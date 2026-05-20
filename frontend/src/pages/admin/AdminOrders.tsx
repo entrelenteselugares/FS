@@ -184,7 +184,7 @@ export const AdminOrders: React.FC = () => {
 
       {/* DASHBOARD DE PERFORMANCE */}
       <div className="max-w-6xl mx-auto w-full grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="bg-theme-bg-muted border border-theme-border p-4 md:p-5 space-y-3 group hover:border-brand-tactical/50 transition-all">
+        <div className="bg-theme-bg-muted border border-theme-border p-4 md:p-5 space-y-3 group hover:border-brand-tactical/50 transition-all rounded-2xl">
            <div className="flex justify-between items-start">
               <span className="text-[9px] font-black text-theme-muted uppercase tracking-[0.3em]">Volume Bruto (Liquidado)</span>
               <DollarSign className="text-brand-tactical opacity-30" size={16} />
@@ -195,7 +195,7 @@ export const AdminOrders: React.FC = () => {
            </div>
         </div>
         
-        <div className="bg-theme-bg-muted border border-theme-border p-6 space-y-4 relative overflow-hidden group hover:border-brand-tactical/50 transition-all">
+        <div className="bg-theme-bg-muted border border-theme-border p-6 space-y-4 relative overflow-hidden group hover:border-brand-tactical/50 transition-all rounded-2xl">
            <div className="flex justify-between items-start">
               <span className="text-[9px] font-black text-theme-muted uppercase tracking-[0.3em]">Ticket Médio / Projeto</span>
               <Zap className="text-amber-500 opacity-30" size={16} />
@@ -203,7 +203,7 @@ export const AdminOrders: React.FC = () => {
            <div className="text-3xl font-heading font-black text-theme-text tracking-tighter italic">{formatCurrency(stats.ticketMedio)}</div>
         </div>
 
-        <div className="bg-theme-bg-muted border border-theme-border p-4 space-y-3 relative overflow-hidden group hover:border-brand-tactical/50 transition-all">
+        <div className="bg-theme-bg-muted border border-theme-border p-4 space-y-3 relative overflow-hidden group hover:border-brand-tactical/50 transition-all rounded-2xl">
            <div className="flex justify-between items-start">
               <span className="text-[9px] font-black text-theme-muted uppercase tracking-[0.3em]">Projetos Pendentes</span>
               <Clock className="text-zinc-500 opacity-30" size={16} />
@@ -229,7 +229,7 @@ export const AdminOrders: React.FC = () => {
       {/* LISTA DE PROJETOS AUDITADOS */}
       <div className="space-y-4">
         {loading ? (
-          <div className="py-24 text-center border border-theme-border bg-theme-bg-muted/10">
+          <div className="py-24 text-center border border-theme-border bg-theme-bg-muted/10 rounded-2xl">
             <div className="text-[10px] text-theme-muted animate-pulse uppercase tracking-[0.5em] font-black italic">Auditando Ledger Financeiro...</div>
           </div>
         ) : groupedOrders.length > 0 ? (
@@ -283,7 +283,7 @@ export const AdminOrders: React.FC = () => {
                           </div>
                         )}
                         {group.status === "PENDENTE" && (
-                          <div className="flex items-center justify-center gap-2 px-4 py-2 border border-theme-border text-theme-muted bg-theme-bg/30 text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest">
+                          <div className="flex items-center justify-center gap-2 px-4 py-2 border border-theme-border text-theme-muted bg-theme-bg/30 text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest rounded-2xl">
                              <Clock size={12} /> {group.status}
                           </div>
                         )}
@@ -293,7 +293,7 @@ export const AdminOrders: React.FC = () => {
 
                {/* LEDGER DE PARCELAS */}
                {expandedId === group.eventId && (
-                 <div className="bg-theme-bg-muted/30 border-x border-b border-theme-border/40 p-4 md:p-6 lg:p-8 animate-in slide-in-from-top-4 duration-500 overflow-x-auto no-scrollbar">
+                 <div className="bg-theme-bg-muted/30 border-x border-b border-theme-border/40 p-4 md:p-6 lg:p-8 animate-in slide-in-from-top-4 duration-500 overflow-x-auto no-scrollbar rounded-2xl">
                     <table className="w-full text-left border-collapse min-w-[600px]">
                        <thead>
                           <tr className="border-b border-theme-border/20">
@@ -371,7 +371,7 @@ export const AdminOrders: React.FC = () => {
                                             placeholder="CÓD. RASTREIO"
                                             defaultValue={o.trackingCode}
                                             onBlur={(e) => handleUpdateLogistics(o.id, o.fulfillmentStatus || 'PENDING', e.target.value)}
-                                            className="text-[7px] text-theme-text font-bold bg-theme-bg-muted border border-theme-border px-1 py-0.5 w-20 text-center uppercase"
+                                            className="text-[7px] text-theme-text font-bold bg-theme-bg-muted border border-theme-border px-1 py-0.5 w-20 text-center uppercase rounded-2xl"
                                           />
                                           {o.shippingFee && <span className="text-[7px] text-theme-muted font-bold">Frete: {formatCurrency(Number(o.shippingFee))}</span>}
                                         </div>
@@ -405,7 +405,7 @@ export const AdminOrders: React.FC = () => {
             </div>
           ))
         ) : (
-          <div className="py-32 text-center border border-dashed border-theme-border bg-theme-bg-muted/10 space-y-6">
+          <div className="py-32 text-center border border-dashed border-theme-border bg-theme-bg-muted/10 space-y-6 rounded-2xl">
              <div className="relative inline-block">
                 <div className="absolute inset-0 bg-theme-border/20 rounded-full animate-ping" />
                 <ArrowUpRight size={48} className="text-theme-muted relative z-10" />
@@ -422,7 +422,7 @@ export const AdminOrders: React.FC = () => {
           
           <div className="relative w-full max-w-2xl bg-theme-card border border-theme-border/60 rounded-[40px] overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300 flex flex-col h-[85vh]">
             {/* Header */}
-            <div className="p-8 md:p-10 border-b border-theme-border flex items-center justify-between shrink-0 bg-theme-bg-muted/30">
+            <div className="p-8 md:p-10 border-b border-theme-border flex items-center justify-between shrink-0 bg-theme-bg-muted/30 rounded-2xl">
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 bg-brand-tactical/10 rounded-2xl flex items-center justify-center border border-brand-tactical/20">
                   <Receipt className="text-brand-tactical" size={24} />
@@ -490,7 +490,7 @@ export const AdminOrders: React.FC = () => {
             </div>
 
             {/* Footer */}
-            <div className="p-8 md:p-10 bg-theme-bg-muted/50 border-t border-theme-border flex gap-6 items-center shrink-0">
+            <div className="p-8 md:p-10 bg-theme-bg-muted/50 border-t border-theme-border flex gap-6 items-center shrink-0 rounded-2xl">
                <div className="flex-1 space-y-1">
                   <span className="text-[8px] font-black text-theme-muted uppercase tracking-[0.4em] italic opacity-40">Liquidado no Ledger</span>
                   <div className="text-3xl font-black italic tracking-tighter text-brand-tactical">{formatCurrency(selectedOrderForDetails.amount)}</div>

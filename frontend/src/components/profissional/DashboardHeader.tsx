@@ -9,13 +9,26 @@ interface DashboardHeaderProps {
 }
 
 export function DashboardHeader({ activeTab, viewTab, onViewTabChange, residentUnits = [], isVerified = false }: DashboardHeaderProps) {
-  const getTitle = () => {
+  const renderTitle = () => {
     switch (activeTab) {
-      case "agenda": return "Meu Cockpit";
-      case "convites": return "Central de Convites";
-      case "financeiro": return "Fluxo de Caixa";
-      case "network": return "Rede Tática de Conexões";
-      default: return "Gestão de Ativos";
+      case "agenda":
+        return <>Meu <span className="text-brand-tactical">Cockpit</span></>;
+      case "convites":
+        return <>Central de <span className="text-brand-tactical">Convites</span></>;
+      case "financeiro":
+        return <>Fluxo de <span className="text-brand-tactical">Caixa</span></>;
+      case "network":
+        return <>Rede Tática de <span className="text-brand-tactical">Conexões</span></>;
+      case "servicos":
+        return <>Portfólio & <span className="text-brand-tactical">Serviços</span></>;
+      case "calendar":
+        return <>Agenda <span className="text-brand-tactical">Google</span></>;
+      case "perfil":
+        return <>Meu <span className="text-brand-tactical">Perfil</span></>;
+      case "franquia":
+        return <>Franquia <span className="text-brand-tactical">Print</span></>;
+      default:
+        return <>Gestão de <span className="text-brand-tactical">Ativos</span></>;
     }
   };
 
@@ -26,7 +39,7 @@ export function DashboardHeader({ activeTab, viewTab, onViewTabChange, residentU
       <div className="flex flex-col xl:flex-row justify-between items-start xl:items-end gap-6 relative z-10">
         <div className="space-y-4">
           <h1 className="text-3xl md:text-5xl xl:text-6xl font-heading font-black text-theme-text uppercase tracking-tighter italic leading-none whitespace-normal sm:whitespace-nowrap">
-            {getTitle()}
+            {renderTitle()}
           </h1>
           <div className="flex items-center gap-4">
             <div className="h-1 w-12 bg-brand-tactical" />
@@ -53,13 +66,13 @@ export function DashboardHeader({ activeTab, viewTab, onViewTabChange, residentU
           <div className="flex flex-wrap items-center gap-4 w-full xl:w-auto">
             <button
               onClick={() => onViewTabChange("lista")}
-              className={`px-4 md:px-6 py-3 text-[9px] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2 border ${viewTab === "lista" ? "bg-brand-tactical text-brand-text border-brand-tactical shadow-lg shadow-brand-tactical/20" : "text-theme-muted border-theme-border/60 hover:text-theme-text"} flex-1 md:flex-none whitespace-nowrap`}
+              className={`px-4 md:px-6 py-3 text-[9px] font-black uppercase tracking-widest rounded-xl transition-all flex items-center justify-center gap-2 border ${viewTab === "lista" ? "bg-brand-tactical text-brand-text border-brand-tactical shadow-lg shadow-brand-tactical/20" : "text-theme-muted border-theme-border/60 hover:text-theme-text"} flex-1 md:flex-none whitespace-nowrap`}
             >
               <List size={14} /> Lista
             </button>
             <button
               onClick={() => onViewTabChange("calendario")}
-              className={`px-4 md:px-6 py-3 text-[9px] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2 border ${viewTab === "calendario" ? "bg-brand-tactical text-brand-text border-brand-tactical shadow-lg shadow-brand-tactical/20" : "text-theme-muted border-theme-border/60 hover:text-theme-text"} flex-1 md:flex-none whitespace-nowrap`}
+              className={`px-4 md:px-6 py-3 text-[9px] font-black uppercase tracking-widest rounded-xl transition-all flex items-center justify-center gap-2 border ${viewTab === "calendario" ? "bg-brand-tactical text-brand-text border-brand-tactical shadow-lg shadow-brand-tactical/20" : "text-theme-muted border-theme-border/60 hover:text-theme-text"} flex-1 md:flex-none whitespace-nowrap`}
             >
               <CalendarIcon size={14} /> Calendário
             </button>

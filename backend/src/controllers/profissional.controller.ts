@@ -8,6 +8,7 @@ import { PricingService } from "../services/pricing.service";
 import { NotificationService } from "../services/notification.service";
 import { audit } from "../lib/audit";
 import { FRONTEND_URL } from "../lib/config";
+import { GamificationService } from "../services/gamification.service";
 
 // GET /api/profissional/events — eventos atribuídos ao profissional logado
 export async function getMeusEventos(req: AuthRequest, res: Response): Promise<void> {
@@ -249,9 +250,21 @@ export async function getProfile(req: AuthRequest, res: Response): Promise<void>
 
     if (!profile) { res.status(404).json({ error: "Perfil não encontrado." }); return; }
 
+    const activeProSub = await prisma.subscription.findFirst({
+      where: {
+        userId,
+        type: "PRO",
+        status: "ACTIVE"
+      }
+    });
+    const isSubscriber = !!activeProSub;
+    const badges = GamificationService.getProfessionalBadges(profile, isSubscriber);
+
     res.json({
       ...profile,
       pixKey: profile.user?.pixKey,
+      isPro: isSubscriber,
+      badges,
       stats: {
         totalEarnings: totalEstimated, // Mostra o total real acumulado
         monthEarnings: monthEstimated, // Mostra o acumulado do mês

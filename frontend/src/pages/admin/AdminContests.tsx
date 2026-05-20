@@ -215,7 +215,7 @@ export const AdminContests: React.FC = () => {
           <div className="py-20 text-center text-[10px] text-zinc-700 uppercase tracking-widest border border-theme-border bg-black/10 italic">Nenhum concurso programado.</div>
         ) : (
           contests.map(c => (
-            <div key={c.id} className="border border-theme-border p-5 bg-theme-bg group hover:border-brand-tactical/30 transition-all shadow-sm">
+            <div key={c.id} className="border border-theme-border p-5 bg-theme-bg group hover:border-brand-tactical/30 transition-all shadow-sm rounded-2xl">
               <div className="flex justify-between items-center">
                 <div className="flex-1">
                   <div className="flex items-center gap-3 mb-2">
@@ -242,7 +242,7 @@ export const AdminContests: React.FC = () => {
                   {c.status !== "FINISHED" && (
                     <button 
                       onClick={() => handleEditClick(c)} 
-                      className="px-3 py-1.5 bg-theme-bg-muted border border-theme-border/60 hover:border-brand-tactical text-theme-text text-[8px] font-black cursor-pointer hover:text-brand-tactical transition-all rounded"
+                      className="px-3 py-1.5 bg-theme-bg-muted border border-theme-border/60 hover:border-brand-tactical text-theme-text text-[8px] font-black cursor-pointer hover:text-brand-tactical transition-all rounded rounded-2xl"
                     >
                       EDITAR
                     </button>
@@ -292,7 +292,7 @@ export const AdminContests: React.FC = () => {
           
           <div className="relative w-full max-w-2xl bg-theme-card border border-theme-border/60 rounded-[40px] overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300 flex flex-col h-[90vh]">
             {/* Header */}
-            <div className="p-8 md:p-10 border-b border-theme-border flex items-center justify-between shrink-0 bg-theme-bg-muted/30">
+            <div className="p-8 md:p-10 border-b border-theme-border flex items-center justify-between shrink-0 bg-theme-bg-muted/30 rounded-2xl">
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 bg-brand-tactical/10 rounded-2xl flex items-center justify-center border border-brand-tactical/20">
                   <TrendingUp className="text-brand-tactical" size={24} strokeWidth={1.5} />
@@ -381,7 +381,7 @@ export const AdminContests: React.FC = () => {
             </form>
 
             {/* Footer */}
-            <div className="p-8 md:p-10 bg-theme-bg-muted/50 border-t border-theme-border flex gap-4 shrink-0">
+            <div className="p-8 md:p-10 bg-theme-bg-muted/50 border-t border-theme-border flex gap-4 shrink-0 rounded-2xl">
               <button onClick={() => setShowModal(false)} className="flex-1 py-5 border border-theme-border text-[11px] font-black uppercase tracking-[0.3em] text-theme-muted hover:text-white transition-all rounded-[20px] italic">Cancelar</button>
               <button 
                 onClick={handleCreate} 

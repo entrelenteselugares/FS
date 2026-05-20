@@ -172,19 +172,19 @@ export const AdminFinance: React.FC = () => {
 
       {/* DASHBOARD DE LIQUIDEZ E MARGEM */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div className="bg-theme-bg-muted border border-theme-border p-5 space-y-3 group hover:border-brand-tactical/50 transition-all">
+        <div className="bg-theme-bg-muted border border-theme-border p-5 space-y-3 group hover:border-brand-tactical/50 transition-all rounded-2xl">
            <div className="flex justify-between items-start"><span className="text-[10px] font-black text-theme-muted uppercase tracking-widest">Receita Bruta (Matriz)</span><ArrowUpCircle className="text-brand-tactical" size={14} strokeWidth={1.5} /></div>
            <div className="text-2xl md:text-3xl font-heading font-black text-theme-text italic">{formatCurrency(financialData.grossRevenue)}</div>
         </div>
-        <div className="bg-theme-bg-muted border border-theme-border p-5 space-y-3 group hover:border-red-500/50 transition-all">
+        <div className="bg-theme-bg-muted border border-theme-border p-5 space-y-3 group hover:border-red-500/50 transition-all rounded-2xl">
            <div className="flex justify-between items-start"><span className="text-[10px] font-black text-theme-muted uppercase tracking-widest">Custo Operacional</span><ArrowDownCircle className="text-red-500" size={14} strokeWidth={1.5} /></div>
            <div className="text-2xl md:text-3xl font-heading font-black text-theme-text italic">{formatCurrency(financialData.totalExpenses)}</div>
         </div>
-        <div className="bg-theme-bg-muted border border-theme-border p-5 space-y-3 group hover:border-brand-tactical transition-all">
+        <div className="bg-theme-bg-muted border border-theme-border p-5 space-y-3 group hover:border-brand-tactical transition-all rounded-2xl">
            <div className="flex justify-between items-start"><span className="text-[10px] font-black text-brand-tactical uppercase tracking-widest">Lucro Líquido Real</span><DollarSign className="text-brand-tactical" size={14} strokeWidth={1.5} /></div>
            <div className="text-2xl md:text-3xl font-heading font-black text-brand-tactical italic">{formatCurrency(financialData.netProfit)}</div>
         </div>
-        <div className="bg-theme-bg-muted border border-theme-border p-5 space-y-3 group transition-all">
+        <div className="bg-theme-bg-muted border border-theme-border p-5 space-y-3 group transition-all rounded-2xl">
            <div className="flex justify-between items-start"><span className="text-[10px] font-black text-theme-muted uppercase tracking-widest">Margem Operacional</span><BarChart3 className="text-amber-500" size={14} strokeWidth={1.5} /></div>
            <div className="text-2xl md:text-3xl font-heading font-black text-theme-text italic">{financialData.margin.toFixed(1)}%</div>
         </div>
@@ -200,9 +200,9 @@ export const AdminFinance: React.FC = () => {
           
           <div className="space-y-4">
             {loading ? (
-              <div className="py-20 text-center border border-theme-border bg-theme-bg-muted/10 text-[10px] text-theme-muted animate-pulse uppercase tracking-widest font-black italic">Auditando Fluxo...</div>
+              <div className="py-20 text-center border border-theme-border bg-theme-bg-muted/10 text-[10px] text-theme-muted animate-pulse uppercase tracking-widest font-black italic rounded-2xl">Auditando Fluxo...</div>
             ) : orders.length === 0 ? (
-              <div className="py-24 text-center border border-dashed border-theme-border bg-theme-bg-muted/5 space-y-4">
+              <div className="py-24 text-center border border-dashed border-theme-border bg-theme-bg-muted/5 space-y-4 rounded-2xl">
                  <ShieldCheck size={32} strokeWidth={1.5} className="mx-auto text-theme-muted opacity-30" />
                  <p className="text-[9px] sm:text-[11px] font-black text-brand-tactical uppercase tracking-[0.2em] sm:tracking-[0.4em] italic truncate max-w-[80vw]">Fluxo de Caixa e Liquidações</p>
               </div>
@@ -211,7 +211,7 @@ export const AdminFinance: React.FC = () => {
                 {orders.map(order => (
                   <React.Fragment key={order.id}>
                     {/* DESKTOP VIEW */}
-                    <div className="hidden md:flex bg-theme-bg-muted border border-theme-border p-4 md:p-5 justify-between gap-4 md:gap-6 hover:border-brand-tactical/30 transition-all group">
+                    <div className="hidden md:flex bg-theme-bg-muted border border-theme-border p-4 md:p-5 justify-between gap-4 md:gap-6 hover:border-brand-tactical/30 transition-all group rounded-2xl">
                        <div className="space-y-4 flex-1">
                           <div className="flex items-center gap-3">
                              <span className="text-[10px] font-black px-2 py-1 bg-brand-tactical text-zinc-950 uppercase tracking-widest">#{order.id.slice(-4).toUpperCase()}</span>
@@ -234,7 +234,7 @@ export const AdminFinance: React.FC = () => {
                     </div>
 
                     {/* MOBILE VIEW (CARD) */}
-                    <div className="md:hidden bg-theme-bg-muted border border-theme-border p-5 space-y-6 hover:border-brand-tactical/30 transition-all">
+                    <div className="md:hidden bg-theme-bg-muted border border-theme-border p-5 space-y-6 hover:border-brand-tactical/30 transition-all rounded-2xl">
                        <div className="flex justify-between items-start">
                           <div className="space-y-2">
                              <span className="text-[9px] font-black px-2 py-0.5 bg-brand-tactical text-zinc-950 uppercase tracking-widest">#{order.id.slice(-4).toUpperCase()}</span>
@@ -323,7 +323,7 @@ export const AdminFinance: React.FC = () => {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 md:gap-10 animate-in fade-in duration-500">
            {/* Form - Engenharia de Custos */}
            <div className="lg:col-span-4 space-y-4">
-              <div className="bg-theme-bg-muted border border-theme-border p-4 md:p-6 space-y-4">
+              <div className="bg-theme-bg-muted border border-theme-border p-4 md:p-6 space-y-4 rounded-2xl">
                  <div className="space-y-0.5">
                     <span className="text-[10px] font-black text-brand-tactical uppercase tracking-[0.5em]">Lançamento Tático</span>
                     <h3 className="text-lg font-heading text-theme-text uppercase tracking-tighter">Registrar Custo</h3>
@@ -332,17 +332,17 @@ export const AdminFinance: React.FC = () => {
                  <form onSubmit={handleAddExpense} className="space-y-3">
                     <div className="space-y-1">
                        <label className="text-[10px] font-black text-theme-muted uppercase tracking-widest">Descrição</label>
-                       <input required value={newExpense.description} onChange={e => setNewExpense({...newExpense, description: e.target.value.toUpperCase()})} placeholder="EX: CARTÃO MICRO SD 32GB" className="w-full bg-theme-bg border border-theme-border p-3 text-sm text-theme-text font-black outline-none focus:border-brand-tactical uppercase" />
+                       <input required value={newExpense.description} onChange={e => setNewExpense({...newExpense, description: e.target.value.toUpperCase()})} placeholder="EX: CARTÃO MICRO SD 32GB" className="w-full bg-theme-bg border border-theme-border p-3 text-sm text-theme-text font-black outline-none focus:border-brand-tactical uppercase rounded-2xl" />
                     </div>
                     
                     <div className="grid grid-cols-2 gap-2">
                        <div className="space-y-1">
                           <label className="text-[10px] font-black text-theme-muted uppercase tracking-widest">Valor (R$)</label>
-                          <input required type="number" step="0.01" value={newExpense.amount} onChange={e => setNewExpense({...newExpense, amount: Number(e.target.value)})} className="w-full bg-theme-bg border border-theme-border p-3 text-sm text-brand-tactical font-black outline-none focus:border-brand-tactical" />
+                          <input required type="number" step="0.01" value={newExpense.amount} onChange={e => setNewExpense({...newExpense, amount: Number(e.target.value)})} className="w-full bg-theme-bg border border-theme-border p-3 text-sm text-brand-tactical font-black outline-none focus:border-brand-tactical rounded-2xl" />
                        </div>
                        <div className="space-y-1">
                           <label className="text-[10px] font-black text-theme-muted uppercase tracking-widest">Data</label>
-                          <input required type="date" value={newExpense.date} onChange={e => setNewExpense({...newExpense, date: e.target.value})} className="w-full bg-theme-bg border border-theme-border p-3 text-sm text-theme-text font-black outline-none focus:border-brand-tactical" />
+                          <input required type="date" value={newExpense.date} onChange={e => setNewExpense({...newExpense, date: e.target.value})} className="w-full bg-theme-bg border border-theme-border p-3 text-sm text-theme-text font-black outline-none focus:border-brand-tactical rounded-2xl" />
                        </div>
                     </div>
 
@@ -359,9 +359,9 @@ export const AdminFinance: React.FC = () => {
                     <div className="pt-3 border-t border-theme-border/20 space-y-2">
                        <span className="text-[10px] font-black text-theme-muted uppercase tracking-widest block opacity-50 italic">Presets de Engenharia</span>
                        <div className="flex flex-wrap gap-1.5">
-                          <button type="button" onClick={() => setNewExpense({ description: "CARTÃO MICRO SD (Venda Bruta)", amount: 25, category: "INSUMO", date: new Date().toISOString().split('T')[0] })} className="px-2 py-1 bg-theme-bg border border-theme-border text-[10px] font-black text-theme-muted hover:border-brand-tactical hover:text-theme-text transition-all uppercase">+ CARTÃO SD (R$ 25)</button>
-                          <button type="button" onClick={() => setNewExpense({ description: "TRANSPORTE / UBER OPERAÇÃO", amount: 15, category: "LOGISTICA", date: new Date().toISOString().split('T')[0] })} className="px-2 py-1 bg-theme-bg border border-theme-border text-[10px] font-black text-theme-muted hover:border-brand-tactical hover:text-theme-text transition-all uppercase">+ UBER (R$ 15)</button>
-                          <button type="button" onClick={() => setNewExpense({ description: "CARTÕES DE VISITA (Lote)", amount: 120, category: "MARKETING", date: new Date().toISOString().split('T')[0] })} className="px-2 py-1 bg-theme-bg border border-theme-border text-[10px] font-black text-theme-muted hover:border-brand-tactical hover:text-theme-text transition-all uppercase">+ MARKETING</button>
+                          <button type="button" onClick={() => setNewExpense({ description: "CARTÃO MICRO SD (Venda Bruta)", amount: 25, category: "INSUMO", date: new Date().toISOString().split('T')[0] })} className="px-2 py-1 bg-theme-bg border border-theme-border text-[10px] font-black text-theme-muted hover:border-brand-tactical hover:text-theme-text transition-all uppercase rounded-2xl">+ CARTÃO SD (R$ 25)</button>
+                          <button type="button" onClick={() => setNewExpense({ description: "TRANSPORTE / UBER OPERAÇÃO", amount: 15, category: "LOGISTICA", date: new Date().toISOString().split('T')[0] })} className="px-2 py-1 bg-theme-bg border border-theme-border text-[10px] font-black text-theme-muted hover:border-brand-tactical hover:text-theme-text transition-all uppercase rounded-2xl">+ UBER (R$ 15)</button>
+                          <button type="button" onClick={() => setNewExpense({ description: "CARTÕES DE VISITA (Lote)", amount: 120, category: "MARKETING", date: new Date().toISOString().split('T')[0] })} className="px-2 py-1 bg-theme-bg border border-theme-border text-[10px] font-black text-theme-muted hover:border-brand-tactical hover:text-theme-text transition-all uppercase rounded-2xl">+ MARKETING</button>
                        </div>
                     </div>
 
@@ -411,7 +411,7 @@ export const AdminFinance: React.FC = () => {
       {/* VIEW: DRE / DASHBOARD */}
       {view === "dre" && (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-10 animate-in fade-in duration-500">
-           <div className="bg-theme-bg-muted border border-theme-border p-6 md:p-10 space-y-8 md:space-y-10">
+           <div className="bg-theme-bg-muted border border-theme-border p-6 md:p-10 space-y-8 md:space-y-10 rounded-2xl">
               <div className="space-y-1">
                  <span className="text-[10px] font-black text-brand-tactical uppercase tracking-[0.5em]">Análise de Performance</span>
                  <h3 className="text-xl font-heading text-theme-text uppercase tracking-tighter italic">DRE Simplificado</h3>
@@ -437,7 +437,7 @@ export const AdminFinance: React.FC = () => {
               </div>
            </div>
 
-           <div className="bg-theme-bg-muted border border-theme-border p-6 md:p-10 flex flex-col items-center justify-center space-y-8 md:space-y-10">
+           <div className="bg-theme-bg-muted border border-theme-border p-6 md:p-10 flex flex-col items-center justify-center space-y-8 md:space-y-10 rounded-2xl">
               <div className="relative w-40 h-40 flex items-center justify-center">
                  <div className="absolute inset-0 border-[12px] border-theme-border rounded-full opacity-20" />
                  <div className="absolute inset-0 border-[12px] border-brand-tactical rounded-full" style={{ clipPath: `polygon(50% 50%, -50% -50%, ${financialData.margin > 50 ? '150% -50%' : '50% -50%'}, 150% 150%, -50% 150%, -50% -50%)`, transform: `rotate(${(financialData.margin / 100) * 360}deg)` }} />
@@ -485,7 +485,7 @@ export const AdminFinance: React.FC = () => {
               </div>
 
               {/* Footer */}
-              <div className="p-8 md:p-10 bg-theme-bg-muted/50 border-t border-theme-border flex gap-4 shrink-0">
+              <div className="p-8 md:p-10 bg-theme-bg-muted/50 border-t border-theme-border flex gap-4 shrink-0 rounded-2xl">
                 <button onClick={() => setConfirmModal(null)} className="flex-1 py-5 border border-theme-border text-[11px] font-black uppercase tracking-[0.3em] text-theme-muted hover:text-white transition-all rounded-[20px] italic">Cancelar</button>
                 <button 
                   onClick={() => handleMarkAsPaid()} 

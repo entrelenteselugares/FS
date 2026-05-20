@@ -207,7 +207,7 @@ export const AdminConfigs: React.FC = () => {
       </div>
 
       {/* NAVIGATION TACTICAL */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:flex bg-theme-bg border border-theme-border/60 p-1.5 shadow-sm w-full md:w-auto md:max-w-fit gap-1">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:flex bg-theme-bg border border-theme-border/60 p-1.5 shadow-sm w-full md:w-auto md:max-w-fit gap-1 rounded-2xl">
         <button onClick={() => setTab("splits")} className={`px-8 py-3 text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest transition-all ${tab === "splits" ? 'bg-brand-tactical text-zinc-950 shadow-md' : 'text-theme-muted hover:text-brand-text'}`}>Divisão de Split</button>
         <button onClick={() => setTab("payouts")} className={`px-8 py-3 text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest transition-all ${tab === "payouts" ? 'bg-brand-tactical text-zinc-950 shadow-md' : 'text-theme-muted hover:text-brand-text'}`}>Repasses ({payouts.length})</button>
         <button onClick={() => setTab("infra")} className={`px-8 py-3 text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest transition-all ${tab === "infra" ? 'bg-brand-tactical text-zinc-950 shadow-md' : 'text-theme-muted hover:text-brand-text'}`}>Infraestrutura</button>
@@ -216,7 +216,7 @@ export const AdminConfigs: React.FC = () => {
       {/* VIEW: SPLIT DISTRIBUTION */}
       {tab === "splits" && (
         <div className="space-y-10 animate-in fade-in duration-500">
-           <div className="bg-theme-bg border border-theme-border/60 p-10 flex flex-col md:flex-row items-center gap-10 shadow-sm relative overflow-hidden group">
+           <div className="bg-theme-bg border border-theme-border/60 p-10 flex flex-col md:flex-row items-center gap-10 shadow-sm relative overflow-hidden group rounded-2xl">
               <div className="p-6 bg-brand-tactical/5 border border-brand-tactical/20 text-brand-tactical rounded-none">
                  <Shield size={32} />
               </div>
@@ -229,7 +229,7 @@ export const AdminConfigs: React.FC = () => {
            </div>
 
            <div className="grid grid-cols-1 lg:grid-cols-[1fr_400px] gap-10 items-start">
-              <div className="bg-theme-bg border border-theme-border/60 p-6 md:p-10 space-y-12 shadow-sm">
+              <div className="bg-theme-bg border border-theme-border/60 p-6 md:p-10 space-y-12 shadow-sm rounded-2xl">
                  <div className="flex items-center justify-between border-b border-theme-border/30 pb-6">
                     <h3 className="text-[11px] font-black text-theme-text uppercase tracking-[0.4em] flex items-center gap-3">
                        <Percent size={14} className="text-brand-tactical" /> Distribuição por Venda
@@ -254,12 +254,12 @@ export const AdminConfigs: React.FC = () => {
                                type="number"
                                value={config.value}
                                onChange={(e) => handleChange(config.key, e.target.value)}
-                               className="w-20 bg-theme-bg-muted border-theme-border/60 border text-theme-text text-right py-3 px-4 text-xl font-heading font-black italic tracking-tighter focus:outline-none focus:border-brand-tactical transition-all leading-none"
+                               className="w-20 bg-theme-bg-muted border-theme-border/60 border text-theme-text text-right py-3 px-4 text-xl font-heading font-black italic tracking-tighter focus:outline-none focus:border-brand-tactical transition-all leading-none rounded-2xl"
                              />
                              <span className="text-theme-muted font-black uppercase text-[10px] tracking-widest">%</span>
                           </div>
                         </div>
-                        <div className="w-full h-1 bg-theme-bg-muted border border-theme-border/10 overflow-hidden">
+                        <div className="w-full h-1 bg-theme-bg-muted border border-theme-border/10 overflow-hidden rounded-2xl">
                            <div className="h-full bg-brand-tactical transition-all duration-700 shadow-[0_0_10px_rgba(133,185,172,0.3)]" style={{ width: `${Math.min(100, Number(config.value))}%` }} />
                         </div>
                       </div>
@@ -278,7 +278,7 @@ export const AdminConfigs: React.FC = () => {
                  </button>
               </div>
 
-              <div className="bg-theme-bg border border-theme-border/60 p-10 space-y-10 shadow-sm">
+              <div className="bg-theme-bg border border-theme-border/60 p-10 space-y-10 shadow-sm rounded-2xl">
                  <h3 className="text-[11px] font-black text-theme-muted uppercase tracking-[0.4em] flex items-center gap-3">
                     <Zap size={14} className="text-brand-tactical" /> Gatilhos de Sistema
                  </h3>
@@ -303,7 +303,7 @@ export const AdminConfigs: React.FC = () => {
       {tab === "payouts" && (
         <div className="space-y-10 animate-in fade-in duration-500">
           {payouts.length === 0 ? (
-            <div className="py-40 text-center border border-dashed border-theme-border bg-theme-bg-muted/5 space-y-6">
+            <div className="py-40 text-center border border-dashed border-theme-border bg-theme-bg-muted/5 space-y-6 rounded-2xl">
               <AlertTriangle className="mx-auto text-theme-muted opacity-20" size={48} />
               <div className="space-y-2">
                 <p className="text-[9px] sm:text-[11px] font-black text-brand-tactical uppercase tracking-[0.2em] sm:tracking-[0.4em] italic truncate max-w-[80vw]">Parâmetros Globais do Sistema</p>
@@ -313,8 +313,8 @@ export const AdminConfigs: React.FC = () => {
           ) : (
             <div className="space-y-8">
               {payouts.map((payout) => (
-                <div key={payout.id} className="bg-theme-bg border border-theme-border/60 shadow-sm group overflow-hidden">
-                   <div className="px-10 py-8 border-b border-theme-border/30 flex flex-col md:flex-row md:items-center justify-between gap-6 bg-theme-bg-muted/20">
+                <div key={payout.id} className="bg-theme-bg border border-theme-border/60 shadow-sm group overflow-hidden rounded-2xl">
+                   <div className="px-10 py-8 border-b border-theme-border/30 flex flex-col md:flex-row md:items-center justify-between gap-6 bg-theme-bg-muted/20 rounded-2xl">
                       <div className="space-y-3">
                         <div className="flex flex-wrap items-center gap-4">
                            <span className="text-2xl font-heading font-black text-theme-text uppercase tracking-tighter italic leading-none">
@@ -331,7 +331,7 @@ export const AdminConfigs: React.FC = () => {
                            <div className="space-y-1"><span className="text-[7px] font-black text-theme-muted uppercase tracking-widest">Provisão de Repasse</span><p className="text-[12px] font-black text-brand-tactical font-mono italic">{formatCurrency(payout.totalPayout)}</p></div>
                         </div>
                       </div>
-                      <div className="px-6 py-4 bg-theme-bg border border-theme-border/40 text-theme-muted text-[8px] font-black uppercase tracking-[0.3em] font-mono shadow-inner group-hover:text-theme-text transition-colors">
+                      <div className="px-6 py-4 bg-theme-bg border border-theme-border/40 text-theme-muted text-[8px] font-black uppercase tracking-[0.3em] font-mono shadow-inner group-hover:text-theme-text transition-colors rounded-2xl">
                         ID: {payout.id.slice(-8).toUpperCase()}
                       </div>
                    </div>
@@ -386,7 +386,7 @@ export const AdminConfigs: React.FC = () => {
         <div className="space-y-12 animate-in fade-in duration-500">
            <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
               {/* Branding Section */}
-              <div className="bg-theme-bg border border-theme-border/60 p-10 space-y-10 shadow-sm">
+              <div className="bg-theme-bg border border-theme-border/60 p-10 space-y-10 shadow-sm rounded-2xl">
                  <div className="flex items-center gap-4 border-b border-theme-border/30 pb-6">
                     <Palette size={16} className="text-brand-tactical" />
                     <h3 className="text-[11px] font-black text-theme-text uppercase tracking-[0.4em]">Identidade Visual Tática</h3>
@@ -406,7 +406,7 @@ export const AdminConfigs: React.FC = () => {
                                     type="text" 
                                     value={config.value} 
                                     onChange={e => handleChange(key, e.target.value)}
-                                    className="w-full bg-theme-bg-muted border border-theme-border/60 p-4 text-[11px] font-black text-theme-text uppercase tracking-widest outline-none focus:border-brand-tactical transition-all"
+                                    className="w-full bg-theme-bg-muted border border-theme-border/60 p-4 text-[11px] font-black text-theme-text uppercase tracking-widest outline-none focus:border-brand-tactical transition-all rounded-2xl"
                                   />
                                   <input 
                                     type="color" 
@@ -423,7 +423,7 @@ export const AdminConfigs: React.FC = () => {
               </div>
 
               {/* Security & Access Section */}
-              <div className="bg-theme-bg border border-theme-border/60 p-10 space-y-10 shadow-sm">
+              <div className="bg-theme-bg border border-theme-border/60 p-10 space-y-10 shadow-sm rounded-2xl">
                  <div className="flex items-center gap-4 border-b border-theme-border/30 pb-6">
                     <Lock size={16} className="text-brand-tactical" />
                     <h3 className="text-[11px] font-black text-theme-text uppercase tracking-[0.4em]">Protocolos de Governança</h3>
@@ -439,7 +439,7 @@ export const AdminConfigs: React.FC = () => {
                        const isOn = config.value === "true";
                        const Icon = item.icon;
                        return (
-                         <div key={item.key} className="flex items-center justify-between p-6 bg-theme-bg-muted/30 border border-theme-border/40 group hover:border-brand-tactical transition-all">
+                         <div key={item.key} className="flex items-center justify-between p-6 bg-theme-bg-muted/30 border border-theme-border/40 group hover:border-brand-tactical transition-all rounded-2xl">
                             <div className="flex items-center gap-6">
                                <div className={`p-4 border ${isOn ? 'border-brand-tactical text-brand-tactical bg-brand-tactical/5' : 'border-theme-border/60 text-theme-muted'}`}>
                                   <Icon size={20} />
@@ -521,7 +521,7 @@ export const AdminConfigs: React.FC = () => {
           
           <div className="relative w-full max-w-md bg-theme-card border border-theme-border/60 rounded-[40px] overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300 flex flex-col">
             {/* Header */}
-            <div className="p-8 md:p-10 border-b border-theme-border flex items-center justify-between shrink-0 bg-theme-bg-muted/30">
+            <div className="p-8 md:p-10 border-b border-theme-border flex items-center justify-between shrink-0 bg-theme-bg-muted/30 rounded-2xl">
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 bg-brand-tactical/10 rounded-2xl flex items-center justify-center border border-brand-tactical/20">
                   <DollarSign className="text-brand-tactical" size={24} strokeWidth={1.5} />

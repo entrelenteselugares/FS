@@ -98,7 +98,7 @@ export const AdminLeadsPage: React.FC = () => {
 
       {/* Stats Header */}
       <div className="max-w-6xl mx-auto w-full grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
-        <div className="bg-theme-bg-muted border border-theme-border p-8 space-y-4 shadow-sm">
+        <div className="bg-theme-bg-muted border border-theme-border rounded-2xl p-8 space-y-4 shadow-sm">
           <div className="flex items-center gap-3 text-theme-text-muted">
             <Users size={16} />
             <span className="text-[10px] font-black uppercase tracking-widest">Total Leads</span>
@@ -107,7 +107,7 @@ export const AdminLeadsPage: React.FC = () => {
           <p className="text-[9px] text-theme-text-muted uppercase font-bold tracking-widest leading-relaxed">Capturados via formulário na galeria.</p>
         </div>
 
-        <div className="bg-theme-bg-muted border border-theme-border p-8 space-y-4 shadow-sm">
+        <div className="bg-theme-bg-muted border border-theme-border rounded-2xl p-8 space-y-4 shadow-sm">
           <div className="flex items-center gap-3 text-orange-500">
             <ShoppingBag size={16} />
             <span className="text-[10px] font-black uppercase tracking-widest">Abandono de Checkout</span>
@@ -116,7 +116,7 @@ export const AdminLeadsPage: React.FC = () => {
           <p className="text-[9px] text-theme-text-muted uppercase font-bold tracking-widest leading-relaxed">Pedidos pendentes há mais de 1 hora.</p>
         </div>
 
-        <div className="bg-brand-tactical/10 border border-brand-tactical/30 p-8 space-y-4 shadow-sm">
+        <div className="bg-brand-tactical/10 border border-brand-tactical/30 rounded-2xl p-8 space-y-4 shadow-sm">
           <div className="flex items-center gap-3 text-brand-tactical">
             <TrendingDown size={16} />
             <span className="text-[10px] font-black uppercase tracking-widest">Receita Recuperada</span>
@@ -125,7 +125,7 @@ export const AdminLeadsPage: React.FC = () => {
           <p className="text-[9px] text-brand-tactical/60 uppercase font-bold tracking-widest leading-relaxed">Impacto real das automações de CRM.</p>
         </div>
 
-        <div className="bg-theme-bg-muted border border-theme-border p-8 space-y-4 shadow-sm">
+        <div className="bg-theme-bg-muted border border-theme-border rounded-2xl p-8 space-y-4 shadow-sm">
           <div className="flex items-center gap-3 text-theme-text-muted">
             <TrendingDown size={16} />
             <span className="text-[10px] font-black uppercase tracking-widest">Taxa de Conversão</span>
@@ -252,7 +252,7 @@ export const AdminLeadsPage: React.FC = () => {
                     {new Date(lead.createdAt).toLocaleDateString('pt-BR')}
                   </td>
                   <td className="p-6">
-                    <span className="px-2 py-1 bg-theme-bg border border-theme-border rounded text-[8px] font-black text-theme-text-muted uppercase tracking-widest">{lead.source}</span>
+                    <span className="px-2 py-1 bg-theme-bg border border-theme-border rounded text-[8px] font-black text-theme-text-muted uppercase tracking-widest rounded-2xl">{lead.source}</span>
                   </td>
                   <td className="p-6 text-right">
                     <button 

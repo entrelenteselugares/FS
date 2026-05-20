@@ -49,7 +49,7 @@ export default function AdminPhygitalQueue({ eventId, eventTitle, onClose }: Pro
 
   return (
     <div className="fixed inset-0 z-[70] flex items-center justify-end bg-black/80 backdrop-blur-sm">
-      <div className="w-full max-w-2xl h-screen bg-theme-bg border-l border-theme-border flex flex-col shadow-2xl animate-in slide-in-from-right duration-500">
+      <div className="w-full max-w-2xl h-screen bg-theme-bg border-l border-theme-border flex flex-col shadow-2xl animate-in slide-in-from-right duration-500 rounded-2xl">
         {/* Header */}
         <div className="p-8 border-b border-theme-border flex items-center justify-between">
           <div>

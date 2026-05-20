@@ -17,25 +17,28 @@ interface ProfileStepperProps {
   profile: ProfissionalProfile | null;
 }
 
-export const ProfileStepper: React.FC<ProfileStepperProps> = ({ user, profile }) => {
-  const steps = useMemo(() => {
-    const s = [
-      { id: "photo", label: "Foto de Perfil", weight: 20, done: !!user?.profileImageUrl },
-      { id: "name", label: "Identidade", weight: 10, done: !!user?.nome },
-      { id: "contact", label: "WhatsApp", weight: 10, done: !!user?.whatsapp },
-      { id: "address", label: "Endereço Operacional", weight: 10, done: !!user?.address && (user.address || "").split('|').filter(Boolean).length > 3 },
-      { id: "pix", label: "Chave PIX", weight: 10, done: !!profile?.pixKey },
-      { id: "exp", label: "Experiência", weight: 10, done: (profile?.experienceYears ?? 0) > 0 },
-      { id: "proof", label: "Primeiro Trabalho", weight: 10, done: !!profile?.firstJobUrl },
-      { id: "skills", label: "Especialidades", weight: 10, done: (profile?.services?.length ?? 0) > 0 },
-      { id: "gear", label: "Inventário Técnico", weight: 10, done: (profile?.equipmentList?.length ?? 0) > 0 },
-    ];
-    return s;
-  }, [user, profile]);
+export const calculateProfileCompleteness = (user: any, profile: any) => {
+  const steps = [
+    { id: "photo", label: "Foto de Perfil", weight: 20, done: !!user?.profileImageUrl },
+    { id: "name", label: "Identidade", weight: 10, done: !!user?.nome },
+    { id: "contact", label: "WhatsApp", weight: 10, done: !!user?.whatsapp },
+    { id: "address", label: "Endereço Operacional", weight: 10, done: !!user?.address && (user.address || "").split('|').filter(Boolean).length > 3 },
+    { id: "pix", label: "Chave PIX", weight: 10, done: !!profile?.pixKey },
+    { id: "exp", label: "Experiência", weight: 10, done: (profile?.experienceYears ?? 0) > 0 },
+    { id: "proof", label: "Primeiro Trabalho", weight: 10, done: !!profile?.firstJobUrl },
+    { id: "skills", label: "Especialidades", weight: 10, done: (profile?.services?.length ?? 0) > 0 },
+    { id: "gear", label: "Inventário Técnico", weight: 10, done: (profile?.equipmentList?.length ?? 0) > 0 },
+  ];
+  return {
+    steps,
+    percentage: steps.reduce((acc, s) => acc + (s.done ? s.weight : 0), 0)
+  };
+};
 
-  const percentage = useMemo(() => {
-    return steps.reduce((acc, s) => acc + (s.done ? s.weight : 0), 0);
-  }, [steps]);
+export const ProfileStepper: React.FC<ProfileStepperProps> = ({ user, profile }) => {
+  const { steps, percentage } = useMemo(() => {
+    return calculateProfileCompleteness(user, profile);
+  }, [user, profile]);
 
   const nextStep = steps.find(s => !s.done);
 

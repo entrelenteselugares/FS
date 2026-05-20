@@ -145,12 +145,12 @@ export function FranchiseShopModal({ onClose, onSuccess, availableBalance, userA
         onClick={onClose} 
       />
       
-      <div className="relative w-full max-w-2xl bg-zinc-900 border border-white/10 rounded-[40px] shadow-2xl flex flex-col max-h-[90vh] animate-in zoom-in-95 duration-500 overflow-hidden">
+      <div className="relative w-full max-w-2xl bg-zinc-900 border border-white/10 rounded-[30px] shadow-2xl flex flex-col max-h-[90vh] animate-in zoom-in-95 duration-500 overflow-hidden">
         
         {/* Header */}
         <div className="p-8 border-b border-white/5 flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-500">
+            <div className="w-12 h-12 bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-500 rounded-xl">
               <ShoppingBag size={24} />
             </div>
             <div>
@@ -189,23 +189,23 @@ export function FranchiseShopModal({ onClose, onSuccess, availableBalance, userA
             <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-500">
               <div className="space-y-4">
                 {PRODUCTS.map(p => (
-                  <div key={p.id} className="bg-zinc-800/50 border border-white/5 p-5 flex items-center justify-between group hover:border-emerald-500/30 transition-all">
+                  <div key={p.id} className="bg-zinc-800/50 border border-white/5 p-5 flex items-center justify-between group hover:border-emerald-500/30 transition-all rounded-2xl">
                     <div className="space-y-1">
                       <h4 className="text-sm font-black text-white uppercase italic">{p.name}</h4>
                       <p className="text-[10px] text-zinc-500 uppercase tracking-widest leading-relaxed">{p.description}</p>
                       <p className="text-emerald-500 text-xs font-black mt-2">R$ {p.price.toFixed(2)}</p>
                     </div>
-                    <div className="flex items-center gap-4 bg-zinc-900 border border-white/5 p-1">
+                    <div className="flex items-center gap-4 bg-zinc-900 border border-white/5 p-1 rounded-xl">
                       <button 
                         onClick={() => updateQty(p.id, -1)}
-                        className="w-8 h-8 flex items-center justify-center text-zinc-500 hover:text-white transition-colors"
+                        className="w-8 h-8 flex items-center justify-center text-zinc-500 hover:text-white transition-colors rounded-lg"
                       >
                         <Minus size={16} />
                       </button>
                       <span className="text-sm font-black text-white w-4 text-center">{cart[p.id] || 0}</span>
                       <button 
                         onClick={() => updateQty(p.id, 1)}
-                        className="w-8 h-8 flex items-center justify-center text-emerald-500 hover:text-white transition-colors"
+                        className="w-8 h-8 flex items-center justify-center text-emerald-500 hover:text-white transition-colors rounded-lg"
                       >
                         <Plus size={16} />
                       </button>
@@ -222,11 +222,11 @@ export function FranchiseShopModal({ onClose, onSuccess, availableBalance, userA
                 <label className="text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em]">Ponto de Recebimento</label>
                 <div 
                   onClick={() => setDeliveryType("SHIPPING")}
-                  className={`p-6 border transition-all cursor-pointer flex flex-col gap-4 group ${deliveryType === "SHIPPING" ? 'bg-emerald-500/5 border-emerald-500' : 'bg-zinc-800/50 border-white/5 hover:border-zinc-700'}`}
+                  className={`p-6 border transition-all cursor-pointer flex flex-col gap-4 group rounded-2xl ${deliveryType === "SHIPPING" ? 'bg-emerald-500/5 border-emerald-500' : 'bg-zinc-800/50 border-white/5 hover:border-zinc-700'}`}
                 >
                   <div className="flex items-center justify-between w-full">
                     <div className="flex items-center gap-5">
-                      <div className={`p-3 border ${deliveryType === "SHIPPING" ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-500' : 'bg-zinc-900 border-zinc-800 text-zinc-600'}`}>
+                      <div className={`p-3 border rounded-xl ${deliveryType === "SHIPPING" ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-500' : 'bg-zinc-900 border-zinc-800 text-zinc-600'}`}>
                         <MapPin size={20} />
                       </div>
                       <div className="space-y-1 text-left">
@@ -247,7 +247,7 @@ export function FranchiseShopModal({ onClose, onSuccess, availableBalance, userA
                           value={shippingData.cep}
                           onBlur={handleCepBlur}
                           onChange={e => setShippingData({...shippingData, cep: e.target.value})}
-                          className="w-full bg-zinc-900 border border-white/10 p-2 text-[10px] text-white font-mono"
+                          className="w-full bg-zinc-900 border border-white/10 p-2 text-[10px] text-white font-mono rounded-xl"
                         />
                       </div>
                       <div className="col-span-4">
@@ -255,7 +255,7 @@ export function FranchiseShopModal({ onClose, onSuccess, availableBalance, userA
                           placeholder="Logradouro" 
                           value={shippingData.street}
                           onChange={e => setShippingData({...shippingData, street: e.target.value})}
-                          className="w-full bg-zinc-900 border border-white/10 p-2 text-[10px] text-white"
+                          className="w-full bg-zinc-900 border border-white/10 p-2 text-[10px] text-white rounded-xl"
                         />
                       </div>
                       <div className="col-span-1">
@@ -263,7 +263,7 @@ export function FranchiseShopModal({ onClose, onSuccess, availableBalance, userA
                           placeholder="Nº" 
                           value={shippingData.number}
                           onChange={e => setShippingData({...shippingData, number: e.target.value})}
-                          className="w-full bg-zinc-900 border border-white/10 p-2 text-[10px] text-white"
+                          className="w-full bg-zinc-900 border border-white/10 p-2 text-[10px] text-white rounded-xl"
                         />
                       </div>
                       <div className="col-span-2">
@@ -271,7 +271,7 @@ export function FranchiseShopModal({ onClose, onSuccess, availableBalance, userA
                           placeholder="Bairro" 
                           value={shippingData.neighborhood}
                           onChange={e => setShippingData({...shippingData, neighborhood: e.target.value})}
-                          className="w-full bg-zinc-900 border border-white/10 p-2 text-[10px] text-white"
+                          className="w-full bg-zinc-900 border border-white/10 p-2 text-[10px] text-white rounded-xl"
                         />
                       </div>
                       <div className="col-span-2">
@@ -279,7 +279,7 @@ export function FranchiseShopModal({ onClose, onSuccess, availableBalance, userA
                           placeholder="Cidade" 
                           value={shippingData.city}
                           readOnly
-                          className="w-full bg-zinc-900 border border-white/10 p-2 text-[10px] text-white opacity-50"
+                          className="w-full bg-zinc-900 border border-white/10 p-2 text-[10px] text-white opacity-50 rounded-xl"
                         />
                       </div>
                       <div className="col-span-1">
@@ -287,7 +287,7 @@ export function FranchiseShopModal({ onClose, onSuccess, availableBalance, userA
                           placeholder="UF" 
                           value={shippingData.state}
                           readOnly
-                          className="w-full bg-zinc-900 border border-white/10 p-2 text-[10px] text-white opacity-50"
+                          className="w-full bg-zinc-900 border border-white/10 p-2 text-[10px] text-white opacity-50 rounded-xl"
                         />
                       </div>
                     </div>
@@ -296,10 +296,10 @@ export function FranchiseShopModal({ onClose, onSuccess, availableBalance, userA
 
                 <div 
                   onClick={() => setDeliveryType("MATRIZ")}
-                  className={`p-6 border transition-all cursor-pointer flex items-center justify-between group ${deliveryType === "MATRIZ" ? 'bg-emerald-500/5 border-emerald-500' : 'bg-zinc-800/50 border-white/5 hover:border-zinc-700'}`}
+                  className={`p-6 border transition-all cursor-pointer flex items-center justify-between group rounded-2xl ${deliveryType === "MATRIZ" ? 'bg-emerald-500/5 border-emerald-500' : 'bg-zinc-800/50 border-white/5 hover:border-zinc-700'}`}
                 >
                   <div className="flex items-center gap-5">
-                    <div className={`p-3 border ${deliveryType === "MATRIZ" ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-500' : 'bg-zinc-900 border-zinc-800 text-zinc-600'}`}>
+                    <div className={`p-3 border rounded-xl ${deliveryType === "MATRIZ" ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-500' : 'bg-zinc-900 border-zinc-800 text-zinc-600'}`}>
                       <Package size={20} />
                     </div>
                     <div className="space-y-1 text-left">
@@ -322,10 +322,10 @@ export function FranchiseShopModal({ onClose, onSuccess, availableBalance, userA
                 
                 <div 
                   onClick={() => canPayWithBalance && setPaymentMethod("BALANCE")}
-                  className={`p-6 border transition-all flex items-center justify-between group ${!canPayWithBalance ? 'opacity-40 cursor-not-allowed grayscale' : 'cursor-pointer'} ${paymentMethod === "BALANCE" ? 'bg-emerald-500/5 border-emerald-500' : 'bg-zinc-800/50 border-white/5 hover:border-zinc-700'}`}
+                  className={`p-6 border transition-all flex items-center justify-between group rounded-2xl ${!canPayWithBalance ? 'opacity-40 cursor-not-allowed grayscale' : 'cursor-pointer'} ${paymentMethod === "BALANCE" ? 'bg-emerald-500/5 border-emerald-500' : 'bg-zinc-800/50 border-white/5 hover:border-zinc-700'}`}
                 >
                   <div className="flex items-center gap-5">
-                    <div className={`p-3 border ${paymentMethod === "BALANCE" ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-500' : 'bg-zinc-900 border-zinc-800 text-zinc-600'}`}>
+                    <div className={`p-3 border rounded-xl ${paymentMethod === "BALANCE" ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-500' : 'bg-zinc-900 border-zinc-800 text-zinc-600'}`}>
                       <Wallet size={20} />
                     </div>
                     <div className="space-y-1 text-left">
@@ -340,10 +340,10 @@ export function FranchiseShopModal({ onClose, onSuccess, availableBalance, userA
 
                 <div 
                   onClick={() => setPaymentMethod("CHECKOUT")}
-                  className={`p-6 border transition-all cursor-pointer flex items-center justify-between group ${paymentMethod === "CHECKOUT" ? 'bg-emerald-500/5 border-emerald-500' : 'bg-zinc-800/50 border-white/5 hover:border-zinc-700'}`}
+                  className={`p-6 border transition-all cursor-pointer flex items-center justify-between group rounded-2xl ${paymentMethod === "CHECKOUT" ? 'bg-emerald-500/5 border-emerald-500' : 'bg-zinc-800/50 border-white/5 hover:border-zinc-700'}`}
                 >
                   <div className="flex items-center gap-5">
-                    <div className={`p-3 border ${paymentMethod === "CHECKOUT" ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-500' : 'bg-zinc-900 border-zinc-800 text-zinc-600'}`}>
+                    <div className={`p-3 border rounded-xl ${paymentMethod === "CHECKOUT" ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-500' : 'bg-zinc-900 border-zinc-800 text-zinc-600'}`}>
                       <CreditCard size={20} />
                     </div>
                     <div className="space-y-1 text-left">
@@ -369,7 +369,7 @@ export function FranchiseShopModal({ onClose, onSuccess, availableBalance, userA
                 <p className="text-[10px] text-zinc-500 uppercase tracking-widest font-bold">Confirme as informações antes de finalizar</p>
               </div>
 
-              <div className="bg-zinc-800/30 border border-white/5 p-6 space-y-4 text-left max-w-sm mx-auto">
+              <div className="bg-zinc-800/30 border border-white/5 p-6 space-y-4 text-left max-w-sm mx-auto rounded-2xl">
                 <div className="space-y-2 border-b border-white/5 pb-4">
                   {Object.entries(cart).map(([id, qty]) => {
                     const p = PRODUCTS.find(item => item.id === id);
@@ -408,7 +408,7 @@ export function FranchiseShopModal({ onClose, onSuccess, availableBalance, userA
             {step !== "products" && (
               <button 
                 onClick={handleBack}
-                className="px-6 py-4 border border-zinc-800 text-[10px] font-black uppercase tracking-widest hover:bg-zinc-800 transition-all flex items-center gap-2 italic"
+                className="px-6 py-4 border border-zinc-800 text-[10px] font-black uppercase tracking-widest hover:bg-zinc-800 transition-all flex items-center gap-2 italic rounded-xl"
               >
                 <ArrowLeft size={14} /> Voltar
               </button>
@@ -418,7 +418,7 @@ export function FranchiseShopModal({ onClose, onSuccess, availableBalance, userA
               <button 
                 disabled={total === 0}
                 onClick={handleNext}
-                className="px-10 py-4 bg-emerald-500 text-black text-[10px] font-black uppercase tracking-widest hover:brightness-110 transition-all disabled:opacity-40 flex items-center gap-2 italic"
+                className="px-10 py-4 bg-emerald-500 text-black text-[10px] font-black uppercase tracking-widest hover:brightness-110 transition-all disabled:opacity-40 flex items-center gap-2 italic rounded-xl"
               >
                 Próximo Passo <ArrowRight size={14} />
               </button>
@@ -426,7 +426,7 @@ export function FranchiseShopModal({ onClose, onSuccess, availableBalance, userA
               <button 
                 disabled={isProcessing}
                 onClick={handleFinish}
-                className="px-12 py-4 bg-emerald-500 text-black text-[11px] font-black uppercase tracking-widest hover:brightness-110 transition-all shadow-xl shadow-emerald-500/20 flex items-center gap-3 italic"
+                className="px-12 py-4 bg-emerald-500 text-black text-[11px] font-black uppercase tracking-widest hover:brightness-110 transition-all shadow-xl shadow-emerald-500/20 flex items-center gap-3 italic rounded-xl"
               >
                 {isProcessing ? "PROCESSANDO..." : <><CheckCircle2 size={16} /> FINALIZAR PEDIDO</>}
               </button>

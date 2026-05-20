@@ -55,7 +55,7 @@ export function FinanceTab({
 
   return (
     <div className="space-y-8">
-      <div className="lux-card p-8 md:p-16 relative overflow-hidden bg-theme-bg">
+      <div className="lux-card rounded-2xl p-8 md:p-16 relative overflow-hidden bg-theme-bg border border-theme-border/60">
         <div className="absolute top-0 right-0 w-64 h-64 bg-brand-tactical/5 rounded-full blur-[100px] -mr-32 -mt-32 pointer-events-none" />
         <div className="relative z-10 space-y-12">
 
@@ -68,19 +68,19 @@ export function FinanceTab({
             <div className="flex items-center gap-4">
               <button
                 onClick={onEditGoal}
-                className="px-4 py-2 bg-theme-bg-muted border border-theme-border text-[9px] font-black text-theme-muted uppercase tracking-widest hover:border-brand-tactical/50 transition-all italic"
+                className="px-4 py-2 bg-theme-bg-muted border border-theme-border text-[9px] font-black text-theme-muted uppercase tracking-widest hover:border-brand-tactical/50 transition-all rounded-xl italic"
               >
                 Ajustar Meta
               </button>
               <div className="flex items-center gap-2 group relative">
                 <button
                   onClick={() => onDownloadTaxReport()}
-                  className="px-4 py-2 bg-brand-tactical/10 border border-brand-tactical/30 text-[9px] font-black text-brand-tactical uppercase tracking-widest hover:bg-brand-tactical hover:text-zinc-950 transition-all italic flex items-center gap-2"
+                  className="px-4 py-2 bg-brand-tactical/10 border border-brand-tactical/30 text-[9px] font-black text-brand-tactical uppercase tracking-widest hover:bg-brand-tactical hover:text-zinc-950 transition-all rounded-xl italic flex items-center gap-2"
                 >
                   <Download size={12} />
                   Relatório Tributário
                 </button>
-                <div className="absolute top-full right-0 mt-1 hidden group-hover:flex flex-col bg-theme-bg border border-theme-border shadow-xl z-50">
+                <div className="absolute top-full right-0 mt-1 hidden group-hover:flex flex-col bg-theme-bg border border-theme-border shadow-xl rounded-xl overflow-hidden z-50">
                    <button onClick={() => window.open(`${API.defaults.baseURL}/profissional/finance/tax-report?format=pdf`, '_blank')} className="px-4 py-3 text-[8px] font-black uppercase text-theme-text hover:bg-brand-tactical/10 flex items-center gap-2 border-b border-theme-border/30">
                       <FileText size={10} className="text-brand-tactical" /> PDF (MEI)
                    </button>
@@ -89,7 +89,7 @@ export function FinanceTab({
                    </button>
                 </div>
               </div>
-              <div className="bg-brand-tactical/10 px-6 py-3 border border-brand-tactical/20 flex items-center gap-3">
+              <div className="bg-brand-tactical/10 px-6 py-3 border border-brand-tactical/20 flex items-center gap-3 rounded-xl">
                 <div className="w-2 h-2 rounded-full bg-brand-tactical animate-pulse" />
                 <span className="text-[9px] font-black text-brand-tactical uppercase tracking-widest">Ciclo de Repasse Ativo</span>
               </div>
@@ -98,9 +98,9 @@ export function FinanceTab({
 
           {/* REAL-TIME LIQUIDITY SUMMARY */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-             <div className="bg-theme-bg-muted border border-theme-border/60 p-6 flex items-center justify-between group hover:border-brand-tactical/40 transition-all">
+             <div className="bg-theme-bg-muted border border-theme-border/60 rounded-2xl p-6 flex items-center justify-between group hover:border-brand-tactical/40 transition-all">
                 <div className="flex items-center gap-5">
-                   <div className="w-14 h-14 bg-brand-tactical/10 border border-brand-tactical/20 flex items-center justify-center text-brand-tactical">
+                   <div className="w-14 h-14 bg-brand-tactical/10 border border-brand-tactical/20 rounded-xl flex items-center justify-center text-brand-tactical">
                       <Wallet size={24} strokeWidth={1.5} />
                    </div>
                    <div className="space-y-0.5">
@@ -114,9 +114,9 @@ export function FinanceTab({
                 </div>
              </div>
              
-             <div className="bg-theme-bg-muted border border-theme-border/60 p-6 flex items-center justify-between group hover:border-amber-500/40 transition-all">
+             <div className="bg-theme-bg-muted border border-theme-border/60 rounded-2xl p-6 flex items-center justify-between group hover:border-amber-500/40 transition-all">
                 <div className="flex items-center gap-5">
-                   <div className="w-14 h-14 bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-500">
+                   <div className="w-14 h-14 bg-amber-500/10 border border-amber-500/20 rounded-xl flex items-center justify-center text-amber-500">
                       <Clock size={24} strokeWidth={1.5} />
                    </div>
                    <div className="space-y-0.5">
@@ -134,7 +134,7 @@ export function FinanceTab({
           {/* Projection & ROI Grid */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
             {/* Goal Progress */}
-            <div className="lg:col-span-8 p-8 bg-brand-tactical/[0.03] border border-brand-tactical/30 relative overflow-hidden group shadow-inner">
+            <div className="lg:col-span-8 p-8 bg-brand-tactical/[0.03] border border-brand-tactical/30 rounded-2xl relative overflow-hidden group shadow-inner">
               <div className="absolute right-0 top-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity"><TrendingUp size={80} /></div>
               <div className="relative z-10 space-y-6">
                 <div className="flex justify-between items-end">
@@ -150,9 +150,9 @@ export function FinanceTab({
                     <p className="text-xl font-heading font-black text-theme-text italic leading-none">R$ {monthlyGoal.toLocaleString("pt-BR")}</p>
                   </div>
                 </div>
-                <div className="h-3 bg-theme-bg-muted border border-theme-border/40 relative overflow-hidden">
+                <div className="h-3 bg-theme-bg-muted border border-theme-border/40 relative overflow-hidden rounded-full">
                   <div
-                    className="absolute left-0 top-0 h-full bg-brand-tactical transition-all duration-1000 ease-out shadow-[0_0_15px_rgba(133,185,172,0.4)]"
+                    className="absolute left-0 top-0 h-full bg-brand-tactical transition-all duration-1000 ease-out shadow-[0_0_15px_rgba(133,185,172,0.4)] rounded-full"
                     style={{ width: `${progressPct}%` }}
                   />
                 </div>
@@ -164,7 +164,7 @@ export function FinanceTab({
             </div>
 
             {/* ROI Donut (static representation) */}
-            <div className="lg:col-span-4 lux-card p-8 flex flex-col bg-theme-bg-muted/40">
+            <div className="lg:col-span-4 lux-card rounded-2xl p-8 flex flex-col bg-theme-bg-muted/40 border border-theme-border/60">
               <div className="flex items-center justify-between mb-6">
                 <div className="space-y-1">
                   <p className="text-[10px] font-black text-brand-tactical uppercase tracking-widest italic">ROI por Ativo</p>
@@ -175,10 +175,10 @@ export function FinanceTab({
               <div className="flex-1 flex flex-col justify-center space-y-3">
                 {[{ l: "FTS", v: "45%", o: 1 }, { l: "VDS", v: "30%", o: 0.6 }, { l: "ALB", v: "25%", o: 0.3 }].map((i) => (
                   <div key={i.l} className="flex items-center gap-4">
-                    <div className="w-3 h-3 bg-brand-tactical flex-shrink-0" style={{ opacity: i.o }} />
+                    <div className="w-3 h-3 bg-brand-tactical flex-shrink-0 rounded-md" style={{ opacity: i.o }} />
                     <span className="text-[9px] font-black text-theme-muted uppercase w-8">{i.l}</span>
-                    <div className="flex-1 h-1.5 bg-theme-bg-muted">
-                      <div className="h-full bg-brand-tactical" style={{ width: i.v, opacity: i.o }} />
+                    <div className="flex-1 h-1.5 bg-theme-bg-muted rounded-full overflow-hidden">
+                      <div className="h-full bg-brand-tactical rounded-full" style={{ width: i.v, opacity: i.o }} />
                     </div>
                     <span className="text-[10px] font-black text-theme-text italic">{i.v}</span>
                   </div>
@@ -187,7 +187,7 @@ export function FinanceTab({
             </div>
 
             {/* Insight */}
-            <div className="lg:col-span-12 p-8 bg-theme-bg-muted border border-theme-border/60 flex flex-col md:flex-row items-center gap-8">
+            <div className="lg:col-span-12 p-8 bg-theme-bg-muted border border-theme-border/60 rounded-2xl flex flex-col md:flex-row items-center gap-8">
               <div className="flex items-center gap-3 text-brand-tactical shrink-0">
                 <Zap size={20} className="animate-pulse" />
                 <span className="text-[11px] font-black uppercase tracking-[0.3em] italic">Insights de Aceleração</span>
@@ -215,21 +215,21 @@ export function FinanceTab({
           </div>
 
           {/* CASHFLOW PROJECTION (Phase 30) */}
-          <div className="bg-theme-bg-muted/20 border border-theme-border/40 p-8 md:p-12 relative">
+          <div className="bg-theme-bg-muted/20 border border-theme-border/40 rounded-2xl p-8 md:p-12 relative overflow-hidden">
              <div className="absolute top-0 right-0 p-4 opacity-5 pointer-events-none"><TrendingUp size={120} /></div>
              <CashflowChart />
           </div>
 
           {/* Demand Heatmap */}
-          <div className="bg-theme-bg border border-theme-border/60 p-8 md:p-12 space-y-8">
+          <div className="bg-theme-bg border border-theme-border/60 rounded-2xl p-8 md:p-12 space-y-8">
             <div className="flex justify-between items-end">
               <div className="space-y-2">
                 <h3 className="text-xl font-heading font-black text-theme-text uppercase tracking-widest italic">Inteligência de Demanda Regional</h3>
                 <p className="text-[11px] text-theme-muted uppercase tracking-[0.4em] italic font-black">Mapa de calor baseado no seu histórico e leads locais</p>
               </div>
               <div className="flex items-center gap-4 text-[8px] font-black uppercase text-theme-muted tracking-widest">
-                <span className="flex items-center gap-2"><div className="w-2 h-2 bg-brand-tactical/10" /> Baixa</span>
-                <span className="flex items-center gap-2"><div className="w-2 h-2 bg-brand-tactical" /> Alta</span>
+                <span className="flex items-center gap-2"><div className="w-2 h-2 bg-brand-tactical/10 rounded-sm" /> Baixa</span>
+                <span className="flex items-center gap-2"><div className="w-2 h-2 bg-brand-tactical rounded-sm" /> Alta</span>
               </div>
             </div>
             <div className="overflow-x-auto">
@@ -246,10 +246,10 @@ export function FinanceTab({
                     {row.d.map((val, dIdx) => (
                       <div
                         key={dIdx}
-                        className="h-10 md:h-12 border border-theme-border/20 transition-all hover:border-brand-tactical/50 cursor-crosshair relative group"
+                        className="h-10 md:h-12 border border-theme-border/20 rounded-md transition-all hover:border-brand-tactical/50 cursor-crosshair relative group"
                         style={{ backgroundColor: `rgba(133, 185, 172, ${val / 10})`, boxShadow: val > 7 ? "inset 0 0 10px rgba(133,185,172,0.2)" : "none" }}
                       >
-                        <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-theme-bg/80">
+                        <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-theme-bg/80 rounded-md">
                           <span className="text-[10px] font-black text-brand-tactical italic">{val * 12}% Fluxo</span>
                         </div>
                       </div>
@@ -273,9 +273,9 @@ export function FinanceTab({
               <h4 className="text-base font-heading font-black text-theme-text uppercase italic tracking-tighter">Histórico de Movimentações</h4>
             </div>
             {profile?.payoutHistory?.map((p) => (
-              <div key={p.id} className="group flex flex-col md:flex-row justify-between md:items-center p-8 bg-theme-bg-muted/50 border border-theme-border/40 hover:border-brand-tactical/40 transition-all gap-8">
+              <div key={p.id} className="group flex flex-col md:flex-row justify-between md:items-center p-8 bg-theme-bg-muted/50 border border-theme-border/40 rounded-2xl hover:border-brand-tactical/40 transition-all gap-8">
                 <div className="flex items-center gap-6">
-                  <div className={`p-4 border ${p.status === "PAID" ? "bg-brand-tactical/10 border-brand-tactical/30 text-brand-tactical" : "bg-amber-500/10 border-amber-500/30 text-amber-500"}`}>
+                  <div className={`p-4 border rounded-xl ${p.status === "PAID" ? "bg-brand-tactical/10 border-brand-tactical/30 text-brand-tactical" : "bg-amber-500/10 border-amber-500/30 text-amber-500"}`}>
                     {p.status === "PAID" ? <Check size={20} /> : <TrendingUp size={20} />}
                   </div>
                   <div className="space-y-1">
@@ -283,7 +283,7 @@ export function FinanceTab({
                       {p.payout?.weekStart ? formatDate(p.payout.weekStart) : "REPASSE OPERACIONAL"}
                     </p>
                     <div className="flex items-center gap-3">
-                      <span className={`text-[9px] font-black uppercase tracking-widest px-2 py-0.5 border ${p.status === "PAID" ? "bg-brand-tactical text-theme-bg border-brand-tactical" : "bg-amber-500/10 text-amber-500 border-amber-500/20"}`}>
+                      <span className={`text-[9px] font-black uppercase tracking-widest px-2 py-0.5 border rounded-xl ${p.status === "PAID" ? "bg-brand-tactical text-theme-bg border-brand-tactical" : "bg-amber-500/10 text-amber-500 border-amber-500/20"}`}>
                         {p.status === "PAID" ? "LIQUIDADO" : "EM PROCESSAMENTO"}
                       </span>
                       <span className="text-[9px] font-bold text-theme-muted uppercase tracking-widest italic">{p.orderCount} VENDAS CONSOLIDADAS</span>
@@ -301,7 +301,7 @@ export function FinanceTab({
                   {p.status === "PAID" && (
                     <button 
                       onClick={() => window.open(`${API.defaults.baseURL}/profissional/finance/receipt/${p.id}`, '_blank')}
-                      className="p-3 bg-theme-bg-muted border border-theme-border text-theme-muted hover:text-brand-tactical hover:border-brand-tactical/50 transition-all shadow-lg"
+                      className="p-3 bg-theme-bg-muted border border-theme-border text-theme-muted hover:text-brand-tactical hover:border-brand-tactical/50 rounded-xl transition-all shadow-lg"
                       title="Baixar Recibo"
                     >
                       <Download size={14} />
@@ -311,7 +311,7 @@ export function FinanceTab({
               </div>
             ))}
             {!profile?.payoutHistory?.length && (
-              <div className="py-24 text-center space-y-6 bg-theme-bg-muted/20 border border-dashed border-theme-border/40">
+              <div className="py-24 text-center space-y-6 bg-theme-bg-muted/20 border border-dashed border-theme-border/40 rounded-2xl">
                 <div className="flex justify-center text-theme-muted opacity-20"><DollarSign size={64} /></div>
                 <p className="text-[11px] font-black text-theme-muted uppercase tracking-[0.4em] italic">Nenhum repasse liquidado</p>
               </div>
@@ -323,7 +323,7 @@ export function FinanceTab({
       {/* Goal Edit Modal */}
       {isEditingGoal && (
         <div className="fixed inset-0 z-[110] flex items-center justify-center p-6 bg-theme-bg/95 backdrop-blur-sm animate-in fade-in duration-300">
-          <div className="w-full max-w-sm bg-theme-bg border border-brand-tactical p-8 space-y-6 shadow-2xl">
+          <div className="w-full max-w-sm bg-theme-bg border border-brand-tactical rounded-2xl p-8 space-y-6 shadow-2xl">
             <div className="space-y-2">
               <h4 className="text-xl font-heading font-black text-theme-text uppercase italic tracking-widest">Ajustar Meta Mensal</h4>
               <p className="text-[10px] text-theme-muted uppercase tracking-widest">Defina seu objetivo de faturamento líquido</p>
@@ -333,15 +333,15 @@ export function FinanceTab({
                 type="number"
                 value={tempGoal}
                 onChange={(e) => onTempGoalChange(e.target.value)}
-                className="w-full bg-theme-bg-muted border border-theme-border p-5 text-brand-tactical font-heading font-black italic text-3xl outline-none focus:border-brand-tactical/50"
+                className="w-full bg-theme-bg-muted border border-theme-border p-5 text-brand-tactical font-heading font-black italic text-3xl rounded-xl outline-none focus:border-brand-tactical/50"
               />
               <div className="absolute right-5 top-1/2 -translate-y-1/2 text-[10px] font-black text-theme-muted uppercase">BRL</div>
             </div>
             <div className="flex gap-3">
-              <button onClick={onCancelGoal} className="flex-1 py-4 bg-theme-bg-muted border border-theme-border text-[10px] font-black text-theme-muted uppercase tracking-widest italic">
+              <button onClick={onCancelGoal} className="flex-1 py-4 bg-theme-bg-muted border border-theme-border text-[10px] font-black text-theme-muted uppercase tracking-widest rounded-xl italic">
                 Cancelar
               </button>
-              <button onClick={onSaveGoal} className="flex-[2] py-4 bg-brand-tactical text-brand-text text-[11px] font-black uppercase tracking-[0.3em] italic">
+              <button onClick={onSaveGoal} className="flex-[2] py-4 bg-brand-tactical text-brand-text text-[11px] font-black uppercase tracking-[0.3em] rounded-xl italic">
                 Salvar Meta
               </button>
             </div>

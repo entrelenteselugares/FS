@@ -521,8 +521,9 @@ export class VaultController {
         return res.status(400).json({ error: "Não há fotos no cofre para materializar." });
       }
 
-      // 2. Preço Fixo (Exemplo: Pacote Cofre + Carta Registrada)
-      const basePrice = 49.90; // Pacote On-Demand
+      // 2. Preço Dinâmico: base varia com o goalPoses do cofre
+      const PRICE_TABLE: Record<number, number> = { 12: 29.90, 24: 49.90, 36: 69.90, 48: 89.90 };
+      const basePrice = PRICE_TABLE[album.goalPoses] ?? 49.90;
       const shippingPrice = 15.00; // Carta Registrada
       const total = basePrice + shippingPrice;
 
@@ -676,28 +677,39 @@ export class VaultController {
   }
 
   /**
-   * Renomeia o cofre (Apenas Proprietário)
+   * Atualiza configurações gerais do cofre (nome e/ou meta de poses). Apenas Proprietário.
    */
   static async renameAlbum(req: AuthRequest, res: Response) {
     const albumId = req.params.albumId as string;
     const userId = req.user?.userId;
-    const { nome } = req.body;
+    const { nome, goalPoses } = req.body;
 
     if (!userId) return res.status(401).json({ error: "Não autenticado." });
-    if (!nome) return res.status(400).json({ error: "Nome não fornecido." });
+    if (!nome && goalPoses === undefined) return res.status(400).json({ error: "Nenhum campo para atualizar." });
 
     try {
       const album = await prisma.sharedAlbum.findUnique({ where: { id: albumId } });
       if (!album) return res.status(404).json({ error: "Cofre não encontrado." });
-      if (album.ownerId !== userId) return res.status(403).json({ error: "Apenas o proprietário pode renomear o cofre." });
+      if (album.ownerId !== userId) return res.status(403).json({ error: "Apenas o proprietário pode editar o cofre." });
+
+      const updateData: { nome?: string; goalPoses?: number } = {};
+
+      if (nome && nome.trim()) updateData.nome = nome.trim();
+
+      if (goalPoses !== undefined) {
+        let finalGoal = Number(goalPoses);
+        if (isNaN(finalGoal) || finalGoal < 12) finalGoal = 12;
+        if (finalGoal % 4 !== 0) finalGoal = Math.ceil(finalGoal / 4) * 4;
+        updateData.goalPoses = finalGoal;
+      }
 
       const updated = await prisma.sharedAlbum.update({
         where: { id: albumId },
-        data: { nome }
+        data: updateData
       });
       return res.json(updated);
     } catch (e: any) {
-      return res.status(500).json({ error: "Erro ao renomear cofre.", details: e.message });
+      return res.status(500).json({ error: "Erro ao atualizar cofre.", details: e.message });
     }
   }
 

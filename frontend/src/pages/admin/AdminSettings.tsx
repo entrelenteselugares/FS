@@ -73,7 +73,7 @@ export const AdminSettings: React.FC = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-white/5 border border-theme-border">
         {/* Branding & Identity */}
-        <div className="bg-theme-bg p-10 space-y-10 border-b md:border-b-0 md:border-r border-theme-border">
+        <div className="bg-theme-bg p-10 space-y-10 border-b md:border-b-0 md:border-r border-theme-border rounded-2xl">
           <div className="flex items-center gap-4 mb-4">
              <Palette className="text-brand-tactical" size={18} strokeWidth={1.5} />
              <h3 className="text-[11px] font-bold text-theme-text uppercase tracking-[0.4em]">Look & Feel (Identidade)</h3>
@@ -129,7 +129,7 @@ export const AdminSettings: React.FC = () => {
         </div>
 
         {/* Financeiro */}
-        <div className="bg-theme-bg p-10 space-y-8 border-b md:border-b-0 border-theme-border">
+        <div className="bg-theme-bg p-10 space-y-8 border-b md:border-b-0 border-theme-border rounded-2xl">
           <div className="flex items-center gap-4 mb-4">
              <Database className="text-brand-tactical" size={18} strokeWidth={1.5} />
              <h3 className="text-[11px] font-bold text-theme-text uppercase tracking-[0.4em]">Engenharia de Repasse</h3>
@@ -155,7 +155,7 @@ export const AdminSettings: React.FC = () => {
         </div>
 
         {/* Meritocracia de Valor Hora */}
-        <div className="bg-theme-bg p-10 space-y-8 border-b md:border-b-0 border-theme-border">
+        <div className="bg-theme-bg p-10 space-y-8 border-b md:border-b-0 border-theme-border rounded-2xl">
           <div className="flex items-center gap-4 mb-4">
              <TrendingUp className="text-brand-tactical" size={18} strokeWidth={1.5} />
              <h3 className="text-[11px] font-bold text-theme-text uppercase tracking-[0.4em]">Meritocracia — Valor Hora</h3>
@@ -201,7 +201,7 @@ export const AdminSettings: React.FC = () => {
           </div>
         </div>
 
-        <div className="bg-theme-bg p-10 space-y-8 md:col-span-3 border-t border-theme-border">
+        <div className="bg-theme-bg p-10 space-y-8 md:col-span-3 border-t border-theme-border rounded-2xl">
           <div className="flex items-center gap-4 mb-4">
              <Shield className="text-brand-tactical" size={18} strokeWidth={1.5} />
              <h3 className="text-[11px] font-bold text-theme-text uppercase tracking-[0.4em]">Protocolos de Acesso</h3>

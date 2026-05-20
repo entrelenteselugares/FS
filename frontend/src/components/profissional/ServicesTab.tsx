@@ -14,10 +14,10 @@ export function ServicesTab({ profile, catalogServices, onAddService, onRemoveSe
     <div className="space-y-6">
 
       {/* Pricing Matrix */}
-      <div className="bg-theme-bg border border-theme-border/60 p-4 sm:p-6 md:p-12 space-y-8 md:space-y-12">
+      <div className="bg-theme-bg border border-theme-border/60 rounded-2xl p-4 sm:p-6 md:p-12 space-y-8 md:space-y-12">
         <div className="space-y-2">
           <h3 className="text-xl sm:text-2xl font-heading font-black text-theme-text uppercase tracking-widest italic leading-none">
-            Matriz de Precificação
+            Matriz de <span className="text-brand-tactical">Precificação</span>
           </h3>
           <p className="text-[9px] sm:text-[10px] text-theme-muted uppercase tracking-[0.2em] sm:tracking-[0.4em] italic">
             Configuração base para cálculo de orçamentos dinâmicos
@@ -27,10 +27,10 @@ export function ServicesTab({ profile, catalogServices, onAddService, onRemoveSe
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-12">
           <div className="space-y-4">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-theme-bg-muted border border-theme-border/60 text-brand-tactical"><Clock size={16} /></div>
+              <div className="p-2 bg-theme-bg-muted border border-theme-border/60 rounded-xl text-brand-tactical"><Clock size={16} /></div>
               <label className="text-[11px] font-black text-theme-text uppercase tracking-widest italic">Valor Hora Automático (R$)</label>
             </div>
-            <div className="w-full bg-theme-bg-muted/30 border border-theme-border/40 p-4 sm:p-5 text-lg sm:text-xl font-heading font-black text-theme-text/40 italic flex justify-between items-center">
+            <div className="w-full bg-theme-bg-muted/30 border border-theme-border/40 rounded-xl p-4 sm:p-5 text-lg sm:text-xl font-heading font-black text-theme-text/40 italic flex justify-between items-center">
               <span>{Number(profile?.hourlyRate || 0).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</span>
               <ShieldCheck size={16} className="text-brand-tactical animate-pulse" />
             </div>
@@ -41,10 +41,10 @@ export function ServicesTab({ profile, catalogServices, onAddService, onRemoveSe
 
           <div className="space-y-4">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-theme-bg-muted border border-theme-border/60 text-brand-tactical"><Zap size={16} /></div>
+              <div className="p-2 bg-theme-bg-muted border border-theme-border/60 rounded-xl text-brand-tactical"><Zap size={16} /></div>
               <label className="text-[11px] font-black text-theme-text uppercase tracking-widest italic">Multiplicador Técnico</label>
             </div>
-            <div className="w-full bg-theme-bg-muted/50 border border-theme-border/60 p-4 sm:p-5 text-lg sm:text-xl font-heading font-black text-brand-tactical italic flex justify-between items-center">
+            <div className="w-full bg-theme-bg-muted/50 border border-theme-border/60 rounded-xl p-4 sm:p-5 text-lg sm:text-xl font-heading font-black text-brand-tactical italic flex justify-between items-center">
               <span>{profile?.equipmentMultiplier || "1.0"}</span>
               <span className="text-[8px] font-black uppercase text-theme-muted tracking-tighter">Nível de Ativos</span>
             </div>
@@ -59,11 +59,11 @@ export function ServicesTab({ profile, catalogServices, onAddService, onRemoveSe
       </div>
 
       {/* My Services Vitrine */}
-      <div className="bg-theme-bg border border-theme-border/60 p-4 sm:p-6 md:p-12 space-y-8 md:space-y-10">
+      <div className="bg-theme-bg border border-theme-border/60 rounded-2xl p-4 sm:p-6 md:p-12 space-y-8 md:space-y-10">
         <div className="flex justify-between items-end">
           <div className="space-y-2">
             <h3 className="text-xl sm:text-2xl font-heading font-black text-theme-text uppercase tracking-widest italic leading-none">
-              Vitrine de Ativos
+              Vitrine de <span className="text-brand-tactical">Ativos</span>
             </h3>
             <p className="text-[9px] sm:text-[10px] text-theme-muted uppercase tracking-[0.2em] sm:tracking-[0.4em] italic">
               Serviços ativos e disponíveis para contratação
@@ -80,7 +80,7 @@ export function ServicesTab({ profile, catalogServices, onAddService, onRemoveSe
             {profile.proServices.map((svc) => (
               <div
                 key={svc.id}
-                className="group flex flex-col sm:flex-row justify-between items-start sm:items-center p-4 sm:p-6 bg-theme-bg-muted/30 border border-theme-border/40 hover:border-brand-tactical/40 transition-all relative overflow-hidden gap-6"
+                className="group flex flex-col sm:flex-row justify-between items-start sm:items-center rounded-2xl p-4 sm:p-6 bg-theme-bg-muted/30 border border-theme-border/40 hover:border-brand-tactical/40 transition-all relative overflow-hidden gap-6"
               >
                 <div className="absolute left-0 top-0 h-full w-1 bg-brand-tactical opacity-20 group-hover:opacity-100 transition-all" />
                 <div className="space-y-2">
@@ -101,7 +101,7 @@ export function ServicesTab({ profile, catalogServices, onAddService, onRemoveSe
                   </div>
                   <button
                     onClick={() => onRemoveService(svc.id)}
-                    className="p-3 sm:p-4 bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-brand-text transition-all border border-red-500/20"
+                    className="p-3 sm:p-4 bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-brand-text transition-all rounded-xl border border-red-500/20"
                   >
                     <X size={18} />
                   </button>
@@ -110,17 +110,17 @@ export function ServicesTab({ profile, catalogServices, onAddService, onRemoveSe
             ))}
           </div>
         ) : (
-          <div className="py-12 text-center text-theme-muted uppercase text-[9px] font-black tracking-widest bg-theme-bg-muted/20 border border-dashed border-theme-border/40">
+          <div className="py-12 text-center text-theme-muted uppercase text-[9px] font-black tracking-widest rounded-2xl bg-theme-bg-muted/20 border border-dashed border-theme-border/40">
             Sua vitrine está vazia. Importe itens do catálogo abaixo.
           </div>
         )}
       </div>
 
       {/* Global Catalog */}
-      <div className="bg-theme-bg border border-theme-border/60 p-4 sm:p-6 md:p-12 space-y-8 md:space-y-12">
+      <div className="bg-theme-bg border border-theme-border/60 rounded-2xl p-4 sm:p-6 md:p-12 space-y-8 md:space-y-12">
         <div className="space-y-2">
           <h3 className="text-xl sm:text-2xl font-heading font-black text-theme-text uppercase tracking-widest italic leading-none">
-            Catálogo Geral da Rede
+            Catálogo Geral da <span className="text-brand-tactical">Rede</span>
           </h3>
           <p className="text-[9px] sm:text-[10px] text-theme-muted uppercase tracking-[0.2em] sm:tracking-[0.4em] italic">
             Benchmark de serviços e precificação sugerida por IA
@@ -136,7 +136,7 @@ export function ServicesTab({ profile, catalogServices, onAddService, onRemoveSe
             return (
               <div
                 key={cat.id}
-                className="flex flex-col md:flex-row justify-between md:items-center p-4 sm:p-6 bg-theme-bg-muted border border-theme-border/40 group hover:border-brand-tactical/30 transition-all gap-4 sm:gap-8 relative overflow-hidden"
+                className="flex flex-col md:flex-row justify-between md:items-center rounded-2xl p-4 sm:p-6 bg-theme-bg-muted border border-theme-border/40 group hover:border-brand-tactical/30 transition-all gap-4 sm:gap-8 relative overflow-hidden"
               >
                 <div className="space-y-2 md:space-y-3">
                   <div className="text-base font-black text-theme-text uppercase tracking-tight italic">{cat.name}</div>
@@ -161,13 +161,13 @@ export function ServicesTab({ profile, catalogServices, onAddService, onRemoveSe
                     </div>
                   </div>
                   {alreadyAdded ? (
-                    <div className="px-4 sm:px-6 py-2 sm:py-3 bg-brand-tactical/10 border border-brand-tactical/30 text-brand-tactical text-[9px] sm:text-[10px] font-black uppercase tracking-widest italic flex items-center gap-2">
+                    <div className="px-4 sm:px-6 py-2 sm:py-3 bg-brand-tactical/10 border border-brand-tactical/30 rounded-xl text-brand-tactical text-[9px] sm:text-[10px] font-black uppercase tracking-widest italic flex items-center gap-2">
                       <Check size={16} /> EM VITRINE
                     </div>
                   ) : (
                     <button
                       onClick={() => onAddService(cat)}
-                      className="px-6 sm:px-10 py-3 sm:py-4 bg-brand-tactical text-brand-text text-[10px] sm:text-[11px] font-black uppercase tracking-[0.2em] hover:brightness-110 shadow-lg shadow-brand-tactical/10 italic"
+                      className="px-6 sm:px-10 py-3 sm:py-4 bg-brand-tactical text-brand-text text-[10px] sm:text-[11px] font-black uppercase tracking-[0.2em] rounded-xl hover:brightness-110 shadow-lg shadow-brand-tactical/10 italic"
                     >
                       IMPORTAR
                     </button>

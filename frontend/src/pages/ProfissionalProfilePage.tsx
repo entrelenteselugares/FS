@@ -8,6 +8,7 @@ import {
 import { API } from "../lib/api";
 import { Navbar } from "../components/Navbar";
 import { useAuth } from "../hooks/useAuth";
+import { ProfessionalBadgesShowcase } from "../components/profissional/ProfessionalBadgesShowcase";
 
 interface ProService {
   id: string;
@@ -36,6 +37,7 @@ interface ProfProfile {
   memberSince: string;
   city?: string | null;
   serviceRadiusKm?: number;
+  badges?: any[];
 }
 
 interface BookingState {
@@ -407,6 +409,13 @@ export default function ProfissionalProfilePage() {
                 </div>
               )))}
             </div>
+          </div>
+        )}
+
+        {/* Achievements Showcase */}
+        {prof.badges && prof.badges.length > 0 && (
+          <div className="mt-12 border border-zinc-900 bg-zinc-950/20 p-6 rounded-xl">
+            <ProfessionalBadgesShowcase badges={prof.badges} />
           </div>
         )}
 

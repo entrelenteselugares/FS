@@ -154,21 +154,21 @@ export const AdminServices: React.FC = () => {
 
       {/* DASHBOARD DE MÉTRICAS */}
       <div className="max-w-6xl mx-auto w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
-         <div className="bg-theme-bg border border-theme-border/60 p-6 space-y-3 shadow-sm group hover:border-brand-tactical/40 transition-all">
+         <div className="bg-theme-bg border border-theme-border/60 p-6 space-y-3 shadow-sm group hover:border-brand-tactical/40 transition-all rounded-2xl">
             <div className="flex justify-between items-start"><span className="text-[8px] font-black text-theme-muted uppercase tracking-widest italic">Portfólio Ativo</span><Layers className="text-brand-tactical" size={14} /></div>
             <div className="flex items-baseline gap-2">
                <span className="text-3xl font-heading font-black text-theme-text italic">{stats.total}</span>
                <span className="text-[10px] font-bold text-theme-muted uppercase tracking-widest">SERVIÇOS</span>
             </div>
          </div>
-         <div className="bg-theme-bg border border-theme-border/60 p-6 space-y-3 shadow-sm group hover:border-brand-tactical/40 transition-all">
+         <div className="bg-theme-bg border border-theme-border/60 p-6 space-y-3 shadow-sm group hover:border-brand-tactical/40 transition-all rounded-2xl">
             <div className="flex justify-between items-start"><span className="text-[8px] font-black text-theme-muted uppercase tracking-widest italic">Ticket Base Médio</span><TrendingUp className="text-brand-tactical" size={14} /></div>
             <div className="flex items-baseline gap-2">
                <span className="text-3xl font-heading font-black text-theme-text italic">{formatCurrency(stats.avgPrice)}</span>
                <span className="text-[10px] font-bold text-theme-muted uppercase tracking-widest">ESTIMADO</span>
             </div>
          </div>
-         <div className="bg-theme-bg border border-theme-border/60 p-6 space-y-3 shadow-sm group hover:border-brand-tactical/40 transition-all">
+         <div className="bg-theme-bg border border-theme-border/60 p-6 space-y-3 shadow-sm group hover:border-brand-tactical/40 transition-all rounded-2xl">
             <div className="flex justify-between items-start"><span className="text-[8px] font-black text-theme-muted uppercase tracking-widest italic">Diversidade</span><Filter className="text-brand-tactical" size={14} /></div>
             <div className="flex items-baseline gap-2">
                <span className="text-3xl font-heading font-black text-theme-text italic">{stats.categories}</span>
@@ -185,13 +185,13 @@ export const AdminServices: React.FC = () => {
                value={searchTerm}
                onChange={e => setSearchTerm(e.target.value)}
                placeholder="BUSCAR SERVIÇO OU DESCRIÇÃO..." 
-               className="w-full bg-theme-bg border border-theme-border/60 p-4 pl-12 text-[10px] text-theme-text font-black outline-none focus:border-brand-tactical transition-all uppercase tracking-widest placeholder:text-theme-muted/40" 
+               className="w-full bg-theme-bg border border-theme-border/60 p-4 pl-12 text-[10px] text-theme-text font-black outline-none focus:border-brand-tactical transition-all uppercase tracking-widest placeholder:text-theme-muted/40 rounded-2xl" 
             />
          </div>
          <select 
             value={filterCategory}
             onChange={e => setFilterCategory(e.target.value)}
-            className="px-6 py-4 bg-theme-bg border border-theme-border/60 text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest text-theme-text outline-none focus:border-brand-tactical transition-all cursor-pointer"
+            className="px-6 py-4 bg-theme-bg border border-theme-border/60 text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest text-theme-text outline-none focus:border-brand-tactical transition-all cursor-pointer rounded-2xl"
          >
             <option value="">TODAS AS CATEGORIAS</option>
             <option value="FOTOGRAFIA">FOTOGRAFIA</option>
@@ -207,12 +207,12 @@ export const AdminServices: React.FC = () => {
       {/* LISTAGEM DE LEDGER DE SERVIÇOS */}
       <div className="space-y-4">
         {loading ? (
-          <div className="py-32 text-center border border-dashed border-theme-border bg-theme-bg-muted/5 space-y-4 animate-pulse">
+          <div className="py-32 text-center border border-dashed border-theme-border bg-theme-bg-muted/5 space-y-4 animate-pulse rounded-2xl">
              <Zap size={32} className="mx-auto text-theme-muted opacity-30" />
              <p className="text-[9px] sm:text-[11px] font-black text-brand-tactical uppercase tracking-[0.2em] sm:tracking-[0.4em] italic truncate max-w-[80vw]">Tabela de Preços e Serviços Fotográficos</p>
           </div>
         ) : filteredServices.length === 0 ? (
-          <div className="py-32 text-center border border-dashed border-theme-border bg-theme-bg-muted/5 space-y-6">
+          <div className="py-32 text-center border border-dashed border-theme-border bg-theme-bg-muted/5 space-y-6 rounded-2xl">
              <Briefcase size={40} className="mx-auto text-theme-muted opacity-20" />
              <div className="space-y-2">
                 <p className="text-[9px] sm:text-[11px] font-black text-brand-tactical uppercase tracking-[0.2em] sm:tracking-[0.4em] italic truncate max-w-[80vw]">Tabela de Preços e Serviços Fotográficos</p>
@@ -226,7 +226,7 @@ export const AdminServices: React.FC = () => {
               <div key={s.id} className="bg-theme-bg-muted border border-theme-border rounded-2xl group hover:border-brand-tactical/50 transition-all overflow-hidden shadow-sm">
                 <div className="p-6 md:p-8 flex flex-col lg:flex-row lg:items-center justify-between gap-8">
                    <div className="flex-1 flex items-start gap-6">
-                      <div className="p-4 bg-theme-bg-muted border border-theme-border/40 text-brand-tactical">
+                      <div className="p-4 bg-theme-bg-muted border border-theme-border/40 text-brand-tactical rounded-2xl">
                          <Icon size={20} />
                       </div>
                       <div className="space-y-2">
@@ -278,7 +278,7 @@ export const AdminServices: React.FC = () => {
       </div>
 
       {/* PAINEL DE COMPLIANCE TÁTICO */}
-      <div className="bg-theme-bg border border-theme-border/60 p-10 flex flex-col md:flex-row items-center gap-10 shadow-sm relative overflow-hidden group">
+      <div className="bg-theme-bg border border-theme-border/60 p-10 flex flex-col md:flex-row items-center gap-10 shadow-sm relative overflow-hidden group rounded-2xl">
          <div className="absolute top-0 right-0 p-10 opacity-[0.03] group-hover:opacity-[0.07] transition-opacity">
             <DollarSign size={120} />
          </div>
@@ -441,7 +441,7 @@ function ServiceModal({ onClose, onSave, initialData, saving }: { onClose: () =>
                       type="checkbox" 
                       checked={form.allowProfessional} 
                       onChange={e => setForm({...form, allowProfessional: e.target.checked})} 
-                      className="w-4 h-4 rounded text-brand-tactical focus:ring-brand-tactical border-theme-border/60 bg-theme-bg-muted"
+                      className="w-4 h-4 rounded text-brand-tactical focus:ring-brand-tactical border-theme-border/60 bg-theme-bg-muted rounded-2xl"
                     />
                     <span className="text-[10px] font-black uppercase tracking-widest text-theme-text">Profissional</span>
                   </label>
@@ -472,7 +472,7 @@ function ServiceModal({ onClose, onSave, initialData, saving }: { onClose: () =>
                       type="checkbox" 
                       checked={form.allowMobile} 
                       onChange={e => setForm({...form, allowMobile: e.target.checked})} 
-                      className="w-4 h-4 rounded text-amber-500 focus:ring-amber-500 border-theme-border/60 bg-theme-bg-muted"
+                      className="w-4 h-4 rounded text-amber-500 focus:ring-amber-500 border-theme-border/60 bg-theme-bg-muted rounded-2xl"
                     />
                     <span className="text-[10px] font-black uppercase tracking-widest text-theme-text">Mobile</span>
                   </label>
@@ -499,7 +499,7 @@ function ServiceModal({ onClose, onSave, initialData, saving }: { onClose: () =>
             </div>
             </div>
             {/* Footer */}
-            <div className="p-8 md:p-10 bg-theme-bg-muted/50 border-t border-theme-border flex gap-4 shrink-0">
+            <div className="p-8 md:p-10 bg-theme-bg-muted/50 border-t border-theme-border flex gap-4 shrink-0 rounded-2xl">
               <button type="button" onClick={onClose} className="flex-1 py-5 border border-theme-border text-[11px] font-black uppercase tracking-[0.3em] text-theme-muted hover:text-white transition-all rounded-[20px] italic">Cancelar</button>
               <button 
                 type="submit" 

@@ -9,6 +9,7 @@ export interface VaultSettingsModalProps {
   vault: {
     id: string;
     nome: string;
+    goalPoses: number;
     members?: { id: string; userId: string; role: string; user: { nome: string; email: string } }[];
   };
   onUpdate: () => void;
@@ -19,11 +20,20 @@ export interface VaultSettingsModalProps {
 export function VaultSettingsModal({ isOpen, onClose, vault, onUpdate, sortConfig, setSortConfig }: VaultSettingsModalProps) {
   const [activeTab, setActiveTab] = useState<"Geral" | "Organização" | "Acesso">("Geral");
   const [nome, setNome] = useState(vault.nome);
+  const [goalPoses, setGoalPoses] = useState(vault.goalPoses);
   const [loading, setLoading] = useState(false);
   const [members, setMembers] = useState(vault.members || []);
 
+  const POSE_PRESETS = [
+    { qty: 12, price: 44.90, label: "12 fotos" },
+    { qty: 24, price: 64.90, label: "24 fotos" },
+    { qty: 36, price: 84.90, label: "36 fotos" },
+    { qty: 48, price: 104.90, label: "48 fotos" },
+  ];
+
   useEffect(() => {
     setNome(vault.nome);
+    setGoalPoses(vault.goalPoses);
     // Fetch members if not passed from parent
     if (!vault.members || vault.members.length === 0) {
       api.get(`/vaults/${vault.id}`).then((res) => {
@@ -34,14 +44,19 @@ export function VaultSettingsModal({ isOpen, onClose, vault, onUpdate, sortConfi
     }
   }, [vault, isOpen]);
 
-  const handleRename = async () => {
-    if (!nome.trim() || nome === vault.nome) return;
+  const hasChanges = nome !== vault.nome || goalPoses !== vault.goalPoses;
+
+  const handleSave = async () => {
+    if (!hasChanges) return;
     setLoading(true);
     try {
-      await api.patch(`/vaults/${vault.id}`, { nome });
+      const payload: { nome?: string; goalPoses?: number } = {};
+      if (nome.trim() && nome !== vault.nome) payload.nome = nome.trim();
+      if (goalPoses !== vault.goalPoses) payload.goalPoses = goalPoses;
+      await api.patch(`/vaults/${vault.id}`, payload);
       onUpdate();
     } catch (e: any) {
-      alert("Erro ao renomear cofre: " + (e.response?.data?.error || e.message));
+      alert("Erro ao salvar configurações: " + (e.response?.data?.error || e.message));
     } finally {
       setLoading(false);
     }
@@ -60,6 +75,8 @@ export function VaultSettingsModal({ isOpen, onClose, vault, onUpdate, sortConfi
       setLoading(false);
     }
   };
+
+  const selectedPreset = POSE_PRESETS.find(p => p.qty === goalPoses);
 
   return (
     <AnimatePresence>
@@ -113,6 +130,7 @@ export function VaultSettingsModal({ isOpen, onClose, vault, onUpdate, sortConfi
             <div className="p-6 overflow-y-auto flex-1">
               {activeTab === "Geral" && (
                 <div className="space-y-6">
+                  {/* Nome */}
                   <div>
                     <label className="block text-[10px] font-black uppercase tracking-widest text-zinc-400 mb-2">Nome do Cofre</label>
                     <input 
@@ -123,10 +141,64 @@ export function VaultSettingsModal({ isOpen, onClose, vault, onUpdate, sortConfi
                       placeholder="Ex: Férias 2024"
                     />
                   </div>
+
+                  {/* Quantidade de Fotos */}
+                  <div>
+                    <label className="block text-[10px] font-black uppercase tracking-widest text-zinc-400 mb-3">
+                      Quantidade de Fotos para Impressão
+                    </label>
+                    <div className="grid grid-cols-2 gap-2">
+                      {POSE_PRESETS.map(preset => (
+                        <button
+                          key={preset.qty}
+                          onClick={() => setGoalPoses(preset.qty)}
+                          className={`flex flex-col items-start p-4 rounded-xl border transition-all text-left ${
+                            goalPoses === preset.qty
+                              ? "bg-emerald-500/10 border-emerald-500/60 ring-1 ring-emerald-500/40"
+                              : "bg-black/30 border-white/5 hover:bg-white/5 hover:border-white/15"
+                          }`}
+                        >
+                          <div className="flex items-center gap-2 mb-2">
+                            <div className={`w-3.5 h-3.5 rounded-full border flex items-center justify-center ${
+                              goalPoses === preset.qty ? "border-emerald-500" : "border-zinc-600"
+                            }`}>
+                              {goalPoses === preset.qty && <div className="w-2 h-2 rounded-full bg-emerald-500" />}
+                            </div>
+                            <span className={`text-[13px] font-black ${goalPoses === preset.qty ? "text-emerald-400" : "text-white"}`}>
+                              {preset.label}
+                            </span>
+                          </div>
+                          <span className={`text-[11px] font-bold ${goalPoses === preset.qty ? "text-emerald-500" : "text-zinc-500"}`}>
+                            R$ {preset.price.toFixed(2).replace(".", ",")}
+                          </span>
+                        </button>
+                      ))}
+                    </div>
+
+                    {/* Pricing summary */}
+                    {selectedPreset && (
+                      <div className="mt-3 p-3 bg-zinc-900/60 rounded-lg border border-white/5 flex items-center justify-between">
+                        <span className="text-[10px] text-zinc-400 uppercase tracking-widest">Total estimado</span>
+                        <span className="text-[13px] font-black text-emerald-400">
+                          R$ {selectedPreset.price.toFixed(2).replace(".", ",")}
+                        </span>
+                      </div>
+                    )}
+
+                    {/* Custom qty warning if current goalPoses doesn't match a preset */}
+                    {!selectedPreset && (
+                      <div className="mt-3 p-3 bg-yellow-500/10 rounded-lg border border-yellow-500/20">
+                        <p className="text-[10px] text-yellow-400 font-bold">
+                          Meta atual: {goalPoses} fotos (personalizada). Selecione um pacote acima para alterar.
+                        </p>
+                      </div>
+                    )}
+                  </div>
+
                   <button 
-                    onClick={handleRename}
-                    disabled={loading || nome === vault.nome || !nome.trim()}
-                    className="w-full h-12 bg-white/5 hover:bg-white/10 text-white text-[11px] font-black uppercase tracking-widest rounded-lg transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                    onClick={handleSave}
+                    disabled={loading || !hasChanges || !nome.trim()}
+                    className="w-full h-12 bg-emerald-500 hover:bg-emerald-400 text-black text-[11px] font-black uppercase tracking-widest rounded-lg transition-colors flex items-center justify-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed shadow-lg shadow-emerald-500/20"
                   >
                     {loading ? <Loader2 size={16} className="animate-spin" /> : "Salvar Alterações"}
                   </button>
@@ -144,7 +216,8 @@ export function VaultSettingsModal({ isOpen, onClose, vault, onUpdate, sortConfi
                       { id: "UPLOAD_DESC", label: "Data de Upload (Mais recentes)" },
                       { id: "UPLOAD_ASC", label: "Data de Upload (Mais antigas)" },
                       { id: "EXIF_ASC", label: "Data da Câmera (Cronológico)" },
-                      { id: "SIZE_DESC", label: "Tamanho (Maiores primeiro)" }
+                      { id: "SIZE_DESC", label: "Tamanho (Maiores primeiro)" },
+                      { id: "ORIENTATION_HORZ", label: "Orientação (Horizontais primeiro)" }
                     ].map(opt => (
                       <label key={opt.id} className={`flex items-center gap-3 p-4 rounded-xl border cursor-pointer transition-all ${
                         sortConfig === opt.id ? "bg-emerald-500/10 border-emerald-500/50" : "bg-black/20 border-white/5 hover:bg-white/5"

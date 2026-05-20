@@ -172,7 +172,7 @@ export const AdminUsers: React.FC = () => {
 
   return (
     <>
-      <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
+      <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-700 rounded-2xl">
       {/* Header Padronizado */}
       <div className="relative border-b border-theme-border/60 pb-8 md:pb-12 space-y-4 md:space-y-6">
         <div className="absolute -top-10 -left-10 w-40 h-40 bg-brand-tactical/5 blur-3xl rounded-full" />
@@ -190,7 +190,7 @@ export const AdminUsers: React.FC = () => {
           <div className="flex flex-wrap items-center gap-4 w-full xl:w-auto">
             <button 
               onClick={() => { setIsModalOpen(true); setEditingUser(null); setFormData({ name: "", email: "", password: "", role: "PROFISSIONAL", pixKey: "", otherHabilities: "", equipment: "", workflowType: ["TRADICIONAL"], captPct: 30, editPct: 10, isFranchise: false, printCredits: 0, isVerified: false, affiliateTier: "STANDARD" }); }}
-              className="fs-btn bg-brand-tactical text-zinc-950 italic flex-1 md:flex-none whitespace-nowrap"
+              className="fs-btn bg-brand-tactical text-zinc-950 italic flex-1 md:flex-none whitespace-nowrap rounded-xl"
             >
               <UserPlus size={14} className="inline mr-2" /> CONVOCAR MEMBRO
             </button>
@@ -248,13 +248,13 @@ export const AdminUsers: React.FC = () => {
             filteredUsers.map(u => {
               const styles = getRoleStyle(u.role);
               return (
-                <div key={u.id} className="bg-theme-bg-muted border border-theme-border hover:border-brand-tactical/30 transition-all group shadow-sm">
+                <div key={u.id} className="bg-theme-bg-muted border border-theme-border rounded-2xl hover:border-brand-tactical/30 transition-all group shadow-sm">
                   <div className="grid grid-cols-1 md:grid-cols-12 gap-3 md:gap-4 items-center px-4 md:px-5 py-2.5">
                     <div className="col-span-1 flex items-center justify-center md:justify-start">
                       <div className={`w-2.5 h-2.5 rounded-full ${u.active ? 'bg-brand-tactical shadow-[0_0_10px_rgba(133,185,172,0.4)]' : 'bg-red-500 shadow-[0_0_10px_rgba(239,68,68,0.4)]'} ${u.active ? 'animate-pulse' : ''}`} />
                     </div>
                     <div className="col-span-4 flex items-center gap-5">
-                      <div className="w-10 h-10 bg-theme-border border border-theme-border flex items-center justify-center text-[12px] font-black text-theme-text tracking-tighter">
+                      <div className="w-10 h-10 bg-theme-border border border-theme-border rounded-xl flex items-center justify-center text-[12px] font-black text-theme-text tracking-tighter">
                         {getInitials(u.nome)}
                       </div>
                       <div className="min-w-0">
@@ -270,21 +270,21 @@ export const AdminUsers: React.FC = () => {
                       </div>
                     </div>
                     <div className="col-span-3 flex flex-wrap gap-2">
-                      <span className={`px-3 py-1.5 border ${styles.bg} ${styles.border} ${styles.text} text-[9px] font-black uppercase tracking-[0.2em] inline-flex items-center gap-2 italic`}>
+                      <span className={`px-3 py-1.5 border ${styles.bg} ${styles.border} ${styles.text} text-[9px] font-black uppercase tracking-[0.2em] inline-flex items-center gap-2 rounded-xl italic`}>
                         {u.role === 'ADMIN' && <Shield size={8} />} {u.role === 'CARTORIO' ? 'CARTÓRIO' : u.role}
                       </span>
                       {u.isVerified && (
-                        <span className="px-2 py-1 bg-brand-tactical/10 border border-brand-tactical/30 text-brand-tactical text-[7px] font-black uppercase tracking-widest flex items-center gap-1">
+                        <span className="px-2 py-1 bg-brand-tactical/10 border border-brand-tactical/30 text-brand-tactical text-[7px] font-black uppercase tracking-widest flex items-center gap-1 rounded-lg">
                           <CheckCircle2 size={8} /> PRO
                         </span>
                       )}
                       {u.franchiseProfile && (
-                        <span className="px-2 py-1 bg-brand-tactical/10 border border-brand-tactical/30 text-brand-tactical text-[7px] font-black uppercase tracking-widest italic">
+                        <span className="px-2 py-1 bg-brand-tactical/10 border border-brand-tactical/30 text-brand-tactical text-[7px] font-black uppercase tracking-widest rounded-lg italic">
                           FRANQUIA: {u.franchiseProfile.printCredits} CR
                         </span>
                       )}
                       {u.affiliateTier === 'VIP' && (
-                        <span className="px-2 py-1 bg-yellow-500/10 border border-yellow-500/30 text-yellow-500 text-[7px] font-black uppercase tracking-widest flex items-center gap-1 italic">
+                        <span className="px-2 py-1 bg-yellow-500/10 border border-yellow-500/30 text-yellow-500 text-[7px] font-black uppercase tracking-widest flex items-center gap-1 rounded-lg italic">
                           AFILIADO VIP
                         </span>
                       )}
@@ -297,14 +297,14 @@ export const AdminUsers: React.FC = () => {
                     <div className="col-span-2 flex justify-end gap-5">
                       <button 
                         onClick={() => handleEditOpen(u)}
-                        className="text-theme-muted hover:text-white transition-colors p-2 hover:bg-theme-border"
+                        className="text-theme-muted hover:text-white transition-colors p-2 hover:bg-theme-border rounded-xl"
                         title="AJUSTAR"
                       >
                         <Edit3 size={14} />
                       </button>
                       <button 
                         onClick={() => setConfirmDelete(u)} 
-                        className="text-red-500/40 hover:text-red-500 transition-colors p-2 hover:bg-red-500/10"
+                        className="text-red-500/40 hover:text-red-500 transition-colors p-2 hover:bg-red-500/10 rounded-xl"
                         title="BANIR"
                       >
                         <Trash2 size={14} />
@@ -322,9 +322,9 @@ export const AdminUsers: React.FC = () => {
         <div className="fixed inset-0 z-[500] flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-theme-bg/80 backdrop-blur-xl animate-in fade-in duration-300" onClick={() => setIsModalOpen(false)} />
           
-          <div className="relative w-full max-w-2xl bg-theme-card border border-theme-border/60 rounded-[40px] overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300 flex flex-col h-[90vh]">
+          <div className="relative w-full max-w-2xl bg-theme-card border border-theme-border/60 rounded-2xl overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300 flex flex-col h-[90vh]">
             {/* Header */}
-            <div className="p-8 md:p-10 border-b border-theme-border flex items-center justify-between shrink-0 bg-theme-bg-muted/30">
+            <div className="p-8 md:p-10 border-b border-theme-border flex items-center justify-between shrink-0 bg-theme-bg-muted/30 rounded-2xl">
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 bg-brand-tactical/10 rounded-2xl flex items-center justify-center border border-brand-tactical/20">
                   <UserPlus className="text-brand-tactical" size={24} strokeWidth={1.5} />
@@ -334,7 +334,7 @@ export const AdminUsers: React.FC = () => {
                   <p className="text-[10px] font-black uppercase tracking-[0.2em] opacity-40">Protocolo Operacional de Inteligência</p>
                 </div>
               </div>
-              <button onClick={() => setIsModalOpen(false)} className="p-3 hover:bg-white/5 rounded-full transition-all text-theme-muted"><X size={24} /></button>
+              <button onClick={() => setIsModalOpen(false)} className="p-3 hover:bg-white/5 rounded-full transition-all text-theme-muted rounded-xl"><X size={24} /></button>
             </div>
 
             {/* Content */}
@@ -433,7 +433,7 @@ export const AdminUsers: React.FC = () => {
 
               {/* ── SEÇÃO DE FRANQUIA ── */}
               <div className="pt-10 border-t border-theme-border/60 space-y-6">
-                <div className="flex items-center justify-between bg-theme-bg-muted/30 p-6 rounded-[30px] border border-theme-border/40">
+                <div className="flex items-center justify-between bg-theme-bg-muted/30 p-6 rounded-2xl border border-theme-border/40">
                   <div className="space-y-1">
                     <label className="text-[10px] font-black text-theme-text uppercase tracking-widest italic">Ponto de Impressão (Phygital)</label>
                     <p className="text-[8px] text-theme-muted uppercase font-bold opacity-40">Habilitar este usuário como franqueado phygital ativo</p>
@@ -448,7 +448,7 @@ export const AdminUsers: React.FC = () => {
                 </div>
 
                 {formData.isFranchise && (
-                  <div className="p-6 bg-brand-tactical/5 border border-brand-tactical/20 rounded-[30px] animate-in slide-in-from-top-4 duration-300">
+                  <div className="p-6 bg-brand-tactical/5 border border-brand-tactical/20 rounded-2xl animate-in slide-in-from-top-4 duration-300">
                     <div className="flex items-center justify-between">
                       <div className="space-y-1">
                         <label className="text-[8px] font-black text-brand-tactical uppercase tracking-widest italic">Saldo de Créditos de Impressão</label>
@@ -468,7 +468,7 @@ export const AdminUsers: React.FC = () => {
               {/* ── VERIFICAÇÃO PRO E AFILIADO VIP ── */}
               <div className="pt-6 space-y-4">
                 {formData.role === "PROFISSIONAL" && (
-                  <div className="flex items-center justify-between bg-brand-tactical/5 p-6 rounded-[30px] border border-brand-tactical/20">
+                  <div className="flex items-center justify-between bg-brand-tactical/5 p-6 rounded-2xl border border-brand-tactical/20">
                     <div className="space-y-1">
                       <label className="text-[10px] font-black text-brand-tactical uppercase tracking-widest italic">Verificação Elite (PRO)</label>
                       <p className="text-[8px] text-theme-muted uppercase font-bold opacity-40 italic">Habilitar repasse financeiro imediato (F-09 Protocol)</p>
@@ -483,7 +483,7 @@ export const AdminUsers: React.FC = () => {
                   </div>
                 )}
 
-                <div className="flex items-center justify-between bg-yellow-500/5 p-6 rounded-[30px] border border-yellow-500/20">
+                <div className="flex items-center justify-between bg-yellow-500/5 p-6 rounded-2xl border border-yellow-500/20">
                   <div className="space-y-1">
                     <label className="text-[10px] font-black text-yellow-500 uppercase tracking-widest italic">Afiliado VIP (L2)</label>
                     <p className="text-[8px] text-theme-muted uppercase font-bold opacity-40 italic">Ativa ganhos de comissão passiva sobre indicados (Regra dos 50)</p>
@@ -500,7 +500,7 @@ export const AdminUsers: React.FC = () => {
             </form>
 
             {/* Footer */}
-            <div className="p-8 md:p-10 bg-theme-bg-muted/50 border-t border-theme-border flex gap-4 shrink-0">
+            <div className="p-8 md:p-10 bg-theme-bg-muted/50 border-t border-theme-border flex gap-4 shrink-0 rounded-2xl">
               <button type="button" onClick={() => setIsModalOpen(false)} className="fs-btn flex-1 border border-theme-border text-theme-muted hover:text-white transition-all italic">Cancelar</button>
               <button 
                 type="submit" 
@@ -522,7 +522,7 @@ export const AdminUsers: React.FC = () => {
           
           <div className="relative w-full max-w-md bg-theme-card border border-red-500/20 rounded-[40px] overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300">
             <div className="p-10 space-y-8 text-center">
-              <div className="w-20 h-20 bg-red-500/10 rounded-[30px] flex items-center justify-center border border-red-500/20 mx-auto mb-6">
+              <div className="w-20 h-20 bg-red-500/10 rounded-2xl flex items-center justify-center border border-red-500/20 mx-auto mb-6">
                 <Trash2 className="text-red-500" size={32} strokeWidth={1.5} />
               </div>
               
@@ -538,13 +538,13 @@ export const AdminUsers: React.FC = () => {
               <div className="grid grid-cols-1 gap-4 pt-4">
                 <button 
                   onClick={() => handleDelete(confirmDelete.id)}
-                  className="w-full py-5 bg-red-600 text-white text-[11px] font-black uppercase tracking-[0.4em] hover:bg-red-700 transition-all rounded-[20px] italic shadow-lg shadow-red-600/20"
+                  className="w-full py-5 bg-red-600 text-white text-[11px] font-black uppercase tracking-[0.4em] hover:bg-red-700 transition-all rounded-xl italic shadow-lg shadow-red-600/20"
                 >
                   BANIR AGORA
                 </button>
                 <button 
                   onClick={() => setConfirmDelete(null)}
-                  className="w-full py-5 border border-theme-border text-theme-muted text-[11px] font-black uppercase tracking-[0.4em] hover:text-white transition-all rounded-[20px] italic"
+                  className="w-full py-5 border border-theme-border text-theme-muted text-[11px] font-black uppercase tracking-[0.4em] hover:text-white transition-all rounded-xl italic"
                 >
                   ABORTAR MISSÃO
                 </button>

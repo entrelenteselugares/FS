@@ -298,6 +298,11 @@ export default function VaultDetailPage() {
         return da - db;
       }
       case "SIZE_DESC": return (b.fileSize || 0) - (a.fileSize || 0);
+      case "ORIENTATION_HORZ": {
+        const isAHorz = (a.width || 0) > (a.height || 0);
+        const isBHorz = (b.width || 0) > (b.height || 0);
+        return isAHorz === isBHorz ? 0 : isAHorz ? -1 : 1;
+      }
       case "UPLOAD_DESC":
       default: return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
     }

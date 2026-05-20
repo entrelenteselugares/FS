@@ -3,6 +3,7 @@ import { Briefcase, Camera, Phone, CheckCircle2, Check, Save, X, ShieldCheck } f
 import { API } from "../../lib/api";
 import type { ProfileData, EquipmentItem } from "./types";
 import { ProfileStepper } from "../ProfileStepper";
+import { ProfessionalBadgesShowcase } from "./ProfessionalBadgesShowcase";
 
 interface ProfileTabProps {
   profile: ProfileData;
@@ -123,6 +124,8 @@ export function ProfileTab({ profile, onUpdated, onNotify }: ProfileTabProps) {
       </div>
 
       <ProfileStepper user={profile.user as any} profile={profile as any} />
+
+      <ProfessionalBadgesShowcase badges={(profile as any).badges} />
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
         {/* Left Column: Data & Specialties */}

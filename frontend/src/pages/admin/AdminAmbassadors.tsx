@@ -138,7 +138,7 @@ export const AdminAmbassadors: React.FC = () => {
           { label: "Conversões", value: campaigns.reduce((acc, c) => acc + c._count.conversions, 0), icon: <TrendingUp size={16} /> },
           { label: "Total Recompensas", value: `R$ ${campaigns.reduce((acc, c) => acc + (c._count.conversions * c.rewardValue), 0).toFixed(2)}`, icon: <Award size={16} /> },
         ].map((s, i) => (
-          <div key={i} className="bg-theme-card border border-theme-border p-6 space-y-2">
+          <div key={i} className="bg-theme-card border border-theme-border p-6 space-y-2 rounded-2xl">
             <div className="flex items-center gap-2 text-theme-subtle">
               {s.icon}
               <span className="text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest">{s.label}</span>
@@ -156,7 +156,7 @@ export const AdminAmbassadors: React.FC = () => {
           placeholder="Buscar por nome, slug ou embaixador..." 
           value={searchTerm}
           onChange={e => setSearchTerm(e.target.value)}
-          className="w-full bg-theme-bg border border-theme-border text-theme-text pl-12 pr-4 py-4 text-sm focus:border-brand-tactical/50 transition-all outline-none"
+          className="w-full bg-theme-bg border border-theme-border text-theme-text pl-12 pr-4 py-4 text-sm focus:border-brand-tactical/50 transition-all outline-none rounded-2xl"
         />
       </div>
 
@@ -418,7 +418,7 @@ export const AdminAmbassadors: React.FC = () => {
             </form>
 
             {/* Footer */}
-            <div className="p-8 md:p-10 bg-theme-bg-muted/50 border-t border-theme-border flex gap-4 shrink-0">
+            <div className="p-8 md:p-10 bg-theme-bg-muted/50 border-t border-theme-border flex gap-4 shrink-0 rounded-2xl">
               <button type="button" onClick={() => setIsModalOpen(false)} className="flex-1 py-5 border border-theme-border text-[11px] font-black uppercase tracking-[0.3em] text-theme-muted hover:text-white transition-all rounded-[20px] italic">Cancelar</button>
               <button 
                 type="submit"

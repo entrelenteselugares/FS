@@ -13,10 +13,10 @@ interface NetworkTabProps {
 export function NetworkTab({ network, networkSearch, searchResults, residentUnits, onSearch, onToggleFavorite }: NetworkTabProps) {
   return (
     <div className="space-y-12">
-      <div className="bg-theme-bg border border-theme-border/60 p-4 sm:p-8 md:p-16 space-y-8 md:space-y-12">
+      <div className="bg-theme-bg border border-theme-border/60 rounded-2xl p-4 sm:p-8 md:p-16 space-y-8 md:space-y-12">
         <div className="space-y-4">
           <h3 className="text-2xl sm:text-3xl font-heading font-black text-theme-text uppercase tracking-tighter italic leading-none">
-            Minha Rede e Alianças
+            Minha Rede e <span className="text-brand-tactical">Alianças</span>
           </h3>
           <p className="text-[9px] sm:text-[10px] text-theme-muted uppercase tracking-[0.15em] sm:tracking-[0.4em] italic font-bold leading-relaxed">
             Gestão de parcerias oficiais com unidades e conexões com outros profissionais
@@ -33,11 +33,11 @@ export function NetworkTab({ network, networkSearch, searchResults, residentUnit
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {residentUnits.map((u) => (
-                <div key={u.id} className="bg-theme-bg-muted border border-cyan-400/20 p-4 sm:p-8 relative group hover:border-cyan-400/50 transition-all">
+                <div key={u.id} className="bg-theme-bg-muted border border-cyan-400/20 rounded-2xl p-4 sm:p-8 relative group hover:border-cyan-400/50 transition-all">
                   <div className="absolute top-0 left-0 w-full h-[1px] bg-cyan-400/30" />
                   <div className="space-y-4">
                     <div className="flex justify-between items-start">
-                      <div className="px-3 py-1 bg-cyan-400/10 border border-cyan-400/30 text-[8px] font-black text-cyan-400 uppercase tracking-widest italic">
+                      <div className="px-3 py-1 bg-cyan-400/10 border border-cyan-400/30 rounded-xl text-[8px] font-black text-cyan-400 uppercase tracking-widest italic">
                         Parceria Ativa
                       </div>
                       <div className="text-cyan-400/20 group-hover:text-cyan-400/50 transition-colors">
@@ -75,7 +75,7 @@ export function NetworkTab({ network, networkSearch, searchResults, residentUnit
           <input
             type="text"
             placeholder="BUSCAR PROFISSIONAL PELO NOME OU E-MAIL..."
-            className="w-full bg-theme-bg-muted border border-theme-border/60 p-8 pl-16 text-[11px] font-black uppercase tracking-[0.2em] text-theme-text outline-none focus:border-brand-tactical transition-all"
+            className="w-full bg-theme-bg-muted border border-theme-border/60 rounded-xl p-8 pl-16 text-[11px] font-black uppercase tracking-[0.2em] text-theme-text outline-none focus:border-brand-tactical transition-all"
             value={networkSearch}
             onChange={(e) => onSearch(e.target.value)}
           />
@@ -88,14 +88,14 @@ export function NetworkTab({ network, networkSearch, searchResults, residentUnit
               Resultados da Busca
             </p>
             {searchResults.map((p) => (
-              <div key={p.id} className="flex justify-between items-center p-6 bg-brand-tactical/5 border border-brand-tactical/20">
+              <div key={p.id} className="flex justify-between items-center rounded-2xl p-6 bg-brand-tactical/5 border border-brand-tactical/20">
                 <div className="space-y-1">
                   <p className="text-sm font-black text-theme-text uppercase tracking-tight italic">{p.nome}</p>
                   <p className="text-[9px] text-theme-muted uppercase font-bold">{p.email}</p>
                 </div>
                 <button
                   onClick={() => onToggleFavorite(p.id)}
-                  className="px-6 py-3 bg-brand-tactical text-zinc-950 text-[9px] font-black uppercase tracking-widest hover:brightness-110 transition-all"
+                  className="px-6 py-3 bg-brand-tactical text-zinc-950 text-[9px] font-black uppercase tracking-widest rounded-xl hover:brightness-110 transition-all"
                 >
                   ADICIONAR À REDE
                 </button>
@@ -118,12 +118,12 @@ export function NetworkTab({ network, networkSearch, searchResults, residentUnit
               {network.map((p) => (
                 <div
                   key={p.id}
-                  className="group relative p-4 sm:p-8 bg-theme-bg-muted border border-theme-border/40 hover:border-brand-tactical/40 transition-all"
+                  className="group relative rounded-2xl p-4 sm:p-8 bg-theme-bg-muted border border-theme-border/40 hover:border-brand-tactical/40 transition-all"
                 >
                   <div className="flex justify-between items-start">
                     <div className="space-y-2">
                       <div className="flex items-center gap-3">
-                        <div className="p-2 bg-brand-tactical/10 text-brand-tactical rounded-full">
+                        <div className="p-2 bg-brand-tactical/10 text-brand-tactical rounded-xl">
                           <Users size={16} />
                         </div>
                         <p className="text-base font-black text-theme-text uppercase italic tracking-tight">{p.nome}</p>

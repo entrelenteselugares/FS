@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { API } from '../lib/api';
-import { Share2, Users, Banknote, Trophy, Copy, Check } from 'lucide-react';
+import { Share2, Users, Banknote, Trophy, Copy, Check, Clock } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface AffiliateData {
@@ -43,13 +43,18 @@ export function AffiliateDashboard() {
   };
 
   if (loading) {
-    return <div className="p-8 text-center animate-pulse">Carregando seu painel de afiliado...</div>;
+    return (
+      <div className="p-12 text-center animate-pulse flex flex-col items-center justify-center gap-4">
+        <div className="w-8 h-8 border-4 border-brand-tactical border-t-transparent rounded-full animate-spin" />
+        <p className="text-[10px] font-black uppercase tracking-widest text-brand-tactical italic">Carregando painel de indicações...</p>
+      </div>
+    );
   }
 
   if (!data) {
     return (
-      <div className="p-8 text-center text-gray-500">
-        Não foi possível carregar as informações do seu painel de indicações.
+      <div className="p-12 text-center border border-dashed border-theme-border/40 rounded-2xl bg-theme-bg-muted/5">
+        <p className="text-[10px] font-black uppercase tracking-widest text-theme-text-muted italic">Não foi possível carregar as informações do seu painel de indicações.</p>
       </div>
     );
   }
@@ -57,32 +62,36 @@ export function AffiliateDashboard() {
   const isVip = data.tier === 'VIP';
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8 animate-in fade-in duration-500">
       {/* Header & Link */}
-      <div className={`p-6 rounded-2xl ${isVip ? 'bg-gradient-to-r from-yellow-500/20 to-amber-600/20 border border-yellow-500/30' : 'bg-fs-800 border border-fs-700'}`}>
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-          <div>
-            <h2 className="text-2xl font-bold text-white flex items-center gap-2">
-              <Share2 className={isVip ? 'text-yellow-500' : 'text-blue-500'} size={24} />
+      <div className={`p-8 rounded-2xl border transition-all duration-500 ${
+        isVip 
+          ? 'bg-gradient-to-r from-brand-tactical/10 to-amber-600/10 border-brand-tactical/30 shadow-[0_0_30px_rgba(242,193,46,0.03)]' 
+          : 'bg-theme-bg-muted/10 border-theme-border/40 hover:border-theme-border/60'
+      }`}>
+        <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
+          <div className="space-y-2">
+            <h2 className="text-2xl font-heading font-black text-theme-text uppercase italic tracking-tight flex items-center gap-2">
+              <Share2 className="text-brand-tactical" size={22} />
               Indique e Ganhe
-              {isVip && <span className="text-xs px-2 py-1 bg-yellow-500/20 text-yellow-400 rounded-full font-medium ml-2">Conta VIP</span>}
+              {isVip && <span className="text-[8px] px-2 py-0.5 bg-brand-tactical text-black font-black uppercase tracking-widest rounded-full ml-2">Conta VIP</span>}
             </h2>
-            <p className="text-gray-400 mt-1">
+            <p className="text-xs text-theme-text-muted max-w-lg leading-relaxed">
               Compartilhe seu link exclusivo e ganhe comissões em todas as compras dos seus indicados.
             </p>
           </div>
 
-          <div className="w-full md:w-auto">
-            <label className="text-xs text-gray-400 mb-1 block">Seu Link de Convite</label>
+          <div className="w-full lg:w-auto space-y-2">
+            <label className="text-[9px] font-black uppercase tracking-widest text-theme-text-muted block italic">Seu Link de Convite</label>
             <div className="flex items-center gap-2">
-              <code className="bg-fs-900 px-3 py-2 rounded-lg text-fs-300 font-mono text-sm border border-fs-700">
+              <code className="bg-theme-bg-field px-4 py-2.5 rounded-xl text-theme-text-muted font-mono text-xs border border-theme-border/60 flex items-center min-h-[44px] select-all truncate max-w-xs md:max-w-md">
                 {window.location.host}/register?ref={data.referralCode}
               </code>
               <button 
                 onClick={handleCopy}
-                className="p-2 bg-fs-700 hover:bg-fs-600 rounded-lg transition-colors"
+                className="p-2.5 bg-brand-tactical/10 hover:bg-brand-tactical/20 border border-brand-tactical/30 rounded-xl transition-all text-brand-tactical shrink-0"
               >
-                {copied ? <Check size={18} className="text-green-400" /> : <Copy size={18} className="text-gray-300" />}
+                {copied ? <Check size={18} className="text-emerald-400" /> : <Copy size={18} />}
               </button>
             </div>
           </div>
@@ -90,98 +99,117 @@ export function AffiliateDashboard() {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
         {/* L1 Network */}
-        <div className="bg-fs-800 border border-fs-700 p-5 rounded-2xl">
-          <div className="flex items-center gap-3 mb-2">
-            <div className="p-2 bg-blue-500/20 text-blue-400 rounded-lg">
-              <Users size={20} />
+        <div className="bg-theme-bg-muted/10 border border-theme-border/40 p-4 sm:p-6 rounded-2xl hover:border-theme-border/60 transition-all duration-500 group relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-16 h-16 bg-gradient-to-br from-white/5 to-transparent rotate-45 translate-x-8 -translate-y-8" />
+          <div className="flex items-center gap-2 sm:gap-3 mb-2 sm:mb-4">
+            <div className="p-1.5 sm:p-2 bg-brand-tactical/10 text-brand-tactical rounded-xl border border-brand-tactical/20">
+              <Users size={16} className="sm:w-[18px] sm:h-[18px]" />
             </div>
-            <h3 className="text-sm font-medium text-gray-400">Indicados Diretos</h3>
+            <h3 className="text-[8px] sm:text-[9px] font-black text-theme-text-muted uppercase tracking-widest">Indicados Diretos</h3>
           </div>
-          <p className="text-3xl font-bold text-white">{data.totalL1}</p>
+          <p className="text-2xl sm:text-4xl font-heading font-black text-theme-text italic tracking-tighter leading-none">{data.totalL1}</p>
         </div>
 
         {/* L1 Earnings */}
-        <div className="bg-fs-800 border border-fs-700 p-5 rounded-2xl">
-          <div className="flex items-center gap-3 mb-2">
-            <div className="p-2 bg-green-500/20 text-green-400 rounded-lg">
-              <Banknote size={20} />
+        <div className="bg-theme-bg-muted/10 border border-theme-border/40 p-4 sm:p-6 rounded-2xl hover:border-theme-border/60 transition-all duration-500 group relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-16 h-16 bg-gradient-to-br from-white/5 to-transparent rotate-45 translate-x-8 -translate-y-8" />
+          <div className="flex items-center gap-2 sm:gap-3 mb-2 sm:mb-4">
+            <div className="p-1.5 sm:p-2 bg-emerald-500/10 text-emerald-400 rounded-xl border border-emerald-500/20">
+              <Banknote size={16} className="sm:w-[18px] sm:h-[18px]" />
             </div>
-            <h3 className="text-sm font-medium text-gray-400">Ganhos Diretos (L1)</h3>
+            <h3 className="text-[8px] sm:text-[9px] font-black text-theme-text-muted uppercase tracking-widest">Ganhos Diretos (L1)</h3>
           </div>
-          <p className="text-3xl font-bold text-white">
+          <p className="text-xl sm:text-3xl font-heading font-black text-emerald-400 italic tracking-tighter leading-none">
             R$ {(data.commissionsL1 || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
           </p>
         </div>
 
         {/* L2 Network */}
-        <div className="bg-fs-800 border border-fs-700 p-5 rounded-2xl relative overflow-hidden">
+        <div className="bg-theme-bg-muted/10 border border-theme-border/40 p-4 sm:p-6 rounded-2xl hover:border-theme-border/60 transition-all duration-500 group relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-16 h-16 bg-gradient-to-br from-white/5 to-transparent rotate-45 translate-x-8 -translate-y-8" />
           {!isVip && (
-             <div className="absolute inset-0 bg-fs-900/80 backdrop-blur-[2px] flex flex-col items-center justify-center z-10">
-               <Trophy size={20} className="text-yellow-500 mb-1 opacity-50" />
-               <span className="text-xs text-yellow-500 font-medium">Exclusivo VIP</span>
+             <div className="absolute inset-0 bg-theme-bg/95 backdrop-blur-[1px] flex flex-col items-center justify-center z-10 p-3 sm:p-4 text-center">
+               <Trophy size={14} className="text-brand-tactical mb-0.5 sm:mb-1 animate-bounce sm:w-4 sm:h-4" />
+               <span className="text-[7px] sm:text-[8px] text-brand-tactical font-black uppercase tracking-widest">Exclusivo VIP</span>
              </div>
           )}
-          <div className="flex items-center gap-3 mb-2">
-            <div className="p-2 bg-purple-500/20 text-purple-400 rounded-lg">
-              <Users size={20} />
+          <div className="flex items-center gap-2 sm:gap-3 mb-2 sm:mb-4">
+            <div className="p-1.5 sm:p-2 bg-purple-500/10 text-purple-400 rounded-xl border border-purple-500/20">
+              <Users size={16} className="sm:w-[18px] sm:h-[18px]" />
             </div>
-            <h3 className="text-sm font-medium text-gray-400">Rede Indireta (L2)</h3>
+            <h3 className="text-[8px] sm:text-[9px] font-black text-theme-text-muted uppercase tracking-widest">Rede Indireta (L2)</h3>
           </div>
-          <p className="text-3xl font-bold text-white">{data.totalL2}</p>
+          <p className="text-2xl sm:text-4xl font-heading font-black text-theme-text italic tracking-tighter leading-none">{data.totalL2}</p>
         </div>
 
         {/* L2 Earnings */}
-        <div className="bg-fs-800 border border-fs-700 p-5 rounded-2xl relative overflow-hidden">
+        <div className="bg-theme-bg-muted/10 border border-theme-border/40 p-4 sm:p-6 rounded-2xl hover:border-theme-border/60 transition-all duration-500 group relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-16 h-16 bg-gradient-to-br from-white/5 to-transparent rotate-45 translate-x-8 -translate-y-8" />
            {!isVip && (
-             <div className="absolute inset-0 bg-fs-900/80 backdrop-blur-[2px] flex flex-col items-center justify-center z-10">
-               <span className="text-xs text-yellow-500 font-medium">Torne-se VIP para ganhar</span>
+             <div className="absolute inset-0 bg-theme-bg/95 backdrop-blur-[1px] flex flex-col items-center justify-center z-10 p-3 sm:p-4 text-center">
+               <span className="text-[7px] sm:text-[8px] text-brand-tactical font-black uppercase tracking-widest">Seja VIP para Ganhar</span>
              </div>
           )}
-          <div className="flex items-center gap-3 mb-2">
-            <div className="p-2 bg-green-500/20 text-green-400 rounded-lg">
-              <Banknote size={20} />
+          <div className="flex items-center gap-2 sm:gap-3 mb-2 sm:mb-4">
+            <div className="p-1.5 sm:p-2 bg-emerald-500/10 text-emerald-400 rounded-xl border border-emerald-500/20">
+              <Banknote size={16} className="sm:w-[18px] sm:h-[18px]" />
             </div>
-            <h3 className="text-sm font-medium text-gray-400">Ganhos de Rede (L2)</h3>
+            <h3 className="text-[8px] sm:text-[9px] font-black text-theme-text-muted uppercase tracking-widest">Ganhos de Rede (L2)</h3>
           </div>
-          <p className="text-3xl font-bold text-white">
+          <p className="text-xl sm:text-3xl font-heading font-black text-emerald-400 italic tracking-tighter leading-none">
             R$ {(data.commissionsL2 || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
           </p>
         </div>
       </div>
 
       {/* Summary Box */}
-      <div className="bg-fs-800 border border-fs-700 p-6 rounded-2xl flex flex-col md:flex-row justify-between items-center gap-4">
-        <div>
-          <h3 className="text-lg font-bold text-white">Resumo de Ganhos</h3>
-          <p className="text-sm text-gray-400">Seu saldo acumulado com indicações</p>
+      <div className="space-y-4">
+        <div className="flex items-center gap-3">
+          <div className="h-px w-6 bg-theme-border/40" />
+          <p className="text-[9px] font-black text-theme-text-muted uppercase tracking-[0.3em]">Resumo de Ganhos</p>
         </div>
         
-        <div className="flex gap-8">
-           <div className="text-right">
-             <span className="block text-sm text-gray-400">Liberado para Saque</span>
-             <span className="text-2xl font-bold text-green-400">
-               R$ {(data.availablePayout || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
-             </span>
+        <div className="grid grid-cols-2 gap-3 sm:gap-6">
+           {/* Liberado para Saque Card */}
+           <div className="bg-theme-bg-muted/10 border border-theme-border/40 p-4 sm:p-6 rounded-2xl hover:border-theme-border/60 transition-all duration-500 group relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-16 h-16 bg-gradient-to-br from-white/5 to-transparent rotate-45 translate-x-8 -translate-y-8 pointer-events-none" />
+              <div className="flex items-center gap-2 sm:gap-3 mb-2 sm:mb-4">
+                <div className="p-1.5 sm:p-2 bg-brand-tactical/10 text-brand-tactical rounded-xl border border-brand-tactical/20">
+                  <Banknote size={16} className="sm:w-[18px] sm:h-[18px]" />
+                </div>
+                <h3 className="text-[8px] sm:text-[9px] font-black text-theme-text-muted uppercase tracking-widest">Liberado para Saque</h3>
+              </div>
+              <p className="text-xl sm:text-3xl font-heading font-black text-brand-tactical italic tracking-tighter leading-none">
+                R$ {(data.availablePayout || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+              </p>
            </div>
-           <div className="text-right">
-             <span className="block text-sm text-gray-400">Em Processamento</span>
-             <span className="text-xl font-bold text-gray-300">
-               R$ {(data.pendingPayout || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
-             </span>
+
+           {/* Em Processamento Card */}
+           <div className="bg-theme-bg-muted/10 border border-theme-border/40 p-4 sm:p-6 rounded-2xl hover:border-theme-border/60 transition-all duration-500 group relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-16 h-16 bg-gradient-to-br from-white/5 to-transparent rotate-45 translate-x-8 -translate-y-8 pointer-events-none" />
+              <div className="flex items-center gap-2 sm:gap-3 mb-2 sm:mb-4">
+                <div className="p-1.5 sm:p-2 bg-theme-bg-muted text-theme-text-muted rounded-xl border border-theme-border/20">
+                  <Clock size={16} className="sm:w-[18px] sm:h-[18px]" />
+                </div>
+                <h3 className="text-[8px] sm:text-[9px] font-black text-theme-text-muted uppercase tracking-widest">Em Processamento</h3>
+              </div>
+              <p className="text-xl sm:text-3xl font-heading font-black text-theme-text-muted italic tracking-tighter leading-none">
+                R$ {(data.pendingPayout || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+              </p>
            </div>
         </div>
       </div>
 
       {/* Help Note */}
       {!isVip && (
-        <div className="p-4 bg-yellow-500/10 border border-yellow-500/20 rounded-xl flex items-start gap-3">
-          <Trophy className="text-yellow-500 text-xl flex-shrink-0 mt-1" size={24} />
-          <div>
-            <h4 className="font-bold text-yellow-500">Quer ganhar na profundidade?</h4>
-            <p className="text-sm text-yellow-200/80 mt-1">
-              Atualmente você ganha comissões apenas das suas indicações diretas. Nossos parceiros VIP também ganham sobre as vendas da segunda geração (indicados dos seus indicados). Fale com o suporte para saber como se qualificar.
+        <div className="p-6 bg-brand-tactical/5 border border-brand-tactical/20 rounded-xl flex items-start gap-4 animate-in fade-in slide-in-from-bottom-2 duration-700">
+          <Trophy className="text-brand-tactical mt-0.5 shrink-0" size={20} />
+          <div className="space-y-1">
+            <h4 className="font-heading font-black text-brand-tactical uppercase tracking-widest text-[11px] italic">Quer faturar na profundidade?</h4>
+            <p className="text-xs text-theme-text-muted leading-relaxed">
+              Atualmente você ganha comissões apenas das suas indicações diretas. Nossos parceiros <span className="text-brand-tactical font-bold">VIP</span> também ganham sobre as vendas da segunda geração (indicados dos seus indicados). Fale com o suporte técnico para saber como se qualificar.
             </p>
           </div>
         </div>
@@ -189,3 +217,4 @@ export function AffiliateDashboard() {
     </div>
   );
 }
+

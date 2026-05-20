@@ -149,21 +149,21 @@ export const AdminPrintCatalog: React.FC = () => {
 
       {/* DASHBOARD DE MÉTRICAS */}
       <div className="max-w-6xl mx-auto w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
-         <div className="bg-theme-bg border border-theme-border/60 p-6 space-y-3 shadow-sm group hover:border-brand-tactical/40 transition-all">
+         <div className="bg-theme-bg border border-theme-border/60 p-6 space-y-3 shadow-sm group hover:border-brand-tactical/40 transition-all rounded-2xl">
             <div className="flex justify-between items-start"><span className="text-[8px] font-black text-theme-muted uppercase tracking-widest italic">Mix Ativo</span><Package className="text-brand-tactical" size={14} strokeWidth={1.5} /></div>
             <div className="flex items-baseline gap-2">
                <span className="text-3xl font-heading font-black text-theme-text italic">{stats.activeCount}</span>
                <span className="text-[10px] font-bold text-theme-muted uppercase tracking-widest">/ {stats.totalCount} ITENS</span>
             </div>
          </div>
-         <div className="bg-theme-bg border border-theme-border/60 p-6 space-y-3 shadow-sm group hover:border-brand-tactical/40 transition-all">
+         <div className="bg-theme-bg border border-theme-border/60 p-6 space-y-3 shadow-sm group hover:border-brand-tactical/40 transition-all rounded-2xl">
             <div className="flex justify-between items-start"><span className="text-[8px] font-black text-theme-muted uppercase tracking-widest italic">Margem Média</span><TrendingUp className="text-brand-tactical" size={14} strokeWidth={1.5} /></div>
             <div className="flex items-baseline gap-2">
                <span className="text-3xl font-heading font-black text-theme-text italic">{stats.avgMargin.toFixed(1)}%</span>
                <span className="text-[10px] font-bold text-theme-muted uppercase tracking-widest">PROPORCIONAL</span>
             </div>
          </div>
-          <div className="bg-theme-bg border border-theme-border/60 p-6 space-y-3 shadow-sm group hover:border-brand-tactical/40 transition-all">
+          <div className="bg-theme-bg border border-theme-border/60 p-6 space-y-3 shadow-sm group hover:border-brand-tactical/40 transition-all rounded-2xl">
             <div className="flex justify-between items-start"><span className="text-[8px] font-black text-theme-muted uppercase tracking-widest italic">Hub de Produção</span><Layers className="text-brand-tactical" size={14} strokeWidth={1.5} /></div>
             <div className="flex items-baseline gap-2">
                <span className="text-3xl font-heading font-black text-theme-text italic">OPERACIONAL</span>
@@ -180,27 +180,27 @@ export const AdminPrintCatalog: React.FC = () => {
                value={searchTerm}
                onChange={e => setSearchTerm(e.target.value)}
                placeholder="BUSCAR NO CATÁLOGO..." 
-               className="w-full bg-theme-bg border border-theme-border/60 p-4 pl-12 text-[10px] text-theme-text font-black outline-none focus:border-brand-tactical transition-all uppercase tracking-widest placeholder:text-theme-muted/40" 
+               className="w-full bg-theme-bg border border-theme-border/60 p-4 pl-12 text-[10px] text-theme-text font-black outline-none focus:border-brand-tactical transition-all uppercase tracking-widest placeholder:text-theme-muted/40 rounded-2xl" 
             />
          </div>
          <select 
             value={filterCategory}
             onChange={e => setFilterCategory(e.target.value)}
-            className="px-6 py-4 bg-theme-bg border border-theme-border/60 text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest text-theme-text outline-none focus:border-brand-tactical transition-all cursor-pointer"
+            className="px-6 py-4 bg-theme-bg border border-theme-border/60 text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest text-theme-text outline-none focus:border-brand-tactical transition-all cursor-pointer rounded-2xl"
          >
             <option value="">TODAS AS CATEGORIAS</option>
             {Object.entries(CATEGORY_LABELS).map(([k, v]) => <option key={k} value={k}>{v.label}</option>)}
          </select>
          <button 
             onClick={() => setShowInactive(!showInactive)}
-            className="px-8 py-4 bg-theme-bg border border-theme-border/60 text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest text-theme-muted hover:text-white flex items-center gap-3 transition-all"
+            className="px-8 py-4 bg-theme-bg border border-theme-border/60 text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest text-theme-muted hover:text-white flex items-center gap-3 transition-all rounded-2xl"
          >
             {showInactive ? <Eye size={14} /> : <EyeOff size={14} />} {showInactive ? 'OCULTAR INATIVOS' : 'EXIBIR TODOS'}
          </button>
       </div>
 
       {loading ? (
-        <div className="py-32 text-center border border-dashed border-theme-border bg-theme-bg-muted/5 space-y-4 animate-pulse">
+        <div className="py-32 text-center border border-dashed border-theme-border bg-theme-bg-muted/5 space-y-4 animate-pulse rounded-2xl">
            <Layers size={32} className="mx-auto text-theme-muted opacity-30" />
            <p className="text-[9px] sm:text-[11px] font-black text-brand-tactical uppercase tracking-[0.2em] sm:tracking-[0.4em] italic truncate max-w-[80vw]">Precificação e Portfólio de Impressão</p>
         </div>
@@ -218,7 +218,7 @@ export const AdminPrintCatalog: React.FC = () => {
                   {/* CATEGORY HEADER */}
                   <div 
                     onClick={() => toggleCategory(catId)}
-                    className="p-5 border-b border-theme-border/40 flex items-center justify-between cursor-pointer hover:bg-theme-bg-muted/30 transition-all"
+                    className="p-5 border-b border-theme-border/40 flex items-center justify-between cursor-pointer hover:bg-theme-bg-muted/30 transition-all rounded-2xl"
                   >
                      <div className="flex items-center gap-4">
                         <div className="w-1.5 h-1.5 rounded-full" style={{ background: catInfo.color }} />
@@ -229,7 +229,7 @@ export const AdminPrintCatalog: React.FC = () => {
                         <div className="flex items-center gap-2 group/bulk" onClick={e => e.stopPropagation()}>
                            <input 
                               placeholder="MARGEM %" 
-                              className="w-16 bg-theme-bg-muted border border-theme-border/40 p-1.5 text-[9px] text-center font-black outline-none focus:border-brand-tactical" 
+                              className="w-16 bg-theme-bg-muted border border-theme-border/40 p-1.5 text-[9px] text-center font-black outline-none focus:border-brand-tactical rounded-2xl" 
                               onKeyDown={e => {
                                  if (e.key === 'Enter') handleBulkMargin(catId, parseFloat(e.currentTarget.value));
                               }}
@@ -511,7 +511,7 @@ function NewProductModal({ onClose, onSave, suppliers, onRefreshSuppliers }: {
           </form>
 
           {/* Footer */}
-          <div className="p-8 md:p-10 bg-theme-bg-muted/50 border-t border-theme-border flex gap-4 shrink-0">
+          <div className="p-8 md:p-10 bg-theme-bg-muted/50 border-t border-theme-border flex gap-4 shrink-0 rounded-2xl">
             <button type="button" onClick={onClose} className="flex-1 py-5 border border-theme-border text-[11px] font-black uppercase tracking-[0.3em] text-theme-muted hover:text-white transition-all rounded-[20px] italic">Cancelar</button>
             <button 
               type="button" 

@@ -10,6 +10,7 @@ import { audit } from "../lib/audit";
 import { applyWatermark } from "../lib/image-processor";
 import bcrypt from "bcryptjs";
 import { driveService } from "../services/googleDrive.service";
+import { GamificationService } from "../services/gamification.service";
 
 export class MarketplaceController {
   /**
@@ -713,6 +714,8 @@ export class MarketplaceController {
               isVerified: true,
               verificationStatus: true,
               createdAt: true,
+              whatsapp: true,
+              pixKey: true,
             }
           },
           proServices: true,
@@ -725,6 +728,8 @@ export class MarketplaceController {
       const sub = await prisma.subscription.findFirst({
         where: { userId: prof.userId, type: "PRO", status: "ACTIVE" }
       });
+
+      const badges = GamificationService.getProfessionalBadges(prof, !!sub);
 
       const p: any = prof;
       // Return public-safe data (no WhatsApp!)
@@ -744,6 +749,7 @@ export class MarketplaceController {
         agilityPoints: p.agilityPoints,
         proServices: p.proServices,
         isSubscriber: !!sub,
+        badges,
         memberSince: p.user.createdAt,
       });
     } catch (error: any) {

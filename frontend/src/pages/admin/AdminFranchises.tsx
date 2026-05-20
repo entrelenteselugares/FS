@@ -198,23 +198,23 @@ export default function AdminFranchises() {
 
       {/* Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-        <div className="bg-theme-bg-muted p-6 border border-theme-border space-y-3 group hover:border-brand-tactical/50 transition-all">
+        <div className="bg-theme-bg-muted p-6 border border-theme-border space-y-3 group hover:border-brand-tactical/50 transition-all rounded-2xl">
           <label className="text-[9px] font-black text-theme-muted uppercase tracking-widest block italic">Total de Franqueados</label>
           <div className="text-3xl font-heading font-black text-theme-text italic">{franchisees.length}</div>
         </div>
-        <div className="bg-theme-bg-muted p-6 border border-theme-border space-y-3 group hover:border-brand-tactical/50 transition-all">
+        <div className="bg-theme-bg-muted p-6 border border-theme-border space-y-3 group hover:border-brand-tactical/50 transition-all rounded-2xl">
           <label className="text-[9px] font-black text-theme-muted uppercase tracking-widest block italic">Créditos em Circulação</label>
           <div className="text-3xl font-heading font-black text-brand-tactical italic">
             {franchisees.reduce((acc, f) => acc + (f.franchiseProfile?.printCredits || 0), 0)}
           </div>
         </div>
-        <div className="bg-theme-bg-muted p-6 border border-theme-border space-y-3 group hover:border-brand-tactical/50 transition-all">
+        <div className="bg-theme-bg-muted p-6 border border-theme-border space-y-3 group hover:border-brand-tactical/50 transition-all rounded-2xl">
           <label className="text-[9px] font-black text-theme-muted uppercase tracking-widest block italic">Eventos Cobertos</label>
           <div className="text-3xl font-heading font-black text-theme-text italic">
             {franchisees.reduce((acc, f) => acc + (f.franchiseProfile?.events?.length || 0), 0)}
           </div>
         </div>
-        <div className="bg-theme-bg-muted p-6 border border-theme-border space-y-3 group hover:border-brand-tactical/50 transition-all">
+        <div className="bg-theme-bg-muted p-6 border border-theme-border space-y-3 group hover:border-brand-tactical/50 transition-all rounded-2xl">
           <label className="text-[9px] font-black text-theme-muted uppercase tracking-widest block italic">Status da Rede</label>
           <div className="flex items-center gap-2 text-brand-tactical font-black text-[12px] font-heading uppercase tracking-widest italic leading-none">
             <Activity size={14} strokeWidth={1.5} /> 100% ONLINE
@@ -290,7 +290,7 @@ export default function AdminFranchises() {
                         </button>
                       </>
                     ) : (
-                      <span className="text-[8px] font-black text-theme-muted uppercase tracking-widest bg-theme-bg-muted px-3 py-2 border border-theme-border">Acesso Restrito</span>
+                      <span className="text-[8px] font-black text-theme-muted uppercase tracking-widest bg-theme-bg-muted px-3 py-2 border border-theme-border rounded-2xl">Acesso Restrito</span>
                     )}
                   </div>
                 </td>
@@ -428,7 +428,7 @@ export default function AdminFranchises() {
             </form>
 
             {/* Footer */}
-            <div className="p-8 md:p-10 bg-theme-bg-muted/50 border-t border-theme-border flex gap-4 shrink-0">
+            <div className="p-8 md:p-10 bg-theme-bg-muted/50 border-t border-theme-border flex gap-4 shrink-0 rounded-2xl">
               <button type="button" onClick={() => setShowAddModal(false)} className="flex-1 py-5 border border-theme-border text-[11px] font-black uppercase tracking-[0.3em] text-theme-muted hover:text-white transition-all rounded-[20px] italic">Cancelar</button>
               <button 
                 type="submit" 
@@ -492,7 +492,7 @@ export default function AdminFranchises() {
             </div>
 
             {/* Footer */}
-            <div className="p-8 md:p-10 bg-theme-bg-muted/50 border-t border-theme-border flex gap-4 shrink-0">
+            <div className="p-8 md:p-10 bg-theme-bg-muted/50 border-t border-theme-border flex gap-4 shrink-0 rounded-2xl">
               <button onClick={() => setShowCreditModal(null)} className="flex-1 py-5 border border-theme-border text-[11px] font-black uppercase tracking-[0.3em] text-theme-muted hover:text-white transition-all rounded-[20px] italic">Cancelar</button>
               <button 
                 onClick={handleAddCredits} 
@@ -562,7 +562,7 @@ export default function AdminFranchises() {
             </div>
 
             {/* Footer */}
-            <div className="p-8 md:p-10 bg-theme-bg-muted/50 border-t border-theme-border flex gap-4 shrink-0">
+            <div className="p-8 md:p-10 bg-theme-bg-muted/50 border-t border-theme-border flex gap-4 shrink-0 rounded-2xl">
               <button onClick={() => { setFulfillModal(null); setTrackingCode(''); setShippingNotes(''); }} className="flex-1 py-5 border border-theme-border text-[11px] font-black uppercase tracking-[0.3em] text-theme-muted hover:text-white transition-all rounded-[20px] italic">Cancelar</button>
               <button 
                 onClick={fulfillOrder}

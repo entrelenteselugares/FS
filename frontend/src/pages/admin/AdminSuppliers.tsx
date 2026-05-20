@@ -178,7 +178,7 @@ export default function AdminSuppliers() {
           </div>
         </div>
         
-        <div className="grid grid-cols-3 md:flex bg-theme-bg border border-theme-border/60 p-1.5 shadow-sm italic gap-1">
+        <div className="grid grid-cols-3 md:flex bg-theme-bg border border-theme-border/60 p-1.5 shadow-sm italic gap-1 rounded-2xl">
           <button 
             onClick={() => setView("production")} 
             className={`px-6 py-3 text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest transition-all whitespace-nowrap italic ${view === "production" ? 'bg-brand-tactical text-zinc-950 shadow-md' : 'text-theme-muted hover:text-brand-text'}`}
@@ -205,15 +205,15 @@ export default function AdminSuppliers() {
         <div className="space-y-8 animate-in fade-in duration-500">
            {/* STATS DE FÁBRICA */}
            <div className="max-w-6xl mx-auto w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
-              <div className="bg-theme-bg border border-theme-border/60 p-6 space-y-3 group hover:border-brand-tactical/50 transition-all shadow-sm">
+              <div className="bg-theme-bg border border-theme-border/60 rounded-2xl p-6 space-y-3 group hover:border-brand-tactical/50 transition-all shadow-sm">
                  <div className="flex justify-between items-start"><span className="text-[8px] font-black text-theme-muted uppercase tracking-widest">Aguardando Início</span><Clock className="text-amber-600" size={14} /></div>
                  <div className="text-3xl font-heading font-black text-theme-text italic">{productionStats.pending}</div>
               </div>
-              <div className="bg-theme-bg border border-theme-border/60 p-6 space-y-3 group hover:border-brand-tactical/50 transition-all shadow-sm">
+              <div className="bg-theme-bg border border-theme-border/60 rounded-2xl p-6 space-y-3 group hover:border-brand-tactical/50 transition-all shadow-sm">
                  <div className="flex justify-between items-start"><span className="text-[8px] font-black text-theme-muted uppercase tracking-widest">Na Impressora</span><Printer className="text-brand-tactical" size={14} /></div>
                  <div className="text-3xl font-heading font-black text-theme-text italic">{productionStats.printing}</div>
               </div>
-              <div className="bg-theme-bg border border-theme-border/60 p-6 space-y-3 group hover:border-brand-tactical/50 transition-all shadow-sm">
+              <div className="bg-theme-bg border border-theme-border/60 rounded-2xl p-6 space-y-3 group hover:border-brand-tactical/50 transition-all shadow-sm">
                  <div className="flex justify-between items-start"><span className="text-[8px] font-black text-theme-muted uppercase tracking-widest">Em Trânsito</span><Truck className="text-blue-600" size={14} /></div>
                  <div className="text-3xl font-heading font-black text-theme-text italic">{productionStats.shipped}</div>
               </div>
@@ -227,10 +227,10 @@ export default function AdminSuppliers() {
                     value={searchTerm} 
                     onChange={e => setSearchTerm(e.target.value)}
                     placeholder="BUSCAR CLIENTE OU PROTOCOLO..." 
-                    className="w-full bg-theme-bg border border-theme-border/60 p-4 pl-12 text-[10px] text-theme-text font-black outline-none focus:border-brand-tactical transition-all uppercase tracking-widest placeholder:text-theme-muted/50" 
+                    className="w-full bg-theme-bg border border-theme-border/60 p-4 pl-12 text-[10px] text-theme-text font-black outline-none focus:border-brand-tactical transition-all uppercase tracking-widest placeholder:text-theme-muted/50 rounded-2xl" 
                  />
               </div>
-              <button className="px-8 py-4 bg-theme-bg border border-theme-border/60 text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest text-theme-muted hover:text-theme-text flex items-center gap-3 transition-all">
+              <button className="px-8 py-4 bg-theme-bg border border-theme-border/60 text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest text-theme-muted hover:text-theme-text flex items-center gap-3 transition-all rounded-2xl">
                  <Filter size={12} /> Filtros Táticos
               </button>
            </div>
@@ -238,14 +238,14 @@ export default function AdminSuppliers() {
            {/* LISTA DE PRODUÇÃO */}
            <div className="space-y-4">
               {loading ? (
-                <div className="py-24 text-center border border-theme-border bg-theme-bg-muted/10 animate-pulse text-[10px] text-theme-muted uppercase tracking-[0.5em] font-black italic">Sincronizando Fila de Produção...</div>
+                <div className="py-24 text-center border border-theme-border bg-theme-bg-muted/10 animate-pulse text-[10px] text-theme-muted uppercase tracking-[0.5em] font-black italic rounded-2xl">Sincronizando Fila de Produção...</div>
               ) : filteredRedemptions.length === 0 ? (
-                <div className="py-32 text-center border border-dashed border-theme-border bg-theme-bg-muted/5 space-y-4">
+                <div className="py-32 text-center border border-dashed border-theme-border bg-theme-bg-muted/5 space-y-4 rounded-2xl">
                    <Package size={32} className="mx-auto text-theme-muted opacity-30" />
                    <p className="text-[9px] sm:text-[11px] font-black text-brand-tactical uppercase tracking-[0.2em] sm:tracking-[0.4em] italic truncate max-w-[80vw]">Logística, Amortização e Fila</p>
                 </div>
               ) : filteredRedemptions.map(r => (
-                <div key={r.id} className="bg-theme-bg-muted border border-theme-border group hover:border-brand-tactical/40 transition-all overflow-hidden">
+                <div key={r.id} className="bg-theme-bg-muted border border-theme-border rounded-2xl group hover:border-brand-tactical/40 transition-all overflow-hidden">
                    <div className="p-6 md:p-8 flex flex-col lg:flex-row lg:items-center justify-between gap-8">
                       <div className="flex-1 space-y-6">
                          <div className="flex flex-wrap items-center gap-3">
@@ -275,7 +275,7 @@ export default function AdminSuppliers() {
                                <div className="flex items-center gap-2 text-[8px] font-black text-theme-muted uppercase tracking-widest"><ImageIcon size={10} /> Ativos para Impressão</div>
                                <div className="flex flex-wrap gap-1.5">
                                   {r.selectedPhotos.map((photo, i) => (
-                                    <div key={i} className="px-2 py-1 bg-theme-bg border border-theme-border text-[8px] font-black text-theme-text font-mono">#{photo.slice(-5)}</div>
+                                    <div key={i} className="px-2 py-1 bg-theme-bg border border-theme-border text-[8px] font-black text-theme-text font-mono rounded-2xl">#{photo.slice(-5)}</div>
                                   ))}
                                </div>
                             </div>
@@ -284,7 +284,7 @@ export default function AdminSuppliers() {
 
                       <div className="lg:w-72 space-y-4 pt-6 lg:pt-0 lg:border-l lg:border-theme-border/20 lg:pl-8 flex flex-col justify-center">
                          {r.status === 'PENDING' || r.status === 'APROVADO' ? (
-                           <button onClick={() => updateStatus(r.id, 'PRINTING')} className="w-full bg-brand-tactical text-zinc-950 py-4 text-[9px] font-black uppercase tracking-[0.4em] shadow-xl hover:brightness-110 transition-all flex items-center justify-center gap-2"><Printer size={12}/> INICIAR IMPRESSÃO</button>
+                           <button onClick={() => updateStatus(r.id, 'PRINTING')} className="w-full bg-brand-tactical text-zinc-950 py-4 text-[9px] font-black uppercase tracking-[0.4em] rounded-xl shadow-xl hover:brightness-110 transition-all flex items-center justify-center gap-2"><Printer size={12}/> INICIAR IMPRESSÃO</button>
                          ) : r.status === 'PRINTING' ? (
                            <div className="space-y-3">
                               <label className="text-[7px] font-black text-theme-muted uppercase tracking-widest block">Inserir Rastreio</label>
@@ -293,10 +293,10 @@ export default function AdminSuppliers() {
                                  <input 
                                     placeholder="CÓDIGO..." 
                                     onBlur={(e) => updateStatus(r.id, 'SHIPPED', e.target.value)}
-                                    className="w-full bg-theme-bg border border-theme-border p-2.5 pl-10 text-[9px] text-theme-text font-black outline-none focus:border-brand-tactical transition-all uppercase" 
+                                    className="w-full bg-theme-bg border border-theme-border p-2.5 pl-10 text-[9px] text-theme-text font-black outline-none focus:border-brand-tactical transition-all uppercase rounded-2xl" 
                                  />
                               </div>
-                              <button onClick={() => updateStatus(r.id, 'SHIPPED')} className="w-full border border-brand-tactical text-brand-tactical py-3 text-[8px] font-black uppercase tracking-widest hover:bg-brand-tactical/10 transition-all italic">FINALIZAR & ENVIAR</button>
+                              <button onClick={() => updateStatus(r.id, 'SHIPPED')} className="w-full border border-brand-tactical text-brand-tactical py-3 text-[8px] font-black uppercase tracking-widest rounded-xl hover:bg-brand-tactical/10 transition-all italic">FINALIZAR & ENVIAR</button>
                            </div>
                          ) : (
                            <div className="text-center p-4 bg-zinc-950/20 border border-theme-border/30">
@@ -338,21 +338,21 @@ export default function AdminSuppliers() {
                  {breakeven ? (
                    <>
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                         <div className="bg-theme-bg border border-theme-border/60 p-6 space-y-4 shadow-sm">
+                         <div className="bg-theme-bg border border-theme-border/60 rounded-2xl p-6 space-y-4 shadow-sm">
                             <span className="text-[8px] font-black text-theme-muted uppercase tracking-widest block">Unitário Operacional</span>
                             <p className="text-2xl font-heading font-black text-theme-text italic">{formatCurrency(breakeven.costPerPhoto)}</p>
                          </div>
-                         <div className="bg-theme-bg border border-theme-border/60 p-6 space-y-4 shadow-sm">
+                         <div className="bg-theme-bg border border-theme-border/60 rounded-2xl p-6 space-y-4 shadow-sm">
                             <span className="text-[8px] font-black text-theme-muted uppercase tracking-widest block">Valor do Equipamento</span>
                             <p className="text-2xl font-heading font-black text-theme-text italic">{formatCurrency(breakeven.printerCost)}</p>
                          </div>
-                         <div className="bg-brand-tactical/5 border border-brand-tactical p-6 space-y-4 shadow-md">
+                         <div className="bg-brand-tactical/5 border border-brand-tactical rounded-2xl p-6 space-y-4 shadow-md">
                             <span className="text-[8px] font-black text-brand-tactical uppercase tracking-widest block">Fotos para Amortizar</span>
                             <p className="text-2xl font-heading font-black text-brand-tactical italic">{breakeven.photosToBreakeven} <span className="text-[10px] uppercase font-sans">un</span></p>
                          </div>
                       </div>
 
-                      <div className="bg-theme-bg border border-theme-border/60 p-10 relative overflow-hidden group shadow-sm">
+                      <div className="bg-theme-bg border border-theme-border/60 rounded-2xl p-10 relative overflow-hidden group shadow-sm">
                          <div className="flex items-center justify-between mb-10">
                             <div className="space-y-1">
                                <h4 className="text-[11px] font-black uppercase tracking-[0.5em] text-theme-text italic">Simulador de Conversão</h4>
@@ -385,7 +385,7 @@ export default function AdminSuppliers() {
                       </div>
                    </>
                  ) : (
-                   <div className="h-64 bg-theme-bg border border-theme-border/60 flex flex-col items-center justify-center space-y-4 shadow-sm">
+                   <div className="h-64 bg-theme-bg border border-theme-border/60 flex flex-col items-center justify-center space-y-4 shadow-sm rounded-2xl">
                       <Calculator size={32} strokeWidth={1.5} className="text-theme-muted opacity-40" />
                       <p className="text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest text-theme-muted">Carregando análise financeira...</p>
                    </div>
@@ -410,7 +410,7 @@ export default function AdminSuppliers() {
            
            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {suppliers.map(s => (
-                <div key={s.id} className="bg-theme-bg-muted border border-theme-border p-8 space-y-6 group hover:border-brand-tactical transition-all relative">
+                <div key={s.id} className="bg-theme-bg-muted border border-theme-border rounded-2xl p-8 space-y-6 group hover:border-brand-tactical transition-all relative">
                    <div className="space-y-1">
                       <span className="text-[8px] font-black text-brand-tactical uppercase tracking-[0.4em]">{s.type}</span>
                       <h4 className="text-xl font-heading font-black text-theme-text uppercase tracking-tighter italic leading-none">{s.name}</h4>
@@ -483,7 +483,7 @@ function NewSupplierModal({ onClose, onSave }: { onClose: () => void; onSave: (d
       
       <div className="relative w-full max-w-3xl bg-theme-card border border-theme-border/60 rounded-[40px] overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300 flex flex-col h-[85vh]">
         {/* Header */}
-        <div className="p-8 md:p-10 border-b border-theme-border flex items-center justify-between shrink-0 bg-theme-bg-muted/30">
+        <div className="p-8 md:p-10 border-b border-theme-border flex items-center justify-between shrink-0 bg-theme-bg-muted/30 rounded-2xl">
           <div className="flex items-center gap-4">
             <div className="w-12 h-12 bg-brand-tactical/10 rounded-2xl flex items-center justify-center border border-brand-tactical/20">
               <Printer className="text-brand-tactical" size={24} />
@@ -564,7 +564,7 @@ function NewSupplierModal({ onClose, onSave }: { onClose: () => void; onSave: (d
         </form>
 
         {/* Footer */}
-        <div className="p-8 md:p-10 bg-theme-bg-muted/50 border-t border-theme-border flex gap-4 shrink-0">
+        <div className="p-8 md:p-10 bg-theme-bg-muted/50 border-t border-theme-border flex gap-4 shrink-0 rounded-2xl">
           <button type="button" onClick={onClose} className="flex-1 py-5 border border-theme-border text-[11px] font-black uppercase tracking-[0.3em] text-theme-muted hover:text-white transition-all rounded-[20px] italic">Cancelar</button>
           <button 
             type="submit" 

@@ -32,9 +32,9 @@ export function CalendarView({ events, currentMonth, setCurrentMonth, onSelect, 
   ];
 
   return (
-    <div className="bg-theme-bg border border-theme-border p-6 md:p-10 space-y-8 shadow-2xl relative overflow-hidden">
+    <div className="bg-theme-bg border border-theme-border/60 rounded-2xl p-6 md:p-10 space-y-8 shadow-2xl relative overflow-hidden">
       <div className="absolute top-0 right-0 w-32 h-32 bg-brand-tactical/5 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none" />
-      <div className="flex items-center justify-between border-b border-theme-border pb-8 relative z-10">
+      <div className="flex items-center justify-between border-b border-theme-border/60 pb-8 relative z-10">
         <div className="flex flex-col md:flex-row gap-6 items-start md:items-center relative z-10">
           <h3 className="text-2xl font-heading font-black text-theme-text uppercase tracking-widest italic">
             {monthNames[month]} {year}
@@ -57,13 +57,13 @@ export function CalendarView({ events, currentMonth, setCurrentMonth, onSelect, 
         <div className="flex gap-3">
           <button
             onClick={() => setCurrentMonth(new Date(year, month - 1, 1))}
-            className="p-3 bg-theme-bg-muted border border-theme-border text-theme-muted hover:text-brand-tactical transition-all"
+            className="p-3 bg-theme-bg-muted border border-theme-border text-theme-muted hover:text-brand-tactical rounded-xl transition-all"
           >
             <ChevronLeft size={20} />
           </button>
           <button
             onClick={() => setCurrentMonth(new Date(year, month + 1, 1))}
-            className="p-3 bg-theme-bg-muted border border-theme-border text-theme-muted hover:text-brand-tactical transition-all"
+            className="p-3 bg-theme-bg-muted border border-theme-border text-theme-muted hover:text-brand-tactical rounded-xl transition-all"
           >
             <ChevronRight size={20} />
           </button>
@@ -102,7 +102,7 @@ export function CalendarView({ events, currentMonth, setCurrentMonth, onSelect, 
                       <button
                         key={ev.id}
                         onClick={() => onSelect(ev)}
-                        className={`w-full text-left p-2 ${bgColor} text-brand-text text-[8px] font-black uppercase truncate italic shadow-sm hover:brightness-110 transition-all`}
+                        className={`w-full text-left p-2 ${bgColor} text-brand-text text-[8px] font-black uppercase truncate italic rounded-md shadow-sm hover:brightness-110 transition-all`}
                       >
                         {ev.nomeNoivos}
                       </button>
