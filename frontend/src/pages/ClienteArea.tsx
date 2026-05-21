@@ -12,7 +12,7 @@ import {
   Users, Play, CheckCircle2, ArrowRight, 
   ShoppingBag, ShieldCheck, Clock, Image as ImageIcon,
   Zap, Lock, User, AlertTriangle, Briefcase, Building2, Camera,
-  DollarSign, Calendar, Printer, Settings
+  DollarSign, Calendar, Printer, Settings, Sparkles
 } from "lucide-react";
 import { ProfilePhotoUpload } from "../components/ProfilePhotoUpload";
 import { toast } from "sonner";
@@ -56,6 +56,9 @@ interface Pedido {
     temVideo: boolean;
     temReels: boolean;
     temFotoImpressa: boolean;
+    temAlbumImpresso: boolean;
+    temFotoEditada: boolean;
+    temVideoEditado: boolean;
   };
   showAlbum: boolean;
   showVideo: boolean;
@@ -967,7 +970,7 @@ function EventGroupRow({ group, now, onSelectPedido }: {
           {/* Actions */}
           <div className="shrink-0 flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
             <button 
-              onClick={() => navigate(`/e/${event.id}`)}
+              onClick={() => firstPendente ? onSelectPedido(firstPendente) : navigate(`/e/${event.id}`)}
               className="px-2.5 py-1.5 sm:px-4 sm:py-2 border border-theme-border text-theme-text hover:border-brand-tactical hover:text-brand-tactical text-[8px] sm:text-[9px] font-black uppercase tracking-widest transition-all rounded-lg italic text-center"
             >
               Ver Detalhes
@@ -1464,22 +1467,74 @@ function PedidoDetalhe({ pedido, loading, onGoToEvent, onChangePrivacy, onRefres
             </div>
           ) : pedido.hasPaid ? (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              <MediaActionCard 
-                icon={<ImageIcon size={16} />}
-                title="Galeria Editorial"
-                subtitle="Ver & Baixar"
-                url={pedido.event.lightroomUrl}
-                disabled={!pedido.event.lightroomUrl}
-                emptyText="Curadoria em andamento."
-              />
-              <MediaActionCard 
-                icon={<Play size={16} />}
-                title="Filmes & Reels"
-                subtitle="Download"
-                url={pedido.event.driveUrl}
-                disabled={!pedido.event.driveUrl}
-                emptyText={(pedido.event.temVideo || pedido.event.temReels) ? "Vídeos em finalização." : "Não inclui vídeo."}
-              />
+              {pedido.event.temFoto && (
+                <MediaActionCard
+                  icon={<Camera size={18} />}
+                  title="Fotografia Digital"
+                  subtitle="Galeria de Fotos"
+                  url={pedido.event.lightroomUrl}
+                  disabled={!pedido.event.lightroomUrl}
+                  emptyText="Arquivos em processamento pela equipe"
+                />
+              )}
+              {pedido.event.temFotoEditada && (
+                <MediaActionCard
+                  icon={<Sparkles size={18} />}
+                  title="Fotos Editadas"
+                  subtitle="Galeria Premium Editada"
+                  url={pedido.event.lightroomUrl}
+                  disabled={!pedido.event.lightroomUrl}
+                  emptyText="Seleção de fotos editadas em preparação"
+                />
+              )}
+              {pedido.event.temVideo && (
+                <MediaActionCard
+                  icon={<Play size={18} />}
+                  title="Vídeo de Cinema"
+                  subtitle="Filme Completo do Evento"
+                  url={pedido.event.driveUrl}
+                  disabled={!pedido.event.driveUrl}
+                  emptyText="Filme do evento em fase de finalização"
+                />
+              )}
+              {pedido.event.temVideoEditado && (
+                <MediaActionCard
+                  icon={<Zap size={18} />}
+                  title="Vídeo Editado Premium"
+                  subtitle="Corte Especial e Edição Premium"
+                  url={pedido.event.driveUrl}
+                  disabled={!pedido.event.driveUrl}
+                  emptyText="Vídeo editado premium em finalização"
+                />
+              )}
+              {pedido.event.temReels && (
+                <MediaActionCard
+                  icon={<Play size={18} />}
+                  title="Reels / Social"
+                  subtitle="Teasers verticais para redes"
+                  url={pedido.event.driveUrl}
+                  disabled={!pedido.event.driveUrl}
+                  emptyText="Teasers e Reels em fase de edição"
+                />
+              )}
+              {pedido.event.temFotoImpressa && (
+                <MediaActionCard
+                  icon={<Printer size={18} />}
+                  title="Fotos Impressas"
+                  subtitle="Fotos Reveladas Premium"
+                  disabled={true}
+                  emptyText="Fotos em fase de revelação laboratorial"
+                />
+              )}
+              {pedido.event.temAlbumImpresso && (
+                <MediaActionCard
+                  icon={<Printer size={18} />}
+                  title="Álbum Físico Impresso"
+                  subtitle="Encadernação Premium de Luxo"
+                  disabled={true}
+                  emptyText="Álbum em fase de diagramação/impressão"
+                />
+              )}
             </div>
           ) : (
             <div className="p-6 text-center border border-dashed border-theme-border/40 bg-brand-tactical/5 flex items-center justify-between gap-4">

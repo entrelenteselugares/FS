@@ -29,6 +29,9 @@ export async function getMeusPedidos(req: AuthRequest, res: Response): Promise<v
             temVideo: true,
             temReels: true,
             temFotoImpressa: true,
+            temAlbumImpresso: true,
+            temFotoEditada: true,
+            temVideoEditado: true,
           },
         },
         items: {
@@ -86,6 +89,9 @@ export async function getMeuPedidoDetalhe(req: AuthRequest, res: Response): Prom
             temVideo: true,
             temReels: true,
             temFotoImpressa: true,
+            temAlbumImpresso: true,
+            temFotoEditada: true,
+            temVideoEditado: true,
           },
         },
         items: {

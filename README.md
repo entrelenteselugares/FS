@@ -179,3 +179,7 @@ The Foto Segundo platform is certified for Production Readiness as of May 14, 20
 - **E2E Integrity:** 100% pass rate in Playwright Master Suite.
 - **Financial Security:** Transactional split, PIX, and FREE-coupon bypass validated.
 - **Architecture:** 9-module Enterprise structure (Growth Engine added).
+
+---
+<!-- GSD-DOCS-UPDATE: SUPPLEMENTED -->
+*Documentação complementada automaticamente via GSD-SDK em 2026-05.*

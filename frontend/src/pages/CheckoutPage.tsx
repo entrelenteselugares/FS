@@ -24,6 +24,8 @@ interface OrderEvent {
   isCrowdfund: boolean;
   tenantBrandColor?: string | null;
   tenantLogoUrl?: string | null;
+  priceHistory?: { price: number; changedAt: string }[];
+  priceBase?: number;
 }
 
 interface OrderDetail {
@@ -179,6 +181,25 @@ export const CheckoutPage = () => {
       .catch(() => setError("Não foi possível carregar os detalhes do pedido."))
       .finally(() => setLoading(false));
   }, [effectiveOrderId]);
+
+  // Real-time price polling for pending orders
+  useEffect(() => {
+    if (!effectiveOrderId || order?.status !== "PENDENTE") return;
+
+    const interval = setInterval(async () => {
+      try {
+        const { data } = await API.get(`/public/orders/${effectiveOrderId}`);
+        if (data.amount !== order.amount || data.status !== order.status) {
+          console.log("[Checkout Polling] Order details updated. Refreshing price...");
+          setOrder(data);
+        }
+      } catch (err) {
+        console.error("Erro ao fazer polling do pedido:", err);
+      }
+    }, 15000);
+
+    return () => clearInterval(interval);
+  }, [effectiveOrderId, order?.amount, order?.status]);
 
   const loadRegisteredAddress = async () => {
     try {
@@ -948,6 +969,61 @@ export const CheckoutPage = () => {
                 </div>
               )}
             </div>
+
+            {/* Negotiation History / Linha do Tempo de Negociação */}
+            {order.event?.priceHistory && order.event.priceHistory.length > 0 && (
+              <div className="p-8 bg-zinc-950/40 border border-white/5 rounded-3xl space-y-6">
+                <div className="flex items-center gap-2 mb-2">
+                  <div className="h-2 w-2 bg-brand-tactical rounded-full animate-pulse" />
+                  <h3 className="text-[10px] font-black text-brand-tactical uppercase tracking-[0.2em] italic">
+                    Histórico de Negociação Real
+                  </h3>
+                </div>
+                <div className="relative border-l border-zinc-800 ml-3 pl-6 space-y-6">
+                  {order.event.priceHistory.map((history, idx) => (
+                    <div key={idx} className="relative">
+                      {/* Timeline dot */}
+                      <div className="absolute -left-[30px] top-1 h-3 w-3 bg-zinc-950 border-2 border-zinc-700 rounded-full flex items-center justify-center">
+                        <div className="h-1 w-1 bg-zinc-500 rounded-full" />
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <div>
+                          <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-wider block">
+                            Proposta Anterior
+                          </span>
+                          <span className="text-[9px] text-zinc-600 font-mono">
+                            {new Date(history.changedAt).toLocaleString("pt-BR")}
+                          </span>
+                        </div>
+                        <span className="text-sm font-black italic text-zinc-500 line-through">
+                          R$ {Number(history.price).toFixed(2)}
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                  {/* Current active offer */}
+                  <div className="relative">
+                    {/* Timeline dot gold */}
+                    <div className="absolute -left-[30px] top-1 h-3 w-3 bg-zinc-950 border-2 border-brand-tactical rounded-full flex items-center justify-center">
+                      <div className="h-1.5 w-1.5 bg-brand-tactical rounded-full animate-ping" />
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <div>
+                        <span className="text-[10px] font-black text-brand-tactical uppercase tracking-widest block italic">
+                          Acordo Atualizado
+                        </span>
+                        <span className="text-[9px] text-zinc-500 font-mono">
+                          Oferta ativa e garantida
+                        </span>
+                      </div>
+                      <span className="text-lg font-black italic text-white">
+                        R$ {Number(order.amount).toFixed(2)}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Lado Direito: Pagamento */}

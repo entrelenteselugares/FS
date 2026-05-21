@@ -36,6 +36,14 @@ export class EventController {
       }
 
       const o = order as any;
+      // Redirect to the appropriate media URL if access is permitted
+      if (o.showAlbum && o.event?.lightroomUrl) {
+        return res.redirect(o.event.lightroomUrl);
+      }
+      if (o.showVideo && o.event?.driveUrl) {
+        return res.redirect(o.event.driveUrl);
+      }
+      // Fallback: return JSON with URLs (maintains backwards compatibility)
       return res.json({
         lightroomUrl: o.showAlbum ? o.event?.lightroomUrl : null,
         driveUrl: o.showVideo ? o.event?.driveUrl : null,
@@ -165,7 +173,7 @@ export class EventController {
         take: 50,
         select: { imageUrl: true }
       });
-      const printUrls = prints.map(p => p.imageUrl);
+      const printUrls = prints.map((p: { imageUrl: string }) => p.imageUrl);
       previewPhotos = Array.from(new Set([...printUrls, ...jsonPreviews]));
 
       // 4. Se for Marketplace, buscamos quais mídias específicas foram compradas
@@ -185,8 +193,8 @@ export class EventController {
           include: { items: { include: { media: true } } }
         });
 
-        paidOrders.forEach(o => {
-          o.items.forEach(item => {
+        paidOrders.forEach((o: any) => {
+          o.items.forEach((item: any) => {
             if (item.mediaId) unlockedMediaIds.push(item.mediaId);
             if (item.media?.shortId) unlockedMediaIds.push(item.media.shortId);
           });
@@ -387,7 +395,7 @@ export class EventController {
 
       const pages = Math.ceil(total / take);
 
-      const mapped = events.map(e => ({
+      const mapped = events.map((e: any) => ({
         ...e,
         city: e.city || (e as any).cartorioUser?.cartorio?.cidade || null
       }));
@@ -418,7 +426,7 @@ export class EventController {
         orderBy: { nome: "asc" }
       });
       console.log(`[PARTNERS] Encontrados ${partners.length} parceiros com role CARTORIO`);
-      return res.json(partners.map(p => {
+      return res.json(partners.map((p: any) => {
         const legacyPrices = {
           foto: p.cartorio?.priceFoto,
           video: p.cartorio?.priceVideo,
@@ -879,12 +887,12 @@ export class EventController {
         }
       });
 
-      const mapped = events.map(e => ({
-        ...e,
-        city: e.city || (e as any).cartorioUser?.cartorio?.cidade || null,
-        cartorio: e.cartorioUser?.cartorio?.razaoSocial || null,
-        collected: e.pedidos.reduce((acc: number, o: any) => acc + Number(o.valor), 0)
-      }));
+      const mapped = events.map((e: any) => ({
+          ...e,
+          city: e.city || (e as any).cartorioUser?.cartorio?.cidade || null,
+          cartorio: e.cartorioUser?.cartorio?.razaoSocial || null,
+          collected: e.pedidos.reduce((acc: number, o: any) => acc + Number(o.valor), 0)
+        }));
 
       return res.json(mapped);
     } catch (error) {

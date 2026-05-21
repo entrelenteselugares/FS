@@ -607,23 +607,7 @@ return (
             </AnimatePresence>
           </div>
 
-          {/* ── Professional Tactical Hub (Floating - Apenas PRO/ADMIN) ── */}
-          {(user?.role === 'PROFISSIONAL' || user?.role === 'FRANCHISEE' || user?.role === 'ADMIN') && (
-            <div className="fixed bottom-10 right-10 z-[150] flex flex-col items-end gap-4 print:hidden">
-              <button 
-                onClick={() => window.open(`${window.location.origin}/phygital-capture?e=${event.id}&auto=1`, '_blank')}
-                title="Abrir câmera — enviar foto agora"
-                className="w-20 h-20 rounded-full flex items-center justify-center shadow-2xl shadow-brand-tactical/30 transition-all duration-300 hover:scale-110 active:scale-95 group relative overflow-hidden bg-brand-tactical text-black"
-              >
-                <div className="absolute inset-0 bg-white/20 scale-0 group-hover:scale-100 transition-transform duration-700 rounded-full" />
-                <Camera size={32} />
-                {/* Badge PRO */}
-                <div className="absolute -top-1 -right-1 w-6 h-6 bg-red-500 border-2 border-zinc-950 rounded-full flex items-center justify-center">
-                  <span className="text-[10px] font-black text-white italic">PRO</span>
-                </div>
-              </button>
-            </div>
-          )}
+          {/* ── Professional Tactical Hub (Floating camera removed per request) ── */}
 
           {step === "countdown" ? (
             <div className="flex-1 flex flex-col items-center justify-center p-8 lg:p-12 space-y-16 text-center relative">
@@ -766,9 +750,12 @@ return (
                         </button>
                       </div>
 
-                      {event.isOwner && (
-                        <button onClick={() => setShowQrModal(true)} className="flex items-center gap-3 px-8 py-5 bg-brand-tactical/10 border border-brand-tactical/40 text-[10px] font-black text-brand-tactical uppercase tracking-widest hover:bg-brand-tactical/20 transition-all italic">
-                          <QrCode size={18} /> PAINEL DE CAPTURA
+                      {(user?.role === 'PROFISSIONAL' || user?.role === 'FRANCHISEE' || user?.role === 'ADMIN') && (
+                        <button 
+                          onClick={() => window.open(`${window.location.origin}/phygital-capture?e=${event.id}&auto=1`, '_blank')}
+                          className="flex items-center gap-3 px-8 py-5 bg-brand-tactical text-black text-[10px] font-black uppercase tracking-widest hover:brightness-110 transition-all italic shadow-lg shadow-brand-tactical/20"
+                        >
+                          <Camera size={18} /> ABRIR CÂMERA
                         </button>
                       )}
                     </div>

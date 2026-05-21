@@ -9,7 +9,34 @@ import { NotificationService } from "../services/notification.service";
 import { audit } from "../lib/audit";
 import { FRONTEND_URL } from "../lib/config";
 
-// â”€â”€ DASHBOARD â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+async function notifyAssignedProfessional(eventId: string, userId: string, eventTitle: string, eventDate: Date | string, location: string) {
+  try {
+    const user = await prisma.user.findUnique({ where: { id: userId } });
+    if (!user) return;
+
+    await NotificationService.notifyProfessionalNewAssignment({
+      to: user.email,
+      profissionalName: user.nome,
+      eventTitle,
+      eventDate: String(eventDate),
+      location
+    });
+
+    await NotificationService.createInApp({
+      userId,
+      type: "EVENT_ASSIGNMENT",
+      title: "Novo Evento Atribuído",
+      body: `Você foi designado para o evento ${eventTitle}`,
+      refId: eventId,
+      refType: "Event"
+    });
+    console.log(`[Notification] Professional ${user.nome} notified successfully for event assignment.`);
+  } catch (err) {
+    console.error(`[NotifyAssignment] Erro ao notificar profissional ${userId}:`, err);
+  }
+}
+
+// ─── DASHBOARD ──────────────────────────────────────────
 
 export async function adminUploadCover(req: AuthRequest, res: Response): Promise<void> {
   const { id } = req.params;
@@ -238,11 +265,7 @@ export async function adminListEvents(req: AuthRequest, res: Response): Promise<
 
   try {
     const where: Prisma.EventWhereInput = { 
-      isQuote: false,
-      OR: [
-        { type: { not: "PHOTO_MARKETPLACE" } }, 
-        { pedidos: { some: { hasPaid: true } } } 
-      ]
+      isQuote: false
     };
     if (status === "active") where.active = true;
     if (status === "inactive") where.active = false;
@@ -321,6 +344,24 @@ export async function adminCreateEvent(req: AuthRequest, res: Response): Promise
   }
 
   try {
+    // Sanitize and validate URLs
+    let finalLightroomUrl = lightroomUrl ? String(lightroomUrl).trim() : "";
+    if (finalLightroomUrl && !/^https?:\/\//i.test(finalLightroomUrl)) {
+      finalLightroomUrl = `https://${finalLightroomUrl}`;
+    }
+    let finalDriveUrl = driveUrl ? String(driveUrl).trim() : "";
+    if (finalDriveUrl && !/^https?:\/\//i.test(finalDriveUrl)) {
+      finalDriveUrl = `https://${finalDriveUrl}`;
+    }
+
+    const urlPattern = /^https?:\/\/.+/i;
+    if (finalLightroomUrl && !urlPattern.test(finalLightroomUrl)) {
+      res.status(400).json({ error: "URL invÃ¡lida para o campo Lightroom/Portfolio." }); return;
+    }
+    if (finalDriveUrl && !urlPattern.test(finalDriveUrl)) {
+      res.status(400).json({ error: "URL invÃ¡lida para o Google Drive." }); return;
+    }
+
     // Gera slug Ãºnico
     let slug = slugify(`${title}-${new Date(date).getFullYear()}`);
     const exists = await prisma.event.findUnique({ where: { slug } });
@@ -348,8 +389,8 @@ export async function adminCreateEvent(req: AuthRequest, res: Response): Promise
         dataEvento: new Date(date),
         location, city,
         description,
-        lightroomUrl: lightroomUrl || null,
-        driveUrl: driveUrl || null,
+        lightroomUrl: finalLightroomUrl || null,
+        driveUrl: finalDriveUrl || null,
         previewPhotos: previewPhotos ? JSON.stringify(previewPhotos) : null,
         priceBase: priceBase ?? 200,
         priceEarly: priceEarly ?? 190,
@@ -390,6 +431,13 @@ export async function adminCreateEvent(req: AuthRequest, res: Response): Promise
 
     await audit(req, "EVENT_CREATED", "Event", event.id, null, event);
 
+    if (event.captacaoId) {
+      notifyAssignedProfessional(event.id, event.captacaoId, event.nomeNoivos, event.dataEvento, event.location || "");
+    }
+    if (event.edicaoId) {
+      notifyAssignedProfessional(event.id, event.edicaoId, event.nomeNoivos, event.dataEvento, event.location || "");
+    }
+
     res.status(201).json(event);
   } catch (err) {
     if (err instanceof Error && (err as NodeJS.ErrnoException & { code?: string }).code === "P2002") {
@@ -419,8 +467,26 @@ export async function adminUpdateEvent(req: AuthRequest, res: Response): Promise
     if (req.body.location) data.location = req.body.location;
     if (req.body.city) data.city = req.body.city;
     if (req.body.description) data.description = req.body.description;
-    if (req.body.lightroomUrl !== undefined) data.lightroomUrl = req.body.lightroomUrl || null;
-    if (req.body.driveUrl !== undefined) data.driveUrl = req.body.driveUrl || null;
+
+    let finalLightroomUrl = req.body.lightroomUrl !== undefined ? (req.body.lightroomUrl ? String(req.body.lightroomUrl).trim() : "") : undefined;
+    if (finalLightroomUrl && !/^https?:\/\//i.test(finalLightroomUrl)) {
+      finalLightroomUrl = `https://${finalLightroomUrl}`;
+    }
+    let finalDriveUrl = req.body.driveUrl !== undefined ? (req.body.driveUrl ? String(req.body.driveUrl).trim() : "") : undefined;
+    if (finalDriveUrl && !/^https?:\/\//i.test(finalDriveUrl)) {
+      finalDriveUrl = `https://${finalDriveUrl}`;
+    }
+
+    const urlPattern = /^https?:\/\/.+/i;
+    if (finalLightroomUrl && !urlPattern.test(finalLightroomUrl)) {
+      res.status(400).json({ error: "URL invÃ¡lida para o campo Lightroom/Portfolio." }); return;
+    }
+    if (finalDriveUrl && !urlPattern.test(finalDriveUrl)) {
+      res.status(400).json({ error: "URL invÃ¡lida para o Google Drive." }); return;
+    }
+
+    if (finalLightroomUrl !== undefined) data.lightroomUrl = finalLightroomUrl || null;
+    if (finalDriveUrl !== undefined) data.driveUrl = finalDriveUrl || null;
     if (req.body.previewPhotos !== undefined) data.previewPhotos = req.body.previewPhotos ? JSON.stringify(req.body.previewPhotos) : null;
     if (req.body.priceBase !== undefined) data.priceBase = Number(req.body.priceBase);
     if (req.body.priceEarly !== undefined) data.priceEarly = Number(req.body.priceEarly);
@@ -464,12 +530,16 @@ export async function adminUpdateEvent(req: AuthRequest, res: Response): Promise
     const wasEmpty = !currentEvent.lightroomUrl && !currentEvent.driveUrl;
     const isAddingLinks = (data.lightroomUrl || data.driveUrl) && wasEmpty;
 
+    // 2. Captura preço antigo antes da atualização
+    const oldPriceBase = currentEvent.priceBase;
+    const newPriceBase = data.priceBase !== undefined ? Number(data.priceBase) : undefined;
+
     // Se estiver adicionando links pela primeira vez, registra o momento da entrega para o SLA
     if (isAddingLinks) {
       data.galleryUploadTime = new Date();
     }
 
-    // 2. Executa a atualizaÃ§Ã£o do evento
+    // 3. Executa a atualização do evento
     const event = await prisma.event.update({
       where: { id: String(id) },
       data,
@@ -480,6 +550,29 @@ export async function adminUpdateEvent(req: AuthRequest, res: Response): Promise
         _count:   { select: { pedidos: true } },
       },
     });
+
+    // Trigger notifications if professional assignment is updated
+    if (event.captacaoId && currentEvent.captacaoId !== event.captacaoId) {
+      notifyAssignedProfessional(event.id, event.captacaoId, event.nomeNoivos, event.dataEvento, event.location || "");
+    }
+    if (event.edicaoId && currentEvent.edicaoId !== event.edicaoId) {
+      notifyAssignedProfessional(event.id, event.edicaoId, event.nomeNoivos, event.dataEvento, event.location || "");
+    }
+
+    // 4. If priceBase changed, record history and sync pending orders
+    if (oldPriceBase !== undefined && newPriceBase !== undefined && Number(oldPriceBase) !== newPriceBase) {
+      const historyEntry = { price: Number(oldPriceBase), changedAt: new Date().toISOString() };
+      const existingHistory = (event.priceHistory as any) || [];
+      await prisma.event.update({
+        where: { id: String(id) },
+        data: { priceHistory: [...existingHistory, historyEntry] },
+      });
+      // Update pending orders (status "PENDENTE") with new priceBase
+      await prisma.order.updateMany({
+        where: { eventId: String(id), status: "PENDENTE" },
+        data: { valor: newPriceBase },
+      });
+    }
 
     // 3. Processa GamificaÃ§Ã£o de Agilidade (SLA)
     if (isAddingLinks) {
@@ -946,10 +1039,23 @@ export async function adminDeleteUser(req: AuthRequest, res: Response): Promise<
           await tx.cartorio.delete({ where: { id: user.cartorio.id } });
         }
         if (user.franchiseProfile) {
-          await tx.supplyOrder.updateMany({
+          // Desassociar Phygital Prints associados ao perfil do franqueado
+          await tx.phygitalPrint.updateMany({
+            where: { franchiseProfileId: user.franchiseProfile.id },
+            data: { franchiseProfileId: null }
+          });
+          
+          // Desassociar Eventos vinculados a esta franquia
+          await tx.event.updateMany({
             where: { franchiseeId: user.franchiseProfile.id },
             data: { franchiseeId: null }
           });
+
+          // Deletar ordens de suprimento do franqueado
+          await tx.supplyOrder.deleteMany({
+            where: { franchiseeId: user.id }
+          });
+
           await tx.creditTransaction.deleteMany({ where: { profileId: user.franchiseProfile.id } });
           await tx.franchiseProfile.delete({ where: { id: user.franchiseProfile.id } });
         }

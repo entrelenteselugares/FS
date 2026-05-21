@@ -356,15 +356,10 @@ export default function FullMonitor() {
         </main>
 
         {/* ── Permanent floating QR (bottom-right) ──────────────────── */}
-        <div className="fixed bottom-6 right-6 z-40 bg-zinc-950/90 backdrop-blur-xl border border-theme-border/60 p-4 rounded-2xl flex flex-col items-center gap-2 shadow-2xl animate-reveal md:flex hidden">
-          <div className="flex items-center gap-1.5">
-            <div className="w-1.5 h-1.5 rounded-full bg-brand-tactical animate-pulse" />
-            <span className="text-[8px] font-black uppercase tracking-widest text-theme-text">Enviar Fotos</span>
-          </div>
-          <div className="p-2 bg-white rounded-xl">
-            <QRCodeSVG value={captureUrl} size={100} level="H" />
-          </div>
-          <span className="text-[7px] text-zinc-400 font-bold uppercase tracking-widest">Aponte a câmera</span>
+        <div className="fixed bottom-6 right-6 z-40 bg-zinc-950/90 backdrop-blur-xl border border-theme-border/60 p-4 rounded-2xl flex items-center gap-2 shadow-2xl animate-reveal">
+          <button onClick={() => setShowQR(true)} className="flex items-center gap-2 text-xs font-black uppercase tracking-widest bg-theme-bg border border-theme-border text-theme-text hover:border-brand-tactical/50 hover:text-brand-tactical transition-all rounded-full px-4 py-2">
+            <QrCode size={14} /> QR
+          </button>
         </div>
 
         {/* ── QR Code Modal ────────────────────────────────────────── */}

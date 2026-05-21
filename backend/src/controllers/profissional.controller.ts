@@ -69,19 +69,28 @@ export async function updateEventLinks(req: AuthRequest, res: Response): Promise
     if (!event) { res.status(403).json({ error: "Acesso negado a este evento." }); return; }
 
     // Valida URLs
-    const urlPattern = /^https?:\/\/.+/;
-    if (lightroomUrl && !urlPattern.test(String(lightroomUrl))) {
+    let finalLightroomUrl = lightroomUrl !== undefined ? (lightroomUrl ? String(lightroomUrl).trim() : "") : undefined;
+    if (finalLightroomUrl && !/^https?:\/\//i.test(finalLightroomUrl)) {
+      finalLightroomUrl = `https://${finalLightroomUrl}`;
+    }
+    let finalDriveUrl = driveUrl !== undefined ? (driveUrl ? String(driveUrl).trim() : "") : undefined;
+    if (finalDriveUrl && !/^https?:\/\//i.test(finalDriveUrl)) {
+      finalDriveUrl = `https://${finalDriveUrl}`;
+    }
+
+    const urlPattern = /^https?:\/\/.+/i;
+    if (finalLightroomUrl && !urlPattern.test(finalLightroomUrl)) {
       res.status(400).json({ error: "URL inválida para o campo Lightroom/Portfolio." }); return;
     }
-    if (driveUrl && !urlPattern.test(String(driveUrl))) {
+    if (finalDriveUrl && !urlPattern.test(finalDriveUrl)) {
       res.status(400).json({ error: "URL inválida para o Google Drive." }); return;
     }
 
     const updated = await prisma.event.update({
       where: { id: String(id) },
       data: {
-        ...(lightroomUrl !== undefined && { lightroomUrl: String(lightroomUrl) || null }),
-        ...(driveUrl !== undefined && { driveUrl: String(driveUrl) || null }),
+        ...(finalLightroomUrl !== undefined && { lightroomUrl: finalLightroomUrl || null }),
+        ...(finalDriveUrl !== undefined && { driveUrl: finalDriveUrl || null }),
         ...(dataEvento !== undefined && { dataEvento: dataEvento ? new Date(dataEvento) : { set: new Date() } }),
         ...(coverPosition !== undefined && { coverPosition: String(coverPosition) || "center" }),
       },

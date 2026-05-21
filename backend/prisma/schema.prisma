@@ -134,6 +134,7 @@ model Event {
   cartorioUserId String?
   priceBase      Decimal  @default(190) @db.Decimal(10, 2)
   priceEarly     Decimal  @default(190) @db.Decimal(10, 2)
+  priceHistory   Json?    @default("[]")
   captacaoId     String?
   edicaoId       String?
   active         Boolean  @default(false)

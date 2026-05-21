@@ -1123,6 +1123,8 @@ export class PaymentController {
               isCrowdfund: true,
               customBrandColor: true,
               customLogoUrl: true,
+              priceHistory: true,
+              priceBase: true,
               cartorioUser: { select: { tenantBrandColor: true, tenantLogoUrl: true } }
             }
           }
