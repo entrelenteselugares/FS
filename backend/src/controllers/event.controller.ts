@@ -37,16 +37,16 @@ export class EventController {
 
       const o = order as any;
       // Redirect to the appropriate media URL if access is permitted
-      if (o.showAlbum && o.event?.lightroomUrl) {
+      if (o.showAlbum && o.event?.lightroomUrl && o.event.lightroomUrl !== "null") {
         return res.redirect(o.event.lightroomUrl);
       }
-      if (o.showVideo && o.event?.driveUrl) {
+      if (o.showVideo && o.event?.driveUrl && o.event.driveUrl !== "null") {
         return res.redirect(o.event.driveUrl);
       }
       // Fallback: return JSON with URLs (maintains backwards compatibility)
       return res.json({
-        lightroomUrl: o.showAlbum ? o.event?.lightroomUrl : null,
-        driveUrl: o.showVideo ? o.event?.driveUrl : null,
+        lightroomUrl: (o.showAlbum && o.event?.lightroomUrl !== "null") ? o.event?.lightroomUrl : null,
+        driveUrl: (o.showVideo && o.event?.driveUrl !== "null") ? o.event?.driveUrl : null,
         eventTitle: o.event?.nomeNoivos,
         accessType: o.accessType || "PRIVATE",
         guestToken: o.guestToken,
@@ -230,8 +230,8 @@ export class EventController {
         pendingOrderId: (order && order.status === "PENDENTE") ? order.id : null,
         isOwner: isOwner,
         hasAccess: hasAccess,
-        lightroomUrl: (hasAccess && !isExpired && (!order || order.showAlbum)) ? event.lightroomUrl : null,
-        driveUrl: (hasAccess && !isExpired && (!order || order.showVideo)) ? event.driveUrl : null,
+        lightroomUrl: (hasAccess && !isExpired && (!order || order.showAlbum)) ? (event.lightroomUrl === "null" ? null : event.lightroomUrl) : null,
+        driveUrl: (hasAccess && !isExpired && (!order || order.showVideo)) ? (event.driveUrl === "null" ? null : event.driveUrl) : null,
         paywall: {
           active: !hasAccess && !isOwner,
           message: isExpired ? "Prazo de download expirado." : (hasAccess ? "Entrega liberada." : "Galeria protegida.")

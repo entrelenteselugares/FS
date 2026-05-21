@@ -132,8 +132,8 @@ export async function getMeuPedidoDetalhe(req: AuthRequest, res: Response): Prom
       event: {
         ...pedido.event,
         // Só expõe os links se aprovado INTEGRALMENTE e NÃO expirado/excluído
-        lightroomUrl: canAccess ? pedido.event?.lightroomUrl ?? null : null,
-        driveUrl: canAccess ? pedido.event?.driveUrl ?? null : null,
+        lightroomUrl: canAccess ? (pedido.event?.lightroomUrl === "null" ? null : (pedido.event?.lightroomUrl ?? null)) : null,
+        driveUrl: canAccess ? (pedido.event?.driveUrl === "null" ? null : (pedido.event?.driveUrl ?? null)) : null,
       },
       items: pedido.items,
     });
