@@ -181,3 +181,7 @@ graph TD
 - **Database:** Supabase (PostgreSQL).
 - **ORM:** Prisma Client (conectado via Direct URL para migrações e Connection Pooling para runtime).
 - **Cron:** Supabase Cron Jobs ou Vercel Cron chamando `/cron/abandoned-carts`.
+
+
+<!-- GSD-DOCS-UPDATE: SUPPLEMENTED -->
+*Documentação verificada e complementada automaticamente via GSD-SDK em 2026-05.*

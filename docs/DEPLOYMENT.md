@@ -48,3 +48,7 @@ npx vercel --prod --yes
 ```
 
 Esse comando usará a CLI da Vercel para subir o estado atual do repositório, ignorando branches e empurrando um release imediato de produção. Mantenha cautela ao executar esse comando para evitar dessincronia com o estado real do GitHub.
+
+
+<!-- GSD-DOCS-UPDATE: SUPPLEMENTED -->
+*Documentação verificada e complementada automaticamente via GSD-SDK em 2026-05.*

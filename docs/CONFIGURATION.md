@@ -104,3 +104,7 @@ As chaves persistidas no navegador seguem o padrão:
 ```
 
 Para redefinir as configurações para os padrões de fábrica do evento, basta o usuário pressionar o botão de fechar sem salvar, ou limpar o `localStorage` via console de desenvolvedor.
+
+
+<!-- GSD-DOCS-UPDATE: SUPPLEMENTED -->
+*Documentação verificada e complementada automaticamente via GSD-SDK em 2026-05.*

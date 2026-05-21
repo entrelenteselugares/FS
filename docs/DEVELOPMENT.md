@@ -93,3 +93,7 @@ Antes de abrir um Pull Request:
 - Trabalhe em branches de feature: `feature/nome-da-feature` ou `fix/nome-do-bug`.
 - Use mensagens de commit convencionais (`feat: ...`, `fix: ...`, `docs: ...`).
 - Sincronize com a branch `main` com frequência para evitar conflitos no motor financeiro ou no esquema Prisma.
+
+
+<!-- GSD-DOCS-UPDATE: SUPPLEMENTED -->
+*Documentação verificada e complementada automaticamente via GSD-SDK em 2026-05.*
