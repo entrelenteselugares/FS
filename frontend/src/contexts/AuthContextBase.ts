@@ -43,6 +43,7 @@ export interface AuthUser {
   isVerified?: boolean;
   verificationStatus?: string;
   discoverySource?: string | null;
+  referredById?: string | null;
   address?: string | null;
   profileComplete: boolean;
   isExperienceValidated?: boolean;

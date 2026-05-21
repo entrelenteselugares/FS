@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Check, X, ChevronLeft, ChevronRight } from "lucide-react";
@@ -29,6 +29,19 @@ export const TouchSelectionGallery: React.FC<TouchSelectionGalleryProps> = ({
   const [fullscreenIndex, setFullscreenIndex] = useState<number | null>(null);
   const [isSelectMode, setIsSelectMode] = useState(false);
   const longPressTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    if (fullscreenIndex === null) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setFullscreenIndex(null);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [fullscreenIndex]);
 
   const handleTouchStart = (shortId: string, url: string) => {
     longPressTimer.current = setTimeout(() => {
@@ -171,6 +184,7 @@ export const TouchSelectionGallery: React.FC<TouchSelectionGalleryProps> = ({
               <button 
                 onClick={() => setFullscreenIndex(null)}
                 className="w-12 h-12 flex items-center justify-center bg-white/5 rounded-full text-white"
+                aria-label="Fechar visualização"
               >
                 <X size={24} />
               </button>

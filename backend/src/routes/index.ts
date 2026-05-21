@@ -156,7 +156,12 @@ router.use("/auth", driveAuthRoutes);
 const requireProOrFranchise = async (req: any, res: Response, next: NextFunction) => {
   const user = req.user;
   if (!user) return res.status(401).json({ error: "Não autenticado." });
-  if (user.role === "ADMIN" || user.role === "PROFISSIONAL") return next();
+  if (
+    user.role === "ADMIN" ||
+    user.role === "PROFISSIONAL" ||
+    user.role === "CARTORIO" ||
+    user.role === "FRANCHISEE"
+  ) return next();
 
   try {
     const profile = await prisma.franchiseProfile.findUnique({ 

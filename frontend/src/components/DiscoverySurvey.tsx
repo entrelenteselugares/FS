@@ -12,8 +12,16 @@ export const DiscoverySurvey: React.FC = () => {
   // ainda é null no momento da montagem e o useState inicial fica travado em true.
   useEffect(() => {
     if (authLoading) return;
+
+    if (user && user.referredById && !user.discoverySource) {
+      // Se veio por indicação/convite, já sabemos o canal e atualizamos em background
+      updateMe({ discoverySource: "referral" }).catch(console.error);
+      setIsOpen(false);
+      return;
+    }
+
     setIsOpen(!!user && !user.discoverySource);
-  }, [authLoading, user]);
+  }, [authLoading, user, updateMe]);
 
   const options = [
     { id: "instagram", label: "📸 Instagram", desc: "Vi um post ou anúncio" },

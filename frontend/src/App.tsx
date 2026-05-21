@@ -104,6 +104,7 @@ const AnimatedRoutes = () => {
         <Route path="/status" element={<StatusPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/registro" element={<RegisterPage />} />
+        <Route path="/register" element={<RegisterPage />} />
         <Route path="/e/:slug" element={<EventPage />} />
         <Route path="/auth" element={<AuthSelectionPage />} />
         <Route path="/reset-password" element={<ResetPasswordPage />} />

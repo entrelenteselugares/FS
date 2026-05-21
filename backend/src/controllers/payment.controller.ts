@@ -624,9 +624,23 @@ export class PaymentController {
         });
       }
 
+      let resolvedEventId = eventId;
+      let orderToUse = null;
+
+      if (passedOrderId) {
+        orderToUse = await prisma.order.findUnique({ where: { id: passedOrderId } });
+        if (orderToUse) {
+          resolvedEventId = resolvedEventId || orderToUse.eventId;
+        }
+      }
+
       // 1. Buscar evento com parceiros para cálculo de split
+      if (!resolvedEventId) {
+        return res.status(400).json({ error: "Identificação do evento ou pedido obrigatória" });
+      }
+
       const event = await prisma.event.findUnique({ 
-        where: { id: eventId },
+        where: { id: resolvedEventId },
         include: {
           captacao: { include: { profissional: true } },
           edicao: { include: { profissional: true } },
@@ -682,20 +696,16 @@ export class PaymentController {
       let finalIncludeLivePrint = includeLivePrint;
       let finalIncludeShipping = includeShipping;
       let finalSelectedServices = selectedServicesIds;
-      let orderToUse = null;
 
-      if (passedOrderId) {
-        orderToUse = await prisma.order.findUnique({ where: { id: passedOrderId } });
-        if (orderToUse && orderToUse.status === "PENDENTE") {
-          // Se for upgrade, recupera as configs das notas
-          if (orderToUse.internalNotes?.startsWith('{"type":"UPGRADE"')) {
-            try {
-              const upgradeData = JSON.parse(orderToUse.internalNotes);
-              finalIncludeLivePrint = upgradeData.includeLivePrint;
-              finalIncludeShipping = upgradeData.includeShipping;
-              finalSelectedServices = upgradeData.selectedServicesIds;
-            } catch (e) { console.error("Erro ao parsear upgrade notes:", e); }
-          }
+      if (orderToUse && orderToUse.status === "PENDENTE") {
+        // Se for upgrade, recupera as configs das notas
+        if (orderToUse.internalNotes?.startsWith('{"type":"UPGRADE"')) {
+          try {
+            const upgradeData = JSON.parse(orderToUse.internalNotes);
+            finalIncludeLivePrint = upgradeData.includeLivePrint;
+            finalIncludeShipping = upgradeData.includeShipping;
+            finalSelectedServices = upgradeData.selectedServicesIds;
+          } catch (e) { console.error("Erro ao parsear upgrade notes:", e); }
         }
       }
 

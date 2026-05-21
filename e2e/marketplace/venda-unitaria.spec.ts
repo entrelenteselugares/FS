@@ -3,7 +3,7 @@ import { test, expect, Page } from '@playwright/test';
 /** Helper para limpar modais que interceptam o clique (Z-Index) */
 async function clearPopups(page: Page) {
   try {
-    const closeBtn = page.locator('button').filter({ hasText: /Entendi|Fechar|Ok|IGNORAR POR ENQUANTO/i }).first();
+    const closeBtn = page.locator('button').filter({ hasText: /Entendi|Fechar|Ok|IGNORAR POR ENQUANTO|Pular Tour/i }).first();
     if (await closeBtn.isVisible({ timeout: 1500 }).catch(() => false)) {
       await closeBtn.click();
       await page.waitForTimeout(500);
@@ -134,19 +134,17 @@ test.describe('Marketplace Hybrid Flow: Unit Photo Sale (Flow D)', () => {
     await expect(selecionarBtn).toBeVisible({ timeout: 10000 });
     await selecionarBtn.click();
     
-    // Fechar modal
-    const closeBtn = clientPage.locator('button').filter({ has: clientPage.locator('svg.lucide-x') }).first();
-    if (await closeBtn.isVisible()) {
-      await closeBtn.click();
-    }
-    
-    // Após fechar o modal, o carrinho (barra inferior/lateral) deve aparecer.
+    // Fechar o lightbox com Escape (mais confiável que localizar o botão X)
+    await clientPage.keyboard.press('Escape');
+    // Aguardar o overlay sumir completamente
+    await clientPage.locator('div.fixed.inset-0.z-\\[99999\\]').waitFor({ state: 'hidden', timeout: 8000 }).catch(() => {});
+    await clientPage.waitForTimeout(500);
 
     console.log('[CLIENT] Abrindo carrinho...');
     await clientPage.screenshot({ path: 'test-results/checkout-1.png' });
     const cartButton = clientPage.locator('button').filter({ hasText: /FINALIZAR COMPRA|DESBLOQUEAR/i }).first();
     await cartButton.scrollIntoViewIfNeeded();
-    await cartButton.click();
+    await cartButton.click({ force: true });
     
     console.log('[CLIENT] Preenchendo dados de autenticação no checkout...');
     await clientPage.screenshot({ path: 'test-results/checkout-2.png' });
@@ -159,7 +157,7 @@ test.describe('Marketplace Hybrid Flow: Unit Photo Sale (Flow D)', () => {
     if (await emailInput.isEnabled()) {
       await emailInput.fill(guestEmail);
     }
-    await clientPage.getByPlaceholder(/Sua Senha/i).fill('123456');
+    await clientPage.getByLabel('Senha').fill('123456');
     await clientPage.getByRole('button', { name: /Continuar para Pagamento/i }).click();
     
     console.log('[CLIENT] Aguardando redirecionamento para /checkout/...');

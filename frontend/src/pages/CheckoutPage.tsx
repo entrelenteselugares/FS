@@ -1130,22 +1130,30 @@ export const CheckoutPage = () => {
                     <p className="text-[10px] font-black text-brand-tactical uppercase tracking-widest mb-4">
                       {authStep === 'login' ? 'Identificação Necessária' : 'Crie sua Conta'}
                     </p>
-                    <input 
-                      type="email"
-                      value={order.buyerEmail || email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      disabled={!!order.buyerEmail}
-                      className="fs-input mb-4 text-center"
-                      placeholder="seu@email.com"
-                    />
-                    <input 
-                      type="password"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      className="fs-input text-center"
-                      placeholder="Sua Senha"
-                      autoFocus
-                    />
+                    <div className="text-left mb-4">
+                      <label htmlFor="checkout-email" className="block text-[10px] font-black text-zinc-500 uppercase tracking-widest mb-2">E-mail</label>
+                      <input 
+                        id="checkout-email"
+                        type="email"
+                        value={order.buyerEmail || email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        disabled={!!order.buyerEmail}
+                        className="fs-input text-center w-full"
+                        placeholder="seu@email.com"
+                      />
+                    </div>
+                    <div className="text-left">
+                      <label htmlFor="checkout-password" className="block text-[10px] font-black text-zinc-500 uppercase tracking-widest mb-2">Senha</label>
+                      <input 
+                        id="checkout-password"
+                        type="password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        className="fs-input text-center w-full"
+                        placeholder="Sua Senha"
+                        autoFocus
+                      />
+                    </div>
                     {localAuthError && <p className="text-[9px] text-red-500 font-black mt-4 uppercase tracking-widest">{localAuthError}</p>}
                     <button 
                       type="submit"

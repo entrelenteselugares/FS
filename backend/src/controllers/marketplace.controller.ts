@@ -45,7 +45,7 @@ export class MarketplaceController {
 
     if (req.user?.userId) {
       const dbUser = await prisma.user.findUnique({ where: { id: req.user.userId } });
-      if (!dbUser || (!dbUser.isVerified && dbUser.verificationStatus !== "APPROVED")) {
+      if (!dbUser || (dbUser.role === "PROFISSIONAL" && !dbUser.isVerified && dbUser.verificationStatus !== "APPROVED")) {
         return res.status(403).json({ error: "Sua conta de profissional ainda não foi aprovada pelo administrador. Aguarde a aprovação para criar vendas expressas." });
       }
     }

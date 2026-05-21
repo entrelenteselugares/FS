@@ -69,10 +69,10 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onSuccess, onClose }) => {
           </div>
 
           <div>
-            <label style={FieldLabel}>Senha</label>
+            <label htmlFor="auth-password" style={FieldLabel}>Senha</label>
             <div style={{ position: "relative" }}>
               <Lock size={14} style={{ position: "absolute", left: 16, top: 18, color: T.text3 }} />
-              <input style={{ ...FieldInput, paddingLeft: 48 }} type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="••••••••" required />
+              <input id="auth-password" style={{ ...FieldInput, paddingLeft: 48 }} type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="Sua Senha" required />
             </div>
           </div>
 

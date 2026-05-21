@@ -85,6 +85,7 @@ export class AuthController {
           whatsapp: true, 
           franchiseProfile: true,
           discoverySource: true,
+          referredById: true,
           profileImageUrl: true
         }
       });
