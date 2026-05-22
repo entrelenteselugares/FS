@@ -141,7 +141,7 @@ export default function ClienteArea() {
       { label: "Meus Dados", onClick: () => setActiveTab("profile"), isActive: activeTab === "profile", icon: <User size={18} /> },
     ];
 
-    if (user?.role === "PROFISSIONAL" || user?.role === "FRANCHISEE") {
+    if ((user?.role === "PROFISSIONAL" || user?.role === "FRANCHISEE") && user?.verificationStatus === "APPROVED") {
       items.push(
         { label: "ÁREA PROFISSIONAL", isHeader: true },
         { label: "Minha Agenda", onClick: () => setActiveTab("agenda"), isActive: activeTab === "agenda", icon: <Play size={18} /> },
@@ -157,7 +157,7 @@ export default function ClienteArea() {
       }
     }
 
-    if (user?.role === "CARTORIO" || user?.role === "UNIDADE") {
+    if ((user?.role === "CARTORIO" || user?.role === "UNIDADE") && user?.verificationStatus === "APPROVED") {
       items.push(
         { label: "ÁREA DA UNIDADE", isHeader: true },
         { label: "Agenda Unidade", onClick: () => setActiveTab("agenda"), isActive: activeTab === "agenda", icon: <Play size={18} /> },
@@ -373,10 +373,10 @@ export default function ClienteArea() {
   const aprovados = groupedEvents.filter(g => g.hasAprovado);
 
   const isProfessionalTab = ["agenda", "financeiro", "servicos", "calendar", "franquia"].includes(activeTab) && 
-    (user?.role === "PROFISSIONAL" || user?.role === "FRANCHISEE");
+    (user?.role === "PROFISSIONAL" || user?.role === "FRANCHISEE") && user?.verificationStatus === "APPROVED";
 
   const isUnitTab = ["agenda", "financeiro", "equipe", "calendar", "franquia", "configuracoes", "monitor"].includes(activeTab) && 
-    (user?.role === "CARTORIO" || user?.role === "UNIDADE");
+    (user?.role === "CARTORIO" || user?.role === "UNIDADE") && user?.verificationStatus === "APPROVED";
 
   return (
     <DashboardLayout title="Minha Conta" navItems={NAV_ITEMS}>
