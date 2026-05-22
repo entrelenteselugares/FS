@@ -83,3 +83,6 @@ Last activity: 2026-05-20 â€” Phase 54 (Professional Badges & Gamification Phase
 ## Backlog (Post-Launch)
 - Phase 55: Advanced Marketplace Analytics
 
+| 2026-05-22 | fast | Remover os grandes títulos redundantes do topo das páginas do dashboard | ? |
+| 2026-05-22 | fast | Corrigir nome e redirecionamento das ordens de cofre na Área do Cliente | ? |
+| 2026-05-22 | fast | Ocultar menu Profissional/Unidade até aprovação do cadastro | ? |
