@@ -9,28 +9,6 @@ interface DashboardHeaderProps {
 }
 
 export function DashboardHeader({ activeTab, viewTab, onViewTabChange, residentUnits = [], isVerified = false }: DashboardHeaderProps) {
-  const renderTitle = () => {
-    switch (activeTab) {
-      case "agenda":
-        return <>Meu <span className="text-brand-tactical">Cockpit</span></>;
-      case "convites":
-        return <>Central de <span className="text-brand-tactical">Convites</span></>;
-      case "financeiro":
-        return <>Fluxo de <span className="text-brand-tactical">Caixa</span></>;
-      case "network":
-        return <>Rede Tática de <span className="text-brand-tactical">Conexões</span></>;
-      case "servicos":
-        return <>Portfólio & <span className="text-brand-tactical">Serviços</span></>;
-      case "calendar":
-        return <>Agenda <span className="text-brand-tactical">Google</span></>;
-      case "perfil":
-        return <>Meu <span className="text-brand-tactical">Perfil</span></>;
-      case "franquia":
-        return <>Franquia <span className="text-brand-tactical">Print</span></>;
-      default:
-        return <>Gestão de <span className="text-brand-tactical">Ativos</span></>;
-    }
-  };
 
   return (
     <div className="relative border-b border-theme-border/60 pb-4 md:pb-6 space-y-4">

@@ -113,15 +113,7 @@ interface CalendarStatus {
   };
 }
 
-const PAGE_TITLES: Record<Tab, { title: string; subtitle: string; prefix: string }> = {
-  franquia: { title: "Franquia Print", subtitle: "Gestão de insumos e créditos phygital.", prefix: "Operações" },
-  monitor: { title: "Monitor de Fila", subtitle: "Acompanhamento em tempo real da produção.", prefix: "Logística" },
-  agenda: { title: "Agenda Tática", subtitle: "Próximas missões e eventos agendados.", prefix: "Estratégia" },
-  financas: { title: "Fluxo Financeiro", subtitle: "Consolidação de repasses e faturamento.", prefix: "Performance" },
-  equipe: { title: "Rede Técnica", subtitle: "Gestão de profissionais e portfólios.", prefix: "Recursos" },
-  calendar: { title: "Agenda Google", subtitle: "Sincronização de disponibilidade externa.", prefix: "Conectividade" },
-  configuracoes: { title: "Configuração", subtitle: "Ajustes de perfil e página pública.", prefix: "Painel" }
-};
+
 
 interface UnidadeFixaDashboardProps {
   noLayout?: boolean;
