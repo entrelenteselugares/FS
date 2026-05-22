@@ -8,7 +8,7 @@ import { test, expect, Page } from '@playwright/test';
  */
 
 const ROLES = {
-  ADMIN: 'matheuskurio@gmail.com', // Admin Master
+  ADMIN: 'contatofotosegundo@gmail.com', // Admin Master
   PROFESSIONAL: 'fotografo@brasil.com.br',
   UNIT: 'unidade-sp@brasil.com.br',
   FRANCHISE: 'franqueado-ouro@brasil.com.br',

@@ -282,9 +282,7 @@ export async function getMeuSaldoSummary(req: AuthRequest, res: Response): Promi
           { event: { captacaoId: userId } },
           { event: { edicaoId: userId } }
         ],
-        payoutSettlements: {
-          none: { userId: userId, status: "PAID" }
-        }
+        payoutStatus: { in: ["PENDING", "AVAILABLE"] }
       },
       select: {
         splitCaptacao: true,

@@ -1,7 +1,19 @@
 import { Response } from "express";
-import { AuthRequest } from "../middlewares/auth";
+import { AuthRequest } from "../lib/auth";
 import prisma from "../lib/prisma";
 import { ReportService } from "../services/report.service";
+
+// Tipo local para compatibilidade com ReportService
+interface SettlementRecord {
+  amount: number | string;
+  role: string;
+  orderId: string;
+  order: {
+    total: number | string;
+    createdAt: Date | string;
+    event?: { nomeNoivos?: string } | null;
+  };
+}
 
 /**
  * GET /api/profissional/reports/tax
@@ -22,19 +34,42 @@ export async function getTaxReport(req: AuthRequest, res: Response): Promise<voi
     const startOfMonth = new Date(y, m - 1, 1);
     const endOfMonth = new Date(y, m, 0, 23, 59, 59);
 
-    const settlements = await prisma.payoutSettlement.findMany({
+    const orders = await prisma.order.findMany({
       where: {
-        userId,
+        status: "APROVADO",
         createdAt: { gte: startOfMonth, lte: endOfMonth },
-        order: { status: "APROVADO" }
+        OR: [
+          { event: { captacaoId: userId } },
+          { event: { edicaoId: userId } }
+        ]
       },
       include: {
-        order: {
-          include: {
-            event: true
-          }
-        }
+        event: true
       }
+    });
+
+    const settlements: SettlementRecord[] = orders.map(o => {
+      let amount = 0;
+      let role = "";
+      if (o.event.captacaoId === userId) {
+        amount += Number(o.splitCaptacao || 0);
+        role += "CAPTAÇÃO";
+      }
+      if (o.event.edicaoId === userId) {
+        amount += Number(o.splitEdicao || 0);
+        role += (role ? " + " : "") + "EDIÇÃO";
+      }
+
+      return {
+        amount,
+        role,
+        orderId: o.id,
+        order: {
+          total: Number(o.valor),
+          createdAt: o.createdAt,
+          event: o.event
+        }
+      };
     });
 
     if (format === 'csv') {
@@ -60,7 +95,7 @@ export async function getTaxReport(req: AuthRequest, res: Response): Promise<voi
  */
 export async function getPayoutReceipt(req: AuthRequest, res: Response): Promise<void> {
   const userId = req.user?.userId;
-  const { id } = req.params;
+  const id = req.params.id as string;
 
   try {
     const payoutItem = await prisma.payoutItem.findUnique({
@@ -78,7 +113,11 @@ export async function getPayoutReceipt(req: AuthRequest, res: Response): Promise
       return;
     }
 
-    const pdfBuffer = await ReportService.generatePayoutReceiptPDF(payoutItem);
+    const pdfBuffer = await ReportService.generatePayoutReceiptPDF({
+      ...payoutItem,
+      amount: Number(payoutItem.amount),
+      payout: payoutItem.payout,
+    });
     res.setHeader('Content-Type', 'application/pdf');
     res.setHeader('Content-Disposition', `attachment; filename=recibo-repasse-${id}.pdf`);
     res.status(200).send(pdfBuffer);
@@ -101,24 +140,30 @@ export async function getCashflowProjection(req: AuthRequest, res: Response): Pr
     const thirtyDaysFromNow = new Date();
     thirtyDaysFromNow.setDate(now.getDate() + 30);
 
-    // Pegamos todos os settlements PENDING de pedidos APROVADO
-    const pendingSettlements = await prisma.payoutSettlement.findMany({
+    const pendingOrders = await prisma.order.findMany({
       where: {
-        userId,
-        status: "PENDING",
-        order: { status: "APROVADO" }
+        status: "APROVADO",
+        payoutStatus: "PENDING",
+        OR: [
+          { event: { captacaoId: userId } },
+          { event: { edicaoId: userId } }
+        ]
       },
       include: {
-        order: true
+        event: true
       }
     });
 
     // Mapeamos para semanas
     const projection: Record<string, number> = {};
 
-    pendingSettlements.forEach(s => {
+    pendingOrders.forEach(o => {
+      let amount = 0;
+      if (o.event.captacaoId === userId) amount += Number(o.splitCaptacao || 0);
+      if (o.event.edicaoId === userId) amount += Number(o.splitEdicao || 0);
+
       // Data de liberação = createdAt do pedido + 7 dias
-      const releaseDate = new Date(s.order.createdAt);
+      const releaseDate = new Date(o.createdAt);
       releaseDate.setDate(releaseDate.getDate() + 7);
 
       if (releaseDate >= now && releaseDate <= thirtyDaysFromNow) {
@@ -128,7 +173,7 @@ export async function getCashflowProjection(req: AuthRequest, res: Response): Pr
         const weekStart = new Date(releaseDate.setDate(diff));
         const weekLabel = `Semana ${weekStart.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' })}`;
 
-        projection[weekLabel] = (projection[weekLabel] || 0) + Number(s.amount);
+        projection[weekLabel] = (projection[weekLabel] || 0) + amount;
       }
     });
 
