@@ -19,6 +19,7 @@ export async function getMeusPedidos(req: AuthRequest, res: Response): Promise<v
         event: {
           select: {
             id: true,
+            slug: true,
             nomeNoivos: true,
             dataEvento: true,
             location: true,
@@ -77,6 +78,7 @@ export async function getMeuPedidoDetalhe(req: AuthRequest, res: Response): Prom
         event: {
           select: {
             id: true,
+            slug: true,
             nomeNoivos: true,
             dataEvento: true,
             location: true,

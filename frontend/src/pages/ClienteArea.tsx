@@ -44,6 +44,7 @@ interface Pedido {
   accessExpiresAt?: string | null;
   event: {
     id: string;
+    slug?: string | null;
     nomeNoivos: string;
     dataEvento: string;
     location: string;
@@ -76,6 +77,13 @@ interface Pedido {
 
 function formatCurrency(v: number) {
   return new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(Number(v));
+}
+
+function getEventUrl(event: Pedido['event']) {
+  if (event?.slug && event.slug.startsWith('vault-')) {
+    return `/meus-albuns/${event.slug.replace('vault-', '')}`;
+  }
+  return `/e/${event?.id}`;
 }
 
 function formatDate(d: string | null | undefined) {
@@ -809,7 +817,7 @@ export default function ClienteArea() {
             <PedidoDetalhe
               pedido={selected}
               loading={loadingDetalhe}
-              onGoToEvent={() => navigate(`/e/${selected.event?.id || selected.id}`)}
+              onGoToEvent={() => navigate(getEventUrl(selected.event))}
               onChangePrivacy={() => setIsPrivacyModalOpen(true)}
               onRefresh={fetchPedidos}
             />
@@ -970,7 +978,7 @@ function EventGroupRow({ group, now, onSelectPedido }: {
           {/* Actions */}
           <div className="shrink-0 flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
             <button 
-              onClick={() => firstPendente ? onSelectPedido(firstPendente) : navigate(`/e/${event.id}`)}
+              onClick={() => firstPendente ? onSelectPedido(firstPendente) : navigate(getEventUrl(event))}
               className="px-2.5 py-1.5 sm:px-4 sm:py-2 border border-theme-border text-theme-text hover:border-brand-tactical hover:text-brand-tactical text-[8px] sm:text-[9px] font-black uppercase tracking-widest transition-all rounded-lg italic text-center"
             >
               Ver Detalhes
@@ -1139,7 +1147,7 @@ function EventGroupRow({ group, now, onSelectPedido }: {
                     if (new Date(event.dataEvento).getTime() > now) {
                       handleAddServices();
                     } else {
-                      navigate(`/e/${event.id}`);
+                      navigate(getEventUrl(event));
                     }
                   }}
                   className="fs-btn border border-theme-border text-theme-text hover:border-brand-tactical hover:text-brand-tactical flex items-center gap-2"
@@ -1157,7 +1165,7 @@ function EventGroupRow({ group, now, onSelectPedido }: {
 
               {hasAprovado ? (
                 <button
-                  onClick={() => navigate(`/e/${event.id}`)}
+                  onClick={() => navigate(getEventUrl(event))}
                   className="fs-btn bg-brand-tactical text-brand-text shadow-lg shadow-brand-tactical/20 flex items-center gap-2"
                 >
                   Acessar Álbum <ArrowRight size={14} />

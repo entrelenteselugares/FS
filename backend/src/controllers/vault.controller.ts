@@ -527,16 +527,16 @@ export class VaultController {
       const shippingPrice = 15.00; // Carta Registrada
       const total = basePrice + shippingPrice;
 
-      // 3. Garantir Evento de Sistema
+      // 3. Garantir Evento Específico do Cofre
       let systemEvent = await prisma.event.findFirst({
-        where: { slug: "vaults-system" }
+        where: { slug: `vault-${album.id}` }
       });
 
       if (!systemEvent) {
         systemEvent = await prisma.event.create({
           data: {
-            slug: "vaults-system",
-            nomeNoivos: "System: Vaults Orders",
+            slug: `vault-${album.id}`,
+            nomeNoivos: album.nome,
             active: true,
             dataEvento: new Date(),
             ownerId: album.ownerId
