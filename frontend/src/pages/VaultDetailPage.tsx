@@ -524,7 +524,7 @@ export default function VaultDetailPage() {
                   }`}
                 >
                   <img 
-                    src={item.thumbnailLink || (import.meta.env.VITE_API_URL ? `${import.meta.env.VITE_API_URL.replace(/\/$/, '')}/vaults/media/proxy/${item.fileId}` : `/api/vaults/media/proxy/${item.fileId}`)} 
+                    src={item.thumbnailLink || `${import.meta.env.VITE_API_URL?.replace(/\/$/, '') || window.location.origin}/vaults/media/proxy/${item.fileId}`}
                     alt="Memory" 
                     className={`w-full h-full object-cover transition-transform duration-700 ${item.votedByMe ? 'scale-105' : 'group-hover:scale-110'}`}
                     onError={(e) => {

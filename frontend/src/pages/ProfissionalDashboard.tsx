@@ -505,13 +505,6 @@ export default function ProfissionalDashboard({
             )}
             {activeTab === "calendar" && (
               <div className="space-y-8 animate-in fade-in duration-500">
-                <div>
-                  <h2 className="text-3xl font-black text-theme-text uppercase tracking-tighter italic">
-                    Agenda <span className="text-brand-tactical">Google</span>
-                  </h2>
-                  <p className="text-[10px] text-theme-muted uppercase tracking-[0.4em] mt-2 font-black italic">Sincronização com seu Calendário Pessoal</p>
-                </div>
-
                 <div className="max-w-3xl space-y-6">
                   {!calendarStatus?.connected ? (
                     <div className="bg-theme-bg border border-theme-border rounded-2xl p-10 text-center space-y-6 shadow-2xl">
@@ -600,12 +593,6 @@ export default function ProfissionalDashboard({
             {activeTab === "franquia" && (
               user?.franchiseProfile ? (
                 <div className="space-y-8 animate-in fade-in duration-500">
-                  <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
-                    <div>
-                      <h2 className="text-4xl md:text-6xl font-display font-black text-theme-text uppercase tracking-tighter italic leading-none">Franquia <span className="text-brand-tactical">Print</span></h2>
-                      <p className="text-[11px] text-brand-tactical uppercase tracking-[0.4em] mt-4 font-black italic">Gestão de Créditos e Operações Phygital</p>
-                    </div>
-                  </div>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div className="bg-theme-bg border border-theme-border p-10 relative overflow-hidden group rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300">
                       <div className="absolute top-0 left-0 w-full h-1 bg-brand-tactical/20 group-hover:bg-brand-tactical transition-colors" />
