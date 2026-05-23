@@ -5,10 +5,9 @@ interface DashboardHeaderProps {
   viewTab: "lista" | "calendario";
   onViewTabChange: (tab: "lista" | "calendario") => void;
   residentUnits?: string[];
-  isVerified?: boolean;
 }
 
-export function DashboardHeader({ activeTab, viewTab, onViewTabChange, residentUnits = [], isVerified = false }: DashboardHeaderProps) {
+export function DashboardHeader({ activeTab, viewTab, onViewTabChange, residentUnits = [] }: DashboardHeaderProps) {
   const hasContent = residentUnits.length > 0 || activeTab === "agenda" || activeTab === "convites";
   if (!hasContent) return null;
 

@@ -400,7 +400,6 @@ export default function ProfissionalDashboard({
           viewTab={viewTab}
           onViewTabChange={setViewTab}
           residentUnits={residentUnits}
-          isVerified={profile?.user?.isVerified}
         />
 
         {/* ── Tab Content ──────────────────────────────────────────────────── */}
