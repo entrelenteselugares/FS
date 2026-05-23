@@ -232,3 +232,24 @@
 - [x] **VCONF-01**: Allow the owner to rename the vault/album after creation.
 - [x] **VCONF-02**: Implement a sorting mechanism for media (sort by name, upload date/time, creation date/time, file size, horizontal/vertical orientation).
 - [x] **VCONF-03**: Provide an access control panel to administer album participants (view members, remove guests).
+
+---
+
+### [ ] Phase 54: Custom Service Submission & Admin Approval (SVC-SUBMIT)
+
+**Goal:** Allow verified professionals and fixed points (Cartório/Unidade) to create custom services via a full-form page. Admin receives in-app + email notification and evaluates submissions in a dedicated "Pendentes" tab in the Catálogo de Serviços admin panel, deciding if the service goes to the network or stays exclusive.
+
+- [ ] **SVC-01**: Schema migration — add `submittedAt`, `reviewStatus`, `reviewNote`, `networkJustification`, `submittedByUserId` fields to `ProfessionalService` model.
+- [ ] **SVC-02**: Backend endpoints — `POST /profissional/services` (create custom service), `PATCH /profissional/services/:id` (edit when NEEDS_ADJUSTMENT), `GET /admin/services/pending`, `PATCH /admin/services/:id/review` (admin decision).
+- [ ] **SVC-03**: Professional UI — dedicated form page for service creation (nome, descrição, categoria, preço, duração, justificativa para a rede). Entry via "+ Criar Serviço Personalizado" button in Portfólio & Serviços.
+- [ ] **SVC-04**: Visual separation in Portfólio & Serviços — "Meus Serviços" section (top, with review badges) vs "Catálogo da Rede" section (bottom, import existing behavior).
+- [ ] **SVC-05**: Admin "Pendentes" tab in Catálogo de Serviços — list view of pending services with 4-action decision panel (Publicar na Rede / Manter Exclusivo / Solicitar Ajustes / Recusar).
+- [ ] **SVC-06**: Notifications — admin receives in-app + email on submission; creator receives in-app + email with result and reason on decision.
+
+**Success Criteria:**
+
+1. Verified professional can create a custom service and see it in "Meus Serviços" with "🔄 Pendente de Avaliação" badge.
+2. Admin sees a "Pendentes" tab with a count badge and can take all 4 decision actions.
+3. Both admin (on submission) and creator (on decision) receive in-app notification + email.
+4. "Publicar na Rede" creates a `ServiceCatalog` record visible to all; "Manter Exclusivo" leaves it exclusive; "Recusar" deactivates with reason; "Solicitar Ajustes" unlocks editing.
+
