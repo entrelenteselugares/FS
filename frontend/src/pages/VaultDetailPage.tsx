@@ -6,8 +6,8 @@ import { useAuth } from "../hooks/useAuth";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
   Lock, Upload, Heart, Share2, 
-  ChevronLeft, Loader2, Camera,
-  Printer, Zap, Star, Settings
+  ChevronLeft, ChevronRight, Loader2, Camera,
+  Printer, Zap, Star, Settings, X
 } from "lucide-react";
 import { Helmet } from "react-helmet-async";
 import { T } from "../lib/theme";
@@ -314,6 +314,32 @@ export default function VaultDetailPage() {
       default: return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
     }
   });
+
+  const handleNavigateMedia = useCallback((direction: 'prev' | 'next', e?: React.MouseEvent) => {
+    if (e) e.stopPropagation();
+    if (!selectedPhoto) return;
+    const currentIndex = sortedMedia.findIndex(m => m.id === selectedPhoto.id);
+    if (currentIndex === -1) return;
+    
+    if (direction === 'prev') {
+      const prevIndex = currentIndex > 0 ? currentIndex - 1 : sortedMedia.length - 1;
+      setSelectedPhoto(sortedMedia[prevIndex]);
+    } else {
+      const nextIndex = currentIndex < sortedMedia.length - 1 ? currentIndex + 1 : 0;
+      setSelectedPhoto(sortedMedia[nextIndex]);
+    }
+  }, [selectedPhoto, sortedMedia]);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (!selectedPhoto) return;
+      if (e.key === 'ArrowLeft') handleNavigateMedia('prev');
+      if (e.key === 'ArrowRight') handleNavigateMedia('next');
+      if (e.key === 'Escape') setSelectedPhoto(null);
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [selectedPhoto, handleNavigateMedia]);
 
   return (
     <div className="min-h-screen font-sans flex flex-col" style={{ background: T.bg, color: T.text }}>
@@ -649,19 +675,35 @@ export default function VaultDetailPage() {
             className="fixed inset-0 z-[200] flex items-center justify-center bg-black/95 p-4 md:p-10 backdrop-blur-sm"
             onClick={() => setSelectedPhoto(null)}
           >
+            {/* Prev Button */}
+            <button
+              onClick={(e) => handleNavigateMedia('prev', e)}
+              className="absolute left-2 md:left-10 z-[210] p-2 md:p-4 bg-white/10 hover:bg-white/20 border border-white/20 hover:border-white/50 text-white rounded-full backdrop-blur-md transition-all shadow-xl"
+            >
+              <ChevronLeft size={32} />
+            </button>
+            
+            {/* Next Button */}
+            <button
+              onClick={(e) => handleNavigateMedia('next', e)}
+              className="absolute right-2 md:right-10 z-[210] p-2 md:p-4 bg-white/10 hover:bg-white/20 border border-white/20 hover:border-white/50 text-white rounded-full backdrop-blur-md transition-all shadow-xl"
+            >
+              <ChevronRight size={32} />
+            </button>
+
             <motion.div
               initial={{ scale: 0.9, y: 20 }}
               animate={{ scale: 1, y: 0 }}
               exit={{ scale: 0.9, y: 20 }}
-              className="relative max-w-5xl w-full max-h-full flex flex-col items-center gap-6"
+              className="relative max-w-5xl w-full max-h-full flex flex-col items-center gap-6 z-[205]"
               onClick={(e) => e.stopPropagation()}
             >
               <button 
                 onClick={() => setSelectedPhoto(null)}
-                className="absolute -top-12 right-0 text-white/60 hover:text-white transition-colors"
+                className="absolute -top-12 right-0 text-white/60 hover:text-white transition-colors flex items-center"
               >
-                <Share2 size={24} className="rotate-45" /> {/* Close icon via Share2 rotation hack if X is missing */}
-                <span className="text-[10px] font-black uppercase tracking-widest ml-2">Fechar</span>
+                <X size={24} />
+                <span className="text-[10px] font-black uppercase tracking-widest ml-2 hidden md:inline">Fechar</span>
               </button>
 
               <div className="relative group w-full flex items-center justify-center">
