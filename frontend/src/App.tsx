@@ -120,7 +120,6 @@ const AnimatedRoutes = () => {
         <Route path="/clube" element={<ClubLandingPage />} />
         <Route path="/flash/:shortId" element={<FlashUnlockPage />} />
         <Route path="/suporte" element={<HelpPage />} />
-        <Route path="/gsd-audit-fix" element={<HelpPage />} />
         <Route path="/embaixador/:slug" element={<AmbassadorPage />} />
 
         {/* Redireciona para o painel correto */}
