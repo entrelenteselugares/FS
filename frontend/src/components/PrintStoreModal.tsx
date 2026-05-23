@@ -158,9 +158,9 @@ function AlbumPhotoGrid({ medias, selectedAlbumPhotos, toggleAlbumPhoto }: {
         rowCount={rowCount}
         rowHeight={itemSize}
         overscanCount={2}
-      >
-        {Row}
-      </List>
+        rowComponent={Row}
+        rowProps={{}}
+      />
     </div>
   );
 }
