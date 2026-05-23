@@ -408,6 +408,15 @@ export default function EventPage() {
     };
   }, [event?.tenantBrandColor]);
 
+  // Handle URL actions like ?action=print
+  useEffect(() => {
+    if (searchParams.get("action") === "print" && step === "success") {
+      // Delay slightly to ensure UI is ready
+      const timer = setTimeout(() => setShowPrintStore(true), 500);
+      return () => clearTimeout(timer);
+    }
+  }, [searchParams, step]);
+
   const handleUnlockClick = async () => { 
     if (!event) return;
     const isMarketplaceWithCart = isMarketplace && (eventCart.length > 0 || eventPhysicalItems.length > 0);

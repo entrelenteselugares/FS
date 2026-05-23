@@ -1112,7 +1112,8 @@ function EventGroupRow({ group, now, onSelectPedido }: {
                     if (new Date(event.dataEvento).getTime() > now) {
                       handleAddServices();
                     } else {
-                      navigate(getEventUrl(event));
+                      const url = getEventUrl(event);
+                      navigate(url.includes('?') ? `${url}&action=print` : `${url}?action=print`);
                     }
                   }}
                   className="fs-btn border border-theme-border text-theme-text hover:border-brand-tactical hover:text-brand-tactical flex items-center gap-2"
