@@ -684,13 +684,7 @@ return (
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                           {event.references.map((ref, i) => (
                             <div key={i} data-shortid={ref} data-testid={`photo-${ref}`} className="aspect-video bg-theme-bg-muted border border-theme-border/40 overflow-hidden group">
-                              {ref.startsWith('http') ? (
-                                <img src={ref} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="Referência" />
-                              ) : (
-                                <div className="w-full h-full flex items-center justify-center p-4 text-center text-[9px] font-black text-theme-text-muted uppercase tracking-widest italic">
-                                  {ref}
-                                </div>
-                              )}
+                                <img src={getProxyUrl(ref)} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="Referência" />
                             </div>
                           ))}
                         </div>

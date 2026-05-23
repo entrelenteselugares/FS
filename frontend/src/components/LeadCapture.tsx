@@ -46,25 +46,25 @@ const LeadCapture: React.FC<LeadCaptureProps> = ({ eventId }) => {
   }
 
   return (
-    <div className="p-8 bg-zinc-900/50 border border-white/5 space-y-6">
+    <div className="p-8 bg-theme-bg-muted border border-theme-border/40 space-y-6">
       <div className="space-y-1">
         <p className="text-[10px] font-black text-brand-tactical uppercase tracking-[0.4em] italic">Stay Tactical</p>
-        <h3 className="text-xl font-black uppercase italic tracking-tight text-white">Acesso Prioritário</h3>
+        <h3 className="text-xl font-black uppercase italic tracking-tight text-theme-text">Acesso Prioritário</h3>
       </div>
       
-      <p className="text-[9px] text-zinc-500 uppercase font-bold leading-relaxed">
+      <p className="text-[9px] text-theme-text-muted uppercase font-bold leading-relaxed">
         Cadastre seu e-mail para receber notificações em tempo real e cupons exclusivos.
       </p>
 
       <form onSubmit={handleSubmit} className="space-y-3">
         <div className="relative">
-          <Mail size={14} className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-600" />
+          <Mail size={14} className="absolute left-4 top-1/2 -translate-y-1/2 text-theme-text-muted" />
           <input 
             type="email" 
             placeholder="seu@email.com" 
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full bg-black border border-white/10 px-10 py-4 text-xs font-medium text-white placeholder:text-zinc-700 focus:border-brand-tactical transition-all outline-none"
+            className="w-full bg-theme-bg border border-theme-border/40 px-10 py-4 text-xs font-medium text-theme-text placeholder:text-theme-text-muted/50 focus:border-brand-tactical transition-all outline-none"
             required
           />
         </div>
