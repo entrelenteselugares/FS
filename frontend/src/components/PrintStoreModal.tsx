@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useLayoutEffect } from "react";
-import { FixedSizeList } from "react-window";
+import * as reactWindow from "react-window";
+const List = (reactWindow as any).List as React.ElementType;
 import { API } from "../lib/api";
 import { useCart } from "../hooks/useCart";
 import { useNavigate } from "react-router-dom";
@@ -153,15 +154,13 @@ function AlbumPhotoGrid({ medias, selectedAlbumPhotos, toggleAlbumPhoto }: {
 
   return (
     <div ref={containerRef} className="w-full h-full bg-theme-bg-muted/20">
-      <FixedSizeList
-        height={dimensions.height}
-        itemCount={rowCount}
-        itemSize={itemSize}
-        width={dimensions.width}
+      <List
+        rowCount={rowCount}
+        rowHeight={itemSize}
         overscanCount={2}
       >
         {Row}
-      </FixedSizeList>
+      </List>
     </div>
   );
 }
