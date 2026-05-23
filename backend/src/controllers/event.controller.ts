@@ -309,23 +309,19 @@ export class EventController {
           in: ['ALBUM_FULL', 'PHOTO_MARKETPLACE', 'FOTO_POINT', 'FLASH_EVENT']
         },
         // Filtro Tático: Eventos contratados (ALBUM_FULL) não pagos não aparecem na vitrine
-        // + Eventos de cofre (vault-*) nunca aparecem na vitrine pública
-        NOT: [
-          {
-            type: 'ALBUM_FULL',
-            pedidos: {
-              some: {
-                status: 'PENDENTE'
-              }
+        NOT: {
+          type: 'ALBUM_FULL',
+          pedidos: {
+            some: {
+              status: 'PENDENTE'
             }
-          },
-          {
-            slug: { startsWith: 'vault-' }
           }
-        ]
+        }
       };
 
-      const andConditions: any[] = [];
+      const andConditions: any[] = [
+        { NOT: { slug: { startsWith: 'vault-' } } }
+      ];
 
       if (city) {
         andConditions.push({
