@@ -151,6 +151,8 @@ export default function FullMonitor() {
   const [loading, setLoading] = useState(true);
   const [showQR, setShowQR] = useState(false);
   const [selected, setSelected] = useState<string[]>([]);
+  const [columns, setColumns] = useState<number>(4);
+  const [maxPhotos, setMaxPhotos] = useState<number>(8);
 
   const toggleSelect = (id: string) => {
     setSelected(prev =>
@@ -226,13 +228,45 @@ export default function FullMonitor() {
           {selected.length > 0 && (
             <div className="flex items-center gap-2 px-3 py-1 bg-brand-tactical/10 border border-brand-tactical/30 rounded-full">
               <Check size={12} className="text-brand-tactical" />
-              <span className="text-xs font-black text-brand-tactical uppercase tracking-widest">
+              <span className="text-xs font-black text-brand-tactical uppercase tracking-widest hidden md:inline">
                 {selected.length} selecionada{selected.length !== 1 ? "s" : ""}
+              </span>
+              <span className="text-xs font-black text-brand-tactical uppercase tracking-widest md:hidden">
+                {selected.length}
               </span>
             </div>
           )}
 
           <div className="ml-auto flex items-center gap-3">
+            {/* Grid Controls */}
+            <div className="hidden lg:flex items-center gap-2 mr-2 bg-theme-bg-muted/50 px-3 py-1.5 rounded-full border border-theme-border/50">
+              <label className="text-[10px] text-theme-text-muted uppercase font-bold tracking-widest">Colunas:</label>
+              <select 
+                value={columns} 
+                onChange={e => setColumns(Number(e.target.value))}
+                className="bg-transparent text-theme-text text-xs font-bold outline-none cursor-pointer"
+              >
+                <option value={2}>2</option>
+                <option value={3}>3</option>
+                <option value={4}>4</option>
+                <option value={5}>5</option>
+                <option value={6}>6</option>
+              </select>
+              <div className="w-[1px] h-3 bg-theme-border mx-1" />
+              <label className="text-[10px] text-theme-text-muted uppercase font-bold tracking-widest">Máx:</label>
+              <select 
+                value={maxPhotos} 
+                onChange={e => setMaxPhotos(Number(e.target.value))}
+                className="bg-transparent text-theme-text text-xs font-bold outline-none cursor-pointer"
+              >
+                <option value={4}>4</option>
+                <option value={8}>8</option>
+                <option value={12}>12</option>
+                <option value={16}>16</option>
+                <option value={24}>24</option>
+              </select>
+            </div>
+
             {/* Clear selection */}
             {selected.length > 0 && (
               <button
@@ -275,8 +309,11 @@ export default function FullMonitor() {
               </p>
             </div>
           ) : (
-            <section className="grid grid-cols-2 md:grid-cols-4 gap-5">
-              {prints.slice(0, 8).map(print => {
+            <section 
+              className="grid gap-5"
+              style={{ gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))` }}
+            >
+              {prints.slice(0, maxPhotos).map(print => {
                 const isSelected = selected.includes(print.id);
                 const photoUrl = `${window.location.origin}/flash/${print.referenceCode}`;
 
@@ -309,11 +346,11 @@ export default function FullMonitor() {
                     </div>
 
                     {/* ── Photo ─────────────────────────── */}
-                    <div className="relative overflow-hidden flex-grow bg-zinc-900">
+                    <div className="relative overflow-hidden flex-grow bg-zinc-900 flex items-center justify-center">
                       <img
                         src={print.imageUrl}
                         alt={print.referenceCode}
-                        className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                        className="absolute inset-0 w-full h-full object-contain transition-transform duration-500 group-hover:scale-105"
                         draggable={false}
                       />
 
