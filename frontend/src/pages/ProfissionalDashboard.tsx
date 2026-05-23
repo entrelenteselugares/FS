@@ -640,19 +640,19 @@ export default function ProfissionalDashboard({
                   {/* Histórico de Pedidos B2B */}
                   <div className="bg-theme-bg border border-theme-border p-8 space-y-6 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300">
                     <div className="flex items-center justify-between">
-                      <h3 className="text-xl font-display font-black text-white uppercase italic tracking-tight">Histórico de Pedidos</h3>
-                      <div className="h-px flex-1 bg-white/5 mx-6" />
+                      <h3 className="text-xl font-display font-black text-theme-text uppercase italic tracking-tight">Histórico de Pedidos</h3>
+                      <div className="h-px flex-1 bg-theme-border/20 mx-6" />
                     </div>
                     
                     {supplyOrders.length === 0 ? (
-                      <div className="py-12 text-center border border-dashed border-white/5 bg-white/[0.02] rounded-xl">
+                      <div className="py-12 text-center border border-dashed border-theme-border/20 bg-theme-bg-muted/30 rounded-xl">
                         <p className="text-[10px] text-theme-muted font-black uppercase tracking-widest">Nenhum pedido realizado</p>
                       </div>
                     ) : (
                       <div className="overflow-x-auto">
                         <table className="w-full text-left border-collapse">
                           <thead>
-                            <tr className="border-b border-white/5 text-[9px] font-black text-theme-muted uppercase tracking-widest">
+                            <tr className="border-b border-theme-border/20 text-[9px] font-black text-theme-text uppercase tracking-widest">
                               <th className="py-4 px-2">Data</th>
                               <th className="py-4 px-2">Itens</th>
                               <th className="py-4 px-2">Total</th>
@@ -661,12 +661,12 @@ export default function ProfissionalDashboard({
                           </thead>
                           <tbody>
                             {supplyOrders.map((order) => (
-                              <tr key={order.id} className="border-b border-white/5 hover:bg-white/[0.02] transition-colors">
-                                <td className="py-4 px-2 text-[10px] text-white font-mono">
+                              <tr key={order.id} className="border-b border-theme-border/20 hover:bg-theme-bg-muted/50 transition-colors">
+                                <td className="py-4 px-2 text-[10px] text-theme-text font-mono">
                                   {new Date(order.createdAt).toLocaleDateString('pt-BR')}
                                 </td>
                                 <td className="py-4 px-2">
-                                  <p className="text-[10px] text-white font-black uppercase italic">
+                                  <p className="text-[10px] text-theme-text font-black uppercase italic">
                                     {order.items?.map((it) => `${it.quantity}x ${it.name}`).join(", ") || "N/A"}
                                   </p>
                                 </td>
@@ -701,8 +701,8 @@ export default function ProfissionalDashboard({
                   {/* Histórico de Consumo (Insumos) */}
                   <div className="space-y-6">
                     <div className="flex items-center justify-between">
-                      <h3 className="text-xl font-display font-black text-white uppercase italic tracking-tight">Histórico de Consumo</h3>
-                      <div className="h-px flex-1 bg-white/5 mx-6" />
+                      <h3 className="text-xl font-display font-black text-theme-text uppercase italic tracking-tight">Histórico de Consumo</h3>
+                      <div className="h-px flex-1 bg-theme-border/20 mx-6" />
                     </div>
                     <div className="bg-theme-bg border border-theme-border overflow-hidden rounded-2xl shadow-xl">
                       <table className="w-full text-left border-collapse">

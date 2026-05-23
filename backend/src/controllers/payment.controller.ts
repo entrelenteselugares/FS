@@ -487,6 +487,21 @@ export class PaymentController {
                   }
                 }
 
+                // Notify admin about the B2B supply order
+                const adminUser = await prisma.user.findFirst({ where: { role: "ADMIN" } });
+                if (adminUser) {
+                  await prisma.notification.create({
+                    data: {
+                      userId: adminUser.id,
+                      type: "PAYMENT_CONFIRMED",
+                      title: "Nova Compra de Franqueado",
+                      body: `O franqueado ${supplyOrder.franchisee?.email || ''} realizou a compra do Pedido #${supplyOrder.id.slice(-6).toUpperCase()} no valor de R$ ${Number(supplyOrder.total).toFixed(2)}.`,
+                      refId: supplyOrder.id,
+                      refType: "supply_order"
+                    }
+                  }).catch(console.error);
+                }
+
                 console.log(`✅ Pedido de Suprimentos ${supplyOrder.id} aprovado e créditos processados via Webhook.`);
                 return res.json({ ok: true, type: "supply_order" });
               }
@@ -559,6 +574,52 @@ export class PaymentController {
             ...(isApproved && { status: "PAID" })
           }
         });
+
+        if (isApproved) {
+          const fullSupplyOrder = await prisma.supplyOrder.findUnique({
+            where: { id: supplyOrder.id },
+            include: { items: true, franchisee: { include: { franchiseProfile: true } } }
+          });
+          
+          if (fullSupplyOrder?.franchisee?.franchiseProfile) {
+            for (const item of fullSupplyOrder.items) {
+              if (item.productId.startsWith('credits_')) {
+                const amountStr = item.productId.split('_')[1];
+                const amount = parseInt(amountStr) * item.quantity;
+                if (!isNaN(amount) && amount > 0) {
+                  await prisma.$transaction([
+                    prisma.franchiseProfile.update({
+                      where: { id: fullSupplyOrder.franchisee.franchiseProfile.id },
+                      data: { printCredits: { increment: amount } }
+                    }),
+                    prisma.creditTransaction.create({
+                      data: {
+                        profileId: fullSupplyOrder.franchisee.franchiseProfile.id,
+                        amount: amount,
+                        type: 'PURCHASE',
+                        description: `Recarga via Checkout Pro #${fullSupplyOrder.id.slice(-6).toUpperCase()}`
+                      }
+                    })
+                  ]);
+                }
+              }
+            }
+
+            const adminUser = await prisma.user.findFirst({ where: { role: "ADMIN" } });
+            if (adminUser) {
+              await prisma.notification.create({
+                data: {
+                  userId: adminUser.id,
+                  type: "PAYMENT_CONFIRMED",
+                  title: "Nova Compra de Franqueado",
+                  body: `O franqueado ${fullSupplyOrder.franchisee?.email || ''} realizou a compra do Pedido #${fullSupplyOrder.id.slice(-6).toUpperCase()} no valor de R$ ${Number(fullSupplyOrder.total).toFixed(2)}.`,
+                  refId: fullSupplyOrder.id,
+                  refType: "supply_order"
+                }
+              }).catch(console.error);
+            }
+          }
+        }
 
         return res.json({
           success: true,
