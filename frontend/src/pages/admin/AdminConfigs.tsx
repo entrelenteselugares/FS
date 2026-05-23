@@ -69,7 +69,8 @@ const REQUIRED_INFRA: Array<{key: string; label: string; value: string}> = [
   { key: "brand_primary", label: "Cor Primária", value: "#0a0a0a" },
   { key: "brand_tactical", label: "Cor Tática", value: "#85B9AC" },
   { key: "maintenance_mode", label: "Modo Manutenção", value: "false" },
-  { key: "public_access", label: "Vitrine Global", value: "true" }
+  { key: "public_access", label: "Vitrine Global", value: "true" },
+  { key: "min_hourly_rate", label: "Valor Hora Mínimo (€)", value: "14" },
 ];
 
 export const AdminConfigs: React.FC = () => {
@@ -460,6 +461,54 @@ export const AdminConfigs: React.FC = () => {
                     })}
                  </div>
               </div>
+           </div>
+
+           {/* Pricing Policy Section */}
+           <div className="bg-theme-bg border border-brand-tactical/30 p-10 space-y-8 shadow-sm rounded-2xl">
+              <div className="flex items-center gap-4 border-b border-theme-border/30 pb-6">
+                 <DollarSign size={16} className="text-brand-tactical" />
+                 <div>
+                   <h3 className="text-[11px] font-black text-theme-text uppercase tracking-[0.4em]">Política de Precificação Mínima</h3>
+                   <p className="text-[9px] text-theme-muted uppercase tracking-widest mt-1">Piso de valor hora que o profissional não pode cobrar abaixo</p>
+                 </div>
+              </div>
+
+              {(() => {
+                const config = configs.find(c => c.key === "min_hourly_rate");
+                if (!config) return null;
+                const hourlyRate = Number(config.value) || 14;
+                return (
+                  <div className="space-y-6">
+                    <div className="space-y-3">
+                      <label className="text-[9px] font-black text-theme-muted uppercase tracking-[0.4em] block">Valor Hora Mínimo (€/hora)</label>
+                      <div className="flex items-center gap-4">
+                        <span className="text-2xl font-heading font-black text-brand-tactical italic">€</span>
+                        <input
+                          type="number"
+                          min="1"
+                          step="0.5"
+                          value={config.value}
+                          onChange={e => handleChange("min_hourly_rate", e.target.value)}
+                          className="flex-1 bg-theme-bg-muted border border-theme-border/60 rounded-2xl p-4 text-2xl font-heading font-black text-theme-text italic focus:outline-none focus:border-brand-tactical transition-all"
+                        />
+                        <span className="text-[9px] font-black text-theme-muted uppercase tracking-widest">/hora</span>
+                      </div>
+                      <p className="text-[9px] text-theme-muted uppercase italic font-bold">
+                        Salário mínimo da Irlanda: <span className="text-brand-tactical">€14/hora</span> — atualizar conforme legislação local.
+                      </p>
+                    </div>
+
+                    <div className="grid grid-cols-3 gap-3">
+                      {[60, 120, 180, 240, 360, 480].map(minutes => (
+                        <div key={minutes} className="p-4 bg-theme-bg-muted/40 border border-theme-border/20 rounded-xl text-center">
+                          <p className="text-[8px] font-black text-theme-muted uppercase tracking-widest mb-1">{minutes}min</p>
+                          <p className="text-base font-heading font-black text-brand-tactical italic">€{(hourlyRate * minutes / 60).toFixed(2)}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })()}
            </div>
 
            <div className="flex justify-center pt-10">

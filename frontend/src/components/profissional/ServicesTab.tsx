@@ -7,9 +7,10 @@ interface ServicesTabProps {
   onAddService: (cat: ServiceCatalog) => void;
   onRemoveService: (serviceId: string) => void;
   onOpenProfile: () => void;
+  minHourlyRate?: number;
 }
 
-export function ServicesTab({ profile, catalogServices, onAddService, onRemoveService, onOpenProfile }: ServicesTabProps) {
+export function ServicesTab({ profile, catalogServices, onAddService, onRemoveService, onOpenProfile, minHourlyRate = 14 }: ServicesTabProps) {
   return (
     <div className="space-y-6">
 
@@ -146,7 +147,7 @@ export function ServicesTab({ profile, catalogServices, onAddService, onRemoveSe
                     </div>
                     <div className="hidden sm:block w-1 h-1 rounded-full bg-theme-border" />
                     <div className="text-[9px] font-bold text-theme-muted uppercase tracking-widest italic">
-                      PREÇO MÍNIMO: R$ {Number(cat.basePrice).toFixed(2)}
+                      Mínimo: € {(minHourlyRate * cat.estimatedMinutes / 60).toFixed(2)}
                     </div>
                   </div>
                 </div>

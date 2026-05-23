@@ -70,6 +70,7 @@ export default function ProfissionalDashboard({
   const [catalogServices, setCatalogServices] = useState<ServiceCatalog[]>([]);
   const [network, setNetwork] = useState<Partner[]>([]);
   const [loading, setLoading] = useState(true);
+  const [minHourlyRate, setMinHourlyRate] = useState(14); // padrão €14/h da Irlanda
 
   // UI state
   const [localActiveTab, setLocalActiveTab] = useState<ActiveTab>("agenda");
@@ -179,8 +180,10 @@ export default function ProfissionalDashboard({
       API.get("profissional/network").then(r => setNetwork(r.data)),
       API.get("calendar/status").then(r => setCalendarStatus(r.data)),
       API.get("me/repasses").then(r => setPayouts(r.data)),
-      API.get("franchise/orders").then(r => setSupplyOrders(r.data.orders || []))
+      API.get("franchise/orders").then(r => setSupplyOrders(r.data.orders || [])),
+      API.get("public/configs/pricing").then(r => setMinHourlyRate(r.data.minHourlyRate || 14)).catch(() => {})
     ]).finally(() => setLoading(false));
+
 
     // Handle calendar return notifications
     const params = new URLSearchParams(window.location.search);
@@ -243,21 +246,23 @@ export default function ProfissionalDashboard({
     try {
       const suggestedPrice = Math.max(
         cat.basePrice,
-        ((profile?.hourlyRate || 150) * (cat.estimatedMinutes / 60)) * (profile?.equipmentMultiplier || 1.0)
+        ((profile?.hourlyRate || minHourlyRate) * (cat.estimatedMinutes / 60)) * (profile?.equipmentMultiplier || 1.0)
       );
 
       await API.post("profissional/services", { 
         catalogId: cat.id,
         name: cat.name,
         description: `Serviço de ${cat.name} importado do catálogo.`,
-        price: suggestedPrice
+        price: suggestedPrice,
+        estimatedMinutes: cat.estimatedMinutes
       });
       
       fetchProfile();
       showNotification(`Serviço "${cat.name}" importado com sucesso!`);
-    } catch (err) {
+    } catch (err: any) {
       console.error("Erro ao adicionar serviço:", err);
-      showNotification("Erro ao importar serviço do catálogo.", "error");
+      const detail = err?.response?.data?.details || err?.response?.data?.error || "Erro ao importar serviço do catálogo.";
+      showNotification(detail, "error");
     }
   };
 
@@ -500,8 +505,10 @@ export default function ProfissionalDashboard({
                 onAddService={handleAddService}
                 onRemoveService={handleRemoveService}
                 onOpenProfile={() => setActiveTab("perfil")}
+                minHourlyRate={minHourlyRate}
               />
             )}
+
             {activeTab === "calendar" && (
               <div className="space-y-8 animate-in fade-in duration-500">
                 <div className="max-w-3xl space-y-6">

@@ -110,3 +110,15 @@ export async function getPublicServices(_req: Request, res: Response): Promise<v
     res.status(500).json({ error: "Erro ao buscar serviços." });
   }
 }
+
+// GET /api/public/configs/pricing — expõe configurações de precificação pública
+export async function getPublicPricingConfigs(_req: Request, res: Response): Promise<void> {
+  try {
+    const config = await prisma.platformConfig.findUnique({ where: { key: "min_hourly_rate" } });
+    res.json({
+      minHourlyRate: config ? Number(config.value) : 14
+    });
+  } catch (err) {
+    res.status(500).json({ error: "Erro ao buscar configurações de precificação." });
+  }
+}

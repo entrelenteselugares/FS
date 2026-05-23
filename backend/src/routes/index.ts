@@ -58,7 +58,8 @@ import {
 import { getMeusPedidos, getMeuPedidoDetalhe, personalizePedido, uploadClientCover } from "../controllers/cliente.controller";
 import { CartorioController } from "../controllers/cartorio.controller";
 import { SEOController } from "../controllers/seo.controller";
-import { getConfigs, updateConfigs, getPublicThemeConfigs, getPublicServices } from "../controllers/config.controller";
+import { getConfigs, updateConfigs, getPublicThemeConfigs, getPublicServices, getPublicPricingConfigs } from "../controllers/config.controller";
+
 import { generateWeeklyPayout, listPayouts, markItemPaid, exportPayoutCSV, getMeusRepasses, getMeuSaldoSummary } from "../controllers/payout.controller";
 import {
   chooseAccessType,
@@ -348,6 +349,7 @@ router.get("/public/unidade-fixa/:slug",   getPartnerLandingData);
 // ── Configurações Públicas ─────────────────────────────────────────────────────
 router.get("/public/configs/theme",        getPublicThemeConfigs);
 router.get("/public/configs/services",     getPublicServices);
+router.get("/public/configs/pricing",      getPublicPricingConfigs);
 router.get("/public/service-catalog",      ServiceCatalogController.adminListServiceCatalog); // Reutilizando a listagem para público
 
 // ── Gamificação Pública ───────────────────────────────────────────────────────

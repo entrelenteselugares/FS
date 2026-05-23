@@ -720,10 +720,25 @@ export async function addProService(req: AuthRequest, res: Response): Promise<vo
     const prof = await prisma.profissional.findUnique({ where: { userId } });
     if (!prof) { res.status(404).json({ error: "Profissional não encontrado." }); return; }
 
-    const { catalogId, name, description, price } = req.body;
+    const { catalogId, name, description, price, estimatedMinutes } = req.body;
     if (!name || price === undefined) {
       res.status(400).json({ error: "Nome e preço são obrigatórios." });
       return;
+    }
+
+    // Valida preço mínimo por hora configurado pelo admin
+    const minHourlyConfig = await prisma.platformConfig.findUnique({ where: { key: "min_hourly_rate" } });
+    const minHourlyRate = minHourlyConfig ? Number(minHourlyConfig.value) : 14; // padrão: €14/h
+    
+    if (estimatedMinutes && Number(estimatedMinutes) > 0) {
+      const minPriceForService = minHourlyRate * (Number(estimatedMinutes) / 60);
+      if (Number(price) < minPriceForService) {
+        res.status(400).json({
+          error: `Preço abaixo do mínimo.`,
+          details: `Para um serviço de ${estimatedMinutes} minutos, o valor mínimo é €${minPriceForService.toFixed(2)} (baseado em €${minHourlyRate}/hora mínima).`
+        });
+        return;
+      }
     }
 
     const service = await prisma.professionalService.create({
