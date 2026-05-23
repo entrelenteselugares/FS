@@ -126,27 +126,7 @@ export default function VaultDetailPage() {
     }
   };
 
-  const handleCheckout = async () => {
-    if (!vault) return;
-    setCheckingOut(true);
-    try {
-      const res = await api.post(`/vaults/${vaultId}/checkout`);
-      if (res.data.orderId) {
-        navigate(`/checkout?orderId=${res.data.orderId}`);
-      } else if (res.data.init_point) {
-        // Fallback
-        window.location.href = res.data.init_point;
-      } else {
-        alert("Erro ao gerar link de pagamento.");
-      }
-    } catch (err: unknown) {
-      console.error("[Checkout] Erro:", err);
-      const msg = (err as { response?: { data?: { error?: string } } }).response?.data?.error || "Erro ao processar materialização do álbum.";
-      alert(msg);
-    } finally {
-      setCheckingOut(false);
-    }
-  };
+
 
   const handleSubscribe = async () => {
     if (!vault) return;
