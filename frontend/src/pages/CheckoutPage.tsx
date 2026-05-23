@@ -153,6 +153,10 @@ export const CheckoutPage = () => {
     API.get(`/public/orders/${effectiveOrderId}`)
       .then(({ data }) => {
         setOrder(data);
+        // If this order is already approved, clear the cached ID so next purchase works fresh
+        if (data.status === 'APROVADO') {
+          localStorage.removeItem('fs_last_order_id');
+        }
         // Pre-fill shipping if available in the order record
         if (data.shippingAddress) {
           try {
@@ -424,6 +428,7 @@ export const CheckoutPage = () => {
     const slug = order.event.slug || order.event.id;
     localStorage.removeItem(`fs_order_${slug}`);
     localStorage.removeItem(`fs_cart_${order.event.id}`);
+    localStorage.removeItem('fs_last_order_id'); // ← clear so next purchase starts fresh
 
     const timer = setTimeout(() => {
        if (order.eventId === "FRANCHISE_SHOP") {
@@ -659,6 +664,9 @@ export const CheckoutPage = () => {
           }))
         });
         localStorage.setItem('fs_last_order_id', data.orderId);
+        // Clear the physical cart items — they are now recorded in the backend order
+        localStorage.removeItem('fs_cart_physical');
+        localStorage.removeItem('fs_cart_digital');
         navigate(`/checkout/${data.orderId}`);
         window.location.reload(); // Force reload to trigger order fetch
       } catch (err) {
@@ -727,14 +735,28 @@ export const CheckoutPage = () => {
           Identidade de <br/> Compra Expirada
         </h2>
         <p className="text-[10px] text-theme-text-muted font-black uppercase tracking-[0.2em] leading-relaxed max-w-xs mx-auto">
-          {error || "Sua sessão de pagamento não foi localizada ou expirou. Volte ao evento para gerar um novo link de checkout."}
+          {error || "Sua sess\u00e3o de pagamento n\u00e3o foi localizada ou expirou. Volte ao evento para gerar um novo link de checkout."}
         </p>
-        <div className="pt-8">
+        <div className="pt-8 space-y-3">
           <button 
-            onClick={() => navigate("/")}
+            onClick={() => {
+              localStorage.removeItem('fs_last_order_id');
+              localStorage.removeItem('fs_cart_physical');
+              localStorage.removeItem('fs_cart_digital');
+              navigate('/');
+            }}
             className="w-full py-5 bg-brand-tactical text-black text-[10px] font-black uppercase tracking-[0.4em] hover:bg-white transition-all italic shadow-2xl"
           >
-            Voltar para a Vitrine
+            Limpar e Voltar para a Vitrine
+          </button>
+          <button 
+            onClick={() => {
+              localStorage.removeItem('fs_last_order_id');
+              window.location.reload();
+            }}
+            className="w-full py-4 border border-theme-border/40 text-theme-text-muted text-[9px] font-black uppercase tracking-[0.2em] hover:border-theme-border transition-all"
+          >
+            Tentar Novamente
           </button>
         </div>
       </div>

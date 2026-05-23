@@ -284,7 +284,7 @@ export class AuthController {
                 }
               }
             },
-            gamificationLogs: {
+            gamificationLedger: {
               orderBy: { createdAt: 'desc' },
               take: 20
             }
