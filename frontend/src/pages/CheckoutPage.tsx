@@ -722,15 +722,15 @@ export const CheckoutPage = () => {
     <div className="min-h-screen bg-theme-bg flex flex-col items-center justify-center p-8 text-center">
       <div className="space-y-6 max-w-md animate-in fade-in slide-in-from-bottom-8 duration-700">
         <h2 className="text-4xl md:text-5xl font-heading font-black text-red-500 uppercase italic tracking-tighter leading-none">
-          Protocolo não <br/> localizado
+          Identidade de <br/> Compra Expirada
         </h2>
         <p className="text-[10px] text-theme-text-muted font-black uppercase tracking-[0.2em] leading-relaxed max-w-xs mx-auto">
-          {error || "Não conseguimos identificar seu protocolo de pagamento ativo."}
+          {error || "Sua sessão de pagamento não foi localizada ou expirou. Volte ao evento para gerar um novo link de checkout."}
         </p>
         <div className="pt-8">
           <button 
             onClick={() => navigate("/")}
-            className="w-full py-5 bg-zinc-800 text-white text-[10px] font-black uppercase tracking-[0.4em] hover:bg-brand-tactical hover:text-black transition-all italic shadow-2xl rounded-2xl"
+            className="w-full py-5 bg-brand-tactical text-black text-[10px] font-black uppercase tracking-[0.4em] hover:bg-white transition-all italic shadow-2xl"
           >
             Voltar para a Vitrine
           </button>

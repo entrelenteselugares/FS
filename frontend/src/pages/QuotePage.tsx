@@ -735,7 +735,7 @@ export const QuotePage = () => {
               {(locationType === "OTHER" || (locationType === "PARTNER" && !currentPartner?.hideDuration)) && (
                 <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                    <label style={{ fontSize: 9, fontWeight: 800, textTransform: "uppercase", color: THEME.text2, letterSpacing: 1 }}>Duração do Registro</label>
+                    <label style={{ fontSize: 10, fontWeight: 900, textTransform: "uppercase", color: THEME.text2, letterSpacing: 1 }}>Duração do Registro</label>
                     <span style={{ fontSize: 11, fontWeight: 900, color: THEME.accent }}>{eventHours} HORAS</span>
                   </div>
                   <div style={{ position: "relative", display: "flex", alignItems: "center", opacity: (locationType === "PARTNER" && currentPartner?.fixedTime) ? 0.6 : 1 }}>
@@ -767,7 +767,7 @@ export const QuotePage = () => {
               {(locationType === "OTHER" || (locationType === "PARTNER" && !currentPartner?.hideDuration)) && (
                 <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                    <label style={{ fontSize: 9, fontWeight: 800, textTransform: "uppercase", color: THEME.text2, letterSpacing: 1 }}>Quantidade de Dias</label>
+                    <label style={{ fontSize: 10, fontWeight: 900, textTransform: "uppercase", color: THEME.text2, letterSpacing: 1 }}>Quantidade de Dias</label>
                     <span style={{ fontSize: 11, fontWeight: 900, color: THEME.accent }}>{eventDays} {eventDays === 1 ? 'DIA' : 'DIAS'}</span>
                   </div>
                   <div style={{ position: "relative", display: "flex", alignItems: "center", opacity: (locationType === "PARTNER") ? 0.6 : 1 }}>
