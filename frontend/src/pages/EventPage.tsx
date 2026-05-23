@@ -634,7 +634,7 @@ return (
               </motion.div>
               
               <div className="pt-8">
-                <button onClick={handleShare} className="px-12 py-5 border border-brand-tactical/30 text-[10px] font-black text-brand-tactical uppercase tracking-[0.4em] hover:bg-brand-tactical hover:text-black transition-all italic flex items-center gap-3">
+                <button onClick={handleShare} className="px-12 py-5 border border-brand-tactical/30 text-[10px] font-black text-brand-tactical uppercase tracking-[0.4em] hover:bg-brand-tactical hover:text-black transition-all italic flex items-center gap-3 hover-lift">
                   <Share2 size={16} /> CONVIDAR AMIGOS
                 </button>
               </div>
@@ -690,7 +690,7 @@ return (
                     {event.references && event.references.length > 0 && (
                       <div className="space-y-6 pt-4">
                         <p className="text-[10px] font-black text-theme-text-muted uppercase tracking-[0.4em]">Referências Técnicas</p>
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
                           {event.references.map((ref, i) => {
                             const isBase64Image = /^data:image\//i.test(ref);
                             const isHttpUrl = /^https?:\/\//i.test(ref);
@@ -702,11 +702,11 @@ return (
                             };
 
                             return isBase64Image || isHttpUrl ? (
-                              <div key={i} data-shortid={ref} data-testid={`photo-${ref}`} className="aspect-video bg-theme-bg-muted border border-theme-border/40 overflow-hidden group">
+                              <div key={i} data-shortid={ref} data-testid={`photo-${ref}`} className="aspect-square bg-theme-bg-muted border border-theme-border/20 overflow-hidden group hover-lift rounded-xl cursor-pointer">
                                   <img src={isBase64Image ? ref : getNormalizedUrl(ref)} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="Referência" />
                               </div>
                             ) : (
-                              <div key={i} className="aspect-video bg-theme-bg-muted border border-theme-border/40 overflow-hidden group p-4 flex items-center justify-center text-center">
+                              <div key={i} className="aspect-video bg-theme-bg-muted border border-theme-border/20 overflow-hidden group p-6 flex items-center justify-center text-center hover-lift rounded-xl">
                                   <span className="text-[10px] font-black uppercase tracking-widest text-theme-text/80 leading-relaxed italic line-clamp-3">{ref}</span>
                               </div>
                             );
@@ -1101,7 +1101,7 @@ return (
                       {(isMarketplace || (!event.hasAccess && (event.isPrimaryClient || event.isOwner))) && (
                         <button 
                           onClick={handleUnlockClick} 
-                          className="group relative w-full h-28 bg-brand-tactical text-black font-black uppercase tracking-[0.4em] text-xs flex items-center justify-center gap-5 overflow-hidden transition-all hover:scale-[1.02] shadow-2xl shadow-brand-tactical/30 italic"
+                          className="group relative w-full h-24 rounded-xl bg-brand-tactical text-black font-black uppercase tracking-[0.4em] text-xs flex items-center justify-center gap-5 overflow-hidden transition-all shadow-2xl shadow-brand-tactical/30 italic hover-lift"
                         >
                           <div className="absolute inset-0 bg-white translate-x-[-100%] group-hover:translate-x-0 transition-transform duration-700 opacity-20" />
                           <span className="relative z-10">

@@ -201,7 +201,8 @@ export default function FullMonitor() {
   }
 
   return (
-    <div className="min-h-screen bg-theme-bg text-theme-text font-sans selection:bg-brand-tactical/30 relative">
+    <div data-theme="dark" className="min-h-screen bg-theme-bg text-theme-text font-sans selection:bg-brand-tactical/30 relative overflow-hidden">
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(20,184,166,0.08),transparent_70%)] pointer-events-none" />
       {/* ── Inject print-specific styles ───────────────────────────────── */}
       <style dangerouslySetInnerHTML={{ __html: PRINT_STYLES }} />
 
@@ -356,11 +357,13 @@ export default function FullMonitor() {
         </main>
 
         {/* ── Permanent floating QR (bottom-right) ──────────────────── */}
-        <div className="fixed bottom-8 right-8 z-40 bg-white p-5 rounded-3xl shadow-2xl flex flex-col items-center gap-4 w-56 border-4 border-brand-tactical/20 print:hidden animate-in fade-in slide-in-from-bottom-8 duration-700">
-          <QRCodeSVG value={captureUrl} size={180} level="H" />
-          <div className="text-center w-full bg-zinc-100 p-2 rounded-xl">
-            <p className="text-[10px] font-black text-zinc-500 uppercase tracking-widest leading-none mb-1">Escaneie para</p>
-            <p className="text-sm font-black text-brand-tactical uppercase tracking-widest">Enviar Fotos</p>
+        <div className="fixed bottom-8 right-8 z-40 bg-white/10 backdrop-blur-md p-6 rounded-3xl shadow-2xl flex flex-col items-center gap-4 w-56 border border-white/20 print:hidden animate-in fade-in slide-in-from-bottom-8 duration-700 hover-lift">
+          <div className="bg-white p-3 rounded-2xl w-full flex justify-center">
+            <QRCodeSVG value={captureUrl} size={160} level="H" />
+          </div>
+          <div className="text-center w-full bg-brand-tactical p-3 rounded-xl shadow-inner">
+            <p className="text-[9px] font-black text-black/60 uppercase tracking-widest leading-none mb-1">Escanear para</p>
+            <p className="text-sm font-black text-black uppercase tracking-widest">Enviar Fotos</p>
           </div>
         </div>
 
