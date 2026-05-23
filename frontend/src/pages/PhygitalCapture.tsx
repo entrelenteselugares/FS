@@ -371,9 +371,9 @@ export default function PhygitalCapture() {
           </div>
 
           {error && (
-            <div className="p-4 bg-red-500/10 border border-red-500/20 rounded-xl flex items-center gap-3 text-red-500 text-[11px] font-bold uppercase tracking-widest">
-              <AlertCircle size={18} />
-              {error}
+            <div className="p-4 bg-red-500/10 border border-red-500/20 rounded-xl flex items-center gap-3 text-red-500 text-[11px] font-bold uppercase tracking-widest text-left">
+              <AlertCircle size={18} className="shrink-0" />
+              <span>{typeof error === 'string' ? error : (error as any).message || JSON.stringify(error)}</span>
             </div>
           )}
 
