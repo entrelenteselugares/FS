@@ -100,8 +100,17 @@ test.describe('🏁 Launch Certification Suite v3.2', () => {
     await expect(page.getByRole('heading', { name: /Meus Álbuns/i })).toBeVisible();
     
     // Verifica se a página carrega corretamente (pode ter álbuns ou estado vazio)
+    const emptyStateLocator = page.getByText(/NENHUM ÁLBUM AINDA|Crie seu primeiro/i).first();
     const albumCard = page.locator('div[class*="cursor-pointer"]').first();
-    const hasAlbums = await albumCard.isVisible().catch(() => false);
+    
+    // Aguarda que pelo menos um dos dois esteja visível
+    await expect(async () => {
+      const isCardVisible = await albumCard.isVisible();
+      const isEmptyVisible = await emptyStateLocator.isVisible();
+      expect(isCardVisible || isEmptyVisible).toBeTruthy();
+    }).toPass({ timeout: 10000 });
+
+    const hasAlbums = await albumCard.isVisible();
     
     if (hasAlbums) {
       // Se há álbuns, clica no primeiro para verificar as fotos (Teste do Hotfix v3.2)
@@ -111,7 +120,7 @@ test.describe('🏁 Launch Certification Suite v3.2', () => {
       await expect(images.first()).toBeVisible({ timeout: 15000 });
     } else {
       // Verifica o estado vazio está renderizado corretamente
-      await expect(page.getByText(/NENHUM ÁLBUM AINDA|Crie seu primeiro/i).first()).toBeVisible();
+      await expect(emptyStateLocator).toBeVisible();
     }
     
     console.log('[ROBOT] ✅ Certificação Cliente Concluída.');

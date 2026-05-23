@@ -874,12 +874,21 @@ export class EventController {
     try {
       const events = await prisma.event.findMany({
         where: {
-          OR: [
-            { captacaoId: userId, captacaoStatus: { not: "REJECTED" } },
-            { edicaoId: userId, edicaoStatus: { not: "REJECTED" } },
-            { cartorioUserId: userId },
-            { ownerId: userId },
-            { isPublicCall: true, captacaoId: null, captacaoStatus: "PENDING" }
+          AND: [
+            {
+              OR: [
+                { captacaoId: userId, captacaoStatus: { not: "REJECTED" } },
+                { edicaoId: userId, edicaoStatus: { not: "REJECTED" } },
+                { cartorioUserId: userId },
+                { ownerId: userId },
+                { isPublicCall: true, captacaoId: null, captacaoStatus: "PENDING" }
+              ]
+            },
+            {
+              NOT: {
+                slug: { startsWith: "vault-" }
+              }
+            }
           ]
         },
         orderBy: { dataEvento: "desc" },
