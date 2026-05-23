@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { createPortal } from "react-dom";
 import { useEventStatus } from "../hooks/useEventStatus";
-import { Check, Printer, QrCode, ShoppingCart, Share2, ChevronRight, ChevronLeft, Image as ImageIcon, Camera, MapPin, ListChecks, Clock, ShieldCheck, CheckCircle2, Lock, UserCircle, Search, X, Link } from "lucide-react";
+import { Check, Printer, QrCode, ShoppingCart, Share2, ChevronRight, ChevronLeft, Image as ImageIcon, Camera, MapPin, ListChecks, Clock, ShieldCheck, CheckCircle2, Lock, UserCircle, Search, X, ExternalLink } from "lucide-react";
 import { QRCodeCanvas } from "qrcode.react";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { API as api } from "../lib/api";
@@ -719,7 +719,7 @@ return (
                               try { domain = new URL(ref).hostname; } catch(e){}
                               return (
                                 <a key={i} href={ref} target="_blank" rel="noopener noreferrer" className="aspect-square bg-theme-bg-muted border border-theme-border/20 overflow-hidden group p-6 flex flex-col items-center justify-center text-center hover-lift rounded-xl text-theme-text/80 hover:text-brand-tactical transition-colors">
-                                    <Link size={24} className="mb-3 opacity-50 group-hover:opacity-100" />
+                                    <ExternalLink size={24} className="mb-3 opacity-50 group-hover:opacity-100" />
                                     <span className="text-[10px] font-black uppercase tracking-widest leading-relaxed italic break-all line-clamp-3">{domain}</span>
                                 </a>
                               );
