@@ -3,7 +3,7 @@ import { useSearchParams, useNavigate } from "react-router-dom";
 
 import { API } from "../lib/api";
 import { QRCodeSVG } from "qrcode.react";
-import { QrCode, Copy, Check, X, Download, Calendar, DollarSign, Settings, Users2, Camera, Star, ShieldCheck, ArrowRight, Share2, MapPin, Phone, UserCircle, Printer, AlertTriangle, Play, RefreshCw, Activity } from "lucide-react";
+import { QrCode, Copy, Check, X, Download, Calendar, DollarSign, Settings, Users2, Camera, Star, ShieldCheck, ArrowRight, Share2, MapPin, Phone, Printer, AlertTriangle, Play, RefreshCw, Activity } from "lucide-react";
 import { useAuth } from "../hooks/useAuth";
 import { DashboardLayout, type NavItem } from "../components/DashboardLayout";
 import { TeamTab } from "../components/profissional/TeamTab";
@@ -22,7 +22,6 @@ interface UnidadeStats {
     franchiseProfile?: {
       tier: "BRONZE" | "SILVER" | "GOLD" | "DIAMOND";
       approvedSalesVolume: number;
-      printCredits: number;
     } | null;
   };
 }
@@ -87,6 +86,24 @@ function formatCurrency(v: number) {
   return new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(Number(v));
 }
 
+function formatDate(d: string | null | undefined) {
+  if (!d) return "—";
+  const date = new Date(d);
+  if (isNaN(date.getTime())) return "—";
+  return new Intl.DateTimeFormat("pt-BR", {
+    day: "2-digit", month: "short", year: "numeric",
+  }).format(date);
+}
+
+function formatDateTime(d: string | null | undefined) {
+  if (!d) return "—";
+  const date = new Date(d);
+  if (isNaN(date.getTime())) return "—";
+  return new Intl.DateTimeFormat("pt-BR", {
+    day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit",
+  }).format(date);
+}
+
 export type Tab = "agenda" | "financas" | "equipe" | "configuracoes" | "franquia" | "monitor" | "calendar";
 
 interface CalendarStatus {
@@ -146,6 +163,8 @@ export default function UnidadeFixaDashboard({
    const [disabledServices, setDisabledServices] = useState<string[]>([]);
    const [savingLp, setSavingLp] = useState(false);
   const [savingPix, setSavingPix] = useState(false);
+  const [qrModalEvent, setQrModalEvent] = useState<EventoAgenda | null>(null);
+  const [copied, setCopied] = useState(false);
   const [isFlashModalOpen, setIsFlashModalOpen] = useState(false);
   const [isShopModalOpen, setIsShopModalOpen] = useState(false);
 
@@ -315,6 +334,22 @@ export default function UnidadeFixaDashboard({
       .then(r => setCalendarStatus(r.data))
       .catch(err => console.error("Erro ao buscar status do calendário:", err));
   }, []);
+
+  const handleConnectCalendar = () => {
+    window.location.href = `${API.defaults.baseURL}/calendar/connect?token=${localStorage.getItem("fs_token")}`;
+  };
+
+  const handleDisconnectCalendar = async () => {
+    if (!confirm("Deseja realmente desconectar seu Google Calendar? Isso removerá os bloqueios automáticos da sua vitrine.")) return;
+    try {
+      await API.delete("calendar/disconnect");
+      setSuccess("Calendário desconectado.");
+      fetchCalendarStatus();
+    } catch (err) {
+      console.error("[Calendar] Erro ao desconectar:", err);
+      setError("Erro ao desconectar.");
+    }
+  };
 
   const handleManualSync = async () => {
     setIsSyncing(true);

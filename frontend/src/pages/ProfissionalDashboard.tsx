@@ -43,7 +43,7 @@ interface SupplyOrder {
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
-export type ActiveTab = "agenda" | "convites" | "financeiro" | "servicos" | "network" | "franquia" | "calendar" | "perfil";
+export type ActiveTab = "agenda" | "convites" | "financeiro" | "servicos" | "network" | "franquia" | "calendar" | "perfil" | "equipe";
 type ViewTab = "lista" | "calendario";
 
 // ─── Main Component ────────────────────────────────────────────────────────────

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { API } from "../../lib/api";
-import { Users2, Star, UserCircle, ArrowRight } from "lucide-react";
+import { Users2, Star, UserCircle } from "lucide-react";
 
 interface ProfissionalEquipe {
   id: string;
