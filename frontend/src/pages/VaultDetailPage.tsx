@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Navbar } from "../components/Navbar";
 import { API as api } from "../lib/api";
@@ -181,6 +181,53 @@ export default function VaultDetailPage() {
     }
   }, [user, navigate, fetchVaultDetails]);
 
+  const sortedMedia = useMemo(() => {
+    return [...media].sort((a, b) => {
+      switch (sortConfig) {
+        case "UPLOAD_ASC": return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+        case "EXIF_ASC": {
+          const da = a.originalDate ? new Date(a.originalDate).getTime() : new Date(a.createdAt).getTime();
+          const db = b.originalDate ? new Date(b.originalDate).getTime() : new Date(b.createdAt).getTime();
+          return da - db;
+        }
+        case "SIZE_DESC": return (b.fileSize || 0) - (a.fileSize || 0);
+        case "ORIENTATION_HORZ": {
+          const isAHorz = (a.width || 0) > (a.height || 0);
+          const isBHorz = (b.width || 0) > (b.height || 0);
+          return isAHorz === isBHorz ? 0 : isAHorz ? -1 : 1;
+        }
+        case "UPLOAD_DESC":
+        default: return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+      }
+    });
+  }, [media, sortConfig]);
+
+  const handleNavigateMedia = useCallback((direction: 'prev' | 'next', e?: React.MouseEvent) => {
+    if (e) e.stopPropagation();
+    if (!selectedPhoto) return;
+    const currentIndex = sortedMedia.findIndex(m => m.id === selectedPhoto.id);
+    if (currentIndex === -1) return;
+    
+    if (direction === 'prev') {
+      const prevIndex = currentIndex > 0 ? currentIndex - 1 : sortedMedia.length - 1;
+      setSelectedPhoto(sortedMedia[prevIndex]);
+    } else {
+      const nextIndex = currentIndex < sortedMedia.length - 1 ? currentIndex + 1 : 0;
+      setSelectedPhoto(sortedMedia[nextIndex]);
+    }
+  }, [selectedPhoto, sortedMedia]);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (!selectedPhoto) return;
+      if (e.key === 'ArrowLeft') handleNavigateMedia('prev');
+      if (e.key === 'ArrowRight') handleNavigateMedia('next');
+      if (e.key === 'Escape') setSelectedPhoto(null);
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [selectedPhoto, handleNavigateMedia]);
+
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files || files.length === 0) return;
@@ -295,51 +342,6 @@ export default function VaultDetailPage() {
   const trialEnds = vault.trialEndsAt ? new Date(vault.trialEndsAt) : null;
   const daysLeft = trialEnds ? Math.ceil((trialEnds.getTime() - now.getTime()) / (1000 * 3600 * 24)) : null;
   const isBlocked = vault.subscriptionStatus === "BLOCKED" || vault.subscriptionStatus === "EXPIRED";
-
-  const sortedMedia = [...media].sort((a, b) => {
-    switch (sortConfig) {
-      case "UPLOAD_ASC": return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
-      case "EXIF_ASC": {
-        const da = a.originalDate ? new Date(a.originalDate).getTime() : new Date(a.createdAt).getTime();
-        const db = b.originalDate ? new Date(b.originalDate).getTime() : new Date(b.createdAt).getTime();
-        return da - db;
-      }
-      case "SIZE_DESC": return (b.fileSize || 0) - (a.fileSize || 0);
-      case "ORIENTATION_HORZ": {
-        const isAHorz = (a.width || 0) > (a.height || 0);
-        const isBHorz = (b.width || 0) > (b.height || 0);
-        return isAHorz === isBHorz ? 0 : isAHorz ? -1 : 1;
-      }
-      case "UPLOAD_DESC":
-      default: return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-    }
-  });
-
-  const handleNavigateMedia = useCallback((direction: 'prev' | 'next', e?: React.MouseEvent) => {
-    if (e) e.stopPropagation();
-    if (!selectedPhoto) return;
-    const currentIndex = sortedMedia.findIndex(m => m.id === selectedPhoto.id);
-    if (currentIndex === -1) return;
-    
-    if (direction === 'prev') {
-      const prevIndex = currentIndex > 0 ? currentIndex - 1 : sortedMedia.length - 1;
-      setSelectedPhoto(sortedMedia[prevIndex]);
-    } else {
-      const nextIndex = currentIndex < sortedMedia.length - 1 ? currentIndex + 1 : 0;
-      setSelectedPhoto(sortedMedia[nextIndex]);
-    }
-  }, [selectedPhoto, sortedMedia]);
-
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (!selectedPhoto) return;
-      if (e.key === 'ArrowLeft') handleNavigateMedia('prev');
-      if (e.key === 'ArrowRight') handleNavigateMedia('next');
-      if (e.key === 'Escape') setSelectedPhoto(null);
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [selectedPhoto, handleNavigateMedia]);
 
   return (
     <div className="min-h-screen font-sans flex flex-col" style={{ background: T.bg, color: T.text }}>
