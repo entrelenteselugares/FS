@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef, useLayoutEffect } from "react";
-import * as reactWindow from "react-window";
-const FixedSizeList = (reactWindow.FixedSizeList || (reactWindow as unknown as { default: { FixedSizeList: React.ElementType } }).default?.FixedSizeList || (reactWindow as unknown as { default: React.ElementType }).default) as React.ElementType;
+import { FixedSizeList } from "react-window";
 import { API } from "../lib/api";
 import { useCart } from "../hooks/useCart";
 import { useNavigate } from "react-router-dom";
@@ -15,9 +14,9 @@ import {
   Plus, 
   Minus,
   Check,
-  X,
   Phone,
-  Image as ImageIcon
+  Image as ImageIcon,
+  Share2
 } from "lucide-react";
 
 interface PrintProduct {
@@ -353,7 +352,7 @@ export function PrintStoreModal({ eventId, eventTitle, medias = [], unlockedMedi
                 {error && (
                   <div className="mb-10 p-6 bg-red-500/10 border border-red-500 text-red-500 text-[10px] font-black uppercase tracking-widest italic flex items-center justify-between">
                     <span>{error}</span>
-                    <button onClick={() => setError("")}><X size={14} /></button>
+                    <button onClick={() => setError("")}><Share2 size={14} className="rotate-45" /></button>
                   </div>
                 )}
                 {step === 'catalog' && (
@@ -511,7 +510,7 @@ export function PrintStoreModal({ eventId, eventTitle, medias = [], unlockedMedi
                                   {filePreviews.map((src, idx) => (
                                     <div key={idx} className="relative aspect-square border border-theme-border overflow-hidden">
                                        <img src={src} className="w-full h-full object-cover" />
-                                        <button onClick={() => removeFile(idx)} className="absolute top-1 right-1 p-1 bg-theme-bg-field text-theme-text border border-theme-border"><X size={10} /></button>
+                                        <button onClick={() => removeFile(idx)} className="absolute top-1 right-1 p-1 bg-theme-bg-field text-theme-text border border-theme-border"><Share2 size={10} className="rotate-45" /></button>
                                     </div>
                                   ))}
                                </div>
