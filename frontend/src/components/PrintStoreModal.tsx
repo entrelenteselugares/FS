@@ -60,7 +60,31 @@ interface PrintStoreModalProps {
   isMarketplace?: boolean;
   isOwner?: boolean;
   onClose: () => void;
+  initialSelectedPhotos?: string[];
 }
+
+const COVER_COLORS = [
+  { name: "Azul Baby", hex: "#AED9E0" },
+  { name: "Acqua", hex: "#7FD1B9" },
+  { name: "Tiffany", hex: "#0AD3FF" },
+  { name: "Pistache", hex: "#B3E59F" },
+  { name: "Turquesa", hex: "#008080" },
+  { name: "Amarelo", hex: "#F7E181" },
+  { name: "Rosa Bebê", hex: "#FBC3BC" },
+  { name: "Goiaba", hex: "#F28482" },
+  { name: "Fúcsia", hex: "#D1495B" },
+  { name: "Vermelho", hex: "#E63946" },
+  { name: "Lilás", hex: "#E8C7DE" },
+  { name: "Violeta", hex: "#B5838D" },
+  { name: "Bordô", hex: "#6B2D5C" },
+  { name: "Preto", hex: "#1C1A27" },
+  { name: "Nude", hex: "#EED7C5" },
+  { name: "Pêssego", hex: "#F7D6C8" },
+  { name: "Caramelo", hex: "#C68B59" },
+  { name: "Areia", hex: "#E2D4C9" },
+  { name: "Cinza", hex: "#A5A5A5" },
+  { name: "Kraft", hex: "#D3B69C" },
+];
 
 // ── VIRTUALIZED GRID COMPONENT ───────────────────────────────────────────
 function AlbumPhotoGrid({ medias, selectedAlbumPhotos, toggleAlbumPhoto }: { 
@@ -149,7 +173,7 @@ const MOCK_PRODUCTS: PrintProduct[] = [
   { id: "mock-3", category: "REVELACAO", name: "Pack 20 Fotos 10x15", description: "Papel fosco profissional com borda branca.", finalPrice: 60, unit: "pack", maxPhotos: 20 },
 ];
 
-export function PrintStoreModal({ eventId, eventTitle, medias = [], unlockedMediaIds = [], isMarketplace = false, isOwner = false, onClose }: PrintStoreModalProps) {
+export function PrintStoreModal({ eventId, eventTitle, medias = [], unlockedMediaIds = [], isMarketplace = false, isOwner = false, onClose, initialSelectedPhotos }: PrintStoreModalProps) {
   const navigate = useNavigate();
   const [products, setProducts] = useState<PrintProduct[]>([]);
   const [loading, setLoading] = useState(true);
@@ -161,6 +185,7 @@ export function PrintStoreModal({ eventId, eventTitle, medias = [], unlockedMedi
   const [step, setStep] = useState<"catalog" | "details" | "delivery" | "processing">("catalog");
   const [deliveryMethod, setDeliveryMethod] = useState<"LOCAL_PICKUP" | "SHIPPING">("LOCAL_PICKUP");
   const [notes, setNotes] = useState("");
+  const [selectedColor, setSelectedColor] = useState<string>("Azul Baby");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
 
@@ -171,7 +196,9 @@ export function PrintStoreModal({ eventId, eventTitle, medias = [], unlockedMedi
   const [photoSource, setPhotoSource] = useState<"upload" | "album">(
     (isOwner || availableMedias.length > 0) ? "album" : "upload"
   );
-  const [selectedAlbumPhotos, setSelectedAlbumPhotos] = useState<string[]>([]);
+  const [selectedAlbumPhotos, setSelectedAlbumPhotos] = useState<string[]>(
+    initialSelectedPhotos || []
+  );
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -233,6 +260,7 @@ export function PrintStoreModal({ eventId, eventTitle, medias = [], unlockedMedi
 
   const handleAddToCart = () => {
     if (!selectedProduct) return;
+    const isAlbum = selectedProduct.category === "ALBUM" || selectedProduct.category === "ALBUM_30X40";
     setSubmitting(true);
     addPhysicalItem({
       productId: selectedProduct.id,
@@ -241,7 +269,9 @@ export function PrintStoreModal({ eventId, eventTitle, medias = [], unlockedMedi
       quantity: quantity,
       selectedPhotos: selectedAlbumPhotos,
       category: selectedProduct.category,
-      eventId: eventId
+      eventId: eventId,
+      coverColor: isAlbum ? selectedColor : undefined,
+      notes: notes
     });
     setStep("processing");
     setTimeout(() => {
@@ -252,7 +282,9 @@ export function PrintStoreModal({ eventId, eventTitle, medias = [], unlockedMedi
 
   const handleWhatsAppCheckout = () => {
     if (!selectedProduct) return;
-    const msg = `Olá! Quero encomendar:\n\n*Produto:* ${selectedProduct.name}\n*Quantidade:* ${quantity}\n*Entrega:* ${deliveryMethod === 'LOCAL_PICKUP' ? 'Retirada no Ponto' : 'Envio para Endereço'}\n*Evento:* ${eventTitle}\n*Total:* R$ ${totalPrice.toFixed(2).replace(".", ",")}\n\n${notes ? `*Obs:* ${notes}` : ""}`;
+    const isAlbum = selectedProduct.category === "ALBUM" || selectedProduct.category === "ALBUM_30X40";
+    const colorInfo = isAlbum && selectedColor ? `\n*Cor da Capa:* ${selectedColor}` : "";
+    const msg = `Olá! Quero encomendar:\n\n*Produto:* ${selectedProduct.name}${colorInfo}\n*Quantidade:* ${quantity}\n*Entrega:* ${deliveryMethod === 'LOCAL_PICKUP' ? 'Retirada no Ponto' : 'Envio para Endereço'}\n*Evento:* ${eventTitle}\n*Total:* R$ ${totalPrice.toFixed(2).replace(".", ",")}\n\n${notes ? `*Obs:* ${notes}` : ""}`;
     window.open(`https://wa.me/5519997843817?text=${encodeURIComponent(msg)}`, "_blank");
   };
 
@@ -395,6 +427,41 @@ export function PrintStoreModal({ eventId, eventTitle, medias = [], unlockedMedi
                                 <button onClick={() => setQuantity(q => q + 1)} className="w-14 h-14 border border-theme-border flex items-center justify-center text-theme-text-muted hover:border-brand-tactical hover:text-brand-tactical transition-all"><Plus size={20} /></button>
                              </div>
                           </div>
+
+                          {(selectedProduct.category === "ALBUM" || selectedProduct.category === "ALBUM_30X40") && (
+                              <div className="space-y-6">
+                                 <p className="text-[10px] font-black text-theme-text-muted uppercase tracking-widest italic">
+                                    Cor da Capa (Mostruário de Tecidos)
+                                 </p>
+                                 <div className="grid grid-cols-5 sm:grid-cols-10 gap-3">
+                                    {COVER_COLORS.map(color => {
+                                       const isSelected = selectedColor === color.name;
+                                       return (
+                                          <button
+                                             key={color.name}
+                                             onClick={() => setSelectedColor(color.name)}
+                                             title={color.name}
+                                             className={`relative aspect-square rounded-full border-2 transition-all ${
+                                                isSelected ? "border-brand-tactical scale-110 shadow-[0_0_10px_rgba(20,184,166,0.5)]" : "border-theme-border hover:scale-105"
+                                             }`}
+                                             style={{ backgroundColor: color.hex }}
+                                          >
+                                             {isSelected && (
+                                                <span className="absolute inset-0 flex items-center justify-center text-black drop-shadow-md">
+                                                   <Check size={12} className="stroke-[3]" />
+                                                </span>
+                                             )}
+                                          </button>
+                                       );
+                                    })}
+                                 </div>
+                                 {selectedColor && (
+                                    <p className="text-xs italic text-brand-tactical font-semibold">
+                                       Selecionado: <span className="uppercase">{selectedColor}</span>
+                                    </p>
+                                 )}
+                              </div>
+                           )}
 
                           <div className="space-y-6">
                              <p className="text-[10px] font-black text-theme-text-muted uppercase tracking-widest italic">Observações de Produção</p>

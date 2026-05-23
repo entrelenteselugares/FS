@@ -14,6 +14,7 @@ interface ProService {
   id: string;
   name: string;
   description: string | null;
+  price?: number;
   basePrice: number;
   estimatedMinutes: number;
 }
@@ -58,7 +59,8 @@ function BookingModal({
   onSubmit: () => void;
 }) {
   if (!state.open || !state.service) return null;
-  const fee = (state.service.basePrice * 0.2).toFixed(2);
+  const activePrice = state.service.price || state.service.basePrice || 0;
+  const fee = (activePrice * 0.2).toFixed(2);
 
   return (
     <div className="fixed inset-0 z-[5000] flex items-center justify-center p-6 bg-black/90 backdrop-blur-xl">
@@ -86,7 +88,7 @@ function BookingModal({
             <div className="flex items-center justify-between mt-2">
               <span className="text-[10px] text-zinc-500 font-bold">Valor Completo</span>
               <span className="text-sm font-heading font-black text-white italic">
-                R$ {state.service.basePrice.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
+                R$ {activePrice.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
               </span>
             </div>
             <div className="flex items-center justify-between">
@@ -167,11 +169,12 @@ export default function ProfissionalProfilePage() {
   const handleBook = async () => {
     if (!booking.service || !booking.phone) return;
     setBooking(b => ({ ...b, loading: true }));
+    const activePrice = booking.service.price || booking.service.basePrice || 0;
     try {
       const { data } = await API.post("/marketplace/profissionais/book", {
         profissionalId: prof?.id,
         packageDesc: booking.service.name,
-        bookingFee: (booking.service.basePrice * 0.2).toFixed(2),
+        bookingFee: (activePrice * 0.2).toFixed(2),
         clientePhone: booking.phone,
       });
       if (data.checkoutUrl) {
@@ -332,7 +335,8 @@ export default function ProfissionalProfilePage() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {prof.proServices.map(svc => {
-              const fee = (svc.basePrice * 0.2).toFixed(2);
+              const activePrice = svc.price || svc.basePrice || 0;
+              const fee = (activePrice * 0.2).toFixed(2);
               return (
                 <motion.div
                   key={svc.id}
@@ -349,7 +353,7 @@ export default function ProfissionalProfilePage() {
                     </div>
                     <div className="text-right flex-shrink-0">
                       <p className="text-2xl font-heading font-black text-white italic">
-                        R$ {svc.basePrice.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
+                        R$ {activePrice.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
                       </p>
                       <p className="text-[8px] text-zinc-600 uppercase tracking-widest font-black">Valor Total</p>
                     </div>

@@ -653,7 +653,9 @@ export const CheckoutPage = () => {
           physicalItems: physicalItems.filter(p => p.eventId === firstEventId).map(i => ({
             id: i.productId,
             quantity: i.quantity,
-            selectedPhotos: i.selectedPhotos
+            selectedPhotos: i.selectedPhotos,
+            coverColor: i.coverColor,
+            notes: i.notes
           }))
         });
         localStorage.setItem('fs_last_order_id', data.orderId);

@@ -543,7 +543,9 @@ export default function EventPage() {
         physicalItems: eventPhysicalItems.map(i => ({ 
           id: i.productId, 
           quantity: i.quantity,
-          selectedPhotos: i.selectedPhotos
+          selectedPhotos: i.selectedPhotos,
+          coverColor: i.coverColor,
+          notes: i.notes
         }))
       });
       localStorage.setItem('fs_last_order_id', data.orderId);

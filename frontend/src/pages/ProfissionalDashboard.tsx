@@ -275,6 +275,19 @@ export default function ProfissionalDashboard({
     }
   };
 
+  const handleUpdateServicePrice = async (serviceId: string, newPrice: number) => {
+    try {
+      await API.patch(`profissional/services/${serviceId}`, { price: newPrice });
+      fetchProfile();
+      showNotification("Preço atualizado com sucesso!");
+    } catch (err: any) {
+      console.error("Erro ao atualizar preço:", err);
+      const detail = err?.response?.data?.details || err?.response?.data?.error || "Erro ao atualizar preço do serviço.";
+      showNotification(detail, "error");
+      throw err;
+    }
+  };
+
   const handleSearchNetwork = async (q: string) => {
     setNetworkSearch(q);
     if (q.length < 3) {
@@ -506,6 +519,7 @@ export default function ProfissionalDashboard({
                 onRemoveService={handleRemoveService}
                 onOpenProfile={() => setActiveTab("perfil")}
                 minHourlyRate={minHourlyRate}
+                onUpdateServicePrice={handleUpdateServicePrice}
               />
             )}
 

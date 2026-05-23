@@ -10,6 +10,34 @@ import { audit } from "../lib/audit";
 import { FRONTEND_URL } from "../lib/config";
 import { GamificationService } from "../services/gamification.service";
 
+async function checkEventPermissions(eventId: string, userId: string, userRole?: string) {
+  const isAdmin = userRole === "ADMIN";
+  if (isAdmin) {
+    return prisma.event.findUnique({ where: { id: eventId } });
+  }
+
+  let userFranchiseId: string | undefined;
+  if (userRole === "FRANCHISEE") {
+    const profile = await prisma.franchiseProfile.findUnique({
+      where: { userId }
+    });
+    if (profile) userFranchiseId = profile.id;
+  }
+
+  return prisma.event.findFirst({
+    where: {
+      id: eventId,
+      OR: [
+        { captacaoId: userId },
+        { edicaoId: userId },
+        { ownerId: userId },
+        { cartorioUserId: userId },
+        ...(userFranchiseId ? [{ franchiseeId: userFranchiseId }] : [])
+      ]
+    }
+  });
+}
+
 // GET /api/profissional/events — eventos atribuídos ao profissional logado
 export async function getMeusEventos(req: AuthRequest, res: Response): Promise<void> {
   const userId = req.user?.userId;
@@ -60,12 +88,7 @@ export async function updateEventLinks(req: AuthRequest, res: Response): Promise
 
   try {
     // Garante que o evento pertence a este profissional
-    const event = await prisma.event.findFirst({
-      where: {
-        id: String(id),
-        OR: [{ captacaoId: userId }, { edicaoId: userId }],
-      },
-    });
+    const event = await checkEventPermissions(String(id), userId, req.user?.role);
     if (!event) { res.status(403).json({ error: "Acesso negado a este evento." }); return; }
 
     // Valida URLs
@@ -124,12 +147,7 @@ export async function uploadEventCover(req: AuthRequest, res: Response): Promise
   }
 
   try {
-    const event = await prisma.event.findFirst({
-      where: {
-        id: String(id),
-        OR: [{ captacaoId: userId }, { edicaoId: userId }],
-      },
-    });
+    const event = await checkEventPermissions(String(id), userId, req.user?.role);
     if (!event) { res.status(403).json({ error: "Acesso negado ao arquivo." }); return; }
 
     // Converte base64 para buffer
@@ -571,12 +589,7 @@ export async function registerManualSale(req: AuthRequest, res: Response): Promi
   if (!userId) { res.status(401).json({ error: "Não autenticado." }); return; }
 
   try {
-    const event = await prisma.event.findFirst({
-      where: {
-        id: String(id),
-        OR: [{ captacaoId: userId }, { edicaoId: userId }],
-      },
-    });
+    const event = await checkEventPermissions(String(id), userId, req.user?.role);
     if (!event) { res.status(403).json({ error: "Acesso negado." }); return; }
 
     // Calcula splits usando a inteligência centralizada
@@ -765,9 +778,38 @@ export async function updateProService(req: AuthRequest, res: Response): Promise
     const id = req.params.id as string;
     const { name, description, price, active } = req.body;
 
-    const existing = await prisma.professionalService.findUnique({ where: { id }, include: { profissional: true } });
+    const existing = await prisma.professionalService.findUnique({
+      where: { id },
+      include: {
+        profissional: true,
+        catalog: true
+      }
+    });
+
     if (!existing || existing.profissional.userId !== userId) {
       res.status(404).json({ error: "Serviço não encontrado." }); return;
+    }
+
+    if (price !== undefined) {
+      const parsedPrice = Number(price);
+      if (isNaN(parsedPrice) || parsedPrice < 0) {
+        res.status(400).json({ error: "Preço inválido." });
+        return;
+      }
+
+      if (existing.catalog && existing.catalog.estimatedMinutes > 0) {
+        const minHourlyConfig = await prisma.platformConfig.findUnique({ where: { key: "min_hourly_rate" } });
+        const minHourlyRate = minHourlyConfig ? Number(minHourlyConfig.value) : 14; // padrão: €14/h
+        const minPriceForService = minHourlyRate * (existing.catalog.estimatedMinutes / 60);
+
+        if (parsedPrice < minPriceForService) {
+          res.status(400).json({
+            error: `Preço abaixo do mínimo.`,
+            details: `Para um serviço de ${existing.catalog.estimatedMinutes} minutos, o valor mínimo é €${minPriceForService.toFixed(2)} (baseado em €${minHourlyRate}/hora mínima).`
+          });
+          return;
+        }
+      }
     }
 
     const updated = await prisma.professionalService.update({

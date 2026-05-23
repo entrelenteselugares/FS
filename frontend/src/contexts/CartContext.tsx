@@ -15,6 +15,8 @@ export interface PhysicalItem {
   selectedPhotos: string[]; // URLs or shortIds
   category?: string;
   eventId: string;
+  coverColor?: string;
+  notes?: string;
 }
 
 interface CartContextType {

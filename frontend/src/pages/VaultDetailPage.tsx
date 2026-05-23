@@ -12,6 +12,7 @@ import {
 import { Helmet } from "react-helmet-async";
 import { T } from "../lib/theme";
 import { VaultSettingsModal } from "../components/VaultSettingsModal";
+import { PrintStoreModal } from "../components/PrintStoreModal";
 
 interface Media {
   id: string;
@@ -58,6 +59,7 @@ export default function VaultDetailPage() {
   const [selectedPhoto, setSelectedPhoto] = useState<Media | null>(null);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [sortConfig, setSortConfig] = useState("UPLOAD_DESC");
+  const [isPrintStoreOpen, setIsPrintStoreOpen] = useState(false);
 
   const fetchVaultDetails = useCallback(async () => {
     try {
@@ -383,15 +385,14 @@ export default function VaultDetailPage() {
             )}
             {vault.myRole === "OWNER" && (
               <button 
-                onClick={handleCheckout}
-                disabled={checkingOut}
+                onClick={() => setIsPrintStoreOpen(true)}
                 className={`flex items-center justify-center gap-2 text-[10px] font-black uppercase tracking-widest px-5 py-2.5 rounded-lg transition-all shadow-lg ${
                   media.length >= vault.goalPoses 
                     ? "bg-emerald-500 text-black shadow-emerald-500/40 animate-pulse" 
                     : "bg-white/5 border border-white/10 text-gray-400 hover:bg-white/10"
                 }`}
               >
-                {checkingOut ? <Loader2 size={14} className="animate-spin" /> : <Printer size={14} />}
+                <Printer size={14} />
                 Materializar
               </button>
             )}
@@ -476,11 +477,10 @@ export default function VaultDetailPage() {
                     </div>
                   </div>
                   <button 
-                    onClick={handleCheckout}
-                    disabled={checkingOut}
+                    onClick={() => setIsPrintStoreOpen(true)}
                     className="w-full md:w-auto bg-emerald-500 hover:bg-emerald-400 text-black font-black uppercase tracking-widest text-[11px] px-8 py-3.5 rounded-full transition-all shadow-xl shadow-emerald-500/20 active:scale-95 flex items-center justify-center gap-2"
                   >
-                    {checkingOut ? <Loader2 size={16} className="animate-spin" /> : null}
+                    <Printer size={16} />
                     Materializar Álbum
                   </button>
                 </div>
@@ -607,8 +607,7 @@ export default function VaultDetailPage() {
           </button>
           
           <button 
-            onClick={handleCheckout}
-            disabled={checkingOut}
+            onClick={() => setIsPrintStoreOpen(true)}
             className={`flex-1 max-w-[220px] mx-4 rounded-full py-3 px-4 flex items-center justify-center gap-2 shadow-xl transition-all active:scale-95 disabled:opacity-50 ${
               media.filter(m => m.votedByMe).length > 0
                 ? "bg-emerald-500 text-black shadow-emerald-500/40"
@@ -617,24 +616,18 @@ export default function VaultDetailPage() {
                   : "bg-zinc-800 text-gray-400"
             }`}
           >
-            {checkingOut ? (
-              <Loader2 size={18} className="animate-spin" />
+            {media.some(m => m.votedByMe) ? (
+              <Heart size={18} fill="currentColor" className="text-black" />
             ) : (
-              <>
-                {media.some(m => m.votedByMe) ? (
-                  <Heart size={18} fill="currentColor" className="text-black" />
-                ) : (
-                  <Printer size={18} />
-                )}
-                <span className="text-[10px] font-black uppercase tracking-widest whitespace-nowrap">
-                  {media.filter(m => m.votedByMe).length > 0 
-                    ? `${media.filter(m => m.votedByMe).length} Escolhida${media.filter(m => m.votedByMe).length > 1 ? 's' : ''}` 
-                    : media.length >= vault.goalPoses 
-                      ? "Materializar Agora" 
-                      : "Imprimir em Breve"}
-                </span>
-              </>
+              <Printer size={18} />
             )}
+            <span className="text-[10px] font-black uppercase tracking-widest whitespace-nowrap">
+              {media.filter(m => m.votedByMe).length > 0 
+                ? `${media.filter(m => m.votedByMe).length} Escolhida${media.filter(m => m.votedByMe).length > 1 ? 's' : ''}` 
+                : media.length >= vault.goalPoses 
+                  ? "Materializar Agora" 
+                  : "Imprimir Em Breve"}
+            </span>
           </button>
 
           <label className="flex flex-col items-center gap-1 text-zinc-400 hover:text-emerald-500 transition-colors cursor-pointer">
@@ -653,6 +646,18 @@ export default function VaultDetailPage() {
         sortConfig={sortConfig}
         setSortConfig={setSortConfig}
       />
+
+      {isPrintStoreOpen && (
+        <PrintStoreModal
+          eventId={vault.id}
+          eventTitle={vault.nome}
+          medias={media.map(m => ({ id: m.id, url: m.thumbnailLink || m.webViewLink, shortId: m.fileId }))}
+          isOwner={vault.myRole === "OWNER"}
+          isMarketplace={false}
+          initialSelectedPhotos={media.filter(m => m.votedByMe).map(m => m.thumbnailLink || m.webViewLink)}
+          onClose={() => setIsPrintStoreOpen(false)}
+        />
+      )}
 
       {/* Lightbox Modal */}
       <AnimatePresence>

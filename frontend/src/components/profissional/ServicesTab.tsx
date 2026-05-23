@@ -1,4 +1,5 @@
-import { Briefcase, Clock, TrendingUp, Check, X, ShieldCheck, Zap } from "lucide-react";
+import { useState } from "react";
+import { Briefcase, Clock, TrendingUp, Check, X, ShieldCheck, Zap, Pencil } from "lucide-react";
 import type { ProfileData, ServiceCatalog } from "./types";
 
 interface ServicesTabProps {
@@ -8,9 +9,45 @@ interface ServicesTabProps {
   onRemoveService: (serviceId: string) => void;
   onOpenProfile: () => void;
   minHourlyRate?: number;
+  onUpdateServicePrice?: (serviceId: string, newPrice: number) => Promise<void>;
 }
 
-export function ServicesTab({ profile, catalogServices, onAddService, onRemoveService, onOpenProfile, minHourlyRate = 14 }: ServicesTabProps) {
+export function ServicesTab({ profile, catalogServices, onAddService, onRemoveService, onOpenProfile, minHourlyRate = 14, onUpdateServicePrice }: ServicesTabProps) {
+  const [editingServiceId, setEditingServiceId] = useState<string | null>(null);
+  const [editingPriceValue, setEditingPriceValue] = useState<string>("");
+  const [loadingUpdate, setLoadingUpdate] = useState<boolean>(false);
+  const [localError, setLocalError] = useState<string | null>(null);
+
+  const handleSavePrice = async (serviceId: string, estimatedMinutes?: number) => {
+    if (!onUpdateServicePrice) return;
+    
+    const priceNum = parseFloat(editingPriceValue);
+    if (isNaN(priceNum) || priceNum < 0) {
+      setLocalError("Preço inválido.");
+      return;
+    }
+
+    if (estimatedMinutes && estimatedMinutes > 0) {
+      const minPrice = minHourlyRate * (estimatedMinutes / 60);
+      if (priceNum < minPrice) {
+        setLocalError(`Mínimo R$ ${minPrice.toFixed(2)} (${estimatedMinutes}m)`);
+        return;
+      }
+    }
+
+    setLoadingUpdate(true);
+    setLocalError(null);
+    try {
+      await onUpdateServicePrice(serviceId, priceNum);
+      setEditingServiceId(null);
+    } catch (err: any) {
+      const errMsg = err?.response?.data?.details || err?.response?.data?.error || "Erro ao atualizar preço.";
+      setLocalError(errMsg);
+    } finally {
+      setLoadingUpdate(false);
+    }
+  };
+
   return (
     <div className="space-y-6">
 
@@ -71,7 +108,7 @@ export function ServicesTab({ profile, catalogServices, onAddService, onRemoveSe
             </p>
           </div>
           <div className="text-right hidden md:block">
-            <p className="text-[8px] font-black text-theme-muted uppercase tracking-widest italic opacity-60">Total em Portfólio</p>
+            <p className="text-[8px] font-black text-theme-muted uppercase tracking-widest mb-1 italic opacity-60">Total em Portfólio</p>
             <p className="text-xl font-heading font-black text-theme-text italic leading-none">{profile?.proServices?.length || 0}</p>
           </div>
         </div>
@@ -94,18 +131,71 @@ export function ServicesTab({ profile, catalogServices, onAddService, onRemoveSe
                   )}
                 </div>
                 <div className="flex items-center justify-between sm:justify-end gap-6 sm:gap-12 w-full sm:w-auto">
-                  <div className="text-left md:text-right">
-                    <p className="text-[8px] font-black text-theme-muted uppercase tracking-widest mb-1 italic opacity-60">Preço Ativo</p>
-                    <p className="text-xl sm:text-2xl font-heading font-black text-theme-text italic leading-none">
-                      R$ {Number(svc.price).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
-                    </p>
-                  </div>
-                  <button
-                    onClick={() => onRemoveService(svc.id)}
-                    className="p-3 sm:p-4 bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-brand-text transition-all rounded-xl border border-red-500/20"
-                  >
-                    <X size={18} />
-                  </button>
+                  {editingServiceId === svc.id ? (
+                    <div className="flex flex-col items-end gap-1.5 w-full sm:w-auto">
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs font-black text-theme-muted uppercase italic">R$</span>
+                        <input
+                          type="number"
+                          value={editingPriceValue}
+                          onChange={(e) => setEditingPriceValue(e.target.value)}
+                          disabled={loadingUpdate}
+                          className="w-24 px-2.5 py-1.5 bg-theme-bg border border-brand-tactical/50 rounded-xl font-heading font-black text-theme-text text-right text-sm focus:outline-none focus:border-brand-tactical transition-all"
+                          step="0.01"
+                        />
+                        <button
+                          onClick={() => handleSavePrice(svc.id, svc.catalog?.estimatedMinutes)}
+                          disabled={loadingUpdate}
+                          className="p-2 bg-brand-tactical/10 text-brand-tactical hover:bg-brand-tactical hover:text-brand-text transition-all rounded-xl border border-brand-tactical/20 cursor-pointer"
+                          title="Salvar preço"
+                        >
+                          <Check size={14} />
+                        </button>
+                        <button
+                          onClick={() => { setEditingServiceId(null); setLocalError(null); }}
+                          disabled={loadingUpdate}
+                          className="p-2 bg-theme-bg-muted border border-theme-border/60 hover:bg-theme-bg/60 text-theme-muted transition-all rounded-xl cursor-pointer"
+                          title="Cancelar"
+                        >
+                          <X size={14} />
+                        </button>
+                      </div>
+                      {localError && (
+                        <p className="text-[8px] text-red-500 font-bold uppercase tracking-widest text-right max-w-[200px]">
+                          {localError}
+                        </p>
+                      )}
+                    </div>
+                  ) : (
+                    <div className="flex items-center justify-between sm:justify-end gap-6 sm:gap-12 w-full sm:w-auto">
+                      <div className="text-left md:text-right">
+                        <p className="text-[8px] font-black text-theme-muted uppercase tracking-widest mb-1 italic opacity-60">Preço Ativo</p>
+                        <p className="text-xl sm:text-2xl font-heading font-black text-theme-text italic leading-none flex items-center gap-2">
+                          <span>R$ {Number(svc.price).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</span>
+                          {onUpdateServicePrice && (
+                            <button
+                              onClick={() => {
+                                setEditingServiceId(svc.id);
+                                setEditingPriceValue(svc.price.toString());
+                                setLocalError(null);
+                              }}
+                              className="p-1.5 text-theme-muted hover:text-brand-tactical transition-colors rounded-lg hover:bg-theme-bg-muted cursor-pointer"
+                              title="Editar Preço"
+                            >
+                              <Pencil size={12} />
+                            </button>
+                          )}
+                        </p>
+                      </div>
+                      <button
+                        onClick={() => onRemoveService(svc.id)}
+                        className="p-3 sm:p-4 bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-brand-text transition-all rounded-xl border border-red-500/20 cursor-pointer"
+                        title="Remover Serviço"
+                      >
+                        <X size={18} />
+                      </button>
+                    </div>
+                  )}
                 </div>
               </div>
             ))}
@@ -132,7 +222,7 @@ export function ServicesTab({ profile, catalogServices, onAddService, onRemoveSe
             const alreadyAdded = profile?.proServices?.some((s) => s.catalogId === cat.id);
             const suggested = Math.max(
               cat.basePrice,
-              ((profile?.hourlyRate || 150) * (cat.estimatedMinutes / 60)) * (profile?.equipmentMultiplier || 1.0)
+              ((profile?.hourlyRate || minHourlyRate) * (cat.estimatedMinutes / 60)) * (profile?.equipmentMultiplier || 1.0)
             );
             return (
               <div
@@ -147,7 +237,7 @@ export function ServicesTab({ profile, catalogServices, onAddService, onRemoveSe
                     </div>
                     <div className="hidden sm:block w-1 h-1 rounded-full bg-theme-border" />
                     <div className="text-[9px] font-bold text-theme-muted uppercase tracking-widest italic">
-                      Mínimo: € {(minHourlyRate * cat.estimatedMinutes / 60).toFixed(2)}
+                      Mínimo: R$ {(minHourlyRate * cat.estimatedMinutes / 60).toFixed(2)}
                     </div>
                   </div>
                 </div>
@@ -168,7 +258,7 @@ export function ServicesTab({ profile, catalogServices, onAddService, onRemoveSe
                   ) : (
                     <button
                       onClick={() => onAddService(cat)}
-                      className="px-6 sm:px-10 py-3 sm:py-4 bg-brand-tactical text-brand-text text-[10px] sm:text-[11px] font-black uppercase tracking-[0.2em] rounded-xl hover:brightness-110 shadow-lg shadow-brand-tactical/10 italic"
+                      className="px-6 sm:px-10 py-3 sm:py-4 bg-brand-tactical text-brand-text text-[10px] sm:text-[11px] font-black uppercase tracking-[0.2em] rounded-xl hover:brightness-110 shadow-lg shadow-brand-tactical/10 italic cursor-pointer"
                     >
                       IMPORTAR
                     </button>
@@ -182,4 +272,3 @@ export function ServicesTab({ profile, catalogServices, onAddService, onRemoveSe
     </div>
   );
 }
-
