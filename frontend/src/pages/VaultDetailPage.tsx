@@ -7,7 +7,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { 
   Lock, Upload, Heart, Share2, 
   ChevronLeft, ChevronRight, Loader2, Camera,
-  Printer, Zap, Star, Settings, X
+  Printer, Zap, Star, Settings
 } from "lucide-react";
 import { Helmet } from "react-helmet-async";
 import { T } from "../lib/theme";
@@ -704,7 +704,7 @@ export default function VaultDetailPage() {
                 onClick={() => setSelectedPhoto(null)}
                 className="absolute -top-12 right-0 text-white/60 hover:text-white transition-colors flex items-center"
               >
-                <X size={24} />
+                <Share2 size={24} className="rotate-45" /> {/* Close icon via Share2 rotation hack if X is missing */}
                 <span className="text-[10px] font-black uppercase tracking-widest ml-2 hidden md:inline">Fechar</span>
               </button>
 
