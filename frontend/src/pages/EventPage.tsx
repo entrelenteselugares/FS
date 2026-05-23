@@ -72,11 +72,10 @@ function ReferenceCard({ url }: { url: string }) {
   // --- Imagem direta / Drive ---
   if (isRenderableImage) {
     return (
-      <a href={url} target="_blank" rel="noopener noreferrer"
-        className="aspect-square bg-theme-bg-muted border border-theme-border/20 overflow-hidden group hover-lift rounded-xl cursor-pointer block">
+      <div className="aspect-square bg-theme-bg-muted border border-theme-border/20 overflow-hidden rounded-xl block relative">
         <img
           src={normalizedImageUrl}
-          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+          className="w-full h-full object-cover"
           alt="Referência"
           onError={() => setImgError(true)}
         />
@@ -85,39 +84,31 @@ function ReferenceCard({ url }: { url: string }) {
             <ExternalLink size={24} className="text-theme-text-muted" />
           </div>
         )}
-      </a>
+      </div>
     );
   }
 
   // --- Rich preview carregado via microlink ---
   if (preview?.image) {
-    let hostname = url;
-    try { hostname = new URL(url).hostname.replace('www.', ''); } catch {}
     return (
-      <a href={url} target="_blank" rel="noopener noreferrer"
-        className="aspect-square bg-theme-bg-muted border border-theme-border/20 overflow-hidden group hover-lift rounded-xl cursor-pointer block relative">
+      <div className="aspect-square bg-theme-bg-muted border border-theme-border/20 overflow-hidden rounded-xl block relative">
         <img
           src={preview.image}
-          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-          alt={preview.title || 'Referência'}
+          className="w-full h-full object-cover"
+          alt="Referência"
           onError={() => setPreview(null)}
         />
-        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 to-transparent p-3">
-          <p className="text-white text-[9px] font-black uppercase tracking-widest truncate">{hostname}</p>
-          {preview.title && <p className="text-white/60 text-[8px] truncate mt-0.5">{preview.title}</p>}
-        </div>
-      </a>
+      </div>
     );
   }
 
-  // --- Carregando preview ou fallback de link clicável ---
+  // --- Fallback genérico ---
   let hostname = url;
   try { hostname = new URL(url).hostname.replace('www.', ''); } catch {}
   const isLoading = !preview && /^https?:\/\//i.test(url);
 
   return (
-    <a href={url} target="_blank" rel="noopener noreferrer"
-      className="aspect-square bg-theme-bg-muted border border-theme-border/20 overflow-hidden group p-4 flex flex-col items-center justify-center text-center hover-lift rounded-xl text-theme-text/80 hover:text-brand-tactical transition-colors relative">
+    <div className="aspect-square bg-theme-bg-muted border border-theme-border/20 overflow-hidden rounded-xl flex flex-col items-center justify-center p-4 relative">
       {isLoading ? (
         <>
           {/* Skeleton shimmer */}
@@ -130,7 +121,7 @@ function ReferenceCard({ url }: { url: string }) {
           <span className="text-[10px] font-black uppercase tracking-widest leading-relaxed italic break-all line-clamp-3">{hostname || url}</span>
         </>
       )}
-    </a>
+    </div>
   );
 }
 

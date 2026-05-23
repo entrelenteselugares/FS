@@ -315,7 +315,9 @@ export class VaultController {
       const album = await prisma.sharedAlbum.findUnique({
         where: { id: albumId },
         include: {
-          members: true,
+          members: {
+            include: { user: { select: { nome: true } } }
+          },
           subscription: true,
           _count: {
             select: { media: true, members: true }
