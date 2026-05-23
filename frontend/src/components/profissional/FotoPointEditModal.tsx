@@ -29,6 +29,7 @@ export function FotoPointEditModal({ event, onClose, onSuccess, onError, network
     isPublicCall: event.isPublicCall
   });
   const [coverUrl, setCoverUrl] = useState<string | null>(event.coverPhotoUrl ?? null);
+  const [coverPosition, setCoverPosition] = useState<string>(event.coverPosition ?? "center");
 
   const [newRef, setNewRef] = useState("");
 
@@ -53,6 +54,7 @@ export function FotoPointEditModal({ event, onClose, onSuccess, onError, network
       const { data } = await API.patch(`/profissional/events/${event.id}/foto-point`, {
         ...formData,
         coverPhotoUrl: coverUrl,
+        coverPosition: coverPosition,
       });
       onSuccess(data);
       onClose();
@@ -210,7 +212,9 @@ export function FotoPointEditModal({ event, onClose, onSuccess, onError, network
             <div className="md:col-span-2">
               <CoverPhotoInput
                 currentUrl={coverUrl}
+                currentPosition={coverPosition}
                 eventId={event.id}
+                onPositionChange={setCoverPosition}
                 onChange={setCoverUrl}
               />
             </div>

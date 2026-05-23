@@ -691,11 +691,18 @@ return (
                       <div className="space-y-6 pt-4">
                         <p className="text-[10px] font-black text-theme-text-muted uppercase tracking-[0.4em]">Referências Técnicas</p>
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                          {event.references.map((ref, i) => (
-                            <div key={i} data-shortid={ref} data-testid={`photo-${ref}`} className="aspect-video bg-theme-bg-muted border border-theme-border/40 overflow-hidden group">
-                                <img src={getProxyUrl(ref)} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="Referência" />
-                            </div>
-                          ))}
+                          {event.references.map((ref, i) => {
+                            const isUrl = /^https?:\/\//i.test(ref);
+                            return isUrl ? (
+                              <div key={i} data-shortid={ref} data-testid={`photo-${ref}`} className="aspect-video bg-theme-bg-muted border border-theme-border/40 overflow-hidden group">
+                                  <img src={getProxyUrl(ref)} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="Referência" />
+                              </div>
+                            ) : (
+                              <div key={i} className="aspect-video bg-theme-bg-muted border border-theme-border/40 overflow-hidden group p-4 flex items-center justify-center text-center">
+                                  <span className="text-[10px] font-black uppercase tracking-widest text-theme-text/80 leading-relaxed italic line-clamp-3">{ref}</span>
+                              </div>
+                            );
+                          })}
                         </div>
                       </div>
                     )}

@@ -27,6 +27,7 @@ export function FotoPointModal({ onClose, onSuccess, onError, network }: FotoPoi
   const [startTime, setStartTime] = useState("09:00");
   const [endTime, setEndTime] = useState("18:00");
   const [coverPhotoUrl, setCoverPhotoUrl] = useState<string | null>(null);
+  const [coverPosition, setCoverPosition] = useState<string>("center");
   const [delegatedUserId, setDelegatedUserId] = useState<string | null>(null);
   const [isPublicCall, setIsPublicCall] = useState(false);
 
@@ -57,6 +58,7 @@ export function FotoPointModal({ onClose, onSuccess, onError, network }: FotoPoi
         references: references.split("\n").filter(r => r.trim() !== ""),
         isPrivate,
         coverPhotoUrl,
+        coverPosition,
       });
 
       // Se a capa é base64 (upload sem eventId), sobe agora que temos o eventId
@@ -65,6 +67,7 @@ export function FotoPointModal({ onClose, onSuccess, onError, network }: FotoPoi
           await API.patch(`/profissional/events/${data.eventId}/cover`, {
             imageBase64: coverPhotoUrl,
             mimeType: coverPhotoUrl.split(";")[0].split(":")[1],
+            coverPosition,
           });
         } catch (uploadErr) {
           console.warn("Upload de capa falhou após criação:", uploadErr);
@@ -231,7 +234,11 @@ export function FotoPointModal({ onClose, onSuccess, onError, network }: FotoPoi
                 />
             </div>
 
-            <CoverPhotoInput onChange={setCoverPhotoUrl} />
+            <CoverPhotoInput 
+              currentPosition={coverPosition}
+              onPositionChange={setCoverPosition}
+              onChange={setCoverPhotoUrl} 
+            />
 
             <div className="pt-4 border-t border-theme-border/30">
               <TeamSelector 

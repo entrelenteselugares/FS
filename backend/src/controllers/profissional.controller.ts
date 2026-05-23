@@ -117,7 +117,7 @@ export async function uploadEventCover(req: AuthRequest, res: Response): Promise
   if (!userId) { res.status(401).json({ error: "Não autenticado." }); return; }
 
   // Recebe base64 do frontend em vez de multipart
-  const { imageBase64, mimeType } = req.body;
+  const { imageBase64, mimeType, coverPosition } = req.body;
   if (!imageBase64 || !mimeType) {
     res.status(400).json({ error: "Imagem e MimeType são obrigatórios." });
     return;
@@ -155,8 +155,11 @@ export async function uploadEventCover(req: AuthRequest, res: Response): Promise
 
     const updated = await prisma.event.update({
       where: { id: String(id) },
-      data: { coverPhotoUrl: publicUrl },
-      select: { id: true, coverPhotoUrl: true },
+      data: { 
+        coverPhotoUrl: publicUrl,
+        ...(coverPosition && { coverPosition: String(coverPosition) })
+      },
+      select: { id: true, coverPhotoUrl: true, coverPosition: true },
     });
 
     // P1 — Upload de capa: rastrear mudanças de identidade visual do evento

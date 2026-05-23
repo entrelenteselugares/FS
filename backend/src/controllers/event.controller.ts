@@ -859,7 +859,7 @@ export class EventController {
   static async createFotoPoint(req: AuthRequest, res: Response) {
     const { 
       name, priceUnit, location, itinerary, references, 
-      isPrivate, coverPhotoUrl, dataEvento, startTime, endTime,
+      isPrivate, coverPhotoUrl, coverPosition, dataEvento, startTime, endTime,
       captacaoId: delegatedCaptacaoId, isPublicCall, city
     } = req.body;
     const { userId } = req.user!;
@@ -912,6 +912,7 @@ export class EventController {
           quoteStatus: "APPROVED",
           isQuote: false,
           coverPhotoUrl: normalizeCoverUrl(coverPhotoUrl),
+          coverPosition: coverPosition || "center",
           retentionDays: (isPrivate ?? true) ? 7 : 15
         }
       });
@@ -983,7 +984,7 @@ export class EventController {
       const id = String(req.params.id);
       const { 
         nomeNoivos, priceUnit, location, city, itinerary, 
-        references, isPrivate, active, coverPhotoUrl, 
+        references, isPrivate, active, coverPhotoUrl, coverPosition,
         dataEvento, startTime, endTime, captacaoId, isPublicCall 
       } = req.body;
 
@@ -1036,7 +1037,8 @@ export class EventController {
           references: references ?? undefined,
           isPrivate: isPrivate !== undefined ? !!isPrivate : undefined,
           active: active !== undefined ? !!active : undefined,
-          coverPhotoUrl: normalizeCoverUrl(coverPhotoUrl),
+          coverPhotoUrl: coverPhotoUrl !== undefined ? normalizeCoverUrl(coverPhotoUrl) : undefined,
+          ...(coverPosition !== undefined && { coverPosition: String(coverPosition) }),
           dataEvento: dataEvento && startTime ? new Date(`${dataEvento}T${startTime}:00-03:00`) : (dataEvento ? new Date(dataEvento) : undefined),
           eventEndTime: dataEvento && endTime ? new Date(`${dataEvento}T${endTime}:00-03:00`) : undefined,
           captacaoId: finalCaptacaoId,
