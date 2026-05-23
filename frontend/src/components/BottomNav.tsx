@@ -36,7 +36,7 @@ export const BottomNav: React.FC = () => {
       { label: "Meus Dados", onClick: () => { navigate("/minha-conta?s=menu"); setDrawerOpen(false); }, isActive: location.pathname === "/minha-conta" && s === "menu", icon: <User size={18} /> },
     ];
 
-    if (user?.role === "PROFISSIONAL" || user?.role === "FRANCHISEE") {
+    if ((user?.role === "PROFISSIONAL" || user?.role === "FRANCHISEE") && user?.verificationStatus === "APPROVED") {
       items.push(
         { label: "ÁREA PROFISSIONAL", isHeader: true },
         { label: "Minha Agenda", onClick: () => { navigate("/minha-conta?s=agenda"); setDrawerOpen(false); }, isActive: location.pathname === "/minha-conta" && s === "agenda", icon: <Play size={18} /> },
@@ -52,7 +52,7 @@ export const BottomNav: React.FC = () => {
       }
     }
 
-    if (user?.role === "CARTORIO" || user?.role === "UNIDADE") {
+    if ((user?.role === "CARTORIO" || user?.role === "UNIDADE") && user?.verificationStatus === "APPROVED") {
       items.push(
         { label: "ÁREA DA UNIDADE", isHeader: true },
         { label: "Agenda Unidade", onClick: () => { navigate("/minha-conta?s=agenda"); setDrawerOpen(false); }, isActive: location.pathname === "/minha-conta" && s === "agenda", icon: <Play size={18} /> },

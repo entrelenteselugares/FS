@@ -1,3 +1,4 @@
+import { APP_CONSTANTS } from '../lib/constants';
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { useAuth } from "../hooks/useAuth";
 import { API } from "../lib/api";
@@ -392,7 +393,7 @@ export default function ProfissionalDashboard({
       )}
 
       {/* ── Main Content ────────────────────────────────────────────────────── */}
-      <div className="max-w-[1600px] mx-auto px-4 md:px-6 py-6 md:py-10 space-y-8 md:space-y-12">
+      <div className="max-w-[1400px] mx-auto px-2 md:px-6 py-4 md:py-8 space-y-4 md:space-y-6">
 
         {/* Page Header */}
         <DashboardHeader 
@@ -629,7 +630,7 @@ export default function ProfissionalDashboard({
                           LOJA DA FRANQUIA
                         </button>
                         <button 
-                          onClick={() => { const w = window.open("https://wa.me/5519984470420?text=Olá! Preciso de assistência técnica para minha unidade Foto Segundo.", "_blank"); if (w) w.opener = null; }}
+                          onClick={() => { const w = window.open("https://wa.me/?text=Olá! Preciso de assistência técnica para minha unidade Foto Segundo.", "_blank"); if (w) w.opener = null; }}
                           className="w-full py-3 border border-theme-border text-theme-muted font-black text-[9px] uppercase tracking-widest hover:border-brand-tactical/30 hover:text-brand-tactical transition-all rounded-xl"
                         >
                           ASSISTÊNCIA TÉCNICA

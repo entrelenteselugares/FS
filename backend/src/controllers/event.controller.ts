@@ -415,6 +415,66 @@ export class EventController {
   }
 
   /**
+   * GET /api/public/events/cities
+   * Lista as cidades disponíveis com base nos eventos ativos na vitrine.
+   */
+  static async getPublicCities(req: AuthRequest, res: Response) {
+    try {
+      const where: any = {
+        active: true,
+        isPrivate: false,
+        isQuote: false,
+        NOT: {
+          type: 'ALBUM_FULL',
+          pedidos: {
+            some: {
+              status: 'PENDENTE'
+            }
+          }
+        },
+        AND: [
+          { NOT: { slug: { startsWith: 'vault-' } } }
+        ]
+      };
+
+      const events = await prisma.event.findMany({
+        where,
+        select: {
+          city: true,
+          cartorioUser: {
+            select: {
+              cartorio: {
+                select: {
+                  cidade: true
+                }
+              }
+            }
+          }
+        }
+      });
+
+      const citiesSet = new Set<string>();
+      
+      events.forEach((e: any) => {
+        const city = e.city || e.cartorioUser?.cartorio?.cidade;
+        if (city) {
+          citiesSet.add(city.trim());
+        }
+      });
+
+      // Se o Set estiver vazio, retornar pelo menos Campinas como fallback
+      if (citiesSet.size === 0) {
+        citiesSet.add("Campinas");
+      }
+
+      return res.json({ cities: Array.from(citiesSet).sort() });
+    } catch (error) {
+      console.error("[getPublicCities] Erro ao listar cidades:", error);
+      return res.status(500).json({ error: "Erro ao listar cidades" });
+    }
+  }
+
+  /**
    * GET /api/public/partners
    * Lista todos os cartórios cadastrados como pontos parceiros.
    */
@@ -740,7 +800,7 @@ export class EventController {
    * Cria um evento instantâneo (Flash) para franqueados/profissionais em campo.
    */
   static async createFlashEvent(req: AuthRequest, res: Response) {
-    const { name, pricePerPhoto, isPrivate, dataEvento, startTime, endTime, captacaoId: delegatedCaptacaoId, isPublicCall } = req.body;
+    const { name, pricePerPhoto, isPrivate, dataEvento, startTime, endTime, captacaoId: delegatedCaptacaoId, isPublicCall, city } = req.body;
     const { userId } = req.user!;
 
     if (!name) return res.status(400).json({ error: "Nome do evento é obrigatório" });
@@ -761,6 +821,7 @@ export class EventController {
       const event = await prisma.event.create({
         data: {
           nomeNoivos: name,
+          city: city || null,
           slug,
           type: "FLASH_EVENT",
           active: !delegatedCaptacaoId && !isPublicCall,
@@ -799,7 +860,7 @@ export class EventController {
     const { 
       name, priceUnit, location, itinerary, references, 
       isPrivate, coverPhotoUrl, dataEvento, startTime, endTime,
-      captacaoId: delegatedCaptacaoId, isPublicCall 
+      captacaoId: delegatedCaptacaoId, isPublicCall, city
     } = req.body;
     const { userId } = req.user!;
 
@@ -831,6 +892,7 @@ export class EventController {
       const event = await prisma.event.create({
         data: {
           nomeNoivos: name,
+          city: city || null,
           slug,
           type: "FOTO_POINT",
           dataEvento: finalStartTime,

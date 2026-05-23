@@ -1,3 +1,4 @@
+import { APP_CONSTANTS } from '../lib/constants';
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { API } from "../lib/api";
@@ -115,7 +116,7 @@ export const PartnerLP: React.FC = () => {
       <section className="relative h-[85vh] overflow-hidden flex items-center justify-center">
         <div className="absolute inset-0">
           <img
-            src={partner.coverUrl || "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=1600"}
+            src={partner.coverUrl || ""}
             className="w-full h-full object-cover opacity-60 grayscale scale-110"
             alt=""
           />
@@ -307,7 +308,7 @@ export const PartnerLP: React.FC = () => {
             >
               <div className="aspect-[4/5] overflow-hidden mb-6 sm:mb-8 bg-theme-bg-muted border border-theme-border relative">
                 <img
-                  src={evt.coverPhotoUrl || "https://images.unsplash.com/photo-1519741497674-611481863552?w=800"}
+                  src={evt.coverPhotoUrl || ""}
                   className="w-full h-full object-cover transition-all duration-1000 group-hover:scale-110 grayscale group-hover:grayscale-0"
                   alt={evt.nomeNoivos}
                   style={{ objectPosition: evt.coverPosition || 'center' }}

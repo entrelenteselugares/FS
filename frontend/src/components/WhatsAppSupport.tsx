@@ -7,8 +7,10 @@ interface WhatsAppSupportProps {
   message?: string;
 }
 
+import { APP_CONSTANTS } from "../lib/constants";
+
 const WhatsAppSupport: React.FC<WhatsAppSupportProps> = ({ 
-  phoneNumber = "5511999999999", // Placeholder, deve vir de config futuramente
+  phoneNumber = APP_CONSTANTS.SUPPORT_WHATSAPP,
   message = "Olá! Estou no checkout do Foto Segundo e tenho uma dúvida sobre meu pedido..."
 }) => {
   const handleClick = () => {

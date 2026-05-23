@@ -18,6 +18,7 @@ export function FotoPointModal({ onClose, onSuccess, onError, network }: FotoPoi
   const [name, setName] = useState("");
   const [price, setPrice] = useState("10");
   const [location, setLocation] = useState("");
+  const [city, setCity] = useState("");
   const [itinerary, setItinerary] = useState("");
   const [references, setReferences] = useState("");
   const [loading, setLoading] = useState(false);
@@ -45,6 +46,7 @@ export function FotoPointModal({ onClose, onSuccess, onError, network }: FotoPoi
       const { data } = await API.post("/profissional/foto-point", {
         name,
         priceUnit: Number(price),
+        city,
         location,
         itinerary,
         dataEvento: date,
@@ -177,16 +179,30 @@ export function FotoPointModal({ onClose, onSuccess, onError, network }: FotoPoi
                 </div>
             </div>
 
-            <div className="space-y-2">
-                <label className="text-[10px] font-black text-theme-muted uppercase tracking-widest italic flex items-center gap-2">
-                    <MapPin size={12} /> Localização Exata
-                </label>
-                <input
-                    placeholder="Ex: Em frente ao MASP, entre os pilares..."
-                    value={location}
-                    onChange={e => setLocation(e.target.value)}
-                    className="w-full bg-theme-bg-muted border border-theme-border p-4 text-theme-text outline-none focus:border-cyan-400/50 transition-all font-medium"
-                />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                    <label className="text-[10px] font-black text-theme-muted uppercase tracking-widest italic flex items-center gap-2">
+                        <MapPin size={12} /> Cidade
+                    </label>
+                    <input
+                        required
+                        placeholder="Ex: Campinas"
+                        value={city}
+                        onChange={e => setCity(e.target.value)}
+                        className="w-full bg-theme-bg-muted border border-theme-border p-4 text-theme-text outline-none focus:border-cyan-400/50 transition-all font-medium"
+                    />
+                </div>
+                <div className="space-y-2">
+                    <label className="text-[10px] font-black text-theme-muted uppercase tracking-widest italic flex items-center gap-2">
+                        <MapPin size={12} /> Localização Exata
+                    </label>
+                    <input
+                        placeholder="Ex: Em frente ao MASP, entre os pilares..."
+                        value={location}
+                        onChange={e => setLocation(e.target.value)}
+                        className="w-full bg-theme-bg-muted border border-theme-border p-4 text-theme-text outline-none focus:border-cyan-400/50 transition-all font-medium"
+                    />
+                </div>
             </div>
 
             <div className="space-y-2">

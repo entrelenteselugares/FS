@@ -1,3 +1,4 @@
+import { APP_CONSTANTS } from '../lib/constants';
 import { useState } from "react";
 import { motion } from "framer-motion";
 
@@ -85,10 +86,10 @@ export function PrintCatalog({ selectedProductId, onAddToCart }: PrintCatalogPro
 
             // Seleção de imagem baseada no tipo para visual mais imersivo
             const bgImage = item.id === "1" 
-              ? "https://images.unsplash.com/photo-1520390138845-fd2d229dd553?q=80&w=600&auto=format&fit=crop" // Polaroid/Instant
+              ? "" // Polaroid/Instant
               : item.id === "2"
-              ? "https://images.unsplash.com/photo-1544377193-33dcf4d68fb5?q=80&w=600&auto=format&fit=crop" // Album/Book
-              : "https://images.unsplash.com/photo-1513519245088-0e12902e5a38?q=80&w=600&auto=format&fit=crop"; // Canvas/Wall art
+              ? "" // Album/Book
+              : ""; // Canvas/Wall art
 
             return (
               <motion.div

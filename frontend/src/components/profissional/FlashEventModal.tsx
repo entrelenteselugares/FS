@@ -15,6 +15,7 @@ interface FlashEventModalProps {
 export function FlashEventModal({ onClose, onSuccess, onError, network }: FlashEventModalProps) {
   const [name, setName] = useState("");
   const [price, setPrice] = useState("1");
+  const [city, setCity] = useState("");
   const [loading, setLoading] = useState(false);
   const [isPrivate, setIsPrivate] = useState(true);
   const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
@@ -30,6 +31,7 @@ export function FlashEventModal({ onClose, onSuccess, onError, network }: FlashE
       const { data } = await API.post("/profissional/flash-event", {
         name,
         pricePerPhoto: Number(price),
+        city,
         dataEvento: date,
         startTime,
         endTime,
@@ -100,6 +102,17 @@ export function FlashEventModal({ onClose, onSuccess, onError, network }: FlashE
                   className="w-full bg-theme-bg-muted border border-theme-border p-4 pl-12 text-theme-text outline-none focus:border-yellow-400/50 transition-all font-black text-xl italic"
                 />
               </div>
+            </div>
+            
+            <div className="space-y-2">
+              <label className="text-[10px] font-black text-theme-muted uppercase tracking-widest italic">Cidade</label>
+              <input
+                required
+                placeholder="Ex: Campinas"
+                value={city}
+                onChange={e => setCity(e.target.value)}
+                className="w-full bg-theme-bg-muted border border-theme-border p-4 text-theme-text outline-none focus:border-yellow-400/50 transition-all font-medium"
+              />
             </div>
             
             <div className="grid grid-cols-2 gap-4">

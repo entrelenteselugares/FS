@@ -11,12 +11,11 @@ interface DashboardHeaderProps {
 export function DashboardHeader({ activeTab, viewTab, onViewTabChange, residentUnits = [], isVerified = false }: DashboardHeaderProps) {
 
   return (
-    <div className="relative border-b border-theme-border/60 pb-4 md:pb-6 space-y-4">
-      <div className="absolute -top-10 -left-10 w-40 h-40 bg-brand-tactical/5 blur-3xl rounded-full" />
+    <div className="relative mb-6">
+      <div className="absolute -top-10 -left-10 w-40 h-40 bg-brand-tactical/5 blur-3xl rounded-full pointer-events-none" />
       
       <div className="flex flex-col xl:flex-row justify-between items-start xl:items-end gap-6 relative z-10">
-        <div className="space-y-4">
-          <div className="flex items-center gap-4">
+        <div className="flex items-center gap-4">
             {residentUnits.length > 0 && (
               <div className="flex items-center gap-2">
                 <ShieldCheck size={14} className="text-brand-tactical" />
@@ -33,7 +32,6 @@ export function DashboardHeader({ activeTab, viewTab, onViewTabChange, residentU
                 </p>
               </div>
             )}
-          </div>
         </div>
         
         {(activeTab === "agenda" || activeTab === "convites") && (

@@ -1,3 +1,4 @@
+import { APP_CONSTANTS } from '../lib/constants';
 import { useState, useEffect, useRef, useMemo } from "react";
 import { Users, Calendar, ArrowRight, ShieldCheck, ChevronLeft, ChevronRight, Clock, Home, Zap, Camera, Video, Printer, Smartphone, Building2, GraduationCap, Utensils } from "lucide-react";
 import { API } from "../lib/api";
@@ -1078,7 +1079,7 @@ export const QuotePage = () => {
               
               <div className="flex flex-col gap-4 max-w-sm mx-auto">
                 <button 
-                  onClick={() => window.open('https://wa.me/5519997843817', '_blank')}
+                  onClick={() => window.open('https://wa.me/', '_blank')}
                   className="w-full py-6 bg-emerald-500 text-white font-display font-black text-xs uppercase tracking-[0.3em] hover:bg-white transition-all shadow-2xl shadow-emerald-500/20"
                 >
                   FALAR COM ESPECIALISTA

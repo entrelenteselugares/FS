@@ -1,3 +1,4 @@
+import { APP_CONSTANTS } from '../lib/constants';
 import { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
@@ -399,7 +400,7 @@ export default function ClienteArea() {
         @media (max-width: 768px) { .mobile-stack { flex-direction:column !important; align-items:flex-start !important; } }
       `}</style>
 
-      <div className="max-w-[1400px] mx-auto px-2 md:px-6 py-6 md:py-10 space-y-8 md:space-y-12">
+      <div className="max-w-[1400px] mx-auto px-2 md:px-6 py-4 md:py-6 space-y-4 md:space-y-8">
 
         {/* Expiring Alert Banner */}
         {(() => {
@@ -419,29 +420,7 @@ export default function ClienteArea() {
         })()}
 
         {/* Header Section */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-theme-border/60 pb-10 animate-in fade-in slide-in-from-top-4 duration-700">
-          <div className="space-y-4 relative z-10">
-            <h1 className="text-4xl md:text-6xl font-heading font-black text-theme-text uppercase tracking-tighter italic leading-none">
-              {activeTab === "files" ? (
-                <>Minhas <span className="text-brand-tactical">Memórias</span></>
-              ) : activeTab === "wallet" ? (
-                <>Meu <span className="text-brand-tactical">Carrinho</span></>
-              ) : activeTab === "affiliate" ? (
-                <>Indique e <span className="text-brand-tactical">Ganhe</span></>
-              ) : activeTab === "profile" ? (
-                <>Meus <span className="text-brand-tactical">Dados</span></>
-              ) : (
-                PAGE_TITLES[activeTab].title
-              )}
-            </h1>
-            <div className="flex items-center gap-4">
-              <div className="h-1 w-12 bg-brand-tactical" />
-              <p className="text-[11px] font-black text-brand-tactical uppercase tracking-[0.4em] italic">
-                {PAGE_TITLES[activeTab].prefix ? `${PAGE_TITLES[activeTab].prefix} • ` : ""}
-                {PAGE_TITLES[activeTab].subtitle || "Premium • Foto Segundo"}
-              </p>
-            </div>
-          </div>
+        <div className="flex flex-col md:flex-row md:items-end justify-end gap-6 mb-6 animate-in fade-in slide-in-from-top-4 duration-700">
           {user?.nome && (
             <div className="flex items-center gap-2 px-4 py-2 bg-brand-tactical/10 rounded-xl border border-brand-tactical/20 shrink-0">
               <ShieldCheck size={14} className="text-brand-tactical" />
@@ -630,7 +609,7 @@ export default function ClienteArea() {
               <div className="pt-6 border-t border-theme-border/40 space-y-4">
                 <h3 className="text-[9px] font-black text-red-400 uppercase tracking-[0.3em]">Zona de Suporte</h3>
                 <p className="text-[11px] text-theme-muted">Para redefinir sua senha ou solicitar exclusão de dados, entre em contato com nosso suporte.</p>
-                <a href="https://wa.me/5519997843817" target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 text-[10px] font-black text-theme-text uppercase tracking-widest hover:text-brand-tactical transition-colors">
+                <a href="https://wa.me/" target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 text-[10px] font-black text-theme-text uppercase tracking-widest hover:text-brand-tactical transition-colors">
                   Falar com Suporte <ArrowRight size={12} />
                 </a>
               </div>
@@ -925,7 +904,7 @@ function EventGroupRow({ group, now, onSelectPedido }: {
       navigate(`/e/${event.id}?intent=upgrade`);
     } else {
       const msg = `Olá! Gostaria de adicionar mais serviços ao meu evento "${event.nomeNoivos}". Vi que para pedidos com menos de 7 dias úteis da data, a inclusão está sujeita à disponibilidade da agenda dos profissionais.`;
-      window.open(`https://wa.me/5519997843817?text=${encodeURIComponent(msg)}`, "_blank");
+      window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, "_blank");
     }
   };
 
@@ -968,7 +947,7 @@ function EventGroupRow({ group, now, onSelectPedido }: {
                </span>
             </div>
             <h4 className="text-sm sm:text-lg font-heading font-black italic tracking-tight uppercase leading-tight text-theme-text truncate">
-              {event.nomeNoivos}
+              {event?.slug?.startsWith('vault-') ? `Álbum: ${event.nomeNoivos}` : event.nomeNoivos}
             </h4>
             <p className="text-[9px] text-theme-text-muted truncate max-w-md hidden sm:block">
               {getStatusMessage(event.dataEvento)}
@@ -1059,7 +1038,7 @@ function EventGroupRow({ group, now, onSelectPedido }: {
                    <p className="text-[9px] font-black text-brand-tactical uppercase tracking-[0.4em]">Álbum do Evento</p>
                 </div>
                 <h4 className="text-2xl md:text-3xl lg:text-4xl font-heading font-black italic tracking-tighter uppercase leading-none text-theme-text">
-                  {event.nomeNoivos}
+                  {event?.slug?.startsWith('vault-') ? `Álbum: ${event.nomeNoivos}` : event.nomeNoivos}
                 </h4>
                 <div className="flex items-center gap-3 text-[9px] md:text-[10px] font-bold text-theme-muted uppercase tracking-widest">
                   <div className="flex items-center gap-1.5"><Clock size={11} /> {formatDate(event.dataEvento)}</div>
@@ -1314,7 +1293,7 @@ function PedidoDetalhe({ pedido, loading, onGoToEvent, onChangePrivacy, onRefres
             <div className="flex items-end justify-between">
               <div className="min-w-0 flex-1">
                 <h3 className="text-2xl md:text-3xl font-heading font-black italic tracking-tighter uppercase text-theme-text leading-tight truncate">
-                  {pedido.event.nomeNoivos}
+                  {pedido.event.slug?.startsWith('vault-') ? `Álbum: ${pedido.event.nomeNoivos}` : pedido.event.nomeNoivos}
                 </h3>
                 <p className="text-[9px] font-bold text-theme-muted uppercase tracking-widest mt-1 whitespace-pre-line">
                   {formatDate(pedido.event.dataEvento)} {pedido.event.city && `• ${pedido.event.city}`}

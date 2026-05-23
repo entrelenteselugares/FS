@@ -1,3 +1,4 @@
+import { APP_CONSTANTS } from '../lib/constants';
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 
@@ -406,7 +407,7 @@ export default function UnidadeFixaDashboard({
   const content = (
     <>
       <WelcomeTour role="CARTORIO" onComplete={() => {}} />
-      <div className="max-w-[1600px] mx-auto px-4 md:px-6 py-4 md:py-8 space-y-6 md:space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
+      <div className="max-w-[1600px] mx-auto px-4 md:px-6 py-4 md:py-6 space-y-4 md:space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
 
         {/* Alertas Premium */}
         {(error || success) && (
@@ -429,10 +430,10 @@ export default function UnidadeFixaDashboard({
         )}
 
         {/* Header Seção Editorial */}
-        <div className="relative border-b border-theme-border/60 pb-4 md:pb-6 space-y-4 md:space-y-6">
-          <div className="absolute -top-10 -left-10 w-40 h-40 bg-brand-tactical/5 blur-3xl rounded-full" />
+        <div className="relative mb-6">
+          <div className="absolute -top-10 -left-10 w-40 h-40 bg-brand-tactical/5 blur-3xl rounded-full pointer-events-none" />
           
-          <div className="flex flex-col xl:flex-row justify-between items-start xl:items-end gap-6 relative z-10">
+          <div className="flex flex-col xl:flex-row justify-end items-start xl:items-end gap-6 relative z-10">
             <div className="flex flex-wrap items-center gap-4 w-full xl:w-auto">
               <div className="flex items-center gap-2 px-3 py-1.5 bg-brand-tactical/10 border border-brand-tactical/30">
                 <ShieldCheck size={12} className="text-brand-tactical" />
@@ -1364,7 +1365,7 @@ export default function UnidadeFixaDashboard({
                       LOJA DA FRANQUIA
                     </button>
                     <button 
-                      onClick={() => window.open("https://wa.me/5519984470420?text=Olá! Preciso de assistência técnica para minha unidade Foto Segundo.", "_blank")}
+                      onClick={() => window.open("https://wa.me/?text=Olá! Preciso de assistência técnica para minha unidade Foto Segundo.", "_blank")}
                       className="mt-2 text-[9px] font-black text-theme-muted uppercase tracking-widest hover:text-emerald-500 transition-all text-left block"
                     >
                       ASSISTÊNCIA TÉCNICA →

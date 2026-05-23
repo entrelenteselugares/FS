@@ -3,6 +3,7 @@ import { createPortal } from "react-dom";
 import { useNavigate } from "react-router-dom";
 import { X, ShoppingBag, Plus, Search } from "lucide-react";
 import { API } from "../../lib/api";
+import { QRCodeSVG } from "qrcode.react";
 import type { Partner, ExpressFormData, ProfessionalService } from "./types";
 
 interface ExpressSaleModalProps {
@@ -442,8 +443,13 @@ export function ExpressSaleModal({ network, onClose, onSuccess, onError }: Expre
               </div>
 
               {successData.checkoutUrl && (
-                <div className="p-6 bg-brand-tactical/10 border border-brand-tactical/30 rounded-[20px] space-y-4 text-left">
-                  <label className="text-[9px] font-black text-brand-tactical uppercase tracking-widest italic block">Link de Pagamento (Pix / Cartão)</label>
+                <div className="flex flex-col items-center space-y-6">
+                  <div className="p-4 bg-white rounded-2xl shadow-2xl flex items-center justify-center">
+                    <QRCodeSVG value={successData.checkoutUrl} size={180} level="M" />
+                  </div>
+
+                  <div className="w-full p-6 bg-brand-tactical/10 border border-brand-tactical/30 rounded-[20px] space-y-4 text-left">
+                    <label className="text-[9px] font-black text-brand-tactical uppercase tracking-widest italic block">Link de Pagamento (Pix / Cartão)</label>
                   <div className="flex gap-2">
                     <input 
                       readOnly
@@ -472,6 +478,7 @@ export function ExpressSaleModal({ network, onClose, onSuccess, onError }: Expre
                   >
                     COPIAR LINK DE PAGAMENTO
                   </button>
+                </div>
                 </div>
               )}
 

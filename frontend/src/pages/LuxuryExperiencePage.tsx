@@ -1,3 +1,4 @@
+import { APP_CONSTANTS } from '../lib/constants';
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { API } from "../lib/api";
@@ -115,7 +116,7 @@ export default function LuxuryExperiencePage() {
           transition={{ duration: 2 }}
           className="absolute inset-0 bg-cover bg-no-repeat"
           style={{ 
-            backgroundImage: `url(${(event.coverPhotoUrl || 'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?q=80&w=2069&auto=format&fit=crop').trim().replace(/\s/g, '')})`,
+            backgroundImage: `url(${(event.coverPhotoUrl || '').trim().replace(/\s/g, '')})`,
             objectPosition: event.coverPosition || 'center',
             backgroundPosition: event.coverPosition || 'center'
           }}

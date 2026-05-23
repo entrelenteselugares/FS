@@ -330,6 +330,7 @@ router.get("/diag", diagnostics);
 
 // ── Eventos Públicos (Vitrine & Paywall) ──────────────────────────────────────
 router.get("/public/events",               EventController.listPublic);
+router.get("/public/events/cities",        EventController.getPublicCities);
 router.get("/public/events/:slug",         optionalAuth, EventController.getById);       // busca por slug ou id
 router.get("/public/events/:slug/access",  EventController.getAccess);     // ?orderId=xxx
 router.get("/profissional/events",      requireAuth, requireProOrFranchise, EventController.listByProfessional);

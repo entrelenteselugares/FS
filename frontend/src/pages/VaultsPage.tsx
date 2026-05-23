@@ -219,7 +219,7 @@ export default function VaultsPage() {
       { label: "Meus Dados", onClick: () => navigate("/minha-conta?s=menu"), isActive: false, icon: <User size={18} /> },
     ];
 
-    if (user?.role === "PROFISSIONAL" || user?.role === "FRANCHISEE") {
+    if ((user?.role === "PROFISSIONAL" || user?.role === "FRANCHISEE") && user?.verificationStatus === "APPROVED") {
       items.push(
         { label: "ÁREA PROFISSIONAL", isHeader: true },
         { label: "Minha Agenda", onClick: () => navigate("/minha-conta?s=agenda"), isActive: false, icon: <Play size={18} /> },
@@ -235,7 +235,7 @@ export default function VaultsPage() {
       }
     }
 
-    if (user?.role === "CARTORIO" || user?.role === "UNIDADE") {
+    if ((user?.role === "CARTORIO" || user?.role === "UNIDADE") && user?.verificationStatus === "APPROVED") {
       items.push(
         { label: "ÁREA DA UNIDADE", isHeader: true },
         { label: "Agenda Unidade", onClick: () => navigate("/minha-conta?s=agenda"), isActive: false, icon: <Play size={18} /> },
@@ -258,19 +258,8 @@ export default function VaultsPage() {
       </Helmet>
 
       <div className="max-w-[1400px] mx-auto px-2 md:px-6 py-6 md:py-10 space-y-8 md:space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
-        {/* Page header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-theme-border/60 pb-10">
-          <div className="space-y-4 relative z-10">
-            <h1 className="text-4xl md:text-6xl font-heading font-black text-theme-text uppercase tracking-tighter italic leading-none">
-              Meus <span className="text-brand-tactical">Álbuns</span>
-            </h1>
-            <div className="flex items-center gap-4">
-              <div className="h-1 w-12 bg-brand-tactical" />
-              <p className="text-[11px] font-black text-brand-tactical uppercase tracking-[0.4em] italic">
-                Premium • Álbuns privados compartilhados
-              </p>
-            </div>
-          </div>
+        {/* Page actions */}
+        <div className="flex flex-col md:flex-row md:items-end justify-end gap-6 border-b border-theme-border/60 pb-4">
 
           <button
             onClick={() => setShowModal(true)}

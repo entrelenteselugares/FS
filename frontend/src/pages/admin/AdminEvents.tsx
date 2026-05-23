@@ -435,20 +435,9 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
 
   return (
     <div className="space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
-      {/* Header Padronizado */}
-      <div className="relative border-b border-theme-border/60 pb-8 md:pb-12 space-y-4 md:space-y-6">
-        <div className="absolute -top-10 -left-10 w-40 h-40 bg-brand-tactical/5 blur-3xl rounded-full" />
-        
-        <div className="flex flex-col xl:flex-row justify-between items-start xl:items-end gap-6 relative z-10">
-          <div className="space-y-4 min-w-0">
-          <h1 className="text-2xl sm:text-4xl md:text-5xl xl:text-6xl font-heading font-black text-theme-text uppercase tracking-tighter italic leading-none truncate whitespace-nowrap">
-            Gestão de <span className="text-brand-tactical">Eventos</span>
-          </h1>
-            <div className="flex items-center gap-4">
-              <div className="h-1 w-12 bg-brand-tactical" />
-              <p className="text-[9px] sm:text-[11px] font-black text-brand-tactical uppercase tracking-[0.2em] sm:tracking-[0.4em] italic truncate max-w-[80vw]">Administração de Coberturas Fotográficas</p>
-            </div>
-          </div>
+      {/* Actions */}
+      <div className="relative border-b border-theme-border/60 pb-4 space-y-4 md:space-y-6">
+        <div className="flex flex-col xl:flex-row justify-end items-start xl:items-end gap-6 relative z-10">
           <div className="flex flex-wrap items-center gap-3 w-full xl:w-auto">
             <button 
               onClick={() => {

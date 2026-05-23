@@ -160,6 +160,13 @@ export const HomePage = () => {
   const [selectedType, setSelectedType] = useState(() => sessionStorage.getItem('hp_type') || "");
   const [selectedCity, setSelectedCity] = useState(() => sessionStorage.getItem('hp_city') || "");
   const [sortBy, setSortBy]             = useState(() => sessionStorage.getItem('hp_sort') || "");
+  const [availableCities, setAvailableCities] = useState<string[]>([]);
+
+  useEffect(() => {
+    API.get("/public/events/cities")
+      .then(res => setAvailableCities(res.data.cities || []))
+      .catch(console.error);
+  }, []);
 
   useEffect(() => {
     sessionStorage.setItem('hp_q', query);
@@ -354,9 +361,9 @@ export const HomePage = () => {
                   className="bg-theme-bg-muted border border-theme-border/40 text-theme-text pl-3 pr-5 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest outline-none appearance-none shadow-sm cursor-pointer hover:border-brand-tactical/50 transition-colors"
                 >
                   <option value="" className="bg-theme-bg text-theme-text">🗺️ Cidades</option>
-                  <option value="Campinas" className="bg-theme-bg text-theme-text">Campinas</option>
-                  <option value="São Paulo" className="bg-theme-bg text-theme-text">São Paulo</option>
-                  <option value="Valinhos" className="bg-theme-bg text-theme-text">Valinhos</option>
+                  {availableCities.map(c => (
+                    <option key={c} value={c} className="bg-theme-bg text-theme-text">{c}</option>
+                  ))}
                 </select>
                 <div className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-[6px] text-theme-text-muted">▼</div>
               </div>
@@ -425,9 +432,9 @@ export const HomePage = () => {
                   className="bg-theme-bg-muted border border-theme-border/40 px-4 py-4 text-[9px] font-black uppercase tracking-widest text-theme-text/40 focus:text-theme-text outline-none cursor-pointer hover:bg-theme-bg-muted/80 transition-colors italic appearance-none"
                 >
                   <option value="" className="bg-theme-bg text-theme-text">Todas as Cidades</option>
-                  <option value="Campinas" className="bg-theme-bg text-theme-text">Campinas</option>
-                  <option value="São Paulo" className="bg-theme-bg text-theme-text">São Paulo</option>
-                  <option value="Valinhos" className="bg-theme-bg text-theme-text">Valinhos</option>
+                  {availableCities.map(c => (
+                    <option key={c} value={c} className="bg-theme-bg text-theme-text">{c}</option>
+                  ))}
                 </select>
 
                 <select 
