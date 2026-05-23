@@ -9,8 +9,8 @@
 export const getProxyUrl = (fileIdOrUrl: string | null | undefined): string => {
   if (!fileIdOrUrl) return '';
 
-  // If it's already a full URL (http/https), return it
-  if (fileIdOrUrl.startsWith('http')) {
+  // If it's already a full URL (http/https) or a base64 data URI, return it
+  if (fileIdOrUrl.startsWith('http') || fileIdOrUrl.startsWith('data:')) {
     return fileIdOrUrl;
   }
 
