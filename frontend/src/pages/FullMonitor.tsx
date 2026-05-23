@@ -324,7 +324,7 @@ export default function FullMonitor() {
                     className={[
                       "relative group cursor-pointer select-none",
                       "bg-theme-card border rounded-2xl overflow-hidden",
-                      "flex flex-col aspect-square",
+                      "flex flex-col aspect-[2/3]",
                       "transition-all duration-300 ease-out",
                       "hover:scale-[1.02] active:scale-[0.97]",
                       isSelected
