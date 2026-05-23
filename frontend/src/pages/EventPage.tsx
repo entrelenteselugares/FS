@@ -692,10 +692,18 @@ return (
                         <p className="text-[10px] font-black text-theme-text-muted uppercase tracking-[0.4em]">Referências Técnicas</p>
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                           {event.references.map((ref, i) => {
-                            const isUrl = /^https?:\/\//i.test(ref);
-                            return isUrl ? (
+                            const isBase64Image = /^data:image\//i.test(ref);
+                            const isHttpUrl = /^https?:\/\//i.test(ref);
+                            
+                            const getNormalizedUrl = (url: string) => {
+                              const driveMatch = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
+                              if (driveMatch) return `https://drive.google.com/thumbnail?id=${driveMatch[1]}&sz=w1200`;
+                              return getProxyUrl(url);
+                            };
+
+                            return isBase64Image || isHttpUrl ? (
                               <div key={i} data-shortid={ref} data-testid={`photo-${ref}`} className="aspect-video bg-theme-bg-muted border border-theme-border/40 overflow-hidden group">
-                                  <img src={getProxyUrl(ref)} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="Referência" />
+                                  <img src={isBase64Image ? ref : getNormalizedUrl(ref)} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="Referência" />
                               </div>
                             ) : (
                               <div key={i} className="aspect-video bg-theme-bg-muted border border-theme-border/40 overflow-hidden group p-4 flex items-center justify-center text-center">
