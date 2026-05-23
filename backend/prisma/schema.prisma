@@ -995,6 +995,8 @@ model SharedAlbumMedia {
   aiTags           String[] @default([])
   aiAnalysisStatus String   @default("PENDING") // PENDING, ANALYZED, FAILED, APPROVED, REJECTED
 
+  status           String   @default("PENDING") // PENDING, APPROVED, REJECTED
+
   createdAt DateTime @default(now())
 
   album      SharedAlbum @relation(fields: [albumId], references: [id], onDelete: Cascade)

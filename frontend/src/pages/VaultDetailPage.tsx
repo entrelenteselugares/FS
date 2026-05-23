@@ -26,6 +26,7 @@ interface Media {
   width?: number;
   height?: number;
   originalDate?: string;
+  status?: string; // PENDING | APPROVED | REJECTED
 }
 
 interface Vault {
@@ -77,6 +78,30 @@ export default function VaultDetailPage() {
       setLoading(false);
     }
   }, [vaultId]);
+
+  const handleDeleteMedia = async (mediaId: string) => {
+    if (!vault || !window.confirm("Tem certeza? Esta foto será excluída permanentemente.")) return;
+    try {
+      await api.delete(`/vaults/${vaultId}/media/${mediaId}`);
+      setMedia(prev => prev.filter(m => m.id !== mediaId));
+      setSelectedPhoto(null);
+    } catch (err) {
+      console.error("[Delete Media] Erro:", err);
+      alert("Erro ao excluir a foto.");
+    }
+  };
+
+  const handleApproveMedia = async (mediaId: string, currentStatus: string) => {
+    const newStatus = currentStatus === "APPROVED" ? "PENDING" : "APPROVED";
+    try {
+      await api.patch(`/vaults/${vaultId}/media/${mediaId}/status`, { status: newStatus });
+      setMedia(prev => prev.map(m => m.id === mediaId ? { ...m, status: newStatus } : m));
+      setSelectedPhoto(prev => prev?.id === mediaId ? { ...prev, status: newStatus } : prev);
+    } catch (err) {
+      console.error("[Approve Media] Erro:", err);
+      alert("Erro ao alterar status da foto.");
+    }
+  };
 
   const handleVote = async (mediaId: string) => {
     try {
@@ -334,7 +359,7 @@ export default function VaultDetailPage() {
             </h1>
               <div className="flex items-center gap-3 mt-1">
                 <span className="text-[9px] font-black text-emerald-500 uppercase tracking-widest">
-                  {media.length} / {vault.goalPoses} POSES
+                  {media.filter(m => m.status !== 'REJECTED').length} / {vault.goalPoses} POSES
                 </span>
                 <div className="w-24 h-1 rounded-full overflow-hidden" style={{ background: T.border }}>
                   <div 
@@ -380,12 +405,12 @@ export default function VaultDetailPage() {
             </button>
             
             <label className={`flex-1 md:flex-none flex items-center justify-center gap-2 text-[10px] font-black uppercase tracking-widest px-5 py-2.5 rounded-lg transition-all shadow-lg ${
-              media.length >= vault.goalPoses
+              media.length >= vault.goalPoses * 2
                 ? "bg-zinc-800 text-gray-500 cursor-not-allowed opacity-50"
                 : "bg-emerald-500 hover:bg-emerald-400 text-black shadow-emerald-500/20 cursor-pointer"
             }`}>
               <Upload size={14} />
-              {media.length >= vault.goalPoses ? "Meta Atingida" : "Enviar Foto"}
+              {media.length >= vault.goalPoses * 2 ? "Limite Atingido" : "Enviar Foto"}
                 <input type="file" className="hidden" onChange={handleFileUpload} accept="image/*" multiple />
             </label>
           </div>
@@ -521,6 +546,8 @@ export default function VaultDetailPage() {
                   onClick={() => setSelectedPhoto(item)}
                   className={`relative aspect-square bg-zinc-900 overflow-hidden group cursor-pointer transition-all duration-300 ${
                     item.votedByMe ? 'ring-4 ring-emerald-500 scale-95 rounded-xl' : 'hover:opacity-90 rounded-none'
+                  } ${
+                    item.status === 'PENDING' ? 'opacity-60' : ''
                   }`}
                 >
                   <img 
@@ -535,6 +562,13 @@ export default function VaultDetailPage() {
                       }
                     }}
                   />
+
+                  {/* Pending badge (visible only to owner) */}
+                  {item.status === 'PENDING' && vault.myRole === 'OWNER' && (
+                    <div className="absolute top-2 left-2 z-20 px-2 py-0.5 bg-yellow-500 text-black text-[8px] font-black uppercase tracking-widest rounded-full">
+                      Pendente
+                    </div>
+                  )}
 
                   {/* Absolute Selection Indicator */}
                   {item.votedByMe && (
@@ -658,7 +692,7 @@ export default function VaultDetailPage() {
                   }}
                 />
                 
-                <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-4">
+                <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-3 flex-wrap justify-center">
                    <button 
                      onClick={() => { handleVote(selectedPhoto.id); setSelectedPhoto(prev => prev ? { ...prev, votedByMe: !prev.votedByMe, _count: { votes: prev.votedByMe ? prev._count.votes - 1 : prev._count.votes + 1 } } : null); }}
                      className={`flex items-center gap-3 px-8 py-4 rounded-full font-black uppercase tracking-widest text-[12px] transition-all ${
@@ -668,6 +702,28 @@ export default function VaultDetailPage() {
                      <Heart size={20} fill={selectedPhoto.votedByMe ? "currentColor" : "none"} />
                      {selectedPhoto.votedByMe ? "Votado" : "Votar nesta Pose"}
                    </button>
+
+                   {/* Owner-only moderation buttons */}
+                   {vault?.myRole === 'OWNER' && (
+                     <>
+                       <button
+                         onClick={() => handleApproveMedia(selectedPhoto.id, selectedPhoto.status || 'PENDING')}
+                         className={`flex items-center gap-2 px-6 py-4 rounded-full font-black uppercase tracking-widest text-[11px] transition-all ${
+                           selectedPhoto.status === 'APPROVED'
+                             ? 'bg-emerald-500/30 text-emerald-400 border border-emerald-500/30'
+                             : 'bg-yellow-500 text-black'
+                         }`}
+                       >
+                         {selectedPhoto.status === 'APPROVED' ? '✓ Aprovada' : '✓ Aprovar'}
+                       </button>
+                       <button
+                         onClick={() => handleDeleteMedia(selectedPhoto.id)}
+                         className="flex items-center gap-2 px-6 py-4 rounded-full font-black uppercase tracking-widest text-[11px] bg-red-500/80 hover:bg-red-500 text-white transition-all"
+                       >
+                         🗑 Excluir
+                       </button>
+                     </>
+                   )}
                 </div>
               </div>
 

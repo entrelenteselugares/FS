@@ -104,11 +104,11 @@ export class VaultController {
 
       if (!album) return res.status(404).json({ error: "Cofre não encontrado." });
       
-      // Regra de Negócio: Impedir upload além da meta
-      if (album._count.media >= album.goalPoses) {
+      // Regra de Negócio: Impedir upload além do DOBRO da meta (para permitir votação)
+      if (album._count.media >= album.goalPoses * 2) {
         return res.status(400).json({ 
           error: "Cofre cheio!", 
-          details: `Você atingiu a meta de ${album.goalPoses} fotos. Feche o ciclo para imprimir ou aumente a meta.` 
+          details: `Você atingiu o limite máximo de envios (${album.goalPoses * 2} fotos). A materialização é para as melhores ${album.goalPoses} poses.` 
         });
       }
 
@@ -175,7 +175,8 @@ export class VaultController {
           fileSize: fileSize,
           width: imageWidth,
           height: imageHeight,
-          originalDate: originalDate
+          originalDate: originalDate,
+          status: album.ownerId === userId ? "APPROVED" : "PENDING"
         }
       });
 
@@ -241,7 +242,15 @@ export class VaultController {
       }
 
       const media = await prisma.sharedAlbumMedia.findMany({
-        where: { albumId: albumId as string },
+        where: { 
+          albumId: albumId as string,
+          ...(membership.role !== "OWNER" ? {
+            OR: [
+              { status: "APPROVED" },
+              { uploadedById: userId }
+            ]
+          } : {})
+        },
         orderBy: { createdAt: "desc" },
         include: {
           uploadedBy: {
@@ -736,6 +745,72 @@ export class VaultController {
       return res.json({ success: true });
     } catch (e: any) {
       return res.status(500).json({ error: "Erro ao remover membro.", details: e.message });
+    }
+  }
+
+  /**
+   * Exclui permanentemente uma mídia do banco de dados e do Google Drive (Apenas Proprietário)
+   */
+  static async deleteMedia(req: AuthRequest, res: Response) {
+    const albumId = req.params.albumId as string;
+    const mediaId = req.params.mediaId as string;
+    const ownerId = req.user?.userId;
+
+    if (!ownerId) return res.status(401).json({ error: "Não autenticado." });
+
+    try {
+      const album = await prisma.sharedAlbum.findUnique({ where: { id: albumId } });
+      if (!album) return res.status(404).json({ error: "Cofre não encontrado." });
+      if (album.ownerId !== ownerId) return res.status(403).json({ error: "Apenas o proprietário pode excluir fotos." });
+
+      const media = await prisma.sharedAlbumMedia.findUnique({ where: { id: mediaId, albumId } });
+      if (!media) return res.status(404).json({ error: "Mídia não encontrada." });
+
+      // 1. Tentar deletar do Drive
+      try {
+        await driveService.deleteItem(media.fileId);
+      } catch (driveErr) {
+        console.warn(`[VAULT DELETE] Falha ao deletar arquivo ${media.fileId} do Drive. Ignorando...`, driveErr);
+      }
+
+      // 2. Deletar do BD
+      await prisma.sharedAlbumMedia.delete({ where: { id: mediaId } });
+
+      return res.json({ success: true, message: "Foto excluída com sucesso." });
+    } catch (e: any) {
+      console.error("[VAULT DELETE MEDIA] Erro:", e.message);
+      return res.status(500).json({ error: "Erro ao excluir foto.", details: e.message });
+    }
+  }
+
+  /**
+   * Atualiza o status de aprovação de uma mídia (Apenas Proprietário)
+   */
+  static async updateMediaStatus(req: AuthRequest, res: Response) {
+    const albumId = req.params.albumId as string;
+    const mediaId = req.params.mediaId as string;
+    const ownerId = req.user?.userId;
+    const { status } = req.body;
+
+    if (!ownerId) return res.status(401).json({ error: "Não autenticado." });
+    if (!["APPROVED", "PENDING", "REJECTED"].includes(status)) {
+      return res.status(400).json({ error: "Status inválido." });
+    }
+
+    try {
+      const album = await prisma.sharedAlbum.findUnique({ where: { id: albumId } });
+      if (!album) return res.status(404).json({ error: "Cofre não encontrado." });
+      if (album.ownerId !== ownerId) return res.status(403).json({ error: "Apenas o proprietário pode aprovar fotos." });
+
+      const media = await prisma.sharedAlbumMedia.update({
+        where: { id: mediaId, albumId },
+        data: { status }
+      });
+
+      return res.json({ success: true, media });
+    } catch (e: any) {
+      console.error("[VAULT UPDATE MEDIA] Erro:", e.message);
+      return res.status(500).json({ error: "Erro ao atualizar status da foto.", details: e.message });
     }
   }
 }

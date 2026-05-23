@@ -27,6 +27,113 @@ const formatDate = (date: string | null | undefined) => {
   return new Date(date).toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' });
 };
 
+/**
+ * ReferenceCard — exibe uma miniatura ou rich-preview para uma URL de referência.
+ * Suporta: imagens diretas, Google Drive, URLs de páginas (Pexels, Pinterest, etc.)
+ */
+function ReferenceCard({ url }: { url: string }) {
+  const [preview, setPreview] = useState<{ title?: string; image?: string; description?: string } | null>(null);
+  const [imgError, setImgError] = useState(false);
+
+  const isBase64 = /^data:image\//i.test(url);
+  const isDirectImage = /\.(jpeg|jpg|gif|png|webp|svg)(\?.*)?$/i.test(url);
+  const driveMatch = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
+  const isDriveExport = url.includes('drive.google.com/uc') || url.includes('drive.google.com/thumbnail');
+  const isRenderableImage = isBase64 || isDirectImage || !!driveMatch || isDriveExport;
+
+  const normalizedImageUrl = (() => {
+    if (isBase64) return url;
+    if (driveMatch) return `https://drive.google.com/thumbnail?id=${driveMatch[1]}&sz=w600`;
+    if (isDriveExport) return url;
+    return url;
+  })();
+
+  useEffect(() => {
+    if (isRenderableImage || isBase64) return;
+    // Fetch rich preview via microlink (gratuito, sem chave)
+    let cancelled = false;
+    const encoded = encodeURIComponent(url);
+    fetch(`https://api.microlink.io/?url=${encoded}&screenshot=false&meta=true`)
+      .then(r => r.json())
+      .then(data => {
+        if (cancelled) return;
+        if (data?.status === 'success' && data?.data) {
+          setPreview({
+            title: data.data.title,
+            image: data.data.image?.url || data.data.screenshot?.url,
+            description: data.data.description,
+          });
+        }
+      })
+      .catch(() => { /* silencia erros de rede */ });
+    return () => { cancelled = true; };
+  }, [url, isRenderableImage, isBase64]);
+
+  // --- Imagem direta / Drive ---
+  if (isRenderableImage) {
+    return (
+      <a href={url} target="_blank" rel="noopener noreferrer"
+        className="aspect-square bg-theme-bg-muted border border-theme-border/20 overflow-hidden group hover-lift rounded-xl cursor-pointer block">
+        <img
+          src={normalizedImageUrl}
+          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+          alt="Referência"
+          onError={() => setImgError(true)}
+        />
+        {imgError && (
+          <div className="absolute inset-0 flex items-center justify-center">
+            <ExternalLink size={24} className="text-theme-text-muted" />
+          </div>
+        )}
+      </a>
+    );
+  }
+
+  // --- Rich preview carregado via microlink ---
+  if (preview?.image) {
+    let hostname = url;
+    try { hostname = new URL(url).hostname.replace('www.', ''); } catch {}
+    return (
+      <a href={url} target="_blank" rel="noopener noreferrer"
+        className="aspect-square bg-theme-bg-muted border border-theme-border/20 overflow-hidden group hover-lift rounded-xl cursor-pointer block relative">
+        <img
+          src={preview.image}
+          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+          alt={preview.title || 'Referência'}
+          onError={() => setPreview(null)}
+        />
+        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 to-transparent p-3">
+          <p className="text-white text-[9px] font-black uppercase tracking-widest truncate">{hostname}</p>
+          {preview.title && <p className="text-white/60 text-[8px] truncate mt-0.5">{preview.title}</p>}
+        </div>
+      </a>
+    );
+  }
+
+  // --- Carregando preview ou fallback de link clicável ---
+  let hostname = url;
+  try { hostname = new URL(url).hostname.replace('www.', ''); } catch {}
+  const isLoading = !preview && /^https?:\/\//i.test(url);
+
+  return (
+    <a href={url} target="_blank" rel="noopener noreferrer"
+      className="aspect-square bg-theme-bg-muted border border-theme-border/20 overflow-hidden group p-4 flex flex-col items-center justify-center text-center hover-lift rounded-xl text-theme-text/80 hover:text-brand-tactical transition-colors relative">
+      {isLoading ? (
+        <>
+          {/* Skeleton shimmer */}
+          <div className="w-12 h-12 rounded-full bg-theme-border/20 animate-pulse mb-3" />
+          <div className="w-20 h-2 rounded bg-theme-border/20 animate-pulse" />
+        </>
+      ) : (
+        <>
+          <ExternalLink size={24} className="mb-3 opacity-50 group-hover:opacity-100 flex-shrink-0" />
+          <span className="text-[10px] font-black uppercase tracking-widest leading-relaxed italic break-all line-clamp-3">{hostname || url}</span>
+        </>
+      )}
+    </a>
+  );
+}
+
 function TacticalBenefit({ icon, title, desc }: { icon: React.ReactNode; title: string; desc: string }) {
   return (
     <div className="flex gap-4 p-4 bg-white/5 border border-white/5 hover:border-brand-tactical/20 transition-colors group">
@@ -690,47 +797,10 @@ return (
                     {event.references && event.references.length > 0 && (
                       <div className="space-y-6 pt-4">
                         <p className="text-[10px] font-black text-theme-text-muted uppercase tracking-[0.4em]">Referências Técnicas</p>
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-                          {event.references.map((ref, i) => {
-                            const isBase64Image = /^data:image\//i.test(ref);
-                            const isHttpUrl = /^https?:\/\//i.test(ref);
-                            
-                            const isDirectImage = /\.(jpeg|jpg|gif|png|webp|svg)$/i.test(ref) || ref.includes('images.pexels.com');
-                            const isGoogleDrive = ref.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
-
-                            const isRenderableImage = isBase64Image || isDirectImage || isGoogleDrive;
-
-                            const getNormalizedUrl = (url: string) => {
-                              const driveMatch = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
-                              if (driveMatch) return `https://drive.google.com/thumbnail?id=${driveMatch[1]}&sz=w1200`;
-                              return getProxyUrl(url);
-                            };
-
-                            if (isRenderableImage) {
-                              return (
-                                <div key={i} data-shortid={ref} data-testid={`photo-${ref}`} className="aspect-square bg-theme-bg-muted border border-theme-border/20 overflow-hidden group hover-lift rounded-xl cursor-pointer">
-                                    <img src={isBase64Image ? ref : getNormalizedUrl(ref)} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="Referência" />
-                                </div>
-                              );
-                            }
-
-                            if (isHttpUrl) {
-                              let domain = ref;
-                              try { domain = new URL(ref).hostname; } catch(e){}
-                              return (
-                                <a key={i} href={ref} target="_blank" rel="noopener noreferrer" className="aspect-square bg-theme-bg-muted border border-theme-border/20 overflow-hidden group p-6 flex flex-col items-center justify-center text-center hover-lift rounded-xl text-theme-text/80 hover:text-brand-tactical transition-colors">
-                                    <ExternalLink size={24} className="mb-3 opacity-50 group-hover:opacity-100" />
-                                    <span className="text-[10px] font-black uppercase tracking-widest leading-relaxed italic break-all line-clamp-3">{domain}</span>
-                                </a>
-                              );
-                            }
-
-                            return (
-                              <div key={i} className="aspect-video bg-theme-bg-muted border border-theme-border/20 overflow-hidden group p-6 flex items-center justify-center text-center hover-lift rounded-xl">
-                                  <span className="text-[10px] font-black uppercase tracking-widest text-theme-text/80 leading-relaxed italic line-clamp-3">{ref}</span>
-                              </div>
-                            );
-                          })}
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                          {event.references.map((ref, i) => (
+                            <ReferenceCard key={i} url={ref} />
+                          ))}
                         </div>
                       </div>
                     )}

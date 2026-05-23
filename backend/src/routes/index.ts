@@ -586,6 +586,9 @@ router.post("/vaults/:albumId/invite",    requireAuth, VaultController.generateI
 router.get("/vaults/invitation/:code",     VaultController.getInvitationDetails);
 router.post("/vaults/invitation/:code/accept", requireAuth, VaultController.acceptInvite);
 router.delete("/vaults/:albumId/members/:userId", requireAuth, VaultController.removeMember);
+router.delete("/vaults/:albumId/media/:mediaId",  requireAuth, VaultController.deleteMedia);
+router.patch("/vaults/:albumId/media/:mediaId/status", requireAuth, VaultController.updateMediaStatus);
+
 
 // ── Flash Event (Venda Direta com PIN) ───────────────────────────────────────
 router.use("/flash", flashRoutes);
