@@ -383,6 +383,7 @@ export class EventController {
             city: true,
             cartorioUser: {
               select: {
+                nome: true,
                 cartorio: {
                   select: {
                     cidade: true
@@ -399,6 +400,7 @@ export class EventController {
 
       const mapped = events.map((e: any) => ({
         ...e,
+        ownerName: e.cartorioUser?.nome || "Foto Segundo",
         city: e.city || (e as any).cartorioUser?.cartorio?.cidade || null
       }));
 

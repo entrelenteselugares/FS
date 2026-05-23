@@ -23,6 +23,7 @@ interface Event {
   temReels: boolean;
   type?: string;
   coverPosition?: string | null;
+  ownerName?: string;
 }
 
 function formatDate(d: string | null | undefined) {
@@ -76,10 +77,10 @@ function EventCard({ event, onClick }: { event: Event; onClick: () => void }) {
       {/* Badge de Autoria (Pílula Glassmorphism) - Top Left */}
       <div className="absolute top-4 left-4 z-10 backdrop-blur-md bg-white/10 border border-white/20 rounded-full px-3 py-1 flex items-center gap-2">
         <div className="w-5 h-5 rounded-full bg-emerald-500/80 flex items-center justify-center text-[10px] font-black text-black">
-          {event.cartorio?.charAt(0).toUpperCase() || "FS"}
+          {event.ownerName?.charAt(0).toUpperCase() || event.cartorio?.charAt(0).toUpperCase() || "FS"}
         </div>
         <span className="text-[10px] font-black text-white uppercase tracking-widest truncate max-w-[120px]">
-          {event.cartorio || "Foto Segundo"}
+          {event.ownerName || event.cartorio || "Foto Segundo"}
         </span>
       </div>
 
