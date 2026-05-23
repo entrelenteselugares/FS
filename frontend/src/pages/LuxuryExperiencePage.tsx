@@ -19,10 +19,12 @@ interface EventData {
   type: 'ALBUM_FULL' | 'PHOTO_MARKETPLACE';
   slug?: string;
   captacao: {
+    id: string;
     nome: string;
-    user: {
-      nome: string;
-    }
+  } | null;
+  edicao: {
+    id: string;
+    nome: string;
   } | null;
 }
 
@@ -93,8 +95,9 @@ export default function LuxuryExperiencePage() {
     </div>
   );
 
-  const artistName = event.captacao?.user?.nome || "Artista Foto Segundo";
-
+  const captacaoName = event.captacao?.nome;
+  const edicaoName = event.edicao?.nome;
+  const initialChar = (captacaoName || edicaoName || "F").charAt(0).toUpperCase();
   return (
     <div className="min-h-screen font-sans selection:bg-brand-tactical selection:text-zinc-950" style={{ background: T.bg, color: T.text }}>
       <nav className="h-20 flex items-center justify-center px-8 border-b sticky top-0 z-50 backdrop-blur-xl" style={{ borderColor: T.border, background: `${T.bg}e6` }}>
@@ -155,18 +158,36 @@ export default function LuxuryExperiencePage() {
         
         {/* ARTIST INFO */}
         <div className="flex flex-col md:flex-row items-center gap-12 border-y py-10" style={{ borderColor: T.border }}>
-          <div className="relative group">
+          <div className="relative group shrink-0">
             <div className="w-24 h-24 rounded-full border border-emerald-500/30 overflow-hidden shadow-xl bg-theme-card">
-               <div className="w-full h-full flex items-center justify-center text-emerald-500 text-2xl font-display italic font-black">
-                  {artistName.charAt(0)}
+               <div className="w-full h-full flex items-center justify-center text-emerald-500 text-3xl font-display italic font-black">
+                  {initialChar}
                </div>
             </div>
             <div className="absolute -bottom-1 -right-1 p-2 bg-emerald-500 text-zinc-950 rounded-full shadow-lg"><Camera size={14} /></div>
           </div>
-          <div className="space-y-4 text-center md:text-left">
-            <p className="text-[10px] font-black text-brand-tactical uppercase tracking-[0.4em] italic">Captura e Visão</p>
-            <h2 className="text-3xl font-heading font-black uppercase italic tracking-tight" style={{ color: T.text }}>{artistName}</h2>
-            <p className="text-xs uppercase font-medium tracking-widest max-w-md leading-relaxed" style={{ color: T.text2 }}>Sua história capturada com precisão e alma sob a curadoria tática da Foto Segundo.</p>
+          <div className="space-y-4 text-center md:text-left flex-1">
+            <p className="text-[10px] font-black text-brand-tactical uppercase tracking-[0.4em] italic">Equipe Responsável</p>
+            <h2 className="text-3xl font-heading font-black uppercase italic tracking-tight" style={{ color: T.text }}>
+              {captacaoName || edicaoName ? 'FOTO SEGUNDO' : 'Artista Foto Segundo'}
+            </h2>
+            <div className="flex flex-col gap-2 pt-2">
+              {captacaoName && (
+                <div className="flex items-center gap-2 justify-center md:justify-start">
+                  <span className="text-[10px] uppercase font-bold tracking-[0.2em] text-brand-tactical">Fotografia & Visão:</span>
+                  <span className="text-xs uppercase font-black tracking-widest text-theme-text">{captacaoName}</span>
+                </div>
+              )}
+              {edicaoName && (
+                <div className="flex items-center gap-2 justify-center md:justify-start">
+                  <span className="text-[10px] uppercase font-bold tracking-[0.2em] text-brand-tactical">Edição & Cor:</span>
+                  <span className="text-xs uppercase font-black tracking-widest text-theme-text">{edicaoName}</span>
+                </div>
+              )}
+              {!captacaoName && !edicaoName && (
+                <p className="text-xs uppercase font-medium tracking-widest max-w-md leading-relaxed" style={{ color: T.text2 }}>Sua história capturada com precisão e alma sob a curadoria tática da Foto Segundo.</p>
+              )}
+            </div>
           </div>
         </div>
 
