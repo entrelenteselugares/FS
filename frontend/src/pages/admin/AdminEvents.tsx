@@ -1,5 +1,6 @@
 // Optimized Admin Dashboard - Foto Segundo
 import React, { useState, useEffect, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 import { API } from "../../lib/api";
 import { T } from "../../lib/theme";
 import { QRCodeSVG } from "qrcode.react";
@@ -61,6 +62,7 @@ interface AdminEventsProps {
 }
 
 export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) => {
+  const navigate = useNavigate();
   const [events, setEvents] = useState<Event[]>([]);
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
@@ -382,11 +384,14 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
       });
       
       if (data.isDigital && data.checkoutUrl) {
-        showNotification("Venda registrada! Abrindo link de pagamento...");
+        showNotification("Venda registrada! Redirecionando para o checkout...");
+        setIsExpressModalOpen(false);
+        // BUG FIX: Navega internamente para o checkout padrão (MP Bricks)
+        // em vez de abrir o Checkout Pro externo do MP
         setTimeout(() => {
-          window.open(data.checkoutUrl, "_blank");
-          setIsExpressModalOpen(false);
-        }, 1500);
+          const path = data.checkoutUrl.replace(window.location.origin, '');
+          navigate(path.startsWith('/') ? path : `/${path}`);
+        }, 800);
         return;
       }
 

@@ -107,6 +107,9 @@ export class MarketplaceController {
       const { editorId } = req.body; 
 
       const isPhysical = finalProduct === "SD_CARD" || finalProduct === "ALBUM_IMPRESSO";
+      // BUG FIX: Evento só fica ativo de imediato para pagamentos físicos (MONEY/PIX direto).
+      // Para PIX/CARD digitais (checkout pendente), o evento só é ativado após confirmação via webhook.
+      const isDigitalPayment = finalMethod === "PIX" || finalMethod === "CARD";
 
       const event = await prisma.event.create({
         data: {
@@ -114,7 +117,7 @@ export class MarketplaceController {
           dataEvento: eventDate,
           location: finalLocation,
           type: "PHOTO_MARKETPLACE",
-          active: true,
+          active: !isDigitalPayment, // Ativa imediatamente só para pagamentos físicos confirmados
           isPrivate: true,
           slug,
           captacaoId: captacaoId || req.user?.userId,
@@ -141,7 +144,7 @@ export class MarketplaceController {
       }
 
       // 4. Cria o Pedido
-      const isDigital = finalMethod === "PIX" || finalMethod === "CARD";
+      const isDigital = isDigitalPayment;
       const { matriz, captacao, edicao, cartorio } = await PricingService.calculateSplits(finalAmount, {
         isExpressSale: true,
         paymentMethod: finalMethod,
@@ -177,23 +180,22 @@ export class MarketplaceController {
         }
       });
       
-      // 5. INTEGRAÇÃO MERCADO PAGO (Para Venda Digital via Marketplace)
-      let checkoutUrl = null;
+      // 5. INTEGRAÇÃO MERCADO PAGO (Para Venda Digital via Checkout Interno)
+      // BUG FIX: Não geramos mais o Checkout Pro externo do MP.
+      // Retornamos o link da nossa página de checkout (/checkout/:orderId) que usa o MP Bricks.
+      // Isso garante o padrão de UX da plataforma e evita o checkout externo.
+      let checkoutUrl: string | null = null;
       if (isDigital) {
-        try {
-          const preference = await MercadoPagoService.createPreference({
-            transaction_amount: finalAmount,
-            description: `FOTOS: ${event.nomeNoivos}`,
-            payer_email: finalEmail,
-            notification_url: `${process.env.BACKEND_URL}/api/webhooks/mercadopago`,
-            orderId: order.id
-          });
-          checkoutUrl = preference.init_point;
-          console.log(`[MP] checkout URL gerada: ${checkoutUrl}`);
-        } catch (mpError) {
-          console.error("[MP Preference CRITICAL Error] - Falha ao gerar link de pagamento:", mpError);
-          // Pedido foi criado mas sem link de pagamento - continua mas avisa
-        }
+        const frontendUrl = process.env.FRONTEND_URL || "https://foto-segundo.vercel.app";
+        checkoutUrl = `${frontendUrl}/checkout/${order.id}`;
+        console.log(`[ExpressSale] Checkout URL interno gerado: ${checkoutUrl}`);
+
+        // Salva o paymentId como referência para o webhook conseguir localizar o pedido
+        // (O MP Brick vai criar o pagamento e vincular via orderId no processPayment)
+        await prisma.order.update({
+          where: { id: order.id },
+          data: { buyerEmail: finalEmail } // Garante que o e-mail está salvo para o checkout transparente
+        });
       }
 
       // Audit — Registro de Venda Expressa (P0)

@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
+import { useNavigate } from "react-router-dom";
 import { X, ShoppingBag, Plus, Search } from "lucide-react";
 import { API } from "../../lib/api";
 import type { Partner, ExpressFormData, ProfessionalService } from "./types";
@@ -30,6 +31,7 @@ const INITIAL_FORM: ExpressFormData = {
 };
 
 export function ExpressSaleModal({ network, onClose, onSuccess, onError }: ExpressSaleModalProps) {
+  const navigate = useNavigate();
   const [step, setStep] = useState<1 | 2 | 3 | 4 | 5>(1);
   const [successData, setSuccessData] = useState<{ msg: string; magicLink?: string; checkoutUrl?: string } | null>(null);
   const [form, setForm] = useState<ExpressFormData>(INITIAL_FORM);
@@ -450,11 +452,14 @@ export function ExpressSaleModal({ network, onClose, onSuccess, onError }: Expre
                     />
                     <button 
                       onClick={() => {
-                        window.open(successData.checkoutUrl, "_blank");
+                        // BUG FIX: Navega internamente para o checkout padrão com MP Bricks
+                        // em vez de abrir o Checkout Pro externo do MP
+                        onClose();
+                        navigate(successData.checkoutUrl!.replace(window.location.origin, '') || successData.checkoutUrl!);
                       }}
                       className="px-6 bg-brand-tactical text-zinc-950 text-[10px] font-black uppercase tracking-widest rounded-xl hover:brightness-110 active:scale-95 transition-all"
                     >
-                      PAGAR
+                      ABRIR CHECKOUT
                     </button>
                   </div>
                   <button 
