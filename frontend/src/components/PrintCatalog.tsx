@@ -1,4 +1,3 @@
-import { APP_CONSTANTS } from '../lib/constants';
 import { useState } from "react";
 import { motion } from "framer-motion";
 

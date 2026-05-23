@@ -1,4 +1,3 @@
-import { APP_CONSTANTS } from '../lib/constants';
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { useAuth } from "../hooks/useAuth";
 import { API } from "../lib/api";

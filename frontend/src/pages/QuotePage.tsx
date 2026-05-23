@@ -1,4 +1,3 @@
-import { APP_CONSTANTS } from '../lib/constants';
 import { useState, useEffect, useRef, useMemo } from "react";
 import { Users, Calendar, ArrowRight, ShieldCheck, ChevronLeft, ChevronRight, Clock, Home, Zap, Camera, Video, Printer, Smartphone, Building2, GraduationCap, Utensils } from "lucide-react";
 import { API } from "../lib/api";

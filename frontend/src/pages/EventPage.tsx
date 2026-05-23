@@ -1,4 +1,3 @@
-import { APP_CONSTANTS } from '../lib/constants';
 import { useState, useEffect, useCallback } from "react";
 import { createPortal } from "react-dom";
 import { useEventStatus } from "../hooks/useEventStatus";

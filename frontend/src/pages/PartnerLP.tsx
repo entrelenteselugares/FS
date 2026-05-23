@@ -1,4 +1,3 @@
-import { APP_CONSTANTS } from '../lib/constants';
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { API } from "../lib/api";

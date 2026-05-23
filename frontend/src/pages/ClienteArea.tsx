@@ -1,4 +1,3 @@
-import { APP_CONSTANTS } from '../lib/constants';
 import { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
@@ -173,21 +172,6 @@ export default function ClienteArea() {
     return items;
   }, [user, activeTab, navigate]);
 
-  const PAGE_TITLES: Record<ActiveTab, { title: string; subtitle: string; prefix: string }> = {
-    files: { title: "Minhas Memórias", subtitle: "Acesso vitalício às memórias que você adquiriu.", prefix: "Central de Arquivos" },
-    wallet: { title: "Carrinho", subtitle: "Créditos de Recompensa e Cashback acumulados.", prefix: "Minha Carteira" },
-    affiliate: { title: "Indique e Ganhe", subtitle: "Ganhe recompensas indicando a Foto Segundo.", prefix: "Programa de Afiliados" },
-    profile: { title: "Meus Dados", subtitle: "Gerencie suas informações e endereços.", prefix: "Configurações" },
-    agenda: { title: "Minha Agenda", subtitle: "", prefix: "" },
-    financeiro: { title: "Minhas Vendas & Ganhos", subtitle: "", prefix: "" },
-    servicos: { title: "Portfólio & Serviços", subtitle: "", prefix: "" },
-    calendar: { title: "Agenda Google", subtitle: "", prefix: "" },
-    franquia: { title: "Franquia Print", subtitle: "", prefix: "" },
-    equipe: { title: "Rede Técnica", subtitle: "", prefix: "" },
-    configuracoes: { title: "Configuração", subtitle: "", prefix: "" },
-    monitor: { title: "Monitor", subtitle: "", prefix: "" }
-  };
-  
   // Profile States
   const [profileData, setProfileData] = useState({ 
     nome: "", 
