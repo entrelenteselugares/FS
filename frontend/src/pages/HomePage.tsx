@@ -302,15 +302,15 @@ export const HomePage = () => {
 
           <div className="hp-hero-search-desktop animate-reveal" style={{ display: "flex", gap: 12, justifyContent: "center" }}>
             {/* Mobile-only Search Bar inside Hero */}
-            <div className="md:hidden w-full relative mb-0 group">
-              <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400 group-focus-within:text-emerald-500 group-focus-within:scale-110 transition-all duration-300" />
+            <div className="md:hidden w-full relative mb-0 group mt-2">
+              <Search size={14} className="absolute left-4 top-1/2 -translate-y-1/2 text-theme-text-muted group-focus-within:text-brand-tactical group-focus-within:scale-110 transition-all duration-300" />
               <input
                 id="mobile-search-input"
                 value={query}
                 onChange={e => setQuery(e.target.value)}
                 onKeyDown={e => e.key === "Enter" && fetchEvents(query, 1)}
                 placeholder="Pesquise por evento, noivos..."
-                className="w-full bg-zinc-900/90 border border-zinc-800 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 text-white pl-12 pr-4 py-3.5 rounded-xl text-xs font-black uppercase tracking-wider outline-none shadow-xl transition-all duration-300 focus:scale-[1.02] placeholder:text-zinc-500"
+                className="w-full bg-theme-bg-muted/80 border border-theme-border/40 focus:border-brand-tactical focus:ring-2 focus:ring-brand-tactical/20 text-theme-text pl-10 pr-4 py-2.5 rounded-lg text-[10px] font-black uppercase tracking-wider outline-none shadow-md transition-all duration-300 focus:scale-[1.02] placeholder:text-theme-text-muted"
               />
             </div>
 
@@ -351,45 +351,45 @@ export const HomePage = () => {
                 <select 
                   value={selectedCity}
                   onChange={e => { setSelectedCity(e.target.value); setPage(1); }}
-                  className="bg-zinc-950/80 border border-zinc-800/80 text-white pl-3 pr-5 py-1 rounded-full text-[8px] font-black uppercase tracking-widest outline-none appearance-none shadow-sm cursor-pointer hover:border-brand-tactical/50 transition-colors"
+                  className="bg-theme-bg-muted border border-theme-border/40 text-theme-text pl-3 pr-5 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest outline-none appearance-none shadow-sm cursor-pointer hover:border-brand-tactical/50 transition-colors"
                 >
-                  <option value="" className="bg-zinc-950 text-white">🗺️ Cidades</option>
-                  <option value="Campinas" className="bg-zinc-950 text-white">Campinas</option>
-                  <option value="São Paulo" className="bg-zinc-950 text-white">São Paulo</option>
-                  <option value="Valinhos" className="bg-zinc-950 text-white">Valinhos</option>
+                  <option value="" className="bg-theme-bg text-theme-text">🗺️ Cidades</option>
+                  <option value="Campinas" className="bg-theme-bg text-theme-text">Campinas</option>
+                  <option value="São Paulo" className="bg-theme-bg text-theme-text">São Paulo</option>
+                  <option value="Valinhos" className="bg-theme-bg text-theme-text">Valinhos</option>
                 </select>
-                <div className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-[5px] text-zinc-400">▼</div>
+                <div className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-[6px] text-theme-text-muted">▼</div>
               </div>
 
               <div className="relative shrink-0">
                 <select 
                   value={selectedType}
                   onChange={e => { setSelectedType(e.target.value); setPage(1); }}
-                  className="bg-zinc-950/80 border border-zinc-800/80 text-white pl-3 pr-5 py-1 rounded-full text-[8px] font-black uppercase tracking-widest outline-none appearance-none shadow-sm cursor-pointer hover:border-brand-tactical/50 transition-colors"
+                  className="bg-theme-bg-muted border border-theme-border/40 text-theme-text pl-3 pr-5 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest outline-none appearance-none shadow-sm cursor-pointer hover:border-brand-tactical/50 transition-colors"
                 >
-                  <option value="" className="bg-zinc-950 text-white">🏷️ Categorias</option>
-                  <option value="ALBUM_FULL" className="bg-zinc-950 text-white">Álbuns</option>
-                  <option value="PHOTO_MARKETPLACE" className="bg-zinc-950 text-white">Live Print</option>
-                  <option value="FOTO_POINT" className="bg-zinc-950 text-white">Foto Point</option>
-                  <option value="FLASH_EVENT" className="bg-zinc-950 text-white">Flash</option>
+                  <option value="" className="bg-theme-bg text-theme-text">🏷️ Categorias</option>
+                  <option value="ALBUM_FULL" className="bg-theme-bg text-theme-text">Álbuns</option>
+                  <option value="PHOTO_MARKETPLACE" className="bg-theme-bg text-theme-text">Live Print</option>
+                  <option value="FOTO_POINT" className="bg-theme-bg text-theme-text">Foto Point</option>
+                  <option value="FLASH_EVENT" className="bg-theme-bg text-theme-text">Flash</option>
                 </select>
-                <div className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-[5px] text-zinc-400">▼</div>
+                <div className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-[6px] text-theme-text-muted">▼</div>
               </div>
 
               <div className="relative shrink-0">
                 <select 
                   value={sortBy}
                   onChange={e => { setSortBy(e.target.value); setPage(1); }}
-                  className="bg-zinc-950/80 border border-zinc-800/80 text-white pl-3 pr-5 py-1 rounded-full text-[8px] font-black uppercase tracking-widest outline-none appearance-none shadow-sm cursor-pointer hover:border-brand-tactical/50 transition-colors"
+                  className="bg-theme-bg-muted border border-theme-border/40 text-theme-text pl-3 pr-5 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest outline-none appearance-none shadow-sm cursor-pointer hover:border-brand-tactical/50 transition-colors"
                 >
-                  <option value="" className="bg-zinc-950 text-white">⏱️ Recentes</option>
-                  <option value="OLD" className="bg-zinc-950 text-white">Antigos</option>
-                  <option value="AZ" className="bg-zinc-950 text-white">A-Z</option>
-                  <option value="ZA" className="bg-zinc-950 text-white">Z-A</option>
-                  <option value="PRICE_ASC" className="bg-zinc-950 text-white">Menor R$</option>
-                  <option value="PRICE_DESC" className="bg-zinc-950 text-white">Maior R$</option>
+                  <option value="" className="bg-theme-bg text-theme-text">⏱️ Recentes</option>
+                  <option value="OLD" className="bg-theme-bg text-theme-text">Antigos</option>
+                  <option value="AZ" className="bg-theme-bg text-theme-text">A-Z</option>
+                  <option value="ZA" className="bg-theme-bg text-theme-text">Z-A</option>
+                  <option value="PRICE_ASC" className="bg-theme-bg text-theme-text">Menor R$</option>
+                  <option value="PRICE_DESC" className="bg-theme-bg text-theme-text">Maior R$</option>
                 </select>
-                <div className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-[5px] text-zinc-400">▼</div>
+                <div className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-[6px] text-theme-text-muted">▼</div>
               </div>
             </div>
           </div>
