@@ -745,12 +745,14 @@ return (
                       </div>
 
                       {(user?.role === 'PROFISSIONAL' || user?.role === 'FRANCHISEE' || user?.role === 'ADMIN') && (
-                        <button 
-                          onClick={() => window.open(`${window.location.origin}/phygital-capture?e=${event.id}&auto=1`, '_blank')}
+                        <a 
+                          href={`/phygital-capture?e=${event.id}&auto=1`}
+                          target="_blank"
+                          rel="noopener noreferrer"
                           className="flex items-center gap-3 px-8 py-5 bg-brand-tactical text-black text-[10px] font-black uppercase tracking-widest hover:brightness-110 transition-all italic shadow-lg shadow-brand-tactical/20"
                         >
                           <Camera size={18} /> ABRIR CÂMERA
-                        </button>
+                        </a>
                       )}
                     </div>
                   </div>
