@@ -20,6 +20,7 @@ export * from "./FranquiaLanding";
 export * from "./TeamSelector";
 export { DashboardActionButton } from "./DashboardActionButton";
 export { CoverPhotoInput } from "./CoverPhotoInput";
+export { TeamTab } from "./TeamTab";
 
 export type {
   EventItem,

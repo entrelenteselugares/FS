@@ -11,7 +11,7 @@ import { T } from "../lib/theme";
 import {
   AgendaTab, FinanceTab, NetworkTab, ServicesTab, ProfileTab, FranquiaLanding,
   EventEditPanel, ExpressSaleModal, ProfileModal, FlashEventModal, FotoPointModal, FotoPointEditModal,
-  DashboardHeader, DashboardStats, SupportBanner,
+  DashboardHeader, DashboardStats, SupportBanner, TeamTab,
   OpportunitiesModal, DashboardActionButton, FranchiseShopModal,
   type EventItem, type UnitInvite, type ServiceCatalog, type ProfileData, type Partner
 } from "../components/profissional";
@@ -521,6 +521,9 @@ export default function ProfissionalDashboard({
                 minHourlyRate={minHourlyRate}
                 onUpdateServicePrice={handleUpdateServicePrice}
               />
+            )}
+            {activeTab === "equipe" && (
+              <TeamTab />
             )}
 
             {activeTab === "calendar" && (

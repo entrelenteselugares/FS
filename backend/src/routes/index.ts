@@ -438,8 +438,8 @@ router.get("/unidade-fixa/stats",    requireAuth, requireRole("ADMIN", "CARTORIO
 router.get("/unidade-fixa/events",   requireAuth, requireRole("ADMIN", "CARTORIO"), CartorioController.getEvents);
 router.get("/unidade-fixa/orders",   requireAuth, requireRole("ADMIN", "CARTORIO"), CartorioController.getOrders);
 router.patch("/unidade-fixa/profile",requireAuth, requireRole("ADMIN", "CARTORIO"), updatePartnerProfile);
-router.get("/unidade-fixa/team",     requireAuth, requireRole("ADMIN", "CARTORIO"), getTeam);
-router.put("/unidade-fixa/team",     requireAuth, requireRole("ADMIN", "CARTORIO"), saveTeam);
+router.get("/unidade-fixa/team",     requireAuth, requireRole("ADMIN", "CARTORIO", "PROFISSIONAL", "FRANCHISEE"), getTeam);
+router.put("/unidade-fixa/team",     requireAuth, requireRole("ADMIN", "CARTORIO", "PROFISSIONAL", "FRANCHISEE"), saveTeam);
 
 // ── Admin: Stats & Logs ────────────────────────────────────────────────────────
 router.get("/admin/stats", requireAuth, requireRole("ADMIN"), getDashboardStats);

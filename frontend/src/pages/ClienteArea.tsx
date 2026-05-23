@@ -147,6 +147,7 @@ export default function ClienteArea() {
         { label: "Minha Agenda", onClick: () => setActiveTab("agenda"), isActive: activeTab === "agenda", icon: <Play size={18} /> },
         { label: "Portfólio & Serviços", onClick: () => setActiveTab("servicos"), isActive: activeTab === "servicos", icon: <Briefcase size={18} /> },
         { label: "Minhas Vendas & Ganhos", onClick: () => setActiveTab("financeiro"), isActive: activeTab === "financeiro", icon: <DollarSign size={18} /> },
+        { label: "Rede Técnica", onClick: () => setActiveTab("equipe"), isActive: activeTab === "equipe", icon: <Users size={18} /> },
         { label: "Agenda Google", onClick: () => setActiveTab("calendar"), isActive: activeTab === "calendar", icon: <Calendar size={18} /> }
       );
 
@@ -359,7 +360,7 @@ export default function ClienteArea() {
 
   const aprovados = groupedEvents.filter(g => g.hasAprovado);
 
-  const isProfessionalTab = ["agenda", "financeiro", "servicos", "calendar", "franquia"].includes(activeTab) && 
+  const isProfessionalTab = ["agenda", "financeiro", "servicos", "network", "calendar", "franquia", "equipe"].includes(activeTab) && 
     (user?.role === "PROFISSIONAL" || user?.role === "FRANCHISEE") && user?.verificationStatus === "APPROVED";
 
   const isUnitTab = ["agenda", "financeiro", "equipe", "calendar", "franquia", "configuracoes", "monitor"].includes(activeTab) && 

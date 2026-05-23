@@ -11,7 +11,7 @@ export async function getTeam(req: AuthRequest, res: Response): Promise<void> {
   if (!userId) { res.status(401).json({ error: "Não autorizado" }); return; }
 
   try {
-    const cartorio = await prisma.cartorio.findUnique({
+    let cartorio = await prisma.cartorio.findUnique({
       where: { userId },
       include: {
         profissionais: {
@@ -25,8 +25,27 @@ export async function getTeam(req: AuthRequest, res: Response): Promise<void> {
     });
 
     if (!cartorio) {
-      res.status(404).json({ error: "Perfil de unidade não encontrado.", code: "UNIDADE_NOT_FOUND" });
-      return;
+      if (req.user?.role === "PROFISSIONAL" || req.user?.role === "FRANCHISEE") {
+        // Create stub cartorio for professional so they can manage a network
+        cartorio = await prisma.cartorio.create({
+          data: {
+            userId,
+            razaoSocial: `Rede de ${req.user.nome || "Profissional"}`
+          },
+          include: {
+            profissionais: {
+              include: {
+                profissional: {
+                  include: { user: { select: { id: true, nome: true, email: true, whatsapp: true } } }
+                }
+              }
+            }
+          }
+        });
+      } else {
+        res.status(404).json({ error: "Perfil de unidade não encontrado.", code: "UNIDADE_NOT_FOUND" });
+        return;
+      }
     }
 
     // Todos profissionais cadastrados na plataforma (Filtrando por Role)
@@ -89,10 +108,19 @@ export async function saveTeam(req: AuthRequest, res: Response): Promise<void> {
   }
 
   try {
-    const cartorio = await prisma.cartorio.findUnique({ where: { userId } });
+    let cartorio = await prisma.cartorio.findUnique({ where: { userId } });
     if (!cartorio) {
-      res.status(404).json({ error: "Perfil de unidade não encontrado.", code: "UNIDADE_NOT_FOUND" });
-      return;
+      if (req.user?.role === "PROFISSIONAL" || req.user?.role === "FRANCHISEE") {
+        cartorio = await prisma.cartorio.create({
+          data: {
+            userId,
+            razaoSocial: `Rede de ${req.user.nome || "Profissional"}`
+          }
+        });
+      } else {
+        res.status(404).json({ error: "Perfil de unidade não encontrado.", code: "UNIDADE_NOT_FOUND" });
+        return;
+      }
     }
 
     // Processar cada assignment
