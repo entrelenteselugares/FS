@@ -4,7 +4,7 @@ import { useAuth } from "../hooks/useAuth";
 import { T, BtnGhost } from "../lib/theme";
 import { ThemeToggle } from "./ThemeToggle";
 import { NotificationBell } from "./notifications/NotificationBell";
-import { Menu } from "lucide-react";
+import { Menu, ShieldCheck } from "lucide-react";
 import '../styles/mobile-fix.css';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -259,6 +259,31 @@ const SidebarContent: React.FC<SidebarContentProps> = ({ navItems, onNavigate })
                  user?.role === "PROFISSIONAL" ? "PROFISSIONAL DA REDE" :
                  "CLIENTE FINAL"}
               </div>
+              {user?.verificationStatus === "APPROVED" && (user?.role === "PROFISSIONAL" || user?.role === "CARTORIO" || user?.role === "UNIDADE" || user?.role === "FRANCHISEE") && (
+                <div style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: 4,
+                  marginTop: 8,
+                  padding: "4px 8px",
+                  background: `${T.brand}15`,
+                  border: `1px solid ${T.brand}40`,
+                  borderRadius: 12,
+                }}>
+                  <ShieldCheck size={10} color={T.brand} />
+                  <span style={{
+                    fontSize: 8,
+                    fontFamily: T.fontB,
+                    fontWeight: 900,
+                    color: T.brand,
+                    textTransform: "uppercase",
+                    letterSpacing: 2,
+                    fontStyle: "italic"
+                  }}>
+                    PRO VERIFICADO
+                  </span>
+                </div>
+              )}
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
               <NotificationBell />

@@ -9,6 +9,8 @@ interface DashboardHeaderProps {
 }
 
 export function DashboardHeader({ activeTab, viewTab, onViewTabChange, residentUnits = [], isVerified = false }: DashboardHeaderProps) {
+  const hasContent = residentUnits.length > 0 || activeTab === "agenda" || activeTab === "convites";
+  if (!hasContent) return null;
 
   return (
     <div className="relative mb-6">
@@ -24,14 +26,7 @@ export function DashboardHeader({ activeTab, viewTab, onViewTabChange, residentU
                 </p>
               </div>
             )}
-            {isVerified && (
-              <div className="flex items-center gap-2 px-3 py-1 bg-brand-tactical/10 border border-brand-tactical/30 rounded-full animate-pulse">
-                <ShieldCheck size={12} className="text-brand-tactical" />
-                <p className="text-[9px] font-black text-brand-tactical uppercase tracking-widest italic">
-                  PRO VERIFICADO
-                </p>
-              </div>
-            )}
+
         </div>
         
         {(activeTab === "agenda" || activeTab === "convites") && (
