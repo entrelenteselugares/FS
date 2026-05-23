@@ -209,7 +209,7 @@ export const CheckoutPage = () => {
       
       if (user && user.address) {
         const parts = user.address.split('|');
-        if (parts.length >= 6) {
+        if (parts.length > 1) {
           setShippingData({
             cep: parts[0] || "",
             street: parts[1] || "",
@@ -235,7 +235,7 @@ export const CheckoutPage = () => {
          const { data: authData } = await API.get("/auth/me");
          if (authData?.user?.address) {
             const parts = authData.user.address.split('|');
-            if (parts.length >= 6) {
+            if (parts.length > 1) {
               setShippingData({
                 cep: parts[0] || "", street: parts[1] || "", number: parts[2] || "",
                 neighborhood: parts[3] || "", city: parts[4] || "", state: parts[5] || "", complement: parts[6] || ""
