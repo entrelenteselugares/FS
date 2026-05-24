@@ -173,7 +173,7 @@ export const AdminServices: React.FC = () => {
         
         <button 
           onClick={() => setIsModalOpen(true)}
-          className="px-8 py-4 bg-brand-tactical text-zinc-950 text-[9px] font-black uppercase tracking-[0.4em] shadow-xl hover:brightness-110 transition-all flex items-center gap-3 italic"
+          className="px-8 py-4 bg-brand-tactical text-[var(--brand-text)] text-[9px] font-black uppercase tracking-[0.4em] shadow-xl hover:brightness-110 transition-all flex items-center gap-3 italic"
         >
           <Plus size={14} /> ADICIONAR SERVIÇO
         </button>
@@ -182,13 +182,13 @@ export const AdminServices: React.FC = () => {
       <div className="flex gap-4 border-b border-theme-border pb-4">
         <button 
           onClick={() => setActiveTab("CATALOGO")}
-          className={`text-[11px] font-black uppercase tracking-widest px-4 py-2 rounded-lg transition-all ${activeTab === "CATALOGO" ? "bg-brand-tactical text-zinc-950" : "text-theme-muted hover:bg-theme-bg-muted"}`}
+          className={`text-[11px] font-black uppercase tracking-widest px-4 py-2 rounded-none transition-all ${activeTab === "CATALOGO" ? "bg-brand-tactical text-[var(--brand-text)]" : "text-theme-muted hover:bg-theme-bg-muted"}`}
         >
           Catálogo Global
         </button>
         <button 
           onClick={() => setActiveTab("PENDENTES")}
-          className={`text-[11px] font-black uppercase tracking-widest px-4 py-2 rounded-lg transition-all flex items-center gap-2 ${activeTab === "PENDENTES" ? "bg-brand-tactical text-zinc-950" : "text-theme-muted hover:bg-theme-bg-muted"}`}
+          className={`text-[11px] font-black uppercase tracking-widest px-4 py-2 rounded-none transition-all flex items-center gap-2 ${activeTab === "PENDENTES" ? "bg-brand-tactical text-[var(--brand-text)]" : "text-theme-muted hover:bg-theme-bg-muted"}`}
         >
           Aprovações Pendentes
           {pendingServices.length > 0 && <span className="bg-red-500 text-white px-2 py-0.5 rounded-full text-[8px]">{pendingServices.length}</span>}
@@ -199,21 +199,21 @@ export const AdminServices: React.FC = () => {
         <>
       {/* DASHBOARD DE MÉTRICAS */}
       <div className="max-w-6xl mx-auto w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
-         <div className="bg-theme-bg border border-theme-border/60 p-6 space-y-3 shadow-sm group hover:border-brand-tactical/40 transition-all rounded-2xl">
+         <div className="bg-theme-bg border border-theme-border/60 p-6 space-y-3 shadow-sm group hover:border-brand-tactical/40 transition-all rounded-none">
             <div className="flex justify-between items-start"><span className="text-[8px] font-black text-theme-muted uppercase tracking-widest italic">Portfólio Ativo</span><Layers className="text-brand-tactical" size={14} /></div>
             <div className="flex items-baseline gap-2">
                <span className="text-3xl font-heading font-black text-theme-text italic">{stats.total}</span>
                <span className="text-[10px] font-bold text-theme-muted uppercase tracking-widest">SERVIÇOS</span>
             </div>
          </div>
-         <div className="bg-theme-bg border border-theme-border/60 p-6 space-y-3 shadow-sm group hover:border-brand-tactical/40 transition-all rounded-2xl">
+         <div className="bg-theme-bg border border-theme-border/60 p-6 space-y-3 shadow-sm group hover:border-brand-tactical/40 transition-all rounded-none">
             <div className="flex justify-between items-start"><span className="text-[8px] font-black text-theme-muted uppercase tracking-widest italic">Ticket Base Médio</span><TrendingUp className="text-brand-tactical" size={14} /></div>
             <div className="flex items-baseline gap-2">
                <span className="text-3xl font-heading font-black text-theme-text italic">{formatCurrency(stats.avgPrice)}</span>
                <span className="text-[10px] font-bold text-theme-muted uppercase tracking-widest">ESTIMADO</span>
             </div>
          </div>
-         <div className="bg-theme-bg border border-theme-border/60 p-6 space-y-3 shadow-sm group hover:border-brand-tactical/40 transition-all rounded-2xl">
+         <div className="bg-theme-bg border border-theme-border/60 p-6 space-y-3 shadow-sm group hover:border-brand-tactical/40 transition-all rounded-none">
             <div className="flex justify-between items-start"><span className="text-[8px] font-black text-theme-muted uppercase tracking-widest italic">Diversidade</span><Filter className="text-brand-tactical" size={14} /></div>
             <div className="flex items-baseline gap-2">
                <span className="text-3xl font-heading font-black text-theme-text italic">{stats.categories}</span>
@@ -230,13 +230,13 @@ export const AdminServices: React.FC = () => {
                value={searchTerm}
                onChange={e => setSearchTerm(e.target.value)}
                placeholder="BUSCAR SERVIÇO OU DESCRIÇÃO..." 
-               className="w-full bg-theme-bg border border-theme-border/60 p-4 pl-12 text-[10px] text-theme-text font-black outline-none focus:border-brand-tactical transition-all uppercase tracking-widest placeholder:text-theme-muted/40 rounded-2xl" 
+               className="w-full bg-theme-bg border border-theme-border/60 p-4 pl-12 text-[10px] text-theme-text font-black outline-none focus:border-brand-tactical transition-all uppercase tracking-widest placeholder:text-theme-muted/40 rounded-none" 
             />
          </div>
          <select 
             value={filterCategory}
             onChange={e => setFilterCategory(e.target.value)}
-            className="px-6 py-4 bg-theme-bg border border-theme-border/60 text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest text-theme-text outline-none focus:border-brand-tactical transition-all cursor-pointer rounded-2xl"
+            className="px-6 py-4 bg-theme-bg border border-theme-border/60 text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest text-theme-text outline-none focus:border-brand-tactical transition-all cursor-pointer rounded-none"
          >
             <option value="">TODAS AS CATEGORIAS</option>
             <option value="FOTOGRAFIA">FOTOGRAFIA</option>
@@ -252,12 +252,12 @@ export const AdminServices: React.FC = () => {
       {/* LISTAGEM DE LEDGER DE SERVIÇOS */}
       <div className="space-y-4">
         {loading ? (
-          <div className="py-32 text-center border border-dashed border-theme-border bg-theme-bg-muted/5 space-y-4 animate-pulse rounded-2xl">
+          <div className="py-32 text-center border border-dashed border-theme-border bg-theme-bg-muted/5 space-y-4 animate-pulse rounded-none">
              <Zap size={32} className="mx-auto text-theme-muted opacity-30" />
              <p className="text-[9px] sm:text-[11px] font-black text-brand-tactical uppercase tracking-[0.2em] sm:tracking-[0.4em] italic truncate max-w-[80vw]">Tabela de Preços e Serviços Fotográficos</p>
           </div>
         ) : filteredServices.length === 0 ? (
-          <div className="py-32 text-center border border-dashed border-theme-border bg-theme-bg-muted/5 space-y-6 rounded-2xl">
+          <div className="py-32 text-center border border-dashed border-theme-border bg-theme-bg-muted/5 space-y-6 rounded-none">
              <Briefcase size={40} className="mx-auto text-theme-muted opacity-20" />
              <div className="space-y-2">
                 <p className="text-[9px] sm:text-[11px] font-black text-brand-tactical uppercase tracking-[0.2em] sm:tracking-[0.4em] italic truncate max-w-[80vw]">Tabela de Preços e Serviços Fotográficos</p>
@@ -268,10 +268,10 @@ export const AdminServices: React.FC = () => {
           filteredServices.map(s => {
             const Icon = CATEGORY_ICONS[s.category] || CATEGORY_ICONS.DEFAULT;
             return (
-              <div key={s.id} className="bg-theme-bg-muted border border-theme-border rounded-2xl group hover:border-brand-tactical/50 transition-all overflow-hidden shadow-sm">
+              <div key={s.id} className="bg-theme-bg-muted border border-theme-border rounded-none group hover:border-brand-tactical/50 transition-all overflow-hidden shadow-sm">
                 <div className="p-6 md:p-8 flex flex-col lg:flex-row lg:items-center justify-between gap-8">
                    <div className="flex-1 flex items-start gap-6">
-                      <div className="p-4 bg-theme-bg-muted border border-theme-border/40 text-brand-tactical rounded-2xl">
+                      <div className="p-4 bg-theme-bg-muted border border-theme-border/40 text-brand-tactical rounded-none">
                          <Icon size={20} />
                       </div>
                       <div className="space-y-2">
@@ -281,12 +281,12 @@ export const AdminServices: React.FC = () => {
                          </div>
                          <div className="flex flex-wrap gap-2 mt-1">
                             {s.allowProfessional && (
-                              <span className="px-2 py-0.5 bg-brand-tactical/15 border border-brand-tactical/25 text-[7px] font-black uppercase tracking-widest text-brand-tactical rounded">
+                              <span className="px-2 py-0.5 bg-brand-tactical/15 border border-brand-tactical/25 text-[7px] font-black uppercase tracking-widest text-brand-tactical rounded-none">
                                 PROFISSIONAL: {formatCurrency(s.priceProfessional || 0)}
                               </span>
                             )}
                             {s.allowMobile && (
-                              <span className="px-2 py-0.5 bg-amber-500/15 border border-amber-500/25 text-[7px] font-black uppercase tracking-widest text-amber-400 rounded">
+                              <span className="px-2 py-0.5 bg-amber-500/15 border border-amber-500/25 text-[7px] font-black uppercase tracking-widest text-amber-400 rounded-none">
                                 MOBILE: {formatCurrency(s.priceMobile || 0)}
                               </span>
                             )}
@@ -326,7 +326,7 @@ export const AdminServices: React.FC = () => {
       ) : (
         <div className="space-y-4">
           {pendingServices.length === 0 ? (
-            <div className="py-32 text-center border border-dashed border-theme-border bg-theme-bg-muted/5 space-y-6 rounded-2xl">
+            <div className="py-32 text-center border border-dashed border-theme-border bg-theme-bg-muted/5 space-y-6 rounded-none">
                <Check size={40} className="mx-auto text-brand-tactical opacity-50" />
                <div className="space-y-2">
                   <p className="text-[11px] font-black text-theme-text uppercase tracking-widest italic">Tudo limpo!</p>
@@ -335,7 +335,7 @@ export const AdminServices: React.FC = () => {
             </div>
           ) : (
             pendingServices.map(ps => (
-              <div key={ps.id} className="bg-theme-bg border border-theme-border rounded-2xl p-6 space-y-4 shadow-sm relative overflow-hidden">
+              <div key={ps.id} className="bg-theme-bg border border-theme-border rounded-none p-6 space-y-4 shadow-sm relative overflow-hidden">
                 <div className="absolute top-0 right-0 p-8 opacity-[0.03]">
                   <Briefcase size={80} />
                 </div>
@@ -355,19 +355,19 @@ export const AdminServices: React.FC = () => {
                 </div>
 
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-4 border-t border-theme-border/50 relative z-10">
-                  <button onClick={() => handleReviewAction(ps.id, 'NETWORK')} className="px-4 py-2 bg-brand-tactical text-zinc-950 text-[9px] font-black uppercase tracking-widest rounded flex items-center justify-center gap-2 hover:brightness-110">
+                  <button onClick={() => handleReviewAction(ps.id, 'NETWORK')} className="px-4 py-2 bg-brand-tactical text-[var(--brand-text)] text-[9px] font-black uppercase tracking-widest rounded-none flex items-center justify-center gap-2 hover:brightness-110">
                     <Check size={14} /> Aprovar p/ Rede
                   </button>
-                  <button onClick={() => handleReviewAction(ps.id, 'EXCLUSIVE')} className="px-4 py-2 border border-brand-tactical text-brand-tactical text-[9px] font-black uppercase tracking-widest rounded flex items-center justify-center gap-2 hover:bg-brand-tactical/10">
+                  <button onClick={() => handleReviewAction(ps.id, 'EXCLUSIVE')} className="px-4 py-2 border border-brand-tactical text-brand-tactical text-[9px] font-black uppercase tracking-widest rounded-none flex items-center justify-center gap-2 hover:bg-brand-tactical/10">
                     Aprovar Exclusivo
                   </button>
                   <button onClick={() => {
                     const reason = prompt("Motivo para ajuste:");
                     if (reason) handleReviewAction(ps.id, 'NEEDS_ADJUSTMENT', reason);
-                  }} className="px-4 py-2 border border-amber-500 text-amber-500 text-[9px] font-black uppercase tracking-widest rounded flex items-center justify-center gap-2 hover:bg-amber-500/10">
+                  }} className="px-4 py-2 border border-amber-500 text-amber-500 text-[9px] font-black uppercase tracking-widest rounded-none flex items-center justify-center gap-2 hover:bg-amber-500/10">
                     Solicitar Ajuste
                   </button>
-                  <button onClick={() => handleReviewAction(ps.id, 'REJECTED')} className="px-4 py-2 border border-red-500 text-red-500 text-[9px] font-black uppercase tracking-widest rounded flex items-center justify-center gap-2 hover:bg-red-500/10">
+                  <button onClick={() => handleReviewAction(ps.id, 'REJECTED')} className="px-4 py-2 border border-red-500 text-red-500 text-[9px] font-black uppercase tracking-widest rounded-none flex items-center justify-center gap-2 hover:bg-red-500/10">
                     <Ban size={14} /> Rejeitar
                   </button>
                 </div>
@@ -378,7 +378,7 @@ export const AdminServices: React.FC = () => {
       )}
 
       {/* PAINEL DE COMPLIANCE TÁTICO */}
-      <div className="bg-theme-bg border border-theme-border/60 p-10 flex flex-col md:flex-row items-center gap-10 shadow-sm relative overflow-hidden group rounded-2xl">
+      <div className="bg-theme-bg border border-theme-border/60 p-10 flex flex-col md:flex-row items-center gap-10 shadow-sm relative overflow-hidden group rounded-none">
          <div className="absolute top-0 right-0 p-10 opacity-[0.03] group-hover:opacity-[0.07] transition-opacity">
             <DollarSign size={120} />
          </div>
@@ -398,9 +398,9 @@ export const AdminServices: React.FC = () => {
         <div className="fixed inset-0 z-[600] flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-red-950/40 backdrop-blur-xl animate-in fade-in duration-300" onClick={() => setConfirmDelete(null)} />
           
-          <div className="relative w-full max-w-md bg-theme-card border border-red-500/20 rounded-[40px] overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300">
+          <div className="relative w-full max-w-md bg-theme-card border border-red-500/20 rounded-none overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300">
             <div className="p-10 space-y-8 text-center">
-              <div className="w-20 h-20 bg-red-500/10 rounded-[30px] flex items-center justify-center border border-red-500/20 mx-auto mb-6">
+              <div className="w-20 h-20 bg-red-500/10 rounded-none flex items-center justify-center border border-red-500/20 mx-auto mb-6">
                 <Trash2 className="text-red-500" size={32} />
               </div>
               
@@ -416,13 +416,13 @@ export const AdminServices: React.FC = () => {
               <div className="grid grid-cols-1 gap-4 pt-4">
                 <button 
                   onClick={executeDelete}
-                  className="w-full py-5 bg-red-600 text-white text-[11px] font-black uppercase tracking-[0.4em] hover:bg-red-700 transition-all rounded-[20px] italic shadow-lg shadow-red-600/20"
+                  className="w-full py-5 bg-red-600 text-white text-[11px] font-black uppercase tracking-[0.4em] hover:bg-red-700 transition-all rounded-none italic shadow-lg shadow-red-600/20"
                 >
                   REMOVER AGORA
                 </button>
                 <button 
                   onClick={() => setConfirmDelete(null)}
-                  className="w-full py-5 border border-theme-border text-theme-muted text-[11px] font-black uppercase tracking-[0.4em] hover:text-white transition-all rounded-[20px] italic"
+                  className="w-full py-5 border border-theme-border text-theme-muted text-[11px] font-black uppercase tracking-[0.4em] hover:text-white transition-all rounded-none italic"
                 >
                   ABORTAR MISSÃO
                 </button>
@@ -462,17 +462,17 @@ function ServiceModal({ onClose, onSave, initialData, saving }: { onClose: () =>
     category: initialData?.category || "FOTOGRAFIA"
   });
 
-  const inputClass = "w-full bg-theme-bg-muted border border-theme-border/60 p-4 text-[10px] text-theme-text font-black outline-none focus:border-brand-tactical transition-all uppercase placeholder:text-theme-muted/30 rounded-xl";
+  const inputClass = "w-full bg-theme-bg-muted border border-theme-border/60 p-4 text-[10px] text-theme-text font-black outline-none focus:border-brand-tactical transition-all uppercase placeholder:text-theme-muted/30 rounded-none";
   const labelClass = "text-[8px] font-black text-theme-muted uppercase tracking-widest block mb-2 opacity-60 italic";
 
   return (
     <div className="fixed inset-0 z-[500] flex items-center justify-center p-4">
        <div className="absolute inset-0 bg-theme-bg/80 backdrop-blur-xl animate-in fade-in duration-300" onClick={onClose} />
-       <div className="relative w-full max-w-2xl bg-theme-card border border-theme-border/60 rounded-[40px] overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300 flex flex-col h-[85vh]">
+       <div className="relative w-full max-w-2xl bg-theme-card border border-theme-border/60 rounded-none overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300 flex flex-col h-[85vh]">
           {/* Header */}
           <div className="p-8 md:p-10 border-b border-theme-border flex items-center justify-between shrink-0">
             <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-brand-tactical/10 rounded-2xl flex items-center justify-center border border-brand-tactical/20">
+              <div className="w-12 h-12 bg-brand-tactical/10 rounded-none flex items-center justify-center border border-brand-tactical/20">
                 <Briefcase className="text-brand-tactical" size={24} strokeWidth={1.5} />
               </div>
               <div>
@@ -535,13 +535,13 @@ function ServiceModal({ onClose, onSave, initialData, saving }: { onClose: () =>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* Profissional Card */}
-                <div className={`p-6 border rounded-2xl transition-all ${form.allowProfessional ? 'border-brand-tactical/40 bg-brand-tactical/5' : 'border-theme-border/60 bg-theme-bg-muted/10'}`}>
+                <div className={`p-6 border rounded-none transition-all ${form.allowProfessional ? 'border-brand-tactical/40 bg-brand-tactical/5' : 'border-theme-border/60 bg-theme-bg-muted/10'}`}>
                   <label className="flex items-center gap-3 cursor-pointer select-none mb-4">
                     <input 
                       type="checkbox" 
                       checked={form.allowProfessional} 
                       onChange={e => setForm({...form, allowProfessional: e.target.checked})} 
-                      className="w-4 h-4 rounded text-brand-tactical focus:ring-brand-tactical border-theme-border/60 bg-theme-bg-muted rounded-2xl"
+                      className="w-4 h-4 rounded-none text-brand-tactical focus:ring-brand-tactical border-theme-border/60 bg-theme-bg-muted rounded-none"
                     />
                     <span className="text-[10px] font-black uppercase tracking-widest text-theme-text">Profissional</span>
                   </label>
@@ -566,13 +566,13 @@ function ServiceModal({ onClose, onSave, initialData, saving }: { onClose: () =>
                 </div>
 
                 {/* Mobile Card */}
-                <div className={`p-6 border rounded-2xl transition-all ${form.allowMobile ? 'border-amber-500/40 bg-amber-500/5' : 'border-theme-border/60 bg-theme-bg-muted/10'}`}>
+                <div className={`p-6 border rounded-none transition-all ${form.allowMobile ? 'border-amber-500/40 bg-amber-500/5' : 'border-theme-border/60 bg-theme-bg-muted/10'}`}>
                   <label className="flex items-center gap-3 cursor-pointer select-none mb-4">
                     <input 
                       type="checkbox" 
                       checked={form.allowMobile} 
                       onChange={e => setForm({...form, allowMobile: e.target.checked})} 
-                      className="w-4 h-4 rounded text-amber-500 focus:ring-amber-500 border-theme-border/60 bg-theme-bg-muted rounded-2xl"
+                      className="w-4 h-4 rounded-none text-amber-500 focus:ring-amber-500 border-theme-border/60 bg-theme-bg-muted rounded-none"
                     />
                     <span className="text-[10px] font-black uppercase tracking-widest text-theme-text">Mobile</span>
                   </label>
@@ -599,12 +599,12 @@ function ServiceModal({ onClose, onSave, initialData, saving }: { onClose: () =>
             </div>
             </div>
             {/* Footer */}
-            <div className="p-8 md:p-10 bg-theme-bg-muted/50 border-t border-theme-border flex gap-4 shrink-0 rounded-2xl">
-              <button type="button" onClick={onClose} className="flex-1 py-5 border border-theme-border text-[11px] font-black uppercase tracking-[0.3em] text-theme-muted hover:text-white transition-all rounded-[20px] italic">Cancelar</button>
+            <div className="p-8 md:p-10 bg-theme-bg-muted/50 border-t border-theme-border flex gap-4 shrink-0 rounded-none">
+              <button type="button" onClick={onClose} className="flex-1 py-5 border border-theme-border text-[11px] font-black uppercase tracking-[0.3em] text-theme-muted hover:text-white transition-all rounded-none italic">Cancelar</button>
               <button 
                 type="submit" 
                 disabled={saving} 
-                className="flex-[2] py-5 bg-brand-tactical text-zinc-950 text-[11px] font-black uppercase tracking-[0.3em] shadow-2xl shadow-brand-tactical/20 hover:brightness-110 transition-all rounded-[20px] italic flex items-center justify-center gap-4"
+                className="flex-[2] py-5 bg-brand-tactical text-[var(--brand-text)] text-[11px] font-black uppercase tracking-[0.3em] shadow-2xl shadow-brand-tactical/20 hover:brightness-110 transition-all rounded-none italic flex items-center justify-center gap-4"
               >
                 {saving ? "SINCRONIZANDO..." : initialData ? "SALVAR ALTERAÇÕES" : "CONFIRMAR ATIVO"}
                 <ArrowRight size={18} strokeWidth={1.5} />
