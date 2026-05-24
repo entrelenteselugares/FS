@@ -94,6 +94,18 @@ Para permitir o fulfillment imediato de fotos físicas pelo fotógrafo ou monito
 2. **Cache:** Assets estáticos em cache via estratégia Cache-First.
 3. **Push:** Subscrição via `PushManager`, notificações enviadas pelo backend via Web Push Protocol.
 
+### 🛠️ Custom Service Submission & Admin Approval (SVC-SUBMIT)
+
+1. **Submission:** The professional fills the Custom Service form (`CustomServiceForm.tsx`), supplying duration (`estimatedMinutes`), category, details, and justification, which creates a `ProfessionalService` entry with reviewStatus set to `PENDING_REVIEW`.
+2. **Alert:** The system automatically dispatches In-App notifications to all admin users and fires a WhatsApp/email notification informing them of the pending approval request.
+3. **Admin Panel:** The admin accesses the "Aprovações Pendentes" tab on `AdminServices.tsx`, listing all pending requests with price and details.
+4. **Decisions & Outcomes:**
+   - **Publish to Network (Aprovar p/ Rede):** Creates a global catalog service (`ServiceCatalog` model) visible and importable by all professionals in the platform.
+   - **Keep Exclusive (Aprovar Exclusivo):** Approves the custom service for this professional only.
+   - **Request Adjustment (Solicitar Ajuste):** Sets the status to `NEEDS_ADJUSTMENT`, unlocks editing for the professional, and records the admin's note/feedback.
+   - **Reject (Recusar):** Deactivates the service request.
+5. **Notification:** On submission review completion, the system automatically fires In-App, email (SMTP), and WhatsApp alerts to the professional containing the outcome details and the reviewer's notes.
+
 ---
 
 ## 5. Segurança e Integridade
@@ -148,6 +160,7 @@ graph TD
 ## 7. Key Abstractions
 
 - **Drive Sync Engine (`backend/src/controllers/marketplace.controller.ts`):** Bulk media ingestion from Google Drive with automated Regex-based metadata extraction for school and sports photography verticals.
+- **Service Catalog & Custom Pricing (`backend/src/controllers/service_catalog.controller.ts` & `backend/src/controllers/profissional.controller.ts`):** Manages global service catalogs and handles submission, adjustment, and review pathways for custom partner services.
 - **Vault Engine (`backend/src/controllers/vault.controller.ts`):** Manages "Cofres de Memórias" lifecycle, including subscription states and media organization.
 - **Order Motor (`backend/src/controllers/payment.controller.ts`):** Orchestrates transaction processing, financial splits, coupon application, ambassador attribution, and fulfillment status.
 - **Growth Controller (`backend/src/controllers/growth.controller.ts`):** Handles coupon validation/listing, affiliate management, and WhatsApp session QR.

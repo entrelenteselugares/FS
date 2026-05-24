@@ -55,6 +55,17 @@ Most endpoints require a JSON Web Token (JWT).
 | `GET` | `/api/vaults/:albumId` | Gets album details and media. | Yes |
 | `POST` | `/api/vaults/:albumId/subscribe` | Subscribes to a recurring vault plan. | Yes |
 
+### 🛠️ Professional Services & Approval
+
+| Method | Path | Description | Auth |
+|--------|------|-------------|------|
+| `GET` | `/api/profissional/services` | Lists services registered for the authenticated professional (both custom and imported). | Pro |
+| `POST` | `/api/profissional/services` | Submits a new custom service for admin review. | Pro |
+| `PATCH` | `/api/profissional/services/:id` | Updates a custom service (allowed when reviewStatus is `NEEDS_ADJUSTMENT`). | Pro |
+| `DELETE` | `/api/profissional/services/:id` | Deletes a professional service association or custom service. | Pro |
+| `GET` | `/api/admin/services/pending` | Lists all pending custom services awaiting admin review. | Admin |
+| `PATCH` | `/api/admin/services/:id/review` | Performs admin review on a pending service (approves as exclusive, publishes to network, requests adjustment, or rejects). | Admin |
+
 ### 📡 IoT & Administration
 
 | Method | Path | Description | Auth |
