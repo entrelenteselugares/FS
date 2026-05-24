@@ -47,6 +47,7 @@ export const PushNotificationManager: React.FC = () => {
 
   useEffect(() => {
     if ("Notification" in window) {
+      // eslint-disable-next-line
       checkSubscription();
     }
     return () => {

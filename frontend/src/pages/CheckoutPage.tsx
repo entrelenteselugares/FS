@@ -601,7 +601,7 @@ export const CheckoutPage = () => {
       }
       brickController.current = null;
     };
-  }, [order, pixData, paymentSuccess, loading, authStep, shippingData, selectedShipping]);
+  }, [order, pixData, paymentSuccess, loading, authStep, shippingData, selectedShipping, couponCode, finalAmount, validatedCoupon]);
 
   // ── Render Helpers ──────────────────────────────────────────────────────────
   if (loading) return (

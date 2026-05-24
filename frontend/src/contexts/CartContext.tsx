@@ -36,16 +36,14 @@ interface CartContextType {
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [digitalPhotos, setDigitalPhotos] = useState<DigitalItem[]>([]);
-  const [physicalItems, setPhysicalItems] = useState<PhysicalItem[]>([]);
-
-  // Carregar do localStorage ao iniciar
-  useEffect(() => {
+  const [digitalPhotos, setDigitalPhotos] = useState<DigitalItem[]>(() => {
     const savedDigital = localStorage.getItem('fs_cart_digital');
+    return savedDigital ? JSON.parse(savedDigital) : [];
+  });
+  const [physicalItems, setPhysicalItems] = useState<PhysicalItem[]>(() => {
     const savedPhysical = localStorage.getItem('fs_cart_physical');
-    if (savedDigital) setDigitalPhotos(JSON.parse(savedDigital));
-    if (savedPhysical) setPhysicalItems(JSON.parse(savedPhysical));
-  }, []);
+    return savedPhysical ? JSON.parse(savedPhysical) : [];
+  });
 
   // Salvar no localStorage quando mudar
   useEffect(() => {
@@ -127,6 +125,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
   );
 };
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useCart = () => {
   const context = useContext(CartContext);
   if (context === undefined) {

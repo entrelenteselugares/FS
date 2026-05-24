@@ -9,6 +9,7 @@ interface Media {
   url: string;
   shortId: string;
   isGuest?: boolean;
+  metadata?: any;
 }
 
 interface TouchSelectionGalleryProps {
@@ -103,7 +104,10 @@ export const TouchSelectionGallery: React.FC<TouchSelectionGalleryProps> = ({
       <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3 md:gap-6">
         {medias.map((m, idx) => {
           const isSelected = selectedIds.includes(m.shortId);
-          const isUnlocked = unlockedIds.includes(m.shortId) || isOwner;
+          const isUnlocked = unlockedIds.includes(m.shortId) || unlockedIds.includes(m.id);
+          
+          const cleanUrl = m.metadata?.rawUrl || m.metadata?.printUrl;
+          const displayUrl = (isUnlocked && cleanUrl) ? cleanUrl : m.url;
 
           return (
             <motion.div
@@ -122,7 +126,7 @@ export const TouchSelectionGallery: React.FC<TouchSelectionGalleryProps> = ({
               onClick={() => handlePhotoClick(idx, m)}
             >
               <img
-                src={getProxyUrl(m.url)}
+                src={getProxyUrl(displayUrl)}
                 alt={m.shortId}
                 className={`w-full h-full object-cover transition-all duration-700 ${
                   isSelected ? "opacity-40" : "opacity-100"
@@ -192,21 +196,29 @@ export const TouchSelectionGallery: React.FC<TouchSelectionGalleryProps> = ({
 
             {/* Image Viewer */}
             <div className="flex-1 relative flex items-center justify-center overflow-hidden">
-              <motion.img
-                key={medias[fullscreenIndex]?.id}
-                src={getProxyUrl(medias[fullscreenIndex]?.url || '')}
-                initial={{ x: 300, opacity: 0 }}
-                animate={{ x: 0, opacity: 1 }}
-                exit={{ x: -300, opacity: 0 }}
-                drag
-                dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
-                onDragEnd={(_, info) => {
-                  if (info.offset.x < -100) nextPhoto();
-                  if (info.offset.x > 100) prevPhoto();
-                  if (info.offset.y > 100) setFullscreenIndex(null); // Swipe down to close
-                }}
-                className="max-w-full max-h-full object-contain touch-none"
-              />
+              {(() => {
+                const fm = medias[fullscreenIndex];
+                const fmIsUnlocked = fm && (unlockedIds.includes(fm.shortId) || unlockedIds.includes(fm.id));
+                const fmCleanUrl = fm?.metadata?.rawUrl || fm?.metadata?.printUrl;
+                const fmDisplayUrl = (fmIsUnlocked && fmCleanUrl) ? fmCleanUrl : (fm?.url || '');
+                return (
+                  <motion.img
+                    key={fm?.id}
+                    src={getProxyUrl(fmDisplayUrl)}
+                    initial={{ x: 300, opacity: 0 }}
+                    animate={{ x: 0, opacity: 1 }}
+                    exit={{ x: -300, opacity: 0 }}
+                    drag
+                    dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
+                    onDragEnd={(_, info) => {
+                      if (info.offset.x < -100) nextPhoto();
+                      if (info.offset.x > 100) prevPhoto();
+                      if (info.offset.y > 100) setFullscreenIndex(null); // Swipe down to close
+                    }}
+                    className="max-w-full max-h-full object-contain touch-none"
+                  />
+                );
+              })()}
 
               {/* Navigation Arrows (Desktop Only or Visual Guide) */}
               <div className="hidden md:flex absolute inset-x-0 top-1/2 -translate-y-1/2 justify-between px-8 pointer-events-none">

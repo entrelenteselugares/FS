@@ -279,7 +279,7 @@ export class NotificationService {
   // ─── WhatsApp Alerts (CallMeBot) ───────────────────────────────────────────
 
   /** Alerta para nova venda confirmada */
-  static notifyNewSale(data: { buyerEmail: string; eventTitle: string; orderId: string; amount: number }) {
+  static async notifyNewSale(data: { buyerEmail: string; eventTitle: string; orderId: string; amount: number }) {
     sendWhatsApp(
       `💰 *VENDA CONFIRMADA — Foto Segundo*\n\n` +
       `📸 Evento: ${data.eventTitle}\n` +
@@ -287,6 +287,22 @@ export class NotificationService {
       `💵 Valor: R$ ${Number(data.amount).toFixed(2)}\n` +
       `📧 Comprador: ${data.buyerEmail}`
     );
+
+    try {
+      const adminUsers = await prisma.user.findMany({ where: { role: "ADMIN" }, select: { id: true } });
+      for (const admin of adminUsers) {
+        await this.createInApp({
+          userId: admin.id,
+          type: "ORDER_CREATED",
+          title: "Nova Venda Confirmada 💰",
+          body: `Pedido ${data.orderId.slice(-8).toUpperCase()} de R$ ${Number(data.amount).toFixed(2)} confirmado para o evento ${data.eventTitle}.`,
+          refId: data.orderId,
+          refType: "order"
+        });
+      }
+    } catch (e) {
+      console.error("[Notification] Erro ao criar InApp para admin (notifyNewSale):", e);
+    }
   }
 
   /** Alerta para novo lead/orçamento recebido */
@@ -670,6 +686,88 @@ export class NotificationService {
     } catch (err) {
       console.error("[Notification] createInApp error:", err);
       return null;
+    }
+  }
+
+  /** Notifica o admin de um novo serviço personalizado */
+  static async notifyAdminNewService(data: { creatorName: string; serviceName: string; price: number; justification: string | null; isUpdate?: boolean }) {
+    const title = data.isUpdate ? `Serviço Editado: ${data.serviceName}` : `Novo Serviço: ${data.serviceName}`;
+    const action = data.isUpdate ? "editou" : "submeteu";
+    
+    // In-App Notification (para Admin)
+    const adminUsers = await prisma.user.findMany({ where: { role: "ADMIN" }, select: { id: true, email: true } });
+    for (const admin of adminUsers) {
+      await this.createInApp({
+        userId: admin.id,
+        type: "ADMIN_SERVICE_PENDING",
+        title: "Avaliação Pendente",
+        body: `${data.creatorName} ${action} o serviço "${data.serviceName}".`
+      });
+    }
+
+    sendWhatsApp(
+      `🔔 *SERVIÇO PENDENTE — Foto Segundo*\n\n` +
+      `👤 Criador: ${data.creatorName}\n` +
+      `🛠️ Serviço: ${data.serviceName}\n` +
+      `💵 Preço Base: R$ ${data.price.toFixed(2)}\n\n` +
+      `Acesse o painel admin para avaliar.`
+    );
+  }
+
+  /** Notifica o criador do serviço sobre o resultado da avaliação */
+  static async notifyServiceReviewOutcome(data: { creatorEmail?: string | null; creatorName: string; serviceName: string; outcome: string; reason: string | null }) {
+    let outcomeText = "avaliado";
+    let statusEmoji = "📝";
+    
+    if (data.outcome === "NETWORK") { outcomeText = "Publicado na Rede"; statusEmoji = "🌐"; }
+    else if (data.outcome === "EXCLUSIVE") { outcomeText = "Mantido Exclusivo"; statusEmoji = "✅"; }
+    else if (data.outcome === "REJECTED") { outcomeText = "Recusado"; statusEmoji = "❌"; }
+    else if (data.outcome === "NEEDS_ADJUSTMENT") { outcomeText = "Ajustes Solicitados"; statusEmoji = "✏️"; }
+
+    if (data.creatorEmail && process.env.SMTP_USER && process.env.SMTP_PASS) {
+      const htmlContent = `
+        <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; color: #000;">
+          <h1 style="font-size: 20px; color: #111;">Resultado da Avaliação de Serviço ${statusEmoji}</h1>
+          <p>Olá, <strong>${data.creatorName}</strong>,</p>
+          <p>O serviço personalizado <strong>${data.serviceName}</strong> foi avaliado pela administração.</p>
+          <div style="background: #f9f9f9; padding: 20px; border-radius: 8px; margin: 20px 0;">
+            <p><strong>Status:</strong> ${outcomeText}</p>
+            ${data.reason ? `<p><strong>Observação da Admin:</strong> ${data.reason}</p>` : ''}
+          </div>
+          <p>Acesse a aba Portfólio & Serviços do seu painel para ver mais detalhes.</p>
+          <hr style="border: 0.5px solid #eee;" />
+        </div>
+      `;
+      try {
+        await this.transporter.sendMail({
+          from: `"Foto Segundo" <${process.env.SMTP_USER}>`,
+          to: data.creatorEmail,
+          subject: `Avaliação do Serviço: ${data.serviceName} ${statusEmoji}`,
+          html: htmlContent,
+        });
+      } catch (e) { console.error("[Notification] Erro e-mail review outcome:", e); }
+    }
+    
+    if (data.creatorEmail) {
+      const creator = await prisma.user.findUnique({ where: { email: data.creatorEmail }, select: { id: true, whatsapp: true } });
+      if (creator) {
+        await this.createInApp({
+          userId: creator.id,
+          type: "SERVICE_REVIEW",
+          title: `Serviço ${outcomeText}`,
+          body: `O serviço "${data.serviceName}" foi avaliado.`
+        });
+        
+        if (creator.whatsapp) {
+          this.sendWhatsAppToClient(creator.whatsapp, 
+            `${statusEmoji} *AVALIAÇÃO DE SERVIÇO — Foto Segundo*\n\n` +
+            `Seu serviço *${data.serviceName}* foi avaliado.\n` +
+            `Status: ${outcomeText}\n` +
+            (data.reason ? `Obs: ${data.reason}\n` : '') +
+            `\nAcesse seu painel para detalhes.`
+          );
+        }
+      }
     }
   }
 }

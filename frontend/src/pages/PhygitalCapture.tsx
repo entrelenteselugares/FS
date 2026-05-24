@@ -115,7 +115,7 @@ export default function PhygitalCapture() {
         } else {
           try {
             await authLogin(formData.customerEmail, password);
-          } catch (_) {
+          } catch {
             setError('Senha incorreta para este e-mail. Tente novamente.');
             setLoading(false);
             return;
@@ -373,7 +373,7 @@ export default function PhygitalCapture() {
           {error && (
             <div className="p-4 bg-red-500/10 border border-red-500/20 rounded-xl flex items-center gap-3 text-red-500 text-[11px] font-bold uppercase tracking-widest text-left">
               <AlertCircle size={18} className="shrink-0" />
-              <span>{typeof error === 'string' ? error : (error as any).message || JSON.stringify(error)}</span>
+              <span>{typeof error === 'string' ? error : (error as Error).message || JSON.stringify(error)}</span>
             </div>
           )}
 

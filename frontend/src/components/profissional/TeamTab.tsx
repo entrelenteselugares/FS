@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { API } from "../../lib/api";
-import { Users2, Star, UserCircle } from "lucide-react";
+import { Users2, Star, UserCircle, Search } from "lucide-react";
 
 interface ProfissionalEquipe {
   id: string;
@@ -16,6 +16,7 @@ interface ProfissionalEquipe {
 
 export function TeamTab() {
   const [teamData, setTeamData] = useState<ProfissionalEquipe[]>([]);
+  const [search, setSearch] = useState("");
   const [teamChanges, setTeamChanges] = useState<Record<string, "FIXO" | "ROTATIVO" | null>>({});
   const [savingTeam, setSavingTeam] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -57,6 +58,12 @@ export function TeamTab() {
     return p.vinculo;
   };
 
+  const filteredTeam = teamData.filter(p => 
+    p.nome.toLowerCase().includes(search.toLowerCase()) || 
+    p.email.toLowerCase().includes(search.toLowerCase()) ||
+    (p.services || []).some(s => s.toLowerCase().includes(search.toLowerCase()))
+  );
+
   if (loading) {
     return <div className="p-10 text-center text-theme-muted uppercase font-black text-[10px] tracking-widest">Carregando Rede Técnica...</div>;
   }
@@ -73,17 +80,28 @@ export function TeamTab() {
           <p className="text-[11px] font-bold text-theme-muted uppercase tracking-[0.2em] leading-relaxed max-w-3xl">
             Otimize sua operação designando profissionais <span className="text-brand-tactical font-black underline decoration-brand-tactical/30 underline-offset-4">FIXOS</span> para prioridade máxima em seus eventos ou integrando o pool <span className="text-blue-400 font-black">ROTATIVO</span> para demandas dinâmicas de rede.
           </p>
-          <div className="flex items-center gap-6 pt-2">
-              <div className="px-4 py-2 bg-theme-bg border border-theme-border flex items-center gap-3">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-2">
+              <div className="px-4 py-3 bg-theme-bg border border-theme-border flex items-center gap-3">
                 <div className="w-2 h-2 rounded-full bg-brand-tactical animate-pulse" />
-                <span className="text-[9px] font-black text-theme-text uppercase tracking-widest">{teamData.length} AGENTES IDENTIFICADOS</span>
+                <span className="text-[9px] font-black text-theme-text uppercase tracking-widest">{filteredTeam.length} AGENTES IDENTIFICADOS</span>
+              </div>
+              
+              <div className="relative flex-1 max-w-md">
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-theme-muted" size={16} />
+                <input
+                  type="text"
+                  placeholder="Buscar por nome, email ou serviço..."
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  className="w-full pl-12 pr-4 py-3 bg-theme-bg border border-theme-border/60 text-theme-text text-sm focus:border-brand-tactical/50 outline-none transition-colors"
+                />
               </div>
           </div>
         </div>
       </div>
 
       <div className="grid grid-cols-1 gap-6">
-        {teamData.map(p => {
+        {filteredTeam.map(p => {
           const vinculo = getVinculo(p);
           return (
             <div key={p.id} className={`lux-card p-0 overflow-hidden group transition-all duration-700 hover:border-brand-tactical/30 ${vinculo === "FIXO" ? 'border-brand-tactical/40 ring-1 ring-brand-tactical/10' : ''}`}>

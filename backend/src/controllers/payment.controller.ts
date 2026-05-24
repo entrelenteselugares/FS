@@ -1744,30 +1744,42 @@ export class PaymentController {
       });
 
       // 5a. Processar Gamificação (Cashback)
-      GamificationService.processOrderRewards(order.id).catch(e => console.error("Erro ao processar cashback:", e));
+      try {
+        await GamificationService.processOrderRewards(order.id);
+      } catch (e) {
+        console.error("Erro ao processar cashback:", e);
+      }
 
       // 5b. Processar Recompensa de Embaixador
       if (order.ambassadorId) {
-        const campaign = await prisma.referralCampaign.findFirst({
-          where: { ownerId: order.ambassadorId, active: true }
-        });
-        if (campaign) {
-          ReferralService.processConversion(campaign.id, { 
-            newUserId: order.clienteId || undefined, 
-            orderId: order.id 
-          }).catch(e => console.error("Erro ao processar recompensa embaixador:", e));
+        try {
+          const campaign = await prisma.referralCampaign.findFirst({
+            where: { ownerId: order.ambassadorId, active: true }
+          });
+          if (campaign) {
+            await ReferralService.processConversion(campaign.id, { 
+              newUserId: order.clienteId || undefined, 
+              orderId: order.id 
+            });
+          }
+        } catch (e) {
+          console.error("Erro ao processar recompensa embaixador:", e);
         }
       }
 
       // 5c. Processar Comissão de Afiliados Multinível
       if (order.affiliateL1Id) {
-        AffiliateService.recordCommissions(
-          order.id,
-          order.affiliateL1Id,
-          Number(order.splitAffiliateL1 || 0),
-          order.affiliateL2Id,
-          Number(order.splitAffiliateL2 || 0)
-        ).catch(e => console.error("Erro ao registrar comissão de afiliado:", e));
+        try {
+          await AffiliateService.recordCommissions(
+            order.id,
+            order.affiliateL1Id,
+            Number(order.splitAffiliateL1 || 0),
+            order.affiliateL2Id,
+            Number(order.splitAffiliateL2 || 0)
+          );
+        } catch (e) {
+          console.error("Erro ao registrar comissão de afiliado:", e);
+        }
       }
 
       // 6. Notificações (E-mail e WhatsApp) - Fora da transação para evitar rollback se falhar

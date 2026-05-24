@@ -146,13 +146,13 @@ export default function ClienteArea() {
         { label: "ÁREA PROFISSIONAL", isHeader: true },
         { label: "Minha Agenda", onClick: () => setActiveTab("agenda"), isActive: activeTab === "agenda", icon: <Play size={18} /> },
         { label: "Portfólio & Serviços", onClick: () => setActiveTab("servicos"), isActive: activeTab === "servicos", icon: <Briefcase size={18} /> },
-        { label: "Minhas Vendas & Ganhos", onClick: () => setActiveTab("financeiro"), isActive: activeTab === "financeiro", icon: <DollarSign size={18} /> },
-        { label: "Rede Técnica", onClick: () => setActiveTab("equipe"), isActive: activeTab === "equipe", icon: <Users size={18} /> },
+        { label: "Vendas & Ganhos", onClick: () => setActiveTab("financeiro"), isActive: activeTab === "financeiro", icon: <DollarSign size={18} /> },
         { label: "Agenda Google", onClick: () => setActiveTab("calendar"), isActive: activeTab === "calendar", icon: <Calendar size={18} /> }
       );
 
-      if (user?.franchiseProfile) {
+      if (user?.role === "FRANCHISEE" || user?.franchiseProfile) {
         items.push(
+          { label: "Rede Técnica", onClick: () => setActiveTab("equipe"), isActive: activeTab === "equipe", icon: <Users size={18} /> },
           { label: "Franquia Print", onClick: () => setActiveTab("franquia"), isActive: activeTab === "franquia", icon: <Printer size={18} /> }
         );
       }

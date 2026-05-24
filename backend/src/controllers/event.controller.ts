@@ -4,6 +4,7 @@ import prisma from "../lib/prisma";
 import { NotificationService } from "../services/notification.service";
 import bcrypt from "bcryptjs";
 import { APP_URL } from "../lib/config";
+import { AcceptanceStatus } from "@prisma/client";
 
 export class EventController {
   /**
@@ -381,6 +382,11 @@ export class EventController {
             temVideo: true,
             temReels: true,
             city: true,
+            captacao: {
+              select: {
+                nome: true
+              }
+            },
             cartorioUser: {
               select: {
                 nome: true,
@@ -400,7 +406,7 @@ export class EventController {
 
       const mapped = events.map((e: any) => ({
         ...e,
-        ownerName: e.cartorioUser?.nome || "Foto Segundo",
+        ownerName: e.cartorioUser?.nome || e.captacao?.nome || "Foto Segundo",
         city: e.city || (e as any).cartorioUser?.cartorio?.cidade || null
       }));
 
@@ -1045,7 +1051,7 @@ export class EventController {
           eventEndTime: dataEvento && endTime ? new Date(`${dataEvento}T${endTime}:00-03:00`) : undefined,
           captacaoId: finalCaptacaoId,
           isPublicCall: isPublicCall !== undefined ? !!isPublicCall : undefined,
-          captacaoStatus: finalCaptacaoStatus
+          captacaoStatus: finalCaptacaoStatus as AcceptanceStatus
         }
       });
       return res.json(updated);

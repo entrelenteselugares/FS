@@ -10,6 +10,7 @@ export interface VaultSettingsModalProps {
     id: string;
     nome: string;
     goalPoses: number;
+    externalVideoLink?: string | null;
     members?: { id: string; userId: string; role: string; user: { nome: string; email: string } }[];
   };
   onUpdate: () => void;
@@ -21,6 +22,7 @@ export function VaultSettingsModal({ isOpen, onClose, vault, onUpdate, sortConfi
   const [activeTab, setActiveTab] = useState<"Geral" | "Organização" | "Acesso">("Geral");
   const [nome, setNome] = useState(vault.nome);
   const [goalPoses, setGoalPoses] = useState(vault.goalPoses);
+  const [externalVideoLink, setExternalVideoLink] = useState(vault.externalVideoLink || "");
   const [loading, setLoading] = useState(false);
   const [members, setMembers] = useState(vault.members || []);
 
@@ -34,6 +36,7 @@ export function VaultSettingsModal({ isOpen, onClose, vault, onUpdate, sortConfi
   useEffect(() => {
     setNome(vault.nome);
     setGoalPoses(vault.goalPoses);
+    setExternalVideoLink(vault.externalVideoLink || "");
     // Fetch members if not passed from parent
     if (!vault.members || vault.members.length === 0) {
       api.get(`/vaults/${vault.id}`).then((res) => {
@@ -44,19 +47,21 @@ export function VaultSettingsModal({ isOpen, onClose, vault, onUpdate, sortConfi
     }
   }, [vault, isOpen]);
 
-  const hasChanges = nome !== vault.nome || goalPoses !== vault.goalPoses;
+  const hasChanges = nome !== vault.nome || goalPoses !== vault.goalPoses || externalVideoLink !== (vault.externalVideoLink || "");
 
   const handleSave = async () => {
     if (!hasChanges) return;
     setLoading(true);
     try {
-      const payload: { nome?: string; goalPoses?: number } = {};
+      const payload: { nome?: string; goalPoses?: number; externalVideoLink?: string | null } = {};
       if (nome.trim() && nome !== vault.nome) payload.nome = nome.trim();
       if (goalPoses !== vault.goalPoses) payload.goalPoses = goalPoses;
+      if (externalVideoLink !== (vault.externalVideoLink || "")) payload.externalVideoLink = externalVideoLink.trim() || null;
       await api.patch(`/vaults/${vault.id}`, payload);
       onUpdate();
-    } catch (e: any) {
-      alert("Erro ao salvar configurações: " + (e.response?.data?.error || e.message));
+    } catch (e: unknown) {
+      const err = e as { response?: { data?: { error?: string } }, message?: string };
+      alert("Erro ao salvar configurações: " + (err.response?.data?.error || err.message));
     } finally {
       setLoading(false);
     }
@@ -69,8 +74,9 @@ export function VaultSettingsModal({ isOpen, onClose, vault, onUpdate, sortConfi
       await api.delete(`/vaults/${vault.id}/members/${userId}`);
       setMembers(members.filter(m => m.userId !== userId));
       onUpdate();
-    } catch (e: any) {
-      alert("Erro ao remover membro: " + (e.response?.data?.error || e.message));
+    } catch (e: unknown) {
+      const err = e as { response?: { data?: { error?: string } }, message?: string };
+      alert("Erro ao remover membro: " + (err.response?.data?.error || err.message));
     } finally {
       setLoading(false);
     }
@@ -140,6 +146,21 @@ export function VaultSettingsModal({ isOpen, onClose, vault, onUpdate, sortConfi
                       className="w-full h-12 bg-black/50 border border-white/10 rounded-lg px-4 text-sm text-white focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all"
                       placeholder="Ex: Férias 2024"
                     />
+                  </div>
+
+                  {/* External Video Link */}
+                  <div>
+                    <label className="block text-[10px] font-black uppercase tracking-widest text-zinc-400 mb-2">Link da Pasta de Vídeos (Drive/Dropbox)</label>
+                    <input 
+                      type="url" 
+                      value={externalVideoLink}
+                      onChange={e => setExternalVideoLink(e.target.value)}
+                      className="w-full h-12 bg-black/50 border border-white/10 rounded-lg px-4 text-sm text-white focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all"
+                      placeholder="https://drive.google.com/drive/folders/..."
+                    />
+                    <p className="text-[9px] text-zinc-500 mt-2 leading-relaxed">
+                      Se preenchido, os membros verão um botão "🎬 Acessar Vídeos Brutos" para acessar arquivos massivos.
+                    </p>
                   </div>
 
                   {/* Quantidade de Fotos */}

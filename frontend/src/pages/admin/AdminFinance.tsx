@@ -122,7 +122,7 @@ export const AdminFinance: React.FC = () => {
       await API.post("/admin/finance/settle", { userId });
       setNotification({ message: "Repasse consolidado gerado com sucesso! 💎", type: 'success' });
       fetchBalances();
-    } catch (err) {
+    } catch {
       setNotification({ message: "Erro ao liquidar saldo.", type: 'error' });
     } finally {
       setSettleLoading(null);

@@ -1,20 +1,7 @@
 import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { 
-  Plus, 
-  Trash2, 
-  Edit3, 
-  ArrowRight,
-  Briefcase, 
-  Search, 
-  Filter, 
-  TrendingUp, 
-  Zap, 
-  DollarSign, 
-  X, 
-  AlertCircle,
-  Camera,
-  Video,
-  Layers
+  Plus, Search, Edit3, Trash2, Zap, Briefcase, Filter, Layers, TrendingUp, AlertCircle, DollarSign, ArrowRight, Camera, Video,
+  Check, Ban, X
 } from "lucide-react";
 import { API } from "../../lib/api";
 
@@ -54,6 +41,18 @@ export const AdminServices: React.FC = () => {
   const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
   const [notification, setNotification] = useState<{message: string, type: 'success' | 'error'} | null>(null);
 
+  const [activeTab, setActiveTab] = useState<"CATALOGO" | "PENDENTES">("CATALOGO");
+  const [pendingServices, setPendingServices] = useState<any[]>([]);
+
+  const fetchPendingServices = useCallback(async () => {
+    try {
+      const { data } = await API.get("/admin/services/pending");
+      setPendingServices(data);
+    } catch (err) {
+      console.error("Erro ao carregar pendentes:", err);
+    }
+  }, []);
+
   const fetchServices = useCallback(async () => {
     setLoading(true);
     try {
@@ -66,7 +65,22 @@ export const AdminServices: React.FC = () => {
     }
   }, []);
 
-  useEffect(() => { fetchServices(); }, [fetchServices]);
+  useEffect(() => { 
+    if (activeTab === "CATALOGO") fetchServices();
+    else fetchPendingServices();
+  }, [activeTab, fetchServices, fetchPendingServices]);
+
+  const handleReviewAction = async (serviceId: string, outcome: string, reason?: string) => {
+    try {
+      await API.patch(`/admin/services/${serviceId}/review`, { outcome, reason });
+      setNotification({ message: `Ação ${outcome} realizada com sucesso.`, type: 'success' });
+      fetchPendingServices();
+      setTimeout(() => setNotification(null), 5000);
+    } catch {
+      setNotification({ message: "Erro ao processar avaliação.", type: 'error' });
+      setTimeout(() => setNotification(null), 5000);
+    }
+  };
 
   const handleSave = async (serviceData: Omit<Service, 'id'>) => {
     setSaving(true);
@@ -152,6 +166,24 @@ export const AdminServices: React.FC = () => {
         </button>
       </div>
 
+      <div className="flex gap-4 border-b border-theme-border pb-4">
+        <button 
+          onClick={() => setActiveTab("CATALOGO")}
+          className={`text-[11px] font-black uppercase tracking-widest px-4 py-2 rounded-lg transition-all ${activeTab === "CATALOGO" ? "bg-brand-tactical text-zinc-950" : "text-theme-muted hover:bg-theme-bg-muted"}`}
+        >
+          Catálogo Global
+        </button>
+        <button 
+          onClick={() => setActiveTab("PENDENTES")}
+          className={`text-[11px] font-black uppercase tracking-widest px-4 py-2 rounded-lg transition-all flex items-center gap-2 ${activeTab === "PENDENTES" ? "bg-brand-tactical text-zinc-950" : "text-theme-muted hover:bg-theme-bg-muted"}`}
+        >
+          Aprovações Pendentes
+          {pendingServices.length > 0 && <span className="bg-red-500 text-white px-2 py-0.5 rounded-full text-[8px]">{pendingServices.length}</span>}
+        </button>
+      </div>
+
+      {activeTab === "CATALOGO" ? (
+        <>
       {/* DASHBOARD DE MÉTRICAS */}
       <div className="max-w-6xl mx-auto w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
          <div className="bg-theme-bg border border-theme-border/60 p-6 space-y-3 shadow-sm group hover:border-brand-tactical/40 transition-all rounded-2xl">
@@ -276,6 +308,61 @@ export const AdminServices: React.FC = () => {
           })
         )}
       </div>
+
+      </>
+      ) : (
+        <div className="space-y-4">
+          {pendingServices.length === 0 ? (
+            <div className="py-32 text-center border border-dashed border-theme-border bg-theme-bg-muted/5 space-y-6 rounded-2xl">
+               <Check size={40} className="mx-auto text-brand-tactical opacity-50" />
+               <div className="space-y-2">
+                  <p className="text-[11px] font-black text-theme-text uppercase tracking-widest italic">Tudo limpo!</p>
+                  <p className="text-[8px] text-theme-muted uppercase tracking-widest">Não há serviços aguardando aprovação no momento.</p>
+               </div>
+            </div>
+          ) : (
+            pendingServices.map(ps => (
+              <div key={ps.id} className="bg-theme-bg border border-theme-border rounded-2xl p-6 space-y-4 shadow-sm relative overflow-hidden">
+                <div className="absolute top-0 right-0 p-8 opacity-[0.03]">
+                  <Briefcase size={80} />
+                </div>
+                
+                <div className="flex justify-between items-start z-10 relative">
+                  <div>
+                    <h3 className="text-lg font-heading font-black text-theme-text uppercase italic">{ps.name}</h3>
+                    <p className="text-[10px] text-theme-muted uppercase tracking-widest">{ps.description}</p>
+                    <div className="mt-2 text-[9px] text-theme-muted uppercase font-bold">
+                      <span className="text-brand-tactical">Solicitante:</span> {ps.professional?.user?.name || "Desconhecido"}
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <div className="text-[14px] font-black text-theme-text italic">{formatCurrency(ps.suggestedPrice)}</div>
+                    <div className="text-[8px] uppercase tracking-widest text-theme-muted">Preço Sugerido</div>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-4 border-t border-theme-border/50 relative z-10">
+                  <button onClick={() => handleReviewAction(ps.id, 'NETWORK')} className="px-4 py-2 bg-brand-tactical text-zinc-950 text-[9px] font-black uppercase tracking-widest rounded flex items-center justify-center gap-2 hover:brightness-110">
+                    <Check size={14} /> Aprovar p/ Rede
+                  </button>
+                  <button onClick={() => handleReviewAction(ps.id, 'EXCLUSIVE')} className="px-4 py-2 border border-brand-tactical text-brand-tactical text-[9px] font-black uppercase tracking-widest rounded flex items-center justify-center gap-2 hover:bg-brand-tactical/10">
+                    Aprovar Exclusivo
+                  </button>
+                  <button onClick={() => {
+                    const reason = prompt("Motivo para ajuste:");
+                    if (reason) handleReviewAction(ps.id, 'NEEDS_ADJUSTMENT', reason);
+                  }} className="px-4 py-2 border border-amber-500 text-amber-500 text-[9px] font-black uppercase tracking-widest rounded flex items-center justify-center gap-2 hover:bg-amber-500/10">
+                    Solicitar Ajuste
+                  </button>
+                  <button onClick={() => handleReviewAction(ps.id, 'REJECTED')} className="px-4 py-2 border border-red-500 text-red-500 text-[9px] font-black uppercase tracking-widest rounded flex items-center justify-center gap-2 hover:bg-red-500/10">
+                    <Ban size={14} /> Rejeitar
+                  </button>
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+      )}
 
       {/* PAINEL DE COMPLIANCE TÁTICO */}
       <div className="bg-theme-bg border border-theme-border/60 p-10 flex flex-col md:flex-row items-center gap-10 shadow-sm relative overflow-hidden group rounded-2xl">

@@ -545,6 +545,8 @@ router.get("/admin/service-catalog", requireAuth, requireRole("ADMIN"), ServiceC
 router.post("/admin/service-catalog", requireAuth, requireRole("ADMIN"), ServiceCatalogController.adminCreateService);
 router.patch("/admin/service-catalog/:id", requireAuth, requireRole("ADMIN"), ServiceCatalogController.adminUpdateService);
 router.delete("/admin/service-catalog/:id", requireAuth, requireRole("ADMIN"), ServiceCatalogController.adminDeleteService);
+router.get("/admin/services/pending", requireAuth, requireRole("ADMIN"), ServiceCatalogController.listPendingServices);
+router.patch("/admin/services/:id/review", requireAuth, requireRole("ADMIN"), ServiceCatalogController.reviewPendingService);
 router.get("/admin/inventory",                               requireAuth, requireRole("ADMIN"), adminListInventory);
 router.post("/admin/inventory/adjust",                       requireAuth, requireRole("ADMIN"), adminAdjustStock);
 

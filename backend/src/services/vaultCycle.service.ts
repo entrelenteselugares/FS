@@ -127,6 +127,7 @@ export class VaultCycleService {
     console.log(`[VAULT CYCLE] Processando ${dueSubscriptions.length} assinaturas vencidas.`);
 
     for (const sub of dueSubscriptions) {
+      if (!sub.albumId) continue;
       try {
         await this.closeVaultCycle(sub.albumId);
       } catch (err) {
@@ -168,7 +169,7 @@ export class VaultCycleService {
       try {
         if (sub.album && sub.album.owner && sub.album.owner.whatsapp) {
           const owner = sub.album.owner;
-          const phone = owner.whatsapp;
+          const phone = owner.whatsapp!;
           const message = `Em 2 dias as top ${sub.planLimit || 36} fotos do seu álbum *${sub.album.nome}* vão para a gráfica. Ainda dá tempo de votar: ${process.env.FRONTEND_URL || 'http://localhost:3000'}/vaults/${sub.album.id}`;
           await WhatsAppService.sendMessage(phone, message);
         }

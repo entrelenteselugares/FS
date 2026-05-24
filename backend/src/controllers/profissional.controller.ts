@@ -730,10 +730,13 @@ export async function addProService(req: AuthRequest, res: Response): Promise<vo
   if (!userId) { res.status(401).json({ error: "Não autenticado." }); return; }
 
   try {
-    const prof = await prisma.profissional.findUnique({ where: { userId } });
+    const prof = await prisma.profissional.findUnique({ 
+      where: { userId },
+      include: { user: { select: { nome: true } } }
+    });
     if (!prof) { res.status(404).json({ error: "Profissional não encontrado." }); return; }
 
-    const { catalogId, name, description, price, estimatedMinutes } = req.body;
+    const { catalogId, name, description, category, price, estimatedMinutes, networkJustification, pricingType, requiredEquipment, isRemote, deliveryDays, minQuantity } = req.body;
     if (!name || price === undefined) {
       res.status(400).json({ error: "Nome e preço são obrigatórios." });
       return;
@@ -754,15 +757,40 @@ export async function addProService(req: AuthRequest, res: Response): Promise<vo
       }
     }
 
+    const isCustom = !catalogId;
+
     const service = await prisma.professionalService.create({
       data: {
         profissionalId: prof.id,
         catalogId: catalogId || null,
         name,
         description,
+        category: category || null,
         price: Number(price),
+        estimatedMinutes: estimatedMinutes ? Number(estimatedMinutes) : null,
+        pricingType: pricingType || "FIXED",
+        requiredEquipment: requiredEquipment || null,
+        isRemote: !!isRemote,
+        deliveryDays: deliveryDays ? Number(deliveryDays) : null,
+        minQuantity: minQuantity ? Number(minQuantity) : null,
+        reviewStatus: isCustom ? "PENDING_REVIEW" : "APPROVED",
+        submittedAt: isCustom ? new Date() : null,
+        networkJustification: isCustom ? networkJustification : null,
+        submittedByUserId: isCustom ? userId : null,
       }
     });
+
+    if (isCustom) {
+      // Import notification service conditionally to avoid circular dependency if not imported at top
+      const { NotificationService } = require("../services/notification.service");
+      NotificationService.notifyAdminNewService({
+        creatorName: prof.user?.nome || "Profissional",
+        serviceName: name,
+        price: Number(price),
+        justification: networkJustification
+      }).catch((e: any) => console.error("Erro ao notificar admin:", e));
+    }
+
     res.status(201).json(service);
   } catch (err) {
     console.error("addProService:", err);
@@ -776,12 +804,12 @@ export async function updateProService(req: AuthRequest, res: Response): Promise
 
   try {
     const id = req.params.id as string;
-    const { name, description, price, active } = req.body;
+    const { name, description, price, active, estimatedMinutes, pricingType, requiredEquipment, isRemote, deliveryDays, minQuantity } = req.body;
 
     const existing = await prisma.professionalService.findUnique({
       where: { id },
       include: {
-        profissional: true,
+        profissional: { include: { user: { select: { nome: true } } } },
         catalog: true
       }
     });
@@ -797,20 +825,23 @@ export async function updateProService(req: AuthRequest, res: Response): Promise
         return;
       }
 
-      if (existing.catalog && existing.catalog.estimatedMinutes > 0) {
+      const minutesToCheck = existing.catalog?.estimatedMinutes || existing.estimatedMinutes || (estimatedMinutes ? Number(estimatedMinutes) : 0);
+      if (minutesToCheck && minutesToCheck > 0) {
         const minHourlyConfig = await prisma.platformConfig.findUnique({ where: { key: "min_hourly_rate" } });
         const minHourlyRate = minHourlyConfig ? Number(minHourlyConfig.value) : 14; // padrão: €14/h
-        const minPriceForService = minHourlyRate * (existing.catalog.estimatedMinutes / 60);
+        const minPriceForService = minHourlyRate * (minutesToCheck / 60);
 
         if (parsedPrice < minPriceForService) {
           res.status(400).json({
             error: `Preço abaixo do mínimo.`,
-            details: `Para um serviço de ${existing.catalog.estimatedMinutes} minutos, o valor mínimo é €${minPriceForService.toFixed(2)} (baseado em €${minHourlyRate}/hora mínima).`
+            details: `Para um serviço de ${minutesToCheck} minutos, o valor mínimo é €${minPriceForService.toFixed(2)} (baseado em €${minHourlyRate}/hora mínima).`
           });
           return;
         }
       }
     }
+
+    const isCustomEditing = !existing.catalogId && existing.reviewStatus === "NEEDS_ADJUSTMENT";
 
     const updated = await prisma.professionalService.update({
       where: { id },
@@ -819,8 +850,27 @@ export async function updateProService(req: AuthRequest, res: Response): Promise
         ...(description !== undefined && { description }),
         ...(price !== undefined && { price: Number(price) }),
         ...(active !== undefined && { active }),
+        ...(estimatedMinutes !== undefined && { estimatedMinutes: Number(estimatedMinutes) }),
+        ...(pricingType !== undefined && { pricingType }),
+        ...(requiredEquipment !== undefined && { requiredEquipment }),
+        ...(isRemote !== undefined && { isRemote: !!isRemote }),
+        ...(deliveryDays !== undefined && { deliveryDays: Number(deliveryDays) }),
+        ...(minQuantity !== undefined && { minQuantity: Number(minQuantity) }),
+        ...(isCustomEditing && { reviewStatus: "PENDING_REVIEW", submittedAt: new Date() })
       }
     });
+
+    if (isCustomEditing) {
+      const { NotificationService } = require("../services/notification.service");
+      NotificationService.notifyAdminNewService({
+        creatorName: existing.profissional.user?.nome || "Profissional",
+        serviceName: updated.name,
+        price: Number(updated.price),
+        justification: updated.networkJustification,
+        isUpdate: true
+      }).catch((e: any) => console.error("Erro ao notificar admin na edição:", e));
+    }
+
     res.json(updated);
   } catch (err) {
     console.error("updateProService:", err);

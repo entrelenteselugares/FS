@@ -46,24 +46,56 @@ const NAV_ITEMS = (activeTab: string, setActiveTab: (t: string) => void, stats: 
   const allItems: NavItem[] = [
     { label: "Visão Geral",    onClick: () => setActiveTab("overview"),      isActive: activeTab === "overview",      icon: <LayoutDashboard size={16} />, hide: role === 'FRANCHISEE' },
     { label: "Eventos",        onClick: () => setActiveTab("events"),        isActive: activeTab === "events",        icon: <Camera size={16} />,         badge: stats?.missingLinksCount },
-    { label: "Membros",        onClick: () => setActiveTab("users"),         isActive: activeTab === "users",         icon: <Users size={16} />,          badge: stats?.pendingInvitesCount, hide: role === 'FRANCHISEE' },
-    { label: "Orçamentos",     onClick: () => setActiveTab("quotes"),        isActive: activeTab === "quotes",        icon: <Briefcase size={16} />,      badge: stats?.pendingQuotesCount, hide: role === 'FRANCHISEE' },
-    { label: "CRM & Leads",    onClick: () => setActiveTab("crm"),           isActive: activeTab === "crm",           icon: <Users size={16} />, hide: role === 'FRANCHISEE' },
-    { label: "Pedidos",        onClick: () => setActiveTab("orders"),        isActive: activeTab === "orders",        icon: <FileText size={16} />, hide: role === 'FRANCHISEE' },
-    { label: "Financeiro",     onClick: () => setActiveTab("finance"),       isActive: activeTab === "finance",       icon: <DollarSign size={16} />, hide: role === 'FRANCHISEE' },
-    { label: "Impressão",      onClick: () => setActiveTab("printers"),      isActive: activeTab === "printers",      icon: <Printer size={16} />, hide: role === 'FRANCHISEE' },
-    { label: "Franquias",      onClick: () => setActiveTab("franchises"),    isActive: activeTab === "franchises",     icon: <ShieldCheck size={16} /> },
-    { label: "Estoque Central",onClick: () => setActiveTab("inventory"),     isActive: activeTab === "inventory",      icon: <Package size={16} />, hide: role === 'FRANCHISEE' },
-    { label: "Catálogo",        onClick: () => setActiveTab("print-catalog"), isActive: activeTab === "print-catalog", icon: <Layers size={16} />, hide: role === 'FRANCHISEE' },
-    { label: "Serviços",       onClick: () => setActiveTab("services"),      isActive: activeTab === "services",      icon: <Grid3X3 size={16} />, hide: role === 'FRANCHISEE' },
-    { label: "Growth",         onClick: () => setActiveTab("growth"),        isActive: activeTab === "growth",        icon: <TrendingUp size={16} />, hide: role === 'FRANCHISEE' },
-    { label: "Aprovações",     onClick: () => setActiveTab("approvals"),     isActive: activeTab === "approvals",     icon: <UserCheck size={16} />, hide: role === 'FRANCHISEE' },
-    { label: "Concursos",      onClick: () => setActiveTab("contests"),      isActive: activeTab === "contests",      icon: <Trophy size={16} />, hide: role === 'FRANCHISEE' },
-    { label: "Configurações",  onClick: () => setActiveTab("settings"),      isActive: activeTab === "settings",      icon: <Settings size={16} />, hide: role === 'FRANCHISEE' },
-    { label: "Embaixadores",   onClick: () => setActiveTab("ambassadors"),   isActive: activeTab === "ambassadors",   icon: <Users size={16} />, hide: role === 'FRANCHISEE' },
+    { 
+      label: "Comercial", icon: <Briefcase size={16} />, hide: role === 'FRANCHISEE',
+      subItems: [
+        { label: "CRM & Leads",    onClick: () => setActiveTab("crm"),           isActive: activeTab === "crm" },
+        { label: "Orçamentos",     onClick: () => setActiveTab("quotes"),        isActive: activeTab === "quotes", badge: stats?.pendingQuotesCount },
+        { label: "Pedidos",        onClick: () => setActiveTab("orders"),        isActive: activeTab === "orders" },
+        { label: "Catálogo",       onClick: () => setActiveTab("print-catalog"), isActive: activeTab === "print-catalog" },
+        { label: "Serviços",       onClick: () => setActiveTab("services"),      isActive: activeTab === "services" },
+      ]
+    },
+    {
+      label: "Operação", icon: <Printer size={16} />, hide: role === 'FRANCHISEE',
+      subItems: [
+        { label: "Impressão",      onClick: () => setActiveTab("printers"),      isActive: activeTab === "printers" },
+        { label: "Estoque",        onClick: () => setActiveTab("inventory"),     isActive: activeTab === "inventory" },
+        { label: "Aprovações",     onClick: () => setActiveTab("approvals"),     isActive: activeTab === "approvals" },
+      ]
+    },
+    {
+      label: "Rede", icon: <Users size={16} />,
+      subItems: [
+        { label: "Franquias",      onClick: () => setActiveTab("franchises"),    isActive: activeTab === "franchises" },
+        { label: "Membros",        onClick: () => setActiveTab("users"),         isActive: activeTab === "users", badge: stats?.pendingInvitesCount, hide: role === 'FRANCHISEE' },
+        { label: "Embaixadores",   onClick: () => setActiveTab("ambassadors"),   isActive: activeTab === "ambassadors", hide: role === 'FRANCHISEE' },
+      ]
+    },
+    {
+      label: "Marketing", icon: <TrendingUp size={16} />, hide: role === 'FRANCHISEE',
+      subItems: [
+        { label: "Growth",         onClick: () => setActiveTab("growth"),        isActive: activeTab === "growth" },
+        { label: "Concursos",      onClick: () => setActiveTab("contests"),      isActive: activeTab === "contests" },
+      ]
+    },
+    {
+      label: "Sistema", icon: <Settings size={16} />, hide: role === 'FRANCHISEE',
+      subItems: [
+        { label: "Financeiro",     onClick: () => setActiveTab("finance"),       isActive: activeTab === "finance" },
+        { label: "Configurações",  onClick: () => setActiveTab("settings"),      isActive: activeTab === "settings" },
+      ]
+    }
   ];
 
-  return allItems.filter(item => !item.hide);
+  return allItems.filter(item => {
+    if (item.hide) return false;
+    if (item.subItems) {
+      item.subItems = item.subItems.filter(sub => !sub.hide);
+      if (item.subItems.length === 0) return false;
+    }
+    return true;
+  });
 };
 
 interface AdminStats {

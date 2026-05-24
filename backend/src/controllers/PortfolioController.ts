@@ -4,7 +4,7 @@ import { prisma } from "../lib/prisma";
 export const PortfolioController = {
   getAlbums: async (req: Request, res: Response) => {
     try {
-      const profissionalId = req.params.profissionalId;
+      const profissionalId = String(req.params.profissionalId);
       if (!profissionalId) {
         return res.status(400).json({ error: "Profissional ID is required" });
       }
@@ -57,7 +57,7 @@ export const PortfolioController = {
 
   getAlbumImages: async (req: Request, res: Response) => {
     try {
-      const albumId = req.params.albumId;
+      const albumId = String(req.params.albumId);
       const images = await prisma.portfolioImage.findMany({
         where: { albumId },
         orderBy: { createdAt: "desc" },

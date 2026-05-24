@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useState, useEffect } from "react";
 
 export type EventPhase =
   | "scheduled"   // criado, > 7 dias para o evento
@@ -45,8 +45,16 @@ export function useEventStatus(
   isExpired?: boolean,
   active?: boolean
 ): EventStatusInfo {
+  const [now, setNow] = useState(() => Date.now());
+
+  useEffect(() => {
+    // Atualiza a cada 1 minuto para não ter renderizações infinitas, 
+    // mas ainda reagir a mudanças de status baseadas no tempo
+    const timer = setInterval(() => setNow(Date.now()), 60000);
+    return () => clearInterval(timer);
+  }, []);
+
   return useMemo(() => {
-    const now = Date.now();
 
     // --- Resolve start & end timestamps ---
     let startMs: number | null = null;
@@ -90,12 +98,17 @@ export function useEventStatus(
       phase = "archived";
     } else if (msUntilEnd !== null && msUntilEnd <= 0) {
       phase = "ended"; // QR still open for 24h
-    } else if (msUntilEnd !== null && msUntilEnd <= HOUR_MS) {
-      phase = "critical";
-    } else if (msUntilEnd !== null && msUntilEnd <= 2 * HOUR_MS) {
-      phase = "closing";
     } else if (msUntilStart !== null && msUntilStart <= 0) {
-      phase = "live"; // started, more than 2h remaining
+      // O evento já começou
+      const duration = endMs !== null && startMs !== null ? endMs - startMs : 0;
+      
+      if (msUntilEnd !== null && msUntilEnd <= 15 * 60 * 1000) {
+        phase = "critical";
+      } else if (msUntilEnd !== null && msUntilEnd <= 60 * 60 * 1000 && duration > 60 * 60 * 1000) {
+        phase = "closing"; // só mostra Encerrando se for evento de mais de 1h
+      } else {
+        phase = "live"; // caso contrário, fica Ao Vivo
+      }
     } else if (msUntilStart !== null && msUntilStart <= DAYS_7) {
       phase = "approaching";
     } else {
@@ -174,7 +187,6 @@ export function useEventStatus(
     const tokens = MAP[phase];
     const dotClass = [
       "rounded-full",
-      "animate-pulse",
       tokens.bg,
       tokens.glow,
       tokens.pulse ? "animate-pulse" : "",
@@ -183,5 +195,5 @@ export function useEventStatus(
       .join(" ");
 
     return { phase, dotClass, ...tokens };
-  }, [eventDate, eventEndTime, eventHours, isExpired, active]);
+  }, [eventDate, eventEndTime, eventHours, isExpired, active, now]);
 }

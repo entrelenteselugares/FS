@@ -27,7 +27,7 @@ export class AffiliateController {
    */
   static async updateTier(req: Request, res: Response) {
     try {
-      const { id } = req.params;
+      const id = String(req.params.id);
       const { tier } = req.body; // "STANDARD" | "VIP"
 
       if (!["STANDARD", "VIP"].includes(tier)) {

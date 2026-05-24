@@ -15,6 +15,7 @@ export interface PhygitalMetadata {
   isBulk?: boolean;
   applyWatermark?: boolean;
   globalTag?: string;
+  price?: number;
 }
 
 export class PhygitalService {
@@ -63,49 +64,11 @@ export class PhygitalService {
       const w = isRotated ? (metadata_img.height || 1600) : (metadata_img.width || 1200);
       const h = isRotated ? (metadata_img.width || 1200) : (metadata_img.height || 1600);
       
-      const compositeLayers: any[] = [];
       let finalWidth = w;
       let finalHeight = h;
 
-      // 4. Lógica de Enquadramento vs Upload Direto (Lote)
-      if (isBulk) {
-        console.log(`[PHYGITAL] Upload em lote: Mantendo dimensões originais ${w}x${h}`);
-        // No upload em lote, não adicionamos borda polaroid por padrão
-      } else {
-        // Adicionamos borda branca (Luxury Frame - Estilo Polaroid)
-        const borderSize = Math.floor(Math.min(w, h) * 0.10); // 10% de borda
-        finalWidth = w + (borderSize * 2);
-        finalHeight = h + (borderSize * 4); // Polaroid clássico tem base maior
-
-        pipeline = pipeline.extend({
-          top: borderSize,
-          bottom: borderSize * 3,
-          left: borderSize,
-          right: borderSize,
-          background: { r: 255, g: 255, b: 255, alpha: 1 }
-        });
-
-        // Adicionamos os carimbos de referência e logo (Polaroid Style)
-        const refSvg = Buffer.from(`
-          <svg width="${finalWidth}" height="${borderSize * 3}" viewBox="0 0 ${finalWidth} ${borderSize * 3}">
-            <text x="50%" y="60%" font-family="sans-serif" font-size="${Math.floor(borderSize * 0.8)}px" font-weight="900" fill="#000000" text-anchor="middle">
-              ${referenceCode}
-            </text>
-          </svg>
-        `);
-        compositeLayers.push({ input: refSvg, gravity: 'south', blend: 'over' });
-
-        const logoSvg = Buffer.from(`
-          <svg width="${finalWidth}" height="${borderSize * 2}" viewBox="0 0 ${finalWidth} ${borderSize * 2}">
-            <text x="${finalWidth - Math.floor(borderSize * 0.5)}" y="70%" font-family="sans-serif" font-size="${Math.floor(borderSize * 0.4)}px" font-weight="900" fill="#000000" text-anchor="end" style="opacity: 0.6; letter-spacing: 5px;">
-              FOTO SEGUNDO
-            </text>
-          </svg>
-        `);
-        compositeLayers.push({ input: logoSvg, gravity: 'southeast', blend: 'over' });
-      }
-
-      // 5. Marca d'água de Proteção (Anti-Theft - Phase 23)
+      // 4. Marca d'água de Proteção (RAW Layer)
+      const rawCompositeLayers: any[] = [];
       if (applyWatermark) {
         console.log(`[PHYGITAL] Aplicando marca d'água de proteção...`);
         const watermarkSvg = Buffer.from(`
@@ -116,48 +79,174 @@ export class PhygitalService {
             <text x="50%" y="50%" class="wm" text-anchor="middle" transform="rotate(-45 ${w/2} ${h/2})">FOTO SEGUNDO</text>
           </svg>
         `);
-        compositeLayers.push({ input: watermarkSvg, gravity: 'center', blend: 'over' });
+        rawCompositeLayers.push({ input: watermarkSvg, gravity: 'center', blend: 'over' });
       }
 
-      // 6. Composição Final
-      const processedImageBuffer = await pipeline
-        .composite(compositeLayers)
-        .jpeg({ quality: 90 })
-        .toBuffer();
-      console.log(`[PHYGITAL] Processamento concluído. Dimensões: ${finalWidth}x${finalHeight}`);
+      // Buffer da Imagem Original (RAW, apenas rotacionada e c/ marca d'água opcional)
+      const rawPipeline = sharp(fileBuffer).rotate();
+      if (rawCompositeLayers.length > 0) {
+        rawPipeline.composite(rawCompositeLayers);
+      }
+      const rawImageBuffer = await rawPipeline.jpeg({ quality: 90 }).toBuffer();
 
-      // 5. Upload para o Storage correspondente (Híbrido)
-      let publicUrl = "";
+      // 5. Buffer Polaroid (apenas se não for lote)
+      let processedImageBuffer = rawImageBuffer; // Fallback
+
+      if (isBulk) {
+        console.log(`[PHYGITAL] Upload em lote: Mantendo dimensões originais ${w}x${h}`);
+      } else {
+        // Adicionamos borda branca (Luxury Frame - Estilo Polaroid)
+        const borderSize = Math.floor(w * 0.05); // Reduzido de 10% para 5%
+        const bottomBorder = Math.floor(borderSize * 3.5); // Borda inferior
+        finalWidth = w + (borderSize * 2);
+        finalHeight = h + borderSize + bottomBorder;
+
+        const compositeLayers: any[] = [];
+
+        try {
+          const fs = require('fs');
+          const path = require('path');
+          const logoPath = path.join(__dirname, '..', 'assets', 'logo.png');
+          
+          let logoHeight = Math.floor(bottomBorder * 0.5); // fallback
+
+          if (fs.existsSync(logoPath)) {
+            const logoBuffer = fs.readFileSync(logoPath);
+            const logoWidth = Math.floor(w * 0.35); // 35% da largura da imagem
+            const { data: logoResized, info: logoInfo } = await sharp(logoBuffer)
+              .resize({ width: logoWidth, withoutEnlargement: true })
+              .png()
+              .toBuffer({ resolveWithObject: true });
+              
+            logoHeight = logoInfo.height;
+            const logoY = h + borderSize + Math.floor((bottomBorder - logoHeight) / 2);
+            const logoX = finalWidth - logoInfo.width - borderSize;
+
+            compositeLayers.push({ 
+              input: logoResized, 
+              top: logoY,
+              left: logoX,
+              blend: 'over' 
+            });
+          }
+
+          // Centralizar verticalmente o bloco de texto usando Y absoluto
+          const textCenterY = Math.floor(bottomBorder / 2);
+          const subtitleY = textCenterY - Math.floor(borderSize * 0.1);
+          const titleY = textCenterY + Math.floor(borderSize * 0.7);
+
+          const refSvg = Buffer.from(`
+            <svg width="${finalWidth}" height="${bottomBorder}" viewBox="0 0 ${finalWidth} ${bottomBorder}">
+              <text x="${borderSize}" y="${subtitleY}" font-family="'Inter', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="${Math.floor(borderSize * 0.35)}px" font-weight="800" fill="#888888" text-anchor="start" letter-spacing="3" text-transform="uppercase">
+                CÓDIGO DA FOTO
+              </text>
+              <text x="${borderSize}" y="${titleY}" font-family="'Inter', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="${Math.floor(borderSize * 0.8)}px" font-weight="900" fill="#111111" text-anchor="start" letter-spacing="1">
+                ${referenceCode.replace('-', ' ')}
+              </text>
+            </svg>
+          `);
+          compositeLayers.push({ input: refSvg, gravity: 'south', blend: 'over' });
+
+        } catch (err) {
+          console.error('[PHYGITAL] Erro ao montar polaroid', err);
+        }
+
+        processedImageBuffer = await sharp(rawImageBuffer)
+          .extend({
+            top: borderSize,
+            bottom: bottomBorder,
+            left: borderSize,
+            right: borderSize,
+            background: { r: 255, g: 255, b: 255, alpha: 1 }
+          })
+          .composite(compositeLayers)
+          .jpeg({ quality: 95 }) // Aumentado para 95 para melhor nitidez
+          .toBuffer();
+          
+        console.log(`[PHYGITAL] Processamento Polaroid concluído. Dimensões: ${finalWidth}x${finalHeight}`);
+      }
+
+      // 6. Gerar Buffer da Galeria (Com Marca D'água Tiled sobre a Foto, não na Borda)
+      let galleryImageBuffer = processedImageBuffer;
+      if (!isBulk) {
+        try {
+          const fs = require('fs');
+          const path = require('path');
+          const logoPath = path.join(__dirname, '..', 'assets', 'logo.png');
+          if (fs.existsSync(logoPath)) {
+            const logoBase64 = fs.readFileSync(logoPath).toString('base64');
+            const patternSize = Math.floor(w * 0.4);
+            const logoW = Math.floor(w * 0.25);
+            // SVG cobrindo apenas a área da foto (w x h)
+            const watermarkSvg = Buffer.from(`
+              <svg width="${w}" height="${h}" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                  <pattern id="wm" patternUnits="userSpaceOnUse" width="${patternSize}" height="${patternSize}" patternTransform="rotate(-25)">
+                    <image href="data:image/png;base64,${logoBase64}" x="0" y="0" width="${logoW}" height="${logoW}" opacity="0.80" preserveAspectRatio="xMidYMid meet" />
+                  </pattern>
+                </defs>
+                <rect width="100%" height="100%" fill="url(#wm)" />
+              </svg>
+            `);
+            const borderSize = Math.floor(w * 0.05);
+            galleryImageBuffer = await sharp(processedImageBuffer)
+              .composite([{
+                input: watermarkSvg,
+                top: borderSize,
+                left: borderSize,
+                blend: 'over'
+              }])
+              .jpeg({ quality: 85 }) // Para galeria web
+              .toBuffer();
+          }
+        } catch (e) {
+          console.error('[PHYGITAL] Erro ao aplicar marca dágua na galeria', e);
+        }
+      }
+
+      // 7. Upload para o Storage correspondente (Híbrido)
+      let rawPublicUrl = "";
+      let printPublicUrl = "";
+      let galleryPublicUrl = "";
       let fileId = "";
       let driveFile: any = null;
 
       if (foundVault) {
         if (!foundVault.folderId) throw new Error("Cofre sem infraestrutura de storage (Google Drive).");
         
-        console.log(`[PHYGITAL] Upload para Google Drive (Vault: ${foundVault.nome})`);
+        console.log(`[PHYGITAL] Upload RAW para Google Drive (Vault: ${foundVault.nome})`);
         driveFile = await driveService.uploadMedia({
           folderId: foundVault.folderId,
           fileName: `${referenceCode}.jpg`,
-          buffer: processedImageBuffer,
+          buffer: rawImageBuffer, // Para cofre, sempre envia o RAW
           mimeType: "image/jpeg"
         });
-        publicUrl = driveFile.webViewLink!;
+        rawPublicUrl = driveFile.webViewLink!;
+        printPublicUrl = rawPublicUrl;
+        galleryPublicUrl = rawPublicUrl;
         fileId = driveFile.id!;
       } else {
-        const fileName = `phygital/${metadata.eventId}/${referenceCode}.jpg`;
-        const { data: uploadData, error: uploadError } = await supabase.storage
-          .from("eventos")
-          .upload(fileName, processedImageBuffer, {
-            contentType: "image/jpeg",
-            upsert: true
-          });
+        const rawFileName = `phygital/${metadata.eventId}/${referenceCode}_raw.jpg`;
+        const printFileName = `phygital/${metadata.eventId}/${referenceCode}_print.jpg`;
+        const galleryFileName = `phygital/${metadata.eventId}/${referenceCode}_gallery.jpg`;
 
-        if (uploadError) throw uploadError;
-        const { data: { publicUrl: supabaseUrl } } = supabase.storage.from("eventos").getPublicUrl(fileName);
-        publicUrl = supabaseUrl;
+        // Upload RAW (Original Limpa)
+        const { error: rawError } = await supabase.storage.from("eventos").upload(rawFileName, rawImageBuffer, { contentType: "image/jpeg", upsert: true });
+        if (rawError) throw rawError;
+        rawPublicUrl = supabase.storage.from("eventos").getPublicUrl(rawFileName).data.publicUrl;
+
+        // Upload Print (Polaroid Limpo para Máquina)
+        const { error: printError } = await supabase.storage.from("eventos").upload(printFileName, processedImageBuffer, { contentType: "image/jpeg", upsert: true });
+        if (printError) throw printError;
+        printPublicUrl = supabase.storage.from("eventos").getPublicUrl(printFileName).data.publicUrl;
+
+        // Upload Gallery (Polaroid Protegido para Web)
+        const { error: galleryError } = await supabase.storage.from("eventos").upload(galleryFileName, galleryImageBuffer, { contentType: "image/jpeg", upsert: true });
+        if (galleryError) throw galleryError;
+        galleryPublicUrl = supabase.storage.from("eventos").getPublicUrl(galleryFileName).data.publicUrl;
       }
 
-      // 6. Persistência no Prisma
+      // 7. Persistência no Prisma
       console.log(`[PHYGITAL] Persistindo no banco (eventId: ${foundEvent ? foundEvent.id : foundVault?.id})`);
       
       // Se for um Vault, não criamos registro na PhygitalPrint por enquanto para evitar erro de FK no Event,
@@ -168,7 +257,7 @@ export class PhygitalService {
         printJob = await prisma.phygitalPrint.create({
           data: {
             referenceCode,
-            imageUrl: publicUrl,
+            imageUrl: printPublicUrl,
             customerName,
             customerPhone,
             customerEmail: metadata.customerEmail || "",
@@ -186,19 +275,21 @@ export class PhygitalService {
         const count = await prisma.eventMedia.count({ where: { eventId: foundEvent.id } });
         const shortId = `F${(count + 1).toString().padStart(3, '0')}`;
         
-        const payloadMetadata = metadata.globalTag 
-          ? { bibNumber: metadata.globalTag, studentId: metadata.globalTag, aiTags: [metadata.globalTag] }
-          : {};
+        const payloadMetadata = {
+          ...(metadata.globalTag ? { bibNumber: metadata.globalTag, studentId: metadata.globalTag, aiTags: [metadata.globalTag] } : {}),
+          rawUrl: rawPublicUrl,
+          printUrl: printPublicUrl
+        };
 
         const isProfessionalUpload = metadata.userId && (metadata.userId === foundEvent.captacaoId || metadata.userId === foundEvent.edicaoId);
 
         await prisma.eventMedia.create({
           data: {
             eventId: foundEvent.id,
-            url: publicUrl,
+            url: galleryPublicUrl, // Modificado para exibir a versão COM marca d'água na galeria
             shortId: shortId,
             type: 'PHOTO',
-            price: foundEvent.pricePerPhoto || foundEvent.priceBase || 15,
+            price: metadata.price || foundEvent.pricePerPhoto || foundEvent.priceBase || 15,
             metadata: payloadMetadata,
             isGuest: !isProfessionalUpload
           } as any
@@ -206,13 +297,13 @@ export class PhygitalService {
       } else if (foundVault) {
         // Fallback robusto para thumbnailLink: se o Drive não retornou, usamos o webViewLink
         // Mas o driveService.uploadMedia já tenta retornar o thumbnailLink.
-        const thumbnailLink = driveFile?.thumbnailLink || driveFile?.webViewLink || publicUrl;
+        const thumbnailLink = driveFile?.thumbnailLink || driveFile?.webViewLink || galleryPublicUrl;
         
         await prisma.sharedAlbumMedia.create({
           data: {
             albumId: foundVault.id,
             fileId: fileId,
-            webViewLink: publicUrl,
+            webViewLink: rawPublicUrl,
             thumbnailLink: thumbnailLink,
             uploadedById: metadata.userId || foundVault.ownerId,
             aiAnalysisStatus: 'PENDING'
@@ -249,9 +340,9 @@ export class PhygitalService {
 
       return {
         success: true,
-        referenceCode: printJob.referenceCode,
-        imageUrl: printJob.imageUrl,
-        id: printJob.id
+        referenceCode: printJob?.referenceCode || referenceCode,
+        imageUrl: printJob?.imageUrl || rawPublicUrl,
+        id: printJob?.id || fileId
       };
 
     } catch (error) {

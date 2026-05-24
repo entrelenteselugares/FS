@@ -7,7 +7,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { 
   Lock, Upload, Heart, Share2, 
   ChevronLeft, ChevronRight, Loader2, Camera,
-  Printer, Zap, Star, Settings
+  Printer, Zap, Star, Settings, Video, PlayCircle
 } from "lucide-react";
 import { Helmet } from "react-helmet-async";
 import { T } from "../lib/theme";
@@ -28,6 +28,7 @@ interface Media {
   height?: number;
   originalDate?: string;
   status?: string; // PENDING | APPROVED | REJECTED
+  type?: string; // PHOTO | VIDEO
 }
 
 interface Vault {
@@ -36,6 +37,7 @@ interface Vault {
   goalPoses: number;
   status: string;
   subscriptionStatus: string;
+  externalVideoLink?: string | null;
   trialEndsAt: string | null;
   myRole: string;
   subscription?: {
@@ -278,9 +280,12 @@ export default function VaultDetailPage() {
         }
       }
 
-      // 2. Size Guard (Vercel)
-      if (file.size > 4.5 * 1024 * 1024) {
+      // 2. Size Guard
+      const isVideo = file.type.startsWith("video/");
+      const maxSize = isVideo ? 100 * 1024 * 1024 : 4.5 * 1024 * 1024;
+      if (file.size > maxSize) {
         console.warn("[Upload] Arquivo muito grande:", file.name);
+        alert(`O arquivo ${file.name} excede o limite de ${isVideo ? '100MB' : '4.5MB'}.`);
         failCount++;
         continue;
       }
@@ -404,6 +409,18 @@ export default function VaultDetailPage() {
                 Materializar
               </button>
             )}
+
+            {vault.subscriptionStatus === "ACTIVE" && vault.externalVideoLink && (
+              <a 
+                href={vault.externalVideoLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hidden md:flex items-center justify-center gap-2 bg-blue-500 hover:bg-blue-400 text-black text-[10px] font-black uppercase tracking-widest px-4 py-2.5 rounded-lg transition-all shadow-lg shadow-blue-500/20"
+              >
+                <Video size={14} />
+                Acessar Vídeos Brutos
+              </a>
+            )}
             
             <button 
               onClick={handleInvite}
@@ -419,8 +436,8 @@ export default function VaultDetailPage() {
                 : "bg-emerald-500 hover:bg-emerald-400 text-black shadow-emerald-500/20 cursor-pointer"
             }`}>
               <Upload size={14} />
-              {media.length >= vault.goalPoses * 2 ? "Limite Atingido" : "Enviar Foto"}
-                <input type="file" className="hidden" onChange={handleFileUpload} accept="image/*" multiple />
+              {media.length >= vault.goalPoses * 2 ? "Limite Atingido" : "Enviar Mídia"}
+                <input type="file" className="hidden" onChange={handleFileUpload} accept={vault.subscriptionStatus === "ACTIVE" ? "image/*,video/mp4,video/quicktime,video/webm" : "image/*"} multiple />
             </label>
           </div>
         </div>
@@ -578,6 +595,13 @@ export default function VaultDetailPage() {
                     </div>
                   )}
 
+                  {/* Video Indicator */}
+                  {item.type === 'VIDEO' && (
+                    <div className="absolute inset-0 flex items-center justify-center z-10 pointer-events-none">
+                      <PlayCircle size={32} className="text-white/70 drop-shadow-lg" />
+                    </div>
+                  )}
+
                   {/* Absolute Selection Indicator */}
                   {item.votedByMe && (
                     <motion.div 
@@ -638,10 +662,22 @@ export default function VaultDetailPage() {
             </span>
           </button>
 
+          {vault.subscriptionStatus === "ACTIVE" && vault.externalVideoLink && (
+            <a 
+              href={vault.externalVideoLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex flex-col items-center gap-1 text-blue-400 hover:text-blue-300 transition-colors mr-4"
+            >
+              <Video size={20} />
+              <span className="text-[9px] font-black uppercase tracking-widest text-center">Vídeos<br/>Brutos</span>
+            </a>
+          )}
+
           <label className="flex flex-col items-center gap-1 text-zinc-400 hover:text-emerald-500 transition-colors cursor-pointer">
             <Upload size={20} />
             <span className="text-[9px] font-black uppercase tracking-widest">Enviar</span>
-            <input type="file" className="hidden" onChange={handleFileUpload} accept="image/*" multiple />
+            <input type="file" className="hidden" onChange={handleFileUpload} accept={vault.subscriptionStatus === "ACTIVE" ? "image/*,video/mp4,video/quicktime,video/webm" : "image/*"} multiple />
           </label>
         </div>
       </div>
@@ -649,7 +685,7 @@ export default function VaultDetailPage() {
       <VaultSettingsModal 
         isOpen={isSettingsOpen}
         onClose={() => setIsSettingsOpen(false)}
-        vault={vault as any}
+        vault={vault as unknown as React.ComponentProps<typeof VaultSettingsModal>["vault"]}
         onUpdate={() => { fetchVaultDetails(); setIsSettingsOpen(false); }}
         sortConfig={sortConfig}
         setSortConfig={setSortConfig}
@@ -709,17 +745,26 @@ export default function VaultDetailPage() {
               </button>
 
               <div className="relative group w-full flex items-center justify-center">
-                <img 
-                  src={import.meta.env.VITE_API_URL ? `${import.meta.env.VITE_API_URL.replace(/\/$/, '')}/vaults/media/proxy/${selectedPhoto.fileId}` : `/api/vaults/media/proxy/${selectedPhoto.fileId}`} 
-                  alt="Full view" 
-                  className="max-w-full max-h-[70vh] object-contain rounded-lg shadow-2xl"
-                  onError={(e) => {
-                    const target = e.target as HTMLImageElement;
-                    if (target.src !== selectedPhoto.thumbnailLink) {
-                      target.src = selectedPhoto.thumbnailLink;
-                    }
-                  }}
-                />
+                {selectedPhoto.type === 'VIDEO' ? (
+                  <video 
+                    src={import.meta.env.VITE_API_URL ? `${import.meta.env.VITE_API_URL.replace(/\/$/, '')}/vaults/media/proxy/${selectedPhoto.fileId}` : `/api/vaults/media/proxy/${selectedPhoto.fileId}`}
+                    controls
+                    autoPlay
+                    className="max-w-full max-h-[70vh] rounded-lg shadow-2xl"
+                  />
+                ) : (
+                  <img 
+                    src={import.meta.env.VITE_API_URL ? `${import.meta.env.VITE_API_URL.replace(/\/$/, '')}/vaults/media/proxy/${selectedPhoto.fileId}` : `/api/vaults/media/proxy/${selectedPhoto.fileId}`} 
+                    alt="Full view" 
+                    className="max-w-full max-h-[70vh] object-contain rounded-lg shadow-2xl"
+                    onError={(e) => {
+                      const target = e.target as HTMLImageElement;
+                      if (target.src !== selectedPhoto.thumbnailLink) {
+                        target.src = selectedPhoto.thumbnailLink;
+                      }
+                    }}
+                  />
+                )}
                 
                 <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-3 flex-wrap justify-center">
                    <button 

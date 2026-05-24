@@ -164,6 +164,8 @@ export class VaultController {
         mimeType: finalMimeType
       });
 
+      const isVideo = finalMimeType.startsWith('video/');
+
       // 2. Persistir metadados no Prisma (incluindo o thumbnailLink para performance)
       const media = await prisma.sharedAlbumMedia.create({
         data: {
@@ -176,6 +178,7 @@ export class VaultController {
           width: imageWidth,
           height: imageHeight,
           originalDate: originalDate,
+          type: isVideo ? "VIDEO" : "PHOTO",
           status: album.ownerId === userId ? "APPROVED" : "PENDING"
         }
       });
@@ -572,7 +575,8 @@ export class VaultController {
           items: {
             create: topMedia.map(m => ({
               price: 0,
-              quantity: 1
+              quantity: 1,
+              selectedPhotos: [m.id]
             }))
           }
         }
@@ -693,19 +697,20 @@ export class VaultController {
   static async renameAlbum(req: AuthRequest, res: Response) {
     const albumId = req.params.albumId as string;
     const userId = req.user?.userId;
-    const { nome, goalPoses } = req.body;
+    const { nome, goalPoses, externalVideoLink } = req.body;
 
     if (!userId) return res.status(401).json({ error: "Não autenticado." });
-    if (!nome && goalPoses === undefined) return res.status(400).json({ error: "Nenhum campo para atualizar." });
+    if (!nome && goalPoses === undefined && externalVideoLink === undefined) return res.status(400).json({ error: "Nenhum campo para atualizar." });
 
     try {
       const album = await prisma.sharedAlbum.findUnique({ where: { id: albumId } });
       if (!album) return res.status(404).json({ error: "Cofre não encontrado." });
       if (album.ownerId !== userId) return res.status(403).json({ error: "Apenas o proprietário pode editar o cofre." });
 
-      const updateData: { nome?: string; goalPoses?: number } = {};
+      const updateData: { nome?: string; goalPoses?: number; externalVideoLink?: string | null } = {};
 
       if (nome && nome.trim()) updateData.nome = nome.trim();
+      if (externalVideoLink !== undefined) updateData.externalVideoLink = externalVideoLink;
 
       if (goalPoses !== undefined) {
         let finalGoal = Number(goalPoses);

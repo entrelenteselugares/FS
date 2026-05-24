@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Briefcase, Clock, TrendingUp, Check, X, ShieldCheck, Zap, Pencil } from "lucide-react";
+import { Briefcase, Clock, TrendingUp, Check, X, ShieldCheck, Zap, Pencil, Plus, AlertCircle } from "lucide-react";
 import type { ProfileData, ServiceCatalog } from "./types";
 
 interface ServicesTabProps {
@@ -45,6 +45,25 @@ export function ServicesTab({ profile, catalogServices, onAddService, onRemoveSe
       setLocalError(errMsg);
     } finally {
       setLoadingUpdate(false);
+    }
+  };
+
+  const getStatusBadge = (status?: string, note?: string | null) => {
+    switch (status) {
+      case "PENDING_REVIEW":
+        return <span className="px-2 py-0.5 rounded-md bg-yellow-500/10 text-yellow-500 border border-yellow-500/20 text-[8px] font-black uppercase tracking-widest flex items-center gap-1" title="Em Análise"><Clock size={10} /> Em Análise</span>;
+      case "NETWORK":
+        return <span className="px-2 py-0.5 rounded-md bg-blue-500/10 text-blue-500 border border-blue-500/20 text-[8px] font-black uppercase tracking-widest flex items-center gap-1" title="Rede Global"><ShieldCheck size={10} /> Rede Global</span>;
+      case "EXCLUSIVE":
+        return <span className="px-2 py-0.5 rounded-md bg-purple-500/10 text-purple-500 border border-purple-500/20 text-[8px] font-black uppercase tracking-widest flex items-center gap-1" title="Exclusivo"><Briefcase size={10} /> Exclusivo</span>;
+      case "REJECTED":
+        return <span className="px-2 py-0.5 rounded-md bg-red-500/10 text-red-500 border border-red-500/20 text-[8px] font-black uppercase tracking-widest flex items-center gap-1" title={note || "Recusado"}><X size={10} /> Recusado</span>;
+      case "NEEDS_ADJUSTMENT":
+        return <span className="px-2 py-0.5 rounded-md bg-orange-500/10 text-orange-500 border border-orange-500/20 text-[8px] font-black uppercase tracking-widest flex items-center gap-1" title={note || "Requer Ajustes"}><AlertCircle size={10} /> Requer Ajustes</span>;
+      case "APPROVED":
+        return null;
+      default:
+        return null;
     }
   };
 
@@ -98,7 +117,7 @@ export function ServicesTab({ profile, catalogServices, onAddService, onRemoveSe
 
       {/* My Services Vitrine */}
       <div className="bg-theme-bg border border-theme-border/60 rounded-2xl p-4 sm:p-6 md:p-12 space-y-8 md:space-y-10">
-        <div className="flex justify-between items-end">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4">
           <div className="space-y-2">
             <h3 className="text-xl sm:text-2xl font-heading font-black text-theme-text uppercase tracking-widest italic leading-none">
               Vitrine de <span className="text-brand-tactical">Ativos</span>
@@ -107,9 +126,17 @@ export function ServicesTab({ profile, catalogServices, onAddService, onRemoveSe
               Serviços ativos e disponíveis para contratação
             </p>
           </div>
-          <div className="text-right hidden md:block">
-            <p className="text-[8px] font-black text-theme-muted uppercase tracking-widest mb-1 italic opacity-60">Total em Portfólio</p>
-            <p className="text-xl font-heading font-black text-theme-text italic leading-none">{profile?.proServices?.length || 0}</p>
+          <div className="flex items-center gap-6 w-full sm:w-auto">
+            <button 
+              onClick={() => window.location.href = "/profissional/novo-servico"}
+              className="w-full sm:w-auto flex justify-center items-center gap-2 px-6 py-3 bg-brand-tactical/10 text-brand-tactical border border-brand-tactical/30 hover:bg-brand-tactical hover:text-brand-text transition-all rounded-xl text-[10px] font-black uppercase tracking-widest"
+            >
+              <Plus size={14} /> CRIAR SERVIÇO PERSONALIZADO
+            </button>
+            <div className="text-right hidden md:block">
+              <p className="text-[8px] font-black text-theme-muted uppercase tracking-widest mb-1 italic opacity-60">Total</p>
+              <p className="text-xl font-heading font-black text-theme-text italic leading-none">{profile?.proServices?.length || 0}</p>
+            </div>
           </div>
         </div>
 
@@ -121,13 +148,19 @@ export function ServicesTab({ profile, catalogServices, onAddService, onRemoveSe
                 className="group flex flex-col sm:flex-row justify-between items-start sm:items-center rounded-2xl p-4 sm:p-6 bg-theme-bg-muted/30 border border-theme-border/40 hover:border-brand-tactical/40 transition-all relative overflow-hidden gap-6"
               >
                 <div className="absolute left-0 top-0 h-full w-1 bg-brand-tactical opacity-20 group-hover:opacity-100 transition-all" />
-                <div className="space-y-2">
+                <div className="space-y-2 flex-1">
                   <div className="flex items-center gap-3">
                     <Briefcase size={14} className="text-brand-tactical" />
                     <div className="text-base font-black text-theme-text uppercase italic tracking-tight">{svc.name}</div>
+                    {getStatusBadge(svc.reviewStatus, svc.reviewNote)}
                   </div>
                   {svc.description && (
                     <div className="text-[9px] text-theme-muted uppercase tracking-[0.2em] italic font-bold max-w-xl">{svc.description}</div>
+                  )}
+                  {svc.reviewStatus === "NEEDS_ADJUSTMENT" && svc.reviewNote && (
+                     <div className="text-[10px] text-orange-500 italic mt-2">
+                       Nota da Admin: {svc.reviewNote}
+                     </div>
                   )}
                 </div>
                 <div className="flex items-center justify-between sm:justify-end gap-6 sm:gap-12 w-full sm:w-auto">
@@ -202,7 +235,7 @@ export function ServicesTab({ profile, catalogServices, onAddService, onRemoveSe
           </div>
         ) : (
           <div className="py-12 text-center text-theme-muted uppercase text-[9px] font-black tracking-widest rounded-2xl bg-theme-bg-muted/20 border border-dashed border-theme-border/40">
-            Sua vitrine está vazia. Importe itens do catálogo abaixo.
+            Sua vitrine está vazia. Importe itens do catálogo abaixo ou crie um personalizado.
           </div>
         )}
       </div>

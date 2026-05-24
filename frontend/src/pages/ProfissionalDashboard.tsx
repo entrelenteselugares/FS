@@ -102,7 +102,7 @@ export default function ProfissionalDashboard({
     const params = new URLSearchParams(location.search);
     const tab = params.get("tab") as ActiveTab;
     if (tab) setActiveTab(tab);
-  }, [location.search]);
+  }, [location.search, setActiveTab]);
 
   // Network search state
   const [networkSearch, setNetworkSearch] = useState("");
@@ -156,7 +156,7 @@ export default function ProfissionalDashboard({
         navigate(location.pathname, { replace: true, state: {} });
       }
     }
-  }, [location.state?.editEventId, events, selected, navigate, location.pathname]);
+  }, [location.state, events, selected, navigate, location.pathname, setActiveTab]);
 
   const fetchNetwork = useCallback(() => {
     API.get("profissional/network")
@@ -375,7 +375,7 @@ export default function ProfissionalDashboard({
         icon: <Printer size={16} /> 
       },
     { label: "Meu Perfil", onClick: () => setActiveTab("perfil"), isActive: activeTab === "perfil", icon: <Settings size={16} /> },
-  ], [activeTab, pendingEvents.length, unitInvites.length]);
+  ], [activeTab, pendingEvents.length, unitInvites.length, opportunities.length, setActiveTab]);
 
   const residentUnits = profile?.cartorios?.map((cp) => cp.cartorio.razaoSocial) || [];
 

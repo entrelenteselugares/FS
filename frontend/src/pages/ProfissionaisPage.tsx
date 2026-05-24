@@ -53,7 +53,7 @@ export default function ProfissionaisPage() {
     } finally {
       setLoading(false);
     }
-  }, [debouncedSearch, city, service]);
+  }, [debouncedSearch, city, service, nearby]);
 
   useEffect(() => { fetchProfs(); }, [fetchProfs]);
 

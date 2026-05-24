@@ -11,6 +11,7 @@ import { applyWatermark } from "../lib/image-processor";
 import bcrypt from "bcryptjs";
 import { driveService } from "../services/googleDrive.service";
 import { GamificationService } from "../services/gamification.service";
+import { PhygitalService } from "../services/phygital.service";
 
 export class MarketplaceController {
   /**
@@ -262,42 +263,32 @@ export class MarketplaceController {
       });
       if (!event) return res.status(403).json({ error: "Acesso negado." });
 
-      // 2. Upload para Supabase Storage
+      // 2. Upload unificado pela esteira Phygital (garante borda polaroid, watermark tiling, e metadados)
       const base64Data = String(imageBase64).replace(/^data:image\/\w+;base64,/, "");
       const buffer = Buffer.from(base64Data, "base64");
       
-      // Aplicar Marca d'água (Blindagem de Conteúdo)
-      const watermarkedBuffer = await applyWatermark(buffer);
-      
-      const ext = String(mimeType).split("/")[1] || "jpg";
-      const fileName = `marketplace/${String(eventId)}/${Date.now()}-${Math.random().toString(36).slice(-4)}.${ext}`;
+      const dbUser = await prisma.user.findUnique({ where: { id: userId } });
+      const customerName = dbUser?.name || "Fotógrafo / Admin";
 
-      const { error: uploadError } = await supabaseAdmin.storage
-        .from("eventos")
-        .upload(fileName, watermarkedBuffer, {
-          contentType: String(mimeType),
-          upsert: true
-        });
-
-      if (uploadError) throw uploadError;
-
-      const { data: { publicUrl } } = supabaseAdmin.storage
-        .from("eventos")
-        .getPublicUrl(fileName);
-
-      // 3. Gerar ShortID
-      const count = await prisma.eventMedia.count({ where: { eventId: String(eventId) } });
-      const shortId = `F${(count + 1).toString().padStart(3, '0')}`;
-
-      const media = await prisma.eventMedia.create({
-        data: {
-          eventId: String(eventId),
-          url: publicUrl,
-          shortId,
-          price: price ? Number(price) : null,
-          metadata: metadata || {}
-        }
+      const result = await PhygitalService.processUpload(buffer, {
+        eventId: String(eventId),
+        customerName,
+        customerPhone: "Manual Upload",
+        userId,
+        isBulk: false,
+        applyWatermark: true,
+        price: price ? Number(price) : undefined
       });
+
+      // 3. Buscar a mídia recém-criada para retornar o mesmo formato esperado pelo frontend
+      const media = await prisma.eventMedia.findFirst({
+        where: { eventId: String(eventId), shortId: result.referenceCode.split('-').pop() },
+        orderBy: { createdAt: 'desc' }
+      });
+
+      if (!media) {
+        throw new Error("Erro ao tentar localizar mídia recém processada pelo PhygitalService");
+      }
 
       // Audit — Upload de Mídia (P2)
       await audit(req, "MEDIA_UPLOADED", "EventMedia", media.id, null, {
@@ -430,6 +421,12 @@ export class MarketplaceController {
       const allMedia = [...media];
       const existingUrls = new Set(media.map(m => m.url));
       
+      media.forEach(m => {
+        const meta = m.metadata as any;
+        if (meta?.printUrl) existingUrls.add(meta.printUrl);
+        if (meta?.rawUrl) existingUrls.add(meta.rawUrl);
+      });
+
       mappedPhygital.forEach(p => {
         if (!existingUrls.has(p.url)) {
           allMedia.push(p as any);
@@ -572,7 +569,7 @@ export class MarketplaceController {
    * Allows Admin to fix metadata manually (studentId, bibNumber, etc).
    */
   static async patchMediaMetadata(req: AuthRequest, res: Response) {
-    const { mediaId } = req.params;
+    const mediaId = String(req.params.mediaId);
     const { metadata } = req.body;
 
     try {
@@ -702,7 +699,7 @@ export class MarketplaceController {
    * Contact (WhatsApp) is always hidden — only revealed after booking fee payment.
    */
   static async getProfissionalProfile(req: AuthRequest, res: Response) {
-    const { id } = req.params;
+    const id = String(req.params.id);
     try {
       const prof = await prisma.profissional.findUnique({
         where: { id },
@@ -805,7 +802,7 @@ export class MarketplaceController {
           notification_url: `${process.env.BACKEND_URL}/api/webhooks/mercadopago`,
           orderId: `booking-${booking.id}`,
         });
-        checkoutUrl = preference.init_point;
+        checkoutUrl = preference.init_point ?? null;
       } catch (mpErr) {
         console.error("[bookProfissional MP Error]:", mpErr);
       }

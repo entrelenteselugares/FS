@@ -86,10 +86,7 @@ export async function settleProfessional(req: AuthRequest, res: Response): Promi
         OR: [
           { event: { captacaoId: userId } },
           { event: { edicaoId: userId } }
-        ],
-        payoutSettlements: {
-          none: { userId: userId, status: "PAID" }
-        }
+        ]
       },
       include: { event: true }
     });
@@ -145,16 +142,9 @@ export async function settleProfessional(req: AuthRequest, res: Response): Promi
       if (o.event.captacaoId === userId) { amount += Number(o.splitCaptacao || 0); role = "CAPTACAO"; }
       if (o.event.edicaoId === userId) { amount += Number(o.splitEdicao || 0); role = "EDICAO"; }
 
-      return prisma.payoutSettlement.create({
-        data: {
-          orderId: o.id,
-          userId: userId,
-          amount,
-          role,
-          status: "PAID",
-          paidAt: new Date(),
-          payoutItemId: payoutItem.id
-        }
+      return prisma.order.update({
+        where: { id: o.id },
+        data: { payoutStatus: "PAID" }
       });
     }));
 
@@ -162,6 +152,7 @@ export async function settleProfessional(req: AuthRequest, res: Response): Promi
     try {
       const pdfBuffer = await ReportService.generatePayoutReceiptPDF({
         ...payoutItem,
+        amount: Number(payoutItem.amount),
         payout: payout
       });
       

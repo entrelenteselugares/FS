@@ -19,6 +19,7 @@ export interface NavItem {
   badge?: string | number;
   hide?: boolean;
   isHeader?: boolean;
+  subItems?: NavItem[];
 }
 
 interface DashboardLayoutProps {
@@ -64,6 +65,20 @@ const SidebarContent: React.FC<SidebarContentProps> = ({ navItems, onNavigate })
     return item.exact
       ? location.pathname === item.to
       : location.pathname.startsWith(item.to);
+  };
+
+  const [expanded, setExpanded] = useState<Record<string, boolean>>(() => {
+    const initialState: Record<string, boolean> = {};
+    navItems.forEach(item => {
+      if (item.subItems?.some(isActive)) {
+        initialState[item.label] = true;
+      }
+    });
+    return initialState;
+  });
+
+  const toggleExpand = (label: string) => {
+    setExpanded(prev => ({ ...prev, [label]: !prev[label] }));
   };
 
   // initial removed as it was unused
@@ -115,6 +130,123 @@ const SidebarContent: React.FC<SidebarContentProps> = ({ navItems, onNavigate })
                 }}
               >
                 {item.label}
+              </div>
+            );
+          }
+
+          if (item.subItems) {
+            const isExpanded = expanded[item.label];
+            const hasActiveChild = item.subItems.some(sub => isActive(sub));
+            
+            return (
+              <div key={item.label} style={{ marginBottom: 4 }}>
+                <button
+                  onClick={() => toggleExpand(item.label)}
+                  style={{
+                    display:       "flex",
+                    alignItems:    "center",
+                    gap:           12,
+                    padding:       "10px 20px",
+                    fontSize:      13,
+                    fontFamily:    T.fontB,
+                    fontWeight:    hasActiveChild ? 700 : 500,
+                    letterSpacing: "0.02em",
+                    cursor:        "pointer",
+                    border:        "none",
+                    background:    "transparent",
+                    color:         hasActiveChild ? T.text : T.text3,
+                    width:         "100%",
+                    textAlign:     "left",
+                    transition:    "all 0.2s ease",
+                  }}
+                >
+                  {item.icon && (
+                    <span style={{ color: hasActiveChild ? T.brand : T.text3, flexShrink: 0 }}>
+                      {item.icon}
+                    </span>
+                  )}
+                  <span style={{ flex: 1 }}>{item.label}</span>
+                  <svg 
+                    width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
+                    style={{
+                      transform: isExpanded ? "rotate(180deg)" : "rotate(0deg)",
+                      transition: "transform 0.2s ease",
+                      color: T.text3
+                    }}
+                  >
+                    <polyline points="6 9 12 15 18 9" />
+                  </svg>
+                </button>
+
+                {isExpanded && (
+                  <div style={{ paddingLeft: 44, paddingRight: 12, display: "flex", flexDirection: "column", gap: 2, marginTop: 4 }}>
+                    {item.subItems.map(subItem => {
+                      if (subItem.hide) return null;
+                      const active = isActive(subItem);
+                      const handleClick = () => {
+                        onNavigate();
+                        subItem.onClick?.();
+                      };
+                      
+                      const style: React.CSSProperties = {
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                        padding: "8px 12px",
+                        fontSize: 12,
+                        fontFamily: T.fontB,
+                        fontWeight: active ? 700 : 500,
+                        color: active ? T.text : T.text3,
+                        textDecoration: "none",
+                        cursor: "pointer",
+                        background: active ? "var(--bg-field)" : "transparent",
+                        borderRadius: 6,
+                        border: "none",
+                        textAlign: "left"
+                      };
+
+                      if (subItem.to) {
+                        return (
+                          <Link key={subItem.label} to={subItem.to} style={style} onClick={handleClick}>
+                            <span style={{ color: active ? T.brand : 'inherit' }}>{subItem.label}</span>
+                            {subItem.badge !== undefined && subItem.badge !== 0 && (
+                              <span style={{
+                                background: T.brand,
+                                color: T.brandText,
+                                fontSize: 9,
+                                fontWeight: 900,
+                                padding: "2px 6px",
+                                borderRadius: 4,
+                                textAlign: "center",
+                              }}>
+                                {subItem.badge}
+                              </span>
+                            )}
+                          </Link>
+                        );
+                      }
+
+                      return (
+                        <button key={subItem.label} style={style} onClick={handleClick}>
+                          <span style={{ color: active ? T.brand : 'inherit' }}>{subItem.label}</span>
+                          {subItem.badge !== undefined && subItem.badge !== 0 && (
+                            <span style={{
+                              background: T.brand,
+                              color: T.brandText,
+                              fontSize: 9,
+                              fontWeight: 900,
+                              padding: "2px 6px",
+                              borderRadius: 4,
+                              textAlign: "center",
+                            }}>
+                              {subItem.badge}
+                            </span>
+                          )}
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
               </div>
             );
           }
@@ -230,7 +362,7 @@ const SidebarContent: React.FC<SidebarContentProps> = ({ navItems, onNavigate })
           gap: 12
         }}>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-            <div style={{ minWidth: 0 }}>
+            <div style={{ minWidth: 0, display: "flex", alignItems: "center", gap: 8 }}>
               <div style={{
                 fontSize:      11,
                 fontFamily:    T.fontB,
@@ -244,44 +376,14 @@ const SidebarContent: React.FC<SidebarContentProps> = ({ navItems, onNavigate })
               }}>
                 {user?.nome}
               </div>
-              <div style={{
-                fontSize:      7,
-                fontFamily:    T.fontB,
-                fontWeight:    900,
-                color:         T.brand,
-                textTransform: "uppercase",
-                letterSpacing: 3,
-                marginTop: 4,
-                opacity: 0.8
-              }}>
-                {user?.role === "ADMIN" ? "ADMINISTRADOR MASTER" : 
-                 user?.role === "CARTORIO" || user?.role === "UNIDADE" ? "UNIDADE OPERACIONAL" :
-                 user?.role === "PROFISSIONAL" ? "PROFISSIONAL DA REDE" :
-                 "CLIENTE FINAL"}
-              </div>
               {user?.verificationStatus === "APPROVED" && (user?.role === "PROFISSIONAL" || user?.role === "CARTORIO" || user?.role === "UNIDADE" || user?.role === "FRANCHISEE") && (
-                <div style={{
-                  display: "inline-flex",
+                <div title="PRO VERIFICADO" style={{
+                  display: "flex",
                   alignItems: "center",
-                  gap: 4,
-                  marginTop: 8,
-                  padding: "4px 8px",
-                  background: `${T.brand}15`,
-                  border: `1px solid ${T.brand}40`,
-                  borderRadius: 12,
+                  justifyContent: "center",
+                  color: T.brand,
                 }}>
-                  <ShieldCheck size={10} color={T.brand} />
-                  <span style={{
-                    fontSize: 8,
-                    fontFamily: T.fontB,
-                    fontWeight: 900,
-                    color: T.brand,
-                    textTransform: "uppercase",
-                    letterSpacing: 2,
-                    fontStyle: "italic"
-                  }}>
-                    PRO VERIFICADO
-                  </span>
+                  <ShieldCheck size={14} strokeWidth={2.5} />
                 </div>
               )}
             </div>
@@ -373,7 +475,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
     }}>
       {/* ── Desktop Sidebar ── */}
       <aside style={{
-        width:     240,
+        width:     260,
         flexShrink: 0,
         display:   "none",  // overridden by media via className below
       }} className="dashboard-sidebar">

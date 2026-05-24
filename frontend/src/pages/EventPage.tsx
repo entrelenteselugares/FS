@@ -104,7 +104,7 @@ function ReferenceCard({ url }: { url: string }) {
 
   // --- Fallback genérico ---
   let hostname = url;
-  try { hostname = new URL(url).hostname.replace('www.', ''); } catch {}
+  try { hostname = new URL(url).hostname.replace('www.', ''); } catch { /* ignore */ }
   const isLoading = !preview && /^https?:\/\//i.test(url);
 
   return (
@@ -599,18 +599,8 @@ export default function EventPage() {
   const isMarketplace = event.type === 'PHOTO_MARKETPLACE' || event.type === 'FOTO_POINT' || event.type === 'FLASH_EVENT';
 
 
-  const isEventOver = event.dataEvento ? (() => {
-    try {
-      const datePart = String(event.dataEvento).split('T')[0];
-      const [year, month, day] = datePart.split('-').map(Number);
-      const endOfDay = new Date(year, month - 1, day, 23, 59, 59, 999);
-      // Give 24 hours grace period into the next day
-      const endOfEvent = new Date(endOfDay.getTime() + (24 * 60 * 60 * 1000));
-      return endOfEvent.getTime() < new Date().getTime();
-    } catch {
-      return false;
-    }
-  })() : false;
+  const isEventOver = eventStatus.phase === 'ended' || eventStatus.phase === 'archived';
+  const qrOpen = eventStatus.qrOpen;
 
 return (
     <div className="min-h-screen bg-theme-bg text-theme-text font-sans selection:bg-brand-tactical/30 overflow-x-hidden selection:text-theme-text" onContextMenu={(e) => e.preventDefault()}>
@@ -851,7 +841,7 @@ return (
                         </button>
                       </div>
 
-                      {(user?.role === 'PROFISSIONAL' || user?.role === 'FRANCHISEE' || user?.role === 'ADMIN') && (
+                      {(user?.role === 'PROFISSIONAL' || user?.role === 'FRANCHISEE' || user?.role === 'ADMIN') && qrOpen && (
                         <a 
                           href={`/phygital-capture?e=${event.id}&auto=1`}
                           target="_blank"
@@ -896,7 +886,7 @@ return (
                               >
                                 Sincronizar Galeria
                               </button>
-                              {(isMarketplace && !isEventOver) && (
+                              {(isMarketplace && qrOpen) && (
                                 <button 
                                   onClick={() => setShowQrModal(true)}
                                   className="px-8 py-4 bg-brand-tactical text-black font-black uppercase tracking-widest text-[10px] italic shadow-[0_15px_30px_rgba(20,184,166,0.3)] flex items-center gap-3"
@@ -1021,11 +1011,11 @@ return (
                  </div>
                  <div className="grid grid-cols-1 gap-2">
                     <button 
-                      onClick={() => !isEventOver && setShowQrModal(true)}
-                      className={`w-full py-4 bg-[var(--bg-card)] border border-brand-tactical/30 text-brand-tactical text-[10px] font-black uppercase tracking-widest transition-all italic flex items-center justify-center gap-3 ${isEventOver ? 'opacity-30 cursor-not-allowed grayscale' : 'hover:bg-brand-tactical hover:text-black'}`}
-                      disabled={isEventOver}
+                      onClick={() => qrOpen && setShowQrModal(true)}
+                      className={`w-full py-4 bg-[var(--bg-card)] border border-brand-tactical/30 text-brand-tactical text-[10px] font-black uppercase tracking-widest transition-all italic flex items-center justify-center gap-3 ${!qrOpen ? 'opacity-30 cursor-not-allowed grayscale' : 'hover:bg-brand-tactical hover:text-black'}`}
+                      disabled={!qrOpen}
                     >
-                      <QrCode size={16} /> {isEventOver ? 'CAPTURAS ENCERRADAS' : 'QR CODE DE CAPTURA'}
+                      <QrCode size={16} /> {!qrOpen ? 'CAPTURAS ENCERRADAS' : 'QR CODE DE CAPTURA'}
                     </button>
                     <button 
                       onClick={() => setShowPrintKit(true)}
@@ -1051,15 +1041,15 @@ return (
             {(!event.isOwner) && (
               <div className="p-6 bg-theme-bg-muted border border-theme-border/40 space-y-4">
                  <div className="flex items-center gap-2">
-                    <QrCode size={16} className={isEventOver ? "text-zinc-600" : "text-brand-tactical"} />
+                    <QrCode size={16} className={!qrOpen ? "text-zinc-600" : "text-brand-tactical"} />
                     <span className="text-[10px] font-black text-theme-text uppercase tracking-widest italic">Galeria Live</span>
                  </div>
                  <p className="text-[9px] text-theme-text-muted leading-relaxed uppercase tracking-wider italic">
-                   {isEventOver 
+                   {!qrOpen 
                      ? "O período de envio de fotos em tempo real para este evento foi encerrado." 
                      : "Envie suas fotos agora para o painel do evento e apareça na transmissão oficial!"}
                  </p>
-                 {!isEventOver && (
+                 {qrOpen && (
                    <button 
                      onClick={() => setShowQrModal(true)}
                      className="w-full py-4 bg-brand-tactical text-black text-[10px] font-black uppercase tracking-widest hover:brightness-110 transition-all italic flex items-center justify-center gap-3"

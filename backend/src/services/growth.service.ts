@@ -46,7 +46,7 @@ export class GrowthService {
       throw new Error("Afiliado inválido ou inativo.");
     }
 
-    if (user.role !== "AFILIADO" && user.role !== "EMBAIXADOR" && user.role !== "ADMIN") {
+    if (user.role === "ADMIN") {
       throw new Error("Usuário não possui perfil de afiliado.");
     }
 

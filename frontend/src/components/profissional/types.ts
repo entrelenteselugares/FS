@@ -61,6 +61,8 @@ export interface ProfessionalService {
   price: number;
   catalogId: string | null;
   active: boolean;
+  reviewStatus?: "PENDING_REVIEW" | "NETWORK" | "EXCLUSIVE" | "REJECTED" | "NEEDS_ADJUSTMENT" | "APPROVED";
+  reviewNote?: string | null;
   catalog?: ServiceCatalog;
   catalogService?: ServiceCatalog;
 }

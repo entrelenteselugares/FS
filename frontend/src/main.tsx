@@ -3,7 +3,7 @@ import './index.css'
 import App from './App'
 import { ErrorBoundary } from './components/ErrorBoundary'
 import { initSentry } from './lib/sentry'
-// @ts-ignore
+// @ts-expect-error - Import meta env may not be fully typed here
 import { registerSW } from 'virtual:pwa-register'
 
 initSentry();

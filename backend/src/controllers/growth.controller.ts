@@ -6,7 +6,7 @@ import prisma from "../lib/prisma";
 export class GrowthController {
   static async validateCoupon(req: Request, res: Response) {
     try {
-      const { code } = req.params;
+      const code = String(req.params.code);
       const result = await GrowthService.validateCoupon(code);
       return res.json({ success: true, discount: result });
     } catch (error: any) {
@@ -16,7 +16,7 @@ export class GrowthController {
 
   static async validateAffiliate(req: Request, res: Response) {
     try {
-      const { id } = req.params;
+      const id = String(req.params.id);
       const result = await GrowthService.validateAffiliate(id);
       return res.json({ success: true, affiliate: result });
     } catch (error: any) {
@@ -102,7 +102,7 @@ export class GrowthController {
 
   static async toggleCoupon(req: Request, res: Response) {
     try {
-      const { id } = req.params;
+      const id = String(req.params.id);
       const { active } = req.body;
       const coupon = await prisma.coupon.update({
         where: { id },
@@ -116,7 +116,7 @@ export class GrowthController {
 
   static async deleteCoupon(req: Request, res: Response) {
     try {
-      const { id } = req.params;
+      const id = String(req.params.id);
       await prisma.coupon.delete({
         where: { id }
       });

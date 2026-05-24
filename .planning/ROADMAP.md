@@ -237,7 +237,12 @@
 
 ### [ ] Phase 54: Custom Service Submission & Admin Approval (SVC-SUBMIT)
 
-**Goal:** Allow verified professionals and fixed points (Cartório/Unidade) to create custom services via a full-form page. Admin receives in-app + email notification and evaluates submissions in a dedicated "Pendentes" tab in the Catálogo de Serviços admin panel, deciding if the service goes to the network or stays exclusive.
+**Mode:** mvp
+
+**Goal:**
+- **Como um:** profissional, ponto fixo, franquia print
+- **Eu quero:** um formulário completo para que possamos precificar o valor da hora, equipamentos necessários, mínimo de tempo e etc.
+- **Para que:** traga dinamismo no cadastro e na criação de novos produtos e serviços na plataforma.
 
 - [ ] **SVC-01**: Schema migration — add `submittedAt`, `reviewStatus`, `reviewNote`, `networkJustification`, `submittedByUserId` fields to `ProfessionalService` model.
 - [ ] **SVC-02**: Backend endpoints — `POST /profissional/services` (create custom service), `PATCH /profissional/services/:id` (edit when NEEDS_ADJUSTMENT), `GET /admin/services/pending`, `PATCH /admin/services/:id/review` (admin decision).

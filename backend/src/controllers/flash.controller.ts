@@ -127,7 +127,7 @@ export class FlashController {
    * GET /api/flash/:eventId/stats
    */
   static async getEventStats(req: AuthRequest, res: Response) {
-    const { eventId } = req.params;
+    const eventId = String(req.params.eventId);
     try {
       const [event, cards, prints] = await Promise.all([
         prisma.event.findUnique({
@@ -148,8 +148,8 @@ export class FlashController {
 
       if (!event) return res.status(404).json({ error: "Evento não encontrado." });
 
-      const cardMap = Object.fromEntries(cards.map(c => [c.status, c._count.status]));
-      const printMap = Object.fromEntries(prints.map(p => [p.status, p._count.status]));
+      const cardMap = Object.fromEntries(cards.map(c => [c.status, (c._count as any).status as number]));
+      const printMap = Object.fromEntries(prints.map(p => [p.status, (p._count as any).status as number]));
       const totalCards = Object.values(cardMap).reduce((a, b) => a + b, 0);
       const usedCards  = cardMap["USED"] ?? 0;
 

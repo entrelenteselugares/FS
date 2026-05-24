@@ -41,12 +41,13 @@ export const BottomNav: React.FC = () => {
         { label: "ÁREA PROFISSIONAL", isHeader: true },
         { label: "Minha Agenda", onClick: () => { navigate("/minha-conta?s=agenda"); setDrawerOpen(false); }, isActive: location.pathname === "/minha-conta" && s === "agenda", icon: <Play size={18} /> },
         { label: "Portfólio & Serviços", onClick: () => { navigate("/minha-conta?s=servicos"); setDrawerOpen(false); }, isActive: location.pathname === "/minha-conta" && s === "servicos", icon: <Briefcase size={18} /> },
-        { label: "Minhas Vendas & Ganhos", onClick: () => { navigate("/minha-conta?s=financeiro"); setDrawerOpen(false); }, isActive: location.pathname === "/minha-conta" && s === "financeiro", icon: <DollarSign size={18} /> },
+        { label: "Vendas & Ganhos", onClick: () => { navigate("/minha-conta?s=financeiro"); setDrawerOpen(false); }, isActive: location.pathname === "/minha-conta" && s === "financeiro", icon: <DollarSign size={18} /> },
         { label: "Agenda Google", onClick: () => { navigate("/minha-conta?s=calendar"); setDrawerOpen(false); }, isActive: location.pathname === "/minha-conta" && s === "calendar", icon: <Calendar size={18} /> }
       );
 
-      if (user?.franchiseProfile) {
+      if (user?.role === "FRANCHISEE" || user?.franchiseProfile) {
         items.push(
+          { label: "Rede Técnica", onClick: () => { navigate("/minha-conta?s=equipe"); setDrawerOpen(false); }, isActive: location.pathname === "/minha-conta" && s === "equipe", icon: <Users size={18} /> },
           { label: "Franquia Print", onClick: () => { navigate("/minha-conta?s=franquia"); setDrawerOpen(false); }, isActive: location.pathname === "/minha-conta" && s === "franquia", icon: <Printer size={18} /> }
         );
       }

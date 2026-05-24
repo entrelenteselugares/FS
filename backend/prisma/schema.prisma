@@ -424,25 +424,48 @@ model ServiceCatalog {
   createdAt         DateTime              @default(now())
   updatedAt         DateTime              @updatedAt
   category          String                @default("FOTOGRAFIA")
+
+  // MVP Phase 54 fields
+  pricingType       String                @default("FIXED") // FIXED, HOURLY, PER_UNIT
+  requiredEquipment String?
+  isRemote          Boolean               @default(false)
+  deliveryDays      Int?
+  minQuantity       Int?
+
   proServices       ProfessionalService[]
 
   @@map("service_catalog")
 }
 
 model ProfessionalService {
-  id             String          @id @default(cuid())
-  profissionalId String
-  name           String
-  description    String?
-  price          Decimal         @db.Decimal(10, 2)
-  active         Boolean         @default(true)
-  catalogId      String?
-  createdAt      DateTime        @default(now())
-  updatedAt      DateTime        @updatedAt
-  category       String?
-  orderItems     OrderItem[]
-  catalog        ServiceCatalog? @relation(fields: [catalogId], references: [id])
-  profissional   Profissional    @relation(fields: [profissionalId], references: [id], onDelete: Cascade)
+  id                   String          @id @default(cuid())
+  profissionalId       String
+  name                 String
+  description          String?
+  price                Decimal         @db.Decimal(10, 2)
+  active               Boolean         @default(true)
+  catalogId            String?
+  createdAt            DateTime        @default(now())
+  updatedAt            DateTime        @updatedAt
+  category             String?
+  orderItems           OrderItem[]
+  catalog              ServiceCatalog? @relation(fields: [catalogId], references: [id])
+  profissional         Profissional    @relation(fields: [profissionalId], references: [id], onDelete: Cascade)
+
+  // Custom service fields
+  submittedAt          DateTime?
+  reviewStatus         String          @default("APPROVED") // PENDING, APPROVED, REJECTED, NEEDS_ADJUSTMENT
+  reviewNote           String?
+  networkJustification String?
+  submittedByUserId    String?
+  estimatedMinutes     Int?
+
+  // MVP Phase 54 fields
+  pricingType          String          @default("FIXED") // FIXED, HOURLY, PER_UNIT
+  requiredEquipment    String?
+  isRemote             Boolean         @default(false)
+  deliveryDays         Int?
+  minQuantity          Int?
 
   @@map("professional_services")
 }
@@ -949,6 +972,7 @@ model SharedAlbum {
   cycleEndDay        Int?      @default(30)
   trialEndsAt        DateTime?
   subscriptionStatus String    @default("TRIAL") // TRIAL, ACTIVE, BLOCKED, EXPIRED
+  externalVideoLink  String?   // Link do Drive/Dropbox para edição de vídeos brutos
   ownerId            String
   createdAt          DateTime  @default(now())
   updatedAt          DateTime  @updatedAt
@@ -996,6 +1020,7 @@ model SharedAlbumMedia {
   aiAnalysisStatus String   @default("PENDING") // PENDING, ANALYZED, FAILED, APPROVED, REJECTED
 
   status           String   @default("PENDING") // PENDING, APPROVED, REJECTED
+  type             String   @default("PHOTO") // PHOTO, VIDEO
 
   createdAt DateTime @default(now())
 
