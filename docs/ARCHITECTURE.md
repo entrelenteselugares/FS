@@ -72,6 +72,7 @@ Configuração via `event.vertical` (campo no banco) e controlada no `AdminEvent
 ### 📸 Client-Side Photo Compositing & Printing Engine
 
 Para permitir o fulfillment imediato de fotos físicas pelo fotógrafo ou monitor no evento (ex: impressora Epson L5290), implementamos um motor de composição vetorial e rasterizado diretamente no navegador:
+
 1. **Composição em A4:** O painel dinâmico calcula o aproveitamento ideal de papel para tamanhos como `9x13cm`, `10x15cm`, `13x18cm` ou `A4 Inteiro`, calculando automaticamente fotos por folha e orientações de página.
 2. **Camadas de Overlays Personalizados:**
    - **Borda Estilizada:** Renderiza bordas com largura (mm) e cores customizadas via Color Picker.
@@ -194,7 +195,6 @@ graph TD
 - **Database:** Supabase (PostgreSQL).
 - **ORM:** Prisma Client (conectado via Direct URL para migrações e Connection Pooling para runtime).
 - **Cron:** Supabase Cron Jobs ou Vercel Cron chamando `/cron/abandoned-carts`.
-
 
 <!-- GSD-DOCS-UPDATE: SUPPLEMENTED -->
 *Documentação verificada e complementada automaticamente via GSD-SDK em 2026-05.*

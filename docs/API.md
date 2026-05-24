@@ -144,6 +144,5 @@ The API implements rate limiting to prevent abuse:
 <!-- VERIFY: Base URL for production API -->
 <!-- VERIFY: Rate limit exact values from Express middleware -->
 
-
 <!-- GSD-DOCS-UPDATE: SUPPLEMENTED -->
 *Documentação verificada e complementada automaticamente via GSD-SDK em 2026-05.*
