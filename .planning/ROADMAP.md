@@ -1,260 +1,63 @@
-# ROADMAP: B2B & White-Label Expansion
+# ROADMAP: Foto Segundo
 
-## Milestone v9.0 Summary
+## Milestones
 
-**Goal:** Empower franchisees and major partners with custom branding and advanced financial reporting to drive B2B growth.
+- ✅ **v7.0 Expansão Total e Go-Live** (shipped 2026-05-17)
+- ✅ **v8.0 MRR Engine** (shipped)
+- ✅ **v9.0 B2B & White-Label Expansion** — Phases 39-42 (shipped)
+- ✅ **v10.0 Professional Network & Engagement** — Phases 43-44 (shipped)
+- ✅ **v11.0 Professional Governance & Marketplace Alpha** — Phases 45-46 (shipped)
+- ✅ **v12.0 Unified Marketplace & Portfolio** — Phases 47-51 (shipped)
+- ✅ **v13.0-SCALE Scale & Optimization** — Phases 52-54 (shipped 2026-05-24) — [Archive](file:///.planning/milestones/v13.0-SCALE-ROADMAP.md)
 
-**Phases:** 3
-**Requirements Coverage:** 0% (0/0 mapped)
+## Phases
 
----
+<details>
+<summary>✅ v9.0 B2B & White-Label Expansion (Phases 39-42) — SHIPPED</summary>
 
-## Phase 39: B2B Tenant Data Layer & Settings (B2B)
+- [x] Phase 39: B2B Tenant Data Layer & Settings
+- [x] Phase 40: White-Label Gallery Rendering
+- [x] Phase 41: Advanced Financial Export & Franchise Intel
+- [x] Phase 42: Express Registration via QR Code
 
-**Goal:** Extend the user and event schemas to support tenant branding (logos, theme colors) and build the configuration UI for franchisees.
+</details>
 
-- [x] **B2B-01**: Database schema supports `tenantLogoUrl` and `tenantBrandColor` for `User` (Franchisee) and optionally overrides per `Event`.
-- [x] **B2B-02**: Franchisee dashboard includes a "Customização de Marca" tab allowing logo upload (saved to storage) and color picker.
-- [x] **B2B-03**: API endpoints created to securely fetch, update, and serve tenant branding configurations.
+<details>
+<summary>✅ v10.0 Professional Network & Engagement (Phases 43-44) — SHIPPED</summary>
 
----
+- [x] Phase 43: Multi-Profile Transition Network
+- [x] Phase 44: Gamified Profile Completion
 
-## Phase 40: White-Label Gallery Rendering (RENDER)
+</details>
 
-**Goal:** Ensure the end-client experience (Event, Checkout, Vault) dynamically respects the photographer/franchisee's branding.
+<details>
+<summary>✅ v11.0 Professional Governance & Marketplace Alpha (Phases 45-46) — SHIPPED</summary>
 
-- [x] **RENDER-01**: `EventPage.tsx` and `VaultDetailPage.tsx` dynamically consume `event.tenantBrandColor` and apply it to the CSS variable `--brand`.
-- [x] **RENDER-02**: `<Navbar />` is modified to accept a `tenantLogoUrl` prop, substituting the "Foto Segundo" logo with the franchisee's logo.
-- [x] **RENDER-03**: The Checkout flows (`CheckoutPage.tsx`) retain the white-label branding, ensuring end-to-end immersion for the customer.
-- [x] **RENDER-04**: Fallback gracefully to default Foto Segundo branding if the franchisee lacks custom settings or if the account is standard.
+- [x] Phase 45: Admin Approval Hub
+- [x] Phase 46: Professional Showcase
 
----
+</details>
 
-## Phase 41: Advanced Financial Export & Franchise Intel (INTEL)
+<details>
+<summary>✅ v12.0 Unified Marketplace & Portfolio (Phases 47-51) — SHIPPED</summary>
 
-**Goal:** Deliver enterprise-grade reporting for franchisees to close their monthly books and monitor unit health.
+- [x] Phase 47: Advanced Portfolio Galleries
+- [x] Phase 48: Automated Booking Escrow
+- [x] Phase 49: Proximity Search & Directory
+- [x] Phase 50: Multi-Tier Affiliate System
+- [x] Phase 51: Mobile UI/UX & E2E Validation
 
-- [x] **INTEL-01**: Create backend PDF and CSV generators for deep payout ledgers (detailing taxes, splits, and net volume per professional).
-- [x] **INTEL-02**: Update Franchise dashboard with a "Fechamento" tab allowing date-range exports.
-- [x] **INTEL-03**: Display unit-level cohort metrics (e.g., Conversion Rate over time) for the Franchisee to monitor their linked operations.
+</details>
 
----
+<details>
+<summary>✅ v13.0-SCALE Scale & Optimization (Phases 52-54) — SHIPPED 2026-05-24</summary>
 
-## Phase 42: Express Registration via QR Code (EXPRESS)
+- [x] Phase 52: Advanced Conversational AI Integration
+- [x] Phase 53: Vault Configuration & Administration
+- [x] Phase 54: Custom Service Submission & Admin Approval (SVC-SUBMIT)
 
-**Goal:** Create a frictionless onboarding flow for phygital capture users using email + password only.
+</details>
 
-- [x] **EXPRESS-01**: Integrated express registration form in `PhygitalCapture.tsx`.
-- [x] **EXPRESS-02**: Backend support for email-only registration with auto-generated name.
-- [x] **EXPRESS-03**: `profileComplete` tracking and global "Incomplete Profile" banner.
-- [x] **EXPRESS-04**: Coupon reward system for profile completion.
+## Backlog (Post-Launch)
 
----
-
-## Traceability Matrix
-
-| REQ-ID | Phase |
-|--------|-------|
-| B2B-01 | 39 |
-| B2B-02 | 39 |
-| B2B-03 | 39 |
-| RENDER-01 | 40 |
-| RENDER-02 | 40 |
-| RENDER-03 | 40 |
-| INTEL-01 | 41 |
-| INTEL-02 | 41 |
-| INTEL-03 | 41 |
-| PROFILE-01 | 43 |
-| PROFILE-02 | 43 |
-| GAME-01 | 44 |
-| GAME-02 | 44 |
-
----
-
-## Milestone v10.0: Professional Network & Engagement
-
-**Goal:** Transform the user profile into a growth engine by allowing role transitions and gamifying data completion.
-
-**Phases:** 2
-
----
-
-### [x] Phase 43: Multi-Profile Transition Network (DONE)
-
-**Goal:** Enable users to apply for or switch between roles (Cliente, Profissional, Unidade) from a single account.
-
-- [x] **PROFILE-01**: Backend: Multi-role session support & role-application endpoints.
-- [x] **PROFILE-02**: UI: "Role Switcher" dropdown & "Welcome Tour" onboarding.
-- [x] **PROFILE-03**: Identity: Mandatory profile photo upload & verification status.
-- [x] **PROFILE-04**: Refactor: AuthContext for seamless role switching and state persistence.
-
----
-
-### [x] Phase 44: Gamified Profile Completion (DONE)
-
-**Goal:** Implement a high-conversion, stepper-based profile UI with real-time reward feedback.
-
-- [x] **GAME-01**: Create `ProfileStepper.tsx` with progress bar and "Reward Unlocked" animations.
-- [x] **GAME-02**: Integrate the "Novo Profissional" discovery survey during the client onboarding.
-
----
-
-## Milestone v11.0: Professional Governance & Marketplace Alpha (DONE)
-
-**Goal:** Enable administrative control over partner applications and provide public visibility for subscribed professionals.
-
-**Phases:** 2
-
----
-
-### [x] Phase 45: Admin Approval Hub (DONE)
-
-**Goal:** UI for Master Admin to review/approve/reject Role Applications.
-
-- [x] **GOV-01**: Admin dashboard tab for reviewing pending professional/unit applications.
-- [x] **GOV-02**: Approve/Reject actions with automated status updates.
-- [x] **GOV-03**: Audit log of administrative approvals.
-
----
-
-### [x] Phase 46: Professional Showcase (DONE)
-
-**Goal:** Public profile pages and directory for subscribed professionals.
-
-- [x] **SHOW-01**: Public portfolio page for verified professionals.
-- [x] **SHOW-02**: Gate public profiles behind active MRR subscription.
-- [x] **SHOW-03**: Budget request flow with "preferred professional" selection prioritizing subscribed users.
-
----
-
-## Milestone v12.0: Unified Marketplace & Portfolio
-
-**Goal:** Scale the marketplace with advanced portfolio galleries, automated booking payments, and proximity-based search.
-
-**Phases:** 3
-
----
-
-### [x] Phase 47: Advanced Portfolio Galleries
-
-**Goal:** Enable professionals to upload, categorize, and showcase high-quality image albums on their public profiles.
-
-- [x] **PORT-01**: User (Professional) can upload and manage high-quality image albums visible on their public profile.
-- [x] **PORT-02**: System automatically generates compressed thumbnails and watermarked previews for portfolio images.
-- [x] **PORT-03**: User (Client) can view professional portfolios in a seamless masonry gallery layout.
-- [x] **PORT-04**: User (Professional) can organize portfolio items into named categories/albums.
-
-**Success Criteria:**
-
-1. Professional can create an album and upload 10+ photos without errors.
-2. Client viewing the public profile sees a fast-loading masonry grid of the albums.
-3. High-res images are protected/watermarked while thumbnails are optimized.
-
----
-
-### [x] Phase 48: Automated Booking Escrow
-
-**Goal:** Implement a secure booking flow requiring clients to pay a reservation fee (via MercadoPago) to access the professional's direct contact.
-
-- [x] **ESCROW-01**: User (Client) must pay a "Booking Fee" (Taxa de Reserva) via MercadoPago to unlock direct WhatsApp contact with a professional.
-- [x] **ESCROW-02**: System holds the booking fee in escrow and reflects it as "Pending" in the professional's balance.
-- [x] **ESCROW-03**: System automatically releases the booking fee to the professional's available balance upon service completion or after 7 days.
-- [x] **ESCROW-04**: System updates the budget request status in real-time via webhooks.
-
-**Success Criteria:**
-
-1. Client is prompted to pay via PIX/Card to unlock the professional's WhatsApp.
-2. Webhook confirms payment and updates budget request status to "Contato Liberado".
-3. The professional's financial dashboard shows the escrowed amount as "Pending".
-
----
-
-### [x] Phase 49: Proximity Search & Directory
-
-**Goal:** Enhance the public directory to allow clients to find professionals based on geographical proximity and subscription tier.
-
-- [x] **SEARCH-01**: User (Client) can search for professionals within a specific radius of their location using geolocation APIs.
-- [x] **SEARCH-02**: System filters professional search results based on geographic proximity, rating, and subscription status (verified PROs first).
-- [x] **SEARCH-03**: User (Professional) can update their service radius (in km) and base location in their profile settings.
-- [x] **SEARCH-04**: System provides a map-based or distance-based UI view for the professional directory.
-
-**Success Criteria:**
-
-1. Clients can filter the directory by "City" or "Near Me".
-2. Search results correctly prioritize subscribed (MRR) and verified professionals.
-3. Professionals can define a maximum travel radius in their config tab.
-
----
-
-### [x] Phase 50: Multi-Tier Affiliate System (DONE)
-
-**Goal:** Implement a multi-level affiliate marketing structure (L1/L2 networks) and consolidate user navigation tabs.
-
-- [x] **AFF-01**: Support standard and VIP affiliate tiers with tiered percentages for direct (L1) and indirect (L2) checkouts.
-- [x] **AFF-02**: Consolidated UX: merge "Campanhas Embaixador" under a unified "Indique e Ganhe" dashboard.
-- [x] **AFF-03**: Safe rendering architecture avoiding toLocaleString crashes.
-
----
-
-### [x] Phase 51: Mobile UI/UX & E2E Validation (DONE)
-
-**Goal:** Hardening mobile layouts, resolving route integrity, and complete end-to-end launch verification.
-
-- [x] **VAL-01**: Mobile first: verify bottom nav layout stacking and fix responsive overlaps.
-- [x] **VAL-02**: Route integrity: resolved API server 404 deployment errors on Vercel by structuring standard Root-level deploy.
-- [x] **VAL-03**: Full browser visual validation and test coverage confirming complete zero-error logs.
-
----
-
-## BACKLOG / Milestone v13.0: AI WhatsApp Attendant (Evolution API)
-
-**Goal:** Transform the current one-way WhatsApp notification system (CallMeBot) into a fully automated, bidirectional AI attendant that answers customers, negotiates, and closes budgets.
-
-**Phases:** 1
-
----
-
-### [x] Phase 52: Advanced Conversational AI Integration (DONE)
-
-**Goal:** Connect an official WhatsApp line to an LLM (using Gemini) using Baileys and Node.js.
-
-- [x] **WPP-01**: Replace CallMeBot with a robust connection engine (Baileys) allowing bidirectional reading of incoming messages.
-- [x] **WPP-02**: Implement a Webhook/Worker listener that routes incoming WhatsApp messages to a Node.js workflow.
-- [x] **WPP-03**: Integrate Google Gemini to read the database context (budget status, professional availability) and answer questions automatically in natural language.
-- [x] **WPP-04**: Automatically trigger quote generation and send checkout links directly via the AI chat flow.
-
----
-
-### [x] Phase 53: Vault Configuration & Administration
-
-**Goal:** Provide the vault owner with a dedicated settings modal/page to manage album metadata, media organization, and access control.
-
-- [x] **VCONF-01**: Allow the owner to rename the vault/album after creation.
-- [x] **VCONF-02**: Implement a sorting mechanism for media (sort by name, upload date/time, creation date/time, file size, horizontal/vertical orientation).
-- [x] **VCONF-03**: Provide an access control panel to administer album participants (view members, remove guests).
-
----
-
-### [x] Phase 54: Custom Service Submission & Admin Approval (SVC-SUBMIT)
-
-**Mode:** mvp
-
-**Goal:**
-- **Como um:** profissional, ponto fixo, franquia print
-- **Eu quero:** um formulário completo para que possamos precificar o valor da hora, equipamentos necessários, mínimo de tempo e etc.
-- **Para que:** traga dinamismo no cadastro e na criação de novos produtos e serviços na plataforma.
-
-- [x] **SVC-01**: Schema migration — add `submittedAt`, `reviewStatus`, `reviewNote`, `networkJustification`, `submittedByUserId` fields to `ProfessionalService` model.
-- [x] **SVC-02**: Backend endpoints — `POST /profissional/services` (create custom service), `PATCH /profissional/services/:id` (edit when NEEDS_ADJUSTMENT), `GET /admin/services/pending`, `PATCH /admin/services/:id/review` (admin decision).
-- [x] **SVC-03**: Professional UI — dedicated form page for service creation (nome, descrição, categoria, preço, duração, justificativa para a rede). Entry via "+ Criar Serviço Personalizado" button in Portfólio & Serviços.
-- [x] **SVC-04**: Visual separation in Portfólio & Serviços — "Meus Serviços" section (top, with review badges) vs "Catálogo da Rede" section (bottom, import existing behavior).
-- [x] **SVC-05**: Admin "Pendentes" tab in Catálogo de Serviços — list view of pending services with 4-action decision panel (Publicar na Rede / Manter Exclusivo / Solicitar Ajustes / Recusar).
-- [x] **SVC-06**: Notifications — admin receives in-app + email on submission; creator receives in-app + email with result and reason on decision.
-
-**Success Criteria:**
-
-1. Verified professional can create a custom service and see it in "Meus Serviços" with "🔄 Pendente de Avaliação" badge.
-2. Admin sees a "Pendentes" tab with a count badge and can take all 4 decision actions.
-3. Both admin (on submission) and creator (on decision) receive in-app notification + email.
-4. "Publicar na Rede" creates a `ServiceCatalog` record visible to all; "Manter Exclusivo" leaves it exclusive; "Recusar" deactivates with reason; "Solicitar Ajustes" unlocks editing.
-
+- **Phase 55**: Advanced Marketplace Analytics (Analytics dashboard for professional sales conversion rates, event-level traffic analysis, and marketing coupon efficiency reports).
