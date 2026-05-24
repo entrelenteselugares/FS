@@ -15,7 +15,8 @@ export default function CustomServiceForm() {
     requiredEquipment: "",
     deliveryDays: "",
     minQuantity: "",
-    networkJustification: ""
+    networkJustification: "",
+    estimatedMinutes: ""
   });
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -33,6 +34,7 @@ export default function CustomServiceForm() {
         price: Number(formData.price),
         deliveryDays: formData.deliveryDays ? Number(formData.deliveryDays) : undefined,
         minQuantity: formData.minQuantity ? Number(formData.minQuantity) : undefined,
+        estimatedMinutes: formData.estimatedMinutes ? Number(formData.estimatedMinutes) : undefined,
       });
       setSuccess(true);
       setFormData({
@@ -45,10 +47,12 @@ export default function CustomServiceForm() {
         requiredEquipment: "",
         deliveryDays: "",
         minQuantity: "",
-        networkJustification: ""
+        networkJustification: "",
+        estimatedMinutes: ""
       });
-    } catch (err: any) {
-      setError(err.response?.data?.error || "Erro ao enviar serviço para aprovação.");
+    } catch (err: unknown) {
+      const apiError = err as { response?: { data?: { error?: string } } };
+      setError(apiError.response?.data?.error || "Erro ao enviar serviço para aprovação.");
     } finally {
       setLoading(false);
     }
@@ -181,6 +185,13 @@ export default function CustomServiceForm() {
                 <label className="block text-[10px] text-theme-muted uppercase tracking-widest font-black mb-2">Prazo de Entrega (Dias)</label>
                 <input type="number" min="0" placeholder="Dias úteis para entrega"
                   value={formData.deliveryDays} onChange={e => setFormData({...formData, deliveryDays: e.target.value})}
+                  className="w-full bg-black border border-white/10 p-3 text-xs text-white outline-none focus:border-brand-tactical transition-colors"
+                />
+              </div>
+              <div>
+                <label className="block text-[10px] text-theme-muted uppercase tracking-widest font-black mb-2">Duração Estimada (Minutos)</label>
+                <input type="number" min="0" placeholder="Ex: 60, 120..."
+                  value={formData.estimatedMinutes} onChange={e => setFormData({...formData, estimatedMinutes: e.target.value})}
                   className="w-full bg-black border border-white/10 p-3 text-xs text-white outline-none focus:border-brand-tactical transition-colors"
                 />
               </div>

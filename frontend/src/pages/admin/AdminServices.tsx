@@ -18,6 +18,19 @@ interface Service {
   category: string;
 }
 
+interface PendingService {
+  id: string;
+  name: string;
+  description: string | null;
+  price: number | string;
+  professional?: {
+    user?: {
+      name: string;
+      email: string;
+    } | null;
+  } | null;
+}
+
 
 const CATEGORY_ICONS: Record<string, React.ElementType> = {
   FOTOGRAFIA: Camera,
@@ -42,7 +55,7 @@ export const AdminServices: React.FC = () => {
   const [notification, setNotification] = useState<{message: string, type: 'success' | 'error'} | null>(null);
 
   const [activeTab, setActiveTab] = useState<"CATALOGO" | "PENDENTES">("CATALOGO");
-  const [pendingServices, setPendingServices] = useState<any[]>([]);
+  const [pendingServices, setPendingServices] = useState<PendingService[]>([]);
 
   const fetchPendingServices = useCallback(async () => {
     try {
@@ -336,8 +349,8 @@ export const AdminServices: React.FC = () => {
                     </div>
                   </div>
                   <div className="text-right">
-                    <div className="text-[14px] font-black text-theme-text italic">{formatCurrency(ps.suggestedPrice)}</div>
-                    <div className="text-[8px] uppercase tracking-widest text-theme-muted">Preço Sugerido</div>
+                    <div className="text-[14px] font-black text-theme-text italic">{formatCurrency(Number(ps.price))}</div>
+                    <div className="text-[8px] uppercase tracking-widest text-theme-muted">Preço Proposto</div>
                   </div>
                 </div>
 

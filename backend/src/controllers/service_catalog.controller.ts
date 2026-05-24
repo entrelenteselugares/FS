@@ -122,7 +122,9 @@ export async function listPendingServices(req: AuthRequest, res: Response): Prom
 export async function reviewPendingService(req: AuthRequest, res: Response): Promise<void> {
   try {
     const { id } = req.params;
-    const { action, reviewNote, updatedName, updatedPrice, updatedEstimatedMinutes } = req.body;
+    const action = req.body.action || req.body.outcome;
+    const reviewNote = req.body.reviewNote || req.body.reason;
+    const { updatedName, updatedPrice, updatedEstimatedMinutes } = req.body;
 
     if (!["NETWORK", "EXCLUSIVE", "REJECTED", "NEEDS_ADJUSTMENT"].includes(action)) {
       res.status(400).json({ error: "Ação inválida." });

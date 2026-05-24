@@ -235,7 +235,7 @@
 
 ---
 
-### [ ] Phase 54: Custom Service Submission & Admin Approval (SVC-SUBMIT)
+### [x] Phase 54: Custom Service Submission & Admin Approval (SVC-SUBMIT)
 
 **Mode:** mvp
 
@@ -244,12 +244,12 @@
 - **Eu quero:** um formulário completo para que possamos precificar o valor da hora, equipamentos necessários, mínimo de tempo e etc.
 - **Para que:** traga dinamismo no cadastro e na criação de novos produtos e serviços na plataforma.
 
-- [ ] **SVC-01**: Schema migration — add `submittedAt`, `reviewStatus`, `reviewNote`, `networkJustification`, `submittedByUserId` fields to `ProfessionalService` model.
-- [ ] **SVC-02**: Backend endpoints — `POST /profissional/services` (create custom service), `PATCH /profissional/services/:id` (edit when NEEDS_ADJUSTMENT), `GET /admin/services/pending`, `PATCH /admin/services/:id/review` (admin decision).
-- [ ] **SVC-03**: Professional UI — dedicated form page for service creation (nome, descrição, categoria, preço, duração, justificativa para a rede). Entry via "+ Criar Serviço Personalizado" button in Portfólio & Serviços.
-- [ ] **SVC-04**: Visual separation in Portfólio & Serviços — "Meus Serviços" section (top, with review badges) vs "Catálogo da Rede" section (bottom, import existing behavior).
-- [ ] **SVC-05**: Admin "Pendentes" tab in Catálogo de Serviços — list view of pending services with 4-action decision panel (Publicar na Rede / Manter Exclusivo / Solicitar Ajustes / Recusar).
-- [ ] **SVC-06**: Notifications — admin receives in-app + email on submission; creator receives in-app + email with result and reason on decision.
+- [x] **SVC-01**: Schema migration — add `submittedAt`, `reviewStatus`, `reviewNote`, `networkJustification`, `submittedByUserId` fields to `ProfessionalService` model.
+- [x] **SVC-02**: Backend endpoints — `POST /profissional/services` (create custom service), `PATCH /profissional/services/:id` (edit when NEEDS_ADJUSTMENT), `GET /admin/services/pending`, `PATCH /admin/services/:id/review` (admin decision).
+- [x] **SVC-03**: Professional UI — dedicated form page for service creation (nome, descrição, categoria, preço, duração, justificativa para a rede). Entry via "+ Criar Serviço Personalizado" button in Portfólio & Serviços.
+- [x] **SVC-04**: Visual separation in Portfólio & Serviços — "Meus Serviços" section (top, with review badges) vs "Catálogo da Rede" section (bottom, import existing behavior).
+- [x] **SVC-05**: Admin "Pendentes" tab in Catálogo de Serviços — list view of pending services with 4-action decision panel (Publicar na Rede / Manter Exclusivo / Solicitar Ajustes / Recusar).
+- [x] **SVC-06**: Notifications — admin receives in-app + email on submission; creator receives in-app + email with result and reason on decision.
 
 **Success Criteria:**
 
