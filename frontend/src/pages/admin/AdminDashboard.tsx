@@ -25,18 +25,10 @@ import {
   LayoutDashboard, 
   Camera, 
   Users, 
-  FileText, 
-  DollarSign, 
   Printer, 
   Briefcase,
   Settings,
-  Layers,
-  Trophy,
-  Grid3X3,
-  ShieldCheck,
-  Package,
-  TrendingUp,
-  UserCheck
+  TrendingUp
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 

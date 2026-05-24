@@ -9,14 +9,13 @@ interface Media {
   url: string;
   shortId: string;
   isGuest?: boolean;
-  metadata?: any;
+  metadata?: { rawUrl?: string; printUrl?: string; [key: string]: unknown };
 }
 
 interface TouchSelectionGalleryProps {
   medias: Media[];
   selectedIds: string[];
   unlockedIds: string[];
-  isOwner: boolean;
   onToggleCart: (shortId: string, url: string) => void;
 }
 
@@ -24,7 +23,6 @@ export const TouchSelectionGallery: React.FC<TouchSelectionGalleryProps> = ({
   medias,
   selectedIds,
   unlockedIds,
-  isOwner,
   onToggleCart,
 }) => {
   const [fullscreenIndex, setFullscreenIndex] = useState<number | null>(null);
@@ -116,13 +114,14 @@ export const TouchSelectionGallery: React.FC<TouchSelectionGalleryProps> = ({
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: (idx % 20) * 0.03 }}
-              className={`relative aspect-[3/4] overflow-hidden border-2 transition-all duration-300 active:scale-95 touch-none ${
+              className={`relative aspect-[3/4] overflow-hidden border-2 transition-all duration-300 active:scale-95 select-none ${
                 isUnlocked ? "border-brand-tactical shadow-lg shadow-brand-tactical/10" : 
                 isSelected ? "border-emerald-500 scale-95 shadow-xl shadow-emerald-500/20" : 
                 "border-theme-border/40"
               }`}
               onTouchStart={() => !isUnlocked && handleTouchStart(m.shortId, m.url)}
               onTouchEnd={handleTouchEnd}
+              onTouchMove={handleTouchEnd}
               onClick={() => handlePhotoClick(idx, m)}
             >
               <img

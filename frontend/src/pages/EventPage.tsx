@@ -965,7 +965,6 @@ return (
                               medias={filteredMedias}
                               selectedIds={eventCart}
                               unlockedIds={event.unlockedMediaIds || []}
-                              isOwner={!!event.isOwner}
                               onToggleCart={toggleCart}
                             />
                           </div>
