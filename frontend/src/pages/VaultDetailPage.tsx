@@ -489,9 +489,9 @@ export default function VaultDetailPage() {
           {(!vault.subscription || vault.subscription.status !== 'ACTIVE') ? (
             vault.myRole === 'OWNER' && (
               <div className="mb-8">
-                <div className="bg-gradient-to-r from-emerald-600/20 to-teal-600/20 border border-emerald-500/30 rounded-2xl p-6 flex flex-col md:flex-row items-center justify-between gap-6 backdrop-blur-md">
-                  <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 bg-emerald-500 rounded-full flex items-center justify-center shadow-[0_0_20px_rgba(16,185,129,0.4)]">
+                <div className="bg-gradient-to-r from-emerald-600/20 to-teal-600/20 border border-emerald-500/30 rounded-2xl p-8 md:p-10 flex flex-col md:flex-row items-center justify-between gap-8 backdrop-blur-md">
+                  <div className="flex items-center gap-6">
+                    <div className="w-14 h-14 bg-emerald-500 rounded-full flex items-center justify-center shadow-[0_0_20px_rgba(16,185,129,0.4)]">
                       <Printer className="text-black" size={24} />
                     </div>
                     <div>
@@ -513,8 +513,8 @@ export default function VaultDetailPage() {
             )
           ) : (
             <div className="mb-8">
-              <div className="bg-zinc-900/50 border border-emerald-500/10 rounded-2xl p-4 flex items-center justify-between gap-4">
-                <div className="flex items-center gap-3">
+              <div className="bg-zinc-900/50 border border-emerald-500/10 rounded-2xl p-6 flex items-center justify-between gap-6">
+                <div className="flex items-center gap-4">
                   <div className="w-8 h-8 bg-emerald-500/10 rounded-full flex items-center justify-center">
                     <Star className="text-emerald-500" size={16} fill="currentColor" />
                   </div>
@@ -535,8 +535,8 @@ export default function VaultDetailPage() {
             </div>
           )}
           {uploading && (
-          <div className="mb-6 p-4 bg-emerald-500/10 border border-emerald-500/20 rounded-xl flex items-center gap-4 animate-pulse">
-            <Loader2 className="animate-spin text-emerald-500" size={18} />
+          <div className="mb-6 p-6 bg-emerald-500/10 border border-emerald-500/20 rounded-xl flex items-center gap-6 animate-pulse">
+            <Loader2 className="animate-spin text-emerald-500" size={24} />
             <div className="flex-1">
               <div className="flex justify-between text-[10px] font-black uppercase tracking-widest mb-1">
                 <span>Enviando Memória para o Drive...</span>

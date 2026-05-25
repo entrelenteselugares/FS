@@ -79,9 +79,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     localStorage.setItem("fs_token", data.token);
     localStorage.setItem("fs_refresh_token", data.refreshToken);
     API.defaults.headers.common["Authorization"] = `Bearer ${data.token}`;
+    
+    // Fetch full user object to guarantee all nested properties (e.g. verificationStatus)
+    const meResponse = await API.get("/auth/me");
+    const fullUser = meResponse.data;
+    
     setToken(data.token);
-    setUser(data.user);
-    return data.user as AuthUser;
+    setUser(fullUser);
+    return fullUser as AuthUser;
   };
 
   const register = async (email: string, senha: string, nome: string) => {
@@ -89,9 +94,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     localStorage.setItem("fs_token", data.token);
     localStorage.setItem("fs_refresh_token", data.refreshToken);
     API.defaults.headers.common["Authorization"] = `Bearer ${data.token}`;
+    
+    const meResponse = await API.get("/auth/me");
+    const fullUser = meResponse.data;
+
     setToken(data.token);
-    setUser(data.user);
-    return data.user as AuthUser;
+    setUser(fullUser);
+    return fullUser as AuthUser;
   };
 
   const registerExpress = async (email: string, senha: string, nome?: string, whatsapp?: string) => {
@@ -99,9 +108,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     localStorage.setItem("fs_token", data.token);
     localStorage.setItem("fs_refresh_token", data.refreshToken);
     API.defaults.headers.common["Authorization"] = `Bearer ${data.token}`;
+    
+    const meResponse = await API.get("/auth/me");
+    const fullUser = meResponse.data;
+
     setToken(data.token);
-    setUser(data.user);
-    return data.user as AuthUser;
+    setUser(fullUser);
+    return fullUser as AuthUser;
   };
 
   const updateMe = async (data: Partial<AuthUser>) => {

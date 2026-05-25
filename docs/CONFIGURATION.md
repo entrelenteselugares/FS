@@ -22,6 +22,7 @@ Configuration for Foto Segundo is managed primarily through environment variable
 ## Config File Format
 
 The system relies on `.env` files located in the `backend/` and `printer-agent/` directories.
+
 ```env
 DATABASE_URL="postgresql://user:pass@host:6543/postgres?pgbouncer=true"
 DIRECT_URL="postgresql://user:pass@host:5432/postgres"
@@ -45,6 +46,7 @@ By default, `STORAGE_PROVIDER` assumes a local fallback (`local`), but for produ
 3. Database split matrix config is managed dynamically in the `PlatformConfig` database table to allow split overrides without redeploys.
 
 ## Print Settings (Local Storage)
+
 Print engine configuration is persisted in the browser's `localStorage` per event using keys like `fs_print_settings_${eventId}`.
 
 ```json

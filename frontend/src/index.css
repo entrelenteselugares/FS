@@ -109,12 +109,16 @@ button, a, [role="button"], input, select, textarea {
   touch-action: manipulation;
 }
 
-/* ─── Focus States ────────────────────────────────────────────────────────── */
+/* ─── Focus States & Brutalist Overrides ────────────────────────────────────── */
 input:focus,
 select:focus,
 textarea:focus {
   border-color: var(--brand) !important;
   outline: none;
+}
+
+select, [data-sonner-toast], [data-sonner-toast] * {
+  border-radius: 0 !important;
 }
 
 /* ─── Typography Utilities ────────────────────────────────────────────────── */

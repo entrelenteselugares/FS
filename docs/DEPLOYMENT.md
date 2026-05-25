@@ -6,6 +6,7 @@ O deploy da Foto Segundo é contínuo e integrado ao repositório GitHub atravé
 ## Deployment Targets
 
 A Foto Segundo opera de maneira híbrida num único domínio (Monólito na borda):
+
 1. O Front-end (Vite/React) é servido na raiz global do domínio pela CDN da Vercel.
 2. O Backend (Express/Node.js) é agrupado (bundled) em um arquivo Javascript Serverless via Vercel.
 
@@ -22,6 +23,7 @@ Qualquer código consolidado na branch `main` disparará automaticamente o proce
 ## Environment Setup
 
 No dashboard da Vercel > **Settings** > **Environment Variables**, garanta que todas as chaves mapeadas no CONFIGURATION.md estão presentes:
+
 - `DATABASE_URL`: Com pgbouncer ativo para pooling Serverless.
 - `DIRECT_URL`: Sem pgbouncer.
 - `JWT_SECRET`, `MP_ACCESS_TOKEN`, `MP_WEBHOOK_SECRET`
@@ -29,6 +31,7 @@ No dashboard da Vercel > **Settings** > **Environment Variables**, garanta que t
 ## Rollback Procedure
 
 Caso seja necessário reverter o deploy:
+
 1. Acesse o painel da Vercel.
 2. Vá em **Deployments**.
 3. Selecione o deploy anterior que estava funcionando.

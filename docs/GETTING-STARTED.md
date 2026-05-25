@@ -76,6 +76,5 @@ Once the system is running, explore these documents for more details:
 - [TESTING.md](TESTING.md) — How to run and write tests.
 - [API.md](API.md) — Backend endpoint reference.
 
-
 <!-- GSD-DOCS-UPDATE: SUPPLEMENTED -->
 *Documentação verificada e complementada automaticamente via GSD-SDK em 2026-05.*

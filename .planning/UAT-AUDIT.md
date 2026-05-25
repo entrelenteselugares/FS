@@ -15,11 +15,13 @@ Este documento certifica a auditoria completa de todos os critérios de UAT (Use
 ## 🏁 1. Status de Verificação UAT
 
 A execução da ferramenta GSD de auditoria UAT oficial atestou:
+
 - **Itens de UAT Pendentes:** **0**
 - **Itens de UAT Aprovados:** **12**
 - **Cobertura de Fluxos:** 100%
 
-### Histórico de Verificação por Componente:
+### Histórico de Verificação por Componente
+
 1. **Atendimento AI WhatsApp (Phase 52 - WPP):**
    - *Critério:* Cliente envia mensagem e o robô responde com tom natural em < 5 segundos usando dados reais do cofre. (Aprovado ✅)
    - *Critério:* Geração de link de checkout via chat WhatsApp envia redirecionamento seguro MercadoPago. (Aprovado ✅)
@@ -35,6 +37,7 @@ A execução da ferramenta GSD de auditoria UAT oficial atestou:
 ## 🛠️ 2. Resolução de Falhas / Bug Fixes Recentes
 
 Durante os testes de certificação final, as seguintes correções foram integradas e verificadas como estáveis:
+
 - **F-01 (Pagamento):** Correção da atribuição de `quoteStatus` incondicional no controller de pagamentos do backend, assegurando o fluxo transacional do MercadoPago.
 - **E2E Timeout:** Tratamento de fechamento do lightbox via tecla Escape, adicionando labels acessíveis nas imagens da galeria e robustez no carregamento assíncrono.
 

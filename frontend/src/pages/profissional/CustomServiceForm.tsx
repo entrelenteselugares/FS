@@ -94,10 +94,10 @@ export default function CustomServiceForm() {
           </motion.div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-8 bg-theme-card border border-theme-border p-8">
+        <form onSubmit={handleSubmit} className="space-y-10 bg-theme-card border border-theme-border p-8 md:p-12">
           
           {/* IDENTIFICAÇÃO */}
-          <section className="space-y-4">
+          <section className="space-y-6">
             <h2 className="text-sm font-black text-white uppercase tracking-widest border-b border-white/5 pb-2">1. Identificação</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
@@ -125,7 +125,7 @@ export default function CustomServiceForm() {
           </section>
 
           {/* FORMATO DO TRABALHO */}
-          <section className="space-y-4">
+          <section className="space-y-6">
             <h2 className="text-sm font-black text-white uppercase tracking-widest border-b border-white/5 pb-2">2. Formato de Trabalho</h2>
             <div className="flex flex-wrap gap-4 mb-4">
               <label className={`cursor-pointer flex-1 border p-4 flex flex-col items-center justify-center gap-3 transition-colors ${!formData.isRemote ? 'bg-brand-tactical/10 border-brand-tactical text-brand-tactical' : 'bg-black border-white/10 text-theme-muted hover:border-white/30'}`}>
@@ -151,7 +151,7 @@ export default function CustomServiceForm() {
           </section>
 
           {/* PRECIFICAÇÃO */}
-          <section className="space-y-4">
+          <section className="space-y-6">
             <h2 className="text-sm font-black text-white uppercase tracking-widest border-b border-white/5 pb-2">3. Precificação</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
@@ -199,7 +199,7 @@ export default function CustomServiceForm() {
           </section>
 
           {/* INFORMAÇÕES INTERNAS */}
-          <section className="space-y-4">
+          <section className="space-y-6">
             <h2 className="text-sm font-black text-white uppercase tracking-widest border-b border-white/5 pb-2">4. Revisão</h2>
             <div className="bg-theme-bg p-4 border border-white/5 flex gap-4">
               <HelpCircle className="text-brand-tactical shrink-0" size={20} />
@@ -221,7 +221,7 @@ export default function CustomServiceForm() {
           <button 
             type="submit" 
             disabled={loading}
-            className="w-full py-4 bg-brand-tactical text-black text-xs font-black uppercase tracking-widest hover:brightness-110 transition-all disabled:opacity-50"
+            className="w-full py-4 bg-brand-tactical text-[var(--brand-text)] text-xs font-black uppercase tracking-widest hover:brightness-110 transition-all disabled:opacity-50"
           >
             {loading ? "Enviando..." : "Enviar Serviço para Aprovação"}
           </button>

@@ -65,6 +65,5 @@ Tests are integrated into our CI pipeline (GitHub Actions).
 - **Environment:** A dedicated staging database is used for CI runs.
 - **Artifacts:** Videos and traces are captured for failing tests and available in the CI logs.
 
-
 <!-- GSD-DOCS-UPDATE: SUPPLEMENTED -->
 *Documentação verificada e complementada automaticamente via GSD-SDK em 2026-05.*

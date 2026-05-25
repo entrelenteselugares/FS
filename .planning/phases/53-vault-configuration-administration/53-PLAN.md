@@ -1,11 +1,13 @@
 # Phase 53: Vault Configuration & Administration - Plan
 
 ## Target
+
 Provide the vault owner with a dedicated settings modal to manage album metadata, media organization, and access control.
 
 ## Feature Breakdown
 
 ### 1. Database & Backend Enhancements
+
 - **Schema Update**: Add EXIF/Metadata fields to `SharedAlbumMedia` in `prisma/schema.prisma`:
   - `fileSize Int?`
   - `width Int?`
@@ -17,11 +19,13 @@ Provide the vault owner with a dedicated settings modal to manage album metadata
   - Create endpoint: `DELETE /api/vaults/:albumId/members/:userId` to allow the owner to remove guests.
 
 ### 2. UI Components - Vault Settings Modal
+
 - **Component (`VaultSettingsModal.tsx`)**:
   - Accessible via a Gear ⚙️ icon in the `VaultDetailPage` header (only visible to the OWNER).
   - Uses the Midnight Luxury design (dark backgrounds, emerald accents, glassy borders).
   
 ### 3. UI Features - Settings Tabs
+
 - **Tab 1: Geral (General)**:
   - Input to rename the album. Calls the new `PATCH` endpoint.
 - **Tab 2: Participantes (Access Control)**:
