@@ -123,7 +123,8 @@ model ProfessionalNetwork {
 
 model Event {
   id             String   @id @default(cuid())
-  nomeNoivos     String
+  title          String
+  category       EventCategory @default(CASAMENTO)
   dataEvento     DateTime
   cartorio       String?
   coverPhotoUrl  String?
@@ -914,6 +915,16 @@ enum EventType {
   FLASH_EVENT
   SCHOOL
   SPORTS
+}
+
+enum EventCategory {
+  CASAMENTO
+  ANIVERSARIO
+  SHOW_FESTIVAL
+  CORPORATIVO
+  FORMATURA
+  ENSAIO
+  OUTROS
 }
 
 enum SlotStatus {

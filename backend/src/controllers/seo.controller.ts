@@ -14,7 +14,7 @@ export const SEOController = {
       const event = await prisma.event.findUnique({
         where: { id: id as string },
         select: { 
-          nomeNoivos: true, 
+          title: true, 
           coverPhotoUrl: true, 
           dataEvento: true,
           cartorio: true,
@@ -26,13 +26,13 @@ export const SEOController = {
         return res.status(404).send("Evento não encontrado");
       }
 
-      const title = `${event.nomeNoivos} | Foto Segundo`;
+      const title = `${event.title} | Foto Segundo`;
       const dateStr = new Intl.DateTimeFormat("pt-BR", { day: "2-digit", month: "long", year: "numeric" }).format(new Date(event.dataEvento));
       const isMarketplace = event.type === "PHOTO_MARKETPLACE";
       
       const description = isMarketplace
-        ? `Escolha e compre suas fotos do evento: ${event.nomeNoivos} (${dateStr}). Seleção individual e download imediato.`
-        : `Acesse as fotos e vídeos do evento: ${event.nomeNoivos} (${dateStr}). Registrado em ${event.cartorio || "Foto Segundo"}.`;
+        ? `Escolha e compre suas fotos do evento: ${event.title} (${dateStr}). Seleção individual e download imediato.`
+        : `Acesse as fotos e vídeos do evento: ${event.title} (${dateStr}). Registrado em ${event.cartorio || "Foto Segundo"}.`;
       const image = event.coverPhotoUrl || `${FRONTEND_URL}/og-default.png`;
 
       // Se for bot, entrega o HTML com meta tags

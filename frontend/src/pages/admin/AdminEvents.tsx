@@ -319,7 +319,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
       const { data } = await API.get(`/admin/events/${event.id}`);
       setEditingEvent(data);
       setFormData({
-        title: data.nomeNoivos,
+        title: data.title,
         slug: data.slug || "",
         date: (() => {
           const d = new Date(data.dataEvento);
@@ -673,7 +673,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
                       </div>
                       <div className="space-y-2">
                         <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest block mb-2 opacity-60 italic">Local</label>
-                        <input type="text" required className="w-full bg-theme-bg-muted border border-theme-border/60 p-4 text-[10px] text-theme-text font-black outline-none focus:border-brand-tactical rounded-xl uppercase" value={formData.location} onChange={e => setFormData({...formData, location: e.target.value})} placeholder="EX: CARTÓRIO X" />
+                        <input type="text" required className="w-full bg-theme-bg-muted border border-theme-border/60 p-4 text-[10px] text-theme-text font-black outline-none focus:border-brand-tactical rounded-xl uppercase" value={formData.location} onChange={e => setFormData({...formData, location: e.target.value})} placeholder="EX: UNIDADE X" />
                       </div>
                     </div>
                   </div>

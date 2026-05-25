@@ -56,7 +56,7 @@ async function main() {
 
   // 2. EVENTO FLASH CAMPINAS
   const flashEventData = {
-    nomeNoivos: "Flash Campinas E2E",
+    title: "Flash Campinas E2E",
     slug: "flash-campinas-e2e",
     dataEvento: new Date("2024-12-31"), // Passado para aparecer na galeria logo
     location: "Campinas - E2E Center",

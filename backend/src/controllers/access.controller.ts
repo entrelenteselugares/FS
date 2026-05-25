@@ -108,7 +108,7 @@ export async function getAccessStatus(req: AuthRequest, res: Response): Promise<
       include: {
         event: {
           select: {
-            nomeNoivos: true, 
+            title: true, 
             slug: true,
             lightroomUrl: true, 
             driveUrl: true,
@@ -130,7 +130,7 @@ export async function getAccessStatus(req: AuthRequest, res: Response): Promise<
       showAlbum: boolean;
       showVideo: boolean;
       event: {
-        nomeNoivos: string;
+        title: string;
         slug: string;
         lightroomUrl: string | null;
         driveUrl: string | null;
@@ -192,7 +192,7 @@ export async function getAccessStatus(req: AuthRequest, res: Response): Promise<
       // Links apenas se ativo e não expirado E visível
       lightroomUrl: (status === "ACTIVE" && !expirado && order.showAlbum) ? order.event.lightroomUrl : null,
       driveUrl: (status === "ACTIVE" && !expirado && order.showVideo) ? order.event.driveUrl : null,
-      eventTitle: order.event.nomeNoivos,
+      eventTitle: order.event.title,
       eventSlug: order.event.slug,
     });
 

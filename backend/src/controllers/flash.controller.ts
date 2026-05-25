@@ -90,7 +90,7 @@ export class FlashController {
         token,
         event: {
           id: card.event.id,
-          nome: card.event.nomeNoivos,
+          nome: card.event.title,
         },
         media: card.media ? {
           id: card.media.id,
@@ -132,7 +132,7 @@ export class FlashController {
       const [event, cards, prints] = await Promise.all([
         prisma.event.findUnique({
           where: { id: eventId },
-          select: { id: true, nomeNoivos: true, slug: true, type: true, dataEvento: true }
+          select: { id: true, title: true, slug: true, type: true, dataEvento: true }
         }),
         prisma.flashCard.groupBy({
           by: ["status"],

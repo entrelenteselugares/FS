@@ -48,7 +48,7 @@ export class EventController {
       return res.json({
         lightroomUrl: (o.showAlbum && o.event?.lightroomUrl !== "null") ? o.event?.lightroomUrl : null,
         driveUrl: (o.showVideo && o.event?.driveUrl !== "null") ? o.event?.driveUrl : null,
-        eventTitle: o.event?.nomeNoivos,
+        eventTitle: o.event?.title,
         accessType: o.accessType || "PRIVATE",
         guestToken: o.guestToken,
         isGuestOrder: o.isGuestOrder
@@ -213,7 +213,7 @@ export class EventController {
 
       const responseData = {
         id: event.id,
-        nomeNoivos: event.nomeNoivos,
+        title: event.title,
         dataEvento: event.dataEvento,
         cartorio: event.cartorioUser?.cartorio?.razaoSocial || event.location,
         tenantBrandColor: event.customBrandColor || event.cartorioUser?.tenantBrandColor || null,
@@ -270,7 +270,7 @@ export class EventController {
       if (isRestrictedPrivate) {
         return res.json({
           id: responseData.id,
-          nomeNoivos: responseData.nomeNoivos,
+          title: responseData.title,
           dataEvento: responseData.dataEvento,
           location: responseData.location,
           type: responseData.type,
@@ -342,7 +342,7 @@ export class EventController {
       if (query) {
         andConditions.push({
           OR: [
-            { nomeNoivos: { contains: query, mode: 'insensitive' } },
+            { title: { contains: query, mode: 'insensitive' } },
             { location: { contains: query, mode: 'insensitive' } },
             { clientName: { contains: query, mode: 'insensitive' } }
           ]
@@ -356,8 +356,8 @@ export class EventController {
       console.log("[DEBUG] listPublic where:", JSON.stringify(where, null, 2));
 
       let orderBy: any = { dataEvento: 'desc' };
-      if (sortBy === 'AZ') orderBy = { nomeNoivos: 'asc' };
-      if (sortBy === 'ZA') orderBy = { nomeNoivos: 'desc' };
+      if (sortBy === 'AZ') orderBy = { title: 'asc' };
+      if (sortBy === 'ZA') orderBy = { title: 'desc' };
       if (sortBy === 'PRICE_ASC') orderBy = { priceBase: 'asc' };
       if (sortBy === 'PRICE_DESC') orderBy = { priceBase: 'desc' };
       if (sortBy === 'OLD') orderBy = { dataEvento: 'asc' };
@@ -371,13 +371,14 @@ export class EventController {
           select: {
             id: true,
             slug: true,
-            nomeNoivos: true,
+            title: true,
             dataEvento: true,
             location: true,
             coverPhotoUrl: true,
             priceBase: true,
             priceEarly: true,
             type: true,
+            category: true,
             temFoto: true,
             temVideo: true,
             temReels: true,
@@ -683,7 +684,7 @@ export class EventController {
 
       const event = await prisma.event.create({
         data: {
-          nomeNoivos: name,
+          title: name,
           slug,
           dataEvento: eventDateObj,
           eventHours: eventHours ? Number(eventHours) : 2,
@@ -828,7 +829,7 @@ export class EventController {
 
       const event = await prisma.event.create({
         data: {
-          nomeNoivos: name,
+          title: name,
           city: city || null,
           slug,
           type: "FLASH_EVENT",
@@ -899,7 +900,7 @@ export class EventController {
 
       const event = await prisma.event.create({
         data: {
-          nomeNoivos: name,
+          title: name,
           city: city || null,
           slug,
           type: "FOTO_POINT",
@@ -991,7 +992,7 @@ export class EventController {
     try {
       const id = String(req.params.id);
       const { 
-        nomeNoivos, priceUnit, location, city, itinerary, 
+        title, priceUnit, location, city, itinerary, 
         references, isPrivate, active, coverPhotoUrl, coverPosition,
         dataEvento, startTime, endTime, captacaoId, isPublicCall 
       } = req.body;
@@ -1037,7 +1038,7 @@ export class EventController {
       const updated = await prisma.event.update({
         where: { id },
         data: {
-          nomeNoivos: nomeNoivos ?? undefined,
+          title: title ?? undefined,
           priceUnit: priceUnit !== undefined ? Number(priceUnit) : undefined,
           location: location !== undefined ? String(location) : undefined,
           city: city !== undefined ? String(city) : undefined,

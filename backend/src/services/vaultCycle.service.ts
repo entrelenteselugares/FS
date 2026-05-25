@@ -53,7 +53,7 @@ export class VaultCycleService {
       systemEvent = await withRetry(() => prisma.event.create({
         data: {
           slug: "clube-recorrencia",
-          nomeNoivos: "Sistema: Clube de Memórias",
+          title: "Sistema: Clube de Memórias",
           active: true,
           dataEvento: new Date(),
           ownerId: album.ownerId // Vinculado ao primeiro dono que disparou, ou um admin

@@ -10,7 +10,7 @@ async function main() {
 
   const event = await prisma.event.create({
     data: {
-      nomeNoivos: "Ana & João - Teste Premium",
+      title: "Ana & João - Teste Premium",
       dataEvento: eventDate,
       cartorio: "Cartório Central de São Paulo",
       temFoto: true,

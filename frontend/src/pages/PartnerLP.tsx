@@ -27,7 +27,7 @@ interface PartnerData {
 
 interface RecentEvent {
   id: string;
-  nomeNoivos: string;
+  title: string;
   slug: string;
   dataEvento: string;
   coverPhotoUrl: string;
@@ -309,14 +309,14 @@ export const PartnerLP: React.FC = () => {
                 <img
                   src={evt.coverPhotoUrl || ""}
                   className="w-full h-full object-cover transition-all duration-1000 group-hover:scale-110 grayscale group-hover:grayscale-0"
-                  alt={evt.nomeNoivos}
+                  alt={evt.title}
                   style={{ objectPosition: evt.coverPosition || 'center' }}
                 />
                 <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                   <span className="text-theme-text text-[10px] font-black uppercase tracking-[0.5em] border border-theme-border-2 px-6 py-3 backdrop-blur-md">Ver Galeria</span>
                 </div>
               </div>
-              <h4 className="text-2xl font-black uppercase tracking-tighter mb-1 leading-none">{evt.nomeNoivos}</h4>
+              <h4 className="text-2xl font-black uppercase tracking-tighter mb-1 leading-none">{evt.title}</h4>
               <div className="text-[10px] text-theme-muted font-bold uppercase tracking-[0.3em]">{new Date(evt.dataEvento).toLocaleDateString('pt-BR', { year: 'numeric', month: 'short', day: '2-digit' })}</div>
             </motion.div>
           ))}

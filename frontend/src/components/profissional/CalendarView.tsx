@@ -104,7 +104,7 @@ export function CalendarView({ events, currentMonth, setCurrentMonth, onSelect, 
                         onClick={() => onSelect(ev)}
                         className={`w-full text-left p-2 ${bgColor} text-brand-text text-[8px] font-black uppercase truncate italic rounded-md shadow-sm hover:brightness-110 transition-all`}
                       >
-                        {ev.nomeNoivos}
+                        {ev.title}
                       </button>
                     );
                   })}

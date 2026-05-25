@@ -8,7 +8,7 @@ import { ThemeToggle } from "../components/ThemeToggle";
 interface RankingItem {
   event: {
     id: string;
-    nomeNoivos: string;
+    title: string;
     slug: string;
     coverPhotoUrl: string;
     cartorio: string;
@@ -120,7 +120,7 @@ export const HallOfFame: React.FC = () => {
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
                 </div>
 
-                <h3 className="text-2xl font-black uppercase tracking-tighter mb-1" style={{ fontFamily: "'Barlow Condensed', sans-serif" }}>{item.event.nomeNoivos}</h3>
+                <h3 className="text-2xl font-black uppercase tracking-tighter mb-1" style={{ fontFamily: "'Barlow Condensed', sans-serif" }}>{item.event.title}</h3>
                 <p className="text-[10px] text-theme-muted uppercase tracking-widest font-bold mb-6">{item.event.cartorio}</p>
 
                   <div className="flex items-center gap-2">
@@ -161,7 +161,7 @@ export const HallOfFame: React.FC = () => {
                                 <Star size={16} fill={widx === 0 ? THEME.gold : widx === 1 ? THEME.silver : THEME.bronze} className="stroke-none" />
                             </div>
                         </div>
-                        <h4 className="text-xl font-bold uppercase tracking-tighter mb-1">{winner.event.nomeNoivos}</h4>
+                        <h4 className="text-xl font-bold uppercase tracking-tighter mb-1">{winner.event.title}</h4>
                         <div className="text-[11px] font-black text-brand-tactical">
                             {widx === 0 ? "GRANDE CAMPEÃO" : widx === 1 ? "MENÇÃO PRATA" : "DESTAQUE BRONZE"}
                         </div>

@@ -141,7 +141,7 @@ function TacticalBenefit({ icon, title, desc }: { icon: React.ReactNode; title: 
 
 interface EventData {
   id: string;
-  nomeNoivos: string;
+  title: string;
   dataEvento?: string | null;
   paywall: { active: boolean; message: string };
   lightroomUrl?: string | null;
@@ -165,7 +165,9 @@ interface EventData {
   isComingSoon?: boolean;
   priceUnit?: number;
   pendingOrderId?: string | null;
+  pendingOrderId?: string | null;
   type?: 'ALBUM_FULL' | 'PHOTO_MARKETPLACE' | 'FOTO_POINT' | 'FLASH_EVENT' | 'SCHOOL' | 'SPORTS';
+  category?: string;
   pricePerPhoto?: number;
   isUnitSale?: boolean;
   preSaleEnabled?: boolean;
@@ -266,9 +268,16 @@ function CountdownTimer({ targetDate }: { targetDate: string }) {
   );
 }
 
-
-
-
+function getFallbackByCategory(category?: string, id: string = "") {
+  if (category === "ANIVERSARIO") return "https://images.unsplash.com/photo-1530103862676-de8892bc952f?auto=format&fit=crop&q=80&w=800";
+  if (category === "SHOW_FESTIVAL") return "https://images.unsplash.com/photo-1540039155732-d6749b9325f0?auto=format&fit=crop&q=80&w=800";
+  if (category === "CORPORATIVO") return "https://images.unsplash.com/photo-1515169067868-5387ec356754?auto=format&fit=crop&q=80&w=800";
+  if (category === "FORMATURA") return "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&q=80&w=800";
+  if (category === "ENSAIO") return "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&q=80&w=800";
+  const defaults = ["/defaults/cover1.png", "/defaults/cover2.png", "/defaults/cover3.png"];
+  const index = id.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0) % defaults.length;
+  return defaults[index];
+}
 
 export default function EventPage() {
   const { slug } = useParams();
@@ -348,8 +357,8 @@ export default function EventPage() {
       : `${window.location.origin}/delivery/${event?.id}`;
 
     const shareData = {
-      title: `Álbum: ${event?.nomeNoivos}`,
-      text: isMarketplace ? `Veja as fotos ao vivo de ${event?.nomeNoivos}!` : `Confira as fotos do evento ${event?.nomeNoivos} no Foto Segundo!`,
+      title: `Álbum: ${event?.title}`,
+      text: isMarketplace ? `Veja as fotos ao vivo de ${event?.title}!` : `Confira as fotos do evento ${event?.title} no Foto Segundo!`,
       url: deliveryUrl,
     };
 
@@ -468,9 +477,9 @@ export default function EventPage() {
     try {
       await api.post(`/orders/${oid}/access-type`, { accessType: "PUBLIC" });
       const { data } = await api.get(`/orders/${oid}/access-status`);
-      setAccess({ lightroomUrl: data.lightroomUrl, driveUrl: data.driveUrl, expiresAt: data.expiresAt || "", eventTitle: event?.nomeNoivos || "" });
+      setAccess({ lightroomUrl: data.lightroomUrl, driveUrl: data.driveUrl, expiresAt: data.expiresAt || "", eventTitle: event?.title || "" });
     } catch (err) { console.error("Erro no auto-confirm:", err); }
-  }, [event?.nomeNoivos]);
+  }, [event?.title]);
 
   useEffect(() => {
     const checkAccessStatus = async (oid: string) => {
@@ -486,7 +495,7 @@ export default function EventPage() {
           else handleAutoConfirmChoice(oid);
         } else if (data.status === "ACTIVE") {
           setStep("success");
-          setAccess({ lightroomUrl: data.lightroomUrl, driveUrl: data.driveUrl, expiresAt: data.expiresAt || "", eventTitle: event?.nomeNoivos || "" });
+          setAccess({ lightroomUrl: data.lightroomUrl, driveUrl: data.driveUrl, expiresAt: data.expiresAt || "", eventTitle: event?.title || "" });
         }
       } catch { /* not paid */ }
     };
@@ -605,9 +614,9 @@ export default function EventPage() {
 return (
     <div className="min-h-screen bg-theme-bg text-theme-text font-sans selection:bg-brand-tactical/30 overflow-x-hidden selection:text-theme-text" onContextMenu={(e) => e.preventDefault()}>
       <SEO 
-        title={event.nomeNoivos} 
+        title={event.title} 
         image={getProxyUrl(event.coverPhotoUrl)}
-        description={`Confira as fotos de ${event.nomeNoivos} no Foto Segundo - Memórias Premium.`}
+        description={`Confira as fotos de ${event.title} no Foto Segundo - Memórias Premium.`}
       />
       <Navbar tenantLogoUrl={event.tenantLogoUrl} />
 
@@ -641,7 +650,13 @@ return (
                     fetchPriority="high"
                   />
                 ) : (
-                  <div className="w-full h-full bg-gradient-to-br from-brand-tactical/20 via-theme-bg-muted to-theme-bg" />
+                  <img 
+                    src={getFallbackByCategory(event.category, event.id)} 
+                    alt="" 
+                    className="w-full h-full object-cover opacity-40 blur-sm scale-110"
+                    style={{ objectPosition: event.coverPosition || 'center' }}
+                    fetchPriority="high"
+                  />
                 )}
               </motion.div>
             </AnimatePresence>
@@ -663,7 +678,7 @@ return (
                 initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
                 className="text-4xl md:text-5xl lg:text-6xl font-heading font-black text-theme-text uppercase tracking-tighter leading-[0.85] italic max-w-2xl md:max-w-5xl"
               >
-                {event.nomeNoivos}
+                {event.title}
               </motion.h1>
 
               <div className="flex flex-wrap items-center gap-8 text-theme-text-muted">
@@ -912,7 +927,7 @@ return (
                         ) : event.type === 'SCHOOL' && !authenticatedStudent && !event.isOwner ? (
                           <SchoolAuthenticationGate 
                             studentListRaw={(event.verticalConfigs?.studentList as string | string[] | undefined) ?? ""}
-                            eventTitle={event.nomeNoivos}
+                            eventTitle={event.title}
                             onAuthenticate={(name) => {
                               setAuthenticatedStudent(name);
                               setSearchQuery(name); // Enforce the filter
@@ -1295,18 +1310,18 @@ return (
           <AuthModal onSuccess={() => setStep("success")} onClose={() => setStep("paywall")} />
         )
       )}
-      {showPrintStore && <PrintStoreModal eventId={event.id} eventTitle={event.nomeNoivos} medias={medias} unlockedMediaIds={event.unlockedMediaIds} isMarketplace={isMarketplace} isOwner={event.isOwner} onClose={() => setShowPrintStore(false)} />}
+      {showPrintStore && <PrintStoreModal eventId={event.id} eventTitle={event.title} medias={medias} unlockedMediaIds={event.unlockedMediaIds} isMarketplace={isMarketplace} isOwner={event.isOwner} onClose={() => setShowPrintStore(false)} />}
       {showPrintKit && (
         <PrintKitModal
           eventId={event.id}
           eventSlug={event.slug || undefined}
-          eventTitle={event.nomeNoivos}
+          eventTitle={event.title}
           eventDate={event.dataEvento || undefined}
           tenantLogoUrl={event.tenantLogoUrl || undefined}
           onClose={() => setShowPrintKit(false)}
         />
       )}
-      {needsAccessChoice && orderId && <AccessTypeModal orderId={orderId} eventTitle={event.nomeNoivos} isPrimaryClient={true} isMarketplace={isMarketplace} onConfirmed={() => setNeedsAccessChoice(false)} onClose={() => setNeedsAccessChoice(false)} />}
+      {needsAccessChoice && orderId && <AccessTypeModal orderId={orderId} eventTitle={event.title} isPrimaryClient={true} isMarketplace={isMarketplace} onConfirmed={() => setNeedsAccessChoice(false)} onClose={() => setNeedsAccessChoice(false)} />}
       
       <Modal isOpen={showQrModal} onClose={() => setShowQrModal(false)} title="Protocolo de Captura Phygital">
         <div className="flex flex-col items-center gap-4 pt-2">

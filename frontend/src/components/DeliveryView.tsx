@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 
 interface DeliveryViewProps {
   event: {
-    nomeNoivos: string;
+    title: string;
     lightroomUrl?: string | null;
     driveUrl?: string | null;
   };

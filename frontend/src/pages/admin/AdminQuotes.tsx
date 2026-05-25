@@ -10,7 +10,7 @@ import {
 import { MERLIN_EQUIPMENT, STAFF_ROLES } from "../../data/merlin_pricing";
 
 interface Quote {
-  id: string; nomeNoivos: string; dataEvento: string; location: string;
+  id: string; title: string; dataEvento: string; location: string;
   description: string; clientEmail: string; clientName: string; clientPhone?: string;
   urgency?: "HIGH" | "MEDIUM" | "LOW"; priceBase: number;
   quoteStatus: "PENDING" | "PRICED" | "APPROVED" | "REJECTED" | "CONVERTED" | "ARCHIVED";
@@ -52,8 +52,8 @@ export const AdminQuotes: React.FC = () => {
   const [professionals, setProfessionals] = useState<{id:string,nome:string,profissional?:{workflowType:string[]}}[]>([]);
   const [archivedOpen, setArchivedOpen] = useState(false);
   const [newQuoteData, setNewQuoteData] = useState({
-    nomeNoivos:"",clientName:"",clientEmail:"",clientPhone:"",dataEvento:"",
-    location:"",description:"",priceBase:190,urgency:"MEDIUM" as "HIGH"|"MEDIUM"|"LOW",
+    title:"",clientName:"",clientEmail:"",clientPhone:"",dataEvento:"",
+    location:"",description:"",category:"CASAMENTO",priceBase:190,urgency:"MEDIUM" as "HIGH"|"MEDIUM"|"LOW",
     temFoto:true,temVideo:false,temReels:false
   });
 
@@ -159,7 +159,7 @@ export const AdminQuotes: React.FC = () => {
     try {
       await API.post("/admin/quotes",{...newQuoteData,usageType:"VENDA_DIRETA",quoteStatus:"PENDING"});
       setIsNewQuoteModalOpen(false);
-      setNewQuoteData({nomeNoivos:"",clientName:"",clientEmail:"",clientPhone:"",dataEvento:"",location:"",description:"",priceBase:190,urgency:"MEDIUM",temFoto:true,temVideo:false,temReels:false});
+      setNewQuoteData({title:"",clientName:"",clientEmail:"",clientPhone:"",dataEvento:"",location:"",description:"",category:"CASAMENTO",priceBase:190,urgency:"MEDIUM",temFoto:true,temVideo:false,temReels:false});
       fetchQuotes(); setNotification({message:"Novo lead cadastrado!",type:"success"});
     } catch { setNotification({message:"Erro ao cadastrar.",type:"error"}); }
   };
@@ -203,7 +203,7 @@ export const AdminQuotes: React.FC = () => {
 
     const matchesStatus = effectiveStatus === status;
     const matchesSearch = !search || 
-      q.nomeNoivos.toLowerCase().includes(search.toLowerCase()) || 
+      q.title.toLowerCase().includes(search.toLowerCase()) || 
       (q.clientName && q.clientName.toLowerCase().includes(search.toLowerCase())) ||
       (q.clientEmail && q.clientEmail.toLowerCase().includes(search.toLowerCase()));
 
@@ -223,7 +223,7 @@ export const AdminQuotes: React.FC = () => {
         {quote.urgency==="HIGH"&&<div className="absolute top-0 left-0 w-1 h-full bg-red-500"/>}
         <div className="space-y-3 pl-1">
           <div className="flex items-start justify-between gap-2">
-            <h4 className="text-sm font-black text-theme-text uppercase italic tracking-tight leading-tight flex-1">{quote.nomeNoivos}</h4>
+            <h4 className="text-sm font-black text-theme-text uppercase italic tracking-tight leading-tight flex-1">{quote.title}</h4>
             {quote.urgency==="HIGH"&&<div className="flex items-center gap-1 bg-red-500/10 px-2 py-0.5 border border-red-500/20 rounded shrink-0"><Flame size={9} className="text-red-500"/><span className="text-[8px] font-black text-red-500 uppercase">Urgente</span></div>}
           </div>
           <div className="flex items-center justify-between">
@@ -358,7 +358,7 @@ export const AdminQuotes: React.FC = () => {
                     <Briefcase className="text-brand-tactical" size={24} strokeWidth={1.5}/>
                   </div>
                   <div>
-                    <h3 className="text-2xl font-black uppercase italic tracking-tighter text-theme-text">{selectedQuote.nomeNoivos}</h3>
+                    <h3 className="text-2xl font-black uppercase italic tracking-tighter text-theme-text">{selectedQuote.title}</h3>
                     <p className="text-[9px] font-black uppercase tracking-[0.2em] opacity-40 mt-1">Protocolo: {selectedQuote.id.toUpperCase()}</p>
                   </div>
                 </div>
@@ -586,7 +586,19 @@ export const AdminQuotes: React.FC = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
                   <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest block mb-2 opacity-60 italic">Evento (Título)</label>
-                  <input required placeholder="EX: CASAMENTO ANA & LEO" value={newQuoteData.nomeNoivos} onChange={e => setNewQuoteData({...newQuoteData, nomeNoivos: e.target.value.toUpperCase()})} className="w-full bg-theme-bg-muted border border-theme-border/60 p-4 text-[10px] text-theme-text outline-none focus:border-brand-tactical font-black rounded-xl uppercase" />
+                  <input required placeholder="EX: CASAMENTO ANA & LEO" value={newQuoteData.title} onChange={e => setNewQuoteData({...newQuoteData, title: e.target.value.toUpperCase()})} className="w-full bg-theme-bg-muted border border-theme-border/60 p-4 text-[10px] text-theme-text outline-none focus:border-brand-tactical font-black rounded-xl uppercase" />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest block mb-2 opacity-60 italic">Categoria</label>
+                  <select required value={(newQuoteData as any).category} onChange={e => setNewQuoteData({...newQuoteData, category: e.target.value})} className="w-full bg-theme-bg-muted border border-theme-border/60 p-4 text-[10px] text-theme-text outline-none focus:border-brand-tactical font-black rounded-xl uppercase">
+                    <option value="CASAMENTO">Casamento</option>
+                    <option value="ANIVERSARIO">Aniversário</option>
+                    <option value="SHOW_FESTIVAL">Show/Festival</option>
+                    <option value="CORPORATIVO">Corporativo</option>
+                    <option value="FORMATURA">Formatura</option>
+                    <option value="ENSAIO">Ensaio</option>
+                    <option value="OUTROS">Outros</option>
+                  </select>
                 </div>
                 <div className="space-y-2">
                   <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest block mb-2 opacity-60 italic">Data do Evento</label>

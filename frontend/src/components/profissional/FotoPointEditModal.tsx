@@ -16,7 +16,7 @@ interface FotoPointEditModalProps {
 export function FotoPointEditModal({ event, onClose, onSuccess, onError, network }: FotoPointEditModalProps) {
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
-    nomeNoivos: event.nomeNoivos,
+    title: event.title,
     priceUnit: event.priceUnit || 20,
     location: event.location || "",
     city: event.cartorio || "", 
@@ -81,7 +81,7 @@ export function FotoPointEditModal({ event, onClose, onSuccess, onError, network
                 Painel de Gestão • Foto Point
               </div>
               <h3 className="text-3xl font-heading font-black text-theme-text uppercase italic leading-none tracking-tighter">
-                Editar {event.nomeNoivos}
+                Editar {event.title}
               </h3>
             </div>
             <button type="button" onClick={onClose} className="p-2 hover:bg-white/5 text-theme-muted hover:text-cyan-400 transition-all">
@@ -96,8 +96,8 @@ export function FotoPointEditModal({ event, onClose, onSuccess, onError, network
                 <Camera size={16} className="absolute left-5 top-1/2 -translate-y-1/2 text-cyan-400/50 group-focus-within:text-cyan-400 transition-colors" />
                 <input
                   required
-                  value={formData.nomeNoivos}
-                  onChange={e => setFormData({ ...formData, nomeNoivos: e.target.value })}
+                  value={formData.title}
+                  onChange={e => setFormData({ ...formData, title: e.target.value })}
                   className="w-full bg-white/5 border border-white/10 p-5 pl-14 text-theme-text outline-none focus:border-cyan-400/50 transition-all text-xs font-bold"
                   placeholder="Ex: Foto Point Morumbi"
                 />

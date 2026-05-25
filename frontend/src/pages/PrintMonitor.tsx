@@ -17,7 +17,7 @@ import type { PhygitalPrint as PrintItem } from "../components/PrintSettingsPane
 
 interface EventInfo {
   id: string;
-  nomeNoivos: string;
+  title: string;
   tenantLogoUrl?: string;
 }
 
@@ -89,7 +89,7 @@ export default function PrintMonitor() {
             <ArrowLeft size={20} />
           </button>
           <div>
-            <h1 className="text-sm font-black uppercase tracking-widest">{event?.nomeNoivos || 'Radar Phygital'}</h1>
+            <h1 className="text-sm font-black uppercase tracking-widest">{event?.title || 'Radar Phygital'}</h1>
             <p className="text-[9px] text-zinc-500 font-bold uppercase tracking-widest mt-0.5">Central de Comando de Impressão</p>
           </div>
         </div>

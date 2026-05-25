@@ -55,7 +55,7 @@ export const PaywallView: React.FC<PaywallViewProps> = ({ event, onCheckout, isP
         <h1 
           className="mb-8 text-6xl md:text-9xl tracking-tight text-white leading-tight"
         >
-          {event?.nomeNoivos || "Evento Premium"}
+          {event?.title || "Evento Premium"}
         </h1>
         
         <p 

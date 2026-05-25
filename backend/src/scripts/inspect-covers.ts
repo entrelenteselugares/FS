@@ -5,9 +5,9 @@ async function main() {
   const pool = new Pool({ connectionString: process.env.DATABASE_URL });
   try {
     const { rows } = await pool.query(
-      `SELECT "nomeNoivos", "coverPhotoUrl" FROM events WHERE "coverPhotoUrl" IS NOT NULL ORDER BY "createdAt" DESC LIMIT 20`
+      `SELECT "title", "coverPhotoUrl" FROM events WHERE "coverPhotoUrl" IS NOT NULL ORDER BY "createdAt" DESC LIMIT 20`
     );
-    rows.forEach(row => console.log(`${row.nomeNoivos} | ${(row.coverPhotoUrl || '').substring(0, 100)}`));
+    rows.forEach(row => console.log(`${row.title} | ${(row.coverPhotoUrl || '').substring(0, 100)}`));
   } finally {
     await pool.end();
   }

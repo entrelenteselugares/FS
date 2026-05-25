@@ -8,8 +8,8 @@ async function cleanup() {
   const julias = await prisma.event.findMany({
     where: {
       OR: [
-        { nomeNoivos: "Julia & Ricardo" },
-        { nomeNoivos: "Exemplo: Julia & Ricardo" }
+        { title: "Julia & Ricardo" },
+        { title: "Exemplo: Julia & Ricardo" }
       ]
     },
     include: { pedidos: true }

@@ -45,7 +45,7 @@ interface Pedido {
   event: {
     id: string;
     slug?: string | null;
-    nomeNoivos: string;
+    title: string;
     dataEvento: string;
     location: string;
     city: string | null;
@@ -803,7 +803,7 @@ export default function ClienteArea() {
             isOpen={!!selected}
             onClose={() => setSelected(null)}
             width="max-w-2xl"
-            title={selected?.event?.nomeNoivos || "Detalhes do Álbum"}
+            title={selected?.event?.title || "Detalhes do Álbum"}
           >
             <PedidoDetalhe
               pedido={selected}
@@ -818,7 +818,7 @@ export default function ClienteArea() {
       {isPrivacyModalOpen && selected && (
         <AccessTypeModal
           orderId={selected.id}
-          eventTitle={selected.event.nomeNoivos}
+          eventTitle={selected.event.title}
           onConfirmed={async () => {
             setIsPrivacyModalOpen(false);
             const data = await fetchPedidos();
@@ -900,7 +900,7 @@ function EventGroupRow({ group, now, onSelectPedido }: {
     if (diffDays > 10) {
       navigate(`/e/${event.id}?intent=upgrade`);
     } else {
-      const msg = `Olá! Gostaria de adicionar mais serviços ao meu evento "${event.nomeNoivos}". Vi que para pedidos com menos de 7 dias úteis da data, a inclusão está sujeita à disponibilidade da agenda dos profissionais.`;
+      const msg = `Olá! Gostaria de adicionar mais serviços ao meu evento "${event.title}". Vi que para pedidos com menos de 7 dias úteis da data, a inclusão está sujeita à disponibilidade da agenda dos profissionais.`;
       window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, "_blank");
     }
   };
@@ -950,7 +950,7 @@ function EventGroupRow({ group, now, onSelectPedido }: {
                </span>
             </div>
             <h4 className="text-sm sm:text-lg font-heading font-black italic tracking-tight uppercase leading-tight text-theme-text truncate">
-              {event?.slug?.startsWith('vault-') ? `Álbum: ${event.nomeNoivos}` : event.nomeNoivos}
+              {event?.slug?.startsWith('vault-') ? `Álbum: ${event.title}` : event.title}
             </h4>
             <p className="text-[9px] text-theme-text-muted truncate max-w-md hidden sm:block">
               {getStatusMessage(event.dataEvento)}
@@ -1047,7 +1047,7 @@ function EventGroupRow({ group, now, onSelectPedido }: {
                    <p className="text-[9px] font-black text-brand-tactical uppercase tracking-[0.4em]">Álbum do Evento</p>
                 </div>
                 <h4 className="text-2xl md:text-3xl lg:text-4xl font-heading font-black italic tracking-tighter uppercase leading-none text-theme-text">
-                  {event?.slug?.startsWith('vault-') ? `Álbum: ${event.nomeNoivos}` : event.nomeNoivos}
+                  {event?.slug?.startsWith('vault-') ? `Álbum: ${event.title}` : event.title}
                 </h4>
                 <div className="flex items-center gap-3 text-[9px] md:text-[10px] font-bold text-theme-muted uppercase tracking-widest">
                   <div className="flex items-center gap-1.5"><Clock size={11} /> {formatDate(event.dataEvento)}</div>
@@ -1202,7 +1202,7 @@ function PedidoDetalhe({ pedido, loading, onGoToEvent, onChangePrivacy, onRefres
 }) {
   const navigate = useNavigate();
   const [isEditing, setIsEditing] = useState(false);
-  const [nome, setNome] = useState(pedido.event.nomeNoivos || "");
+  const [nome, setNome] = useState(pedido.event.title || "");
   const [coverUrl, setCoverUrl] = useState(pedido.event.coverPhotoUrl || "");
   const [coverPos, setCoverPos] = useState(pedido.event.coverPosition || "center");
   const [loc, setLoc] = useState(pedido.event.location || "");
@@ -1213,7 +1213,7 @@ function PedidoDetalhe({ pedido, loading, onGoToEvent, onChangePrivacy, onRefres
 
   // Sync state with props when pedido changes (e.g. after a refresh)
   useEffect(() => {
-    setNome(pedido.event.nomeNoivos || "");
+    setNome(pedido.event.title || "");
     setCoverUrl(pedido.event.coverPhotoUrl || "");
     setCoverPos(pedido.event.coverPosition || "center");
     setLoc(pedido.event.location || "");
@@ -1257,13 +1257,13 @@ function PedidoDetalhe({ pedido, loading, onGoToEvent, onChangePrivacy, onRefres
     setIsSaving(true);
     try {
       await API.patch(`/cliente/pedidos/${pedido.id}/personalize`, {
-        nomeNoivos: nome,
+        title: nome,
         coverPhotoUrl: coverUrl,
         coverPosition: coverPos,
         location: loc,
         city: city
       });
-      pedido.event.nomeNoivos = nome;
+      pedido.event.title = nome;
       pedido.event.coverPhotoUrl = coverUrl;
       pedido.event.coverPosition = coverPos;
       pedido.event.location = loc;
@@ -1309,7 +1309,7 @@ function PedidoDetalhe({ pedido, loading, onGoToEvent, onChangePrivacy, onRefres
             <div className="flex items-end justify-between">
               <div className="min-w-0 flex-1">
                 <h3 className="text-2xl md:text-3xl font-heading font-black italic tracking-tighter uppercase text-theme-text leading-tight truncate">
-                  {pedido.event.slug?.startsWith('vault-') ? `Álbum: ${pedido.event.nomeNoivos}` : pedido.event.nomeNoivos}
+                  {pedido.event.slug?.startsWith('vault-') ? `Álbum: ${pedido.event.title}` : pedido.event.title}
                 </h3>
                 <p className="text-[9px] font-bold text-theme-muted uppercase tracking-widest mt-1 whitespace-pre-line">
                   {formatDate(pedido.event.dataEvento)} {pedido.event.city && `• ${pedido.event.city}`}

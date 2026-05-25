@@ -3,7 +3,7 @@
 export interface EventItem {
   id: string;
   slug: string;
-  nomeNoivos: string;
+  title: string;
   dataEvento: string;
   createdAt: string;
   cartorio: string | null;

@@ -10,7 +10,7 @@ interface SettlementRecord {
   order: {
     total: number | string;
     createdAt: Date | string;
-    event?: { nomeNoivos?: string } | null;
+    event?: { title?: string } | null;
   };
 }
 
@@ -108,7 +108,7 @@ export const ReportService = {
         const dateStr = new Date(s.order.createdAt).toLocaleDateString('pt-BR');
         doc.text(dateStr, 50, currentY);
         doc.text(s.orderId.slice(-8).toUpperCase(), 120, currentY);
-        doc.text(s.order.event?.nomeNoivos || 'Venda Direta', 200, currentY, { width: 170, height: 10, ellipsis: true });
+        doc.text(s.order.event?.title || 'Venda Direta', 200, currentY, { width: 170, height: 10, ellipsis: true });
         doc.text(`R$ ${Number(s.order.total).toFixed(2)}`, 380, currentY);
         doc.text(`R$ ${Number(s.amount).toFixed(2)}`, 450, currentY);
 
@@ -199,7 +199,7 @@ export const ReportService = {
       const liquido = Number(s.amount);
       const taxa = bruto - liquido;
       const date = new Date(s.order.createdAt).toLocaleDateString('pt-BR');
-      const event = s.order.event?.nomeNoivos || 'Venda Direta';
+      const event = s.order.event?.title || 'Venda Direta';
       
       return `${date};${s.orderId};${event};${s.role};${bruto.toFixed(2)};${taxa.toFixed(2)};${liquido.toFixed(2)}`;
     }).join('\n');

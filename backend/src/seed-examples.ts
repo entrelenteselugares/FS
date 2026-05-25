@@ -44,7 +44,7 @@ function calcTotal(services: {
 const EVENTOS = [
   {
     originalNamePattern: "Julia & Ricardo",
-    nomeNoivos: "Julia & Ricardo",
+    title: "Julia & Ricardo",
     dataEvento: new Date("2026-12-30"),
     location: "Espaço Monumental",
     city: "São Paulo",
@@ -55,7 +55,7 @@ const EVENTOS = [
     coverPhotoUrl: COVERS[9],
   },
   {
-    nomeNoivos: "Beatriz & Marcos",
+    title: "Beatriz & Marcos",
     dataEvento: new Date("2026-03-15"),
     location: "Vila Madalena, São Paulo",
     city: "São Paulo",
@@ -65,7 +65,7 @@ const EVENTOS = [
     coverPhotoUrl: COVERS[0],
   },
   {
-    nomeNoivos: "Camila & André",
+    title: "Camila & André",
     dataEvento: new Date("2026-02-28"),
     location: "Espaço Jardim das Flores",
     city: "Campinas",
@@ -75,7 +75,7 @@ const EVENTOS = [
     coverPhotoUrl: COVERS[1],
   },
   {
-    nomeNoivos: "Fernanda & Lucas",
+    title: "Fernanda & Lucas",
     dataEvento: new Date("2026-04-05"),
     location: "Hotel Grand Hyatt",
     city: "São Paulo",
@@ -85,7 +85,7 @@ const EVENTOS = [
     coverPhotoUrl: COVERS[2],
   },
   {
-    nomeNoivos: "Isabela & Rafael",
+    title: "Isabela & Rafael",
     dataEvento: new Date("2026-01-20"),
     location: "Fazenda Santa Alice",
     city: "Bragança Paulista",
@@ -95,7 +95,7 @@ const EVENTOS = [
     coverPhotoUrl: COVERS[3],
   },
   {
-    nomeNoivos: "Juliana & Pedro",
+    title: "Juliana & Pedro",
     dataEvento: new Date("2026-03-30"),
     location: "Centro Cultural São Paulo",
     city: "São Paulo",
@@ -105,7 +105,7 @@ const EVENTOS = [
     coverPhotoUrl: COVERS[4],
   },
   {
-    nomeNoivos: "Mariana & Felipe",
+    title: "Mariana & Felipe",
     dataEvento: new Date("2025-12-14"),
     location: "Palazzo Tangará",
     city: "São Paulo",
@@ -115,7 +115,7 @@ const EVENTOS = [
     coverPhotoUrl: COVERS[5],
   },
   {
-    nomeNoivos: "Natália & Thiago",
+    title: "Natália & Thiago",
     dataEvento: new Date("2026-04-12"),
     location: "Recanto das Orquídeas",
     city: "Atibaia",
@@ -125,7 +125,7 @@ const EVENTOS = [
     coverPhotoUrl: COVERS[6],
   },
   {
-    nomeNoivos: "Renata & Guilherme",
+    title: "Renata & Guilherme",
     dataEvento: new Date("2026-05-03"),
     location: "Espaço Contemporâneo",
     city: "Santo André",
@@ -135,7 +135,7 @@ const EVENTOS = [
     coverPhotoUrl: COVERS[7],
   },
   {
-    nomeNoivos: "Carolina & Bruno",
+    title: "Carolina & Bruno",
     dataEvento: new Date("2026-06-14"),
     location: "Quinta da Boa Vista",
     city: "Rio de Janeiro",
@@ -150,7 +150,7 @@ async function main() {
   console.log("🌱 Saneando banco de dados e atualizando fotos premium...\n");
 
   for (const ev of EVENTOS) {
-    const slug = slugify(ev.nomeNoivos);
+    const slug = slugify(ev.title);
     // @ts-ignore
     const total = ev.priceOverride ?? calcTotal(ev.services);
 
@@ -159,14 +159,14 @@ async function main() {
       where: {
         OR: [
           { slug },
-          { nomeNoivos: `Exemplo: ${ev.nomeNoivos}` },
+          { title: `Exemplo: ${ev.title}` },
           { slug: `exemplo-${slug}` }
         ]
       }
     });
 
     const data = {
-      nomeNoivos:       ev.nomeNoivos,
+      title:       ev.title,
       slug,
       dataEvento:       ev.dataEvento,
       location:         ev.location,
@@ -197,10 +197,10 @@ async function main() {
         where: { id: existing.id },
         data,
       });
-      console.log(`🔄 Atualizado: ${ev.nomeNoivos} (ID: ${existing.id})`);
+      console.log(`🔄 Atualizado: ${ev.title} (ID: ${existing.id})`);
     } else {
       await prisma.event.create({ data });
-      console.log(`✅ Criado: ${ev.nomeNoivos}`);
+      console.log(`✅ Criado: ${ev.title}`);
     }
   }
 
@@ -208,7 +208,7 @@ async function main() {
   const desativados = await prisma.event.updateMany({
     where: {
       OR: [
-        { nomeNoivos: { startsWith: "Exemplo:" } },
+        { title: { startsWith: "Exemplo:" } },
         { slug: { startsWith: "exemplo-" } }
       ],
       active: true

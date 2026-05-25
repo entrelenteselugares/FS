@@ -367,6 +367,7 @@ export const QuotePage = () => {
   const [addressData, setAddressData] = useState({ logradouro: "", bairro: "", cidade: "", uf: "" });
   const [addressNumber, setAddressNumber] = useState("");
   const { fetchAddress, loading: isCepLoading } = useViaCep();
+  const [category, setCategory] = useState("CASAMENTO");
   const [eventDate, setEventDate] = useState("");
   const [eventHours, setEventHours] = useState(2);
   const [eventDays, setEventDays] = useState(1);
@@ -510,8 +511,8 @@ export const QuotePage = () => {
       : `${addressData.logradouro}, ${addressNumber} - ${addressData.bairro}, ${addressData.cidade}/${addressData.uf} (CEP: ${customCep})`;
 
     const payload = {
-      name, email, whatsapp, attendees: Number(attendees), locationType, usageType, selectedPartnerId, 
-      customCep, 
+      title: name, email, whatsapp, attendees: Number(attendees), locationType, usageType, selectedPartnerId, 
+      category, customCep, 
       location: fullAddress,
       eventDate, eventHours, eventDays, description, selectedServices, totalPrice, 
       availableBudget,
@@ -754,7 +755,7 @@ export const QuotePage = () => {
                       }}
                     />
                   </div>
-                  <div style={{ display: "flex", justifyContent: "space-between", fontSize: 8, color: THEME.text2, fontWeight: 600 }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", fontSize: 10, color: THEME.text2, fontWeight: 600 }}>
                     <span>1H</span><span>3H</span><span>6H</span><span>9H</span><span>12H</span>
                   </div>
                   {locationType === "PARTNER" && currentPartner?.fixedTime && (
@@ -786,7 +787,7 @@ export const QuotePage = () => {
                       }}
                     />
                   </div>
-                  <div style={{ display: "flex", justifyContent: "space-between", fontSize: 8, color: THEME.text2, fontWeight: 600 }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", fontSize: 10, color: THEME.text2, fontWeight: 600 }}>
                     <span>1 DIA</span><span>3 DIAS</span><span>5 DIAS</span><span>7 DIAS</span>
                   </div>
                 </div>

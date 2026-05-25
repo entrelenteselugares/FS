@@ -55,7 +55,7 @@ export async function getMeusEventos(req: AuthRequest, res: Response): Promise<v
       },
       select: {
         id: true,
-        nomeNoivos: true,
+        title: true,
         dataEvento: true,
         createdAt: true,
         cartorio: true,
@@ -553,7 +553,7 @@ export async function respondToEvent(req: AuthRequest, res: Response): Promise<v
         NotificationService.notifyProfessionalNewAssignment({
           to: nextProEmail,
           profissionalName: nextProName,
-          eventTitle: event.nomeNoivos,
+          eventTitle: event.title,
           eventDate: event.dataEvento.toISOString(),
           location: event.location || "Ponto Fixo"
         }).catch(e => console.error("Erro ao notificar novo profissional redirecionado:", e));
@@ -628,7 +628,7 @@ export async function registerManualSale(req: AuthRequest, res: Response): Promi
     // 3. Notificações (Auditoria: Adicionando fluxos de alerta)
     NotificationService.notifyNewSale({
       buyerEmail: customerEmail || "venda-manual@fotosegundo.com",
-      eventTitle: event.nomeNoivos,
+      eventTitle: event.title,
       orderId: order.id,
       amount: Number(amount)
     });
@@ -637,7 +637,7 @@ export async function registerManualSale(req: AuthRequest, res: Response): Promi
       NotificationService.sendAccessEmail({
         to: customerEmail,
         buyerName: customerName || "Cliente",
-        eventTitle: event.nomeNoivos,
+        eventTitle: event.title,
         orderId: order.id,
         accessLink: `${FRONTEND_URL}/e/${event.id}`
       }).catch((e: unknown) => console.error("Erro e-mail venda manual:", e));

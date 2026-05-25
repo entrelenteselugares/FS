@@ -29,7 +29,7 @@ export async function runExpirationJob(req?: AuthRequest): Promise<void> {
       deletedAt: null,
     },
     include: {
-      event: { select: { nomeNoivos: true } },
+      event: { select: { title: true } },
     },
   }));
 
@@ -46,7 +46,7 @@ export async function runExpirationJob(req?: AuthRequest): Promise<void> {
       NotificationService.sendAccessEmail({
         to: recipientEmail,
         buyerName: "Cliente",
-        eventTitle: order.event?.nomeNoivos || "Seu álbum",
+        eventTitle: order.event?.title || "Seu álbum",
         orderId: order.id,
         accessLink: `${FRONTEND_URL}/minha-conta`,
       }).catch((e: unknown) =>
@@ -68,7 +68,7 @@ export async function runExpirationJob(req?: AuthRequest): Promise<void> {
       deletedAt: null,
     },
     include: {
-      event: { select: { nomeNoivos: true, id: true } },
+      event: { select: { title: true, id: true } },
     },
   }));
 
@@ -193,7 +193,7 @@ export async function runExpirationJob(req?: AuthRequest): Promise<void> {
     const retentionLimit = event.retentionDays || (event.isPrivate ? 7 : 15);
 
     if (diffDays >= retentionLimit) {
-      console.log(`[EXPIRATION JOB] Encerrando evento ${event.id} (${event.nomeNoivos}) por expiração de retenção (${diffDays}/${retentionLimit} dias)`);
+      console.log(`[EXPIRATION JOB] Encerrando evento ${event.id} (${event.title}) por expiração de retenção (${diffDays}/${retentionLimit} dias)`);
       
       await prisma.event.update({
         where: { id: event.id },
@@ -208,7 +208,7 @@ export async function runExpirationJob(req?: AuthRequest): Promise<void> {
         NotificationService.notifyEventAutoClosed({
           to: ownerEmail,
           ownerName,
-          eventTitle: event.nomeNoivos
+          eventTitle: event.title
         }).catch(e => console.error(`[EXPIRATION JOB] Erro ao notificar dono de ${event.id}:`, e));
       }
     }

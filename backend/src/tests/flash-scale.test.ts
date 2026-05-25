@@ -96,7 +96,7 @@ async function main() {
     targetEventId = flashEvent?.id ?? events[0]?.id ?? null;
 
     if (flashEvent) {
-      console.log(`✅ Evento Flash encontrado: ${flashEvent.id} (${flashEvent.nomeNoivos})`);
+      console.log(`✅ Evento Flash encontrado: ${flashEvent.id} (${flashEvent.title})`);
     } else if (events[0]) {
       console.warn(`⚠️  Nenhum FLASH_EVENT. Usando primeiro evento disponível: ${events[0].id}`);
       targetEventId = events[0].id;

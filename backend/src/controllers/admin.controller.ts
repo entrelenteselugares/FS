@@ -155,7 +155,7 @@ export async function getDashboardStats(req: AuthRequest, res: Response): Promis
     const recentOrdersRaw = await prisma.order.findMany({
       where: { status: "APROVADO" },
       include: {
-        event: { select: { nomeNoivos: true, slug: true } },
+        event: { select: { title: true, slug: true } },
       },
       orderBy: { createdAt: "desc" },
       take: 8,
@@ -169,7 +169,7 @@ export async function getDashboardStats(req: AuthRequest, res: Response): Promis
           { lightroomUrl: null },
         ],
       },
-      select: { id: true, nomeNoivos: true, dataEvento: true, coverPhotoUrl: true, lightroomUrl: true },
+      select: { id: true, title: true, dataEvento: true, coverPhotoUrl: true, lightroomUrl: true },
       orderBy: { dataEvento: "asc" },
       take: 5,
     });
@@ -242,7 +242,7 @@ export async function getDashboardStats(req: AuthRequest, res: Response): Promis
       })),
       pendingEvents: pendingEvents.map(e => ({
         id: e.id,
-        title: e.nomeNoivos,
+        title: e.title,
         coverPhotoUrl: e.coverPhotoUrl,
         lightroomUrl: e.lightroomUrl
       })),
@@ -275,7 +275,7 @@ export async function adminListEvents(req: AuthRequest, res: Response): Promise<
       where.AND = [
         {
           OR: [
-            { nomeNoivos: { contains: searchString, mode: "insensitive" } },
+            { title: { contains: searchString, mode: "insensitive" } },
             { location: { contains: searchString, mode: "insensitive" } },
           ]
         }
@@ -307,7 +307,7 @@ export async function adminListEvents(req: AuthRequest, res: Response): Promise<
       events: events.map(e => ({ 
         ...e, 
         city: e.city || (e as any).cartorioUser?.cartorio?.cidade || null,
-        title: e.nomeNoivos, 
+        title: e.title, 
         date: e.dataEvento, 
         isCrowdfund: e.isCrowdfund,
         targetAmount: e.targetAmount,
@@ -384,7 +384,7 @@ export async function adminCreateEvent(req: AuthRequest, res: Response): Promise
 
     const event = await prisma.event.create({
       data: {
-        nomeNoivos: title,
+        title: title,
         slug,
         dataEvento: new Date(date),
         location, city,
@@ -432,10 +432,10 @@ export async function adminCreateEvent(req: AuthRequest, res: Response): Promise
     await audit(req, "EVENT_CREATED", "Event", event.id, null, event);
 
     if (event.captacaoId) {
-      notifyAssignedProfessional(event.id, event.captacaoId, event.nomeNoivos, event.dataEvento, event.location || "");
+      notifyAssignedProfessional(event.id, event.captacaoId, event.title, event.dataEvento, event.location || "");
     }
     if (event.edicaoId) {
-      notifyAssignedProfessional(event.id, event.edicaoId, event.nomeNoivos, event.dataEvento, event.location || "");
+      notifyAssignedProfessional(event.id, event.edicaoId, event.title, event.dataEvento, event.location || "");
     }
 
     res.status(201).json(event);
@@ -462,7 +462,7 @@ export async function adminUpdateEvent(req: AuthRequest, res: Response): Promise
     }
 
     // Mapeamento de campos do body para o schema v4.0
-    if (req.body.title) data.nomeNoivos = req.body.title;
+    if (req.body.title) data.title = req.body.title;
     if (req.body.date) data.dataEvento = new Date(req.body.date);
     if (req.body.location) data.location = req.body.location;
     if (req.body.city) data.city = req.body.city;
@@ -553,10 +553,10 @@ export async function adminUpdateEvent(req: AuthRequest, res: Response): Promise
 
     // Trigger notifications if professional assignment is updated
     if (event.captacaoId && currentEvent.captacaoId !== event.captacaoId) {
-      notifyAssignedProfessional(event.id, event.captacaoId, event.nomeNoivos, event.dataEvento, event.location || "");
+      notifyAssignedProfessional(event.id, event.captacaoId, event.title, event.dataEvento, event.location || "");
     }
     if (event.edicaoId && currentEvent.edicaoId !== event.edicaoId) {
-      notifyAssignedProfessional(event.id, event.edicaoId, event.nomeNoivos, event.dataEvento, event.location || "");
+      notifyAssignedProfessional(event.id, event.edicaoId, event.title, event.dataEvento, event.location || "");
     }
 
     // 4. If priceBase changed, record history and sync pending orders
@@ -608,7 +608,7 @@ export async function adminUpdateEvent(req: AuthRequest, res: Response): Promise
 
     res.json({ 
       ...event, 
-      title: event.nomeNoivos, 
+      title: event.title, 
       date: event.dataEvento, 
       _count: { orders: event._count?.pedidos || 0 } 
     });
@@ -917,7 +917,7 @@ export async function adminUpdateUser(req: AuthRequest, res: Response): Promise<
           data: {
             userId: String(id),
             title: "Franquia Print Habilitada 🖨️",
-            message: "Sua unidade Phygital foi ativada. Você já pode acessar a central de impressões e configurar seus nós de hardware.",
+            body: "Sua unidade Phygital foi ativada. Você já pode acessar a central de impressões e configurar seus nós de hardware.",
             type: "SYSTEM"
           }
         });
@@ -1135,7 +1135,7 @@ export async function adminListOrders(req: AuthRequest, res: Response): Promise<
       const searchString = String(q);
       where.OR = [
         { buyerEmail: { contains: searchString, mode: "insensitive" } },
-        { event: { nomeNoivos: { contains: searchString, mode: "insensitive" } } },
+        { event: { title: { contains: searchString, mode: "insensitive" } } },
       ];
     }
 
@@ -1144,7 +1144,7 @@ export async function adminListOrders(req: AuthRequest, res: Response): Promise<
       include: {
         event: { 
           select: { 
-            nomeNoivos: true, slug: true, dataEvento: true, location: true, city: true,
+            title: true, slug: true, dataEvento: true, location: true, city: true,
             captacao: { select: { id: true, nome: true, pixKey: true, profissional: { select: { captPct: true } } } },
             edicao:   { select: { id: true, nome: true, pixKey: true, profissional: { select: { editPct: true } } } },
             cartorioUser: { select: { id: true, nome: true, pixKey: true, cartorio: { select: { splitPct: true } } } }
@@ -1180,7 +1180,7 @@ export async function adminListOrders(req: AuthRequest, res: Response): Promise<
           } : null
         })),
           event: { 
-            title: o.event.nomeNoivos, 
+            title: o.event.title, 
             slug: o.event.slug,
             date: o.event.dataEvento,
             location: o.event.location,
@@ -1236,7 +1236,7 @@ export async function adminListQuotes(req: AuthRequest, res: Response): Promise<
       AND: [baseFilter, { OR: [
         { clientEmail: { contains: String(q), mode: "insensitive" } },
         { clientName: { contains: String(q), mode: "insensitive" } },
-        { nomeNoivos: { contains: String(q), mode: "insensitive" } },
+        { title: { contains: String(q), mode: "insensitive" } },
       ]}]
     } : baseFilter;
 
@@ -1263,25 +1263,25 @@ export async function adminListQuotes(req: AuthRequest, res: Response): Promise<
 
 export async function adminCreateQuote(req: AuthRequest, res: Response): Promise<void> {
   const {
-    nomeNoivos, clientName, clientEmail, clientPhone,
+    title, clientName, clientEmail, clientPhone,
     dataEvento, location, description, priceBase,
     urgency, temFoto, temVideo, temReels, usageType
   } = req.body;
 
-  if (!nomeNoivos || !dataEvento) {
+  if (!title || !dataEvento) {
     res.status(400).json({ error: "Título do evento e data são obrigatórios." });
     return;
   }
 
   try {
     // Gera slug único para o lead
-    let slug = slugify(`quote-${nomeNoivos}-${new Date(dataEvento).getFullYear()}`);
+    let slug = slugify(`quote-${title}-${new Date(dataEvento).getFullYear()}`);
     const exists = await prisma.event.findUnique({ where: { slug } });
     if (exists) slug = `${slug}-${Date.now().toString(36)}`;
 
     const quote = await prisma.event.create({
       data: {
-        nomeNoivos,
+        title,
         slug,
         dataEvento: new Date(dataEvento),
         location: location || "",
@@ -1457,7 +1457,7 @@ export async function adminApproveQuote(req: AuthRequest, res: Response): Promis
     await NotificationService.sendQuotationPricedEmail({
       to: quote.clientEmail!,
       clientName: quote.clientName || "Cliente",
-      eventTitle: quote.nomeNoivos,
+      eventTitle: quote.title,
       checkoutUrl
     });
 
@@ -1467,7 +1467,7 @@ export async function adminApproveQuote(req: AuthRequest, res: Response): Promis
         userId: targetUser.id,
         type: 'QUOTE_PRICED',
         title: '💰 Seu orçamento chegou!',
-        body: `Preparamos uma proposta exclusiva para ${quote.nomeNoivos}. Clique para ver e confirmar.`,
+        body: `Preparamos uma proposta exclusiva para ${quote.title}. Clique para ver e confirmar.`,
         refId: quote.id,
         refType: 'event'
       });
@@ -1476,7 +1476,7 @@ export async function adminApproveQuote(req: AuthRequest, res: Response): Promis
     // 5. Alerta WhatsApp (Admin)
     NotificationService.notifyQuotationApproved({
       clientName: quote.clientName || "Cliente",
-      eventTitle: quote.nomeNoivos,
+      eventTitle: quote.title,
       finalPrice: Number(finalPrice)
     });
 
@@ -1486,7 +1486,7 @@ export async function adminApproveQuote(req: AuthRequest, res: Response): Promis
         userId: updatedQuote.captacaoId,
         type: 'EVENT_INVITE',
         title: '📸 Novo evento confirmado!',
-        body: `Uma proposta foi aprovada para "${quote.nomeNoivos}". Verifique sua agenda e os detalhes do evento.`,
+        body: `Uma proposta foi aprovada para "${quote.title}". Verifique sua agenda e os detalhes do evento.`,
         refId: quote.id,
         refType: 'event'
       });
@@ -1729,7 +1729,7 @@ export async function adminCreateManualSale(req: AuthRequest, res: Response): Pr
     // 3. NotificaÃ§Ãµes (Auditoria: Corrigindo lacuna de comunicaÃ§Ã£o)
     NotificationService.notifyNewSale({
       buyerEmail: customerEmail,
-      eventTitle: event.nomeNoivos,
+      eventTitle: event.title,
       orderId: order.id,
       amount: Number(amount)
     });
@@ -1737,7 +1737,7 @@ export async function adminCreateManualSale(req: AuthRequest, res: Response): Pr
     NotificationService.sendAccessEmail({
       to: customerEmail,
       buyerName: customerName,
-      eventTitle: event.nomeNoivos,
+      eventTitle: event.title,
       orderId: order.id,
       accessLink: `${FRONTEND_URL}/e/${event.id}`
     }).catch(e => console.error("Erro e-mail venda manual admin:", e));

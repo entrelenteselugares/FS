@@ -98,7 +98,7 @@ export class CartorioController {
 
         return {
           id: ev.id,
-          title: ev.nomeNoivos,
+          title: ev.title,
           date: ev.dataEvento,
           city: ev.city || ev.cartorioUser?.cartorio?.cidade || null,
           location: ev.location,
@@ -195,7 +195,7 @@ export class CartorioController {
           const result = events.map(ev => ({
             ...ev,
             city: ev.city || (ev as any).cartorioUser?.cartorio?.cidade || null,
-            title: ev.nomeNoivos,
+            title: ev.title,
             date: ev.dataEvento,
             captacao: ev.captacao || (ev.cartorioUser?.cartorio?.profissionais?.length
               ? { nome: ev.cartorioUser.cartorio.profissionais.map(p => p.profissional.user.nome).join(", ") }
@@ -236,7 +236,7 @@ export class CartorioController {
             : {}),
         },
         include: {
-          event: { select: { nomeNoivos: true } },
+          event: { select: { title: true } },
         },
         orderBy: { createdAt: "desc" },
         take: 100,
@@ -249,7 +249,7 @@ export class CartorioController {
         splitCartorio: null,
         createdAt: p.createdAt,
         buyerEmail: null,
-        event: { title: p.event?.nomeNoivos ?? "—" },
+        event: { title: p.event?.title ?? "—" },
       }));
 
       res.json({ orders: result });

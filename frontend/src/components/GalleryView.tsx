@@ -13,7 +13,7 @@ export const GalleryView: React.FC<GalleryViewProps> = ({ event }) => {
       <header className="px-6 mb-16 text-center max-w-7xl mx-auto">
         <h2 className="mb-2 text-[10px] font-black uppercase tracking-[0.6em] text-brand-indigo">Galeria Desbloqueada</h2>
         <h1 className="text-4xl font-black tracking-tighter uppercase md:text-6xl" style={{ color: "var(--theme-text)" }}>
-          {event.nomeNoivos}
+          {event.title}
         </h1>
         <div className="flex items-center justify-center gap-4 mt-6">
            <div className="flex items-center gap-2 px-4 py-2 text-[10px] font-black uppercase border rounded-xl" style={{ borderColor: "var(--theme-border)", background: "var(--theme-bg-muted)", color: "var(--theme-text)" }}>

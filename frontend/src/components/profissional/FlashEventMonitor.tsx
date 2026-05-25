@@ -7,7 +7,7 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 
 interface EventStats {
-  event: { id: string; nomeNoivos: string; slug: string; type: string };
+  event: { id: string; title: string; slug: string; type: string };
   cards: {
     total: number; unused: number; used: number; claimed: number;
     conversionRate: string;
@@ -75,7 +75,7 @@ export function FlashEventMonitor({ eventId }: { eventId: string }) {
             <p className="text-[9px] font-black text-emerald-400 uppercase tracking-[0.4em]">Ao vivo</p>
           </div>
           <h3 className="text-xl font-black italic text-theme-text uppercase tracking-tight">
-            {stats.event.nomeNoivos}
+            {stats.event.title}
           </h3>
           <p className="text-[9px] text-theme-muted font-bold uppercase tracking-widest">
             Atualizado {lastPoll ? lastPoll.toLocaleTimeString("pt-BR") : "—"} • polling a cada 10s

@@ -71,7 +71,7 @@ export function EventEditPanel({ event, onUpdated, onClose, onNotify }: EventEdi
             </div>
             <div>
               <p className="text-[10px] font-black uppercase tracking-[0.2em] opacity-40">Painel de Entrega Técnica</p>
-              <h2 className="text-2xl font-black uppercase italic tracking-tighter" style={{ color: T.text }}>{event.nomeNoivos}</h2>
+              <h2 className="text-2xl font-black uppercase italic tracking-tighter" style={{ color: T.text }}>{event.title}</h2>
             </div>
           </div>
           <button onClick={onClose} className="p-3 hover:bg-white/5 rounded-full transition-all active:scale-90" style={{ color: T.text2 }}>

@@ -339,7 +339,7 @@ export class PaymentController {
 
       const mpResponse = await MercadoPagoService.createPreference({
         transaction_amount: preco,
-        description: `Fotos Evento: ${event.nomeNoivos}`,
+        description: `Fotos Evento: ${event.title}`,
         payer_email: email,
         notification_url: isLocal 
           ? "" 
@@ -1099,7 +1099,7 @@ export class PaymentController {
       const mpResponse = await MercadoPagoService.processPayment({
         transaction_amount: preco,
         token: cardToken,
-        description: `Fotos Evento: ${event.nomeNoivos}`,
+        description: `Fotos Evento: ${event.title}`,
         installments: Number(installments) || 1,
         payment_method_id: paymentMethodId || "visa",
         payer: {
@@ -1142,7 +1142,7 @@ export class PaymentController {
         NotificationService.notifyPaymentIssue({
           orderId: order.id,
           status: mpResponse.status_detail || "rejected",
-          eventTitle: event.nomeNoivos
+          eventTitle: event.title
         });
       }
 
@@ -1187,7 +1187,7 @@ export class PaymentController {
           event: {
             select: {
               id: true,
-              nomeNoivos: true,
+              title: true,
               dataEvento: true,
               location: true,
               coverPhotoUrl: true,
@@ -1222,7 +1222,7 @@ export class PaymentController {
             buyerEmail: supplyOrder.franchisee?.email,
             event: {
               id: "FRANCHISE_SHOP",
-              nomeNoivos: "Loja da Franquia",
+              title: "Loja da Franquia",
               dataEvento: supplyOrder.createdAt,
               location: "Portal do Franqueado",
               coverPhotoUrl: "/logo-fs.png",
@@ -1260,7 +1260,7 @@ export class PaymentController {
             buyerEmail: subscription.user?.email,
             event: {
               id: "VAULT_SUBSCRIPTION",
-              nomeNoivos: `Assinatura: ${subscription.album?.nome || "Cofre de Memórias"}`,
+              title: `Assinatura: ${subscription.album?.nome || "Cofre de Memórias"}`,
               dataEvento: subscription.createdAt,
               location: "Plataforma Foto Segundo",
               coverPhotoUrl: "/logo-fs.png",
@@ -1381,7 +1381,7 @@ export class PaymentController {
       let order = await prisma.order.findUnique({
         where: { id: String(id) },
         include: {
-          event: { select: { id: true, nomeNoivos: true } },
+          event: { select: { id: true, title: true } },
           cliente: { select: { email: true, nome: true } }
         }
       });
@@ -1465,7 +1465,7 @@ export class PaymentController {
 
         NotificationService.notifyNewSale({
           buyerEmail: order.buyerEmail || order.cliente?.email || "desconhecido",
-          eventTitle: order.event.nomeNoivos,
+          eventTitle: order.event.title,
           orderId: order.id,
           amount: Number(order.valor)
         });
@@ -1476,7 +1476,7 @@ export class PaymentController {
           NotificationService.sendAccessEmail({
             to: recipientEmail,
             buyerName: order.cliente?.nome || "Cliente",
-            eventTitle: order.event.nomeNoivos,
+            eventTitle: order.event.title,
             orderId: order.id,
             accessLink: `${FRONTEND_URL}/e/${order.eventId}`,
             tempPassword: order.tempPassword || undefined
@@ -1788,7 +1788,7 @@ export class PaymentController {
         NotificationService.sendAccessEmail({
           to: recipientEmail,
           buyerName: order.cliente?.nome || "Cliente",
-          eventTitle: event.nomeNoivos,
+          eventTitle: event.title,
           orderId: order.id,
           accessLink: `${FRONTEND_URL}/e/${event.id}`,
           tempPassword: order.tempPassword || undefined,
@@ -1798,7 +1798,7 @@ export class PaymentController {
 
       NotificationService.notifyNewSale({
         buyerEmail: recipientEmail || "desconhecido",
-        eventTitle: event.nomeNoivos,
+        eventTitle: event.title,
         orderId: order.id,
         amount: Number(order.valor)
       });

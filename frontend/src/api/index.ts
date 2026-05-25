@@ -13,7 +13,7 @@ export interface MediaFile {
 
 export interface EventData {
   id: string;
-  nomeNoivos: string;
+  title: string;
   dataEvento: string;
   coverPhotoUrl: string | null;
   temFoto: boolean;

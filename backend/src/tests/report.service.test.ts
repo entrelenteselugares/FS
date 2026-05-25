@@ -15,7 +15,7 @@ describe('ReportService', () => {
       order: {
         total: 150,
         createdAt: new Date('2026-05-10T10:00:00Z'),
-        event: { nomeNoivos: 'Casamento A' }
+        event: { title: 'Casamento A' }
       }
     },
     {
@@ -25,7 +25,7 @@ describe('ReportService', () => {
       order: {
         total: 250,
         createdAt: new Date('2026-05-11T15:00:00Z'),
-        event: { nomeNoivos: 'Batizado B' }
+        event: { title: 'Batizado B' }
       }
     }
   ];

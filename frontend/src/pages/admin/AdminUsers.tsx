@@ -269,7 +269,7 @@ export const AdminUsers: React.FC = () => {
                     </div>
                     <div className="col-span-3 flex flex-wrap gap-2">
                       <span className={`px-3 py-1.5 border ${styles.bg} ${styles.border} ${styles.text} text-[9px] font-black uppercase tracking-[0.2em] inline-flex items-center gap-2 rounded-xl italic`}>
-                        {u.role === 'ADMIN' && <Shield size={8} />} {u.role === 'CARTORIO' ? 'CARTÓRIO' : u.role}
+                        {u.role === 'ADMIN' && <Shield size={8} />} {u.role === 'CARTORIO' ? 'UNIDADE' : u.role}
                       </span>
                       {u.isVerified && (
                         <span className="px-2 py-1 bg-brand-tactical/10 border border-brand-tactical/30 text-brand-tactical text-[7px] font-black uppercase tracking-widest flex items-center gap-1 rounded-lg">
@@ -367,7 +367,7 @@ export const AdminUsers: React.FC = () => {
                         <select className="fs-input font-black uppercase appearance-none cursor-pointer" value={formData.role} onChange={e => setFormData({...formData, role: e.target.value})}>
                           <option value="ADMIN">ADMINISTRADOR</option>
                           <option value="PROFISSIONAL">PROFISSIONAL / PARCEIRO</option>
-                          <option value="CARTORIO">UNIDADE FIXA / CARTÓRIO</option>
+                          <option value="CARTORIO">UNIDADE FIXA / PARCEIRO</option>
                           <option value="CLIENTE">CLIENTE</option>
                         </select>
                       </div>

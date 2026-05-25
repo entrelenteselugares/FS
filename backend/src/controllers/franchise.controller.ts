@@ -322,7 +322,7 @@ export class FranchiseController {
           status: "APROVADO"
         },
         include: {
-          event: { select: { nomeNoivos: true } }
+          event: { select: { title: true } }
         },
         orderBy: { updatedAt: 'desc' },
         take: 5
@@ -362,7 +362,7 @@ export class FranchiseController {
         recentCommissions: recentCommissions.map(c => ({
           id: c.id,
           amount: Number(c.splitFranchisee || 0),
-          eventTitle: c.event.nomeNoivos,
+          eventTitle: c.event.title,
           date: c.updatedAt
         })),
         intel: {
@@ -399,7 +399,7 @@ export class FranchiseController {
       const orders = await prisma.order.findMany({
         where: whereClause,
         include: {
-          event: { select: { nomeNoivos: true } },
+          event: { select: { title: true } },
           cliente: { select: { nome: true, email: true } }
         },
         orderBy: { updatedAt: 'desc' }
@@ -414,7 +414,7 @@ export class FranchiseController {
       
       orders.forEach(o => {
         const dateStr = o.updatedAt.toISOString().split('T')[0];
-        const eventName = o.event?.nomeNoivos ? `"${o.event.nomeNoivos}"` : "N/A";
+        const eventName = o.event?.title ? `"${o.event.title}"` : "N/A";
         const clientName = o.cliente?.nome ? `"${o.cliente.nome}"` : "N/A";
         const clientEmail = o.cliente?.email ? `"${o.cliente.email}"` : "N/A";
         const total = Number(o.valor).toFixed(2);

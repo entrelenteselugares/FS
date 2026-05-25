@@ -55,7 +55,7 @@ async function main() {
   // Cria o evento
   const event = await prisma.event.create({
     data: {
-      nomeNoivos:   'E2E Marketplace Test',
+      title:   'E2E Marketplace Test',
       slug:         existingSlug,
       type:         'PHOTO_MARKETPLACE',
       active:       true,

@@ -11,7 +11,7 @@ interface SettlementRecord {
   order: {
     total: number | string;
     createdAt: Date | string;
-    event?: { nomeNoivos?: string } | null;
+    event?: { title?: string } | null;
   };
 }
 

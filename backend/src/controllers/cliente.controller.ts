@@ -20,7 +20,7 @@ export async function getMeusPedidos(req: AuthRequest, res: Response): Promise<v
           select: {
             id: true,
             slug: true,
-            nomeNoivos: true,
+            title: true,
             dataEvento: true,
             location: true,
             city: true,
@@ -79,7 +79,7 @@ export async function getMeuPedidoDetalhe(req: AuthRequest, res: Response): Prom
           select: {
             id: true,
             slug: true,
-            nomeNoivos: true,
+            title: true,
             dataEvento: true,
             location: true,
             city: true,
@@ -153,7 +153,7 @@ export async function personalizePedido(req: AuthRequest, res: Response): Promis
   const user = req.user;
   if (!user) { res.status(401).json({ error: "Não autenticado." }); return; }
   const { id } = req.params;
-  const { nomeNoivos, coverPhotoUrl, coverPosition, location, city } = req.body;
+  const { title, coverPhotoUrl, coverPosition, location, city } = req.body;
 
   try {
     const pedido = await prisma.order.findFirst({
@@ -172,7 +172,7 @@ export async function personalizePedido(req: AuthRequest, res: Response): Promis
     const updatedEvent = await prisma.event.update({
       where: { id: pedido.eventId },
       data: {
-        ...(nomeNoivos !== undefined && { nomeNoivos: String(nomeNoivos) }),
+        ...(title !== undefined && { title: String(title) }),
         ...(coverPhotoUrl !== undefined && { coverPhotoUrl: String(coverPhotoUrl) || null }),
         ...(coverPosition !== undefined && { coverPosition: String(coverPosition) || "center" }),
         ...(location !== undefined && { location: String(location) || "" }),

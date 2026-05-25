@@ -128,7 +128,7 @@ export function AgendaTab({
                   {/* INFO COL */}
                   <div className="flex-grow space-y-3">
                     <div className="flex items-center gap-4">
-                      <h3 className="text-xl md:text-2xl font-heading font-black text-theme-text uppercase italic tracking-tight">{ev.nomeNoivos}</h3>
+                      <h3 className="text-xl md:text-2xl font-heading font-black text-theme-text uppercase italic tracking-tight">{ev.title}</h3>
                       <div className="px-2 py-0.5 text-[9px] font-black border rounded-xl bg-yellow-400/10 text-yellow-400 border-yellow-400/20">
                         CHAMADA ABERTA
                       </div>
@@ -213,7 +213,7 @@ export function AgendaTab({
                     {/* INFO COL */}
                     <div className="flex-grow space-y-3">
                       <div className="flex items-center gap-4">
-                        <h3 className="text-xl md:text-2xl font-heading font-black text-theme-text uppercase italic tracking-tight">{ev.nomeNoivos}</h3>
+                        <h3 className="text-xl md:text-2xl font-heading font-black text-theme-text uppercase italic tracking-tight">{ev.title}</h3>
                         <div className={`px-2 py-0.5 text-[9px] font-black border rounded-xl ${ev.captacaoStatus === "ACCEPTED" ? "bg-brand-tactical/10 text-brand-tactical border-brand-tactical/20" : "bg-amber-500/10 text-amber-500 border-amber-500/20"}`}>
                           {ev.captacaoStatus === "ACCEPTED" ? "CONFIRMADO" : "PENDENTE"}
                         </div>

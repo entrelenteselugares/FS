@@ -61,7 +61,7 @@ export async function runLoyaltyBot(req: Request, res: Response): Promise<void> 
           console.log(`[LoyaltyBot] Enviando para ${event.clientName} (${type})`);
           NotificationService.sendLoyaltyMessage({
             clientName: event.clientName || "Cliente",
-            eventTitle: event.nomeNoivos,
+            eventTitle: event.title,
             whatsapp: whatsapp,
             type: type
           });

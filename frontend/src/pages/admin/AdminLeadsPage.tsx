@@ -19,7 +19,7 @@ interface Lead {
   source: string;
   createdAt: string;
   event?: {
-    nomeNoivos: string;
+    title: string;
   };
 }
 
@@ -28,7 +28,7 @@ interface AbandonedCart {
   valor: number;
   createdAt: string;
   event: {
-    nomeNoivos: string;
+    title: string;
   };
   cliente?: {
     nome: string;
@@ -187,7 +187,7 @@ export const AdminLeadsPage: React.FC = () => {
                     </div>
                   </td>
                   <td className="p-6">
-                    <span className="text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest text-theme-text-muted">{item.event.nomeNoivos}</span>
+                    <span className="text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest text-theme-text-muted">{item.event.title}</span>
                   </td>
                   <td className="p-6">
                     <span className="text-xs font-heading font-black italic text-theme-text">R$ {Number(item.valor).toFixed(2)}</span>
@@ -202,7 +202,7 @@ export const AdminLeadsPage: React.FC = () => {
                     <div className="flex items-center justify-end gap-3">
                       {(item.cliente?.whatsapp || item.buyerWhatsapp) && (
                         <button 
-                          onClick={() => window.open(`https://wa.me/${(item.cliente?.whatsapp || item.buyerWhatsapp)?.replace(/\D/g, '')}?text=${encodeURIComponent('Olá! Vimos que você iniciou um pedido no Foto Segundo para o evento ' + item.event.nomeNoivos + '. Ficou com alguma dúvida?')}`, '_blank')}
+                          onClick={() => window.open(`https://wa.me/${(item.cliente?.whatsapp || item.buyerWhatsapp)?.replace(/\D/g, '')}?text=${encodeURIComponent('Olá! Vimos que você iniciou um pedido no Foto Segundo para o evento ' + item.event.title + '. Ficou com alguma dúvida?')}`, '_blank')}
                           className="p-2 bg-[#25D366]/10 text-[#25D366] hover:bg-[#25D366] hover:text-white transition-all rounded-lg"
                         >
                           <MessageCircle size={14} />
@@ -248,7 +248,7 @@ export const AdminLeadsPage: React.FC = () => {
                     </div>
                   </td>
                   <td className="p-6 text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest text-theme-text-muted">
-                    {lead.event?.nomeNoivos || 'Captação Geral'}
+                    {lead.event?.title || 'Captação Geral'}
                   </td>
                   <td className="p-6 text-[9px] font-bold text-theme-text-muted">
                     {new Date(lead.createdAt).toLocaleDateString('pt-BR')}

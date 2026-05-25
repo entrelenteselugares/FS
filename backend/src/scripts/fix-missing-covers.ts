@@ -41,7 +41,7 @@ async function main() {
   try {
     // Buscar TODOS os eventos, ordenados por data de criação
     const { rows: events } = await pool.query(
-      `SELECT id, "nomeNoivos", "coverPhotoUrl" FROM events ORDER BY "createdAt" ASC`
+      `SELECT id, "title", "coverPhotoUrl" FROM events ORDER BY "createdAt" ASC`
     );
 
     console.log(`📸 Total de ${events.length} eventos encontrados.`);
@@ -61,7 +61,7 @@ async function main() {
         [coverUrl, event.id]
       );
       updated++;
-      console.log(`✅ [${i + 1}/${events.length}] ${event.nomeNoivos}`);
+      console.log(`✅ [${i + 1}/${events.length}] ${event.title}`);
     }
 
     console.log(`\n🎉 ${updated} eventos atualizados com imagens únicas!`);

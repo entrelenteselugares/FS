@@ -27,7 +27,7 @@ async function main() {
   // Criar um evento de exemplo para o painel não vir vazio
   const sampleEvent = await prisma.event.create({
     data: {
-      nomeNoivos: "Exemplo: Julia & Ricardo",
+      title: "Exemplo: Julia & Ricardo",
       dataEvento: new Date("2026-12-31"),
       cartorio: "1º Cartório de Registro Civil",
       lightroomUrl: "https://lightroom.adobe.com/sample",
@@ -36,7 +36,7 @@ async function main() {
     }
   });
 
-  console.log("✅ Evento de Exemplo criado:", sampleEvent.nomeNoivos);
+  console.log("✅ Evento de Exemplo criado:", sampleEvent.title);
 }
 
 main()

@@ -207,7 +207,7 @@ export function FinanceTab({
                 ) : (
                   <div className="space-y-1">
                     <p className="text-[12px] font-black text-brand-tactical uppercase italic">META ATINGIDA! 🏆 OPERAÇÃO DE ALTA PERFORMANCE</p>
-                    <p className="text-[9px] text-theme-muted uppercase font-bold tracking-widest">Você atingiu seu target tático. Continue escalando sua rede de empatia.</p>
+                    <p className="text-[9px] text-theme-muted uppercase font-bold tracking-widest">Você atingiu seu target tático. Continue escalando sua rede tática de conexões.</p>
                   </div>
                 )}
               </div>

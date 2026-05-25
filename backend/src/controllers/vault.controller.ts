@@ -550,7 +550,7 @@ export class VaultController {
         systemEvent = await prisma.event.create({
           data: {
             slug: `vault-${album.id}`,
-            nomeNoivos: album.nome,
+            title: album.nome,
             active: true,
             dataEvento: new Date(),
             ownerId: album.ownerId

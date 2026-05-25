@@ -30,7 +30,7 @@ export const CRMService = {
         include: {
           event: {
             select: {
-              nomeNoivos: true
+              title: true
             }
           },
           cliente: {
@@ -55,7 +55,7 @@ export const CRMService = {
         try {
           await EmailService.sendAbandonmentReminder(
             targetEmail,
-            order.event.nomeNoivos,
+            order.event.title,
             order.id,
             Number(order.valor)
           );

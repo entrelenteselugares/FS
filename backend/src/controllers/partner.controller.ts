@@ -37,7 +37,7 @@ export async function getPartnerLandingData(req: Request, res: Response): Promis
       },
       select: {
         id: true,
-        nomeNoivos: true,
+        title: true,
         slug: true,
         dataEvento: true,
         coverPhotoUrl: true,

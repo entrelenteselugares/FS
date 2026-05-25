@@ -17,7 +17,7 @@ import { useCart } from "../hooks/useCart";
 interface OrderEvent {
   id: string;
   slug?: string;
-  nomeNoivos: string;
+  title: string;
   dataEvento: string;
   location?: string;
   coverPhotoUrl?: string;
@@ -328,13 +328,13 @@ export const CheckoutPage = () => {
           // Se o erro for "usuário não encontrado", tentamos registrar automaticamente
           if (axiosError.response?.status === 404 || axiosError.response?.data?.error?.includes("encontrado")) {
             setAuthStep('register');
-            await authRegister(targetEmail, password, order!.contributorName || order!.event.nomeNoivos || "Cliente");
+            await authRegister(targetEmail, password, order!.contributorName || order!.event.title || "Cliente");
           } else {
             throw loginErr;
           }
         }
       } else {
-        await authRegister(targetEmail, password, order!.contributorName || order!.event.nomeNoivos || "Cliente");
+        await authRegister(targetEmail, password, order!.contributorName || order!.event.title || "Cliente");
       }
       setAuthStep('authorized');
     } catch (err: unknown) {
@@ -745,7 +745,7 @@ export const CheckoutPage = () => {
               localStorage.removeItem('fs_cart_digital');
               navigate('/');
             }}
-            className="w-full py-5 bg-brand-tactical text-black text-[10px] font-black uppercase tracking-[0.4em] hover:bg-white transition-all italic shadow-2xl"
+            className="w-full px-8 py-4 bg-zinc-800 text-white text-[10px] font-black uppercase tracking-[0.4em] hover:bg-white hover:text-black transition-all italic shadow-2xl"
           >
             Limpar e Voltar para a Vitrine
           </button>
@@ -812,7 +812,7 @@ export const CheckoutPage = () => {
             <div>
               <p className="text-[10px] font-black text-brand-tactical uppercase tracking-[0.4em] mb-4">Investimento</p>
               <h1 className="text-4xl md:text-5xl font-black italic tracking-tighter uppercase leading-none">
-                {order.event?.slug === "vaults-system" ? "Finalizar Pedido" : order.event?.nomeNoivos}
+                {order.event?.slug === "vaults-system" ? "Finalizar Pedido" : order.event?.title}
               </h1>
               <p className="text-zinc-500 text-sm mt-4 font-medium">
                 {order.manualType === "VAULT_ONDEMAND" ? "Checkout do Álbum" : (order.manualType || "Seleção Digital de Alta Resolução")}

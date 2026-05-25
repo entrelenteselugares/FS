@@ -150,7 +150,7 @@ async function getContestRankingInternal(start: Date, end: Date, limit: number =
       where: { id: item.eventId },
       select: {
         id: true,
-        nomeNoivos: true,
+        title: true,
         slug: true,
         coverPhotoUrl: true,
         cartorio: true,

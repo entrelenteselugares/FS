@@ -114,7 +114,7 @@ export class MarketplaceController {
 
       const event = await prisma.event.create({
         data: {
-          nomeNoivos: finalName,
+          title: finalName,
           dataEvento: eventDate,
           location: finalLocation,
           type: "PHOTO_MARKETPLACE",
@@ -268,7 +268,7 @@ export class MarketplaceController {
       const buffer = Buffer.from(base64Data, "base64");
       
       const dbUser = await prisma.user.findUnique({ where: { id: userId } });
-      const customerName = dbUser?.name || "Fotógrafo / Admin";
+      const customerName = dbUser?.nome || "Fotógrafo / Admin";
 
       const result = await PhygitalService.processUpload(buffer, {
         eventId: String(eventId),
@@ -293,8 +293,8 @@ export class MarketplaceController {
       // Audit — Upload de Mídia (P2)
       await audit(req, "MEDIA_UPLOADED", "EventMedia", media.id, null, {
         eventId: String(eventId),
-        url: publicUrl,
-        shortId,
+        url: media.url,
+        shortId: media.shortId,
         price: media.price
       });
 
@@ -489,7 +489,7 @@ export class MarketplaceController {
       const folderId = folderIdMatch[0];
 
       // 2. Listar arquivos no Drive
-      console.log(`[SYNC] Iniciando sincronização para evento ${event.nomeNoivos} (ID: ${eventId})`);
+      console.log(`[SYNC] Iniciando sincronização para evento ${event.title} (ID: ${eventId})`);
       const files = await driveService.listFiles(folderId);
       console.log(`[SYNC] ${files.length} arquivos encontrados no Drive.`);
 

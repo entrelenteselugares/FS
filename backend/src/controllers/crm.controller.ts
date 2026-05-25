@@ -23,18 +23,18 @@ export const CRMController = {
           metadata: metadata || {},
         },
         include: {
-          event: { select: { nomeNoivos: true } }
+          event: { select: { title: true } }
         }
       });
 
       // Gatilho de Boas-vindas (Assíncrono)
       EmailService.sendEmail({
         to: email,
-        subject: `Bem-vindo ao Foto Segundo | ${lead.event?.nomeNoivos || 'Galeria Profissional'}`,
+        subject: `Bem-vindo ao Foto Segundo | ${lead.event?.title || 'Galeria Profissional'}`,
         html: `
           <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; background: #000; color: #fff; padding: 40px; border: 1px solid #333;">
             <h2 style="font-style: italic; text-transform: uppercase; letter-spacing: -1px;">Olá tático!</h2>
-            <p>Seu e-mail foi cadastrado com sucesso para o evento <strong>${lead.event?.nomeNoivos || 'da nossa rede'}</strong>.</p>
+            <p>Seu e-mail foi cadastrado com sucesso para o evento <strong>${lead.event?.title || 'da nossa rede'}</strong>.</p>
             <p>Você receberá alertas exclusivos quando novas fotos forem liberadas e cupons táticos para suas compras.</p>
             <hr style="border: 0; border-top: 1px solid #333; margin: 20px 0;">
             <p style="font-size: 10px; color: #666;">Foto Segundo - O melhor da sua memória, eternizado.</p>
@@ -67,7 +67,7 @@ export const CRMController = {
         include: {
           event: {
             select: {
-              nomeNoivos: true,
+              title: true,
             },
           },
           cliente: {
@@ -99,7 +99,7 @@ export const CRMController = {
         include: {
           event: {
             select: {
-              nomeNoivos: true,
+              title: true,
             },
           },
         },

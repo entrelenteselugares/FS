@@ -47,7 +47,7 @@ export async function getTaxReport(req: AuthRequest, res: Response): Promise<voi
       return {
         id: o.id,
         data: o.createdAt.toISOString().split('T')[0],
-        evento: o.event.nomeNoivos,
+        evento: o.event.title,
         valorTotal: totalValue,
         taxaPlataforma: platformFee,
         recebimentoLiquido: mySplit,

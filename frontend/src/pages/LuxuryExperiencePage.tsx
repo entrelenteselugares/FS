@@ -9,7 +9,7 @@ import { useAuth } from "../hooks/useAuth";
 
 interface EventData {
   id: string;
-  nomeNoivos: string;
+  title: string;
   dataEvento: string;
   location: string | null;
   coverPhotoUrl: string | null;
@@ -134,7 +134,7 @@ export default function LuxuryExperiencePage() {
           >
             <p className="text-[11px] font-black text-emerald-500 uppercase tracking-[0.6em] italic">Galeria Exclusiva</p>
             <h1 className="text-5xl md:text-8xl font-display font-black uppercase italic tracking-tighter leading-none text-theme-text">
-              {event.nomeNoivos}
+              {event.title}
             </h1>
             <div className="flex flex-wrap justify-center items-center gap-6 text-[10px] font-bold uppercase tracking-widest mt-6 text-theme-muted">
               <span className="flex items-center gap-2"><Calendar size={12} className="text-emerald-500" /> {new Date(event.dataEvento).toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' })}</span>

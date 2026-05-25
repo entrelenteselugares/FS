@@ -11,7 +11,7 @@ import { MapPin, Calendar, Search } from "lucide-react";
 interface Event {
   id: string;
   slug: string | null;
-  nomeNoivos: string;
+  title: string;
   dataEvento: string;
   cartorio: string | null;
   location?: string;
@@ -21,7 +21,9 @@ interface Event {
   temFoto: boolean;
   temVideo: boolean;
   temReels: boolean;
+  temReels: boolean;
   type?: string;
+  category?: string;
   coverPosition?: string | null;
   ownerName?: string;
 }
@@ -49,13 +51,22 @@ function isRecent(d: string) {
   return Date.now() - new Date(d).getTime() < 7 * 24 * 60 * 60 * 1000;
 }
 
+function getFallbackByCategory(category?: string, id: string = "") {
+  if (category === "ANIVERSARIO") return "https://images.unsplash.com/photo-1530103862676-de8892bc952f?auto=format&fit=crop&q=80&w=800";
+  if (category === "SHOW_FESTIVAL") return "https://images.unsplash.com/photo-1540039155732-d6749b9325f0?auto=format&fit=crop&q=80&w=800";
+  if (category === "CORPORATIVO") return "https://images.unsplash.com/photo-1515169067868-5387ec356754?auto=format&fit=crop&q=80&w=800";
+  if (category === "FORMATURA") return "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&q=80&w=800";
+  if (category === "ENSAIO") return "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&q=80&w=800";
+  const defaults = ["/defaults/cover1.png", "/defaults/cover2.png", "/defaults/cover3.png"];
+  const index = id.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0) % defaults.length;
+  return defaults[index];
+}
+
 // ── EventCard — Unified Immersive Version ───────────────────────────────────
 function EventCard({ event, onClick }: { event: Event; onClick: () => void }) {
   const today = isToday(event.dataEvento);
   const novo  = !today && isRecent(event.dataEvento);
-  const defaults = ["/defaults/cover1.png", "/defaults/cover2.png", "/defaults/cover3.png"];
-  const index = event.id.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0) % defaults.length;
-  const fallback = defaults[index];
+  const fallback = getFallbackByCategory(event.category, event.id);
 
   return (
     <div
@@ -65,7 +76,7 @@ function EventCard({ event, onClick }: { event: Event; onClick: () => void }) {
       {/* Background Image */}
       <img
         src={event.coverPhotoUrl || fallback}
-        alt={event.nomeNoivos}
+        alt={event.title}
         className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 md:group-hover:scale-110"
         style={{ objectPosition: event.coverPosition || 'center' }}
         onError={e => { e.currentTarget.src = fallback; }}
@@ -101,13 +112,13 @@ function EventCard({ event, onClick }: { event: Event; onClick: () => void }) {
       {/* Content Overlay - Centered on Mobile, Bottom on Desktop */}
       <div className="absolute inset-0 flex flex-col items-center justify-center p-4 z-10 text-center md:hidden">
         <h3 className="text-xl font-heading font-black text-white uppercase italic tracking-tighter leading-none drop-shadow-2xl">
-          {event.nomeNoivos}
+          {event.title}
         </h3>
       </div>
 
       <div className="absolute bottom-0 left-0 w-full p-5 z-10 space-y-1 hidden md:block">
         <h3 className="text-xl font-heading font-black text-white uppercase italic tracking-tight leading-tight drop-shadow-lg truncate">
-          {event.nomeNoivos}
+          {event.title}
         </h3>
         <div className="hidden md:flex flex-col gap-1 text-white/70 text-[9px] font-black uppercase tracking-widest italic">
           <div className="flex items-center gap-1.5">

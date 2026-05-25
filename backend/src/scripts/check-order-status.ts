@@ -18,7 +18,7 @@ async function main() {
   console.log(`Status: ${latestOrder.status}`);
   console.log(`Valor: R$ ${latestOrder.valor}`);
   console.log(`Cliente: ${latestOrder.cliente?.nome} (${latestOrder.buyerEmail})`);
-  console.log(`Evento: ${latestOrder.event?.nomeNoivos}`);
+  console.log(`Evento: ${latestOrder.event?.title}`);
   console.log(`Data: ${latestOrder.createdAt}`);
   console.log("----------------------------");
 
