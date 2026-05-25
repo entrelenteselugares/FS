@@ -284,7 +284,7 @@ export class AuthController {
                 }
               }
             },
-            gamificationLedger: {
+            gamificationLogs: {
               orderBy: { createdAt: 'desc' },
               take: 20
             }
@@ -293,7 +293,10 @@ export class AuthController {
       } catch (prismaErr: any) {
         console.error("[AUTH ME PRISMA ERROR]:", prismaErr.message, prismaErr.code);
         // Fallback: tenta buscar sem os includes pesados se falhar
-        user = await prisma.user.findUnique({ where: { id: req.user.userId } });
+        user = await prisma.user.findUnique({ 
+          where: { id: req.user.userId },
+          include: { franchiseProfile: true }
+        });
       }
       if (!user) {
         console.warn(`[AUTH ME] Usuário não encontrado no banco: ${req.user.userId}`);
