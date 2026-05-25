@@ -49,11 +49,16 @@ export class FranchiseController {
     try {
       const { userId, baseCep } = req.body;
 
-      // Só cria/ativa o FranchiseProfile, sem tocar no role
+      // Cria/ativa o FranchiseProfile e atualiza o role para FRANCHISEE
       const profile = await prisma.franchiseProfile.upsert({
         where: { userId },
         create: { userId, printCredits: 0, active: true, baseCep },
         update: { active: true, baseCep }
+      });
+
+      await prisma.user.update({
+        where: { id: userId },
+        data: { role: 'FRANCHISEE' }
       });
 
       res.json({ success: true, profile });

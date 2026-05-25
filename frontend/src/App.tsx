@@ -177,7 +177,7 @@ const AnimatedRoutes = () => {
 
         {/* Área do Cliente / Minha Conta */}
         <Route path="/minha-conta" element={
-          <ProtectedRoute roles={["ADMIN", "CLIENTE", "PROFISSIONAL", "CARTORIO", "UNIDADE"]}>
+          <ProtectedRoute roles={["ADMIN", "CLIENTE", "PROFISSIONAL", "CARTORIO", "UNIDADE", "FRANCHISEE"]}>
             <ClienteArea />
           </ProtectedRoute>
         }
