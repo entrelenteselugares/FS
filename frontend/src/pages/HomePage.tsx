@@ -21,7 +21,6 @@ interface Event {
   temFoto: boolean;
   temVideo: boolean;
   temReels: boolean;
-  temReels: boolean;
   type?: string;
   category?: string;
   coverPosition?: string | null;

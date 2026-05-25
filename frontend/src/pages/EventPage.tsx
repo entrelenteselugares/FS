@@ -165,7 +165,6 @@ interface EventData {
   isComingSoon?: boolean;
   priceUnit?: number;
   pendingOrderId?: string | null;
-  pendingOrderId?: string | null;
   type?: 'ALBUM_FULL' | 'PHOTO_MARKETPLACE' | 'FOTO_POINT' | 'FLASH_EVENT' | 'SCHOOL' | 'SPORTS';
   category?: string;
   pricePerPhoto?: number;
