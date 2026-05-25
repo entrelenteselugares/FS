@@ -685,9 +685,29 @@ export const QuotePage = () => {
                 </div>
               </div>
 
+              {/* Tipo de Evento */}
+              <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 12 }}>
+                <label style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", color: THEME.text }}>02. Tipo de Evento</label>
+                <select 
+                  required 
+                  value={category} 
+                  onChange={e => setCategory(e.target.value)} 
+                  className="fs-input" 
+                  style={{ width: "100%" }}
+                >
+                  <option value="CASAMENTO">CASAMENTO</option>
+                  <option value="ANIVERSARIO">ANIVERSÁRIO</option>
+                  <option value="SHOW_FESTIVAL">SHOW / FESTIVAL</option>
+                  <option value="CORPORATIVO">EVENTO CORPORATIVO</option>
+                  <option value="FORMATURA">FORMATURA</option>
+                  <option value="ENSAIO">ENSAIO FOTOGRÁFICO</option>
+                  <option value="OUTROS">OUTROS</option>
+                </select>
+              </div>
+
               {/* Data e Horário */}
               <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-                <label style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", color: THEME.text }}>02. Data e Horário do Evento</label>
+                <label style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", color: THEME.text }}>03. Data e Horário do Evento</label>
                 <DateTimePicker 
                   value={eventDate} 
                   onChange={setEventDate} 
