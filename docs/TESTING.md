@@ -1,4 +1,4 @@
-<!-- GSD:TESTING -->
+<!-- generated-by: gsd-doc-writer -->
 # Testing Guide: Foto Segundo
 
 Quality assurance in Foto Segundo is driven by end-to-end (E2E) testing to ensure transaction integrity across all phygital verticals.

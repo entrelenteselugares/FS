@@ -1,4 +1,4 @@
-<!-- GSD:GETTING_STARTED -->
+<!-- generated-by: gsd-doc-writer -->
 # Getting Started: Foto Segundo
 
 Welcome to the Foto Segundo development guide. Follow these steps to set up your local environment and get the platform running.

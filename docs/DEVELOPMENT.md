@@ -1,3 +1,4 @@
+<!-- generated-by: gsd-doc-writer -->
 # Development Guide
 
 Este guia detalha o fluxo de trabalho local para o desenvolvimento e manutenção da plataforma Foto Segundo.
@@ -61,6 +62,7 @@ O repositório é configurado com o frontend (`/frontend`) em Vite/React e o bac
 ### 🖨️ Componentes e Motores de Impressão (A4 & Fotos)
 
 Se você estiver desenvolvendo ou estendendo as capacidades de impressão (ex: `PrintKitModal.tsx` ou `PrintSettingsPanel.tsx`), siga estas diretrizes:
+
 - **Estilos CSS @page e Mídias:** Sempre encapsule estilos de formatação física (medidas em milímetros, remoção de cabeçalhos/rodapés do browser) dentro de blocos dedicados para `@media print` ou folhas injetadas em iframes.
 - **Cross-Origin Images:** Imagens externas ou de CDNs devem possuir o atributo `crossOrigin="anonymous"` nas tags `<img>` para que o browser não barre a renderização ou manipulação das fotos pelo motor de composição.
 - **Carregamento Assíncrono:** Sempre aguarde o evento `onload` de todas as tags de imagens no documento de impressão (iframe) antes de disparar o `iframe.contentWindow.print()`. Caso contrário, a impressora imprimirá páginas em branco.
@@ -93,7 +95,6 @@ Antes de abrir um Pull Request:
 - Trabalhe em branches de feature: `feature/nome-da-feature` ou `fix/nome-do-bug`.
 - Use mensagens de commit convencionais (`feat: ...`, `fix: ...`, `docs: ...`).
 - Sincronize com a branch `main` com frequência para evitar conflitos no motor financeiro ou no esquema Prisma.
-
 
 <!-- GSD-DOCS-UPDATE: SUPPLEMENTED -->
 *Documentação verificada e complementada automaticamente via GSD-SDK em 2026-05.*

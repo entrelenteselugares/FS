@@ -1,4 +1,4 @@
-<!-- GSD:API -->
+<!-- generated-by: gsd-doc-writer -->
 # API Reference: Foto Segundo
 
 This document describes the REST API for the Foto Segundo platform.

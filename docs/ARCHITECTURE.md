@@ -1,4 +1,4 @@
-<!-- GSD:ARCHITECTURE -->
+<!-- generated-by: gsd-doc-writer -->
 # Project Architecture: Foto Segundo
 
 Este documento descreve a arquitetura técnica da plataforma **Foto Segundo**, focando nos fluxos de dados, infraestrutura de storage, motor de automação phygital, suporte multi-vertical e o Growth Engine de retenção de clientes.
