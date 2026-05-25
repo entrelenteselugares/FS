@@ -36,6 +36,7 @@ import VaultDetailPage from "./pages/VaultDetailPage";
 import InvitationPage from "./pages/InvitationPage";
 import { AboutPage } from "./pages/AboutPage";
 import { PrivacyPage } from "./pages/PrivacyPage";
+import { LgpdPage } from "./pages/LgpdPage";
 import { PartnershipsPage } from "./pages/PartnershipsPage";
 import { ContactPage } from "./pages/ContactPage";
 import { StatusPage } from "./pages/StatusPage";
@@ -101,6 +102,7 @@ const AnimatedRoutes = () => {
         <Route path="/parcerias" element={<PartnershipsPage />} />
         <Route path="/termos" element={<TermsPage />} />
         <Route path="/privacidade" element={<PrivacyPage />} />
+        <Route path="/lgpd" element={<LgpdPage />} />
         <Route path="/contato" element={<ContactPage />} />
         <Route path="/status" element={<StatusPage />} />
         <Route path="/login" element={<LoginPage />} />

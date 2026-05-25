@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { API } from "../../lib/api";
 import { X, UserPlus, Shield, Trash2, Edit3, Search, CheckCircle2, ArrowRight } from "lucide-react";
+import { toast } from "sonner";
 
 interface User {
   id: string;
@@ -45,7 +46,7 @@ export const AdminUsers: React.FC = () => {
     affiliateTier: "STANDARD"
   });
   const [confirmDelete, setConfirmDelete] = useState<User | null>(null);
-  const [notification, setNotification] = useState<{message: string, type: 'success' | 'error'} | null>(null);
+
 
   const fetchUsers = async () => {
     setLoading(true);
@@ -72,10 +73,7 @@ export const AdminUsers: React.FC = () => {
     });
   }, [users, searchTerm, filterRole]);
 
-  const showNotification = (message: string, type: 'success' | 'error' = 'success') => {
-    setNotification({ message, type });
-    setTimeout(() => setNotification(null), 5000);
-  };
+
 
   const getInitials = (name: string) => {
     return name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
@@ -132,9 +130,9 @@ export const AdminUsers: React.FC = () => {
       setEditingUser(null);
       setFormData({ name: "", email: "", password: "", role: "PROFISSIONAL", pixKey: "", otherHabilities: "", equipment: "", workflowType: ["TRADICIONAL"], captPct: 30, editPct: 10, isFranchise: false, printCredits: 0, isVerified: false, affiliateTier: "STANDARD" });
       fetchUsers();
-      showNotification(editingUser ? "Membro atualizado com sucesso!" : "Membro convocado com sucesso!");
+      toast.success(editingUser ? "Membro atualizado com sucesso!" : "Membro convocado com sucesso!");
     } catch {
-      showNotification("Erro ao processar usuário", 'error');
+      toast.error("Erro ao processar usuário.");
     }
   };
 
@@ -164,9 +162,9 @@ export const AdminUsers: React.FC = () => {
       await API.delete(`/admin/users/${userId}`);
       setUsers(users.filter(u => u.id !== userId));
       setConfirmDelete(null);
-      showNotification("Membro removido da base de dados.");
+      toast.success("Membro removido da base de dados.");
     } catch {
-      showNotification("Erro ao remover membro", 'error');
+      toast.error("Erro ao remover membro.");
     }
   };
 
@@ -338,7 +336,7 @@ export const AdminUsers: React.FC = () => {
             </div>
 
             {/* Content */}
-            <form onSubmit={handleCreate} className="flex-1 overflow-y-auto p-8 md:p-10 space-y-10 custom-scrollbar bg-theme-card">
+            <form id="member-form" onSubmit={handleCreate} className="flex-1 overflow-y-auto p-8 md:p-10 space-y-10 custom-scrollbar bg-theme-card">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div className="space-y-6">
                   <div className="space-y-4">
@@ -504,7 +502,7 @@ export const AdminUsers: React.FC = () => {
               <button type="button" onClick={() => setIsModalOpen(false)} className="fs-btn flex-1 border border-theme-border text-theme-muted hover:text-white transition-all italic">Cancelar</button>
               <button 
                 type="submit" 
-                onClick={handleCreate}
+                form="member-form"
                 className="fs-btn flex-[2] bg-brand-tactical text-zinc-950 shadow-2xl shadow-brand-tactical/20 hover:brightness-110 transition-all italic flex items-center justify-center gap-4"
               >
                 {editingUser ? 'Salvar Membro' : 'Confirmar Convocação'}
@@ -555,20 +553,7 @@ export const AdminUsers: React.FC = () => {
       )}
 
 
-      {/* NOTIFICATION */}
-      {notification && (
-        <div className="fixed bottom-10 right-10 z-[130] animate-in slide-in-from-right-10 duration-500">
-           <div className={`p-6 border ${notification.type === 'success' ? 'border-brand-tactical bg-theme-bg shadow-[0_0_30px_rgba(133,185,172,0.1)]' : 'border-red-900 bg-theme-bg'} min-w-[320px] relative overflow-hidden shadow-2xl`}>
-              <div className="flex flex-col gap-1">
-                 <span className={`text-[9px] font-black uppercase tracking-[0.4em] ${notification.type === 'success' ? 'text-brand-tactical' : 'text-red-500'}`}>
-                    {notification.type === 'success' ? 'Comando Executado' : 'Falha na Operação'}
-                 </span>
-                 <p className="text-[12px] font-bold text-theme-text uppercase tracking-widest mt-1">{notification.message}</p>
-              </div>
-              <div className={`absolute bottom-0 left-0 h-1 ${notification.type === 'success' ? 'bg-brand-tactical' : 'bg-red-900'} animate-out fade-out duration-[5000ms] w-full`} />
-           </div>
-        </div>
-      )}
+
     </>
   );
 };

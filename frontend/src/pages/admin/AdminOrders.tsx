@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { API } from "../../lib/api";
+import { toast } from "sonner";
 import { 
   Search, ChevronDown, ChevronRight, 
   CheckCircle2, Clock, PieChart, 
@@ -136,8 +137,9 @@ export const AdminOrders: React.FC = () => {
     try {
       await API.delete(`/admin/orders/${id}`);
       fetchOrders();
+      toast.success("Pedido excluído do Ledger com sucesso.");
     } catch {
-      alert("Erro ao excluir pedido.");
+      toast.error("Erro ao excluir pedido.");
     }
   };
 
@@ -145,8 +147,9 @@ export const AdminOrders: React.FC = () => {
     try {
       await API.patch(`/admin/orders/${id}/logistics`, { fulfillmentStatus, trackingCode });
       fetchOrders();
+      toast.success("Status logístico atualizado.");
     } catch {
-      alert("Erro ao atualizar logística.");
+      toast.error("Erro ao atualizar logística.");
     }
   };
 
@@ -410,7 +413,7 @@ export const AdminOrders: React.FC = () => {
                 <div className="absolute inset-0 bg-theme-border/20 rounded-full animate-ping" />
                 <ArrowUpRight size={48} className="text-theme-muted relative z-10" />
              </div>
-             <p className="text-[9px] sm:text-[11px] font-black text-brand-tactical uppercase tracking-[0.2em] sm:tracking-[0.4em] italic truncate max-w-[80vw]">Controle de Vendas e Faturamento</p>
+             <p className="text-[9px] sm:text-[11px] font-black text-brand-tactical uppercase tracking-[0.2em] sm:tracking-[0.4em] italic truncate max-w-[80vw]">Nenhum pedido localizado no ledger</p>
           </div>
         )}
       </div>
@@ -464,7 +467,7 @@ export const AdminOrders: React.FC = () => {
 
                 {(!selectedOrderForDetails.items || selectedOrderForDetails.items.length === 0) ? (
                   <div className="p-10 text-center bg-theme-bg-muted/30 border border-dashed border-theme-border/60 rounded-[30px]">
-                    <p className="text-[9px] sm:text-[11px] font-black text-brand-tactical uppercase tracking-[0.2em] sm:tracking-[0.4em] italic truncate max-w-[80vw]">Controle de Vendas e Faturamento</p>
+                    <p className="text-[9px] sm:text-[11px] font-black text-brand-tactical uppercase tracking-[0.2em] sm:tracking-[0.4em] italic truncate max-w-[80vw]">Nenhum item detalhado neste pedido</p>
                   </div>
                 ) : (
                   <div className="space-y-4">

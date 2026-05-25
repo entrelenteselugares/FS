@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { API } from '../../lib/api';
+import { toast } from 'sonner';
 import { useAuth } from '../../hooks/useAuth';
 import { 
   Plus, 
@@ -96,12 +97,13 @@ export default function AdminFranchises() {
         : o
       ));
       await fetchFranchisees();
+      toast.success('Pedido despachado e créditos liberados! 🚚');
       setFulfillModal(null);
       setTrackingCode('');
       setShippingNotes('');
     } catch (err) {
       console.error('Erro ao processar fulfillment:', err);
-      alert('Erro ao processar. Verifique o console.');
+      toast.error('Erro ao processar envio de insumos.');
     } finally {
       setFulfillingOrder(null);
     }
@@ -122,10 +124,11 @@ export default function AdminFranchises() {
       if (data.success) {
         setShowAddModal(false);
         fetchFranchisees();
+        toast.success('Usuário promovido a franqueado com sucesso!');
         setSelectedUserId('');
       }
     } catch {
-      alert('Erro ao promover usuário');
+      toast.error('Erro ao promover usuário');
     } finally {
       setIsPromoting(false);
     }
@@ -142,9 +145,10 @@ export default function AdminFranchises() {
       if (data.success) {
         setShowCreditModal(null);
         fetchFranchisees();
+        toast.success('Créditos recarregados com sucesso!');
       }
     } catch {
-      alert('Erro ao adicionar créditos');
+      toast.error('Erro ao adicionar créditos');
     }
   };
 
@@ -152,8 +156,9 @@ export default function AdminFranchises() {
     try {
       await API.patch(`/admin/franchises/${profileId}/toggle`, { active: !currentActive });
       fetchFranchisees();
+      toast.success('Status da franquia atualizado!');
     } catch {
-      alert('Erro ao alterar status');
+      toast.error('Erro ao alterar status');
     }
   };
 
@@ -162,8 +167,9 @@ export default function AdminFranchises() {
     try {
       await API.delete(`/admin/franchises/${profileId}`);
       fetchFranchisees();
+      toast.success('Franquia removida com sucesso!');
     } catch {
-      alert('Erro ao remover franquia');
+      toast.error('Erro ao remover franquia');
     }
   };
 
@@ -402,7 +408,7 @@ export default function AdminFranchises() {
             </div>
 
             {/* Content */}
-            <form onSubmit={handlePromote} className="flex-1 overflow-y-auto p-8 md:p-10 space-y-8 custom-scrollbar">
+            <form id="promote-franchise-form" onSubmit={handlePromote} className="flex-1 overflow-y-auto p-8 md:p-10 space-y-8 custom-scrollbar">
               <div className="space-y-4">
                 <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest block mb-2 opacity-60 italic">Selecione o Usuário Alvo</label>
                 <select 
@@ -432,7 +438,7 @@ export default function AdminFranchises() {
               <button type="button" onClick={() => setShowAddModal(false)} className="flex-1 py-5 border border-theme-border text-[11px] font-black uppercase tracking-[0.3em] text-theme-muted hover:text-white transition-all rounded-[20px] italic">Cancelar</button>
               <button 
                 type="submit" 
-                onClick={handlePromote}
+                form="promote-franchise-form"
                 disabled={isPromoting || !selectedUserId}
                 className="flex-[2] py-5 bg-brand-tactical text-zinc-950 text-[11px] font-black uppercase tracking-[0.3em] shadow-2xl shadow-brand-tactical/20 hover:brightness-110 transition-all rounded-[20px] italic flex items-center justify-center gap-4 disabled:opacity-50"
               >
@@ -557,7 +563,7 @@ export default function AdminFranchises() {
               </div>
 
               <div className="bg-brand-tactical/5 border border-brand-tactical/20 p-6 rounded-[24px]">
-                <p className="text-[9px] sm:text-[11px] font-black text-brand-tactical uppercase tracking-[0.2em] sm:tracking-[0.4em] italic truncate max-w-[80vw]">⚠ ESTA AÇÃO IRÁ DEDUZIR O ESTOQUE DA MATRIZ E CREDITAR OS CRÉDITOS DE IMPRESSÃO AO FRANQUEADO. ESTA OPERAÇÃO É IRREVERSÍVEL NO LEDGER.</p>
+                <p className="text-[9px] sm:text-[11px] font-black text-brand-tactical uppercase tracking-[0.2em] sm:tracking-[0.4em] italic">⚠ ESTA AÇÃO IRÁ DEDUZIR O ESTOQUE DA MATRIZ E CREDITAR OS CRÉDITOS DE IMPRESSÃO AO FRANQUEADO. ESTA OPERAÇÃO É IRREVERSÍVEL NO LEDGER.</p>
               </div>
             </div>
 

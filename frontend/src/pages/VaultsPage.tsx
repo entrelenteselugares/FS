@@ -117,9 +117,18 @@ function NewVaultModal({ onClose, onCreated }: { onClose: () => void; onCreated:
     }
   };
 
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [onClose]);
+
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-theme-bg/80 backdrop-blur-md p-0 sm:p-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-theme-bg/80 backdrop-blur-md p-0 sm:p-4" onClick={onClose}>
       <motion.div
+        onClick={e => e.stopPropagation()}
         initial={{ opacity: 0, y: 40 }}
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: 40 }}
@@ -135,14 +144,15 @@ function NewVaultModal({ onClose, onCreated }: { onClose: () => void; onCreated:
           </div>
         </div>
 
-        <div className="space-y-6 flex-1">
+        <form onSubmit={e => { e.preventDefault(); handleCreate(); }} className="space-y-6 flex-1">
           <div>
             <label className="block text-[10px] font-black uppercase tracking-widest text-gray-500 mb-2">Nome do Álbum</label>
             <input
+              id="input-nome-album"
+              required
               autoFocus
               value={name}
               onChange={e => setName(e.target.value)}
-              onKeyDown={e => e.key === "Enter" && handleCreate()}
               placeholder="Ex: Casamento Ana & Pedro"
               className="w-full bg-theme-bg-field border border-theme-border/60 focus:border-brand-tactical/50 rounded-xl px-4 py-3 text-theme-text text-sm outline-none transition-colors placeholder:text-theme-text-muted/40"
             />
@@ -153,6 +163,7 @@ function NewVaultModal({ onClose, onCreated }: { onClose: () => void; onCreated:
               Meta de fotos do ciclo: <span className="text-brand-tactical">{goalPoses}</span>
             </label>
             <input
+              id="range-meta-poses"
               type="range" min={12} max={120} step={4}
               value={goalPoses}
               onChange={e => setGoalPoses(Number(e.target.value))}
@@ -167,13 +178,16 @@ function NewVaultModal({ onClose, onCreated }: { onClose: () => void; onCreated:
 
           <div className="flex gap-3 pt-4 border-t border-theme-border/20 mt-auto shrink-0">
             <button
+              id="btn-cancelar-criar-album"
+              type="button"
               onClick={onClose}
               className="flex-1 py-3 border border-[#2a2a2a] text-gray-400 text-[11px] font-black uppercase tracking-widest rounded-xl hover:border-gray-600 transition-colors"
             >
               Cancelar
             </button>
             <button
-              onClick={handleCreate}
+              id="btn-confirmar-criar-album"
+              type="submit"
               disabled={loading}
               className="flex-1 py-3 bg-brand-tactical hover:bg-brand-tactical/90 disabled:opacity-50 text-black text-[11px] font-black uppercase tracking-widest rounded-xl transition-colors flex items-center justify-center gap-2"
             >
@@ -181,7 +195,7 @@ function NewVaultModal({ onClose, onCreated }: { onClose: () => void; onCreated:
               Criar Álbum
             </button>
           </div>
-        </div>
+        </form>
       </motion.div>
     </div>
   );
@@ -263,6 +277,7 @@ export default function VaultsPage() {
         <div className="flex flex-col md:flex-row md:items-end justify-end gap-6 border-b border-theme-border/60 pb-4">
 
           <button
+            id="btn-novo-album"
             onClick={() => setShowModal(true)}
             className="flex items-center gap-2 bg-brand-tactical hover:bg-brand-tactical/90 text-black text-[11px] font-black uppercase tracking-widest px-6 py-4 rounded-xl transition-all active:scale-95 shadow-lg shadow-brand-tactical/20 italic"
           >
@@ -273,9 +288,20 @@ export default function VaultsPage() {
 
         {/* Vaults grid */}
         {loading ? (
-          <div className="flex flex-col items-center justify-center py-32 gap-4 opacity-30">
-            <Loader2 size={32} className="animate-spin text-brand-tactical" />
-            <span className="text-[10px] font-black uppercase tracking-widest italic">Carregando álbuns...</span>
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+            {[...Array(3)].map((_, i) => (
+              <div key={i} className="bg-theme-card border border-theme-border/60 rounded-2xl p-6 h-[200px] animate-pulse flex flex-col justify-between">
+                <div className="flex justify-between items-start">
+                  <div className="w-12 h-12 bg-white/5 rounded-xl border border-white/10" />
+                  <div className="w-16 h-6 bg-white/5 rounded-full border border-white/10" />
+                </div>
+                <div className="space-y-3 mt-4">
+                  <div className="w-3/4 h-6 bg-white/5 rounded border border-white/10" />
+                  <div className="w-1/2 h-4 bg-white/5 rounded border border-white/10" />
+                </div>
+                <div className="w-full h-1 bg-white/5 rounded-full mt-auto" />
+              </div>
+            ))}
           </div>
         ) : vaults.length === 0 ? (
           <motion.div

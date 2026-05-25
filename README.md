@@ -31,14 +31,17 @@ cd backend && npx prisma generate
 ## Quick Start
 
 1. Start both frontend and backend development servers simultaneously:
+
 ```bash
 npm run dev
 ```
-2. The application will be running with the API and frontend accessible.
+
+1. The application will be running with the API and frontend accessible.
 
 ## Usage Examples
 
 ### 1. Create a Flash Event
+
 ```bash
 POST /api/profissional/flash-event
 Authorization: Bearer <seu_token>
@@ -52,18 +55,22 @@ Content-Type: application/json
 ```
 
 ### 2. Apply Discount Coupon
+
 ```bash
 GET /api/marketplace/coupons/PROMO20/validate?eventId=<eventId>
 ```
 
 ### 3. Sync Google Drive
+
 ```bash
 POST /api/marketplace/events/:eventId/sync-drive
 Authorization: Bearer <token>
 ```
 
 ## Contributing
+
 See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 
 ## License
+
 © 2026 Foto Segundo. All rights reserved.

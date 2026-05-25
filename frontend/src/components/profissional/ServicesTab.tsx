@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Briefcase, Clock, TrendingUp, Check, X, ShieldCheck, Zap, Pencil, Plus, AlertCircle } from "lucide-react";
 import type { ProfileData, ServiceCatalog } from "./types";
 
@@ -13,6 +14,7 @@ interface ServicesTabProps {
 }
 
 export function ServicesTab({ profile, catalogServices, onAddService, onRemoveService, onOpenProfile, minHourlyRate = 14, onUpdateServicePrice }: ServicesTabProps) {
+  const navigate = useNavigate();
   const [editingServiceId, setEditingServiceId] = useState<string | null>(null);
   const [editingPriceValue, setEditingPriceValue] = useState<string>("");
   const [loadingUpdate, setLoadingUpdate] = useState<boolean>(false);
@@ -128,8 +130,8 @@ export function ServicesTab({ profile, catalogServices, onAddService, onRemoveSe
           </div>
           <div className="flex items-center gap-6 w-full sm:w-auto">
             <button 
-              onClick={() => window.location.href = "/profissional/novo-servico"}
-              className="w-full sm:w-auto flex justify-center items-center gap-2 px-6 py-3 bg-brand-tactical/10 text-brand-tactical border border-brand-tactical/30 hover:bg-brand-tactical hover:text-brand-text transition-all rounded-xl text-[10px] font-black uppercase tracking-widest"
+              onClick={() => navigate("/profissional/novo-servico")}
+              className="w-full sm:w-auto flex justify-center items-center gap-2 px-6 py-3 bg-brand-tactical/10 text-brand-tactical border border-brand-tactical/30 hover:bg-brand-tactical hover:text-brand-text hover:scale-[1.02] hover:shadow-lg hover:shadow-brand-tactical/20 transition-all rounded-xl text-[10px] font-black uppercase tracking-widest"
             >
               <Plus size={14} /> CRIAR SERVIÇO PERSONALIZADO
             </button>
@@ -291,7 +293,7 @@ export function ServicesTab({ profile, catalogServices, onAddService, onRemoveSe
                   ) : (
                     <button
                       onClick={() => onAddService(cat)}
-                      className="px-6 sm:px-10 py-3 sm:py-4 bg-brand-tactical text-brand-text text-[10px] sm:text-[11px] font-black uppercase tracking-[0.2em] rounded-xl hover:brightness-110 shadow-lg shadow-brand-tactical/10 italic cursor-pointer"
+                      className="px-6 sm:px-10 py-3 sm:py-4 bg-brand-tactical text-brand-text text-[10px] sm:text-[11px] font-black uppercase tracking-[0.2em] rounded-xl hover:bg-brand-tactical/90 hover:scale-[1.02] hover:shadow-xl hover:shadow-brand-tactical/30 transition-all shadow-lg shadow-brand-tactical/10 italic cursor-pointer"
                     >
                       IMPORTAR
                     </button>

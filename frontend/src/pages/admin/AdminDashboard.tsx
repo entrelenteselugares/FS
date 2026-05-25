@@ -31,6 +31,7 @@ import {
   TrendingUp
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { toast } from "sonner";
 
 
 
@@ -214,6 +215,7 @@ export const AdminDashboard: React.FC = () => {
         setPendingEvents(data.pendingEvents);
       } catch (err) {
         console.error("Erro ao carregar stats globais:", err);
+        toast.error("Falha ao carregar métricas globais. Verifique sua conexão.");
       } finally {
         setLoading(false);
       }

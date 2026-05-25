@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { API as api } from "../../lib/api";
+import { toast } from "sonner";
 import { 
   Printer, 
   Settings,
@@ -71,7 +72,6 @@ export default function AdminSuppliers() {
   const [selectedSupplierId, setSelectedSupplierId] = useState<string | null>(null);
   const [breakeven, setBreakeven] = useState<Breakeven | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
-  const [notification, setNotification] = useState<{message: string, type: 'success' | 'error'} | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const fetchRedemptions = useCallback(async () => {
@@ -121,11 +121,10 @@ export default function AdminSuppliers() {
       await api.post("/admin/suppliers", formData);
       fetchSuppliers();
       setIsModalOpen(false);
-      setNotification({ message: "Equipamento cadastrado com sucesso!", type: 'success' });
-      setTimeout(() => setNotification(null), 5000);
+      toast.success("Equipamento cadastrado com sucesso!");
     } catch (err) {
       console.error(err);
-      setNotification({ message: "Erro ao cadastrar equipamento.", type: 'error' });
+      toast.error("Erro ao cadastrar equipamento.");
     }
   };
 
@@ -133,14 +132,10 @@ export default function AdminSuppliers() {
     try {
       await api.patch(`/admin/redemptions/${id}/status`, { status, trackingCode });
       fetchRedemptions();
-      setNotification({ 
-        message: status === 'PRINTING' ? "Produção iniciada! 🖨️" : "Logística atualizada! 🚚", 
-        type: 'success' 
-      });
-      setTimeout(() => setNotification(null), 5000);
+      toast.success(status === 'PRINTING' ? "Produção iniciada! 🖨️" : "Logística atualizada! 🚚");
     } catch (err) { 
       console.error(err);
-      setNotification({ message: "Erro ao atualizar status.", type: 'error' });
+      toast.error("Erro ao atualizar status.");
     }
   };
 
@@ -242,7 +237,7 @@ export default function AdminSuppliers() {
               ) : filteredRedemptions.length === 0 ? (
                 <div className="py-32 text-center border border-dashed border-theme-border bg-theme-bg-muted/5 space-y-4 rounded-2xl">
                    <Package size={32} className="mx-auto text-theme-muted opacity-30" />
-                   <p className="text-[9px] sm:text-[11px] font-black text-brand-tactical uppercase tracking-[0.2em] sm:tracking-[0.4em] italic truncate max-w-[80vw]">Logística, Amortização e Fila</p>
+                   <p className="text-[9px] sm:text-[11px] font-black text-brand-tactical uppercase tracking-[0.2em] sm:tracking-[0.4em] italic truncate max-w-[80vw]">Nenhum protocolo na fila de impressão</p>
                 </div>
               ) : filteredRedemptions.map(r => (
                 <div key={r.id} className="bg-theme-bg-muted border border-theme-border rounded-2xl group hover:border-brand-tactical/40 transition-all overflow-hidden">
@@ -429,18 +424,7 @@ export default function AdminSuppliers() {
         </div>
       )}
 
-      {/* NOTIFICATIONS */}
-      {notification && (
-        <div className="fixed bottom-10 right-10 z-[300] animate-in slide-in-from-right-10 duration-500">
-           <div className={`p-8 border ${notification.type === 'success' ? 'border-brand-tactical bg-theme-bg shadow-[0_0_40px_rgba(133,185,172,0.15)]' : 'border-red-900 bg-theme-bg'} min-w-[350px] relative overflow-hidden shadow-2xl`}>
-              <div className="flex flex-col gap-2">
-                 <span className={`text-[9px] font-black uppercase tracking-[0.5em] ${notification.type === 'success' ? 'text-brand-tactical' : 'text-red-500'}`}>Protocolo de Impressão</span>
-                 <p className="text-[13px] font-bold text-theme-text uppercase tracking-widest mt-1 leading-tight">{notification.message}</p>
-              </div>
-              <div className={`absolute bottom-0 left-0 h-1.5 ${notification.type === 'success' ? 'bg-brand-tactical' : 'bg-red-900'} animate-out fade-out duration-[5000ms] w-full`} />
-           </div>
-        </div>
-      )}
+
     </div>
   );
 }
@@ -497,7 +481,7 @@ function NewSupplierModal({ onClose, onSave }: { onClose: () => void; onSave: (d
         </div>
 
         {/* Content */}
-        <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-8 md:p-10 space-y-10 custom-scrollbar bg-theme-card">
+        <form id="new-supplier-form" onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-8 md:p-10 space-y-10 custom-scrollbar bg-theme-card">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
             <div className="space-y-6">
               <div className="space-y-4">
@@ -568,7 +552,7 @@ function NewSupplierModal({ onClose, onSave }: { onClose: () => void; onSave: (d
           <button type="button" onClick={onClose} className="flex-1 py-5 border border-theme-border text-[11px] font-black uppercase tracking-[0.3em] text-theme-muted hover:text-white transition-all rounded-[20px] italic">Cancelar</button>
           <button 
             type="submit" 
-            onClick={handleSubmit}
+            form="new-supplier-form"
             className="flex-[2] py-5 bg-brand-tactical text-zinc-950 text-[11px] font-black uppercase tracking-[0.3em] shadow-2xl shadow-brand-tactical/20 hover:brightness-110 transition-all rounded-[20px] italic flex items-center justify-center gap-4"
           >
             Salvar Equipamento

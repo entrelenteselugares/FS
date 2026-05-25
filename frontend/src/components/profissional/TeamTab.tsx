@@ -146,7 +146,7 @@ export function TeamTab() {
                             <button
                               key={String(tipo)}
                               onClick={() => setTeamChanges(prev => ({ ...prev, [p.id]: tipo }))}
-                              className={`px-6 py-2.5 text-[9px] font-black uppercase tracking-widest transition-all duration-500 relative overflow-hidden ${
+                              className={`px-6 py-2.5 text-[9px] font-black uppercase tracking-widest transition-all duration-500 relative overflow-hidden cursor-pointer hover:scale-[1.02] ${
                                 vinculo === tipo 
                                   ? tipo === "FIXO" ? "bg-brand-tactical text-brand-text shadow-lg shadow-brand-tactical/20" : tipo === "ROTATIVO" ? "bg-blue-500 text-theme-text" : "bg-theme-border text-theme-text"
                                   : "text-theme-muted hover:text-theme-text hover:bg-theme-border/20"

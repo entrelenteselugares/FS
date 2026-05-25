@@ -17,6 +17,7 @@ import {
   X
 } from "lucide-react";
 import { API } from "../../lib/api";
+import { toast } from "sonner";
 
 // --- Types ---
 interface Config {
@@ -84,7 +85,7 @@ export const AdminConfigs: React.FC = () => {
   const [tab, setTab] = useState<"splits" | "payouts" | "infra">("splits");
   const [payoutModal, setPayoutModal] = useState<{payoutId: string, itemId: string, name: string, amount: number} | null>(null);
   const [pixTxId, setPixTxId] = useState("");
-  const [notification, setNotification] = useState<{message: string, type: 'success' | 'error'} | null>(null);
+
   const [showGenerateConfirm, setShowGenerateConfirm] = useState(false);
 
   const fetchData = useCallback(async () => {
@@ -139,10 +140,10 @@ export const AdminConfigs: React.FC = () => {
       // Filtra apenas as que foram alteradas ou as obrigatórias para garantir criação no banco
       await API.patch("/admin/configs", { configs });
       setSaved(true);
-      setNotification({ message: "Configurações sincronizadas!", type: 'success' });
-      setTimeout(() => { setSaved(false); setNotification(null); }, 2500);
+      toast.success("Configurações sincronizadas!");
+      setTimeout(() => { setSaved(false); }, 2500);
     } catch {
-      setNotification({ message: "Erro ao salvar configurações.", type: 'error' });
+      toast.error("Erro ao salvar configurações.");
     } finally {
       setSaving(false);
     }
@@ -155,13 +156,13 @@ export const AdminConfigs: React.FC = () => {
       const { data } = await API.post("/admin/payouts/generate");
       setPayouts((p) => [data, ...p]);
       setTab("payouts");
-      setNotification({ message: "Relatório gerado com sucesso!", type: 'success' });
+      toast.success("Relatório gerado com sucesso!");
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "Erro ao gerar relatório.";
-      setNotification({ message: msg, type: 'error' });
+      toast.error(msg);
     } finally {
       setGenerating(false);
-      setTimeout(() => setNotification(null), 5000);
+
     }
   };
 
@@ -172,11 +173,11 @@ export const AdminConfigs: React.FC = () => {
       setPayoutModal(null);
       setPixTxId("");
       fetchData();
-      setNotification({ message: "Comprovante registrado!", type: 'success' });
+      toast.success("Comprovante registrado!");
     } catch {
-      setNotification({ message: "Erro ao registrar pagamento.", type: 'error' });
+      toast.error("Erro ao registrar pagamento.");
     } finally {
-      setTimeout(() => setNotification(null), 5000);
+
     }
   };
 
@@ -307,7 +308,7 @@ export const AdminConfigs: React.FC = () => {
             <div className="py-40 text-center border border-dashed border-theme-border bg-theme-bg-muted/5 space-y-6 rounded-2xl">
               <AlertTriangle className="mx-auto text-theme-muted opacity-20" size={48} />
               <div className="space-y-2">
-                <p className="text-[9px] sm:text-[11px] font-black text-brand-tactical uppercase tracking-[0.2em] sm:tracking-[0.4em] italic truncate max-w-[80vw]">Parâmetros Globais do Sistema</p>
+                <p className="text-[9px] sm:text-[11px] font-black text-brand-tactical uppercase tracking-[0.2em] sm:tracking-[0.4em] italic truncate max-w-[80vw]">Histórico de Repasses Vazio</p>
                 <p className="text-[8px] text-theme-muted/60 uppercase tracking-widest">Inicie um fechamento semanal para consolidar as provisões.</p>
               </div>
             </div>
@@ -537,7 +538,7 @@ export const AdminConfigs: React.FC = () => {
               
               <div className="space-y-2">
                 <h3 className="text-2xl font-black uppercase tracking-tighter text-theme-text italic leading-none">Gerar Fechamento?</h3>
-                <p className="text-[9px] sm:text-[11px] font-black text-brand-tactical uppercase tracking-[0.2em] sm:tracking-[0.4em] italic truncate max-w-[80vw]">Parâmetros Globais do Sistema</p>
+                <p className="text-[9px] sm:text-[11px] font-black text-brand-tactical uppercase tracking-[0.2em] sm:tracking-[0.4em] italic truncate max-w-[80vw]">Consolidação de Provisões Semanal</p>
               </div>
               
               <p className="text-[11px] uppercase tracking-[0.2em] leading-relaxed text-theme-muted italic">
@@ -608,7 +609,7 @@ export const AdminConfigs: React.FC = () => {
                     className="w-full bg-theme-bg-muted border border-theme-border/60 p-5 pl-12 text-[11px] font-black text-theme-text placeholder:opacity-20 focus:border-brand-tactical outline-none transition-all uppercase rounded-xl"
                   />
                 </div>
-                <p className="text-[9px] sm:text-[11px] font-black text-brand-tactical uppercase tracking-[0.2em] sm:tracking-[0.4em] italic truncate max-w-[80vw]">Parâmetros Globais do Sistema</p>
+                <p className="text-[9px] sm:text-[11px] font-black text-brand-tactical uppercase tracking-[0.2em] sm:tracking-[0.4em] italic truncate max-w-[80vw]">Confirme a liquidação do repasse</p>
               </div>
 
               <div className="flex gap-4 pt-4">
@@ -626,17 +627,7 @@ export const AdminConfigs: React.FC = () => {
         </div>
       )}
 
-      {notification && (
-        <div className="fixed bottom-10 right-10 z-[700] animate-in slide-in-from-right-10 duration-500">
-           <div className={`p-8 border ${notification.type === 'success' ? 'border-brand-tactical bg-theme-bg shadow-[0_0_40px_rgba(133,185,172,0.15)]' : 'border-red-900 bg-theme-bg'} min-w-[350px] relative overflow-hidden shadow-2xl`}>
-              <div className="flex flex-col gap-2">
-                 <span className={`text-[9px] font-black uppercase tracking-[0.5em] ${notification.type === 'success' ? 'text-brand-tactical' : 'text-red-500'}`}>Sincronização de Inteligência</span>
-                 <p className="text-[13px] font-bold text-theme-text uppercase tracking-widest mt-1 leading-tight">{notification.message}</p>
-              </div>
-              <div className={`absolute bottom-0 left-0 h-1.5 ${notification.type === 'success' ? 'bg-brand-tactical' : 'bg-red-900'} animate-out fade-out duration-[5000ms] w-full`} />
-           </div>
-        </div>
-      )}
+      {null}
     </div>
   );
 };

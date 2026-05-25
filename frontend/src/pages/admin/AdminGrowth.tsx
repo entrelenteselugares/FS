@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
-import { Plus, Tag, Phone, Activity, X, ArrowRight } from "lucide-react";
+import { Plus, Tag, Phone, X, ArrowRight } from "lucide-react";
 import { API } from "../../lib/api";
+import { toast } from "sonner";
 import { QRCodeSVG } from "qrcode.react";
 
 interface Coupon {
@@ -78,6 +79,7 @@ export function AdminGrowth() {
       });
       setIsModalOpen(false);
       fetchData();
+      toast.success("Cupom criado com sucesso! 🏷️");
     } catch (err: any) {
       setFormError(err?.response?.data?.error || "Erro ao criar cupom.");
     } finally {
@@ -89,8 +91,10 @@ export function AdminGrowth() {
     try {
       await API.patch(`/admin/coupons/${id}`, { active });
       fetchData();
+      toast.success("Status do cupom atualizado!");
     } catch (err) {
       console.error("Erro ao alterar status do cupom:", err);
+      toast.error("Erro ao alterar status do cupom.");
     }
   };
 
@@ -99,8 +103,10 @@ export function AdminGrowth() {
     try {
       await API.delete(`/admin/coupons/${id}`);
       fetchData();
+      toast.success("Cupom excluído com sucesso!");
     } catch (err) {
       console.error("Erro ao excluir cupom:", err);
+      toast.error("Erro ao excluir cupom.");
     }
   };
 
@@ -142,7 +148,7 @@ export function AdminGrowth() {
       {/* Content */}
       <div className="pt-4">
         {loading ? (
-          <div className="p-12 flex justify-center"><div className="animate-spin text-brand-tactical"><Activity size={24} /></div></div>
+          <div className="py-24 text-center border border-theme-border bg-theme-bg-muted/10 animate-pulse text-[10px] text-theme-muted uppercase tracking-[0.5em] font-black italic rounded-2xl">Sincronizando Dados de Crescimento...</div>
         ) : activeTab === "COUPONS" ? (
           <div className="space-y-4">
             <div className="flex justify-end">

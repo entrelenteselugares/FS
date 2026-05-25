@@ -3,6 +3,10 @@ import { API } from '../lib/api';
 import { Share2, Users, Banknote, Trophy, Copy, Check, Clock } from 'lucide-react';
 import { toast } from 'sonner';
 
+function formatCurrency(v: number) {
+  return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(v);
+}
+
 interface AffiliateData {
   tier: 'STANDARD' | 'VIP';
   referralCode: string;
@@ -44,9 +48,16 @@ export function AffiliateDashboard() {
 
   if (loading) {
     return (
-      <div className="p-12 text-center animate-pulse flex flex-col items-center justify-center gap-4">
-        <div className="w-8 h-8 border-4 border-brand-tactical border-t-transparent rounded-full animate-spin" />
-        <p className="text-[10px] font-black uppercase tracking-widest text-brand-tactical italic">Carregando painel de indicações...</p>
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6 pt-24">
+        {[...Array(4)].map((_, i) => (
+          <div key={i} className="bg-theme-card border border-theme-border/60 rounded-2xl p-6 h-[120px] animate-pulse flex flex-col justify-between">
+             <div className="flex justify-between items-start">
+                <div className="w-10 h-10 bg-white/5 rounded-xl border border-white/10" />
+                <div className="w-20 h-4 bg-white/5 rounded border border-white/10" />
+             </div>
+             <div className="w-full h-8 bg-white/5 rounded border border-white/10 mt-auto" />
+          </div>
+        ))}
       </div>
     );
   }
@@ -122,12 +133,12 @@ export function AffiliateDashboard() {
             <h3 className="text-[8px] sm:text-[9px] font-black text-theme-text-muted uppercase tracking-widest">Ganhos Diretos (L1)</h3>
           </div>
           <p className="text-xl sm:text-3xl font-heading font-black text-emerald-400 italic tracking-tighter leading-none">
-            R$ {(data.commissionsL1 || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+            {formatCurrency(data.commissionsL1 || 0)}
           </p>
         </div>
 
         {/* L2 Network */}
-        <div className="bg-theme-bg-muted/10 border border-theme-border/40 p-4 sm:p-6 rounded-2xl hover:border-theme-border/60 transition-all duration-500 group relative overflow-hidden">
+        <div className={`bg-theme-bg-muted/10 border border-theme-border/40 p-4 sm:p-6 rounded-2xl transition-all duration-500 group relative overflow-hidden ${isVip ? 'hover:border-theme-border/60' : 'opacity-80 grayscale'}`}>
           <div className="absolute top-0 right-0 w-16 h-16 bg-gradient-to-br from-white/5 to-transparent rotate-45 translate-x-8 -translate-y-8" />
           {!isVip && (
              <div className="absolute inset-0 bg-theme-bg/95 backdrop-blur-[1px] flex flex-col items-center justify-center z-10 p-3 sm:p-4 text-center">
@@ -145,7 +156,7 @@ export function AffiliateDashboard() {
         </div>
 
         {/* L2 Earnings */}
-        <div className="bg-theme-bg-muted/10 border border-theme-border/40 p-4 sm:p-6 rounded-2xl hover:border-theme-border/60 transition-all duration-500 group relative overflow-hidden">
+        <div className={`bg-theme-bg-muted/10 border border-theme-border/40 p-4 sm:p-6 rounded-2xl transition-all duration-500 group relative overflow-hidden ${isVip ? 'hover:border-theme-border/60' : 'opacity-80 grayscale'}`}>
           <div className="absolute top-0 right-0 w-16 h-16 bg-gradient-to-br from-white/5 to-transparent rotate-45 translate-x-8 -translate-y-8" />
            {!isVip && (
              <div className="absolute inset-0 bg-theme-bg/95 backdrop-blur-[1px] flex flex-col items-center justify-center z-10 p-3 sm:p-4 text-center">
@@ -159,7 +170,7 @@ export function AffiliateDashboard() {
             <h3 className="text-[8px] sm:text-[9px] font-black text-theme-text-muted uppercase tracking-widest">Ganhos de Rede (L2)</h3>
           </div>
           <p className="text-xl sm:text-3xl font-heading font-black text-emerald-400 italic tracking-tighter leading-none">
-            R$ {(data.commissionsL2 || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+            {formatCurrency(data.commissionsL2 || 0)}
           </p>
         </div>
       </div>
@@ -182,7 +193,7 @@ export function AffiliateDashboard() {
                 <h3 className="text-[8px] sm:text-[9px] font-black text-theme-text-muted uppercase tracking-widest">Liberado para Saque</h3>
               </div>
               <p className="text-xl sm:text-3xl font-heading font-black text-brand-tactical italic tracking-tighter leading-none">
-                R$ {(data.availablePayout || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                {formatCurrency(data.availablePayout || 0)}
               </p>
            </div>
 
@@ -196,7 +207,7 @@ export function AffiliateDashboard() {
                 <h3 className="text-[8px] sm:text-[9px] font-black text-theme-text-muted uppercase tracking-widest">Em Processamento</h3>
               </div>
               <p className="text-xl sm:text-3xl font-heading font-black text-theme-text-muted italic tracking-tighter leading-none">
-                R$ {(data.pendingPayout || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                {formatCurrency(data.pendingPayout || 0)}
               </p>
            </div>
         </div>

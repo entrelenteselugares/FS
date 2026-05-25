@@ -173,13 +173,23 @@ export default function VaultDetailPage() {
     if (!user) { navigate("/login"); return; }
     fetchVaultDetails();
     
-    // Check for success redirect from MP
+    // Check for success redirect from MP or URL actions
     const params = new URLSearchParams(window.location.search);
+    
     if (params.get("subscribed") === "true") {
       // In a real app, we'd use a toast component
       alert("Assinatura ativada com sucesso! Seu cofre está salvo.");
       // Remove query param to avoid repeated alerts
-      window.history.replaceState({}, document.title, window.location.pathname);
+      params.delete("subscribed");
+      const newQuery = params.toString();
+      window.history.replaceState({}, document.title, `${window.location.pathname}${newQuery ? `?${newQuery}` : ''}`);
+    }
+
+    if (params.get("action") === "print") {
+      setIsPrintStoreOpen(true);
+      params.delete("action");
+      const newQuery = params.toString();
+      window.history.replaceState({}, document.title, `${window.location.pathname}${newQuery ? `?${newQuery}` : ''}`);
     }
   }, [user, navigate, fetchVaultDetails]);
 

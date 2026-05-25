@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { toast } from "sonner";
 import { API } from "../../lib/api";
 import { Check, X, FileText, User as UserIcon, Building2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -33,6 +34,7 @@ export const AdminApprovalHub: React.FC = () => {
       setApplications(data);
     } catch (err) {
       console.error("Erro ao carregar aplicações:", err);
+      toast.error("Erro ao carregar solicitações de aprovação.");
     } finally {
       setLoading(false);
     }
@@ -47,8 +49,10 @@ export const AdminApprovalHub: React.FC = () => {
     try {
       await API.patch(`/admin/applications/${id}/${action}`);
       setApplications(prev => prev.filter(a => a.id !== id));
+      toast.success(action === 'approve' ? "Solicitação aprovada com sucesso! 🛡️" : "Solicitação rejeitada com sucesso. 🚫");
     } catch (err) {
       console.error(`Erro ao ${action} aplicação:`, err);
+      toast.error(action === 'approve' ? "Erro ao aprovar solicitação." : "Erro ao rejeitar solicitação.");
     } finally {
       setProcessingId(null);
     }
@@ -56,8 +60,9 @@ export const AdminApprovalHub: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center py-20">
-        <div className="w-8 h-8 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin" />
+      <div className="py-24 text-center border border-theme-border bg-theme-bg-muted/10 animate-pulse text-[10px] text-theme-muted uppercase tracking-[0.5em] font-black italic rounded-2xl">
+        Sincronizando Solicitações Pendentes...
+
       </div>
     );
   }

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { toast } from "sonner";
 import { API } from "../../lib/api";
 import { Users, Plus, TrendingUp, MousePointer2, Award, Search, X, ArrowRight, Trash2, Power } from "lucide-react";
 
@@ -64,8 +65,9 @@ export const AdminAmbassadors: React.FC = () => {
       await API.post("/admin/ambassador/campaigns", formData);
       setIsModalOpen(false);
       fetchCampaigns();
+      toast.success("Campanha criada com sucesso! 🚀");
     } catch {
-      alert("Erro ao criar campanha.");
+      toast.error("Erro ao criar campanha.");
     }
   };
 
@@ -73,8 +75,9 @@ export const AdminAmbassadors: React.FC = () => {
     try {
       await API.patch(`/admin/ambassador/campaigns/${id}/toggle`);
       fetchCampaigns();
+      toast.success("Status da campanha atualizado!");
     } catch {
-      alert("Erro ao alterar status da campanha.");
+      toast.error("Erro ao alterar status da campanha.");
     }
   };
 
@@ -83,8 +86,9 @@ export const AdminAmbassadors: React.FC = () => {
     try {
       await API.delete(`/admin/ambassador/campaigns/${id}`);
       fetchCampaigns();
+      toast.success("Campanha excluída com sucesso!");
     } catch {
-      alert("Erro ao excluir campanha.");
+      toast.error("Erro ao excluir campanha.");
     }
   };
 
@@ -96,11 +100,12 @@ export const AdminAmbassadors: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="p-8 h-screen flex flex-col items-center justify-center space-y-4">
-        <div className="h-1 w-32 bg-zinc-800 relative overflow-hidden">
-          <div className="absolute inset-0 bg-brand-tactical animate-shimmer" style={{ width: '40%' }} />
-        </div>
-        <p className="text-[10px] font-black text-zinc-500 uppercase tracking-[0.4em] animate-pulse">Sincronizando Engine...</p>
+      <div className="py-24 text-center border border-theme-border bg-theme-bg-muted/10 animate-pulse text-[10px] text-theme-muted uppercase tracking-[0.5em] font-black italic rounded-2xl">
+        Sincronizando Engine de Afiliados...
+
+
+
+
       </div>
     );
   }
@@ -254,7 +259,7 @@ export const AdminAmbassadors: React.FC = () => {
             </div>
 
             {/* Content */}
-            <form onSubmit={handleCreate} className="flex-1 overflow-y-auto p-8 md:p-10 space-y-8 custom-scrollbar">
+            <form id="campaign-form" onSubmit={handleCreate} className="flex-1 overflow-y-auto p-8 md:p-10 space-y-8 custom-scrollbar">
               <div className="space-y-2">
                 <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest block mb-2 opacity-60 italic">Nome da Campanha</label>
                 <input 
@@ -422,7 +427,7 @@ export const AdminAmbassadors: React.FC = () => {
               <button type="button" onClick={() => setIsModalOpen(false)} className="flex-1 py-5 border border-theme-border text-[11px] font-black uppercase tracking-[0.3em] text-theme-muted hover:text-white transition-all rounded-[20px] italic">Cancelar</button>
               <button 
                 type="submit"
-                onClick={handleCreate}
+                form="campaign-form"
                 className="flex-[2] py-5 bg-brand-tactical text-zinc-950 text-[11px] font-black uppercase tracking-[0.3em] shadow-2xl shadow-brand-tactical/20 hover:brightness-110 transition-all rounded-[20px] italic flex items-center justify-center gap-4"
               >
                 Ativar Campanha

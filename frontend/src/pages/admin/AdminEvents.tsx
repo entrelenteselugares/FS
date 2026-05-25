@@ -904,8 +904,8 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
                   {eventMedia.length === 0 && (
                     <div className="py-20 text-center border-2 border-dashed border-theme-border/40 rounded-[30px] bg-theme-bg-muted/30">
                       <Image size={40} className="mx-auto text-theme-muted/30 mb-4" strokeWidth={1} />
-                      <p className="text-[9px] sm:text-[11px] font-black text-brand-tactical uppercase tracking-[0.2em] sm:tracking-[0.4em] italic truncate max-w-[80vw]">Administração de Coberturas Fotográficas</p>
-                      <p className="text-[9px] sm:text-[11px] font-black text-brand-tactical uppercase tracking-[0.2em] sm:tracking-[0.4em] italic truncate max-w-[80vw]">Administração de Coberturas Fotográficas</p>
+                      <p className="text-[9px] sm:text-[11px] font-black text-brand-tactical uppercase tracking-[0.2em] sm:tracking-[0.4em] italic truncate max-w-[80vw]">Nenhuma mídia sincronizada.</p>
+                      <p className="text-[8px] sm:text-[9px] font-bold text-theme-muted uppercase tracking-[0.2em] sm:tracking-[0.4em] italic truncate max-w-[80vw] mt-2">Clique em "SINCRO DRIVE" para importar imagens.</p>
                     </div>
                   )}
                 </div>

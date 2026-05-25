@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Shield, Database, Save, RotateCcw, Palette, TrendingUp } from "lucide-react";
 
 import { API } from "../../lib/api";
+import { toast } from "sonner";
 
 interface Config {
   key: string;
@@ -35,18 +36,16 @@ export const AdminSettings: React.FC = () => {
 
   const getConfig = (key: string) => settings.find(c => c.key === key)?.value || "";
 
-  const [notification, setNotification] = useState<{message: string, type: 'success' | 'error'} | null>(null);
+
 
   const handleSave = async () => {
     setSaving(true);
     try {
       await API.patch("/admin/configs", { configs: settings });
-      setNotification({ message: "Configurações do sistema sincronizadas com sucesso! ✅", type: 'success' });
-      setTimeout(() => setNotification(null), 4000);
+      toast.success("Configurações do sistema sincronizadas com sucesso! ✅");
     } catch (err) {
       const axiosError = err as import("axios").AxiosError<{ error: string }>;
-      setNotification({ message: axiosError.response?.data?.error || "Erro ao salvar.", type: 'error' });
-      setTimeout(() => setNotification(null), 5000);
+      toast.error(axiosError.response?.data?.error || "Erro ao salvar.");
     } finally {
       setSaving(false);
     }
@@ -240,19 +239,7 @@ export const AdminSettings: React.FC = () => {
          <p className="text-zinc-600 text-[9px] uppercase tracking-widest font-bold">Protocolo V4.0.2 - Todos os direitos reservados</p>
       </div>
       {/* NOTIFICATION (MIDNIGHT LUXURY) */}
-      {notification && (
-        <div className="fixed bottom-10 right-10 z-[100] animate-in slide-in-from-right-10 duration-500">
-           <div className={`p-6 border ${notification.type === 'success' ? 'border-brand-tactical bg-theme-bg shadow-[0_0_30px_rgba(133,185,172,0.1)]' : 'border-red-900 bg-theme-bg'} min-w-[300px] relative overflow-hidden shadow-2xl`}>
-              <div className="flex flex-col gap-1">
-                 <span className={`text-[8px] font-black uppercase tracking-[0.4em] ${notification.type === 'success' ? 'text-brand-tactical' : 'text-red-500'}`}>
-                    {notification.type === 'success' ? 'Protocolo Sincronizado' : 'Erro de Infraestrutura'}
-                 </span>
-                 <p className="text-[11px] font-bold text-theme-text uppercase tracking-widest">{notification.message}</p>
-              </div>
-              <div className={`absolute bottom-0 left-0 h-1 ${notification.type === 'success' ? 'bg-brand-tactical' : 'bg-red-900'} animate-out fade-out duration-[5000ms] w-full`} />
-           </div>
-        </div>
-      )}
+      {null}
     </div>
   );
 };

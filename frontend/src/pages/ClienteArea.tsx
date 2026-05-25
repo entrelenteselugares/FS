@@ -113,47 +113,70 @@ const S = {
 export default function ClienteArea() {
   const { user, updateMe } = useAuth();
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [pedidos, setPedidos] = useState<Pedido[]>([]);
   const [selected, setSelected] = useState<Pedido | null>(null);
   const [loading, setLoading] = useState(true);
   const [loadingDetalhe, setLoadingDetalhe] = useState(false);
   const [isPrivacyModalOpen, setIsPrivacyModalOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<ActiveTab>("files");
+
+  const handleTabChange = useCallback((tab: string) => {
+    let targetTab = tab as ActiveTab;
+    if (tab === "financas") {
+      targetTab = "financeiro";
+    }
+    setActiveTab(targetTab);
+
+    const searchMap: Record<string, string> = {
+      wallet: "wallet",
+      files: "files",
+      profile: "menu",
+      affiliate: "affiliate",
+    };
+    const s = searchMap[targetTab] || targetTab;
+
+    const nextParams = new URLSearchParams(searchParams);
+    nextParams.set("s", s);
+    setSearchParams(nextParams);
+  }, [searchParams, setSearchParams]);
   
   // Franchise States
   const [network, setNetwork] = useState<Partner[]>([]);
   const [isExpressModalOpen, setIsExpressModalOpen] = useState(false);
   const [isFlashModalOpen, setIsFlashModalOpen] = useState(false);
-  const [notification, setNotification] = useState<{ message: string; type: "success" | "error" } | null>(null);
+
 
   const showNotification = useCallback((message: string, type: "success" | "error" = "success") => {
-    setNotification({ message, type });
-    setTimeout(() => setNotification(null), 5000);
+    if (type === "success") toast.success(message);
+    else toast.error(message);
   }, []);
   
   const NAV_ITEMS = useMemo<NavItem[]>(() => {
     const items: NavItem[] = [
-      { label: "Minhas Memórias", onClick: () => setActiveTab("files"), isActive: activeTab === "files", icon: <ImageIcon size={18} /> },
+      { label: "Minhas Memórias", onClick: () => handleTabChange("files"), isActive: activeTab === "files", icon: <ImageIcon size={18} /> },
       { label: "Meus Álbuns", onClick: () => navigate("/meus-albuns"), isActive: false, icon: <Lock size={18} /> },
-      { label: "Carrinho", onClick: () => setActiveTab("wallet"), isActive: activeTab === "wallet", icon: <ShoppingBag size={18} /> },
-      { label: "Indique e Ganhe", onClick: () => setActiveTab("affiliate"), isActive: activeTab === "affiliate", icon: <Users size={18} /> },
-      { label: "Meus Dados", onClick: () => setActiveTab("profile"), isActive: activeTab === "profile", icon: <User size={18} /> },
+      { label: "Carrinho", onClick: () => handleTabChange("wallet"), isActive: activeTab === "wallet", icon: <ShoppingBag size={18} /> },
+      { label: "Indique e Ganhe", onClick: () => handleTabChange("affiliate"), isActive: activeTab === "affiliate", icon: <Users size={18} /> },
+      { label: "Meus Dados", onClick: () => handleTabChange("profile"), isActive: activeTab === "profile", icon: <User size={18} /> },
     ];
 
-    if ((user?.role === "PROFISSIONAL" || user?.role === "FRANCHISEE") && user?.verificationStatus === "APPROVED") {
+    const isProOrFranchise = user?.role === "PROFISSIONAL" || user?.role === "FRANCHISEE" || !!user?.franchiseProfile;
+    const isVerified = user?.verificationStatus === "APPROVED" || user?.isVerified || !!user?.franchiseProfile;
+
+    if (isProOrFranchise && isVerified) {
       items.push(
         { label: "ÁREA PROFISSIONAL", isHeader: true },
-        { label: "Minha Agenda", onClick: () => setActiveTab("agenda"), isActive: activeTab === "agenda", icon: <Play size={18} /> },
-        { label: "Portfólio & Serviços", onClick: () => setActiveTab("servicos"), isActive: activeTab === "servicos", icon: <Briefcase size={18} /> },
-        { label: "Vendas & Ganhos", onClick: () => setActiveTab("financeiro"), isActive: activeTab === "financeiro", icon: <DollarSign size={18} /> },
-        { label: "Agenda Google", onClick: () => setActiveTab("calendar"), isActive: activeTab === "calendar", icon: <Calendar size={18} /> }
+        { label: "Minha Agenda", onClick: () => handleTabChange("agenda"), isActive: activeTab === "agenda", icon: <Play size={18} /> },
+        { label: "Portfólio & Serviços", onClick: () => handleTabChange("servicos"), isActive: activeTab === "servicos", icon: <Briefcase size={18} /> },
+        { label: "Vendas & Ganhos", onClick: () => handleTabChange("financeiro"), isActive: activeTab === "financeiro", icon: <DollarSign size={18} /> },
+        { label: "Agenda Google", onClick: () => handleTabChange("calendar"), isActive: activeTab === "calendar", icon: <Calendar size={18} /> }
       );
 
       if (user?.role === "FRANCHISEE" || user?.franchiseProfile) {
         items.push(
-          { label: "Rede Técnica", onClick: () => setActiveTab("equipe"), isActive: activeTab === "equipe", icon: <Users size={18} /> },
-          { label: "Franquia Print", onClick: () => setActiveTab("franquia"), isActive: activeTab === "franquia", icon: <Printer size={18} /> }
+          { label: "Rede Técnica", onClick: () => handleTabChange("equipe"), isActive: activeTab === "equipe", icon: <Users size={18} /> },
+          { label: "Franquia Print", onClick: () => handleTabChange("franquia"), isActive: activeTab === "franquia", icon: <Printer size={18} /> }
         );
       }
     }
@@ -161,17 +184,17 @@ export default function ClienteArea() {
     if ((user?.role === "CARTORIO" || user?.role === "UNIDADE") && user?.verificationStatus === "APPROVED") {
       items.push(
         { label: "ÁREA DA UNIDADE", isHeader: true },
-        { label: "Agenda Unidade", onClick: () => setActiveTab("agenda"), isActive: activeTab === "agenda", icon: <Play size={18} /> },
-        { label: "Fluxo Financeiro", onClick: () => setActiveTab("financeiro"), isActive: activeTab === "financeiro", icon: <DollarSign size={18} /> },
-        { label: "Rede Técnica", onClick: () => setActiveTab("equipe"), isActive: activeTab === "equipe", icon: <Users size={18} /> },
-        { label: "Google Calendar", onClick: () => setActiveTab("calendar"), isActive: activeTab === "calendar", icon: <Calendar size={18} /> },
-        { label: "Franquia Print", onClick: () => setActiveTab("franquia"), isActive: activeTab === "franquia", icon: <Printer size={18} /> },
-        { label: "Configuração Pública", onClick: () => setActiveTab("configuracoes"), isActive: activeTab === "configuracoes", icon: <Settings size={18} /> }
+        { label: "Agenda Unidade", onClick: () => handleTabChange("agenda"), isActive: activeTab === "agenda", icon: <Play size={18} /> },
+        { label: "Fluxo Financeiro", onClick: () => handleTabChange("financeiro"), isActive: activeTab === "financeiro", icon: <DollarSign size={18} /> },
+        { label: "Rede Técnica", onClick: () => handleTabChange("equipe"), isActive: activeTab === "equipe", icon: <Users size={18} /> },
+        { label: "Google Calendar", onClick: () => handleTabChange("calendar"), isActive: activeTab === "calendar", icon: <Calendar size={18} /> },
+        { label: "Franquia Print", onClick: () => handleTabChange("franquia"), isActive: activeTab === "franquia", icon: <Printer size={18} /> },
+        { label: "Configuração Pública", onClick: () => handleTabChange("configuracoes"), isActive: activeTab === "configuracoes", icon: <Settings size={18} /> }
       );
     }
 
     return items;
-  }, [user, activeTab, navigate]);
+  }, [user, activeTab, navigate, handleTabChange]);
 
   // Profile States
   const [profileData, setProfileData] = useState({ 
@@ -301,7 +324,7 @@ export default function ClienteArea() {
       setSaveSuccess(true);
       setTimeout(() => setSaveSuccess(false), 3000);
     } catch {
-      alert("Erro ao salvar perfil.");
+      toast.error("Erro ao salvar perfil.");
     } finally {
       setIsSaving(false);
     }
@@ -372,13 +395,13 @@ export default function ClienteArea() {
         <ProfissionalDashboard 
           noLayout={true} 
           activeTab={activeTab as ProfissionalTab} 
-          setActiveTab={setActiveTab as unknown as (tab: ProfissionalTab) => void} 
+          setActiveTab={handleTabChange as unknown as (tab: ProfissionalTab) => void} 
         />
       ) : isUnitTab ? (
         <UnidadeFixaDashboard 
           noLayout={true} 
           activeTab={(activeTab === "financeiro" ? "financas" : activeTab) as UnidadeTab} 
-          setActiveTab={setActiveTab as unknown as (tab: UnidadeTab) => void} 
+          setActiveTab={handleTabChange as unknown as (tab: UnidadeTab) => void} 
         />
       ) : (
         <>
@@ -495,7 +518,7 @@ export default function ClienteArea() {
                     <button onClick={() => navigate("/")} className="fs-btn bg-brand-tactical text-brand-text flex items-center gap-3">
                       Explorar Vitrine <ArrowRight size={14} />
                     </button>
-                    <button onClick={() => navigate("/cotacao")} className="fs-btn border border-theme-border text-theme-text hover:border-brand-tactical flex items-center gap-3">
+                    <button onClick={() => navigate("/cotacao")} className="fs-btn border border-theme-border text-theme-text hover:border-brand-tactical hover:text-brand-tactical transition-colors flex items-center gap-3">
                       Solicitar Cobertura <ArrowRight size={14} />
                     </button>
                   </div>
@@ -587,7 +610,7 @@ export default function ClienteArea() {
                   </div>
                 </div>
                 <div className="flex items-center gap-6">
-                  <button type="submit" disabled={isSaving} className="fs-btn bg-brand-tactical text-brand-text disabled:opacity-50 italic">
+                  <button type="submit" disabled={isSaving} className="fs-btn bg-brand-tactical text-brand-text hover:bg-brand-tactical/90 hover:scale-[1.02] hover:shadow-lg hover:shadow-brand-tactical/20 transition-all disabled:opacity-50 disabled:hover:scale-100 disabled:hover:shadow-none italic">
                     {isSaving ? "Salvando..." : "Salvar Alterações"}
                   </button>
                   {saveSuccess && <span className="text-brand-tactical text-[10px] font-black uppercase tracking-widest">✓ Atualizado</span>}
@@ -596,7 +619,7 @@ export default function ClienteArea() {
               <div className="pt-6 border-t border-theme-border/40 space-y-4">
                 <h3 className="text-[9px] font-black text-red-400 uppercase tracking-[0.3em]">Zona de Suporte</h3>
                 <p className="text-[11px] text-theme-muted">Para redefinir sua senha ou solicitar exclusão de dados, entre em contato com nosso suporte.</p>
-                <a href="https://wa.me/" target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 text-[10px] font-black text-theme-text uppercase tracking-widest hover:text-brand-tactical transition-colors">
+                <a href="https://wa.me/5511999999999" target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 text-[10px] font-black text-theme-text uppercase tracking-widest hover:text-brand-tactical transition-colors">
                   Falar com Suporte <ArrowRight size={12} />
                 </a>
               </div>
@@ -687,7 +710,7 @@ export default function ClienteArea() {
           ) : activeTab === "wallet" ? (
             <div className="space-y-10">
 
-              <div className="grid grid-cols-2 md:grid-cols-2 gap-3 md:gap-8">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-8">
                 <div className="relative overflow-hidden bg-theme-bg-muted/10 border border-theme-border/40 p-4 sm:p-8 md:p-10 rounded-2xl transition-all duration-500 hover:border-brand-tactical/30 hover:shadow-[0_0_30px_rgba(242,193,46,0.03)] group">
                   <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-white/5 to-transparent rotate-45 translate-x-12 -translate-y-12 pointer-events-none" />
                   <div className="relative z-10 space-y-2 sm:space-y-4">
@@ -711,7 +734,7 @@ export default function ClienteArea() {
                     </p>
                   </div>
                   <div className="relative z-10">
-                    <button onClick={() => navigate("/")} className="fs-btn bg-brand-tactical text-brand-text w-full flex items-center justify-center gap-1.5 sm:gap-3 shadow-lg shadow-brand-tactical/10 text-[9px] sm:text-xs py-2 sm:py-3">
+                    <button id="btn-explorar-carteira" onClick={() => navigate("/")} className="fs-btn bg-brand-tactical text-brand-text hover:bg-brand-tactical/90 hover:scale-[1.02] transition-all w-full flex items-center justify-center gap-1.5 sm:gap-3 shadow-lg shadow-brand-tactical/10 hover:shadow-brand-tactical/20 text-[9px] sm:text-xs py-2 sm:py-3">
                       Explorar <ArrowRight size={10} className="sm:w-3.5 sm:h-3.5" />
                     </button>
                   </div>
@@ -742,11 +765,13 @@ export default function ClienteArea() {
                                 </p>
                              </div>
                              <div className="text-right">
-                               <p className="text-[14px] font-black italic tracking-tighter text-brand-tactical">
-                                  +{formatCurrency(item.amount || 0)}
-                               </p>
+                               {(item.amount && Number(item.amount) > 0) ? (
+                                 <p className="text-[14px] font-black italic tracking-tighter text-brand-tactical">
+                                    +{formatCurrency(item.amount)}
+                                 </p>
+                               ) : null}
                                {item.points && (
-                                 <p className="text-[8px] font-black text-theme-text-muted uppercase tracking-widest">
+                                 <p className="text-[8px] font-black text-theme-text-muted uppercase tracking-widest mt-0.5">
                                    +{item.points} pts
                                  </p>
                                )}
@@ -830,22 +855,7 @@ export default function ClienteArea() {
         />
       )}
 
-      {/* Global Notifications */}
-      {notification && (
-        <div 
-          className="fixed bottom-10 right-10 z-[2000] px-8 py-4 shadow-2xl animate-in slide-in-from-right duration-500"
-          style={{ 
-            background: notification.type === "success" ? T.brand : "#f87171",
-            color: notification.type === "success" ? "#000" : "#fff",
-            fontWeight: 900,
-            fontSize: 10,
-            textTransform: "uppercase",
-            letterSpacing: 2
-          }}
-        >
-          {notification.message}
-        </div>
-      )}
+      {null}
         </>
       )}
     </DashboardLayout>
@@ -912,6 +922,12 @@ function EventGroupRow({ group, now, onSelectPedido }: {
                 alt="" 
                 className="w-full h-full object-cover grayscale brightness-30 blur-[1px] transition-all duration-1000 group-hover:scale-105" 
                 style={{ objectPosition: event.coverPosition || 'center' }}
+                onError={(e) => {
+                  const target = e.target as HTMLImageElement;
+                  target.onerror = null;
+                  target.src = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiMzZjNmNDYiIHN0cm9rZS13aWR0aD0iMiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PHJlY3Qgd2lkdGg9IjE4IiBoZWlnaHQ9IjE4IiB4PSIzIiB5PSIzIiByeD0iMiIgcnk9IjIiLz48Y2lyY2xlIGN4PSI5IiBjeT0iOSIgcj0iMiIvPjxwYXRoIGQ9Im0yMSAxNS0zLjA4Ni0zLjA4NmEyIDIgMCAwIDAtMi44MjggMEw2IDIxIi8+PC9zdmc+';
+                  target.className = 'w-full h-full object-contain p-4 opacity-30 transition-all duration-1000 group-hover:scale-105';
+                }}
               />
             ) : (
               <div className="w-full h-full flex items-center justify-center bg-zinc-900">
@@ -980,6 +996,12 @@ function EventGroupRow({ group, now, onSelectPedido }: {
                 alt="" 
                 className={`w-full h-full object-cover transition-all duration-1000 group-hover:scale-110 ${hasAprovado ? 'grayscale-0 brightness-110' : 'grayscale brightness-40 blur-[2px]'}`} 
                 style={{ objectPosition: event.coverPosition || 'center' }}
+                onError={(e) => {
+                  const target = e.target as HTMLImageElement;
+                  target.onerror = null;
+                  target.src = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiMzZjNmNDYiIHN0cm9rZS13aWR0aD0iMiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PHJlY3Qgd2lkdGg9IjE4IiBoZWlnaHQ9IjE4IiB4PSIzIiB5PSIzIiByeD0iMiIgcnk9IjIiLz48Y2lyY2xlIGN4PSI5IiBjeT0iOSIgcj0iMiIvPjxwYXRoIGQ9Im0yMSAxNS0zLjA4Ni0zLjA4NmEyIDIgMCAwIDAtMi44MjggMEw2IDIxIi8+PC9zdmc+';
+                  target.className = `w-full h-full object-contain p-6 opacity-30 transition-all duration-1000 group-hover:scale-110`;
+                }}
               />
             ) : (
               <div className="w-full h-full flex items-center justify-center bg-zinc-900">
@@ -1204,7 +1226,7 @@ function PedidoDetalhe({ pedido, loading, onGoToEvent, onChangePrivacy, onRefres
 
     // Valida tamanho (max 5MB)
     if (file.size > 5 * 1024 * 1024) {
-      alert("A imagem deve ter no máximo 5MB.");
+      toast.error("A imagem deve ter no máximo 5MB.");
       return;
     }
 
@@ -1224,7 +1246,7 @@ function PedidoDetalhe({ pedido, loading, onGoToEvent, onChangePrivacy, onRefres
         onRefresh();
       } catch (err) {
         console.error("Erro no upload:", err);
-        alert("Erro ao enviar imagem.");
+        toast.error("Erro ao enviar imagem.");
       } finally {
         setIsUploading(false);
       }
@@ -1249,7 +1271,7 @@ function PedidoDetalhe({ pedido, loading, onGoToEvent, onChangePrivacy, onRefres
       setIsEditing(false);
       onRefresh();
     } catch {
-      alert("Erro ao salvar personalização.");
+      toast.error("Erro ao salvar personalização.");
     } finally {
       setIsSaving(false);
     }
@@ -1264,8 +1286,14 @@ function PedidoDetalhe({ pedido, loading, onGoToEvent, onChangePrivacy, onRefres
               src={pedido.event.coverPhotoUrl.toString().trim().replace(/\s/g, '')} 
               alt="" 
               className="w-full h-full object-cover opacity-60"
+              onError={(e) => {
+                const target = e.target as HTMLImageElement;
+                target.onerror = null;
+                target.src = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiMzZjNmNDYiIHN0cm9rZS13aWR0aD0iMiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PHJlY3Qgd2lkdGg9IjE4IiBoZWlnaHQ9IjE4IiB4PSIzIiB5PSIzIiByeD0iMiIgcnk9IjIiLz48Y2lyY2xlIGN4PSI5IiBjeT0iOSIgcj0iMiIvPjxwYXRoIGQ9Im0yMSAxNS0zLjA4Ni0zLjA4NmEyIDIgMCAwIDAtMi44MjggMEw2IDIxIi8+PC9zdmc+';
+                target.className = 'w-full h-full object-contain opacity-20 p-4';
+              }}
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-theme-bg via-theme-bg/80 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-theme-bg via-theme-bg/80 to-transparent pointer-events-none" />
           </>
         ) : (
           <div className="absolute inset-0 bg-gradient-to-br from-brand-tactical/20 to-transparent" />
@@ -1559,7 +1587,7 @@ function MediaActionCard({ icon, title, subtitle, url, disabled, emptyText }: {
 }) {
   if (disabled) {
     return (
-      <div className="p-6 bg-theme-bg-muted/30 border border-theme-border/30 text-theme-muted flex items-center gap-5">
+      <div className="p-6 bg-theme-bg-muted/30 border border-theme-border/30 text-theme-muted flex items-center gap-5 cursor-not-allowed">
         <div className="p-3 bg-theme-bg-muted border border-theme-border/20 opacity-40">{icon}</div>
         <div>
           <p className="text-[11px] font-black uppercase tracking-widest mb-1 italic">{title}</p>

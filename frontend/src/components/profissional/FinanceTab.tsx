@@ -75,7 +75,7 @@ export function FinanceTab({
               <div className="flex items-center gap-2 group relative">
                 <button
                   onClick={() => onDownloadTaxReport()}
-                  className="px-4 py-2 bg-brand-tactical/10 border border-brand-tactical/30 text-[9px] font-black text-brand-tactical uppercase tracking-widest hover:bg-brand-tactical hover:text-zinc-950 transition-all rounded-xl italic flex items-center gap-2"
+                  className="px-4 py-2 bg-brand-tactical/10 border border-brand-tactical/30 text-[9px] font-black text-brand-tactical uppercase tracking-widest hover:bg-brand-tactical/90 hover:scale-[1.02] hover:shadow-lg hover:shadow-brand-tactical/20 transition-all rounded-xl italic flex items-center gap-2"
                 >
                   <Download size={12} />
                   Relatório Tributário
@@ -301,7 +301,7 @@ export function FinanceTab({
                   {p.status === "PAID" && (
                     <button 
                       onClick={() => window.open(`${API.defaults.baseURL}/profissional/finance/receipt/${p.id}`, '_blank')}
-                      className="p-3 bg-theme-bg-muted border border-theme-border text-theme-muted hover:text-brand-tactical hover:border-brand-tactical/50 rounded-xl transition-all shadow-lg"
+                      className="p-3 bg-theme-bg-muted border border-theme-border text-theme-muted hover:text-brand-tactical hover:border-brand-tactical/50 hover:scale-[1.02] rounded-xl transition-all shadow-lg cursor-pointer"
                       title="Baixar Recibo"
                     >
                       <Download size={14} />
@@ -341,7 +341,7 @@ export function FinanceTab({
               <button onClick={onCancelGoal} className="flex-1 py-4 bg-theme-bg-muted border border-theme-border text-[10px] font-black text-theme-muted uppercase tracking-widest rounded-xl italic">
                 Cancelar
               </button>
-              <button onClick={onSaveGoal} className="flex-[2] py-4 bg-brand-tactical text-brand-text text-[11px] font-black uppercase tracking-[0.3em] rounded-xl italic">
+              <button onClick={onSaveGoal} className="flex-[2] py-4 bg-brand-tactical text-brand-text text-[11px] font-black uppercase tracking-[0.3em] hover:bg-brand-tactical/90 hover:scale-[1.02] hover:shadow-xl hover:shadow-brand-tactical/30 transition-all rounded-xl italic cursor-pointer">
                 Salvar Meta
               </button>
             </div>

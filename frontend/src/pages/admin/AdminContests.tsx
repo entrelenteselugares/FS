@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { toast } from "sonner";
 import { API } from "../../lib/api";
 import { X, TrendingUp, ArrowRight } from "lucide-react";
 
@@ -21,13 +22,13 @@ export const AdminContests: React.FC = () => {
   const [contests, setContests] = useState<Contest[]>([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
-  const [notification, setNotification] = useState<{message: string, type: 'success' | 'error'} | null>(null);
+
   const [editingContest, setEditingContest] = useState<Contest | null>(null);
 
-  const showNotification = (message: string, type: 'success' | 'error' = 'success') => {
-    setNotification({ message, type });
-    setTimeout(() => setNotification(null), 4000);
-  };
+
+
+
+
 
   const [formData, setFormData] = useState({
     title: "",
@@ -148,25 +149,25 @@ export const AdminContests: React.FC = () => {
 
       if (editingContest) {
         await API.patch(`/admin/contests/${editingContest.id}`, payload);
-        showNotification("Concurso atualizado com sucesso!");
+        toast.success("Concurso atualizado com sucesso!");
       } else {
         await API.post("/admin/contests", payload);
-        showNotification("Concurso lançado com sucesso!");
+        toast.success("Concurso lançado com sucesso! 🏆");
       }
       setShowModal(false);
       fetchContests();
     } catch {
-      showNotification(editingContest ? "Erro ao atualizar concurso." : "Erro ao criar concurso.", "error");
+      toast.error(editingContest ? "Erro ao atualizar concurso." : "Erro ao criar concurso.");
     }
   };
 
   const updateStatus = async (id: string, status: string) => {
     try {
       await API.patch(`/admin/contests/${id}`, { status });
-      showNotification(`Status atualizado para ${status}`);
+      toast.success(`Status atualizado para ${status}!`);
       fetchContests();
     } catch {
-      showNotification("Erro ao atualizar status.", "error");
+      toast.error("Erro ao atualizar status.");
     }
   };
 
@@ -174,10 +175,10 @@ export const AdminContests: React.FC = () => {
     if (!confirm("Tem certeza que deseja excluir permanentemente este concurso?")) return;
     try {
       await API.delete(`/admin/contests/${id}`);
-      showNotification("Concurso excluído com sucesso!");
+      toast.success("Concurso excluído com sucesso!");
       fetchContests();
     } catch {
-      showNotification("Erro ao excluir concurso.", "error");
+      toast.error("Erro ao excluir concurso.");
     }
   };
 
@@ -210,7 +211,7 @@ export const AdminContests: React.FC = () => {
 
       <div className="grid grid-cols-1 gap-4">
         {loading ? (
-          <div className="py-20 text-center text-[10px] text-zinc-700 uppercase tracking-widest bg-black/20">Carregando Concursos...</div>
+          <div className="py-24 text-center border border-theme-border bg-theme-bg-muted/10 animate-pulse text-[10px] text-theme-muted uppercase tracking-[0.5em] font-black italic rounded-2xl">Sincronizando Concursos da Rede...</div>
         ) : contests.length === 0 ? (
           <div className="py-20 text-center text-[10px] text-zinc-700 uppercase tracking-widest border border-theme-border bg-black/10 italic">Nenhum concurso programado.</div>
         ) : (
@@ -306,7 +307,7 @@ export const AdminContests: React.FC = () => {
             </div>
 
             {/* Content */}
-            <form onSubmit={handleCreate} className="flex-1 overflow-y-auto p-8 md:p-10 space-y-8 custom-scrollbar">
+            <form id="contest-form" onSubmit={handleCreate} className="flex-1 overflow-y-auto p-8 md:p-10 space-y-8 custom-scrollbar">
               <div className="space-y-2">
                 <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest block mb-2 opacity-60 italic">Título da Campanha</label>
                 <input required className="w-full bg-theme-bg-muted border border-theme-border/60 p-4 text-[11px] text-theme-text font-black outline-none focus:border-brand-tactical rounded-xl uppercase placeholder:opacity-20" value={formData.title} onChange={e => setFormData({...formData, title: e.target.value.toUpperCase()})} placeholder="EX: CORRIDA DOS 10 ÁLBUNS" />
@@ -384,8 +385,7 @@ export const AdminContests: React.FC = () => {
             <div className="p-8 md:p-10 bg-theme-bg-muted/50 border-t border-theme-border flex gap-4 shrink-0 rounded-2xl">
               <button onClick={() => setShowModal(false)} className="flex-1 py-5 border border-theme-border text-[11px] font-black uppercase tracking-[0.3em] text-theme-muted hover:text-white transition-all rounded-[20px] italic">Cancelar</button>
               <button 
-                onClick={handleCreate} 
-                className="flex-[2] py-5 bg-brand-tactical text-zinc-950 text-[11px] font-black uppercase tracking-[0.3em] shadow-2xl shadow-brand-tactical/20 hover:brightness-110 transition-all rounded-[20px] italic flex items-center justify-center gap-4"
+                type="submit" form="contest-form"                className="flex-[2] py-5 bg-brand-tactical text-zinc-950 text-[11px] font-black uppercase tracking-[0.3em] shadow-2xl shadow-brand-tactical/20 hover:brightness-110 transition-all rounded-[20px] italic flex items-center justify-center gap-4"
               >
                 {editingContest ? "Salvar Alterações" : "Lançar Concurso"}
                 <ArrowRight size={18} strokeWidth={1.5} />
@@ -395,14 +395,7 @@ export const AdminContests: React.FC = () => {
         </div>
       )}
 
-      {notification && (
-        <div className="fixed bottom-10 right-10 z-[110] p-6 border border-brand-tactical bg-theme-bg shadow-2xl min-w-[300px] animate-in slide-in-from-right-10 duration-500">
-          <div className="flex flex-col gap-1">
-             <span className="text-[8px] font-black uppercase tracking-[0.4em] text-brand-tactical">Notificação Sistema</span>
-             <p className="text-[11px] font-bold text-theme-text uppercase tracking-widest">{notification.message}</p>
-          </div>
-        </div>
-      )}
+      {null}
     </div>
   );
 };

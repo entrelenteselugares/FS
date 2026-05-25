@@ -9,6 +9,7 @@ import {
   ArrowRight,
   X
 } from "lucide-react";
+import { toast } from "sonner";
 
 // Types for New Operational Management
 interface Expense {
@@ -48,7 +49,7 @@ export const AdminFinance: React.FC = () => {
   const [view, setView] = useState<"payouts" | "balances" | "expenses" | "dre">("payouts");
   const [payoutTab, setPayoutTab] = useState<"pending" | "history">("pending");
   const [confirmModal, setConfirmModal] = useState<string | null>(null);
-  const [notification, setNotification] = useState<{message: string, type: 'success' | 'error'} | null>(null);
+
   const [balances, setBalances] = useState<any[]>([]);
   const [settleLoading, setSettleLoading] = useState<string | null>(null);
 
@@ -107,26 +108,26 @@ export const AdminFinance: React.FC = () => {
     if (!confirmModal) return;
     try {
       await API.patch(`/admin/orders/${confirmModal}/payout`);
-      setNotification({ message: "Repasse liquidado com sucesso! 💸", type: 'success' });
+      toast.success("Repasse liquidado com sucesso! 💸");
       setConfirmModal(null);
       fetchPayouts();
     } catch {
-      setNotification({ message: "Erro ao liquidar repasse.", type: 'error' });
+      toast.error("Erro ao liquidar repasse.");
     }
-    setTimeout(() => setNotification(null), 5000);
+
   };
 
   const handleSettle = async (userId: string) => {
     setSettleLoading(userId);
     try {
       await API.post("/admin/finance/settle", { userId });
-      setNotification({ message: "Repasse consolidado gerado com sucesso! 💎", type: 'success' });
+      toast.success("Repasse consolidado gerado com sucesso! 💎");
       fetchBalances();
     } catch {
-      setNotification({ message: "Erro ao liquidar saldo.", type: 'error' });
+      toast.error("Erro ao liquidar saldo.");
     } finally {
       setSettleLoading(null);
-      setTimeout(() => setNotification(null), 5000);
+
     }
   };
 
@@ -135,8 +136,8 @@ export const AdminFinance: React.FC = () => {
     const expense: Expense = { ...newExpense, id: Math.random().toString(36).substr(2, 9) };
     setExpenses([expense, ...expenses]);
     setNewExpense({ description: "", amount: 0, category: "OPERACIONAL", date: new Date().toISOString().split('T')[0] });
-    setNotification({ message: "Custo operacional lançado! 📊", type: 'success' });
-    setTimeout(() => setNotification(null), 5000);
+    toast.success("Custo operacional lançado! 📊");
+
   };
 
   const deleteExpense = (id: string) => {
@@ -499,17 +500,7 @@ export const AdminFinance: React.FC = () => {
         </div>
       )}
 
-      {notification && (
-        <div className="fixed bottom-10 right-10 z-[300] animate-in slide-in-from-right-10 duration-500">
-           <div className={`p-8 border ${notification.type === 'success' ? 'border-brand-tactical bg-theme-bg shadow-[0_0_40px_rgba(133,185,172,0.15)]' : 'border-red-900 bg-theme-bg'} min-w-[350px] relative overflow-hidden shadow-2xl`}>
-              <div className="flex flex-col gap-2">
-                 <span className={`text-[9px] font-black uppercase tracking-[0.5em] ${notification.type === 'success' ? 'text-brand-tactical' : 'text-red-500'}`}>Protocolo Financeiro</span>
-                 <p className="text-[13px] font-bold text-theme-text uppercase tracking-widest mt-1 leading-tight">{notification.message}</p>
-              </div>
-              <div className={`absolute bottom-0 left-0 h-1.5 ${notification.type === 'success' ? 'bg-brand-tactical' : 'bg-red-900'} animate-out fade-out duration-[5000ms] w-full`} />
-           </div>
-        </div>
-      )}
+      {null}
     </div>
   );
 };

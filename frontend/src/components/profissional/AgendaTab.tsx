@@ -145,7 +145,7 @@ export function AgendaTab({
                   <div className="flex flex-col items-center md:items-end gap-3 min-w-[150px]">
                     <button 
                       onClick={() => onRespond(ev.id, "ACCEPTED")} 
-                      className="px-8 py-3 bg-yellow-400 text-black text-[10px] font-black uppercase tracking-widest rounded-xl hover:brightness-110 transition-all flex items-center gap-2 italic shadow-lg shadow-yellow-400/10"
+                      className="px-8 py-3 bg-yellow-400 text-black text-[10px] font-black uppercase tracking-widest rounded-xl hover:bg-yellow-400/90 hover:scale-[1.02] hover:shadow-xl hover:shadow-yellow-400/20 transition-all flex items-center gap-2 italic shadow-lg shadow-yellow-400/10"
                     >
                       <Check size={14} /> PEGAR AGORA
                     </button>
@@ -174,7 +174,7 @@ export function AgendaTab({
                       <button onClick={() => onRespondUnit(ui.id, "REJECTED")} className="px-8 py-4 border border-red-500/30 text-red-500 text-[10px] font-black uppercase tracking-widest rounded-xl hover:bg-red-500/10 italic flex items-center gap-2">
                         <X size={16} /> Recusar
                       </button>
-                      <button onClick={() => onRespondUnit(ui.id, "ACCEPTED")} className="px-10 py-4 bg-brand-tactical text-zinc-950 text-[11px] font-black uppercase tracking-[0.2em] rounded-xl hover:brightness-110 italic flex items-center gap-2 shadow-lg shadow-brand-tactical/20">
+                      <button onClick={() => onRespondUnit(ui.id, "ACCEPTED")} className="px-10 py-4 bg-brand-tactical text-zinc-950 text-[11px] font-black uppercase tracking-[0.2em] rounded-xl hover:bg-brand-tactical/90 hover:scale-[1.02] hover:shadow-xl hover:shadow-brand-tactical/30 transition-all italic flex items-center gap-2 shadow-lg shadow-brand-tactical/20">
                         <Check size={18} /> FIRMAR PARCERIA
                       </button>
                     </div>
@@ -254,7 +254,7 @@ export function AgendaTab({
                           >
                             <Users size={14} /> DELEGAR
                           </button>
-                          <button onClick={(e) => { e.stopPropagation(); onRespond(ev.id, "ACCEPTED"); }} className="px-5 py-2.5 bg-brand-tactical text-brand-text text-[9px] font-black uppercase tracking-widest rounded-xl hover:brightness-110 transition-all">
+                          <button onClick={(e) => { e.stopPropagation(); onRespond(ev.id, "ACCEPTED"); }} className="px-5 py-2.5 bg-brand-tactical text-brand-text text-[9px] font-black uppercase tracking-widest rounded-xl hover:bg-brand-tactical/90 hover:scale-[1.02] hover:shadow-lg hover:shadow-brand-tactical/20 transition-all">
                             <Check size={14} /> ACEITAR
                           </button>
                         </div>

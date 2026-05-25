@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback, useMemo } from "react";
 import { useAuth } from "../hooks/useAuth";
 import { API } from "../lib/api";
 import { useNavigate, useLocation } from "react-router-dom";
+import { toast } from "sonner";
 import {
   DollarSign,
   Settings, Briefcase, Users, LayoutDashboard, Play, Calendar, RefreshCw, LogOut, CheckCircle, Camera, Printer
@@ -86,7 +87,7 @@ export default function ProfissionalDashboard({
   const [isShopModalOpen, setIsShopModalOpen] = useState(false);
   const [showNewServicesModal, setShowNewServicesModal] = useState(false);
   const [hasCheckedInvites, setHasCheckedInvites] = useState(false);
-  const [notification, setNotification] = useState<{ message: string; type: "success" | "error" } | null>(null);
+
   const [payouts, setPayouts] = useState<PayoutItem[]>([]);
   const [calendarStatus, setCalendarStatus] = useState<{ 
     connected: boolean; 
@@ -119,8 +120,11 @@ export default function ProfissionalDashboard({
   // ─── Notification Helper ─────────────────────────────────────────────────────
 
   const showNotification = useCallback((message: string, type: "success" | "error" = "success") => {
-    setNotification({ message, type });
-    setTimeout(() => setNotification(null), 5000);
+    if (type === "success") {
+      toast.success(message);
+    } else {
+      toast.error(message);
+    }
   }, []);
 
   // ─── Data Fetchers ────────────────────────────────────────────────────────────
@@ -542,7 +546,7 @@ export default function ProfissionalDashboard({
                       </div>
                       <button 
                         onClick={handleConnectCalendar}
-                        className="px-10 py-4 bg-brand-tactical text-zinc-950 text-[11px] font-black uppercase tracking-[0.2em] rounded-xl hover:brightness-110 transition-all shadow-xl shadow-brand-tactical/10 italic"
+                        className="px-10 py-4 bg-brand-tactical text-zinc-950 text-[11px] font-black uppercase tracking-[0.2em] rounded-xl hover:bg-brand-tactical/90 hover:scale-[1.02] hover:shadow-2xl hover:shadow-brand-tactical/30 transition-all shadow-xl shadow-brand-tactical/10 italic cursor-pointer"
                       >
                         CONECTAR GOOGLE CALENDAR
                       </button>
@@ -563,7 +567,7 @@ export default function ProfissionalDashboard({
                         </div>
                         <button 
                           onClick={handleDisconnectCalendar}
-                          className="p-3 text-theme-muted hover:text-red-500 transition-colors"
+                          className="p-3 text-theme-muted hover:text-red-500 hover:bg-red-500/10 rounded-xl transition-all hover:scale-[1.02] cursor-pointer"
                           title="Desconectar"
                         >
                           <LogOut size={18} />
@@ -581,7 +585,7 @@ export default function ProfissionalDashboard({
                           <button 
                             onClick={handleManualSync}
                             disabled={isSyncing}
-                            className="flex items-center gap-2 text-[10px] font-black text-brand-tactical uppercase tracking-widest hover:underline disabled:opacity-50"
+                            className="flex items-center gap-2 text-[10px] font-black text-brand-tactical uppercase tracking-widest hover:opacity-70 transition-all disabled:opacity-50 cursor-pointer"
                           >
                             <RefreshCw size={12} className={isSyncing ? "animate-spin" : ""} />
                             {isSyncing ? "Sincronizando..." : "Sincronizar Agora"}
@@ -647,13 +651,13 @@ export default function ProfissionalDashboard({
                       <div className="space-y-4 mt-6">
                         <button 
                           onClick={() => setIsShopModalOpen(true)}
-                          className="w-full py-4 bg-brand-tactical text-black font-display font-black text-[10px] uppercase tracking-widest hover:brightness-110 transition-all shadow-lg shadow-brand-tactical/10 rounded-xl"
+                          className="w-full py-4 bg-brand-tactical text-black font-display font-black text-[10px] uppercase tracking-widest hover:bg-brand-tactical/90 hover:scale-[1.02] hover:shadow-xl hover:shadow-brand-tactical/20 transition-all shadow-lg shadow-brand-tactical/10 rounded-xl cursor-pointer"
                         >
                           LOJA DA FRANQUIA
                         </button>
                         <button 
                           onClick={() => { const w = window.open("https://wa.me/?text=Olá! Preciso de assistência técnica para minha unidade Foto Segundo.", "_blank"); if (w) w.opener = null; }}
-                          className="w-full py-3 border border-theme-border text-theme-muted font-black text-[9px] uppercase tracking-widest hover:border-brand-tactical/30 hover:text-brand-tactical transition-all rounded-xl"
+                          className="w-full py-3 border border-theme-border text-theme-muted font-black text-[9px] uppercase tracking-widest hover:border-brand-tactical/30 hover:bg-theme-bg-muted/50 hover:text-brand-tactical hover:scale-[1.02] transition-all rounded-xl cursor-pointer"
                         >
                           ASSISTÊNCIA TÉCNICA
                         </button>
@@ -916,21 +920,7 @@ export default function ProfissionalDashboard({
       )}
 
       {/* Global Notifications */}
-      {notification && (
-        <div 
-          className="fixed bottom-10 right-10 z-[2000] px-8 py-4 shadow-2xl animate-in slide-in-from-right duration-500"
-          style={{ 
-            background: notification.type === "success" ? T.brand : "#f87171",
-            color: notification.type === "success" ? "#000" : "#fff",
-            fontWeight: 900,
-            fontSize: 10,
-            textTransform: "uppercase",
-            letterSpacing: 2
-          }}
-        >
-          {notification.message}
-        </div>
-      )}
+      {null}
       {/* Modal de Foto Point */}
       {isFotoPointModalOpen && (
         <FotoPointModal 

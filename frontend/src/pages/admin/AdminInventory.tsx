@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import { API } from '../../lib/api';
+import { toast } from 'sonner';
 import { 
   Package, 
   AlertCircle,
@@ -85,8 +86,9 @@ export default function AdminInventory() {
       setShowAdjustModal(null);
       setAdjustData({ quantity: 1, type: 'PURCHASE', description: '' });
       fetchInventory();
+      toast.success('Estoque atualizado com sucesso!');
     } catch {
-      alert('Erro ao ajustar estoque');
+      toast.error('Erro ao ajustar estoque');
     }
   };
 
@@ -99,9 +101,10 @@ export default function AdminInventory() {
         supplierCost: 0, stockType: 'PROPRIO', externalLink: ''
       });
       fetchInventory();
+      toast.success('Produto cadastrado com sucesso!');
     } catch (err: unknown) {
       const error = err as { response?: { data?: { error?: string } } };
-      alert(error.response?.data?.error || 'Erro ao cadastrar produto');
+      toast.error(error.response?.data?.error || 'Erro ao cadastrar produto');
     }
   };
 
@@ -173,7 +176,7 @@ export default function AdminInventory() {
             <Package className="text-emerald-500" size={20} />
             <div>
               <p className="text-[9px] font-black text-emerald-500 uppercase tracking-widest">Status do Inventário</p>
-              <p className="text-[9px] sm:text-[11px] font-black text-brand-tactical uppercase tracking-[0.2em] sm:tracking-[0.4em] italic truncate max-w-[80vw]">Gestão de Ativos e Logística</p>
+              <p className="text-[9px] sm:text-[11px] font-black text-brand-tactical uppercase tracking-[0.2em] sm:tracking-[0.4em] italic truncate max-w-[80vw]">Estoque Saudável. Nenhum alerta crítico.</p>
             </div>
           </div>
         )}
@@ -273,11 +276,12 @@ export default function AdminInventory() {
             </div>
 
             {/* Content */}
-            <div className="flex-1 overflow-y-auto p-8 md:p-10 space-y-8 custom-scrollbar">
+            <form id="new-inventory-form" onSubmit={(e) => { e.preventDefault(); handleCreate(); }} className="flex-1 overflow-y-auto p-8 md:p-10 space-y-8 custom-scrollbar">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
                   <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest block mb-2 opacity-60 italic">Nome do Produto</label>
                   <input 
+                    required
                     type="text"
                     className="w-full bg-theme-bg-muted border border-theme-border/60 p-4 text-[10px] font-bold text-theme-text uppercase outline-none focus:border-brand-tactical rounded-xl"
                     placeholder="EX: ÁLBUM 20X20 PREMIUM"
@@ -288,6 +292,7 @@ export default function AdminInventory() {
                 <div className="space-y-2">
                   <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest block mb-2 opacity-60 italic">SKU (ID Único)</label>
                   <input 
+                    required
                     type="text"
                     className="w-full bg-theme-bg-muted border border-theme-border/60 p-4 text-[10px] font-bold text-theme-text uppercase outline-none focus:border-brand-tactical rounded-xl"
                     placeholder="EX: ALB_20X20_PREM"
@@ -335,13 +340,14 @@ export default function AdminInventory() {
                   onChange={e => setNewData({...newData, externalLink: e.target.value})}
                 />
               </div>
-            </div>
+            </form>
 
             {/* Footer */}
             <div className="p-8 md:p-10 bg-theme-bg-muted/50 border-t border-theme-border flex gap-4 shrink-0 rounded-2xl">
               <button onClick={() => setShowCreateModal(false)} className="flex-1 py-5 border border-theme-border text-[11px] font-black uppercase tracking-[0.3em] text-theme-muted hover:text-white transition-all rounded-[20px] italic">Cancelar</button>
               <button 
-                onClick={handleCreate} 
+                type="submit"
+                form="new-inventory-form"
                 className="flex-[2] py-5 bg-brand-tactical text-zinc-950 text-[11px] font-black uppercase tracking-[0.3em] shadow-2xl shadow-brand-tactical/20 hover:brightness-110 transition-all rounded-[20px] italic flex items-center justify-center gap-4"
               >
                 Cadastrar Ativo

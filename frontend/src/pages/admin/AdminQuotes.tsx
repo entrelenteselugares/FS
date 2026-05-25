@@ -582,7 +582,7 @@ export const AdminQuotes: React.FC = () => {
             </div>
 
             {/* Scrollable Content */}
-            <form onSubmit={handleCreateNewQuote} className="flex-1 overflow-y-auto p-8 md:p-10 space-y-8 custom-scrollbar">
+            <form id="new-quote-form" onSubmit={handleCreateNewQuote} className="flex-1 overflow-y-auto p-8 md:p-10 space-y-8 custom-scrollbar">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
                   <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest block mb-2 opacity-60 italic">Evento (Título)</label>
@@ -651,7 +651,8 @@ export const AdminQuotes: React.FC = () => {
             <div className="p-8 md:p-10 bg-theme-bg-muted/50 border-t border-theme-border flex gap-4 shrink-0 rounded-2xl">
               <button type="button" onClick={() => setIsNewQuoteModalOpen(false)} className="flex-1 py-5 border border-theme-border text-[11px] font-black uppercase tracking-[0.3em] text-theme-muted hover:text-white transition-all rounded-[20px] italic">Cancelar</button>
               <button 
-                onClick={handleCreateNewQuote} 
+                type="submit"
+                form="new-quote-form"
                 className="flex-[2] py-5 bg-brand-tactical text-zinc-950 text-[11px] font-black uppercase tracking-[0.3em] shadow-2xl shadow-brand-tactical/20 hover:brightness-110 transition-all rounded-[20px] italic flex items-center justify-center gap-4"
               >
                 Cadastrar no Radar

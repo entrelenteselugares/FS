@@ -310,7 +310,7 @@ export const HomePage = () => {
 
           <div className="hp-hero-search-desktop animate-reveal" style={{ display: "flex", gap: 12, justifyContent: "center" }}>
             {/* Mobile-only Search Bar inside Hero */}
-            <div className="md:hidden w-full relative mb-0 group mt-2">
+            <form onSubmit={e => { e.preventDefault(); fetchEvents(query, 1); }} className="md:hidden w-full relative mb-0 group mt-2">
               <Search size={14} className="absolute left-4 top-1/2 -translate-y-1/2 text-theme-text-muted group-focus-within:text-brand-tactical group-focus-within:scale-110 transition-all duration-300" />
               <input
                 id="mobile-search-input"
@@ -320,17 +320,17 @@ export const HomePage = () => {
                 placeholder="Pesquise por evento, noivos..."
                 className="w-full bg-theme-bg-muted/80 border border-theme-border/40 focus:border-brand-tactical focus:ring-2 focus:ring-brand-tactical/20 text-theme-text pl-10 pr-4 py-2.5 rounded-lg text-[10px] font-black uppercase tracking-wider outline-none shadow-md transition-all duration-300 focus:scale-[1.02] placeholder:text-theme-text-muted"
               />
-            </div>
+            </form>
 
-            <button
+            <button id="btn-explorar-vitrine"
               onClick={() => document.getElementById('vitrine')?.scrollIntoView({ behavior: 'smooth' })}
               className="lux-button-tactical px-10 py-4 text-[10px] font-display font-black uppercase tracking-[0.4em] italic shadow-2xl shadow-brand-tactical/20 hidden md:block"
             >
               Explorar Vitrine
             </button>
-            <button
+            <button id="btn-agendar-cobertura"
               onClick={() => navigate("/cotacao")}
-              className="px-8 py-4 text-[10px] font-display font-black uppercase tracking-[0.2em] italic bg-white/5 border border-white/10 text-theme-text hover:bg-theme-text/10 transition-all hidden md:block"
+              className="px-8 py-4 text-[10px] font-display font-black uppercase tracking-[0.2em] italic bg-white/5 border border-white/10 text-theme-text hover:bg-theme-text/10 hover:scale-[1.02] transition-all hidden md:block cursor-pointer"
             >
               Agendar Cobertura
             </button>
@@ -356,7 +356,7 @@ export const HomePage = () => {
           <div className="hp-mobile-vitrine-header flex flex-col gap-2 p-3 pb-2">
             <div className="flex gap-2 overflow-x-auto scrollbar-hide py-1">
               <div className="relative shrink-0">
-                <select 
+                <select id="select-cidade-mobile" 
                   value={selectedCity}
                   onChange={e => { setSelectedCity(e.target.value); setPage(1); }}
                   className="bg-theme-bg-muted border border-theme-border/40 text-theme-text pl-3 pr-5 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest outline-none appearance-none shadow-sm cursor-pointer hover:border-brand-tactical/50 transition-colors"
@@ -370,7 +370,7 @@ export const HomePage = () => {
               </div>
 
               <div className="relative shrink-0">
-                <select 
+                <select id="select-categoria-mobile" 
                   value={selectedType}
                   onChange={e => { setSelectedType(e.target.value); setPage(1); }}
                   className="bg-theme-bg-muted border border-theme-border/40 text-theme-text pl-3 pr-5 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest outline-none appearance-none shadow-sm cursor-pointer hover:border-brand-tactical/50 transition-colors"
@@ -385,7 +385,7 @@ export const HomePage = () => {
               </div>
 
               <div className="relative shrink-0">
-                <select 
+                <select id="select-ordenacao-mobile" 
                   value={sortBy}
                   onChange={e => { setSortBy(e.target.value); setPage(1); }}
                   className="bg-theme-bg-muted border border-theme-border/40 text-theme-text pl-3 pr-5 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest outline-none appearance-none shadow-sm cursor-pointer hover:border-brand-tactical/50 transition-colors"
@@ -414,20 +414,21 @@ export const HomePage = () => {
 
             <div className="flex flex-col md:flex-row items-stretch md:items-center gap-3 flex-1 max-w-4xl lg:justify-end">
               {/* Desktop Search Input */}
-              <div className="relative flex-1 group">
+              <form onSubmit={e => { e.preventDefault(); fetchEvents(query, 1); }} className="relative flex-1 group">
                 <Search size={14} className="absolute left-4 top-1/2 -translate-y-1/2 text-theme-text-muted group-focus-within:text-brand-tactical transition-colors" />
                 <input
+                  id="desktop-search-input"
                   value={query}
                   onChange={e => setQuery(e.target.value)}
                   onKeyDown={e => e.key === "Enter" && fetchEvents(query, 1)}
                   placeholder="Nome do evento ou titular..."
                   className="w-full bg-theme-bg-muted border border-theme-border/40 pl-12 pr-4 py-4 text-[11px] font-display font-black uppercase tracking-widest text-theme-text focus:bg-theme-bg-muted/80 transition-all outline-none italic"
                 />
-              </div>
+              </form>
 
               {/* Filters Dropdowns */}
               <div className="flex items-center gap-2">
-                <select 
+                <select id="select-cidade-desktop" 
                   value={selectedCity}
                   onChange={e => { setSelectedCity(e.target.value); setPage(1); }}
                   className="bg-theme-bg-muted border border-theme-border/40 px-4 py-4 text-[9px] font-black uppercase tracking-widest text-theme-text/40 focus:text-theme-text outline-none cursor-pointer hover:bg-theme-bg-muted/80 transition-colors italic appearance-none"
@@ -438,7 +439,7 @@ export const HomePage = () => {
                   ))}
                 </select>
 
-                <select 
+                <select id="select-categoria-desktop" 
                   value={selectedType}
                   onChange={e => { setSelectedType(e.target.value); setPage(1); }}
                   className="bg-theme-bg-muted border border-theme-border/40 px-4 py-4 text-[9px] font-black uppercase tracking-widest text-theme-text/40 focus:text-theme-text outline-none cursor-pointer hover:bg-theme-bg-muted/80 transition-colors italic appearance-none"
@@ -450,7 +451,7 @@ export const HomePage = () => {
                   <option value="FLASH_EVENT" className="bg-theme-bg text-theme-text">Flash Event / Venda Direta</option>
                 </select>
 
-                <select 
+                <select id="select-ordenacao-desktop" 
                   value={sortBy}
                   onChange={e => { setSortBy(e.target.value); setPage(1); }}
                   className="bg-theme-bg-muted border border-theme-border/40 px-4 py-4 text-[9px] font-black uppercase tracking-widest text-theme-text/40 focus:text-theme-text outline-none cursor-pointer hover:bg-theme-bg-muted/80 transition-colors italic appearance-none"
@@ -495,15 +496,17 @@ export const HomePage = () => {
           {/* Pagination */}
           {totalPages > 1 && (
             <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: 32, marginTop: 80, padding: "40px 0" }}>
-              <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1}
-                style={{ background: "none", border: "none", color: page === 1 ? "var(--text-3)" : "var(--text-2)", cursor: page === 1 ? "default" : "pointer", fontSize: 10, fontFamily: T.fontB, letterSpacing: "0.2em", textTransform: "uppercase" }}>
+              <button id="btn-pagina-anterior" onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1}
+                className="hover:text-brand-tactical"
+                style={{ background: "none", border: "none", color: page === 1 ? "var(--text-3)" : "var(--text-2)", cursor: page === 1 ? "default" : "pointer", fontSize: 10, fontFamily: T.fontB, letterSpacing: "0.2em", textTransform: "uppercase", transition: "color 0.2s" }}>
                 ← Anterior
               </button>
               <span style={{ fontFamily: T.fontD, fontWeight: 900, fontSize: 18, color: "var(--text)" }}>
                 {page} <span style={{ color: "var(--border)", margin: "0 8px" }}>/</span> {totalPages}
               </span>
-              <button onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page === totalPages}
-                style={{ background: "none", border: "none", color: page === totalPages ? "var(--border)" : "var(--text-2)", cursor: page === totalPages ? "default" : "pointer", fontSize: 10, fontFamily: T.fontB, letterSpacing: "0.2em", textTransform: "uppercase" }}>
+              <button id="btn-proxima-pagina" onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page === totalPages}
+                className="hover:text-brand-tactical"
+                style={{ background: "none", border: "none", color: page === totalPages ? "var(--border)" : "var(--text-2)", cursor: page === totalPages ? "default" : "pointer", fontSize: 10, fontFamily: T.fontB, letterSpacing: "0.2em", textTransform: "uppercase", transition: "color 0.2s" }}>
                 Próximo →
               </button>
             </div>

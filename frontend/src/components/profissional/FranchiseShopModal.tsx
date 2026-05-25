@@ -6,6 +6,7 @@ import {
   Minus, Plus, MapPin, Wallet, Package, ArrowRight, ArrowLeft 
 } from "lucide-react";
 import { API } from "../../lib/api";
+import { toast } from "sonner";
 
 interface Product {
   id: string;
@@ -130,7 +131,7 @@ export function FranchiseShopModal({ onClose, onSuccess, availableBalance, userA
       }
     } catch (error) {
       console.error("Order failed:", error);
-      alert("Erro ao processar pedido. Tente novamente em alguns instantes.");
+      toast.error("Erro ao processar pedido. Tente novamente em alguns instantes.");
     } finally {
       setIsProcessing(false);
     }

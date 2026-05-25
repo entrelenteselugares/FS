@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { API } from "../../lib/api";
+import { toast } from "sonner";
 import { 
   Plus, 
   ChevronDown, 
@@ -349,7 +350,8 @@ function NewSupplierModal({ onClose, onSave }: { onClose: () => void, onSave: ()
       await API.post("/admin/suppliers", form);
       onSave();
       onClose();
-    } catch { alert("Erro ao criar fornecedor."); }
+      toast.success("Fornecedor criado com sucesso!");
+    } catch { toast.error("Erro ao criar fornecedor."); }
     finally { setLoading(false); }
   };
 
@@ -428,7 +430,8 @@ function NewProductModal({ onClose, onSave, suppliers, onRefreshSuppliers }: {
         marginPct: parseFloat(form.marginPct)
       });
       onClose();
-    } catch { alert("Erro ao criar produto."); }
+      toast.success("Produto cadastrado com sucesso!");
+    } catch { toast.error("Erro ao criar produto."); }
     finally { setLoading(false); }
   };
 
@@ -453,7 +456,7 @@ function NewProductModal({ onClose, onSave, suppliers, onRefreshSuppliers }: {
           </div>
 
           {/* Scrollable Content */}
-          <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-8 md:p-10 space-y-8 custom-scrollbar">
+          <form id="new-product-form" onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-8 md:p-10 space-y-8 custom-scrollbar">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">
                 <label className={labelClass}>Operador Logístico</label>
@@ -514,8 +517,8 @@ function NewProductModal({ onClose, onSave, suppliers, onRefreshSuppliers }: {
           <div className="p-8 md:p-10 bg-theme-bg-muted/50 border-t border-theme-border flex gap-4 shrink-0 rounded-2xl">
             <button type="button" onClick={onClose} className="flex-1 py-5 border border-theme-border text-[11px] font-black uppercase tracking-[0.3em] text-theme-muted hover:text-white transition-all rounded-[20px] italic">Cancelar</button>
             <button 
-              type="button" 
-              onClick={(e) => handleSubmit(e as React.FormEvent)}
+              type="submit" 
+              form="new-product-form"
               disabled={loading} 
               className="flex-[2] py-5 bg-brand-tactical text-zinc-950 text-[11px] font-black uppercase tracking-[0.3em] shadow-2xl shadow-brand-tactical/20 hover:brightness-110 transition-all rounded-[20px] italic flex items-center justify-center gap-4"
             >

@@ -911,6 +911,16 @@ export async function adminUpdateUser(req: AuthRequest, res: Response): Promise<
               });
            }
         }
+        
+        // Notify user about Franchise status
+        await prisma.notification.create({
+          data: {
+            userId: String(id),
+            title: "Franquia Print Habilitada 🖨️",
+            message: "Sua unidade Phygital foi ativada. Você já pode acessar a central de impressões e configurar seus nós de hardware.",
+            type: "SYSTEM"
+          }
+        });
       } else {
         // Desabilita perfil de franquia (apenas desativa, nÃ£o deleta o histÃ³rico)
         await prisma.franchiseProfile.updateMany({

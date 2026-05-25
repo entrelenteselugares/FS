@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { API } from '../../lib/api';
+import { toast } from 'sonner';
 import { 
   Users, 
   ShoppingBag, 
@@ -60,6 +61,7 @@ export const AdminLeadsPage: React.FC = () => {
         setStats(statsRes.data);
       } catch (err) {
         console.error('[AdminLeads] Error fetching CRM data:', err);
+        toast.error("Falha ao sincronizar leads.");
       } finally {
         setLoading(false);
       }
@@ -252,7 +254,7 @@ export const AdminLeadsPage: React.FC = () => {
                     {new Date(lead.createdAt).toLocaleDateString('pt-BR')}
                   </td>
                   <td className="p-6">
-                    <span className="px-2 py-1 bg-theme-bg border border-theme-border rounded text-[8px] font-black text-theme-text-muted uppercase tracking-widest rounded-2xl">{lead.source}</span>
+                    <span className="px-2 py-1 bg-theme-bg border border-theme-border text-[8px] font-black text-theme-text-muted uppercase tracking-widest rounded-full">{lead.source}</span>
                   </td>
                   <td className="p-6 text-right">
                     <button 

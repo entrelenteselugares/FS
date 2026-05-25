@@ -963,7 +963,7 @@ export default function UnidadeFixaDashboard({
                   <button
                     disabled={savingPix}
                     onClick={savePixKey}
-                    className="bg-brand-tactical text-brand-text px-10 py-4 text-[10px] font-black uppercase tracking-[0.4em] hover:brightness-110 transition-all italic"
+                    className="bg-brand-tactical text-brand-text px-10 py-4 text-[10px] font-black uppercase tracking-[0.4em] hover:bg-brand-tactical/90 hover:scale-[1.02] hover:shadow-xl hover:shadow-brand-tactical/30 transition-all italic cursor-pointer"
                   >
                     {savingPix ? "PROCESSANDO..." : "VINCULAR CHAVE"}
                   </button>
@@ -1026,7 +1026,7 @@ export default function UnidadeFixaDashboard({
                 <button
                    disabled={savingPrices}
                    onClick={saveServicePrices}
-                   className="bg-brand-tactical text-brand-text px-16 py-5 text-[10px] font-black uppercase tracking-[0.5em] hover:brightness-110 transition-all italic shadow-2xl shadow-brand-tactical/30 flex items-center gap-4 group"
+                   className="bg-brand-tactical text-brand-text px-16 py-5 text-[10px] font-black uppercase tracking-[0.5em] hover:bg-brand-tactical/90 hover:scale-[1.02] hover:shadow-2xl hover:shadow-brand-tactical/30 transition-all italic flex items-center gap-4 group cursor-pointer"
                 >
                    {savingPrices ? "ATUALIZANDO MATRIZ..." : "CONSOLIDAR TABELA"}
                    <ArrowRight size={16} className="group-hover:translate-x-2 transition-transform" />
@@ -1171,7 +1171,7 @@ export default function UnidadeFixaDashboard({
                    <button
                      disabled={savingLp}
                      onClick={saveLpProfile}
-                     className="bg-theme-text text-theme-bg px-14 py-5 text-[10px] font-black uppercase tracking-[0.5em] hover:bg-brand-tactical hover:text-brand-text transition-all italic shadow-xl"
+                     className="bg-theme-text text-theme-bg px-14 py-5 text-[10px] font-black uppercase tracking-[0.5em] hover:bg-brand-tactical hover:text-brand-text hover:scale-[1.02] hover:shadow-2xl hover:shadow-brand-tactical/20 transition-all italic shadow-xl cursor-pointer"
                    >
                      {savingLp ? "SINCRO..." : "PUBLICAR DIRETRIZES DIGITAIS"}
                    </button>
