@@ -1237,7 +1237,7 @@ export default function UnidadeFixaDashboard({
                       LOJA DA FRANQUIA
                     </button>
                     <button 
-                      onClick={() => window.open("https://wa.me/?text=Olá! Preciso de assistência técnica para minha unidade Foto Segundo.", "_blank")}
+                      onClick={() => window.open("https://wa.me/5519981150440?text=Olá! Preciso de assistência técnica para minha unidade Foto Segundo.", "_blank")}
                       className="mt-2 text-[9px] font-black text-theme-muted uppercase tracking-widest hover:text-emerald-500 transition-all text-left block"
                     >
                       ASSISTÊNCIA TÉCNICA →

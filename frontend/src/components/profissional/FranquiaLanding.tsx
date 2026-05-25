@@ -46,7 +46,7 @@ export function FranquiaLanding() {
           </p>
           <div className="flex flex-wrap gap-4 pt-4">
             <button 
-              onClick={() => safeOpen("https://wa.me/5519984470420?text=Ol%C3%A1! Tenho interesse em me tornar uma Franquia Print.")}
+              onClick={() => safeOpen("https://wa.me/5519981150440?text=Ol%C3%A1! Tenho interesse em me tornar uma Franquia Print.")}
               className="px-8 py-4 bg-brand-tactical text-black font-display font-black text-xs uppercase tracking-widest hover:brightness-110 transition-all flex items-center gap-3 shadow-xl shadow-brand-tactical/20 rounded-xl"
             >
               QUERO SER FRANQUIA <Rocket size={16} />
@@ -190,7 +190,7 @@ export function FranquiaLanding() {
                       </div>
                     </div>
                     <button 
-                      onClick={() => safeOpen("https://wa.me/5519984470420?text=Ol%C3%A1! Gostaria de saber mais sobre como me tornar uma Franquia Print Hub.")}
+                      onClick={() => safeOpen("https://wa.me/5519981150440?text=Ol%C3%A1! Gostaria de saber mais sobre como me tornar uma Franquia Print Hub.")}
                       className="w-full bg-black text-white py-4 font-display font-black text-[10px] uppercase tracking-widest hover:brightness-125 transition-all flex items-center justify-center gap-3 rounded-xl"
                     >
                       SOLICITAR PROPOSTA COMERCIAL <ArrowRight size={14} />
@@ -216,13 +216,13 @@ export function FranquiaLanding() {
         
         <div className="flex flex-wrap justify-center gap-4">
           <button
-            onClick={() => safeOpen("https://wa.me/5519984470420?text=Ol%C3%A1! Gostaria de receber o book da Franquia Print.")}
+            onClick={() => safeOpen("https://wa.me/5519981150440?text=Ol%C3%A1! Gostaria de receber o book da Franquia Print.")}
             className="px-12 py-5 bg-brand-tactical text-black font-display font-black text-[11px] uppercase tracking-widest hover:brightness-110 transition-all shadow-xl shadow-brand-tactical/20 rounded-xl"
           >
             BAIXAR BOOK DE FRANQUIA
           </button>
           <button
-            onClick={() => safeOpen("https://wa.me/5519984470420?text=Ol%C3%A1! Gostaria de falar com um consultor sobre a franquia.")}
+            onClick={() => safeOpen("https://wa.me/5519981150440?text=Ol%C3%A1! Gostaria de falar com um consultor sobre a franquia.")}
             className="px-12 py-5 border border-theme-border text-zinc-400 font-display font-black text-[11px] uppercase tracking-widest hover:border-brand-tactical/40 hover:text-white transition-all flex items-center gap-3 rounded-xl"
           >
             <HelpCircle size={14} /> FALAR COM CONSULTOR

@@ -8,7 +8,7 @@ export function SupportBanner() {
         <p className="text-[10px] text-theme-muted uppercase tracking-widest font-medium">Linha direta com a matriz para dúvidas operacionais ou técnicas.</p>
       </div>
       <a
-        href="https://wa.me/5519984470420"
+        href="https://wa.me/5519981150440"
         target="_blank"
         rel="noopener noreferrer"
         className="w-full md:w-auto px-4 md:px-8 py-4 bg-brand-tactical text-brand-text text-[10px] font-black uppercase tracking-[0.3em] flex items-center justify-center gap-3 hover:brightness-110 rounded-xl transition-all shadow-lg shadow-brand-tactical/10"

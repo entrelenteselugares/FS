@@ -656,7 +656,7 @@ export default function ProfissionalDashboard({
                           LOJA DA FRANQUIA
                         </button>
                         <button 
-                          onClick={() => { const w = window.open("https://wa.me/?text=Olá! Preciso de assistência técnica para minha unidade Foto Segundo.", "_blank"); if (w) w.opener = null; }}
+                          onClick={() => { const w = window.open("https://wa.me/5519981150440?text=Olá! Preciso de assistência técnica para minha unidade Foto Segundo.", "_blank"); if (w) w.opener = null; }}
                           className="w-full py-3 border border-theme-border text-theme-muted font-black text-[9px] uppercase tracking-widest hover:border-brand-tactical/30 hover:bg-theme-bg-muted/50 hover:text-brand-tactical hover:scale-[1.02] transition-all rounded-xl cursor-pointer"
                         >
                           ASSISTÊNCIA TÉCNICA

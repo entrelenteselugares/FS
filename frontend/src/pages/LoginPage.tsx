@@ -10,7 +10,7 @@ const ROLE_DESTINATIONS: Record<string, string> = {
   PROFISSIONAL: "/minha-conta?s=agenda",
   CARTORIO:     "/minha-conta?s=agenda",
   UNIDADE:      "/minha-conta?s=agenda",
-  FRANCHISEE:   "/minha-conta?s=agenda",
+  FRANCHISEE:   "/franquia",
   CLIENTE:      "/minha-conta",
 };
 

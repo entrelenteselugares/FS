@@ -1300,7 +1300,7 @@ return (
                 <p className="text-[10px] font-black text-brand-tactical uppercase tracking-widest italic">Protocolo de Segurança Ativo</p>
               </div>
               <div className="flex flex-col w-full gap-4 pt-6">
-                <a href="https://wa.me/" target="_blank" rel="noreferrer" className="w-full py-4 bg-brand-tactical text-black text-[10px] font-black uppercase tracking-widest text-center italic shadow-lg shadow-brand-tactical/20">FALAR COM SUPORTE</a>
+                <a href="https://wa.me/5519981150440" target="_blank" rel="noreferrer" className="w-full py-4 bg-brand-tactical text-black text-[10px] font-black uppercase tracking-widest text-center italic shadow-lg shadow-brand-tactical/20">FALAR COM SUPORTE</a>
                 <button onClick={() => setStep("paywall")} className="w-full py-4 border border-theme-border text-theme-text-muted text-[10px] font-black uppercase tracking-widest italic">VOLTAR</button>
               </div>
             </div>

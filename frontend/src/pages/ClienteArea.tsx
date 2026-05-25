@@ -619,7 +619,7 @@ export default function ClienteArea() {
               <div className="pt-6 border-t border-theme-border/40 space-y-4">
                 <h3 className="text-[9px] font-black text-red-400 uppercase tracking-[0.3em]">Zona de Suporte</h3>
                 <p className="text-[11px] text-theme-muted">Para redefinir sua senha ou solicitar exclusão de dados, entre em contato com nosso suporte.</p>
-                <a href="https://wa.me/5511999999999" target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 text-[10px] font-black text-theme-text uppercase tracking-widest hover:text-brand-tactical transition-colors">
+                <a href="https://wa.me/5519981150440" target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 text-[10px] font-black text-theme-text uppercase tracking-widest hover:text-brand-tactical transition-colors">
                   Falar com Suporte <ArrowRight size={12} />
                 </a>
               </div>
@@ -901,7 +901,7 @@ function EventGroupRow({ group, now, onSelectPedido }: {
       navigate(`/e/${event.id}?intent=upgrade`);
     } else {
       const msg = `Olá! Gostaria de adicionar mais serviços ao meu evento "${event.title}". Vi que para pedidos com menos de 7 dias úteis da data, a inclusão está sujeita à disponibilidade da agenda dos profissionais.`;
-      window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, "_blank");
+      window.open(`https://wa.me/5519981150440?text=${encodeURIComponent(msg)}`, "_blank");
     }
   };
 

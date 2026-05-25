@@ -283,7 +283,7 @@ export function PrintStoreModal({ eventId, eventTitle, medias = [], unlockedMedi
     const isAlbum = selectedProduct.category === "ALBUM" || selectedProduct.category === "ALBUM_30X40";
     const colorInfo = isAlbum && selectedColor ? `\n*Cor da Capa:* ${selectedColor}` : "";
     const msg = `Olá! Quero encomendar:\n\n*Produto:* ${selectedProduct.name}${colorInfo}\n*Quantidade:* ${quantity}\n*Entrega:* ${deliveryMethod === 'LOCAL_PICKUP' ? 'Retirada no Ponto' : 'Envio para Endereço'}\n*Evento:* ${eventTitle}\n*Total:* R$ ${totalPrice.toFixed(2).replace(".", ",")}\n\n${notes ? `*Obs:* ${notes}` : ""}`;
-    window.open(`https://wa.me/5519997843817?text=${encodeURIComponent(msg)}`, "_blank");
+    window.open(`https://wa.me/5519981150440?text=${encodeURIComponent(msg)}`, "_blank");
   };
 
   return (
