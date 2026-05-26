@@ -55,9 +55,7 @@ export default function PortfolioManage() {
     Array.from(e.target.files).forEach((file) => formData.append("files", file));
 
     try {
-      await API.post(`portfolio/albums/${albumId}/upload`, formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
+      await API.post(`portfolio/albums/${albumId}/upload`, formData);
       fetchAlbums();
     } catch (err) {
       console.error(err);

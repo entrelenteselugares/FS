@@ -140,9 +140,7 @@ export default function PhygitalCapture() {
     data.append('eventId', eventId);
 
     try {
-      const res = await API.post('/public/phygital/upload', data, {
-        headers: { 'Content-Type': 'multipart/form-data' }
-      });
+      const res = await API.post('/public/phygital/upload', data);
 
       if (res.data && res.data.success) {
         setResult(res.data);

@@ -152,6 +152,11 @@ export class GoogleDriveService {
       return folder.data;
     } catch (error: any) {
       console.error('[DRIVE] Erro ao criar pasta após retentativas:', error.message);
+      if (error.message && (error.message.includes('invalid_grant') || error.message.includes('auth') || error.message.includes('credential') || error.message.includes('expired') || error.message.includes('revoked'))) {
+        console.warn(`[DRIVE] ⚠️ Erro de credenciais detectado ao criar pasta. Alternando para MODO MOCK dinamicamente.`);
+        this.drive = null;
+        return this.createAlbumFolder(albumName);
+      }
       throw error;
     }
   }
@@ -162,11 +167,10 @@ export class GoogleDriveService {
    */
   async uploadMedia({ folderId, fileName, buffer, mimeType }: { folderId: string, fileName: string, buffer: Buffer, mimeType: string }) {
     if (!this.drive) {
-      console.warn(`[DRIVE MOCK] Gravando arquivo localmente (em /tmp): ${fileName}`);
+      console.warn(`[DRIVE MOCK] Gravando arquivo localmente (em /uploads/vaults): ${fileName}`);
       const mockId = `mock-file-${Date.now()}`;
       
-      const os = require('os');
-      const uploadDir = path.join(os.tmpdir(), 'vaults');
+      const uploadDir = path.join(process.cwd(), 'uploads', 'vaults');
       if (!fs.existsSync(uploadDir)) {
         fs.mkdirSync(uploadDir, { recursive: true });
       }
@@ -174,7 +178,7 @@ export class GoogleDriveService {
       const filePath = path.join(uploadDir, fileName);
       fs.writeFileSync(filePath, buffer);
 
-      const appUrl = process.env.APP_URL || 'http://localhost:3001';
+      const appUrl = process.env.BACKEND_URL || process.env.APP_URL || 'http://localhost:3002';
       const fileUrl = `${appUrl}/uploads/vaults/${fileName}`;
 
       return { 
@@ -236,6 +240,12 @@ export class GoogleDriveService {
       }
       console.error('=========================================');
       
+      if (error.message && (error.message.includes('invalid_grant') || error.message.includes('auth') || error.message.includes('credential') || error.message.includes('expired') || error.message.includes('revoked'))) {
+        console.warn(`[DRIVE] ⚠️ Erro de credenciais detectado no upload. Alternando para MODO MOCK dinamicamente.`);
+        this.drive = null;
+        return this.uploadMedia({ folderId, fileName, buffer, mimeType });
+      }
+      
       throw error;
     }
   }
@@ -270,6 +280,25 @@ export class GoogleDriveService {
   async listFiles(folderId: string) {
     if (!this.drive) {
       console.warn(`[DRIVE MOCK] Listando arquivos mock para pasta: ${folderId}`);
+      const uploadDir = path.join(process.cwd(), 'uploads', 'vaults');
+      if (fs.existsSync(uploadDir)) {
+        try {
+          const files = fs.readdirSync(uploadDir);
+          const appUrl = process.env.BACKEND_URL || process.env.APP_URL || 'http://localhost:3002';
+          return files.map((file, index) => {
+            const fileUrl = `${appUrl}/uploads/vaults/${file}`;
+            return {
+              id: `mock-file-${index}-${Date.now()}`,
+              name: file,
+              mimeType: 'image/jpeg',
+              webViewLink: fileUrl,
+              thumbnailLink: fileUrl
+            };
+          });
+        } catch (readErr: any) {
+          console.error('[DRIVE MOCK] Erro ao ler pasta de upload mock:', readErr.message);
+        }
+      }
       return [];
     }
 
@@ -284,6 +313,11 @@ export class GoogleDriveService {
       return response.data.files || [];
     } catch (error: any) {
       console.error('[DRIVE] Erro ao listar arquivos:', error.message);
+      if (error.message && (error.message.includes('invalid_grant') || error.message.includes('auth') || error.message.includes('credential') || error.message.includes('expired') || error.message.includes('revoked'))) {
+        console.warn(`[DRIVE] ⚠️ Erro de credenciais detectado na listagem. Alternando para MODO MOCK dinamicamente.`);
+        this.drive = null;
+        return this.listFiles(folderId);
+      }
       throw error;
     }
   }

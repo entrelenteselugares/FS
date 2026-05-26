@@ -110,9 +110,7 @@ export default function PrintMonitor() {
                   formData.append("photo", file);
                   formData.append("eventId", eventId!);
                   formData.append("customerName", "Profissional (Manual)");
-                  await API.post("/public/phygital/upload", formData, {
-                    headers: { "Content-Type": "multipart/form-data" }
-                  });
+                  await API.post("/public/phygital/upload", formData);
                 }
                 fetchPrints();
               } catch (err) {

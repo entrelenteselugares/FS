@@ -351,6 +351,7 @@ router.get("/public/configs/theme",        getPublicThemeConfigs);
 router.get("/public/configs/services",     getPublicServices);
 router.get("/public/configs/pricing",      getPublicPricingConfigs);
 router.get("/public/service-catalog",      ServiceCatalogController.adminListServiceCatalog); // Reutilizando a listagem para público
+router.get("/public/services/vault",      ServiceCatalogController.listVaultServices);
 
 // ── Gamificação Pública ───────────────────────────────────────────────────────
 router.get("/public/contests/active",      getActiveContest);
@@ -585,6 +586,7 @@ router.get("/vaults/:albumId/media", requireAuth, VaultController.listMedia);
 router.post("/vaults/:albumId/upload", requireAuth, upload.single("file"), VaultController.uploadMedia);
 router.post("/vaults/media/:mediaId/vote", requireAuth, (req: any, res: any, next: any) => VaultController.voteMedia(req, res, next));
 router.post("/vaults/:albumId/checkout", requireAuth, VaultController.checkoutVault);
+router.post("/vaults/:albumId/services/buy", requireAuth, VaultController.buyService);
 router.post("/vaults/:albumId/subscribe", requireAuth, VaultController.subscribe);
 router.post("/vaults/:albumId/invite",    requireAuth, VaultController.generateInvite);
 router.get("/vaults/invitation/:code",     VaultController.getInvitationDetails);

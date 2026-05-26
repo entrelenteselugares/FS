@@ -359,6 +359,8 @@ model Order {
   manualType           String?
   buyerWhatsapp        String?
   internalNotes        String?
+  referenceFiles       Json?               // [{ url, name, size }]
+  soundtrackSuggestion String?
   editorId             String?
   deliveryType         DeliveryType        @default(DIGITAL_ONLY)
   guestEmail           String?
@@ -393,6 +395,11 @@ model Order {
   coupon               Coupon?             @relation(fields: [couponId], references: [id])
   abandonedEmailSentAt DateTime?
   affiliateCommissions AffiliateCommission[]
+  
+  // Customizations for hired services
+  referenceUrl         String?
+  soundtrack           String?
+  instructions         String?
 
   @@map("orders")
 }
@@ -432,6 +439,7 @@ model ServiceCatalog {
   isRemote          Boolean               @default(false)
   deliveryDays      Int?
   minQuantity       Int?
+  availableInVault  Boolean               @default(false) // Exibir como upsell no Cofre de Memórias
 
   proServices       ProfessionalService[]
 

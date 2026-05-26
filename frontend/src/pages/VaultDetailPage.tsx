@@ -13,6 +13,7 @@ import { Helmet } from "react-helmet-async";
 import { T } from "../lib/theme";
 import { VaultSettingsModal } from "../components/VaultSettingsModal";
 import { PrintStoreModal } from "../components/PrintStoreModal";
+import { ServiceStoreModal } from "../components/ServiceStoreModal";
 
 interface Media {
   id: string;
@@ -62,6 +63,7 @@ export default function VaultDetailPage() {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [sortConfig, setSortConfig] = useState("UPLOAD_DESC");
   const [isPrintStoreOpen, setIsPrintStoreOpen] = useState(false);
+  const [isServiceStoreOpen, setIsServiceStoreOpen] = useState(false);
 
   const fetchVaultDetails = useCallback(async () => {
     try {
@@ -306,7 +308,6 @@ export default function VaultDetailPage() {
 
       try {
         await api.post(`/vaults/${vaultId}/upload`, formData, {
-          headers: { "Content-Type": "multipart/form-data" },
           onUploadProgress: (pe) => {
             const subProgress = Math.round((pe.loaded * progressStep) / (pe.total || 1));
             setUploadProgress(Math.round(progressBase + subProgress));
@@ -432,6 +433,14 @@ export default function VaultDetailPage() {
               </a>
             )}
             
+            <button 
+              onClick={() => setIsServiceStoreOpen(true)}
+              className="flex-1 md:flex-none flex items-center justify-center gap-2 bg-purple-500 hover:bg-purple-400 text-black text-[10px] font-black uppercase tracking-widest px-4 py-2.5 rounded-lg transition-all shadow-lg shadow-purple-500/20"
+            >
+              <Video size={14} />
+              Serviços
+            </button>
+
             <button 
               onClick={handleInvite}
               className="flex-1 md:flex-none flex items-center justify-center gap-2 bg-white/5 border border-white/10 hover:bg-white/10 text-[10px] font-black uppercase tracking-widest px-4 py-2.5 rounded-lg transition-all"
@@ -647,6 +656,14 @@ export default function VaultDetailPage() {
             <ChevronLeft size={20} />
             <span className="text-[9px] font-black uppercase tracking-widest">Voltar</span>
           </button>
+
+          <button 
+            onClick={() => setIsServiceStoreOpen(true)}
+            className="flex flex-col items-center gap-1 text-purple-400 hover:text-purple-300 transition-colors ml-2"
+          >
+            <Video size={20} />
+            <span className="text-[9px] font-black uppercase tracking-widest text-center">Serviços</span>
+          </button>
           
           <button 
             onClick={() => setIsPrintStoreOpen(true)}
@@ -710,6 +727,14 @@ export default function VaultDetailPage() {
           isMarketplace={false}
           initialSelectedPhotos={media.filter(m => m.votedByMe).map(m => m.thumbnailLink || m.webViewLink)}
           onClose={() => setIsPrintStoreOpen(false)}
+        />
+      )}
+
+      {isServiceStoreOpen && (
+        <ServiceStoreModal
+          vaultId={vault.id}
+          vaultName={vault.nome}
+          onClose={() => setIsServiceStoreOpen(false)}
         />
       )}
 

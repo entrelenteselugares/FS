@@ -67,7 +67,7 @@ export async function adminCreateService(req: AuthRequest, res: Response): Promi
 export async function adminUpdateService(req: AuthRequest, res: Response): Promise<void> {
   try {
     const { id } = req.params;
-    const { name, description, category, basePrice, priceProfessional, priceMobile, allowProfessional, allowMobile, estimatedMinutes, active } = req.body;
+    const { name, description, category, basePrice, priceProfessional, priceMobile, allowProfessional, allowMobile, estimatedMinutes, active, availableInVault } = req.body;
     const service = await prisma.serviceCatalog.update({
       where: { id: String(id) },
       data: {
@@ -81,6 +81,7 @@ export async function adminUpdateService(req: AuthRequest, res: Response): Promi
         ...(allowMobile !== undefined && { allowMobile: Boolean(allowMobile) }),
         ...(estimatedMinutes !== undefined && { estimatedMinutes: Number(estimatedMinutes) }),
         ...(active !== undefined && { active }),
+        ...(availableInVault !== undefined && { availableInVault: Boolean(availableInVault) }),
       }
     });
     res.json(serializeService(service));
@@ -187,5 +188,22 @@ export async function reviewPendingService(req: AuthRequest, res: Response): Pro
   } catch (err) {
     console.error("reviewPendingService:", err);
     res.status(500).json({ error: "Erro ao revisar serviço." });
+  }
+}
+
+/**
+ * Lista serviços de pós-produção disponíveis para contratação dentro do Cofre.
+ * GET /public/services/vault
+ */
+export async function listVaultServices(_req: Request, res: Response): Promise<void> {
+  try {
+    const services = await prisma.serviceCatalog.findMany({
+      where: { active: true, availableInVault: true },
+      orderBy: { name: 'asc' }
+    });
+    res.json(services.map(serializeService));
+  } catch (err) {
+    console.error("listVaultServices:", err);
+    res.status(500).json({ error: "Erro ao listar serviços do cofre." });
   }
 }

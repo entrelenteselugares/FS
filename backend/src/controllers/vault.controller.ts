@@ -667,6 +667,26 @@ export class VaultController {
         return res.status(402).send("SUBSCRIPTION_REQUIRED");
       }
 
+      // Se for arquivo mock, servir diretamente do diretório local
+      if (fileId.startsWith("mock-file-")) {
+        const fs = require('fs');
+        const path = require('path');
+        const uploadDir = path.join(process.cwd(), 'uploads', 'vaults');
+        
+        let fileName = "";
+        if (media && media.webViewLink) {
+          fileName = media.webViewLink.substring(media.webViewLink.lastIndexOf('/') + 1);
+        }
+        
+        const filePath = path.join(uploadDir, fileName || fileId);
+        if (fs.existsSync(filePath)) {
+          const contentType = fileName.endsWith('.mp4') ? 'video/mp4' : 'image/jpeg';
+          res.setHeader('Content-Type', contentType);
+          res.setHeader('Cache-Control', 'public, max-age=86400');
+          return fs.createReadStream(filePath).pipe(res);
+        }
+      }
+
       const driveRes = await driveService.getMediaStream(fileId);
       
       const contentType = driveRes.headers['content-type'] || 'image/jpeg';
@@ -678,6 +698,26 @@ export class VaultController {
     } catch (error: any) {
       console.error("[PROXY MEDIA] Erro fatal:");
       console.error(" - Mensagem:", error.message);
+      
+      // Fallback para arquivo local se falhar a conexão com o Google Drive
+      try {
+        const media = await prisma.sharedAlbumMedia.findUnique({ where: { fileId } });
+        if (media && media.webViewLink) {
+          const fs = require('fs');
+          const path = require('path');
+          const fileName = media.webViewLink.substring(media.webViewLink.lastIndexOf('/') + 1);
+          const filePath = path.join(process.cwd(), 'uploads', 'vaults', fileName);
+          if (fs.existsSync(filePath)) {
+            const contentType = fileName.endsWith('.mp4') ? 'video/mp4' : 'image/jpeg';
+            res.setHeader('Content-Type', contentType);
+            res.setHeader('Cache-Control', 'public, max-age=86400');
+            return fs.createReadStream(filePath).pipe(res);
+          }
+        }
+      } catch (localErr) {
+        console.error("[PROXY MEDIA] Falha ao tentar carregar localmente:", localErr);
+      }
+
       if (error.response) {
         console.error(" - Google Data:", JSON.stringify(error.response.data, null, 2));
         console.error(" - Status:", error.response.status);
@@ -818,6 +858,140 @@ export class VaultController {
     } catch (e: any) {
       console.error("[VAULT UPDATE MEDIA] Erro:", e.message);
       return res.status(500).json({ error: "Erro ao atualizar status da foto.", details: e.message });
+    }
+  }
+
+  static async buyService(req: AuthRequest, res: Response) {
+    const albumId = req.params.albumId as string;
+    const userId = req.user?.userId;
+    const { serviceId, internalNotes, referenceFiles, soundtrackSuggestion } = req.body;
+
+    if (!userId) return res.status(401).json({ error: "Não autenticado." });
+    if (!serviceId) return res.status(400).json({ error: "serviceId é obrigatório." });
+
+    try {
+      // 1. Validar membro do cofre
+      const membership = await prisma.albumMember.findUnique({
+        where: { albumId_userId: { albumId, userId } }
+      });
+      if (!membership) return res.status(403).json({ error: "Você não é membro deste cofre." });
+
+      // 2. Buscar álbum e serviço
+      const album = await prisma.sharedAlbum.findUnique({
+        where: { id: albumId },
+        include: { owner: true }
+      });
+      if (!album) return res.status(404).json({ error: "Cofre não encontrado." });
+
+      const service = await prisma.serviceCatalog.findUnique({ where: { id: serviceId } });
+      if (!service || !service.active || !(service as any).availableInVault) {
+        return res.status(404).json({ error: "Serviço não disponível." });
+      }
+
+      // 3. Garantir Evento do Cofre
+      let systemEvent = await prisma.event.findFirst({
+        where: { slug: `vault-${album.id}` }
+      });
+
+      if (!systemEvent) {
+        systemEvent = await prisma.event.create({
+          data: {
+            slug: `vault-${album.id}`,
+            title: album.nome,
+            active: true,
+            dataEvento: new Date(),
+            ownerId: album.ownerId
+          }
+        });
+      }
+
+      // 3.5 Garantir ProfessionalService (para o relacionamento do OrderItem)
+      let proService = await prisma.professionalService.findFirst({
+        where: { catalogId: service.id, active: true }
+      });
+
+      if (!proService) {
+        let firstPro = await prisma.profissional.findFirst();
+        if (!firstPro) {
+          let adminUser = await prisma.user.findFirst({ where: { role: "ADMIN" } });
+          if (!adminUser) {
+            adminUser = await prisma.user.findFirst();
+          }
+          if (adminUser) {
+            firstPro = await prisma.profissional.create({
+              data: {
+                userId: adminUser.id,
+                experienceYears: 5,
+                hourlyRate: 150,
+                equipmentMultiplier: 1.0,
+              }
+            });
+          }
+        }
+
+        if (firstPro) {
+          proService = await prisma.professionalService.create({
+            data: {
+              profissionalId: firstPro.id,
+              catalogId: service.id,
+              name: service.name,
+              description: service.description,
+              price: service.basePrice,
+              active: true,
+              category: service.category,
+              estimatedMinutes: service.estimatedMinutes,
+              reviewStatus: "APPROVED",
+            }
+          });
+        }
+      }
+
+      if (!proService) {
+        return res.status(500).json({ error: "Nenhum profissional disponível para associar ao serviço do catálogo." });
+      }
+
+      // 4. Criar pedido PENDENTE
+      const buyer = await prisma.user.findUnique({ where: { id: userId } });
+      const order = await prisma.order.create({
+        data: {
+          valor: Number(service.basePrice),
+          status: "PENDENTE",
+          eventId: systemEvent.id,
+          clienteId: userId,
+          buyerEmail: buyer?.email || album.owner.email,
+          isManual: true,
+          manualType: "VAULT_SERVICE",
+          paymentId: `VAULT-SVC-${Date.now()}`,
+          internalNotes: `Serviço "${service.name}" contratado via cofre "${album.nome}"${internalNotes ? `\n\nObservações: ${internalNotes}` : ""}`,
+          referenceFiles: referenceFiles ? referenceFiles : undefined,
+          soundtrackSuggestion: soundtrackSuggestion || undefined,
+          items: {
+            create: [{
+              serviceId: proService.id,
+              price: Number(service.basePrice),
+              quantity: 1,
+            }]
+          }
+        }
+      });
+
+      // 5. Notificar admin via WhatsApp
+      const { NotificationService } = require("../services/notification.service");
+      NotificationService.notifyNewSale({
+        buyerEmail: buyer?.email || "desconhecido",
+        eventTitle: `Serviço: ${service.name} (Cofre: ${album.nome})`,
+        orderId: order.id,
+        amount: Number(service.basePrice)
+      });
+
+      return res.json({
+        orderId: order.id,
+        amount: Number(service.basePrice),
+        serviceName: service.name
+      });
+    } catch (error: any) {
+      console.error("[VAULT BUY SERVICE] Erro:", error.message);
+      return res.status(500).json({ error: "Erro ao contratar serviço.", details: error.message });
     }
   }
 }
