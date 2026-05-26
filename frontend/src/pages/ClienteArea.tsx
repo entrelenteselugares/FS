@@ -282,6 +282,8 @@ export default function ClienteArea() {
       setActiveTab("profile");
     } else if (section === "affiliate") {
       setActiveTab("affiliate");
+    } else if (section === "convites") {
+      setActiveTab("agenda");
     } else if (section === "agenda" || section === "financeiro" || section === "servicos" || section === "calendar" || section === "franquia" || section === "equipe" || section === "configuracoes") {
       setActiveTab(section as ActiveTab);
     }
