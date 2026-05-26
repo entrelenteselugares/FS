@@ -1,12 +1,17 @@
-import prisma from './src/lib/prisma';
+import { PrismaClient } from '@prisma/client';
+const prisma = new PrismaClient();
 
-async function fix() {
-  const updated = await prisma.user.updateMany({
-    where: { role: 'FRANCHISEE' },
-    data: { role: 'PROFISSIONAL' }
+async function main() {
+  const result = await prisma.user.updateMany({
+    where: { 
+      franchiseProfile: { isNot: null },
+      role: { not: 'FRANCHISEE' }
+    },
+    data: { role: 'FRANCHISEE' }
   });
-  console.log(`✅ Corrigido: ${updated.count} usuário(s) voltaram para PROFISSIONAL`);
-  await prisma.$disconnect();
+  console.log(`Updated ${result.count} users to FRANCHISEE role.`);
 }
 
-fix().catch(console.error);
+main()
+  .catch(console.error)
+  .finally(() => prisma.$disconnect());

@@ -544,10 +544,12 @@ export class EventController {
   static async createQuote(req: AuthRequest, res: Response) {
     try {
       const { 
-        name, email, whatsapp, attendees, locationType, usageType, selectedPartnerId, 
+        name, email: rawEmail, whatsapp, attendees, locationType, usageType, selectedPartnerId, 
         customCep, eventDate, eventHours, eventDays, description, selectedServices = [], totalPrice,
         preferredProfessionalId 
       } = req.body;
+
+      const email = rawEmail ? rawEmail.toLowerCase().trim() : "";
 
       if (!Array.isArray(selectedServices)) {
         return res.status(400).json({ error: "selectedServices deve ser um array" });

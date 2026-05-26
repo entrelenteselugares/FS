@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import https from "https";
 import { FRONTEND_URL, APP_URL } from "../lib/config";
 import { prisma } from "../lib/prisma";
+import { webpush } from "../lib/push";
 
 dotenv.config();
 
@@ -680,9 +681,54 @@ export class NotificationService {
           await prisma.notification.deleteMany({ where: { id: { in: oldest.map(n => n.id) } } });
         }
       }
-      return await prisma.notification.create({
+      const newNotification = await prisma.notification.create({
         data: { userId, type, title, body, refId, refType, read: false }
       });
+
+      // --- DISPARAR WEB PUSH NOTIFICATION EM ADICIONAL ---
+      try {
+        const subscriptions = await prisma.pushSubscription.findMany({
+          where: { userId }
+        });
+
+        if (subscriptions.length > 0) {
+          console.log(`[PushNotification] Enviando ${subscriptions.length} notificações push para o usuário ${userId}`);
+          const payload = JSON.stringify({
+            title,
+            body,
+            url: refId && refType === "event" ? `${FRONTEND_URL}/e/${refId}` : `${FRONTEND_URL}/dashboard`
+          });
+
+          const pushPromises = subscriptions.map(sub => {
+            const pushConfig = {
+              endpoint: sub.endpoint,
+              keys: {
+                auth: sub.auth,
+                p256dh: sub.p256dh
+              }
+            };
+            return webpush.sendNotification(pushConfig, payload).catch(async (err: any) => {
+              console.error("[PushNotification] Erro ao enviar para endpoint:", sub.endpoint, err.message);
+              // Se o endpoint for inválido ou expirado, removemos a assinatura para manter o banco limpo
+              if (err.statusCode === 410 || err.statusCode === 404) {
+                try {
+                  await prisma.pushSubscription.delete({ where: { endpoint: sub.endpoint } });
+                  console.log("[PushNotification] Assinatura expirada removida com sucesso:", sub.endpoint);
+                } catch (e: any) {
+                  console.error("[PushNotification] Erro ao deletar assinatura expirada:", e.message);
+                }
+              }
+            });
+          });
+
+          // Executar em background sem bloquear a resposta principal
+          Promise.all(pushPromises).catch(e => console.error("[PushNotification] Falha geral no Promise.all:", e));
+        }
+      } catch (pushErr: any) {
+        console.error("[PushNotification] Falha ao processar envio push:", pushErr);
+      }
+
+      return newNotification;
     } catch (err) {
       console.error("[Notification] createInApp error:", err);
       return null;
