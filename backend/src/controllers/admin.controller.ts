@@ -1369,7 +1369,11 @@ export async function adminApproveQuote(req: AuthRequest, res: Response): Promis
       }
     });
 
-    // 2. Criar ou Atualizar o(s) pedido(s) (Idempotência)
+    // 2. Apagar pedidos PENDENTES antigos e recriar para evitar links cacheados/Pix travados
+    await prisma.order.deleteMany({
+      where: { eventId: updatedQuote.id, status: "PENDENTE" }
+    });
+
     const isSplit = req.body.isSplit === true;
     let order;
 
@@ -1379,75 +1383,43 @@ export async function adminApproveQuote(req: AuthRequest, res: Response): Promis
     if (isSplit) {
       const halfPrice = Number(finalPrice) / 2;
       
-      // Upsert Pedido 1: Reserva (50%)
-      const existingReserva = await prisma.order.findFirst({
-        where: { eventId: updatedQuote.id, manualType: "Reserva (50%)", status: "PENDENTE" }
+      // Pedido 1: Reserva (50%)
+      order = await prisma.order.create({
+        data: {
+          eventId: updatedQuote.id,
+          valor: halfPrice,
+          buyerEmail: quote.clientEmail,
+          clienteId: targetUser?.id,
+          status: "PENDENTE",
+          manualType: "Reserva (50%)",
+          paymentId: `QUOTE-RESERVA-${Date.now()}`
+        }
       });
 
-      if (existingReserva) {
-        order = await prisma.order.update({
-          where: { id: existingReserva.id },
-          data: { valor: halfPrice, clienteId: targetUser?.id }
-        });
-      } else {
-        order = await prisma.order.create({
-          data: {
-            eventId: updatedQuote.id,
-            valor: halfPrice,
-            buyerEmail: quote.clientEmail,
-            clienteId: targetUser?.id,
-            status: "PENDENTE",
-            manualType: "Reserva (50%)",
-            paymentId: `QUOTE-RESERVA-${Date.now()}`
-          }
-        });
-      }
-
-      // Upsert Pedido 2: Quitação (50%)
-      const existingQuitacao = await prisma.order.findFirst({
-        where: { eventId: updatedQuote.id, manualType: "Quitação (50%)", status: "PENDENTE" }
+      // Pedido 2: Quitação (50%)
+      await prisma.order.create({
+        data: {
+          eventId: updatedQuote.id,
+          valor: halfPrice,
+          buyerEmail: quote.clientEmail,
+          clienteId: targetUser?.id,
+          status: "PENDENTE",
+          manualType: "Quitação (50%)",
+          paymentId: `QUOTE-FINAL-${Date.now()}`
+        }
       });
-
-      if (existingQuitacao) {
-        await prisma.order.update({
-          where: { id: existingQuitacao.id },
-          data: { valor: halfPrice, clienteId: targetUser?.id }
-        });
-      } else {
-        await prisma.order.create({
-          data: {
-            eventId: updatedQuote.id,
-            valor: halfPrice,
-            buyerEmail: quote.clientEmail,
-            clienteId: targetUser?.id,
-            status: "PENDENTE",
-            manualType: "Quitação (50%)",
-            paymentId: `QUOTE-FINAL-${Date.now()}`
-          }
-        });
-      }
     } else {
       // Pedido único
-      const existingSingle = await prisma.order.findFirst({
-        where: { eventId: updatedQuote.id, manualType: null, status: "PENDENTE" }
+      order = await prisma.order.create({
+        data: {
+          eventId: updatedQuote.id,
+          valor: Number(finalPrice),
+          buyerEmail: quote.clientEmail,
+          clienteId: targetUser?.id,
+          status: "PENDENTE",
+          paymentId: `QUOTE-SINGLE-${Date.now()}`
+        }
       });
-
-      if (existingSingle) {
-        order = await prisma.order.update({
-          where: { id: existingSingle.id },
-          data: { valor: Number(finalPrice), clienteId: targetUser?.id }
-        });
-      } else {
-        order = await prisma.order.create({
-          data: {
-            eventId: updatedQuote.id,
-            valor: Number(finalPrice),
-            buyerEmail: quote.clientEmail,
-            clienteId: targetUser?.id,
-            status: "PENDENTE"
-          }
-        });
-      }
     }
 
     // 3. Gerar link de checkout
