@@ -546,7 +546,7 @@ export class EventController {
       const { 
         name, email: rawEmail, whatsapp, attendees, locationType, usageType, selectedPartnerId, 
         customCep, eventDate, eventHours, eventDays, description, selectedServices = [], totalPrice,
-        preferredProfessionalId 
+        preferredProfessionalId, category
       } = req.body;
 
       const email = rawEmail ? rawEmail.toLowerCase().trim() : "";
@@ -694,6 +694,7 @@ export class EventController {
           location: req.body.location || (locationType === "PARTNER" ? "Ponto Fixo" : `CEP: ${customCep}`),
           description: `ORÇAMENTO AUTOMÁTICO\nConvidados: ${attendees}\nUso: ${usageType}\nPreferência: ${req.body.workflowPref || 'TRADICIONAL'}\nOrçamento Disponível: ${req.body.availableBudget || 'Não informado'}\nServiços: ${serviceLabels.join(", ")}\nDias: ${eventDays}\n\nDescrição do Cliente: ${description}`,
           usageType: usageType || "PESSOAL",
+          category: category ? category : undefined,
           isQuote: isQuote,
           quoteStatus: isQuote ? "PENDING" : "APPROVED",
           priceBase: totalPrice,
@@ -768,18 +769,26 @@ export class EventController {
       }
 
       // Se for Orçamento (OTHER), apenas retorna sucesso. O Admin irá precificar depois.
-      NotificationService.notifyNewLead({ name, email, eventDate, usageType, locationType });
-      
+      try {
+        NotificationService.notifyNewLead({ name, email, eventDate, usageType, locationType });
+      } catch (err) {
+        console.error('Error notifying new lead:', err);
+      }
+
       const admins = await prisma.user.findMany({ where: { role: 'ADMIN' }, select: { id: true } });
-      for (const admin of admins) {
-        await NotificationService.createInApp({
-          userId: admin.id,
-          type: 'QUOTE_RECEIVED',
-          title: '📋 Novo orçamento recebido',
-          body: `${name} solicitou um orçamento para ${eventDate}. Acesse o Kanban para precificar.`,
-          refId: event.id,
-          refType: 'event'
-        });
+      try {
+        for (const admin of admins) {
+          await NotificationService.createInApp({
+            userId: admin.id,
+            type: 'QUOTE_RECEIVED',
+            title: '📋 Novo orçamento recebido',
+            body: `${name} solicitou um orçamento para ${eventDate}. Acesse o Kanban para precificar.`,
+            refId: event.id,
+            refType: 'event'
+          });
+        }
+      } catch (err) {
+        console.error('Error sending admin notifications:', err);
       }
       
       NotificationService.sendWelcomeEmail({

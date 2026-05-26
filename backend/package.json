@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "jest --testPathPattern=resilience --testTimeout=10000",
+    "test": "jest --testPathPatterns=resilience --testTimeout=10000",
     "test:resilience": "jest resilience --testTimeout=10000",
     "test:integration": "jest integration --testTimeout=30000 --runInBand",
     "test:all": "jest --testTimeout=30000 --runInBand",

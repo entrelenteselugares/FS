@@ -41,15 +41,20 @@ function sendWhatsApp(message: string): void {
  * Inicialmente via E-mail (SMTP / Gmail)
  */
 export class NotificationService {
-  private static transporter = nodemailer.createTransport({
-    host: process.env.SMTP_HOST || "smtp.gmail.com",
-    port: Number(process.env.SMTP_PORT) || 465,
-    secure: true, // true para port 465
-    auth: {
-      user: process.env.SMTP_USER, // Seu e-mail (ex: contatofotosegundo@gmail.com)
-      pass: process.env.SMTP_PASS, // Sua Senha de App do Google
-    },
-  });
+  private static getTransporter() {
+    const host = process.env.SMTP_HOST || "smtp.gmail.com";
+    const port = Number(process.env.SMTP_PORT) || 465;
+    const secure = process.env.SMTP_SECURE ? process.env.SMTP_SECURE === "true" : port === 465;
+    return nodemailer.createTransport({
+      host,
+      port,
+      secure,
+      auth: {
+        user: process.env.SMTP_USER,
+        pass: process.env.SMTP_PASS,
+      },
+    });
+  }
 
   /**
    * Envia o e-mail de acesso aos arquivos após aprovação do pagamento
@@ -113,7 +118,7 @@ export class NotificationService {
     `;
 
     try {
-      const info = await this.transporter.sendMail({
+      const info = await this.getTransporter().sendMail({
         from: `"Foto Segundo" <${process.env.SMTP_USER}>`,
         to: data.to,
         subject: `Sua galeria está pronta! 📸 ${data.eventTitle}`,
@@ -195,7 +200,7 @@ export class NotificationService {
       : `Bem-vindo(a) à Foto Segundo! ✨`;
 
     try {
-      await this.transporter.sendMail({
+      await this.getTransporter().sendMail({
         from: `"Foto Segundo" <${process.env.SMTP_USER}>`,
         to: data.to,
         subject,
@@ -264,7 +269,7 @@ export class NotificationService {
     `;
 
     try {
-      const info = await this.transporter.sendMail({
+      const info = await this.getTransporter().sendMail({
         from: `"Foto Segundo" <${process.env.SMTP_USER}>`,
         to: data.to,
         subject: `Seu Orçamento está pronto! ✨ ${data.eventTitle}`,
@@ -418,7 +423,7 @@ export class NotificationService {
     `;
 
     try {
-      await this.transporter.sendMail({
+      await this.getTransporter().sendMail({
         from: `"Foto Segundo" <${process.env.SMTP_USER}>`,
         to: data.to,
         subject: `Novo Evento: ${data.eventTitle} 📅`,
@@ -499,7 +504,7 @@ export class NotificationService {
     `;
 
     try {
-      await this.transporter.sendMail({
+      await this.getTransporter().sendMail({
         from: `"Foto Segundo" <${process.env.SMTP_USER}>`,
         to: data.to,
         subject: `Recuperação de Senha 🔒`,
@@ -785,7 +790,7 @@ export class NotificationService {
         </div>
       `;
       try {
-        await this.transporter.sendMail({
+        await this.getTransporter().sendMail({
           from: `"Foto Segundo" <${process.env.SMTP_USER}>`,
           to: data.creatorEmail,
           subject: `Avaliação do Serviço: ${data.serviceName} ${statusEmoji}`,
