@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { X, Video, Wand2, Loader2, Sparkles, Plus, Image as ImageIcon } from "lucide-react";
 import { API as api } from "../lib/api";
 import { useNavigate } from "react-router-dom";
