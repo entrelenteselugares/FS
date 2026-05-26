@@ -543,13 +543,37 @@ export class EventController {
    */
   static async createQuote(req: AuthRequest, res: Response) {
     try {
-      const { 
-        name, email: rawEmail, whatsapp, attendees, locationType, usageType, selectedPartnerId, 
-        customCep, eventDate, eventHours, eventDays, description, selectedServices = [], totalPrice,
-        preferredProfessionalId, category
+      console.log('Headers:', req.headers);
+      console.log('CreateQuote payload:', req.body);
+      const {
+        name,
+        title,
+        email: rawEmail,
+        whatsapp,
+        attendees,
+        locationType,
+        usageType,
+        selectedPartnerId,
+        customCep,
+        eventDate,
+        eventHours,
+        eventDays,
+        description,
+        selectedServices = [],
+        totalPrice,
+        preferredProfessionalId,
+        category
       } = req.body;
 
+      // Fallback: use title if name is not provided
+      const finalName = name || title;
+      if (!finalName) {
+        return res.status(400).json({ error: "Nome (name) é obrigatório" });
+      }
+
       const email = rawEmail ? rawEmail.toLowerCase().trim() : "";
+        // Use finalName for further processing
+        const processedName = finalName;
 
       if (!Array.isArray(selectedServices)) {
         return res.status(400).json({ error: "selectedServices deve ser um array" });
@@ -644,7 +668,7 @@ export class EventController {
         targetUser = await prisma.user.create({
           data: {
             email,
-            nome: name,
+            nome: processedName,
             senha: hashedPass,
             role: "CLIENTE",
             whatsapp: whatsapp ? String(whatsapp).replace(/\D/g, "") : null
@@ -682,11 +706,11 @@ export class EventController {
       const hasImpresso = selectedServices.some((id: string) => id === "impresso" || serviceLabels.some((l, i) => selectedServices[i] === id && /impresso|álbum|album/i.test(l)));
 
       // Gera slug único
-      const slug = `event-${name.toLowerCase().replace(/\s+/g, "-")}-${Math.random().toString(36).substring(2, 6)}`;
+      const slug = `event-${processedName.toLowerCase().replace(/\s+/g, "-")}-${Math.random().toString(36).substring(2, 6)}`;
 
       const event = await prisma.event.create({
         data: {
-          title: name,
+          title: processedName,
           slug,
           dataEvento: eventDateObj,
           eventHours: eventHours ? Number(eventHours) : 2,
@@ -706,7 +730,7 @@ export class EventController {
           temReels: hasReels,
           temFotoImpressa: hasImpresso,
           clientEmail: email,
-          clientName: name,
+          clientName: processedName,
           captacaoId: captacaoId,
           captacaoStatus: "PENDING",
           retentionDays: 15,
@@ -737,7 +761,7 @@ export class EventController {
         NotificationService.notifyProfessionalNewAssignment({
           to: fp.profissional.user.email,
           profissionalName: fp.profissional.user.nome,
-          eventTitle: name,
+          eventTitle: processedName,
           eventDate: eventDate,
           location: locationType === "PARTNER" ? "Ponto Fixo" : `CEP: ${customCep}`
         }).catch(e => console.error("Erro ao notificar profissional fixo:", e));
@@ -759,7 +783,7 @@ export class EventController {
         // Dispara e-mail de Boas-Vindas / Confirmação
         NotificationService.sendWelcomeEmail({
           to: email,
-          name: name,
+          name: processedName,
           tempPassword: tempPassForEmail
         }).catch(e => console.error("Erro ao enviar boas-vindas:", e));
 
@@ -770,7 +794,7 @@ export class EventController {
 
       // Se for Orçamento (OTHER), apenas retorna sucesso. O Admin irá precificar depois.
       try {
-        NotificationService.notifyNewLead({ name, email, eventDate, usageType, locationType });
+        NotificationService.notifyNewLead({ name: processedName, email, eventDate, usageType, locationType });
       } catch (err) {
         console.error('Error notifying new lead:', err);
       }
@@ -782,7 +806,7 @@ export class EventController {
             userId: admin.id,
             type: 'QUOTE_RECEIVED',
             title: '📋 Novo orçamento recebido',
-            body: `${name} solicitou um orçamento para ${eventDate}. Acesse o Kanban para precificar.`,
+            body: `${processedName} solicitou um orçamento para ${eventDate}. Acesse o Kanban para precificar.`,
             refId: event.id,
             refType: 'event'
           });
@@ -793,7 +817,7 @@ export class EventController {
       
       NotificationService.sendWelcomeEmail({
         to: email,
-        name: name,
+        name: processedName,
         tempPassword: tempPassForEmail
       }).catch(e => console.error("Erro ao enviar boas-vindas (lead):", e));
 
@@ -802,7 +826,7 @@ export class EventController {
         userId: targetUser.id,
         type: 'QUOTE_RECEIVED',
         title: '✨ Recebemos seu pedido!',
-        body: `Olá ${name}, já estamos analisando seu pedido para ${eventDate}. Em breve enviaremos a proposta!`,
+        body: `Olá ${processedName}, já estamos analisando seu pedido para ${eventDate}. Em breve enviaremos a proposta!`,
         refId: event.id,
         refType: 'event'
       }).catch(e => console.error("Erro notif cliente lead:", e));
