@@ -1480,13 +1480,22 @@ export async function adminApproveQuote(req: AuthRequest, res: Response): Promis
       finalPrice: Number(finalPrice)
     });
 
-    // [P2] Notificação in-app para o profissional atribuído (captacaoId)
-    if (updatedQuote.captacaoId) {
+    // [P2] Notificação in-app para a equipe selecionada
+    const assignedUserIds = new Set<string>();
+    if (updatedQuote.captacaoId) assignedUserIds.add(updatedQuote.captacaoId);
+    
+    if (req.body.breakdown && Array.isArray(req.body.breakdown.staff)) {
+      req.body.breakdown.staff.forEach((member: any) => {
+        if (member.userId) assignedUserIds.add(member.userId);
+      });
+    }
+
+    for (const userId of assignedUserIds) {
       await NotificationService.createInApp({
-        userId: updatedQuote.captacaoId,
+        userId,
         type: 'EVENT_INVITE',
-        title: '📸 Novo evento confirmado!',
-        body: `Uma proposta foi aprovada para "${quote.title}". Verifique sua agenda e os detalhes do evento.`,
+        title: '📸 Pré-reserva de Equipe!',
+        body: `Você foi pré-escalado(a) para a equipe de "${quote.title}". Aguarde a aprovação e pagamento do cliente para confirmação oficial.`,
         refId: quote.id,
         refType: 'event'
       });
