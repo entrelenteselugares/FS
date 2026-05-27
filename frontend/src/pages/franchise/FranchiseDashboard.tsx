@@ -1,4 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { DashboardLayout, type NavItem } from '../../components/DashboardLayout';
 import { 
   Printer, 
   Users, 
@@ -11,7 +13,14 @@ import {
   Activity,
   History,
   DollarSign,
-  Palette
+  Palette,
+  LayoutDashboard,
+  Play,
+  Briefcase,
+  Calendar,
+  Lock,
+  User,
+  Image as ImageIcon
 } from 'lucide-react';
 import { API as api } from '../../lib/api';
 import { useAuth } from '../../hooks/useAuth';
@@ -51,6 +60,43 @@ interface FinanceStats {
 
 const FranchiseDashboard: React.FC = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
+  const navItems = useMemo<NavItem[]>(() => {
+    const items: NavItem[] = [
+      { label: "Minhas Memórias", onClick: () => navigate("/minha-conta?s=fotos"), isActive: false, icon: <ImageIcon size={18} /> },
+      { label: "Meus Álbuns", onClick: () => navigate("/meus-albuns"), isActive: false, icon: <Lock size={18} /> },
+      { label: "Carrinho", onClick: () => navigate("/minha-conta?s=wallet"), isActive: false, icon: <ShoppingBag size={18} /> },
+      { label: "Indique e Ganhe", onClick: () => navigate("/minha-conta?s=affiliate"), isActive: false, icon: <Users size={18} /> },
+      { label: "Meus Dados", onClick: () => navigate("/minha-conta?s=menu"), isActive: false, icon: <User size={18} /> },
+    ];
+
+    const isProOrFranchise = user?.role === "PROFISSIONAL" || user?.role === "FRANCHISEE" || !!user?.franchiseProfile;
+    const isVerified = user?.verificationStatus === "APPROVED" || user?.isVerified || !!user?.franchiseProfile;
+
+    if (isProOrFranchise && isVerified) {
+      items.push(
+        { label: "ÁREA PROFISSIONAL", isHeader: true },
+        { label: "Minha Agenda", onClick: () => navigate("/minha-conta?s=agenda"), isActive: false, icon: <Play size={18} /> },
+        { label: "Portfólio & Serviços", onClick: () => navigate("/minha-conta?s=servicos"), isActive: false, icon: <Briefcase size={18} /> },
+        { label: "Vendas & Ganhos", onClick: () => navigate("/minha-conta?s=financeiro"), isActive: false, icon: <DollarSign size={18} /> },
+        { label: "Agenda Google", onClick: () => navigate("/minha-conta?s=calendar"), isActive: false, icon: <Calendar size={18} /> }
+      );
+
+      if (user?.role === "FRANCHISEE" || user?.franchiseProfile) {
+        if (user?.role === "FRANCHISEE") {
+          items.push(
+            { label: "Gestão de Franquia", onClick: () => navigate("/franquia"), isActive: true, icon: <LayoutDashboard size={18} /> }
+          );
+        }
+        items.push(
+          { label: "Rede Técnica", onClick: () => navigate("/minha-conta?s=equipe"), isActive: false, icon: <Users size={18} /> },
+          { label: "Franquia Print", onClick: () => navigate("/minha-conta?s=franquia"), isActive: false, icon: <Printer size={18} /> }
+        );
+      }
+    }
+    return items;
+  }, [user, navigate]);
+
   const [loading, setLoading] = useState(true);
   const [savingBranding, setSavingBranding] = useState(false);
   const [printerStatus] = useState<'ONLINE' | 'OFFLINE' | 'ERROR'>('ONLINE');
@@ -144,18 +190,17 @@ const FranchiseDashboard: React.FC = () => {
     }
   };
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="text-[10px] font-black text-theme-muted uppercase tracking-[0.5em] animate-pulse">
-          Sincronizando Hub B2B...
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
+    <DashboardLayout title="Gestão de Franquia" navItems={navItems}>
+      {loading ? (
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <div className="text-[10px] font-black text-theme-muted uppercase tracking-[0.5em] animate-pulse">
+            Sincronizando Hub B2B...
+          </div>
+        </div>
+      ) : (
+      <div style={{ padding: "clamp(8px, 2vw, 32px)", maxWidth: "100%", margin: "0 auto", minHeight: "100vh" }}>
+        <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
       {/* HEADER OPERACIONAL */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div className="space-y-2">
@@ -440,9 +485,12 @@ const FranchiseDashboard: React.FC = () => {
           </div>
         </div>
 
+        </div>
       </div>
     </div>
-  );
+      )}
+  </DashboardLayout>
+);
 };
 
 export default FranchiseDashboard;
