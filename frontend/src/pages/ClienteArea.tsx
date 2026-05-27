@@ -161,8 +161,8 @@ export default function ClienteArea() {
       { label: "Meus Dados", onClick: () => handleTabChange("profile"), isActive: activeTab === "profile", icon: <User size={18} /> },
     ];
 
-    const isProOrFranchise = user?.role === "PROFISSIONAL" || user?.role === "FRANCHISEE" || !!user?.franchiseProfile;
-    const isVerified = user?.verificationStatus === "APPROVED" || user?.isVerified || !!user?.franchiseProfile;
+    const isProOrFranchise = (user?.role === "PROFISSIONAL" || user?.role === "FRANCHISEE" || !!user?.franchiseProfile) && user?.role !== "UNIDADE" && user?.role !== "CARTORIO";
+    const isVerified = (user?.verificationStatus === "APPROVED" || user?.isVerified || !!user?.franchiseProfile) && user?.role !== "UNIDADE" && user?.role !== "CARTORIO";
 
     if (isProOrFranchise && isVerified) {
       items.push(

@@ -70,8 +70,8 @@ const FranchiseDashboard: React.FC = () => {
       { label: "Meus Dados", onClick: () => navigate("/minha-conta?s=menu"), isActive: false, icon: <User size={18} /> },
     ];
 
-    const isProOrFranchise = user?.role === "PROFISSIONAL" || user?.role === "FRANCHISEE" || !!user?.franchiseProfile;
-    const isVerified = user?.verificationStatus === "APPROVED" || user?.isVerified || !!user?.franchiseProfile;
+    const isProOrFranchise = (user?.role === "PROFISSIONAL" || user?.role === "FRANCHISEE" || !!user?.franchiseProfile) && user?.role !== "UNIDADE" && user?.role !== "CARTORIO";
+    const isVerified = (user?.verificationStatus === "APPROVED" || user?.isVerified || !!user?.franchiseProfile) && user?.role !== "UNIDADE" && user?.role !== "CARTORIO";
 
     if (isProOrFranchise && isVerified) {
       items.push(
