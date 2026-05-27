@@ -66,23 +66,38 @@ export class SupplyService {
 
     if (!profile) throw new Error("Franchise not found");
 
-    const prices = {
+    const packPrices: Record<string, number> = {
       'CREDITS_100': 200.00,
       'CREDITS_500': 850.00,
-      'PHYSICAL_KIT': 1200.00
+      'PHYSICAL_KIT': 1200.00,
     };
 
-    const order = await prisma.order.create({
+    const packNames: Record<string, string> = {
+      'CREDITS_100': '100 Créditos de Impressão',
+      'CREDITS_500': '500 Créditos de Impressão',
+      'PHYSICAL_KIT': 'Kit Físico Completo',
+    };
+
+    const price = packPrices[packType];
+    if (price === undefined) throw new Error(`Invalid packType: ${packType}`);
+
+    const order = await prisma.supplyOrder.create({
       data: {
-        valor: prices[packType],
-        status: 'PENDENTE',
-        buyerEmail: profile.user.email,
-        paymentMethod: 'PIX',
-        isManual: true,
-        manualType: 'SUPPLY_RECHARGE',
-        internalNotes: `[REABASTECIMENTO] ${packType} para ${profile.user.nome}`,
-        eventId: 'SUPPLY_SYSTEM_EVENT', // Virtual event for supply orders
-      }
+        franchiseeId: profile.userId,
+        total: price,
+        paymentMethod: 'CHECKOUT', // PIX via checkout flow
+        deliveryType: packType === 'PHYSICAL_KIT' ? 'SHIPPING' : 'MATRIZ',
+        status: 'PENDING',
+        items: {
+          create: [{
+            productId: packType.toLowerCase(),
+            name: packNames[packType],
+            price: price,
+            quantity: 1,
+          }]
+        }
+      },
+      include: { items: true }
     });
 
     // Update last supply order timestamp

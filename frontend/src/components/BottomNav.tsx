@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from "react";
 import { useNavigate, useLocation, useSearchParams, Link } from "react-router-dom";
-import { Home, Search, ShoppingBag, Image, Menu, X, Play, Briefcase, DollarSign, Calendar, Printer, Settings, Lock, Users, User, Image as ImageIcon } from "lucide-react";
+import { Home, Search, ShoppingBag, Image, Menu, X, Play, Briefcase, DollarSign, Calendar, Printer, Settings, Lock, Users, User, Image as ImageIcon, LayoutDashboard } from "lucide-react";
 import { useAuth } from "../hooks/useAuth";
 import type { NavItem } from "./DashboardLayout";
 
@@ -46,6 +46,11 @@ export const BottomNav: React.FC = () => {
       );
 
       if (user?.role === "FRANCHISEE" || user?.franchiseProfile) {
+        if (user?.role === "FRANCHISEE") {
+          items.push(
+            { label: "Gestão de Franquia", onClick: () => { navigate("/franquia"); setDrawerOpen(false); }, isActive: location.pathname === "/franquia", icon: <LayoutDashboard size={18} /> }
+          );
+        }
         items.push(
           { label: "Rede Técnica", onClick: () => { navigate("/minha-conta?s=equipe"); setDrawerOpen(false); }, isActive: location.pathname === "/minha-conta" && s === "equipe", icon: <Users size={18} /> },
           { label: "Franquia Print", onClick: () => { navigate("/minha-conta?s=franquia"); setDrawerOpen(false); }, isActive: location.pathname === "/minha-conta" && s === "franquia", icon: <Printer size={18} /> }

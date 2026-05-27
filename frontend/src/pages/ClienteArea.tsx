@@ -12,7 +12,7 @@ import {
   Users, Play, CheckCircle2, ArrowRight, 
   ShoppingBag, ShieldCheck, Clock, Image as ImageIcon,
   Zap, Lock, User, AlertTriangle, Briefcase, Building2, Camera,
-  DollarSign, Calendar, Printer, Settings, Sparkles
+  DollarSign, Calendar, Printer, Settings, Sparkles, LayoutDashboard
 } from "lucide-react";
 import { ProfilePhotoUpload } from "../components/ProfilePhotoUpload";
 import { toast } from "sonner";
@@ -174,6 +174,11 @@ export default function ClienteArea() {
       );
 
       if (user?.role === "FRANCHISEE" || user?.franchiseProfile) {
+        if (user?.role === "FRANCHISEE") {
+          items.push(
+            { label: "Gestão de Franquia", onClick: () => navigate("/franquia"), isActive: false, icon: <LayoutDashboard size={18} /> }
+          );
+        }
         items.push(
           { label: "Rede Técnica", onClick: () => handleTabChange("equipe"), isActive: activeTab === "equipe", icon: <Users size={18} /> },
           { label: "Franquia Print", onClick: () => handleTabChange("franquia"), isActive: activeTab === "franquia", icon: <Printer size={18} /> }

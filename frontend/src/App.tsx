@@ -59,7 +59,7 @@ const DashboardRedirect = () => {
     PROFISSIONAL: "/minha-conta",
     CARTORIO:     "/minha-conta",
     UNIDADE:      "/minha-conta",
-    FRANCHISEE:   "/minha-conta",
+    FRANCHISEE:   "/franquia",
     CLIENTE:      "/minha-conta",
   };
   return <Navigate to={map[user.role] || "/"} replace />;

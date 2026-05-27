@@ -6,7 +6,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [user, setUser] = useState<AuthUser | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
-  const [activeRole, setActiveRole] = useState<string | null>(null);
+  const [activeRole, setActiveRole] = useState<string | null>(() => {
+    return localStorage.getItem("fs_active_role");
+  });
 
   const logout = () => {
     localStorage.removeItem("fs_token");
@@ -58,18 +60,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     initAuth();
   }, []);
 
-  useEffect(() => {
-    if (user && !activeRole) {
-      const savedRole = localStorage.getItem("fs_active_role");
-      setActiveRole(savedRole || user.role);
-    }
-  }, [user, activeRole]);
+
 
   const switchRole = (role: string) => {
     setActiveRole(role);
     localStorage.setItem("fs_active_role", role);
     // Redirecionamento baseado no papel
     if (role === "ADMIN") window.location.href = "/admin";
+    else if (role === "FRANCHISEE") window.location.href = "/franquia";
     else if (role === "PROFISSIONAL" || role === "CARTORIO" || role === "UNIDADE") window.location.href = "/minha-conta";
     else window.location.href = "/";
   };
@@ -130,8 +128,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return r.data;
   };
 
+  const effectiveRole = activeRole || user?.role || null;
+
   return (
-    <AuthContext.Provider value={{ user, token, login, register, registerExpress, updateMe, applyRole, switchRole, logout, loading, activeRole }}>
+    <AuthContext.Provider value={{ user, token, login, register, registerExpress, updateMe, applyRole, switchRole, logout, loading, activeRole: effectiveRole }}>
       {children}
     </AuthContext.Provider>
   );
