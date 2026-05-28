@@ -38,7 +38,7 @@ export function PrintKitModal({
   const handlePrint = () => {
     // Create print-specific container
     const printContainerId = 'foto-segundo-print-area';
-    let existingContainer = document.getElementById(printContainerId);
+    const existingContainer = document.getElementById(printContainerId);
     if (existingContainer) {
       existingContainer.remove();
     }
@@ -256,7 +256,7 @@ export function PrintKitModal({
 
     // Add print styles
     const styleId = 'foto-segundo-print-styles';
-    let existingStyle = document.getElementById(styleId);
+    const existingStyle = document.getElementById(styleId);
     if (existingStyle) {
       existingStyle.remove();
     }
