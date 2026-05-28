@@ -44,7 +44,8 @@ export const AdminQuotes: React.FC = () => {
   const [selectedEquip, setSelectedEquip] = useState<{id:string,qty:number}[]>([]);
   const [transportCost, setTransportCost] = useState<number>(0);
   const [lodgingCost, setLodgingCost] = useState<number>(0);
-  const [margin, setMargin] = useState(30);
+  const [margin, setMargin] = useState(20);
+  const [defaultMarkup, setDefaultMarkup] = useState(20);
   const [isSplit, setIsSplit] = useState(true);
   const [approving, setApproving] = useState(false);
   const [notification, setNotification] = useState<{message:string,type:"success"|"error"}|null>(null);
@@ -74,7 +75,17 @@ export const AdminQuotes: React.FC = () => {
     catch (e) { console.error(e); } finally { setLoading(false); }
   }, [search]);
 
-  useEffect(() => { fetchQuotes(); fetchProfessionals(); }, [fetchQuotes,fetchProfessionals]);
+  const fetchConfigs = useCallback(async () => {
+    try {
+      const { data } = await API.get("/admin/configs");
+      const markupConfig = data.configs?.find((c: { key: string; value: string }) => c.key === "markup_cliente");
+      if (markupConfig) {
+        setDefaultMarkup(Number(markupConfig.value));
+      }
+    } catch (e) { console.error(e); }
+  }, []);
+
+  useEffect(() => { fetchQuotes(); fetchProfessionals(); fetchConfigs(); }, [fetchQuotes,fetchProfessionals,fetchConfigs]);
 
   useEffect(() => {
     if (selectedQuote) {
@@ -84,15 +95,15 @@ export const AdminQuotes: React.FC = () => {
         if (b.STAFF) setSelectedStaff(b.STAFF.map(s=>({instanceId:Math.random().toString(36).substr(2,9),id:s.ID||s.id||"",label:s.LABEL||s.label||"",cost:Number(s.COST||s.cost||0),userId:s.USER_ID||s.userId||""})));
         if (b.EQUIPMENT) setSelectedEquip(b.EQUIPMENT.map(e=>({id:e.ID||e.id||"",qty:Number(e.QTY||e.qty||0)})));
         if (b.MARGIN||b.margin) setMargin(Number(b.MARGIN||b.margin));
-      } else { setSelectedStaff([]); setSelectedEquip([]); setMargin(30); }
+      } else { setSelectedStaff([]); setSelectedEquip([]); setMargin(defaultMarkup); }
       setTransportCost(0); setLodgingCost(0); setFinalPrice(0); setActiveTab("briefing");
     }
-  }, [selectedQuote,parseBreakdown]);
+  }, [selectedQuote, parseBreakdown, defaultMarkup]);
 
   const staffTotal = selectedStaff.reduce((a,s)=>a+(s.cost||0),0);
   const equipTotal = selectedEquip.reduce((a,e)=>{const i=MERLIN_EQUIPMENT.find(m=>m.id===e.id);return a+(i?i.price*e.qty:0);},0);
   const costTotal = staffTotal+equipTotal+transportCost+lodgingCost;
-  const suggestedPrice = Math.max(selectedQuote?.priceBase || 0, costTotal > 0 ? costTotal / (1 - margin / 100) : 0);
+  const suggestedPrice = Math.max(selectedQuote?.priceBase || 0, costTotal > 0 ? costTotal * (1 + margin / 100) : 0);
   useEffect(()=>{ if(suggestedPrice>0) setFinalPrice(Math.ceil(suggestedPrice)); },[suggestedPrice, selectedQuote?.id]);
 
   const stats = useMemo(()=>({
@@ -418,7 +429,7 @@ export const AdminQuotes: React.FC = () => {
                                   <span className="text-theme-text font-bold italic">{(data as BudgetBreakdown).STAFF?.map(s => s.LABEL || s.label).join(", ") || "N/A"}</span>
                                 </div>
                                 <div className="flex justify-between border-b border-brand-tactical/10 pb-1">
-                                  <span className="text-theme-subtle italic">Margem Operacional</span>
+                                  <span className="text-theme-subtle italic">Markup Aplicado</span>
                                   <span className="text-theme-text font-bold italic">{(data as BudgetBreakdown).MARGIN || ((data as BudgetBreakdown).margin)}%</span>
                                 </div>
                               </div>
@@ -524,8 +535,8 @@ export const AdminQuotes: React.FC = () => {
                   <div className="space-y-5 animate-in fade-in duration-300">
                     <div className="bg-theme-bg p-5 border border-theme-border space-y-3 rounded-lg relative overflow-hidden">
                       <div className="absolute top-0 left-0 w-px h-full bg-brand-tactical"/>
-                      <div className="flex justify-between items-center text-[10px] font-black uppercase tracking-widest text-theme-muted italic"><span>Custo Total</span><span className="text-theme-text text-lg font-display">R$ {costTotal.toLocaleString()}</span></div>
-                      <div className="flex items-center justify-between pt-2 border-t border-theme-border"><span className="text-[10px] font-black uppercase tracking-widest text-theme-muted italic">Margem (%)</span><input type="number" value={margin} onChange={e=>setMargin(Number(e.target.value))} className="w-20 bg-theme-card border border-theme-border p-2 text-sm font-display font-black text-brand-tactical text-center outline-none focus:border-brand-tactical italic rounded-lg"/></div>
+                      <div className="flex justify-between items-center text-[10px] font-black uppercase tracking-widest text-theme-muted italic"><span>Custo Total Base</span><span className="text-theme-text text-lg font-display">R$ {costTotal.toLocaleString()}</span></div>
+                      <div className="flex items-center justify-between pt-2 border-t border-theme-border"><span className="text-[10px] font-black uppercase tracking-widest text-theme-muted italic">Markup do Cliente (%)</span><input type="number" value={margin} onChange={e=>setMargin(Number(e.target.value))} className="w-20 bg-theme-card border border-theme-border p-2 text-sm font-display font-black text-brand-tactical text-center outline-none focus:border-brand-tactical italic rounded-lg"/></div>
                       <div className="flex items-center justify-between pt-2 border-t border-theme-border"><span className="text-[10px] font-black uppercase tracking-widest text-theme-muted italic">Parcelamento 50/50</span><button onClick={()=>setIsSplit(!isSplit)} className={`px-5 py-1.5 text-[8px] font-black uppercase border rounded-lg transition-all italic ${isSplit?"border-brand-tactical text-brand-tactical bg-brand-tactical/10":"border-theme-border text-theme-subtle"}`}>{isSplit?"Ativo":"Inativo"}</button></div>
                       <div className="pt-4 border-t border-theme-border flex justify-between items-end"><span className="text-[8px] font-black text-brand-tactical uppercase tracking-[0.4em] italic">Sugestão Técnica</span><span className="text-3xl font-display font-black text-brand-tactical italic">R$ {Math.ceil(suggestedPrice).toLocaleString()}</span></div>
                     </div>
@@ -590,7 +601,7 @@ export const AdminQuotes: React.FC = () => {
                 </div>
                 <div className="space-y-2">
                   <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest block mb-2 opacity-60 italic">Categoria</label>
-                  <select required value={(newQuoteData as any).category} onChange={e => setNewQuoteData({...newQuoteData, category: e.target.value})} className="w-full bg-theme-bg-muted border border-theme-border/60 p-4 text-[10px] text-theme-text outline-none focus:border-brand-tactical font-black rounded-xl uppercase">
+                  <select required value={newQuoteData.category} onChange={e => setNewQuoteData({...newQuoteData, category: e.target.value})} className="w-full bg-theme-bg-muted border border-theme-border/60 p-4 text-[10px] text-theme-text outline-none focus:border-brand-tactical font-black rounded-xl uppercase">
                     <option value="CASAMENTO">Casamento</option>
                     <option value="ANIVERSARIO">Aniversário</option>
                     <option value="SHOW_FESTIVAL">Show/Festival</option>

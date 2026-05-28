@@ -10,14 +10,15 @@ export async function getConfigs(req: AuthRequest, res: Response): Promise<void>
       orderBy: { key: "asc" },
     });
 
-    // Valida que os splits somam 100%
-    const splits = ["split_matriz", "split_captacao", "split_edicao", "split_cartorio", "split_franchisee", "split_affiliate_l1", "split_affiliate_l2"];
+    // As novas taxas (Markup e Take Rate) não precisam somar 100%
+    const splits = ["markup_cliente", "take_rate_profissional", "split_affiliate", "split_taxes", "split_platform_costs"];
     const total = splits.reduce((acc, key) => {
-      const c = configs.find((c) => c.key === key);
+      const c = configs.find((cfg) => cfg.key === key);
       return acc + Number(c?.value ?? 0);
     }, 0);
 
-    res.json({ configs, splitsTotal: total, splitsValid: total === 100 });
+    // Splits valid is true since we don't have the 100% limitation anymore
+    res.json({ configs, splitsTotal: total, splitsValid: true });
   } catch (err) {
     res.status(500).json({ error: "Erro ao buscar configurações." });
   }
@@ -34,28 +35,9 @@ export async function updateConfigs(req: AuthRequest, res: Response): Promise<vo
     return;
   }
 
-  // Valida que splits somam 100
-  const splitKeys = ["split_matriz", "split_captacao", "split_edicao", "split_cartorio", "split_franchisee", "split_affiliate_l1", "split_affiliate_l2"];
-  const newSplits = configs.filter((c) => splitKeys.includes(c.key));
-  if (newSplits.length > 0) {
-    const total = newSplits.reduce((acc, c) => acc + Number(c.value), 0);
-    // Soma com os existentes não alterados
-    const existingConfigs = await prisma.platformConfig.findMany({
-      where: { key: { in: splitKeys } },
-    });
-    const allSplits = splitKeys.map((key) => {
-      const updated = newSplits.find((c) => c.key === key);
-      const existing = existingConfigs.find((c) => c.key === key);
-      return Number(updated?.value ?? existing?.value ?? 0);
-    });
-    const totalFinal = allSplits.reduce((a, b) => a + b, 0);
-    if (totalFinal !== 100) {
-      res.status(400).json({
-        error: `Os percentuais de split devem somar 100%. Soma atual: ${totalFinal}%`,
-      });
-      return;
-    }
-  }
+  // Validation to check if sum to 100% was removed (Markup + Take Rate model)
+  const splitKeys = ["markup_cliente", "take_rate_profissional", "split_affiliate", "split_taxes", "split_platform_costs"];
+
 
   try {
     await Promise.all(
@@ -70,7 +52,7 @@ export async function updateConfigs(req: AuthRequest, res: Response): Promise<vo
 
     // Audit — Configurações da plataforma (P1)
     await audit(req, "PLATFORM_CONFIG_UPDATED", "System", "CONFIGS", null, {
-      keysModified: configs.map(c => c.key),
+      keysModified: configs.map(cfg => cfg.key),
       updatedBy: userId
     });
 

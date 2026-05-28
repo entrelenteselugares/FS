@@ -57,13 +57,11 @@ const safeDate = (d: string | null | undefined) => {
 };
 
 const REQUIRED_SPLITS: Array<{key: string; label: string; value: string}> = [
-  { key: "split_affiliate_l1", label: "Afiliado Direto — Nível 1 (%)", value: "0" },
-  { key: "split_affiliate_l2", label: "Afiliado Passivo VIP — Nível 2 (%)", value: "0" },
-  { key: "split_captacao", label: "Captação (Fotógrafo)",      value: "0" },
-  { key: "split_cartorio", label: "Unidade Fixa (Logística)",  value: "0" },
-  { key: "split_edicao",   label: "Edição (Curadoria)",        value: "0" },
-  { key: "split_franchisee", label: "Comissão Passiva B2B (%)", value: "0" },
-  { key: "split_matriz",    label: "Matriz (Plataforma)",       value: "0" }
+  { key: "markup_cliente", label: "Markup Cliente (Preço Final) %", value: "20" },
+  { key: "take_rate_profissional", label: "Taxa de Intermediação Profissional (Take Rate) %", value: "7" },
+  { key: "split_affiliate", label: "Taxa de Afiliado (%)", value: "2" },
+  { key: "split_taxes", label: "Impostos (%)", value: "6" },
+  { key: "split_platform_costs", label: "Custos da Plataforma (%)", value: "5" }
 ];
 
 const REQUIRED_INFRA: Array<{key: string; label: string; value: string}> = [
@@ -76,7 +74,6 @@ const REQUIRED_INFRA: Array<{key: string; label: string; value: string}> = [
 
 export const AdminConfigs: React.FC = () => {
   const [configs, setConfigs] = useState<Config[]>([]);
-  const [splitsTotal, setSplitsTotal] = useState(0);
   const [splitsValid, setSplitsValid] = useState(true);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
@@ -112,8 +109,7 @@ export const AdminConfigs: React.FC = () => {
       });
 
       setConfigs(mergedConfigs);
-      setSplitsTotal(configRes.data.splitsTotal || 0);
-      setSplitsValid(configRes.data.splitsValid ?? false);
+      setSplitsValid(configRes.data.splitsValid ?? true);
       setPayouts(payoutRes.data);
     } catch (err) { console.error(err); }
   }, []);
@@ -123,15 +119,9 @@ export const AdminConfigs: React.FC = () => {
   const handleChange = (key: string, value: string) => {
     const updatedConfigs = configs.map((c) => c.key === key ? { ...c, value } : c);
     setConfigs(updatedConfigs);
-
-    const splitKeys = REQUIRED_SPLITS.map(s => s.key);
-    const total = splitKeys.reduce((acc, k) => {
-      const c = updatedConfigs.find((c) => c.key === k);
-      return acc + Number(c?.value ?? 0);
-    }, 0);
-    setSplitsTotal(total);
-    setSplitsValid(total === 100);
+    setSplitsValid(true); // Always valid in Markup model
   };
+
 
   const handleSave = async () => {
     if (tab === 'splits' && !splitsValid) return;
@@ -176,13 +166,11 @@ export const AdminConfigs: React.FC = () => {
       toast.success("Comprovante registrado!");
     } catch {
       toast.error("Erro ao registrar pagamento.");
-    } finally {
-
     }
   };
 
-  const splitConfigs = useMemo(() => configs.filter((c) => c.key.startsWith("split_")), [configs]);
-  const infraConfigs = useMemo(() => configs.filter((c) => !c.key.startsWith("split_")), [configs]);
+  const splitConfigs = useMemo(() => configs.filter((c) => REQUIRED_SPLITS.some(rs => rs.key === c.key)), [configs]);
+  const infraConfigs = useMemo(() => configs.filter((c) => !REQUIRED_SPLITS.some(rs => rs.key === c.key)), [configs]);
 
   return (
     <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-700 pb-20">
@@ -223,9 +211,9 @@ export const AdminConfigs: React.FC = () => {
                  <Shield size={32} />
               </div>
               <div className="flex-1 space-y-2">
-                 <h4 className="text-[11px] font-black uppercase tracking-[0.5em] text-theme-text italic">Protocolo de Split Manual</h4>
+                 <h4 className="text-[11px] font-black uppercase tracking-[0.5em] text-theme-text italic">Protocolo de Precificação (Markup)</h4>
                  <p className="text-[9px] text-theme-muted uppercase tracking-widest font-medium leading-relaxed max-w-3xl">
-                    A plataforma centraliza 100% dos recebíveis. Os percentuais abaixo definem a provisão automática para cada parceiro no fechamento semanal, garantindo transparência e segurança operacional.
+                    A plataforma utiliza um modelo de Precificação Bottom-Up. O valor final cobrado do cliente é o custo base somado ao Markup. Do repasse ao profissional, descontamos a Taxa de Intermediação (Take Rate).
                  </p>
               </div>
            </div>
@@ -234,10 +222,10 @@ export const AdminConfigs: React.FC = () => {
               <div className="bg-theme-bg border border-theme-border/60 p-6 md:p-10 space-y-12 shadow-sm rounded-2xl">
                  <div className="flex items-center justify-between border-b border-theme-border/30 pb-6">
                     <h3 className="text-[11px] font-black text-theme-text uppercase tracking-[0.4em] flex items-center gap-3">
-                       <Percent size={14} className="text-brand-tactical" /> Distribuição por Venda
+                       <Percent size={14} className="text-brand-tactical" /> Taxas e Margens
                     </h3>
-                    <div className={`px-6 py-2 text-[10px] font-black border tracking-widest italic ${splitsValid ? "border-brand-tactical/30 text-brand-tactical bg-brand-tactical/5" : "border-red-900/30 text-red-500 bg-red-900/5"}`}>
-                       TOTAL: {splitsTotal}% {splitsValid ? "✓ OPERACIONAL" : "⚠️ DEVE SER 100%"}
+                    <div className={`px-6 py-2 text-[10px] font-black border tracking-widest italic border-brand-tactical/30 text-brand-tactical bg-brand-tactical/5`}>
+                       MODELO MARKUP ATIVO
                     </div>
                  </div>
 
@@ -246,10 +234,7 @@ export const AdminConfigs: React.FC = () => {
                       <div key={config.key} className="space-y-4 group">
                         <div className="flex justify-between items-end">
                           <label className="text-[9px] font-black text-theme-muted uppercase tracking-[0.4em] group-hover:text-theme-text transition-colors">
-                            {config.key === "split_cartorio" ? "Unidade Fixa (Logística)" : 
-                             config.key === "split_captacao" ? "Captação (Fotógrafo)" :
-                             config.key === "split_edicao" ? "Edição (Curadoria)" :
-                             config.label}
+                            {config.label}
                           </label>
                           <div className="flex items-center gap-3">
                              <input 
@@ -260,9 +245,6 @@ export const AdminConfigs: React.FC = () => {
                              />
                              <span className="text-theme-muted font-black uppercase text-[10px] tracking-widest">%</span>
                           </div>
-                        </div>
-                        <div className="w-full h-1 bg-theme-bg-muted border border-theme-border/10 overflow-hidden rounded-2xl">
-                           <div className="h-full bg-brand-tactical transition-all duration-700 shadow-[0_0_10px_rgba(133,185,172,0.3)]" style={{ width: `${Math.min(100, Number(config.value))}%` }} />
                         </div>
                       </div>
                     ))}
