@@ -218,7 +218,7 @@ export const AdminConfigs: React.FC = () => {
               </div>
            </div>
 
-           <div className="grid grid-cols-1 lg:grid-cols-[1fr_400px] gap-10 items-start">
+           <div className="grid grid-cols-1 gap-10 items-start max-w-4xl">
               <div className="bg-theme-bg border border-theme-border/60 p-6 md:p-10 space-y-12 shadow-sm rounded-2xl">
                  <div className="flex items-center justify-between border-b border-theme-border/30 pb-6">
                     <h3 className="text-[11px] font-black text-theme-text uppercase tracking-[0.4em] flex items-center gap-3">
@@ -241,7 +241,7 @@ export const AdminConfigs: React.FC = () => {
                                type="number"
                                value={config.value}
                                onChange={(e) => handleChange(config.key, e.target.value)}
-                               className="w-20 bg-theme-bg-muted border-theme-border/60 border text-theme-text text-right py-3 px-4 text-xl font-heading font-black italic tracking-tighter focus:outline-none focus:border-brand-tactical transition-all leading-none rounded-2xl"
+                               className="w-24 bg-theme-bg-muted border-theme-border/60 border text-theme-text text-right py-3 px-4 text-sm focus:outline-none focus:border-brand-tactical transition-all leading-none rounded-xl"
                              />
                              <span className="text-theme-muted font-black uppercase text-[10px] tracking-widest">%</span>
                           </div>
@@ -262,23 +262,7 @@ export const AdminConfigs: React.FC = () => {
                  </button>
               </div>
 
-              <div className="bg-theme-bg border border-theme-border/60 p-10 space-y-10 shadow-sm rounded-2xl">
-                 <h3 className="text-[11px] font-black text-theme-muted uppercase tracking-[0.4em] flex items-center gap-3">
-                    <Zap size={14} className="text-brand-tactical" /> Gatilhos de Sistema
-                 </h3>
-                 <div className="space-y-8">
-                    {infraConfigs.filter(c => !c.key.includes("color") && !c.key.includes("access") && !c.key.includes("maintenance")).map((config) => (
-                      <div key={config.key} className="space-y-3">
-                        <label className="text-[9px] font-black text-theme-muted uppercase tracking-[0.4em] block">{config.label}</label>
-                        <input 
-                          value={config.value}
-                          onChange={(e) => handleChange(config.key, e.target.value)}
-                          className="w-full bg-transparent border-b border-theme-border/60 py-3 text-[11px] font-black text-theme-text focus:outline-none focus:border-brand-tactical transition-all uppercase tracking-widest placeholder:text-theme-muted/20"
-                        />
-                      </div>
-                    ))}
-                 </div>
-              </div>
+
            </div>
         </div>
       )}
