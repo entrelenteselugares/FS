@@ -10,6 +10,7 @@ import {
   Palette, 
   Shield, 
   ArrowRight,
+  Globe,
   Lock,
   Smartphone,
   X
