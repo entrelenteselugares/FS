@@ -33,7 +33,9 @@ type ActiveTab =
   | "franquia"
   | "equipe" 
   | "configuracoes" 
-  | "monitor";
+  | "monitor"
+  | "perfil"
+  | "portfolio";
 
 interface Pedido {
   id: string;
@@ -169,7 +171,9 @@ export default function ClienteArea() {
       items.push(
         { label: "ÁREA PROFISSIONAL", isHeader: true },
         { label: "Minha Agenda", onClick: () => handleTabChange("agenda"), isActive: activeTab === "agenda" || activeTab === "convites", icon: <Play size={18} /> },
-        { label: "Portfólio & Serviços", onClick: () => handleTabChange("servicos"), isActive: activeTab === "servicos", icon: <Briefcase size={18} /> },
+        { label: "Meu Portfólio", onClick: () => handleTabChange("portfolio"), isActive: activeTab === "portfolio", icon: <ImageIcon size={18} /> },
+        { label: "Serviços & Preços", onClick: () => handleTabChange("servicos"), isActive: activeTab === "servicos", icon: <Briefcase size={18} /> },
+        { label: "Ficha Técnica & Pix", onClick: () => handleTabChange("perfil"), isActive: activeTab === "perfil", icon: <Settings size={18} /> },
         { label: "Vendas & Ganhos", onClick: () => handleTabChange("financeiro"), isActive: activeTab === "financeiro", icon: <DollarSign size={18} /> },
         { label: "Agenda Google", onClick: () => handleTabChange("calendar"), isActive: activeTab === "calendar", icon: <Calendar size={18} /> }
       );
@@ -290,7 +294,7 @@ export default function ClienteArea() {
       setActiveTab("affiliate");
     } else if (section === "convites") {
       setActiveTab("convites");
-    } else if (section === "agenda" || section === "financeiro" || section === "servicos" || section === "calendar" || section === "franquia" || section === "equipe" || section === "configuracoes") {
+    } else if (section === "agenda" || section === "financeiro" || section === "servicos" || section === "calendar" || section === "franquia" || section === "equipe" || section === "configuracoes" || section === "perfil" || section === "portfolio") {
       setActiveTab(section as ActiveTab);
     }
 
@@ -391,7 +395,7 @@ export default function ClienteArea() {
 
   const aprovados = groupedEvents.filter(g => g.hasAprovado);
 
-  const isProfessionalTab = ["agenda", "convites", "financeiro", "servicos", "network", "calendar", "franquia", "equipe"].includes(activeTab) && 
+  const isProfessionalTab = ["agenda", "convites", "financeiro", "servicos", "network", "calendar", "franquia", "equipe", "perfil", "portfolio"].includes(activeTab) && 
     (user?.role === "PROFISSIONAL" || user?.role === "FRANCHISEE") && user?.verificationStatus === "APPROVED";
 
   const isUnitTab = ["agenda", "financeiro", "equipe", "calendar", "franquia", "configuracoes", "monitor"].includes(activeTab) && 

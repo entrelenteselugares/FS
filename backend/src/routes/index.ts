@@ -371,6 +371,7 @@ router.get("/cron/crm-recovery",              CRMController.runRecoveryCron);
 // ── Checkout & Webhook ─────────────────────────────────────────────────────────
 router.post("/checkout/pending",     PaymentController.createPendingOrder);
 router.post("/checkout/payment",     optionalAuth, PaymentController.processPayment);
+router.post("/test/mock-payment",    PaymentController.mockWebhook);
 router.get("/checkout/shipping-quote", optionalAuth, PaymentController.calculateShipping);
 router.post(
   "/webhooks/mercadopago",

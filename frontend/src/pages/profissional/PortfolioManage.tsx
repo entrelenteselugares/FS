@@ -4,16 +4,25 @@ import { T } from "../../lib/theme";
 import { Camera, Plus, Image as ImageIcon } from "lucide-react";
 import { motion } from "framer-motion";
 
+interface AlbumImage {
+  id: string;
+  url: string;
+}
+
 interface Album {
   id: string;
   title: string;
   description?: string | null;
   category?: string | null;
   coverUrl?: string | null;
-  images?: any[];
+  images?: AlbumImage[];
 }
 
-export default function PortfolioManage() {
+interface PortfolioManageProps {
+  isTab?: boolean;
+}
+
+export default function PortfolioManage({ isTab = false }: PortfolioManageProps) {
   const [albums, setAlbums] = useState<Album[]>([]);
   const [loading, setLoading] = useState(true);
   const [isCreating, setIsCreating] = useState(false);
@@ -67,29 +76,48 @@ export default function PortfolioManage() {
   if (loading) return <div className="p-10 text-theme-muted">Carregando...</div>;
 
   return (
-    <div className="min-h-screen pb-20" style={{ background: T.bg }}>
-      <header className="pt-20 pb-10 border-b border-white/5 relative overflow-hidden">
-        <div className="absolute inset-0 bg-brand-tactical/5 blur-3xl rounded-full -m-64 opacity-30" />
-        <div className="max-w-[1600px] mx-auto px-4 md:px-6 relative z-10 flex flex-col md:flex-row md:items-end justify-between gap-6">
+    <div className={isTab ? "pb-20" : "min-h-screen pb-20"} style={isTab ? {} : { background: T.bg }}>
+      {!isTab ? (
+        <header className="pt-20 pb-10 border-b border-white/5 relative overflow-hidden">
+          <div className="absolute inset-0 bg-brand-tactical/5 blur-3xl rounded-full -m-64 opacity-30" />
+          <div className="max-w-[1600px] mx-auto px-4 md:px-6 relative z-10 flex flex-col md:flex-row md:items-end justify-between gap-6">
+            <div>
+              <div className="w-12 h-1 bg-brand-tactical mb-6" />
+              <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-theme-text uppercase tracking-tighter whitespace-normal md:whitespace-nowrap italic pr-6">
+                Gerenciar Portfólio
+              </h1>
+              <p className="text-[10px] text-theme-muted uppercase tracking-[0.4em] mt-4 font-black">
+                Organize seus melhores trabalhos
+              </p>
+            </div>
+            <button
+              onClick={() => setIsCreating(true)}
+              className="px-6 py-3 bg-brand-tactical text-black text-[10px] font-black uppercase tracking-widest flex items-center gap-2 hover:brightness-110 transition-all"
+            >
+              <Plus size={14} /> Novo Álbum
+            </button>
+          </div>
+        </header>
+      ) : (
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8 border-b border-theme-border/20 pb-6">
           <div>
-            <div className="w-12 h-1 bg-brand-tactical mb-6" />
-            <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-theme-text uppercase tracking-tighter whitespace-normal md:whitespace-nowrap italic pr-6">
-              Gerenciar Portfólio
-            </h1>
-            <p className="text-[10px] text-theme-muted uppercase tracking-[0.4em] mt-4 font-black">
-              Organize seus melhores trabalhos
+            <h2 className="text-2xl font-heading font-black text-theme-text uppercase tracking-widest italic leading-none">
+              Gerenciar <span className="text-brand-tactical">Portfólio</span>
+            </h2>
+            <p className="text-[9px] text-theme-muted uppercase tracking-[0.2em] sm:tracking-[0.4em] italic mt-2">
+              Organize seus melhores trabalhos para a vitrine pública
             </p>
           </div>
           <button
             onClick={() => setIsCreating(true)}
-            className="px-6 py-3 bg-brand-tactical text-black text-[10px] font-black uppercase tracking-widest flex items-center gap-2 hover:brightness-110 transition-all"
+            className="px-6 py-3 bg-brand-tactical text-black text-[10px] font-black uppercase tracking-widest flex items-center gap-2 hover:brightness-110 transition-all rounded-xl"
           >
             <Plus size={14} /> Novo Álbum
           </button>
         </div>
-      </header>
+      )}
 
-      <main className="max-w-[1600px] mx-auto px-4 md:px-6 py-12">
+      <main className={isTab ? "py-6" : "max-w-[1600px] mx-auto px-4 md:px-6 py-12"}>
         {isCreating && (
           <form onSubmit={handleCreateAlbum} className="bg-theme-bg border border-theme-border p-6 mb-12 space-y-4">
             <h2 className="text-sm font-black text-white uppercase tracking-widest">Criar Álbum</h2>

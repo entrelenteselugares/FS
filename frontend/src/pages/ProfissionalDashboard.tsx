@@ -19,6 +19,7 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 import { WelcomeTour } from "../components/WelcomeTour";
 import { DiscoverySurvey } from "../components/DiscoverySurvey";
+import PortfolioManage from "./profissional/PortfolioManage";
 
 interface PayoutItem {
   id: string;
@@ -44,7 +45,7 @@ interface SupplyOrder {
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
-export type ActiveTab = "agenda" | "convites" | "financeiro" | "servicos" | "network" | "franquia" | "calendar" | "perfil" | "equipe";
+export type ActiveTab = "agenda" | "convites" | "financeiro" | "servicos" | "network" | "franquia" | "calendar" | "perfil" | "equipe" | "portfolio";
 type ViewTab = "lista" | "calendario";
 
 // ─── Main Component ────────────────────────────────────────────────────────────
@@ -263,9 +264,10 @@ export default function ProfissionalDashboard({
       
       fetchProfile();
       showNotification(`Serviço "${cat.name}" importado com sucesso!`);
-    } catch (err: any) {
+    } catch (err) {
       console.error("Erro ao adicionar serviço:", err);
-      const detail = err?.response?.data?.details || err?.response?.data?.error || "Erro ao importar serviço do catálogo.";
+      const error = err as { response?: { data?: { details?: string; error?: string } } };
+      const detail = error.response?.data?.details || error.response?.data?.error || "Erro ao importar serviço do catálogo.";
       showNotification(detail, "error");
     }
   };
@@ -284,9 +286,10 @@ export default function ProfissionalDashboard({
       await API.patch(`profissional/services/${serviceId}`, { price: newPrice });
       fetchProfile();
       showNotification("Preço atualizado com sucesso!");
-    } catch (err: any) {
+    } catch (err) {
       console.error("Erro ao atualizar preço:", err);
-      const detail = err?.response?.data?.details || err?.response?.data?.error || "Erro ao atualizar preço do serviço.";
+      const error = err as { response?: { data?: { details?: string; error?: string } } };
+      const detail = error.response?.data?.details || error.response?.data?.error || "Erro ao atualizar preço do serviço.";
       showNotification(detail, "error");
       throw err;
     }
@@ -615,6 +618,10 @@ export default function ProfissionalDashboard({
                 onUpdated={setProfile}
                 onNotify={showNotification}
               />
+            )}
+
+            {activeTab === "portfolio" && (
+              <PortfolioManage isTab={true} />
             )}
 
             {activeTab === "franquia" && (

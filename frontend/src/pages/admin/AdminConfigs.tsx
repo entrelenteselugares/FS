@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback, useMemo } from "react";
+import AdminLayout from "../../components/AdminLayout";
 import { 
   Percent, 
   DollarSign, 
@@ -16,6 +17,7 @@ import {
   X
 } from "lucide-react";
 import { API } from "../../lib/api";
+import AdminMenuSection from "../../components/AdminMenuSection.tsx";
 import { toast } from "sonner";
 
 // --- Types ---
@@ -171,7 +173,8 @@ export const AdminConfigs: React.FC = () => {
   const splitConfigs = useMemo(() => configs.filter((c) => REQUIRED_SPLITS.some(rs => rs.key === c.key)), [configs]);
 
   return (
-    <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-700 pb-20">
+    <AdminLayout>
+        <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-700 pb-20">
       {/* HEADER MASTER */}
       <div className="flex flex-col lg:flex-row lg:items-center justify-between border-b border-theme-border pb-10 gap-6">
         <div className="space-y-4 min-w-0">
@@ -197,7 +200,7 @@ export const AdminConfigs: React.FC = () => {
       {/* NAVIGATION TACTICAL */}
       <div className="grid grid-cols-2 sm:grid-cols-3 md:flex bg-theme-bg border border-theme-border/60 p-1.5 shadow-sm w-full md:w-auto md:max-w-fit gap-1 rounded-2xl">
         <button onClick={() => setTab("splits")} className={`px-8 py-3 text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest transition-all ${tab === "splits" ? 'bg-brand-tactical text-zinc-950 shadow-md' : 'text-theme-muted hover:text-brand-text'}`}>Divisão de Split</button>
-        <button onClick={() => setTab("payouts")} className={`px-8 py-3 text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest transition-all ${tab === "payouts" ? 'bg-brand-tactical text-zinc-950 shadow-md' : 'text-theme-muted hover:text-brand-text'}`}>Repasses ({payouts.length})</button>
+        <button onClick={() => setTab("payouts")} className={`px-8 py-3 text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest transition-all ${tab === "payouts" ? 'bg-brand-tactical text-zinc-950 shadow-md' : 'text-theme-muted hover:text-brand-text'}`}>Orçamentos ({payouts.length})</button>
         <button onClick={() => setTab("infra")} className={`px-8 py-3 text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest transition-all ${tab === "infra" ? 'bg-brand-tactical text-zinc-950 shadow-md' : 'text-theme-muted hover:text-brand-text'}`}>Infraestrutura</button>
       </div>
 
@@ -217,7 +220,7 @@ export const AdminConfigs: React.FC = () => {
            </div>
 
            <div className="grid grid-cols-1 gap-10 items-start max-w-4xl">
-              <div className="bg-theme-bg border border-theme-border/60 p-6 md:p-10 space-y-12 shadow-sm rounded-2xl">
+              <AdminMenuSection>
                  <div className="flex items-center justify-between border-b border-theme-border/30 pb-6">
                     <h3 className="text-[11px] font-black text-theme-text uppercase tracking-[0.4em] flex items-center gap-3">
                        <Percent size={14} className="text-brand-tactical" /> Taxas e Margens
@@ -258,7 +261,7 @@ export const AdminConfigs: React.FC = () => {
                    {saved ? <CheckCircle size={14} /> : <Save size={14} />}
                    {saved ? "PROTOCOLO SINCRONIZADO" : saving ? "PROCESSANDO..." : "SALVAR CONFIGURAÇÕES FINANCEIRAS"}
                  </button>
-              </div>
+              </AdminMenuSection>
 
 
            </div>
@@ -593,5 +596,6 @@ export const AdminConfigs: React.FC = () => {
 
       {null}
     </div>
+    </AdminLayout>
   );
 };

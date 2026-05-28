@@ -1,5 +1,5 @@
 import { test, expect, type Page } from '@playwright/test';
-
+import { adminLogin } from "./fixtures/adminUser";
 /**
  * 🔐 Simulation: Admin User Journey (v1.0)
  *
@@ -26,24 +26,45 @@ const ADMIN_EMAIL = 'contatofotosegundo@gmail.com';
 const ADMIN_SENHA = '123456';
 
 // ── Helper ──────────────────────────────────────────────────────────────────
-async function adminLogin(page: Page) {
-  await page.goto('/login', { waitUntil: 'domcontentloaded' });
-  await page.getByPlaceholder('seu@email.com').fill(ADMIN_EMAIL);
-  await page.getByPlaceholder('••••••••').fill(ADMIN_SENHA);
-  await page.getByRole('button', { name: /ENTRAR NO SISTEMA/i }).click();
-  await page.waitForURL('**/admin', { timeout: 25000 });
-  console.log('[✅] Login admin concluído.');
-}
 
 async function clickSidebar(page: Page, label: string) {
-  const item = page.locator('nav, aside, [class*="sidebar"]').getByText(label, { exact: false }).first();
-  if (await item.isVisible({ timeout: 3000 }).catch(() => false)) {
-    await item.click();
-  } else {
-    // fallback: qualquer link/botão com o texto
-    await page.getByRole('button', { name: new RegExp(label, 'i') }).first().click();
+  const parentMap: Record<string, string> = {
+    'Membros': 'Rede',
+    'Franquias': 'Rede',
+    'Embaixadores': 'Rede',
+    'Orçamentos': 'Comercial',
+    'Pedidos': 'Comercial',
+    'Catálogo': 'Comercial',
+    'Serviços': 'Comercial',
+    'Impressão': 'Operação',
+    'Estoque Central': 'Operação',
+    'Concursos': 'Marketing',
+    'Financeiro': 'Sistema',
+    'Configurações': 'Sistema',
+  };
+
+  const groupName = parentMap[label];
+  if (groupName) {
+    const groupBtn = page.getByRole('button', { name: new RegExp('^' + groupName + '$', 'i') }).first();
+    if (await groupBtn.isVisible().catch(() => false)) {
+      await groupBtn.click();
+      await page.waitForTimeout(300);
+    }
   }
-  await page.waitForTimeout(1000);
+
+  // Try button first (legacy UI) then link (new UI)
+  const searchLabel = label === 'Estoque Central' ? 'Estoque' : label;
+  
+  let element = page.getByRole('button', { name: new RegExp(searchLabel, 'i') }).first();
+  try {
+    await element.waitFor({ state: 'visible', timeout: 4000 });
+  } catch {
+    // Fallback to link if button not found
+    element = page.getByRole('link', { name: new RegExp(searchLabel, 'i') }).first();
+    await element.waitFor({ state: 'visible', timeout: 8000 });
+  }
+  await element.click();
+  await page.waitForTimeout(500);
   console.log(`[✅] Aba "${label}" carregada.`);
 }
 

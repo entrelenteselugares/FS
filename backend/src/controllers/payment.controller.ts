@@ -1170,6 +1170,45 @@ export class PaymentController {
       });
     }
   }
+  /**
+   * POST /api/test/mock-payment
+   * Simula um Webhook do Mercado Pago para testes E2E.
+   */
+  static async mockWebhook(req: Request, res: Response) {
+    if (process.env.NODE_ENV !== "test" && process.env.NODE_ENV !== "development") {
+       return res.status(403).json({ error: "Only available in test/development environment." });
+    }
+    
+    const { orderId } = req.body;
+    if (!orderId) return res.status(400).json({ error: "orderId is required" });
+
+    try {
+      const order = await prisma.order.findUnique({
+        where: { id: String(orderId) },
+        include: { event: true, cliente: true }
+      });
+
+      if (!order) return res.status(404).json({ error: "Order not found" });
+
+      const updatedOrder = await prisma.order.update({
+        where: { id: order.id },
+        data: {
+          status: "APROVADO",
+          hasPaid: true,
+          paymentMethod: "PIX",
+          paymentId: `MOCK-${Date.now()}`
+        }
+      });
+
+      await PaymentController.finalizeApprovedOrder(updatedOrder, order.event, req);
+
+      return res.json({ success: true, mocked: true, status: "APROVADO" });
+    } catch (error) {
+      console.error("[Mock Webhook Error]:", error);
+      return res.status(500).json({ error: "Error mocking payment" });
+    }
+  }
+
   static async getOrderPublic(req: Request, res: Response) {
     const { id } = req.params;
 

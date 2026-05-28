@@ -22,18 +22,21 @@ import { execSync } from 'child_process';
 dotenv.config({ path: path.resolve(__dirname, '../../backend/.env') });
 
 /**
- * FLUXO D: Marketplace (Venda Unitária) - HÍBRIDO
+ * FLUXO D: Marketplace (Venda Unitária) - HÍBRIDO AUTOMATIZADO
  * 1. Profissional cria evento Marketplace.
  * 2. Upload de mídias para vitrine.
  * 3. Cliente seleciona fotos e gera PIX real.
- * 4. USER paga o PIX e robô valida desbloqueio.
+ * 4. Robot dispara mock-payment para simular aprovação instantânea.
+ * 5. Polling do frontend detecta aprovação e redireciona para sucesso.
  */
+
+const API_BASE = process.env.API_URL || 'http://localhost:3002/api';
 
 test.describe('Marketplace Hybrid Flow: Unit Photo Sale (Flow D)', () => {
   const proEmail = 'hibrido@brasil.com.br'; 
   const eventName = `MKT Hybrid ${Date.now()}`;
 
-  test('should process a real marketplace sale and unlock photo', async ({ page, browser }) => {
+  test('should process a real marketplace sale and unlock photo via mock payment', async ({ page, browser }) => {
     test.setTimeout(240000); // 4 minutos
 
     // ─── 1. Login do Profissional ───────────────────────────
@@ -48,7 +51,6 @@ test.describe('Marketplace Hybrid Flow: Unit Photo Sale (Flow D)', () => {
     // ─── 2. Criar Evento Marketplace (via Flash Event) ──────
     console.log('[PRO] Criando novo Foto Print Live (Flash Event)...');
     await page.goto('/profissional');
-    // Lidar com modal de oportunidades se aparecer (mais resiliente)
     await page.locator('button').filter({ hasText: /IGNORAR POR ENQUANTO/i })
       .click({ timeout: 10000 })
       .catch(() => console.log('[DEBUG] Modal de oportunidades não apareceu ou já foi fechado.'));
@@ -59,40 +61,34 @@ test.describe('Marketplace Hybrid Flow: Unit Photo Sale (Flow D)', () => {
     await page.screenshot({ path: 'test-results/dashboard-ready.png' });
     await page.getByRole('button', { name: /Live Print/i }).click();
     console.log('[DEBUG] Card Flash Event clicado. Aguardando modal...');
-    await page.screenshot({ path: 'test-results/flash-modal-check.png' });
     
     const nameInput = page.getByPlaceholder('Ex: Ensaio no Parque, Festa do João...');
     await expect(nameInput).toBeVisible({ timeout: 20000 });
     await nameInput.fill(eventName);
     await page.locator('input[type="number"]').first().fill('1'); // Valor por Click
-    await page.locator('input[type="date"]').first().fill('2026-05-06'); // Hoje
-    await page.locator('input[type="time"]').first().fill('00:00'); // Início
-    await page.locator('input[type="time"]').nth(1).fill('23:59'); // Fim
+    await page.locator('input[type="date"]').first().fill('2026-05-06');
+    await page.locator('input[type="time"]').first().fill('00:00');
+    await page.locator('input[type="time"]').nth(1).fill('23:59');
     
     await page.locator('button[type="submit"]').click();
     console.log('[PRO] Botão ATIVAR clicado. Aguardando redirecionamento...');
     
-    // O Flash Event redireciona automaticamente para /e/:slug
     await expect(page).toHaveURL(/\/e\/.*/, { timeout: 30000 });
     const eventUrl = page.url();
     console.log(`[SYSTEM] Redirecionado para galeria: ${eventUrl}`);
     
-    // ─── 3. Configurar Vitrine (Volta ao Dashboard) ────────
+    // ─── 3. Configurar Vitrine ────────────────────────────
     console.log('[PRO] Voltando ao dashboard para configurar vitrine...');
     await page.goto('/profissional?tab=agenda');
     await page.waitForTimeout(3000);
     await clearPopups(page);
-    await page.screenshot({ path: 'test-results/dashboard-after-create.png' });
     
-    console.log('[PRO] Abrindo edição do evento...');
     const eventCard = page.getByText(eventName).first();
     await eventCard.scrollIntoViewIfNeeded();
     await eventCard.click();
     
     const previewInput = page.locator('input[placeholder*="adobe.ly"]');
     await expect(previewInput).toBeVisible({ timeout: 15000 });
-    
-    // Usando imagens reais do Unsplash para teste
     await previewInput.fill('https://images.unsplash.com/photo-1519741497674-611481863552,https://images.unsplash.com/photo-1511285560929-80b456fea0bc');
     await page.getByRole('button', { name: /EFETIVAR LINKS/i }).first().click();
     await page.waitForTimeout(2000);
@@ -104,29 +100,22 @@ test.describe('Marketplace Hybrid Flow: Unit Photo Sale (Flow D)', () => {
     
     const output = execSync(injectCmd, { cwd: path.resolve(__dirname, '../../backend') });
     console.log(`[SYSTEM] Injection output: ${output.toString()}`);
-    
-    console.log(`[SYSTEM] Evento pronto e com mídias: ${eventUrl}`);
 
-    // ─── 4. Jornada do Cliente ──────────────────────────────
+    // ─── 5. Jornada do Cliente ──────────────────────────────
     const guestEmail = generateTestEmail();
     const guestContext = await browser.newContext();
     const clientPage = await guestContext.newPage();
     
-    // Capturar logs do browser para debug
     clientPage.on('console', msg => console.log(`[BROWSER] ${msg.type().toUpperCase()}: ${msg.text()}`));
     clientPage.on('pageerror', err => console.log(`[BROWSER ERROR] ${err.message}`));
 
     await clientPage.goto(eventUrl);
     await clientPage.waitForLoadState('networkidle');
-    const content = await clientPage.content();
-    console.log(`[CLIENT] HTML Length: ${content.length}`);
-    const photosCount = await clientPage.locator('.group').count();
-    console.log(`[CLIENT] Photos Found: ${photosCount}`);
     
     console.log('[CLIENT] Selecionando foto para compra...');
     const firstPhoto = clientPage.locator('img[alt^="PHOTO"]').first();
     await firstPhoto.scrollIntoViewIfNeeded();
-    await clientPage.waitForTimeout(1000); // Esperar animação
+    await clientPage.waitForTimeout(1000);
     await firstPhoto.click({ force: true });
     
     console.log('[CLIENT] Adicionando ao carrinho via modal...');
@@ -134,26 +123,19 @@ test.describe('Marketplace Hybrid Flow: Unit Photo Sale (Flow D)', () => {
     await expect(selecionarBtn).toBeVisible({ timeout: 10000 });
     await selecionarBtn.click();
     
-    // Fechar o lightbox com Escape (mais confiável que localizar o botão X)
     await clientPage.keyboard.press('Escape');
-    // Aguardar o overlay sumir completamente
     await clientPage.locator('div.fixed.inset-0.z-\\[99999\\]').waitFor({ state: 'hidden', timeout: 8000 }).catch(() => {});
     await clientPage.waitForTimeout(500);
 
     console.log('[CLIENT] Abrindo carrinho...');
-    await clientPage.screenshot({ path: 'test-results/checkout-1.png' });
     const cartButton = clientPage.locator('button').filter({ hasText: /FINALIZAR COMPRA|DESBLOQUEAR/i }).first();
     await cartButton.scrollIntoViewIfNeeded();
     await cartButton.click({ force: true });
     
     console.log('[CLIENT] Preenchendo dados de autenticação no checkout...');
-    await clientPage.screenshot({ path: 'test-results/checkout-2.png' });
-    
-    // O CheckoutPage atualizado agora pede E-mail e Senha (não pede Nome)
     const emailInput = clientPage.getByPlaceholder(/seu@email.com/i);
     await expect(emailInput).toBeVisible({ timeout: 15000 });
     
-    // O e-mail pode já vir preenchido e desativado, então verificamos se está habilitado
     if (await emailInput.isEnabled()) {
       await emailInput.fill(guestEmail);
     }
@@ -162,50 +144,46 @@ test.describe('Marketplace Hybrid Flow: Unit Photo Sale (Flow D)', () => {
     
     console.log('[CLIENT] Aguardando redirecionamento para /checkout/...');
     await expect(clientPage).toHaveURL(/.*\/checkout\/[a-zA-Z0-9-]+/, { timeout: 30000 });
-    await clientPage.screenshot({ path: 'test-results/checkout-3.png' });
 
-    // ─── 5. Extrair orderId e gerar PIX via API direta ──────
-    // O MP Bricks roda num iframe que o Playwright não consegue controlar.
-    // A solução correta é chamar a API diretamente após obter o orderId da URL.
+    // ─── 6. Extrair orderId e disparar Mock Payment ──────────
     const checkoutUrl = clientPage.url();
     const orderId = checkoutUrl.split('/checkout/')[1];
-    console.log(`[CLIENT] Checkout URL: ${checkoutUrl} | orderId: ${orderId}`);
+    console.log(`[CLIENT] orderId: ${orderId}`);
 
-    console.log('[CLIENT] Gerando PIX via API direta (bypass iframe MP Brick)...');
-    const pixResponse = await clientPage.evaluate(async (oid) => {
-      const resp = await fetch(`/api/checkout/payment`, {
+    console.log('[ROBO] 🤖 Disparando mock-payment para simular aprovação instantânea...');
+    const mockResp = await clientPage.evaluate(async (oid) => {
+      const resp = await fetch(`/api/test/mock-payment`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          orderId: oid,
-          paymentMethodId: 'pix',
-          email: 'guest@e2e-test.com',
-        }),
+        body: JSON.stringify({ orderId: oid }),
       });
       return resp.json();
     }, orderId);
 
-    console.log('\n' + '='.repeat(60));
-    console.log('🚀 PROTOCOLO PENNY (MKT): PIX GERADO!');
-    
-    const pixCode = pixResponse?.qr_code || pixResponse?.ticket_url || 'PIX gerado com sucesso';
-    console.log(`\n👉 CHAVE PIX MARKETPLACE:\n${pixCode}\n`);
-    console.log('👉 AÇÃO: Pague R$ 1,00 para desbloquear a foto.');
-    console.log('=' .repeat(60) + '\n');
+    console.log(`[ROBO] Mock Payment Response:`, JSON.stringify(mockResp));
 
+    if (!mockResp?.success) {
+      // Fallback: PIX real gerado (para log, sem travar)
+      console.log('[ROBO] Mock payment falhou. Gerando PIX real para log...');
+      const pixResponse = await clientPage.evaluate(async (oid) => {
+        const resp = await fetch(`/api/checkout/payment`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ orderId: oid, paymentMethodId: 'pix', email: 'guest@e2e-test.com' }),
+        });
+        return resp.json();
+      }, orderId);
+      const pixCode = pixResponse?.qr_code || pixResponse?.ticket_url || 'PIX gerado';
+      console.log(`\n👉 CHAVE PIX (fallback): ${pixCode}\n`);
+    }
 
-    // await clientPage.pause();
+    // ─── 7. Aguarda polling detectar APROVADO ───────────────
+    console.log('[CLIENT] Aguardando tela de sucesso via polling...');
+    await expect(
+      clientPage.getByText(/Missão Cumprida|PAGAMENTO CONFIRMADO|Sucesso|Aprovado/i).first()
+    ).toBeVisible({ timeout: 30000 });
 
-    // ─── 6. Validação de Desbloqueio (Ignorada no teste autônomo) ───
-    // await expect(clientPage.getByText(/PAGAMENTO CONFIRMADO|Sucesso|Aprovado/i).first()).toBeVisible({ timeout: 60000 });
-    // console.log('[CLIENT] ✅ Pagamento detectado! Voltando à galeria para baixar...');
-
-    // await clientPage.goto(eventUrl);
-    
-    // Agora o ícone de download (imagem) deve estar visível e o de carrinho deve sumir para aquela foto
-    // const downloadBtn = clientPage.locator('.lucide-image').first();
-    // await expect(downloadBtn).toBeVisible({ timeout: 15000 });
-    
-    console.log('[CLIENT] 🎉 FOTO ADICIONADA AO CARRINHO E PIX GERADO COM SUCESSO! Fluxo Validado.');
+    console.log('[CLIENT] 🎉 FOTO DESBLOQUEADA E PAGAMENTO SIMULADO COM SUCESSO!');
+    await guestContext.close();
   });
 });
