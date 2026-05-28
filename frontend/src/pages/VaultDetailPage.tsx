@@ -864,13 +864,13 @@ export default function VaultDetailPage() {
                     src={import.meta.env.VITE_API_URL ? `${import.meta.env.VITE_API_URL.replace(/\/$/, '')}/vaults/media/proxy/${selectedPhoto.fileId}` : `/api/vaults/media/proxy/${selectedPhoto.fileId}`}
                     controls
                     autoPlay
-                    className="max-w-full max-h-full rounded-lg shadow-2xl"
+                    className="max-w-full max-h-[60vh] md:max-h-[70vh] rounded-lg shadow-2xl"
                   />
                 ) : (
                   <img 
                     src={import.meta.env.VITE_API_URL ? `${import.meta.env.VITE_API_URL.replace(/\/$/, '')}/vaults/media/proxy/${selectedPhoto.fileId}` : `/api/vaults/media/proxy/${selectedPhoto.fileId}`} 
                     alt="Full view" 
-                    className="max-w-full max-h-full object-contain rounded-lg shadow-2xl transition-transform duration-300"
+                    className="max-w-full max-h-[60vh] md:max-h-[70vh] object-contain rounded-lg shadow-2xl transition-transform duration-300"
                     style={{ transform: `rotate(${selectedPhoto.rotation || 0}deg)` }}
                     onError={(e) => {
                       const target = e.target as HTMLImageElement;
@@ -880,6 +880,7 @@ export default function VaultDetailPage() {
                     }}
                   />
                 )}
+
 
                 {/* Botões de rotação: overlay no canto superior direito da imagem */}
                 {vault?.myRole === 'OWNER' && selectedPhoto.type !== 'VIDEO' && (
