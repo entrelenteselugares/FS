@@ -835,40 +835,42 @@ export default function VaultDetailPage() {
               initial={{ scale: 0.9, y: 20 }}
               animate={{ scale: 1, y: 0 }}
               exit={{ scale: 0.9, y: 20 }}
-              className="relative max-w-5xl w-full max-h-full flex flex-col items-center gap-6 z-[205]"
+              className="relative max-w-4xl w-full flex flex-col z-[205] max-h-[90vh]"
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="absolute -top-12 right-0 flex gap-4">
+              {/* ── Header: download + close ── */}
+              <div className="flex justify-end gap-4 pb-3 shrink-0">
                 <button 
                   onClick={handleDownloadSingle}
                   disabled={downloadingSingle}
-                  className="text-white/60 hover:text-white transition-colors flex items-center"
+                  className="text-white/60 hover:text-white transition-colors flex items-center gap-2"
                 >
-                  {downloadingSingle ? <Loader2 size={24} className="animate-spin" /> : <Download size={24} />}
-                  <span className="text-[10px] font-black uppercase tracking-widest ml-2 hidden md:inline">Baixar</span>
+                  {downloadingSingle ? <Loader2 size={20} className="animate-spin" /> : <Download size={20} />}
+                  <span className="text-[10px] font-black uppercase tracking-widest hidden md:inline">Baixar</span>
                 </button>
                 <button 
                   onClick={() => setSelectedPhoto(null)}
-                  className="text-white/60 hover:text-white transition-colors flex items-center"
+                  className="text-white/60 hover:text-white transition-colors flex items-center gap-2"
                 >
-                  <Share2 size={24} className="rotate-45" /> {/* Close icon via Share2 rotation hack if X is missing */}
-                  <span className="text-[10px] font-black uppercase tracking-widest ml-2 hidden md:inline">Fechar</span>
+                  <Share2 size={20} className="rotate-45" />
+                  <span className="text-[10px] font-black uppercase tracking-widest hidden md:inline">Fechar</span>
                 </button>
               </div>
 
-              <div className="relative group w-full flex items-center justify-center">
+              {/* ── Image area: ocupa o espaço disponível ── */}
+              <div className="relative flex-1 min-h-0 flex items-center justify-center overflow-hidden rounded-lg">
                 {selectedPhoto.type === 'VIDEO' ? (
                   <video 
                     src={import.meta.env.VITE_API_URL ? `${import.meta.env.VITE_API_URL.replace(/\/$/, '')}/vaults/media/proxy/${selectedPhoto.fileId}` : `/api/vaults/media/proxy/${selectedPhoto.fileId}`}
                     controls
                     autoPlay
-                    className="max-w-full max-h-[70vh] rounded-lg shadow-2xl"
+                    className="max-w-full max-h-full rounded-lg shadow-2xl"
                   />
                 ) : (
                   <img 
                     src={import.meta.env.VITE_API_URL ? `${import.meta.env.VITE_API_URL.replace(/\/$/, '')}/vaults/media/proxy/${selectedPhoto.fileId}` : `/api/vaults/media/proxy/${selectedPhoto.fileId}`} 
                     alt="Full view" 
-                    className="max-w-full max-h-[70vh] object-contain rounded-lg shadow-2xl transition-transform duration-300"
+                    className="max-w-full max-h-full object-contain rounded-lg shadow-2xl transition-transform duration-300"
                     style={{ transform: `rotate(${selectedPhoto.rotation || 0}deg)` }}
                     onError={(e) => {
                       const target = e.target as HTMLImageElement;
@@ -879,66 +881,65 @@ export default function VaultDetailPage() {
                   />
                 )}
 
-                {/* Owner-only rotation buttons */}
+                {/* Botões de rotação: overlay no canto superior direito da imagem */}
                 {vault?.myRole === 'OWNER' && selectedPhoto.type !== 'VIDEO' && (
-                  <div className="absolute top-4 right-4 flex flex-col gap-2">
+                  <div className="absolute top-3 right-3 flex flex-col gap-2">
                     <button
                       onClick={(e) => { e.stopPropagation(); handleRotateMedia(selectedPhoto.id, 'LEFT'); }}
-                      className="p-3 bg-black/50 hover:bg-black text-white rounded-full transition-all"
+                      className="p-2 bg-black/60 hover:bg-black text-white rounded-full transition-all"
                       title="Rotacionar para a esquerda"
                     >
-                      <RotateCcw size={18} />
+                      <RotateCcw size={16} />
                     </button>
                     <button
                       onClick={(e) => { e.stopPropagation(); handleRotateMedia(selectedPhoto.id, 'RIGHT'); }}
-                      className="p-3 bg-black/50 hover:bg-black text-white rounded-full transition-all"
+                      className="p-2 bg-black/60 hover:bg-black text-white rounded-full transition-all"
                       title="Rotacionar para a direita"
                     >
-                      <RotateCw size={18} />
+                      <RotateCw size={16} />
                     </button>
                   </div>
                 )}
-                
-                <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-2 flex-wrap justify-center w-[90%] max-w-lg bg-black/40 p-2 rounded-full backdrop-blur-md">
-                   <button 
-                     onClick={() => { handleVote(selectedPhoto.id); setSelectedPhoto(prev => prev ? { ...prev, votedByMe: !prev.votedByMe, _count: { votes: prev.votedByMe ? prev._count.votes - 1 : prev._count.votes + 1 } } : null); }}
-                     className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-full font-black uppercase tracking-wider text-[10px] sm:text-[11px] transition-all whitespace-nowrap ${
-                       selectedPhoto.votedByMe ? 'bg-emerald-500 text-black' : 'bg-white/10 text-white hover:bg-white/20'
-                     }`}
-                   >
-                     <Heart size={16} fill={selectedPhoto.votedByMe ? "currentColor" : "none"} />
-                     <span className="hidden sm:inline">{selectedPhoto.votedByMe ? "Votado" : "Votar nesta Pose"}</span>
-                     <span className="sm:hidden">{selectedPhoto.votedByMe ? "Votado" : "Votar"}</span>
-                   </button>
-
-                   {/* Owner-only moderation buttons */}
-                   {vault?.myRole === 'OWNER' && (
-                     <>
-                       <button
-                         onClick={() => handleApproveMedia(selectedPhoto.id, selectedPhoto.status || 'PENDING')}
-                         className={`flex-1 flex items-center justify-center gap-1 sm:gap-2 px-4 py-3 rounded-full font-black uppercase tracking-wider text-[10px] sm:text-[11px] transition-all whitespace-nowrap ${
-                           selectedPhoto.status === 'APPROVED'
-                             ? 'bg-emerald-500/30 text-emerald-400 border border-emerald-500/30'
-                             : 'bg-yellow-500 text-black hover:bg-yellow-400'
-                         }`}
-                       >
-                         {selectedPhoto.status === 'APPROVED' ? '✓ Aprovada' : '✓ Aprovar'}
-                       </button>
-                       <button
-                         onClick={() => handleDeleteMedia(selectedPhoto.id)}
-                         className="flex-none flex items-center justify-center px-4 py-3 rounded-full font-black uppercase tracking-wider text-[10px] sm:text-[11px] bg-red-500/80 hover:bg-red-500 text-white transition-all"
-                         title="Excluir"
-                       >
-                         🗑 <span className="hidden sm:inline ml-1">Excluir</span>
-                       </button>
-                     </>
-                   )}
-                </div>
               </div>
 
-              <div className="text-center">
+              {/* ── Botões de ação: abaixo da foto, não sobrepostos ── */}
+              <div className="shrink-0 flex items-center justify-center gap-2 pt-3 px-2 flex-wrap">
+                <button 
+                  onClick={() => { handleVote(selectedPhoto.id); setSelectedPhoto(prev => prev ? { ...prev, votedByMe: !prev.votedByMe, _count: { votes: prev.votedByMe ? prev._count.votes - 1 : prev._count.votes + 1 } } : null); }}
+                  className={`flex items-center gap-2 px-5 py-2.5 rounded-full font-black uppercase tracking-wider text-[11px] transition-all whitespace-nowrap ${
+                    selectedPhoto.votedByMe ? 'bg-emerald-500 text-black' : 'bg-white/10 text-white hover:bg-white/20 border border-white/20'
+                  }`}
+                >
+                  <Heart size={15} fill={selectedPhoto.votedByMe ? "currentColor" : "none"} />
+                  {selectedPhoto.votedByMe ? "Votado" : "Votar nesta Pose"}
+                </button>
+
+                {vault?.myRole === 'OWNER' && (
+                  <>
+                    <button
+                      onClick={() => handleApproveMedia(selectedPhoto.id, selectedPhoto.status || 'PENDING')}
+                      className={`flex items-center gap-2 px-5 py-2.5 rounded-full font-black uppercase tracking-wider text-[11px] transition-all whitespace-nowrap ${
+                        selectedPhoto.status === 'APPROVED'
+                          ? 'bg-emerald-500/30 text-emerald-400 border border-emerald-500/40'
+                          : 'bg-yellow-500 text-black hover:bg-yellow-400'
+                      }`}
+                    >
+                      {selectedPhoto.status === 'APPROVED' ? '✓ Aprovada' : '✓ Aprovar'}
+                    </button>
+                    <button
+                      onClick={() => handleDeleteMedia(selectedPhoto.id)}
+                      className="flex items-center gap-2 px-5 py-2.5 rounded-full font-black uppercase tracking-wider text-[11px] bg-red-500/80 hover:bg-red-500 text-white transition-all whitespace-nowrap"
+                    >
+                      🗑 Excluir
+                    </button>
+                  </>
+                )}
+              </div>
+
+              {/* ── Info: enviada por ── */}
+              <div className="text-center shrink-0 pt-2 pb-1">
                 <p className="text-white/40 text-[10px] font-black uppercase tracking-[0.2em]">Enviada por {selectedPhoto.uploadedBy.nome}</p>
-                <p className="text-white/20 text-[9px] uppercase mt-1">{new Date(selectedPhoto.createdAt).toLocaleDateString()}</p>
+                <p className="text-white/20 text-[9px] uppercase mt-0.5">{new Date(selectedPhoto.createdAt).toLocaleDateString()}</p>
               </div>
             </motion.div>
           </motion.div>
