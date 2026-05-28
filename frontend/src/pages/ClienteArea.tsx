@@ -26,6 +26,7 @@ type ActiveTab =
   | "wallet" 
   | "affiliate"
   | "agenda" 
+  | "convites"
   | "financeiro" 
   | "servicos" 
   | "calendar" 
@@ -167,7 +168,7 @@ export default function ClienteArea() {
     if (isProOrFranchise && isVerified) {
       items.push(
         { label: "ÁREA PROFISSIONAL", isHeader: true },
-        { label: "Minha Agenda", onClick: () => handleTabChange("agenda"), isActive: activeTab === "agenda", icon: <Play size={18} /> },
+        { label: "Minha Agenda", onClick: () => handleTabChange("agenda"), isActive: activeTab === "agenda" || activeTab === "convites", icon: <Play size={18} /> },
         { label: "Portfólio & Serviços", onClick: () => handleTabChange("servicos"), isActive: activeTab === "servicos", icon: <Briefcase size={18} /> },
         { label: "Vendas & Ganhos", onClick: () => handleTabChange("financeiro"), isActive: activeTab === "financeiro", icon: <DollarSign size={18} /> },
         { label: "Agenda Google", onClick: () => handleTabChange("calendar"), isActive: activeTab === "calendar", icon: <Calendar size={18} /> }
@@ -288,7 +289,7 @@ export default function ClienteArea() {
     } else if (section === "affiliate") {
       setActiveTab("affiliate");
     } else if (section === "convites") {
-      setActiveTab("agenda");
+      setActiveTab("convites");
     } else if (section === "agenda" || section === "financeiro" || section === "servicos" || section === "calendar" || section === "franquia" || section === "equipe" || section === "configuracoes") {
       setActiveTab(section as ActiveTab);
     }
@@ -390,7 +391,7 @@ export default function ClienteArea() {
 
   const aprovados = groupedEvents.filter(g => g.hasAprovado);
 
-  const isProfessionalTab = ["agenda", "financeiro", "servicos", "network", "calendar", "franquia", "equipe"].includes(activeTab) && 
+  const isProfessionalTab = ["agenda", "convites", "financeiro", "servicos", "network", "calendar", "franquia", "equipe"].includes(activeTab) && 
     (user?.role === "PROFISSIONAL" || user?.role === "FRANCHISEE") && user?.verificationStatus === "APPROVED";
 
   const isUnitTab = ["agenda", "financeiro", "equipe", "calendar", "franquia", "configuracoes", "monitor"].includes(activeTab) && 

@@ -364,7 +364,7 @@ export default function ProfissionalDashboard({
     { 
       label: "Minha Agenda", 
       onClick: () => setActiveTab("agenda"), 
-      isActive: activeTab === "agenda", 
+      isActive: activeTab === "agenda" || activeTab === "convites", 
       icon: <LayoutDashboard size={16} />,
       badge: pendingEvents.length + unitInvites.length + opportunities.length
     },
