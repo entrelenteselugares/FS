@@ -10,8 +10,6 @@ import {
   Palette, 
   Shield, 
   ArrowRight,
-  Zap,
-  Globe,
   Lock,
   Smartphone,
   X
@@ -170,7 +168,6 @@ export const AdminConfigs: React.FC = () => {
   };
 
   const splitConfigs = useMemo(() => configs.filter((c) => REQUIRED_SPLITS.some(rs => rs.key === c.key)), [configs]);
-  const infraConfigs = useMemo(() => configs.filter((c) => !REQUIRED_SPLITS.some(rs => rs.key === c.key)), [configs]);
 
   return (
     <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-700 pb-20">
