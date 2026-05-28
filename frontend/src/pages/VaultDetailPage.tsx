@@ -100,17 +100,16 @@ export default function VaultDetailPage() {
       alert("Erro ao excluir a foto.");
     }
   };
-
   const handleRotateMedia = async (mediaId: string, direction: 'LEFT' | 'RIGHT') => {
     try {
       const { data } = await api.patch(`/vaults/${vaultId}/media/${mediaId}/rotate`, { direction });
       setMedia(prev => prev.map(m => m.id === mediaId ? { ...m, rotation: data.rotation } : m));
       setSelectedPhoto(prev => prev && prev.id === mediaId ? { ...prev, rotation: data.rotation } : prev);
-    } catch (err: any) {
-      alert(err.response?.data?.error || "Erro ao rotacionar foto.");
+    } catch (err) {
+      const error = err as { response?: { data?: { error?: string } } };
+      alert(error.response?.data?.error || "Erro ao rotacionar foto.");
     }
   };
-
   const handleApproveMedia = async (mediaId: string, currentStatus: string) => {
     const newStatus = currentStatus === "APPROVED" ? "PENDING" : "APPROVED";
     try {
