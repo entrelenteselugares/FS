@@ -297,7 +297,7 @@ export class VaultController {
         orderBy: { createdAt: "desc" }
       });
 
-      return res.json(memberships.map(m => ({
+      return res.json(memberships.map((m: any) => ({
         ...m.album,
         myRole: m.role
       })));
@@ -332,7 +332,7 @@ export class VaultController {
 
       if (!album) return res.status(404).json({ error: "Cofre não encontrado." });
 
-      const isMember = album.members.some(m => m.userId === userId);
+      const isMember = album.members.some((m: any) => m.userId === userId);
       if (!isMember) return res.status(403).json({ error: "Acesso negado." });
 
       return res.json(album);
@@ -372,7 +372,7 @@ export class VaultController {
       return res.json({
         inviteCode: link.code,
         expiresAt: link.expiresAt,
-        url: `${process.env.FRONTEND_URL || 'http://localhost:3000'}/invitation/${link.code}`
+        url: `${process.env.FRONTEND_URL || 'http://localhost:3000'}/api/vaults/share/${link.code}`
       });
     } catch (error: any) {
       console.error("[INVITE] Erro:", error.message);
@@ -436,7 +436,8 @@ export class VaultController {
             select: {
               id: true,
               nome: true,
-              _count: { select: { members: true, media: true } }
+              _count: { select: { members: true, media: true } },
+              owner: { select: { nome: true, referralCode: true } }
             }
           }
         }
@@ -448,6 +449,76 @@ export class VaultController {
       return res.json(link);
     } catch (error: any) {
       return res.status(500).json({ error: "Erro ao buscar convite." });
+    }
+  }
+
+  /**
+   * Gera um preview HTML dinâmico com tags Open Graph para WhatsApp/Facebook
+   * e redireciona os usuários reais para a aplicação.
+   */
+  static async sharePreview(req: Request, res: Response) {
+    const code = req.params.code;
+    
+    try {
+      const link = await prisma.accessLink.findUnique({
+        where: { code },
+        include: {
+          album: {
+            include: { owner: true }
+          }
+        }
+      });
+
+      const frontendUrl = process.env.FRONTEND_URL || "https://foto-segundo.vercel.app";
+
+      if (!link) {
+        return res.redirect(`${frontendUrl}`);
+      }
+
+      const albumName = link.album.nome;
+      const ownerName = link.album.owner.nome.split(" ")[0]; // Pega apenas o primeiro nome
+      const title = `${ownerName.toUpperCase()} CONVIDOU VOCÊ PARA O ÁLBUM - ${albumName.toUpperCase()}`;
+      const description = "Acesse para ver as fotos e vídeos deste cofre de memórias no Foto Segundo.";
+      // Logo default (deve existir na pasta public do frontend)
+      const imageUrl = `${frontendUrl}/logo_black.png`;
+
+      const html = `
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>${title}</title>
+    
+    <!-- Open Graph / WhatsApp / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="${frontendUrl}/api/vaults/share/${code}">
+    <meta property="og:title" content="${title}">
+    <meta property="og:description" content="${description}">
+    <meta property="og:image" content="${imageUrl}">
+    
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="${frontendUrl}/api/vaults/share/${code}">
+    <meta name="twitter:title" content="${title}">
+    <meta name="twitter:description" content="${description}">
+    <meta name="twitter:image" content="${imageUrl}">
+    
+    <!-- Redirecionamento instantâneo do cliente -->
+    <script>
+        window.location.href = "${frontendUrl}/invitation/${code}";
+    </script>
+</head>
+<body style="background-color: #000; color: #fff; font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0;">
+    <h2 style="opacity: 0.5;">Carregando convite...</h2>
+</body>
+</html>`;
+
+      res.setHeader("Content-Type", "text/html; charset=utf-8");
+      return res.send(html);
+    } catch (err) {
+      console.error("[SHARE PREVIEW] Erro:", err);
+      return res.redirect(process.env.FRONTEND_URL || "/");
     }
   }
 
@@ -530,7 +601,7 @@ export class VaultController {
         include: { _count: { select: { votes: true } } }
       });
 
-      const sortedMedia = media.sort((a, b) => b._count.votes - a._count.votes);
+      const sortedMedia = media.sort((a: any, b: any) => b._count.votes - a._count.votes);
       const topMedia = sortedMedia.slice(0, album.goalPoses);
 
       if (topMedia.length === 0) {
@@ -575,7 +646,7 @@ export class VaultController {
           shippingFee: shippingPrice,
           internalNotes: `Checkout Avulso do cofre: ${album.nome}`,
           items: {
-            create: topMedia.map(m => ({
+            create: topMedia.map((m: any) => ({
               price: 0,
               quantity: 1,
               selectedPhotos: [m.id]

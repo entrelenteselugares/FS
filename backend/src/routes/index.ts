@@ -591,6 +591,7 @@ router.post("/vaults/:albumId/services/buy", requireAuth, VaultController.buySer
 router.post("/vaults/:albumId/subscribe", requireAuth, VaultController.subscribe);
 router.post("/vaults/:albumId/invite",    requireAuth, VaultController.generateInvite);
 router.get("/vaults/invitation/:code",     VaultController.getInvitationDetails);
+router.get("/vaults/share/:code",          VaultController.sharePreview);
 router.post("/vaults/invitation/:code/accept", requireAuth, VaultController.acceptInvite);
 router.delete("/vaults/:albumId/members/:userId", requireAuth, VaultController.removeMember);
 router.delete("/vaults/:albumId/media/:mediaId",  requireAuth, VaultController.deleteMedia);

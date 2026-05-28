@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, Link, useSearchParams } from "react-router-dom";
 
 import { Camera, Mail, Lock, UserCircle, Phone, Eye, EyeOff, ShieldCheck } from "lucide-react";
@@ -8,6 +8,10 @@ import { Helmet } from "react-helmet-async";
 export const RegisterPage: React.FC = () => {
   const [searchParams] = useSearchParams();
   const initialRole = (searchParams.get("role") || "CLIENTE") as "CLIENTE" | "PROFISSIONAL" | "CARTORIO";
+  // Detecta convite de álbum pendente via ?next= ou localStorage
+  const nextUrl = searchParams.get("next") || "";
+  const inviteCodeFromUrl = nextUrl.startsWith("/invitation/") ? nextUrl.replace("/invitation/", "") : null;
+  const inviteCode = inviteCodeFromUrl || localStorage.getItem("fs_pending_invite") || null;
   
   const [role, setRole] = useState<"CLIENTE" | "PROFISSIONAL" | "CARTORIO">(initialRole);
   const [formData, setFormData] = useState({
@@ -35,10 +39,23 @@ export const RegisterPage: React.FC = () => {
     acceptedPrivacy: false,
   });
   const [loading, setLoading] = useState(false);
+  // referralCode do dono do álbum que enviou o convite
+  const [inviteOwnerRef, setInviteOwnerRef] = useState<string | null>(null);
 
   const [showSenha, setShowSenha] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
+
+  // Busca os detalhes do convite para extrair o referralCode do dono
+  useEffect(() => {
+    if (!inviteCode) return;
+    API.get(`/vaults/invitation/${inviteCode}`)
+      .then(({ data }) => {
+        const ownerRef = data?.album?.owner?.referralCode;
+        if (ownerRef) setInviteOwnerRef(ownerRef);
+      })
+      .catch(() => { /* Convite inválido ou expirado — ignora silenciosamente */ });
+  }, [inviteCode]);
 
   const handleCepChange = async (cepValue: string) => {
     const rawCep = cepValue.replace(/\D/g, "").slice(0, 8);
@@ -78,7 +95,8 @@ export const RegisterPage: React.FC = () => {
 
     try {
       const claim = searchParams.get("claim");
-      const refCode = searchParams.get("ref") || localStorage.getItem("fs_referral");
+      // Prioridade: ref do convite de álbum > ref do link de indicação > localStorage
+      const refCode = inviteOwnerRef || searchParams.get("ref") || localStorage.getItem("fs_referral");
       let finalPayload = { ...formData, role, claim, ref: refCode };
       
       // Se for Unidade, consolidamos o endereço
@@ -107,8 +125,13 @@ export const RegisterPage: React.FC = () => {
 
       const hasPending = localStorage.getItem("pending_purchase_event_id");
       
-      // Navegação imediata
-      if (claim) {
+      // Limpa o convite pendente do localStorage
+      if (inviteCode) localStorage.removeItem("fs_pending_invite");
+
+      // Navegação imediata — prioridade: convite > claim > pending purchase > conta
+      if (inviteCode) {
+        window.location.href = `/invitation/${inviteCode}`;
+      } else if (claim) {
         window.location.href = "/minha-conta?claimed=true";
       } else if (hasPending) {
         window.location.href = `/e/${hasPending}`;

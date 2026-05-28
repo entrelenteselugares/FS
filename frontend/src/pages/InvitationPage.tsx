@@ -44,7 +44,9 @@ export default function InvitationPage() {
 
   const handleAccept = async () => {
     if (!user) {
-      navigate(`/login?next=/invitation/${code}`);
+      // Salva o convite pendente no localStorage para recuperar após o cadastro
+      localStorage.setItem("fs_pending_invite", code!);
+      navigate(`/register?next=/invitation/${code}`);
       return;
     }
 
@@ -128,7 +130,7 @@ export default function InvitationPage() {
 
         {!user && (
           <p className="mt-6 text-[10px] text-gray-600 uppercase tracking-widest font-bold">
-            Será necessário fazer login ou criar uma conta.
+            Será necessário criar uma conta ou fazer login para aceitar.
           </p>
         )}
       </main>
