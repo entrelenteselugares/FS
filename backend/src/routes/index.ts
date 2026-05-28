@@ -595,6 +595,7 @@ router.get("/vaults/share/:code",          VaultController.sharePreview);
 router.post("/vaults/invitation/:code/accept", requireAuth, VaultController.acceptInvite);
 router.delete("/vaults/:albumId/members/:userId", requireAuth, VaultController.removeMember);
 router.delete("/vaults/:albumId/media/:mediaId",  requireAuth, VaultController.deleteMedia);
+router.patch("/vaults/:albumId/media/:mediaId/rotate", requireAuth, VaultController.rotateMedia);
 router.patch("/vaults/:albumId/media/:mediaId/status", requireAuth, VaultController.updateMediaStatus);
 
 

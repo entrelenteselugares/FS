@@ -874,9 +874,31 @@ export class VaultController {
           // Garantir extensão
           if (!fileName.includes('.')) fileName += media.type === 'VIDEO' ? '.mp4' : '.jpg';
 
-          // Baixar stream do Google Drive
-          const driveRes = await driveService.getMediaStream(media.fileId);
-          archive.append(driveRes.data as any, { name: fileName });
+          const fs = require('fs');
+          const path = require('path');
+          
+          if (media.fileId.startsWith("mock-file-")) {
+            const uploadDir = path.join(process.cwd(), 'uploads', 'vaults');
+            const filePath = path.join(uploadDir, fileName || media.fileId);
+            if (fs.existsSync(filePath)) {
+              archive.append(fs.createReadStream(filePath), { name: fileName });
+              return;
+            }
+          }
+
+          try {
+            // Baixar stream do Google Drive
+            const driveRes = await driveService.getMediaStream(media.fileId);
+            archive.append(driveRes.data as any, { name: fileName });
+          } catch (driveErr) {
+            // Fallback para arquivo local se falhar a conexão com o Google Drive ou se estiver em MOCK
+            const fallbackPath = path.join(process.cwd(), 'uploads', 'vaults', fileName);
+            if (fs.existsSync(fallbackPath)) {
+              archive.append(fs.createReadStream(fallbackPath), { name: fileName });
+            } else {
+              throw driveErr;
+            }
+          }
         } catch (err) {
           console.error(`[DOWNLOAD ALL] Erro ao baixar foto ${media.fileId}:`, err);
         }
@@ -1000,6 +1022,49 @@ export class VaultController {
   /**
    * Atualiza o status de aprovação de uma mídia (Apenas Proprietário)
    */
+  static async rotateMedia(req: AuthRequest, res: Response) {
+    const { albumId, mediaId } = req.params;
+    const { direction } = req.body; // 'LEFT' ou 'RIGHT'
+    const userId = req.user?.userId;
+
+    if (!userId) return res.status(401).json({ error: "Não autenticado." });
+
+    try {
+      const album = await prisma.sharedAlbum.findUnique({
+        where: { id: albumId }
+      });
+
+      if (!album) return res.status(404).json({ error: "Cofre não encontrado." });
+      if (album.ownerId !== userId) return res.status(403).json({ error: "Apenas o proprietário pode rotacionar a mídia." });
+
+      const media = await prisma.sharedAlbumMedia.findUnique({
+        where: { id: mediaId }
+      });
+
+      if (!media) return res.status(404).json({ error: "Mídia não encontrada." });
+
+      let newRotation = media.rotation;
+      if (direction === 'LEFT') {
+        newRotation = (newRotation - 90) % 360;
+        if (newRotation < 0) newRotation += 360;
+      } else if (direction === 'RIGHT') {
+        newRotation = (newRotation + 90) % 360;
+      } else {
+        return res.status(400).json({ error: "Direção inválida. Use 'LEFT' ou 'RIGHT'." });
+      }
+
+      const updated = await prisma.sharedAlbumMedia.update({
+        where: { id: mediaId },
+        data: { rotation: newRotation }
+      });
+
+      return res.json(updated);
+    } catch (error: any) {
+      console.error("[VAULT] Erro ao rotacionar mídia:", error.message);
+      return res.status(500).json({ error: "Erro ao rotacionar mídia.", details: error.message });
+    }
+  }
+
   static async updateMediaStatus(req: AuthRequest, res: Response) {
     const albumId = req.params.albumId as string;
     const mediaId = req.params.mediaId as string;

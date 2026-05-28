@@ -88,7 +88,7 @@ export class GoogleDriveService {
   /**
    * Cria uma pasta para um novo Álbum compartilhado.
    */
-  async createAlbumFolder(albumName: string) {
+  async createAlbumFolder(albumName: string): Promise<any> {
     if (!this.drive) {
       console.warn(`[DRIVE MOCK] Criando pasta mock para: ${albumName}`);
       return { id: `mock-folder-${Date.now()}`, name: albumName };
@@ -165,7 +165,7 @@ export class GoogleDriveService {
    * Realiza o upload de uma mídia diretamente para a pasta do álbum.
    * Utiliza thumbnailLink para performance no frontend conforme diretrizes executivas.
    */
-  async uploadMedia({ folderId, fileName, buffer, mimeType }: { folderId: string, fileName: string, buffer: Buffer, mimeType: string }) {
+  async uploadMedia({ folderId, fileName, buffer, mimeType }: { folderId: string, fileName: string, buffer: Buffer, mimeType: string }): Promise<any> {
     if (!this.drive) {
       console.warn(`[DRIVE MOCK] Gravando arquivo localmente (em /uploads/vaults): ${fileName}`);
       const mockId = `mock-file-${Date.now()}`;
@@ -266,7 +266,22 @@ export class GoogleDriveService {
    * Obtém o stream de um arquivo para proxy.
    */
   async getMediaStream(fileId: string) {
-    if (!this.drive) throw new Error("Drive service not initialized");
+    if (!this.drive) {
+      // MOCK MODE
+      console.warn(`[DRIVE MOCK] Lendo arquivo local (mock): ${fileId}`);
+      // Em mock mode, fileId gerado geralmente é "mock-file-...", mas aqui no vault
+      // o media.fileId pode ter recebido o link ou nome real salvo.
+      // Tentamos achar pelo nome do arquivo ou ID. Se o ID for uma URL (webViewLink),
+      // pegamos a última parte. No upload nós passamos o ID como "mock-file-X".
+      // Vamos assumir que os arquivos estão na pasta 'uploads/vaults' com o nome que está no banco.
+      // Porém, o vault.controller.ts passa media.fileId para getMediaStream.
+      // E no MOCK nós salvamos como { id: mockId, webViewLink: fileUrl }. E o arquivo fisicamente tem o nome original.
+      // Infelizmente, se não soubermos o fileName, será difícil, MAS...
+      // Vamos alterar no vault.controller.ts para mock também, se necessário?
+      // Melhor: se fileId contém "mock-file", não temos o nome original aqui, a não ser que busquemos.
+      // Vamos apenas avisar e jogar um erro explícito para consertarmos onde chamou?
+      throw new Error("Modo MOCK não suporta getMediaStream apenas com ID se não salvou o nome do arquivo. Por favor, trate MOCK localmente.");
+    }
     return this.drive.files.get(
       { fileId, alt: 'media', supportsAllDrives: true },
       { responseType: 'stream' }
@@ -277,7 +292,7 @@ export class GoogleDriveService {
    * Lista arquivos de uma pasta do Drive.
    * Utilizado para sincronização de galerias em massa.
    */
-  async listFiles(folderId: string) {
+  async listFiles(folderId: string): Promise<any[]> {
     if (!this.drive) {
       console.warn(`[DRIVE MOCK] Listando arquivos mock para pasta: ${folderId}`);
       const uploadDir = path.join(process.cwd(), 'uploads', 'vaults');

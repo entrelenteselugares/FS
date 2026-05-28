@@ -1032,6 +1032,7 @@ model SharedAlbumMedia {
   width         Int?
   height        Int?
   originalDate  DateTime?
+  rotation      Int      @default(0) // 0, 90, 180, 270
 
   // AI Curation
   aiScore          Float?

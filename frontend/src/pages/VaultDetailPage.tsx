@@ -7,7 +7,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { 
   Lock, Upload, Heart, Share2, 
   ChevronLeft, ChevronRight, Loader2, Camera,
-  Printer, Zap, Star, Settings, Video, PlayCircle, Download
+  Printer, Zap, Star, Settings, Video, PlayCircle, Download,
+  RotateCcw, RotateCw
 } from "lucide-react";
 import { Helmet } from "react-helmet-async";
 import { T } from "../lib/theme";
@@ -30,6 +31,7 @@ interface Media {
   originalDate?: string;
   status?: string; // PENDING | APPROVED | REJECTED
   type?: string; // PHOTO | VIDEO
+  rotation?: number; // 0, 90, 180, 270
 }
 
 interface Vault {
@@ -96,6 +98,16 @@ export default function VaultDetailPage() {
     } catch (err) {
       console.error("[Delete Media] Erro:", err);
       alert("Erro ao excluir a foto.");
+    }
+  };
+
+  const handleRotateMedia = async (mediaId: string, direction: 'LEFT' | 'RIGHT') => {
+    try {
+      const { data } = await api.patch(`/vaults/${vaultId}/media/${mediaId}/rotate`, { direction });
+      setMedia(prev => prev.map(m => m.id === mediaId ? { ...m, rotation: data.rotation } : m));
+      setSelectedPhoto(prev => prev && prev.id === mediaId ? { ...prev, rotation: data.rotation } : prev);
+    } catch (err: any) {
+      alert(err.response?.data?.error || "Erro ao rotacionar foto.");
     }
   };
 
@@ -856,7 +868,8 @@ export default function VaultDetailPage() {
                   <img 
                     src={import.meta.env.VITE_API_URL ? `${import.meta.env.VITE_API_URL.replace(/\/$/, '')}/vaults/media/proxy/${selectedPhoto.fileId}` : `/api/vaults/media/proxy/${selectedPhoto.fileId}`} 
                     alt="Full view" 
-                    className="max-w-full max-h-[70vh] object-contain rounded-lg shadow-2xl"
+                    className="max-w-full max-h-[70vh] object-contain rounded-lg shadow-2xl transition-transform duration-300"
+                    style={{ transform: `rotate(${selectedPhoto.rotation || 0}deg)` }}
                     onError={(e) => {
                       const target = e.target as HTMLImageElement;
                       if (target.src !== selectedPhoto.thumbnailLink) {
@@ -865,16 +878,37 @@ export default function VaultDetailPage() {
                     }}
                   />
                 )}
+
+                {/* Owner-only rotation buttons */}
+                {vault?.myRole === 'OWNER' && selectedPhoto.type !== 'VIDEO' && (
+                  <div className="absolute top-4 right-4 flex flex-col gap-2">
+                    <button
+                      onClick={(e) => { e.stopPropagation(); handleRotateMedia(selectedPhoto.id, 'LEFT'); }}
+                      className="p-3 bg-black/50 hover:bg-black text-white rounded-full transition-all"
+                      title="Rotacionar para a esquerda"
+                    >
+                      <RotateCcw size={18} />
+                    </button>
+                    <button
+                      onClick={(e) => { e.stopPropagation(); handleRotateMedia(selectedPhoto.id, 'RIGHT'); }}
+                      className="p-3 bg-black/50 hover:bg-black text-white rounded-full transition-all"
+                      title="Rotacionar para a direita"
+                    >
+                      <RotateCw size={18} />
+                    </button>
+                  </div>
+                )}
                 
-                <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-3 flex-wrap justify-center">
+                <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-2 flex-wrap justify-center w-[90%] max-w-lg bg-black/40 p-2 rounded-full backdrop-blur-md">
                    <button 
                      onClick={() => { handleVote(selectedPhoto.id); setSelectedPhoto(prev => prev ? { ...prev, votedByMe: !prev.votedByMe, _count: { votes: prev.votedByMe ? prev._count.votes - 1 : prev._count.votes + 1 } } : null); }}
-                     className={`flex items-center gap-3 px-8 py-4 rounded-full font-black uppercase tracking-widest text-[12px] transition-all ${
-                       selectedPhoto.votedByMe ? 'bg-emerald-500 text-black' : 'bg-white/10 text-white backdrop-blur-md'
+                     className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-full font-black uppercase tracking-wider text-[10px] sm:text-[11px] transition-all whitespace-nowrap ${
+                       selectedPhoto.votedByMe ? 'bg-emerald-500 text-black' : 'bg-white/10 text-white hover:bg-white/20'
                      }`}
                    >
-                     <Heart size={20} fill={selectedPhoto.votedByMe ? "currentColor" : "none"} />
-                     {selectedPhoto.votedByMe ? "Votado" : "Votar nesta Pose"}
+                     <Heart size={16} fill={selectedPhoto.votedByMe ? "currentColor" : "none"} />
+                     <span className="hidden sm:inline">{selectedPhoto.votedByMe ? "Votado" : "Votar nesta Pose"}</span>
+                     <span className="sm:hidden">{selectedPhoto.votedByMe ? "Votado" : "Votar"}</span>
                    </button>
 
                    {/* Owner-only moderation buttons */}
@@ -882,19 +916,20 @@ export default function VaultDetailPage() {
                      <>
                        <button
                          onClick={() => handleApproveMedia(selectedPhoto.id, selectedPhoto.status || 'PENDING')}
-                         className={`flex items-center gap-2 px-6 py-4 rounded-full font-black uppercase tracking-widest text-[11px] transition-all ${
+                         className={`flex-1 flex items-center justify-center gap-1 sm:gap-2 px-4 py-3 rounded-full font-black uppercase tracking-wider text-[10px] sm:text-[11px] transition-all whitespace-nowrap ${
                            selectedPhoto.status === 'APPROVED'
                              ? 'bg-emerald-500/30 text-emerald-400 border border-emerald-500/30'
-                             : 'bg-yellow-500 text-black'
+                             : 'bg-yellow-500 text-black hover:bg-yellow-400'
                          }`}
                        >
                          {selectedPhoto.status === 'APPROVED' ? '✓ Aprovada' : '✓ Aprovar'}
                        </button>
                        <button
                          onClick={() => handleDeleteMedia(selectedPhoto.id)}
-                         className="flex items-center gap-2 px-6 py-4 rounded-full font-black uppercase tracking-widest text-[11px] bg-red-500/80 hover:bg-red-500 text-white transition-all"
+                         className="flex-none flex items-center justify-center px-4 py-3 rounded-full font-black uppercase tracking-wider text-[10px] sm:text-[11px] bg-red-500/80 hover:bg-red-500 text-white transition-all"
+                         title="Excluir"
                        >
-                         🗑 Excluir
+                         🗑 <span className="hidden sm:inline ml-1">Excluir</span>
                        </button>
                      </>
                    )}
