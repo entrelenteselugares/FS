@@ -6,7 +6,9 @@ import { MercadoPagoService } from "../services/mercadopago.service";
 import { SubscriptionService } from "../services/subscription.service";
 import sharp from "sharp";
 import exifr from "exifr";
+import archiver from "archiver";
 import { WhatsAppService } from "../services/whatsapp.service";
+
 /**
  * VaultController - Orquestrador da Fase 11 (Cofres de Memórias).
  * Gerencia a lógica de negócio unindo Prisma e Google Drive Cold Storage.
@@ -728,6 +730,100 @@ export class VaultController {
         });
       }
       res.status(500).send("Erro ao carregar mídia");
+    }
+  }
+
+  /**
+   * Baixa todas as mídias do cofre como um arquivo ZIP via stream
+   */
+  static async downloadAllMedia(req: AuthRequest, res: Response) {
+    const albumId = req.params.albumId as string;
+    const userId = req.user?.userId;
+
+    if (!userId) return res.status(401).json({ error: "Não autenticado." });
+
+    try {
+      // 1. Validar membro do cofre
+      const membership = await prisma.albumMember.findUnique({
+        where: { albumId_userId: { albumId, userId } },
+        include: { album: true }
+      });
+
+      if (!membership) return res.status(403).json({ error: "Você não é membro deste cofre." });
+      if (membership.album.subscriptionStatus === "BLOCKED" || membership.album.subscriptionStatus === "EXPIRED") {
+        return res.status(402).json({ error: "SUBSCRIPTION_REQUIRED", message: "O período gratuito deste cofre expirou." });
+      }
+
+      // 2. Buscar mídias aprovadas (ou as que ele enviou)
+      const mediaList = await prisma.sharedAlbumMedia.findMany({
+        where: {
+          albumId,
+          ...(membership.role !== "OWNER" ? {
+            OR: [
+              { status: "APPROVED" },
+              { uploadedById: userId }
+            ]
+          } : {})
+        }
+      });
+
+      if (mediaList.length === 0) {
+        return res.status(404).json({ error: "Nenhuma foto encontrada para download." });
+      }
+
+      // 3. Configurar cabeçalhos para o ZIP
+      res.setHeader('Content-Type', 'application/zip');
+      res.setHeader('Content-Disposition', `attachment; filename="${membership.album.nome}-fotos.zip"`);
+
+      // 4. Iniciar Archiver
+      const archive = archiver('zip', {
+        zlib: { level: 9 } // Nível máximo de compressão (pode reduzir se quiser mais velocidade)
+      });
+
+      // Se houver erro no archiver, logamos
+      archive.on('error', (err) => {
+        console.error('[DOWNLOAD ALL] Erro no archiver:', err);
+        if (!res.headersSent) {
+          res.status(500).send({ error: "Erro ao gerar o ZIP." });
+        }
+      });
+
+      // Ligar a saída do archiver à resposta HTTP
+      archive.pipe(res);
+
+      // Função auxiliar para esperar stream carregar
+      const appendToArchive = async (media: any) => {
+        try {
+          // Usa proxyMedia logic internamente ou driveService
+          let fileName = "";
+          if (media.webViewLink) {
+            fileName = media.webViewLink.substring(media.webViewLink.lastIndexOf('/') + 1);
+          }
+          if (!fileName) fileName = `${media.id}.jpg`;
+          // Garantir extensão
+          if (!fileName.includes('.')) fileName += media.type === 'VIDEO' ? '.mp4' : '.jpg';
+
+          // Baixar stream do Google Drive
+          const driveRes = await driveService.getMediaStream(media.fileId);
+          archive.append(driveRes.data as any, { name: fileName });
+        } catch (err) {
+          console.error(`[DOWNLOAD ALL] Erro ao baixar foto ${media.fileId}:`, err);
+        }
+      };
+
+      // Adicionar arquivos sequencialmente para não estourar memória / limite de conexões
+      for (const media of mediaList) {
+        await appendToArchive(media);
+      }
+
+      // Finalizar e fechar o ZIP
+      await archive.finalize();
+
+    } catch (error: any) {
+      console.error("[DOWNLOAD ALL] Erro fatal:", error.message);
+      if (!res.headersSent) {
+        return res.status(500).json({ error: "Erro ao iniciar download de todas as fotos." });
+      }
     }
   }
 

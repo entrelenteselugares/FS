@@ -7,7 +7,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { 
   Lock, Upload, Heart, Share2, 
   ChevronLeft, ChevronRight, Loader2, Camera,
-  Printer, Zap, Star, Settings, Video, PlayCircle
+  Printer, Zap, Star, Settings, Video, PlayCircle, Download
 } from "lucide-react";
 import { Helmet } from "react-helmet-async";
 import { T } from "../lib/theme";
@@ -64,6 +64,8 @@ export default function VaultDetailPage() {
   const [sortConfig, setSortConfig] = useState("UPLOAD_DESC");
   const [isPrintStoreOpen, setIsPrintStoreOpen] = useState(false);
   const [isServiceStoreOpen, setIsServiceStoreOpen] = useState(false);
+  const [downloadingAll, setDownloadingAll] = useState(false);
+  const [downloadingSingle, setDownloadingSingle] = useState(false);
 
   const fetchVaultDetails = useCallback(async () => {
     try {
@@ -168,6 +170,50 @@ export default function VaultDetailPage() {
       }
     } catch {
       alert("Apenas o proprietário pode gerar convites.");
+    }
+  };
+
+  const handleDownloadAll = async () => {
+    if (!vault) return;
+    setDownloadingAll(true);
+    try {
+      const response = await api.get(`/vaults/${vaultId}/download-all`, {
+        responseType: 'blob'
+      });
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `${vault.nome}-fotos.zip`);
+      document.body.appendChild(link);
+      link.click();
+      link.parentNode?.removeChild(link);
+    } catch (err) {
+      console.error("[Download All] Erro:", err);
+      alert("Erro ao baixar as fotos.");
+    } finally {
+      setDownloadingAll(false);
+    }
+  };
+
+  const handleDownloadSingle = async () => {
+    if (!selectedPhoto) return;
+    setDownloadingSingle(true);
+    try {
+      const proxyUrl = import.meta.env.VITE_API_URL ? `${import.meta.env.VITE_API_URL.replace(/\/$/, '')}/vaults/media/proxy/${selectedPhoto.fileId}` : `/api/vaults/media/proxy/${selectedPhoto.fileId}`;
+      const response = await fetch(proxyUrl);
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `${selectedPhoto.fileId}.${selectedPhoto.type === 'VIDEO' ? 'mp4' : 'jpg'}`);
+      document.body.appendChild(link);
+      link.click();
+      link.parentNode?.removeChild(link);
+    } catch (err) {
+      console.error("[Download Single] Erro:", err);
+      alert("Erro ao baixar o arquivo.");
+    } finally {
+      setDownloadingSingle(false);
     }
   };
 
@@ -439,6 +485,15 @@ export default function VaultDetailPage() {
             >
               <Video size={14} />
               Serviços
+            </button>
+
+            <button 
+              onClick={handleDownloadAll}
+              disabled={downloadingAll}
+              className="flex-1 md:flex-none flex items-center justify-center gap-2 bg-zinc-800 hover:bg-zinc-700 text-white text-[10px] font-black uppercase tracking-widest px-4 py-2.5 rounded-lg transition-all"
+            >
+              {downloadingAll ? <Loader2 size={14} className="animate-spin" /> : <Download size={14} />}
+              Baixar Tudo
             </button>
 
             <button 
@@ -771,13 +826,23 @@ export default function VaultDetailPage() {
               className="relative max-w-5xl w-full max-h-full flex flex-col items-center gap-6 z-[205]"
               onClick={(e) => e.stopPropagation()}
             >
-              <button 
-                onClick={() => setSelectedPhoto(null)}
-                className="absolute -top-12 right-0 text-white/60 hover:text-white transition-colors flex items-center"
-              >
-                <Share2 size={24} className="rotate-45" /> {/* Close icon via Share2 rotation hack if X is missing */}
-                <span className="text-[10px] font-black uppercase tracking-widest ml-2 hidden md:inline">Fechar</span>
-              </button>
+              <div className="absolute -top-12 right-0 flex gap-4">
+                <button 
+                  onClick={handleDownloadSingle}
+                  disabled={downloadingSingle}
+                  className="text-white/60 hover:text-white transition-colors flex items-center"
+                >
+                  {downloadingSingle ? <Loader2 size={24} className="animate-spin" /> : <Download size={24} />}
+                  <span className="text-[10px] font-black uppercase tracking-widest ml-2 hidden md:inline">Baixar</span>
+                </button>
+                <button 
+                  onClick={() => setSelectedPhoto(null)}
+                  className="text-white/60 hover:text-white transition-colors flex items-center"
+                >
+                  <Share2 size={24} className="rotate-45" /> {/* Close icon via Share2 rotation hack if X is missing */}
+                  <span className="text-[10px] font-black uppercase tracking-widest ml-2 hidden md:inline">Fechar</span>
+                </button>
+              </div>
 
               <div className="relative group w-full flex items-center justify-center">
                 {selectedPhoto.type === 'VIDEO' ? (
