@@ -29,31 +29,31 @@ export const BottomNav: React.FC = () => {
 
   const NAV_ITEMS = useMemo<NavItem[]>(() => {
     const items: NavItem[] = [
-      { label: "Minhas Memórias", onClick: () => { navigate("/minha-conta?s=fotos"); setDrawerOpen(false); }, isActive: location.pathname === "/minha-conta" && s === "fotos", icon: <ImageIcon size={18} /> },
-      { label: "Meus Álbuns", onClick: () => { navigate("/meus-albuns"); setDrawerOpen(false); }, isActive: location.pathname.startsWith("/meus-albuns"), icon: <Lock size={18} /> },
-      { label: "Carrinho", onClick: () => { navigate("/minha-conta?s=wallet"); setDrawerOpen(false); }, isActive: location.pathname === "/minha-conta" && s === "wallet", icon: <ShoppingBag size={18} /> },
-      { label: "Indique e Ganhe", onClick: () => { navigate("/minha-conta?s=affiliate"); setDrawerOpen(false); }, isActive: location.pathname === "/minha-conta" && s === "affiliate", icon: <Users size={18} /> },
-      { label: "Meus Dados", onClick: () => { navigate("/minha-conta?s=menu"); setDrawerOpen(false); }, isActive: location.pathname === "/minha-conta" && s === "menu", icon: <User size={18} /> },
+      { label: "Minhas Memórias", onClick: () => { setDrawerOpen(false); setTimeout(() => navigate("/minha-conta?s=fotos", { replace: true }), 50); }, isActive: location.pathname === "/minha-conta" && s === "fotos", icon: <ImageIcon size={18} /> },
+      { label: "Meus Álbuns", onClick: () => { setDrawerOpen(false); setTimeout(() => navigate("/meus-albuns", { replace: true }), 50); }, isActive: location.pathname.startsWith("/meus-albuns"), icon: <Lock size={18} /> },
+      { label: "Carrinho", onClick: () => { setDrawerOpen(false); setTimeout(() => navigate("/minha-conta?s=wallet", { replace: true }), 50); }, isActive: location.pathname === "/minha-conta" && s === "wallet", icon: <ShoppingBag size={18} /> },
+      { label: "Indique e Ganhe", onClick: () => { setDrawerOpen(false); setTimeout(() => navigate("/minha-conta?s=affiliate", { replace: true }), 50); }, isActive: location.pathname === "/minha-conta" && s === "affiliate", icon: <Users size={18} /> },
+      { label: "Meus Dados", onClick: () => { setDrawerOpen(false); setTimeout(() => navigate("/minha-conta?s=menu", { replace: true }), 50); }, isActive: location.pathname === "/minha-conta" && s === "menu", icon: <User size={18} /> },
     ];
 
     if ((user?.role === "PROFISSIONAL" || user?.role === "FRANCHISEE") && user?.verificationStatus === "APPROVED") {
       items.push(
         { label: "ÁREA PROFISSIONAL", isHeader: true },
-        { label: "Minha Agenda", onClick: () => { navigate("/minha-conta?s=agenda"); setDrawerOpen(false); }, isActive: location.pathname === "/minha-conta" && s === "agenda", icon: <Play size={18} /> },
-        { label: "Portfólio & Serviços", onClick: () => { navigate("/minha-conta?s=servicos"); setDrawerOpen(false); }, isActive: location.pathname === "/minha-conta" && s === "servicos", icon: <Briefcase size={18} /> },
-        { label: "Vendas & Ganhos", onClick: () => { navigate("/minha-conta?s=financeiro"); setDrawerOpen(false); }, isActive: location.pathname === "/minha-conta" && s === "financeiro", icon: <DollarSign size={18} /> },
-        { label: "Agenda Google", onClick: () => { navigate("/minha-conta?s=calendar"); setDrawerOpen(false); }, isActive: location.pathname === "/minha-conta" && s === "calendar", icon: <Calendar size={18} /> }
+        { label: "Minha Agenda", onClick: () => { setDrawerOpen(false); setTimeout(() => navigate("/minha-conta?s=agenda", { replace: true }), 50); }, isActive: location.pathname === "/minha-conta" && s === "agenda", icon: <Play size={18} /> },
+        { label: "Portfólio & Serviços", onClick: () => { setDrawerOpen(false); setTimeout(() => navigate("/minha-conta?s=servicos", { replace: true }), 50); }, isActive: location.pathname === "/minha-conta" && s === "servicos", icon: <Briefcase size={18} /> },
+        { label: "Vendas & Ganhos", onClick: () => { setDrawerOpen(false); setTimeout(() => navigate("/minha-conta?s=financeiro", { replace: true }), 50); }, isActive: location.pathname === "/minha-conta" && s === "financeiro", icon: <DollarSign size={18} /> },
+        { label: "Agenda Google", onClick: () => { setDrawerOpen(false); setTimeout(() => navigate("/minha-conta?s=calendar", { replace: true }), 50); }, isActive: location.pathname === "/minha-conta" && s === "calendar", icon: <Calendar size={18} /> }
       );
 
       if (user?.role === "FRANCHISEE" || user?.franchiseProfile) {
         if (user?.role === "FRANCHISEE") {
           items.push(
-            { label: "Gestão de Franquia", onClick: () => { navigate("/franquia"); setDrawerOpen(false); }, isActive: location.pathname === "/franquia", icon: <LayoutDashboard size={18} /> }
+            { label: "Gestão de Franquia", onClick: () => { setDrawerOpen(false); setTimeout(() => navigate("/franquia", { replace: true }), 50); }, isActive: location.pathname === "/franquia", icon: <LayoutDashboard size={18} /> }
           );
         }
         items.push(
-          { label: "Rede Técnica", onClick: () => { navigate("/minha-conta?s=equipe"); setDrawerOpen(false); }, isActive: location.pathname === "/minha-conta" && s === "equipe", icon: <Users size={18} /> },
-          { label: "Franquia Print", onClick: () => { navigate("/minha-conta?s=franquia"); setDrawerOpen(false); }, isActive: location.pathname === "/minha-conta" && s === "franquia", icon: <Printer size={18} /> }
+          { label: "Rede Técnica", onClick: () => { setDrawerOpen(false); setTimeout(() => navigate("/minha-conta?s=equipe", { replace: true }), 50); }, isActive: location.pathname === "/minha-conta" && s === "equipe", icon: <Users size={18} /> },
+          { label: "Franquia Print", onClick: () => { setDrawerOpen(false); setTimeout(() => navigate("/minha-conta?s=franquia", { replace: true }), 50); }, isActive: location.pathname === "/minha-conta" && s === "franquia", icon: <Printer size={18} /> }
         );
       }
     }
@@ -61,19 +61,19 @@ export const BottomNav: React.FC = () => {
     if ((user?.role === "CARTORIO" || user?.role === "UNIDADE") && user?.verificationStatus === "APPROVED") {
       items.push(
         { label: "ÁREA DA UNIDADE", isHeader: true },
-        { label: "Agenda Unidade", onClick: () => { navigate("/minha-conta?s=agenda"); setDrawerOpen(false); }, isActive: location.pathname === "/minha-conta" && s === "agenda", icon: <Play size={18} /> },
-        { label: "Fluxo Financeiro", onClick: () => { navigate("/minha-conta?s=financeiro"); setDrawerOpen(false); }, isActive: location.pathname === "/minha-conta" && s === "financeiro", icon: <DollarSign size={18} /> },
-        { label: "Rede Técnica", onClick: () => { navigate("/minha-conta?s=equipe"); setDrawerOpen(false); }, isActive: location.pathname === "/minha-conta" && s === "equipe", icon: <Users size={18} /> },
-        { label: "Google Calendar", onClick: () => { navigate("/minha-conta?s=calendar"); setDrawerOpen(false); }, isActive: location.pathname === "/minha-conta" && s === "calendar", icon: <Calendar size={18} /> },
-        { label: "Franquia Print", onClick: () => { navigate("/minha-conta?s=franquia"); setDrawerOpen(false); }, isActive: location.pathname === "/minha-conta" && s === "franquia", icon: <Printer size={18} /> },
-        { label: "Configuração Pública", onClick: () => { navigate("/minha-conta?s=configuracoes"); setDrawerOpen(false); }, isActive: location.pathname === "/minha-conta" && s === "configuracoes", icon: <Settings size={18} /> }
+        { label: "Agenda Unidade", onClick: () => { setDrawerOpen(false); setTimeout(() => navigate("/minha-conta?s=agenda", { replace: true }), 50); }, isActive: location.pathname === "/minha-conta" && s === "agenda", icon: <Play size={18} /> },
+        { label: "Fluxo Financeiro", onClick: () => { setDrawerOpen(false); setTimeout(() => navigate("/minha-conta?s=financeiro", { replace: true }), 50); }, isActive: location.pathname === "/minha-conta" && s === "financeiro", icon: <DollarSign size={18} /> },
+        { label: "Rede Técnica", onClick: () => { setDrawerOpen(false); setTimeout(() => navigate("/minha-conta?s=equipe", { replace: true }), 50); }, isActive: location.pathname === "/minha-conta" && s === "equipe", icon: <Users size={18} /> },
+        { label: "Google Calendar", onClick: () => { setDrawerOpen(false); setTimeout(() => navigate("/minha-conta?s=calendar", { replace: true }), 50); }, isActive: location.pathname === "/minha-conta" && s === "calendar", icon: <Calendar size={18} /> },
+        { label: "Franquia Print", onClick: () => { setDrawerOpen(false); setTimeout(() => navigate("/minha-conta?s=franquia", { replace: true }), 50); }, isActive: location.pathname === "/minha-conta" && s === "franquia", icon: <Printer size={18} /> },
+        { label: "Configuração Pública", onClick: () => { setDrawerOpen(false); setTimeout(() => navigate("/minha-conta?s=configuracoes", { replace: true }), 50); }, isActive: location.pathname === "/minha-conta" && s === "configuracoes", icon: <Settings size={18} /> }
       );
     }
 
     if (user?.role === "ADMIN") {
       items.push(
         { label: "ADMINISTRAÇÃO", isHeader: true },
-        { label: "Painel Central", onClick: () => { navigate("/admin"); setDrawerOpen(false); }, isActive: location.pathname.startsWith("/admin"), icon: <Settings size={18} /> }
+        { label: "Painel Central", onClick: () => { setDrawerOpen(false); setTimeout(() => navigate("/admin", { replace: true }), 50); }, isActive: location.pathname.startsWith("/admin"), icon: <Settings size={18} /> }
       );
     }
 
@@ -86,7 +86,7 @@ export const BottomNav: React.FC = () => {
     <>
       <div className="md:hidden fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md bg-[var(--bg)]/80 backdrop-blur-xl border-t border-theme-border/10 z-[100] px-3 py-3 flex items-center justify-around pb-safe">
         <button 
-          onClick={() => navigate("/")}
+          onClick={() => navigate("/", { replace: true })}
           className={`flex flex-col items-center gap-1 transition-colors ${isActive("/") ? "text-emerald-500" : "text-[var(--text)]/40"}`}
         >
           <Home size={20} strokeWidth={1.5} />
@@ -96,7 +96,7 @@ export const BottomNav: React.FC = () => {
         <button 
           onClick={() => {
             if (location.pathname !== "/") {
-              navigate("/");
+              navigate("/", { replace: true });
               setTimeout(() => {
                 window.scrollTo({ top: 0, behavior: "smooth" });
                 document.getElementById("mobile-search-input")?.focus();
@@ -113,7 +113,7 @@ export const BottomNav: React.FC = () => {
         </button>
 
         <button 
-          onClick={() => navigate("/minha-conta?s=wallet")}
+          onClick={() => navigate("/minha-conta?s=wallet", { replace: true })}
           className={`flex flex-col items-center gap-1 transition-colors ${location.pathname === "/minha-conta" && (s === "wallet" || s === "pedidos") ? "text-emerald-500" : "text-[var(--text)]/40"}`}
         >
           <ShoppingBag size={20} strokeWidth={1.5} />
@@ -121,7 +121,7 @@ export const BottomNav: React.FC = () => {
         </button>
 
         <button 
-          onClick={() => navigate("/meus-albuns")}
+          onClick={() => navigate("/meus-albuns", { replace: true })}
           className={`flex flex-col items-center gap-1 transition-colors ${location.pathname.startsWith("/meus-albuns") ? "text-emerald-500" : "text-[var(--text)]/40"}`}
         >
           <Image size={20} strokeWidth={1.5} />

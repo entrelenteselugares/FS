@@ -203,7 +203,7 @@ function NewVaultModal({ onClose, onCreated }: { onClose: () => void; onCreated:
 
 export default function VaultsPage() {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const [vaults, setVaults] = useState<Vault[]>([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
@@ -220,9 +220,13 @@ export default function VaultsPage() {
   };
 
   useEffect(() => {
-    if (!user) { navigate("/login"); return; }
+    // Wait for auth context to finish loading before deciding to redirect.
+    // Without this guard, user=null during the brief auth initialization
+    // causes a premature redirect to /login (the intermittent blank-screen bug).
+    if (authLoading) return;
+    if (!user) { navigate("/login", { replace: true }); return; }
     fetchVaults();
-  }, [user, navigate]);
+  }, [authLoading, user, navigate]);
 
   const NAV_ITEMS = useMemo(() => {
     const items: Array<{ label: string; onClick?: () => void; isActive?: boolean; icon?: React.ReactNode; isHeader?: boolean }> = [
@@ -266,6 +270,15 @@ export default function VaultsPage() {
 
     return items;
   }, [user, navigate]);
+
+  // Show spinner while auth context is initializing to avoid blank-screen flash
+  if (authLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 size={32} className="animate-spin text-brand-tactical" />
+      </div>
+    );
+  }
 
   return (
     <DashboardLayout title="Meus Álbuns" navItems={NAV_ITEMS}>

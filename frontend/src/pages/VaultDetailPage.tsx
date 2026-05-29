@@ -53,7 +53,7 @@ interface Vault {
 export default function VaultDetailPage() {
   const { vaultId } = useParams();
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   
   const [vault, setVault] = useState<Vault | null>(null);
   const [media, setMedia] = useState<Media[]>([]);
@@ -229,7 +229,11 @@ export default function VaultDetailPage() {
   };
 
   useEffect(() => {
-    if (!user) { navigate("/login"); return; }
+    // Wait for auth context to finish loading before deciding to redirect.
+    // Without this guard, user=null during brief auth initialization causes
+    // a premature redirect to /login (intermittent blank-screen bug).
+    if (authLoading) return;
+    if (!user) { navigate("/login", { replace: true }); return; }
     fetchVaultDetails();
     
     // Check for success redirect from MP or URL actions
@@ -250,7 +254,7 @@ export default function VaultDetailPage() {
       const newQuery = params.toString();
       window.history.replaceState({}, document.title, `${window.location.pathname}${newQuery ? `?${newQuery}` : ''}`);
     }
-  }, [user, navigate, fetchVaultDetails]);
+  }, [authLoading, user, navigate, fetchVaultDetails]);
 
   const sortedMedia = useMemo(() => {
     return [...media].sort((a, b) => {
@@ -391,7 +395,8 @@ export default function VaultDetailPage() {
     }
   };
 
-  if (loading) {
+  // Spinner while auth or vault data is loading
+  if (authLoading || loading) {
     return (
       <div className="min-h-screen flex items-center justify-center" style={{ background: T.bg }}>
         <Loader2 className="animate-spin text-emerald-500" size={32} />
