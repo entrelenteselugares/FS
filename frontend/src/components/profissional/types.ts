@@ -30,6 +30,7 @@ export interface EventItem {
   references: string[];
   isPrivate: boolean;
   active: boolean;
+  description: string | null;
   _count: { pedidos: number };
 }
 

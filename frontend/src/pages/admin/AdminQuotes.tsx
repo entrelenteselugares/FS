@@ -168,7 +168,11 @@ export const AdminQuotes: React.FC = () => {
   const handleCreateNewQuote = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await API.post("/admin/quotes",{...newQuoteData,usageType:"VENDA_DIRETA",quoteStatus:"PENDING"});
+      const payload = { ...newQuoteData, usageType: "VENDA_DIRETA", quoteStatus: "PENDING" };
+      if (payload.dataEvento) {
+        payload.dataEvento = new Date(payload.dataEvento).toISOString();
+      }
+      await API.post("/admin/quotes", payload);
       setIsNewQuoteModalOpen(false);
       setNewQuoteData({title:"",clientName:"",clientEmail:"",clientPhone:"",dataEvento:"",location:"",description:"",category:"CASAMENTO",priceBase:190,urgency:"MEDIUM",temFoto:true,temVideo:false,temReels:false});
       fetchQuotes(); setNotification({message:"Novo lead cadastrado!",type:"success"});

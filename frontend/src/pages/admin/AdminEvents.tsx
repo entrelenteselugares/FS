@@ -207,11 +207,16 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
     setIsUploading(true);
     try {
       let event;
+      const payload = { ...formData };
+      if (payload.date) {
+        payload.date = new Date(payload.date).toISOString();
+      }
+
       if (editingEvent) {
-        const { data } = await API.patch(`/admin/events/${editingEvent.id}`, formData);
+        const { data } = await API.patch(`/admin/events/${editingEvent.id}`, payload);
         event = data;
       } else {
-        const { data } = await API.post("/admin/events", formData);
+        const { data } = await API.post("/admin/events", payload);
         event = data;
       }
       

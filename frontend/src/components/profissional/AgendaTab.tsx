@@ -133,6 +133,17 @@ export function AgendaTab({
                         CHAMADA ABERTA
                       </div>
                     </div>
+
+                    {(ev.description || ev.itinerary) && (
+                      <div className="space-y-1.5 pt-1">
+                        {ev.description && (
+                          <p className="text-xs text-theme-text/80 line-clamp-2 whitespace-pre-line leading-relaxed">{ev.description}</p>
+                        )}
+                        {ev.itinerary && (
+                          <p className="text-xs text-theme-text/70 line-clamp-2"><strong className="text-theme-text/90 uppercase tracking-wider text-[10px]">Observações:</strong> {ev.itinerary}</p>
+                        )}
+                      </div>
+                    )}
                     
                     <div className="flex flex-wrap gap-5 items-center">
                       <div className="flex gap-4 text-[9px] text-theme-muted font-black uppercase tracking-widest">
@@ -218,6 +229,17 @@ export function AgendaTab({
                           {ev.captacaoStatus === "ACCEPTED" ? "CONFIRMADO" : "PENDENTE"}
                         </div>
                       </div>
+
+                      {(ev.description || ev.itinerary) && (
+                        <div className="space-y-1.5 pt-1">
+                          {ev.description && (
+                            <p className="text-xs text-theme-text/80 line-clamp-2 whitespace-pre-line leading-relaxed">{ev.description}</p>
+                          )}
+                          {ev.itinerary && (
+                            <p className="text-xs text-theme-text/70 line-clamp-2"><strong className="text-theme-text/90 uppercase tracking-wider text-[10px]">Observações:</strong> {ev.itinerary}</p>
+                          )}
+                        </div>
+                      )}
                       
                       <div className="flex flex-wrap gap-5 items-center">
                         <div className="flex gap-2.5">
