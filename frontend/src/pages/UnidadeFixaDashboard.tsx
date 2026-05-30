@@ -161,6 +161,7 @@ export default function UnidadeFixaDashboard({
     sun: { open: "00:00", close: "00:00", closed: true },
    });
    const [disabledServices, setDisabledServices] = useState<string[]>([]);
+   const [eventTypes, setEventTypes] = useState<string[]>([]);
    const [savingLp, setSavingLp] = useState(false);
   const [savingPix, setSavingPix] = useState(false);
   const [qrModalEvent, setQrModalEvent] = useState<EventoAgenda | null>(null);
@@ -221,6 +222,7 @@ export default function UnidadeFixaDashboard({
         setLpFixedTime(statsData.cartorio.fixedTime || false);
          setLpHideDuration(statsData.cartorio.hideDuration || false);
          setDisabledServices(statsData.cartorio.disabledServices || []);
+         setEventTypes(statsData.cartorio.eventTypes || []);
          if (statsData.cartorio.workingHours) setWorkingHours(statsData.cartorio.workingHours);
         setLocalPrices(statsData.cartorio.servicePrices || {});
         setPixKey(statsData.pixKey ?? "");
@@ -308,7 +310,8 @@ export default function UnidadeFixaDashboard({
      try {
        await API.patch("/unidade-fixa/profile", { 
          servicePrices: localPrices,
-         disabledServices 
+         disabledServices,
+         eventTypes
        });
        setSuccess("Tabela de preços e catálogo atualizados! 🏷️");
       setTimeout(() => setSuccess(""), 3000);
@@ -1020,6 +1023,44 @@ export default function UnidadeFixaDashboard({
                     </div>
                   );
                 })}
+              </div>
+
+              <div className="space-y-6 mt-10">
+                <div className="flex items-center gap-6">
+                  <h4 className="text-[11px] font-black text-theme-text uppercase tracking-[0.6em] italic whitespace-nowrap">Tipos de Eventos Suportados</h4>
+                  <div className="h-px w-full bg-gradient-to-r from-theme-border/60 to-transparent" />
+                </div>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  {[
+                    { id: "CASAMENTO", label: "CASAMENTO" },
+                    { id: "ANIVERSARIO", label: "ANIVERSÁRIO" },
+                    { id: "SHOW_FESTIVAL", label: "SHOW / FESTIVAL" },
+                    { id: "CORPORATIVO", label: "CORPORATIVO" },
+                    { id: "FORMATURA", label: "FORMATURA" },
+                    { id: "ENSAIO", label: "ENSAIO" },
+                    { id: "BAILE_FESTA", label: "BAILE / FESTA" },
+                    { id: "CONFRATERNIZACAO", label: "CONFRATERNIZAÇÃO" },
+                    { id: "CHURRASCO_BUFFET", label: "CHURRASCO / BUFFET" },
+                    { id: "OUTROS", label: "OUTROS" }
+                  ].map(type => {
+                    const isSelected = eventTypes.includes(type.id);
+                    return (
+                      <button
+                        key={type.id}
+                        onClick={() => {
+                          if (isSelected) setEventTypes(prev => prev.filter(t => t !== type.id));
+                          else setEventTypes(prev => [...prev, type.id]);
+                        }}
+                        className={`p-4 border transition-all text-left flex items-center justify-between group ${isSelected ? 'border-brand-tactical bg-brand-tactical/10' : 'border-theme-border bg-theme-bg hover:bg-theme-bg-muted/50'}`}
+                      >
+                        <span className={`text-[10px] font-black uppercase tracking-widest ${isSelected ? 'text-brand-tactical' : 'text-theme-text'}`}>{type.label}</span>
+                        <div className={`w-4 h-4 border flex items-center justify-center ${isSelected ? 'border-brand-tactical bg-brand-tactical' : 'border-theme-border'}`}>
+                          {isSelected && <Check size={10} className="text-brand-text" />}
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
 
               <div className="flex justify-end pt-4">

@@ -62,6 +62,7 @@ interface Partner {
   hideDuration?: boolean;
   workingHours?: WorkingHours;
   disabledServices?: string[];
+  eventTypes?: string[];
 }
 
 interface UserProfile {
@@ -339,16 +340,7 @@ export const QuotePage = () => {
   const [attendees, setAttendees] = useState<string>("0");
   const [locationType, setLocationType] = useState<"PARTNER" | "OTHER">("PARTNER");
   const [usageType, setUsageType] = useState<"PESSOAL" | "EMPRESARIAL">("PESSOAL");
-  const [workflowPref, setWorkflowPref] = useState<string[]>(["TRADICIONAL"]);
-  const toggleWorkflow = (pref: string) => {
-    setWorkflowPref(prev => {
-      if (prev.includes(pref)) {
-        if (prev.length === 1) return prev; // Mantém pelo menos um selecionado
-        return prev.filter(p => p !== pref);
-      }
-      return [...prev, pref];
-    });
-  };
+  const [workflowPref, setWorkflowPref] = useState<string>("TRADICIONAL");
   const [selectedPartnerId, setSelectedPartnerId] = useState("");
   const currentPartner = useMemo(() => partners.find(p => p.id === selectedPartnerId), [partners, selectedPartnerId]);
 
@@ -517,7 +509,7 @@ export const QuotePage = () => {
       eventDate, eventHours, eventDays, description, selectedServices, totalPrice, 
       availableBudget,
       preferredProfessionalId,
-      workflowPref: workflowPref.join(" + "),
+      workflowPref,
       status: "PENDING"
     };
 
@@ -686,22 +678,27 @@ export const QuotePage = () => {
               </div>
 
               {/* Tipo de Evento */}
-              <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 12 }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
                 <label style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", color: THEME.text }}>02. Tipo de Evento</label>
-                <select 
-                  required 
-                  value={category} 
-                  onChange={e => setCategory(e.target.value)} 
-                  className="fs-input" 
-                  style={{ width: "100%" }}
-                >
-                  <option value="CASAMENTO">CASAMENTO</option>
-                  <option value="ANIVERSARIO">ANIVERSÁRIO</option>
-                  <option value="SHOW_FESTIVAL">SHOW / FESTIVAL</option>
-                  <option value="CORPORATIVO">EVENTO CORPORATIVO</option>
-                  <option value="FORMATURA">FORMATURA</option>
-                  <option value="ENSAIO">ENSAIO FOTOGRÁFICO</option>
-                  <option value="OUTROS">OUTROS</option>
+                <select value={category} onChange={e => setCategory(e.target.value)} className="fs-input" style={{ width: "100%", paddingLeft: 46 }}>
+                  {locationType === "PARTNER" && currentPartner?.eventTypes?.length ? (
+                    currentPartner.eventTypes.map(type => (
+                      <option key={type} value={type}>{type}</option>
+                    ))
+                  ) : (
+                    <>
+                      <option value="CASAMENTO">CASAMENTO</option>
+                      <option value="ANIVERSARIO">ANIVERSÁRIO</option>
+                      <option value="SHOW_FESTIVAL">SHOW / FESTIVAL</option>
+                      <option value="CORPORATIVO">EVENTO CORPORATIVO</option>
+                      <option value="FORMATURA">FORMATURA</option>
+                      <option value="ENSAIO">ENSAIO FOTOGRÁFICO</option>
+                      <option value="BAILE_FESTA">BAILE / FESTA</option>
+                      <option value="CONFRATERNIZACAO">CONFRATERNIZAÇÃO</option>
+                      <option value="CHURRASCO_BUFFET">CHURRASCO / BUFFET</option>
+                      <option value="OUTROS">OUTROS</option>
+                    </>
+                  )}
                 </select>
               </div>
 
@@ -835,23 +832,23 @@ export const QuotePage = () => {
                     <div style={{ display: "flex", gap: 10 }}>
                       <button 
                         type="button" 
-                        onClick={() => toggleWorkflow("MOBILE")} 
+                        onClick={() => setWorkflowPref("MOBILE")} 
                         style={{ 
                           flex: 1, minHeight: 52, padding: "0 12px", fontSize: 10, fontWeight: 800, 
-                          border: `1px solid ${workflowPref.includes("MOBILE") ? THEME.accent : THEME.border}`, 
-                          background: workflowPref.includes("MOBILE") ? `${THEME.accent}10` : "transparent", 
-                          color: workflowPref.includes("MOBILE") ? THEME.accent : THEME.text2, 
+                          border: `1px solid ${workflowPref === "MOBILE" ? THEME.accent : THEME.border}`, 
+                          background: workflowPref === "MOBILE" ? `${THEME.accent}10` : "transparent", 
+                          color: workflowPref === "MOBILE" ? THEME.accent : THEME.text2, 
                           cursor: "pointer", transition: "all 0.3s ease" 
                         }}
                       >MOBILE MAKER</button>
                       <button 
                         type="button" 
-                        onClick={() => toggleWorkflow("TRADICIONAL")} 
+                        onClick={() => setWorkflowPref("TRADICIONAL")} 
                         style={{ 
                           flex: 1, minHeight: 52, padding: "0 12px", fontSize: 10, fontWeight: 800, 
-                          border: `1px solid ${workflowPref.includes("TRADICIONAL") ? THEME.accent : THEME.border}`, 
-                          background: workflowPref.includes("TRADICIONAL") ? `${THEME.accent}10` : "transparent", 
-                          color: workflowPref.includes("TRADICIONAL") ? THEME.accent : THEME.text2, 
+                          border: `1px solid ${workflowPref === "TRADICIONAL" ? THEME.accent : THEME.border}`, 
+                          background: workflowPref === "TRADICIONAL" ? `${THEME.accent}10` : "transparent", 
+                          color: workflowPref === "TRADICIONAL" ? THEME.accent : THEME.text2, 
                           cursor: "pointer", transition: "all 0.3s ease" 
                         }}
                       >TRADICIONAL</button>

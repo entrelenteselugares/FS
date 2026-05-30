@@ -517,6 +517,7 @@ export class EventController {
           hideDuration?: boolean;
           workingHours?: unknown;
           disabledServices?: string[];
+          eventTypes?: string[];
         } | null;
 
         return {
@@ -528,7 +529,8 @@ export class EventController {
           fixedTime: cartorioConfig?.fixedTime ?? false,
           hideDuration: cartorioConfig?.hideDuration ?? false,
           workingHours: cartorioConfig?.workingHours,
-          disabledServices: cartorioConfig?.disabledServices || []
+          disabledServices: cartorioConfig?.disabledServices || [],
+          eventTypes: cartorioConfig?.eventTypes || []
         };
       }));
     } catch (error) {

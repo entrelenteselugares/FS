@@ -308,6 +308,7 @@ model Cartorio {
   disabledServices String[]               @default([])
   workingHours     Json?                  @default("{\"fri\": {\"open\": \"09:00\", \"close\": \"18:00\", \"closed\": false}, \"mon\": {\"open\": \"09:00\", \"close\": \"18:00\", \"closed\": false}, \"sat\": {\"open\": \"09:00\", \"close\": \"12:00\", \"closed\": true}, \"sun\": {\"open\": \"00:00\", \"close\": \"00:00\", \"closed\": true}, \"thu\": {\"open\": \"09:00\", \"close\": \"18:00\", \"closed\": false}, \"tue\": {\"open\": \"09:00\", \"close\": \"18:00\", \"closed\": false}, \"wed\": {\"open\": \"09:00\", \"close\": \"18:00\", \"closed\": false}}")
   services         String[]               @default([])
+  eventTypes       String[]               @default([])
   profissionais    CartorioProfissional[]
   user             User                   @relation(fields: [userId], references: [id])
   quotes           Quote[]

@@ -58,6 +58,7 @@ export async function getPartnerLandingData(req: Request, res: Response): Promis
         coverUrl: partner.coverUrl,
         servicePrices: partner.servicePrices,
         disabledServices: partner.disabledServices || [],
+        eventTypes: partner.eventTypes || [],
         workingHours: partner.workingHours,
         fixedDuration: partner.fixedDuration,
       },
@@ -75,7 +76,7 @@ export async function getPartnerLandingData(req: Request, res: Response): Promis
  */
 export async function updatePartnerProfile(req: AuthRequest, res: Response): Promise<void> {
   const userId = req.user?.userId;
-  const { address, phone, description, coverUrl, slug, pixKey, servicePrices, fixedDuration, fixedTime, hideDuration, workingHours, disabledServices } = req.body;
+  const { address, phone, description, coverUrl, slug, pixKey, servicePrices, fixedDuration, fixedTime, hideDuration, workingHours, disabledServices, eventTypes } = req.body;
 
   try {
     interface CartorioBefore {
@@ -103,6 +104,7 @@ export async function updatePartnerProfile(req: AuthRequest, res: Response): Pro
         ...(hideDuration !== undefined && { hideDuration: Boolean(hideDuration) }),
         ...(workingHours !== undefined && { workingHours }),
         ...(disabledServices !== undefined && { disabledServices }),
+        ...(eventTypes !== undefined && { eventTypes }),
         user: {
           update: {
             ...(pixKey !== undefined && { pixKey })
