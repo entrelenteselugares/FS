@@ -19,5 +19,4 @@ app.use("/api/profissional", professionalRoutes);
 app.use("/api/vaults", vaultRoutes);
 app.use("/api/flash", flashRoutes);
 
-export default app;
 module.exports = app;

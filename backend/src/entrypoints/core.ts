@@ -15,5 +15,4 @@ app.use(express.json());
 // Some routes are already handled by the specialized entrypoints but this guarantees no 404s
 app.use("/api", routes);
 
-export default app;
 module.exports = app;

@@ -18,5 +18,4 @@ app.use(express.json());
 app.use("/api/checkout", checkoutRoutes);
 app.use("/api/webhooks", webhookRoutes);
 
-export default app;
 module.exports = app;
