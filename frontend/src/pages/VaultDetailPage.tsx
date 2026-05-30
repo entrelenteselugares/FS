@@ -363,17 +363,80 @@ export default function VaultDetailPage() {
         continue;
       }
 
-      // 3. Sequential Upload
-      const formData = new FormData();
-      formData.append("file", file);
-
+      // 3. Sequential Direct Upload Architecture
       try {
-        await api.post(`/vaults/${vaultId}/upload`, formData, {
-          onUploadProgress: (pe) => {
-            const subProgress = Math.round((pe.loaded * progressStep) / (pe.total || 1));
-            setUploadProgress(Math.round(progressBase + subProgress));
-          }
+        const isVideo = file.type.startsWith("video/");
+        const originalName = file.name || "arquivo";
+        
+        // Passo 3.1: Pede a URL de upload direto para o Backend
+        const initRes = await api.post(`/vaults/${vaultId}/upload/init`, {
+          fileName: originalName,
+          mimeType: file.type,
+          fileSize: file.size,
+          type: isVideo ? "VIDEO" : "PHOTO"
         });
+
+        const { uploadUrl, finalFileName, publicUrl, storageType } = initRes.data;
+
+        if (!uploadUrl || (uploadUrl.includes('/api/mock/') && storageType !== 'r2')) {
+          // Fallback para ambiente local sem Google Drive configurado
+          const formData = new FormData();
+          formData.append("file", file, finalFileName);
+          await api.post(`/vaults/${vaultId}/upload`, formData, {
+            onUploadProgress: (pe) => {
+              const subProgress = Math.round((pe.loaded * progressStep) / (pe.total || 1));
+              setUploadProgress(Math.round(progressBase + subProgress));
+            }
+          });
+          successCount++;
+          continue;
+        }
+
+        // Passo 3.2: Faz o upload DIRETO para o Storage (Bypassa Vercel)
+        // Usamos XMLHttpRequest nativo para ter barra de progresso sem os interceptors do Axios da nossa API
+        const driveFileId = await new Promise<string>((resolve, reject) => {
+          const xhr = new XMLHttpRequest();
+          xhr.open("PUT", uploadUrl, true);
+          xhr.setRequestHeader("Content-Type", file.type);
+          
+          xhr.upload.onprogress = (pe) => {
+            if (pe.lengthComputable) {
+              const subProgress = Math.round((pe.loaded * progressStep) / pe.total);
+              setUploadProgress(Math.round(progressBase + subProgress));
+            }
+          };
+
+          xhr.onload = () => {
+            if (xhr.status >= 200 && xhr.status < 300) {
+              if (storageType === 'r2') {
+                resolve(finalFileName);
+              } else {
+                // Google Drive retorna os metadados do arquivo em JSON
+                try {
+                  const response = JSON.parse(xhr.responseText);
+                  resolve(response.id);
+                } catch {
+                  resolve(finalFileName);
+                }
+              }
+            } else {
+              reject(new Error(`Falha no Storage HTTP ${xhr.status}: ${xhr.responseText}`));
+            }
+          };
+
+          xhr.onerror = () => reject(new Error("Erro de rede ao conectar no Storage."));
+          xhr.send(file);
+        });
+
+        // Passo 3.3: Confirma com o nosso backend
+        await api.post(`/vaults/${vaultId}/upload/complete`, {
+          key: finalFileName,
+          publicUrl,
+          fileId: driveFileId, // fallback caso precise
+          fileSize: file.size,
+          type: isVideo ? "VIDEO" : "PHOTO"
+        });
+
         successCount++;
       } catch (err: unknown) {
         console.error("[Upload] Falha em", file.name, err);

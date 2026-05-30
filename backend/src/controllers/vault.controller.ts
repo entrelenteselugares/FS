@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import { AuthRequest } from "../lib/auth";
 import { prisma } from "../lib/prisma";
 import { driveService } from "../services/googleDrive.service";
+import { r2Service } from "../services/r2Storage.service";
 import { MercadoPagoService } from "../services/mercadopago.service";
 import { SubscriptionService } from "../services/subscription.service";
 import sharp from "sharp";
@@ -84,6 +85,109 @@ export class VaultController {
   }
 
   /**
+   * (DIRECT UPLOAD ARCHITECTURE)
+   * Passo 1: Inicia a sessão de Resumable Upload com o Google Drive e devolve a URL.
+   */
+  static async initResumableUpload(req: AuthRequest, res: Response) {
+    const albumId = req.params.albumId as string;
+    const userId = req.user?.userId;
+    const { fileName, mimeType, fileSize, originalDate, width, height, type } = req.body;
+
+    if (!userId) return res.status(401).json({ error: "Não autenticado." });
+    if (!fileName || !mimeType) return res.status(400).json({ error: "fileName e mimeType são obrigatórios." });
+
+    try {
+      const album = await prisma.sharedAlbum.findUnique({
+        where: { id: albumId },
+        include: { 
+          members: true,
+          _count: { select: { media: true } }
+        }
+      });
+
+      if (!album) return res.status(404).json({ error: "Cofre não encontrado." });
+      
+      // Regra de Negócio: Impedir upload além do DOBRO da meta
+      if (album._count.media >= album.goalPoses * 2) {
+        return res.status(400).json({ 
+          error: "Cofre cheio!", 
+          details: `Você atingiu o limite máximo de envios (${album.goalPoses * 2} fotos). A materialização é para as melhores ${album.goalPoses} poses.` 
+        });
+      }
+
+      if (!album.folderId) return res.status(400).json({ error: "Infraestrutura de storage não inicializada para este cofre." });
+
+      const isMember = (album as any).members.some((m: any) => m.userId === userId);
+      if (!isMember) return res.status(403).json({ error: "Você não tem permissão para enviar mídias para este cofre." });
+
+      // Gera nome final para evitar colisão
+      const finalFileName = `vaults/${albumId}/${Date.now()}-${fileName.replace(/\s+/g, '_')}`;
+      const { uploadUrl, publicUrl } = await r2Service.createPresignedUploadUrl({
+        key: finalFileName,
+        mimeType
+      });
+
+      return res.json({ uploadUrl, finalFileName, publicUrl, storageType: 'r2' });
+
+    } catch (err: any) {
+      console.error("[VAULT] Erro initResumableUpload:", err);
+      return res.status(500).json({ error: "Falha ao iniciar sessão de upload", details: err.message });
+    }
+  }
+
+  /**
+   * (DIRECT UPLOAD ARCHITECTURE)
+   * Passo 3: Após o cliente subir o arquivo para a URL, ele manda o fileId pra cá 
+   * para salvar no banco de dados.
+   */
+  static async completeResumableUpload(req: AuthRequest, res: Response) {
+    const albumId = req.params.albumId as string;
+    const userId = req.user?.userId;
+    const { key, publicUrl: filePublicUrl, fileSize, width, height, originalDate, type } = req.body;
+
+    if (!userId) return res.status(401).json({ error: "Não autenticado." });
+    if (!key) return res.status(400).json({ error: "key é obrigatório." });
+
+    try {
+      const album = await prisma.sharedAlbum.findUnique({
+        where: { id: albumId },
+        include: { members: true }
+      });
+      if (!album) return res.status(404).json({ error: "Cofre não encontrado." });
+
+      const isMember = (album as any).members.some((m: any) => m.userId === userId);
+      if (!isMember) return res.status(403).json({ error: "Você não tem permissão para este cofre." });
+
+      const memberInfo = (album as any).members.find((m: any) => m.userId === userId);
+
+      // Salva no banco de dados
+      const newMedia = await prisma.sharedAlbumMedia.create({
+        data: {
+          albumId,
+          uploadedById: memberInfo.id,
+          fileId: key,                        // key do R2 em vez de fileId do Drive
+          webViewLink: filePublicUrl,          // URL pública do R2
+          thumbnailLink: filePublicUrl,        // Sem thumbnail automático; usa a própria URL
+          status: album.ownerId === userId ? 'APPROVED' : 'PENDING',
+          type: type || 'PHOTO', // frontend must send type
+
+          fileSize: fileSize || null,
+          width: width || null,
+          height: height || null,
+          originalDate: originalDate ? new Date(originalDate) : null,
+        },
+        include: { uploadedBy: true, _count: { select: { votes: true } } }
+      });
+
+      return res.status(201).json(newMedia);
+    } catch (err: any) {
+      console.error("[VAULT] Erro completeResumableUpload:", err);
+      return res.status(500).json({ error: "Falha ao finalizar upload", details: err.message });
+    }
+  }
+
+  /**
+   * (LEGADO - NÃO USAR PARA ARQUIVOS GRANDES EM VERCEL)
    * Realiza o upload de mídias para o cofre, salvando metadados e thumbnailLink.
    */
   static async uploadMedia(req: AuthRequest, res: Response) {
@@ -93,6 +197,8 @@ export class VaultController {
 
     if (!userId) return res.status(401).json({ error: "Não autenticado." });
     if (!file) return res.status(400).json({ error: "Nenhum arquivo enviado." });
+
+    let uploadFilePath = file.path;
 
     try {
       // Validar existência do cofre e permissão do membro
@@ -122,7 +228,6 @@ export class VaultController {
       // 1. Otimização & Upload para o Cold Storage
       const fileName = `${Date.now()}-${file.originalname.replace(/\s+/g, '_')}`;
       
-      let uploadBuffer = file.buffer;
       let finalMimeType = file.mimetype;
       let finalFileName = fileName;
       
@@ -131,15 +236,18 @@ export class VaultController {
       let originalDate: Date | null = null;
       const fileSize = file.size;
 
+      const fs = require('fs');
+      const path = require('path');
+
       if (file.mimetype.startsWith('image/')) {
         try {
-          // Extração de Metadados via Sharp & EXIFR
-          const metadata = await sharp(file.buffer).metadata();
+          // Extração de Metadados via Sharp & EXIFR a partir do disco
+          const metadata = await sharp(uploadFilePath).metadata();
           imageWidth = metadata.width || null;
           imageHeight = metadata.height || null;
           
           try {
-            const exifData = await exifr.parse(file.buffer);
+            const exifData = await exifr.parse(uploadFilePath);
             if (exifData && exifData.DateTimeOriginal) {
               originalDate = new Date(exifData.DateTimeOriginal);
             }
@@ -147,13 +255,21 @@ export class VaultController {
             console.warn("[VAULT] Falha ao extrair EXIF via exifr:", (exifErr as Error).message);
           }
 
-          uploadBuffer = await sharp(file.buffer)
+          const resizedBuffer = await sharp(uploadFilePath)
             .resize(2000, 2000, { fit: 'inside', withoutEnlargement: true })
             .jpeg({ quality: 80 })
             .toBuffer();
+          
           finalMimeType = 'image/jpeg';
           finalFileName = fileName.replace(/\.[^/.]+$/, "") + ".jpeg";
-          console.log(`[VAULT] Imagem comprimida de ${file.size} para ${uploadBuffer.length} bytes.`);
+          
+          // Grava a versão comprimida por cima no disco para não deixar na RAM
+          const os = require('os');
+          const tempResized = path.join(os.tmpdir(), `resized_${finalFileName}`);
+          fs.writeFileSync(tempResized, resizedBuffer);
+          uploadFilePath = tempResized; // Atualiza a variável monitorada pelo finally
+
+          console.log(`[VAULT] Imagem comprimida de ${file.size} para ${resizedBuffer.length} bytes.`);
         } catch (sharpError) {
           console.warn("[VAULT] Falha na compressão Sharp, enviando original:", sharpError);
         }
@@ -162,7 +278,7 @@ export class VaultController {
       const driveFile = await driveService.uploadMedia({
         folderId: album.folderId,
         fileName: finalFileName,
-        buffer: uploadBuffer,
+        filePath: uploadFilePath,
         mimeType: finalMimeType
       });
 
@@ -216,6 +332,15 @@ export class VaultController {
         details: error.message || "Erro interno na comunicação com o Drive.",
         googleError: error.response?.data || null
       });
+    } finally {
+      // GARANTIA ABSOLUTA DE LIMPEZA DE DISCO (PREVENÇÃO OOM)
+      const fs = require('fs');
+      try {
+        if (uploadFilePath && fs.existsSync(uploadFilePath)) fs.unlinkSync(uploadFilePath);
+        if (file && file.path && fs.existsSync(file.path) && uploadFilePath !== file.path) fs.unlinkSync(file.path);
+      } catch (e) {
+        console.warn("[VAULT] Erro ignorado durante a limpeza de tmp files:", e);
+      }
     }
   }
 
