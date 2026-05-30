@@ -153,8 +153,7 @@ export const AdminFinance: React.FC = () => {
         
         <div className="flex flex-col xl:flex-row justify-between items-start xl:items-end gap-6 relative z-10">
           <div>
-            <h1 className="text-3xl md:text-4xl font-black uppercase tracking-tight text-theme-text">Finanças</h1>
-            <p className="text-theme-muted mt-2 text-sm">Controle financeiro, repasses e DRE</p>
+                        <p className="text-theme-muted mt-2 text-sm">Controle financeiro, repasses e DRE</p>
           </div>
           
           <div className="flex flex-wrap bg-theme-bg-muted p-1.5 border border-theme-border rounded-sm w-full xl:w-auto">

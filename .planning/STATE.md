@@ -84,6 +84,6 @@ Last activity: 2026-05-24 — Shipped Milestone v13.0 Scale & Optimization.
 
 - Phase 55: Advanced Marketplace Analytics
 
-| 2026-05-22 | fast | Remover os grandes t�tulos redundantes do topo das p�ginas do dashboard | ? |
-| 2026-05-22 | fast | Corrigir nome e redirecionamento das ordens de cofre na �rea do Cliente | ? |
-| 2026-05-22 | fast | Ocultar menu Profissional/Unidade at� aprova��o do cadastro | ? |
+| 2026-05-22 | fast | Remover os grandes títulos redundantes do topo das páginas do dashboard | x |
+| 2026-05-22 | fast | Corrigir nome e redirecionamento das ordens de cofre na área do Cliente | x |
+| 2026-05-22 | fast | Ocultar menu Profissional/Unidade até aprovação do cadastro | x |

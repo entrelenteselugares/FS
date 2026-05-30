@@ -136,8 +136,7 @@ export const AdminServices: React.FC = () => {
       {/* HEADER */}
       <div className="flex flex-col lg:flex-row lg:items-center justify-between border-b border-theme-border pb-10 gap-6">
         <div>
-          <h1 className="text-3xl md:text-4xl font-black uppercase tracking-tight text-theme-text">Serviços e Tabela Base</h1>
-          <p className="text-theme-muted mt-2 text-sm">Gestão de catálogo, portfólio de serviços e aprovações</p>
+                    <p className="text-theme-muted mt-2 text-sm">Gestão de catálogo, portfólio de serviços e aprovações</p>
         </div>
         <button onClick={() => setIsModalOpen(true)} className="px-8 py-4 bg-brand-tactical text-[var(--brand-text)] text-[9px] font-black uppercase tracking-[0.4em] shadow-xl hover:brightness-110 transition-all flex items-center gap-3 italic">
           <Plus size={14} /> ADICIONAR SERVIÇO

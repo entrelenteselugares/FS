@@ -164,8 +164,7 @@ export default function AdminSuppliers() {
       {/* HEADER MASTER */}
       <div className="flex flex-col lg:flex-row lg:items-center justify-between border-b border-theme-border pb-10 gap-6">
         <div>
-          <h1 className="text-3xl md:text-4xl font-black uppercase tracking-tight text-theme-text">Impressão & Hardware</h1>
-          <p className="text-theme-muted mt-2 text-sm">Fila de produção, ROI de equipamentos e fornecedores</p>
+                    <p className="text-theme-muted mt-2 text-sm">Fila de produção, ROI de equipamentos e fornecedores</p>
         </div>
         
         <div className="grid grid-cols-3 md:flex bg-theme-bg border border-theme-border/60 p-1.5 shadow-sm italic gap-1 rounded-2xl">

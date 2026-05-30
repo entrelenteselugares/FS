@@ -824,7 +824,7 @@ export default function ClienteArea() {
             <PedidoDetalhe
               pedido={selected}
               loading={loadingDetalhe}
-              onGoToEvent={() => navigate(getEventUrl(selected.event))}
+              onGoToEvent={() => navigate(getEventUrl(selected))}
               onChangePrivacy={() => setIsPrivacyModalOpen(true)}
               onRefresh={fetchPedidos}
             />
