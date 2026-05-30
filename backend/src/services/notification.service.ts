@@ -450,7 +450,7 @@ export class NotificationService {
     `;
 
     try {
-      await this.transporter.sendMail({
+      await this.getTransporter().sendMail({
         from: `"Foto Segundo" <${process.env.SMTP_USER}>`,
         to: data.to,
         subject: `Evento Encerrado: ${data.eventTitle}`,
@@ -546,7 +546,7 @@ export class NotificationService {
       `;
 
       try {
-        await this.transporter.sendMail({
+        await this.getTransporter().sendMail({
           from: `"Foto Segundo" <${process.env.SMTP_USER}>`,
           to: data.to,
           subject: `${data.userName} adicionou você à rede de parcerias! ✨`,
@@ -607,7 +607,7 @@ export class NotificationService {
       `;
 
       try {
-        await this.transporter.sendMail({
+        await this.getTransporter().sendMail({
           from: `"Foto Segundo" <${process.env.SMTP_USER}>`,
           to: data.franchiseeEmail,
           subject: `NOVO PEDIDO DE IMPRESSÃO: ${data.customerName} 🖨️`,
@@ -645,7 +645,7 @@ export class NotificationService {
       `;
 
       try {
-        await this.transporter.sendMail({
+        await this.getTransporter().sendMail({
           from: `"Foto Segundo" <${process.env.SMTP_USER}>`,
           to: process.env.ADMIN_EMAIL || "contatofotosegundo@gmail.com",
           subject: `NOVO PEDIDO MATRIZ: ${data.customerName} 🏢`,

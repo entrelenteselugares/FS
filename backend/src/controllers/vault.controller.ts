@@ -457,7 +457,7 @@ export class VaultController {
    * e redireciona os usuários reais para a aplicação.
    */
   static async sharePreview(req: Request, res: Response) {
-    const code = req.params.code;
+    const code = req.params.code as string;
     
     try {
       const link = await prisma.accessLink.findUnique({
@@ -869,38 +869,23 @@ export class VaultController {
           let fileName = "";
           if (media.webViewLink) {
             fileName = media.webViewLink.substring(media.webViewLink.lastIndexOf('/') + 1);
+          } else {
+            fileName = media.fileId + (media.type === "VIDEO" ? ".mp4" : ".jpeg");
           }
-          if (!fileName) fileName = `${media.id}.jpg`;
-          // Garantir extensão
-          if (!fileName.includes('.')) fileName += media.type === 'VIDEO' ? '.mp4' : '.jpg';
 
-          const fs = require('fs');
-          const path = require('path');
-          
           if (media.fileId.startsWith("mock-file-")) {
-            const uploadDir = path.join(process.cwd(), 'uploads', 'vaults');
-            const filePath = path.join(uploadDir, fileName || media.fileId);
+            const fs = require('fs');
+            const path = require('path');
+            const filePath = path.join(process.cwd(), 'uploads', 'vaults', fileName);
             if (fs.existsSync(filePath)) {
               archive.append(fs.createReadStream(filePath), { name: fileName });
-              return;
             }
-          }
-
-          try {
-            // Baixar stream do Google Drive
+          } else {
             const driveRes = await driveService.getMediaStream(media.fileId);
             archive.append(driveRes.data as any, { name: fileName });
-          } catch (driveErr) {
-            // Fallback para arquivo local se falhar a conexão com o Google Drive ou se estiver em MOCK
-            const fallbackPath = path.join(process.cwd(), 'uploads', 'vaults', fileName);
-            if (fs.existsSync(fallbackPath)) {
-              archive.append(fs.createReadStream(fallbackPath), { name: fileName });
-            } else {
-              throw driveErr;
-            }
           }
         } catch (err) {
-          console.error(`[DOWNLOAD ALL] Erro ao baixar foto ${media.fileId}:`, err);
+          console.error(`[DOWNLOAD ALL] Erro ao adicionar mídia ${media.id} ao ZIP:`, err);
         }
       };
 
@@ -1023,7 +1008,8 @@ export class VaultController {
    * Atualiza o status de aprovação de uma mídia (Apenas Proprietário)
    */
   static async rotateMedia(req: AuthRequest, res: Response) {
-    const { albumId, mediaId } = req.params;
+    const albumId = req.params.albumId as string;
+    const mediaId = req.params.mediaId as string;
     const { direction } = req.body; // 'LEFT' ou 'RIGHT'
     const userId = req.user?.userId;
 

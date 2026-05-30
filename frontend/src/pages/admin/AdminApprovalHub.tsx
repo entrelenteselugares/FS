@@ -74,14 +74,9 @@ export const AdminApprovalHub: React.FC = () => {
         <div className="absolute -top-10 -left-10 w-40 h-40 bg-brand-tactical/5 blur-3xl rounded-full" />
         
         <div className="flex flex-col xl:flex-row justify-between items-start xl:items-end gap-6 relative z-10">
-          <div className="space-y-4 min-w-0">
-          <h1 className="text-2xl sm:text-4xl md:text-5xl xl:text-6xl font-heading font-black text-theme-text uppercase tracking-tighter italic leading-none truncate whitespace-nowrap">
-            Central de <span className="text-brand-tactical">Aprovações</span>
-          </h1>
-            <div className="flex items-center gap-4">
-              <div className="h-1 w-12 bg-brand-tactical" />
-              <p className="text-[9px] sm:text-[11px] font-black text-brand-tactical uppercase tracking-[0.2em] sm:tracking-[0.4em] italic truncate max-w-[80vw]">Auditoria de Cadastros e Saques</p>
-            </div>
+          <div>
+            <h1 className="text-3xl md:text-4xl font-black uppercase tracking-tight text-theme-text">Hub de Aprovações</h1>
+            <p className="text-theme-muted mt-2 text-sm">Aprovação de mídias e conteúdos enviados pelos membros</p>
           </div>
         </div>
       </div>

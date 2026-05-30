@@ -5,7 +5,7 @@
 
 ---
 
-## <domain>
+<domain>
 
 This phase refines two UX friction points in the client-facing quote/booking flow (`/cotacao` → `QuotePage.tsx`):
 
@@ -17,7 +17,7 @@ This phase refines two UX friction points in the client-facing quote/booking flo
 
 ---
 
-## <decisions>
+<decisions>
 
 ### 1. Event Type Filtering for Unidade Fixa
 
@@ -51,7 +51,7 @@ This phase refines two UX friction points in the client-facing quote/booking flo
 
 ---
 
-## <code_context>
+<code_context>
 
 ### Files to modify
 
@@ -77,7 +77,7 @@ The existing `/public/unidades-fixas` endpoint just needs to include `eventTypes
 
 ---
 
-## <canonical_refs>
+<canonical_refs>
 
 - `frontend/src/pages/QuotePage.tsx` — main file for both changes
 - `frontend/src/pages/admin/AdminSettings.tsx` — admin config UI for eventTypes
@@ -88,7 +88,7 @@ The existing `/public/unidades-fixas` endpoint just needs to include `eventTypes
 
 ---
 
-## <deferred>
+<deferred>
 
 - **Mapping equipment to unit type:** Future idea to auto-suggest equipment preference based on the type of venue (studio → Tradicional, street → Mobile). Deferred — not in scope.
 

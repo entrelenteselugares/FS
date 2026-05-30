@@ -10,6 +10,7 @@
 **Question:** Como os tipos de evento de uma Unidade Fixa devem ser definidos?
 
 **Options presented:**
+
 1. ✅ Cada Unidade Fixa define seus próprios tipos no AdminSettings (recomendado)
 2. Mapeamento global por tipo de local
 3. Unidade configura pelo próprio dashboard
@@ -31,6 +32,7 @@
 **Question:** O que muda nos campos de Equipamento e Finalidade?
 
 **Options presented:**
+
 1. ✅ Ambos viram seleção única radio-style (recomendado)
 2. Apenas Equipamento vira single-select
 3. Unifica em 4 opções combinadas
@@ -44,6 +46,7 @@
 **Question:** Campos aparecem quando Unidade Fixa está selecionada?
 
 **Options presented:**
+
 1. ✅ Sim, aparecem normalmente
 2. Não — a unidade já define o contexto
 3. Depende da unidade

@@ -1,7 +1,9 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { DashboardLayout, type NavItem } from "../../components/DashboardLayout";
+import { RouteErrorBoundary } from "../../components/RouteErrorBoundary";
 import { API } from "../../lib/api";
 import { useAuth } from "../../hooks/useAuth";
+import { useQuery } from "@tanstack/react-query";
 import { useNavigate, useLocation, useSearchParams } from "react-router-dom";
 
 const AdminOverview = React.lazy(() => import("./AdminOverview").then(m => ({ default: m.AdminOverview })));
@@ -21,6 +23,7 @@ const AdminInventory = React.lazy(() => import("./AdminInventory"));
 const AdminLeads = React.lazy(() => import("./AdminLeadsPage").then(m => ({ default: m.AdminLeadsPage })));
 const AdminGrowth = React.lazy(() => import("./AdminGrowth").then(m => ({ default: m.AdminGrowth })));
 const AdminApprovalHub = React.lazy(() => import("./AdminApprovalHub").then(m => ({ default: m.AdminApprovalHub })));
+const AdminAnalytics = React.lazy(() => import("./AdminAnalytics").then(m => ({ default: m.AdminAnalytics })));
 import { 
   LayoutDashboard, 
   Camera, 
@@ -70,6 +73,7 @@ const NAV_ITEMS = (activeTab: string, setActiveTab: (t: string) => void, stats: 
       subItems: [
         { label: "Growth",         onClick: () => setActiveTab("growth"),        isActive: activeTab === "growth" },
         { label: "Concursos",      onClick: () => setActiveTab("contests"),      isActive: activeTab === "contests" },
+        { label: "Analytics",      onClick: () => setActiveTab("analytics"),     isActive: activeTab === "analytics" },
       ]
     },
     {
@@ -154,14 +158,11 @@ const TAB_ALIASES: Record<string, string> = {
   growth:       "growth",
   approvals:    "approvals",
   aprovacoes:   "approvals",
+  analytics:    "analytics",
 };
 
 export const AdminDashboard: React.FC = () => {
   const { user } = useAuth();
-  const [stats, setStats] = useState<AdminStats | null>(null);
-  const [recentOrders, setRecentOrders] = useState<AdminOrder[]>([]);
-  const [pendingEvents, setPendingEvents] = useState<AdminEvent[]>([]);
-  const [loading, setLoading] = useState(true);
   const [editingEventId, setEditingEventId] = useState<string | null>(null);
 
   const location = useLocation();
@@ -174,7 +175,6 @@ export const AdminDashboard: React.FC = () => {
   const activeTab = TAB_ALIASES[rawTab] ?? rawTab;
 
   const setActiveTab = useCallback((tab: string) => {
-    // Ao clicar na tab, atualizamos apenas a URL para o subpath limpo (deep-link moderno)
     navigate(`/admin/${tab}`);
   }, [navigate]);
 
@@ -197,31 +197,25 @@ export const AdminDashboard: React.FC = () => {
     }
   }, [user, activeTab, setActiveTab]);
 
-  useEffect(() => {
-    const fetchGlobalStats = async () => {
-      setLoading(true);
+  // React Query: fetch global stats com cache automático de 5 minutos
+  const { data: statsData, isLoading: loading } = useQuery({
+    queryKey: ["admin-stats"],
+    queryFn: async () => {
+      const { data } = await API.get("/admin/stats");
       try {
-        const { data } = await API.get("/admin/stats");
-        
-        // Fetch MRR
-        try {
-          const { data: mrrData } = await API.get("/admin/finance/subscriptions-mrr");
-          data.stats.mrr = mrrData.mrr;
-          data.stats.totalActiveSubscriptions = mrrData.totalActive;
-        } catch (e) { console.error("Erro MRR:", e); }
+        const { data: mrrData } = await API.get("/admin/finance/subscriptions-mrr");
+        data.stats.mrr = mrrData.mrr;
+        data.stats.totalActiveSubscriptions = mrrData.totalActive;
+      } catch (e) { console.error("Erro MRR:", e); }
+      return data;
+    },
+    enabled: user?.role === "ADMIN",
+  });
 
-        setStats(data.stats);
-        setRecentOrders(data.recentOrders);
-        setPendingEvents(data.pendingEvents);
-      } catch (err) {
-        console.error("Erro ao carregar stats globais:", err);
-        toast.error("Falha ao carregar métricas globais. Verifique sua conexão.");
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchGlobalStats();
-  }, []);
+  const stats = statsData?.stats ?? null;
+  const recentOrders = statsData?.recentOrders ?? [];
+  const pendingEvents = statsData?.pendingEvents ?? [];
+
 
   return (
     <DashboardLayout title="Operações Centrais" variant="tactical" navItems={NAV_ITEMS(activeTab, setActiveTab, stats, user?.role || '')}>
@@ -251,23 +245,26 @@ export const AdminDashboard: React.FC = () => {
                     <div className="text-[10px] font-display font-black uppercase tracking-[0.3em] text-emerald-500/40 animate-pulse">Acessando Módulo...</div>
                   </div>
                 }>
-                  {activeTab === "overview" && <AdminOverview stats={stats} recentOrders={recentOrders} pendingEvents={pendingEvents} onEditEvent={handleEditEvent} />}
-                  {activeTab === "events"   && <AdminEvents initialEditEventId={editingEventId} onClose={() => setEditingEventId(null)} />}
-                  {activeTab === "users"    && <AdminUsers />}
-                  {activeTab === "quotes"   && <AdminQuotes />}
-                  {activeTab === "orders"   && <AdminOrders />}
-                  {activeTab === "finance"  && <AdminFinance />}
-                  {activeTab === "printers" && <AdminSuppliers />}
-                  {activeTab === "print-catalog" && <AdminPrintCatalog />}
-                  {activeTab === "contests" && <AdminContests />}
-                  {activeTab === "services" && <AdminServices />}
-                  {activeTab === "settings" && <AdminConfigs />}
-                  {activeTab === "crm"      && <AdminLeads />}
-                  {activeTab === "franchises" && <AdminFranchises />}
-                  {activeTab === "ambassadors" && <AdminAmbassadors />}
-                  {activeTab === "growth"   && <AdminGrowth />}
-                  {activeTab === "approvals" && <AdminApprovalHub />}
-                  {activeTab === "inventory" && <AdminInventory />}
+                  <RouteErrorBoundary resetKey={activeTab}>
+                    {activeTab === "overview" && <AdminOverview stats={stats} recentOrders={recentOrders} pendingEvents={pendingEvents} onEditEvent={handleEditEvent} />}
+                    {activeTab === "events"   && <AdminEvents initialEditEventId={editingEventId} onClose={() => setEditingEventId(null)} />}
+                    {activeTab === "users"    && <AdminUsers />}
+                    {activeTab === "quotes"   && <AdminQuotes />}
+                    {activeTab === "orders"   && <AdminOrders />}
+                    {activeTab === "finance"  && <AdminFinance />}
+                    {activeTab === "printers" && <AdminSuppliers />}
+                    {activeTab === "print-catalog" && <AdminPrintCatalog />}
+                    {activeTab === "contests" && <AdminContests />}
+                    {activeTab === "services" && <AdminServices />}
+                    {activeTab === "settings" && <AdminConfigs />}
+                    {activeTab === "crm"      && <AdminLeads />}
+                    {activeTab === "franchises" && <AdminFranchises />}
+                    {activeTab === "ambassadors" && <AdminAmbassadors />}
+                    {activeTab === "growth"   && <AdminGrowth />}
+                    {activeTab === "approvals" && <AdminApprovalHub />}
+                    {activeTab === "inventory" && <AdminInventory />}
+                    {activeTab === "analytics" && <AdminAnalytics />}
+                  </RouteErrorBoundary>
                 </React.Suspense>
               </motion.div>
             </AnimatePresence>

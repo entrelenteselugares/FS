@@ -632,4 +632,7 @@ router.get("/health", (req, res) => res.json({ status: "ok", time: new Date().to
 router.post("/iot/heartbeat", IoTController.heartbeat);
 router.get("/admin/iot/devices", requireAuth, requireRole("ADMIN"), IoTController.listDevices);
 
+import analyticsRoutes from "./analytics.routes";
+router.use("/analytics", analyticsRoutes);
+
 export default router;

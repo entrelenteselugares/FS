@@ -109,3 +109,6 @@ export const requireRole = (...roles: string[]) => {
     return next();
   };
 };
+
+export const requireAdmin = [requireAuth, requireRole("ADMIN")];
+export const requireFranchisee = [requireAuth, requireRole("FRANCHISEE", "ADMIN")];

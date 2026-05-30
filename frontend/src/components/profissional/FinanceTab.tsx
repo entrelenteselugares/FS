@@ -48,10 +48,25 @@ export function FinanceTab({
   ];
 
   const [summary, setSummary] = useState<{available: number, pending: number, totalCount: number} | null>(null);
+  const [conversionData, setConversionData] = useState<{
+    totalEvents: number;
+    totalOrders: number;
+    totalPaidOrders: number;
+    totalRevenue: number;
+    ticketMedio: number;
+    conversionRate: string;
+  } | null>(null);
 
   useEffect(() => {
     API.get("/me/payout-summary").then(({ data }) => setSummary(data)).catch(console.error);
   }, []);
+
+  useEffect(() => {
+    if (!profile?.user?.id) return;
+    API.get(`/analytics/professional/${profile.user.id}/conversion`)
+      .then(({ data }) => setConversionData(data))
+      .catch(() => {}); // Non-critical, silently skip
+  }, [profile?.user?.id]);
 
   return (
     <div className="space-y-8">
@@ -130,6 +145,24 @@ export function FinanceTab({
                 </div>
              </div>
           </div>
+
+          {/* CONVERSION ANALYTICS CARD (Phase 55) */}
+          {conversionData && (
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {([
+                { label: "Eventos Ativos", value: String(conversionData.totalEvents), sub: "total de eventos" },
+                { label: "Taxa de Conversão", value: `${conversionData.conversionRate}%`, sub: "visualizações → vendas" },
+                { label: "Ticket Médio", value: formatCurrency(conversionData.ticketMedio), sub: "por pedido pago" },
+                { label: "Vendas Confirmadas", value: String(conversionData.totalPaidOrders), sub: `de ${conversionData.totalOrders} pedidos` },
+              ] as const).map((stat) => (
+                <div key={stat.label} className="bg-theme-bg-muted border border-theme-border/60 rounded-2xl p-6 flex flex-col gap-2 hover:border-brand-tactical/40 transition-all">
+                  <span className="text-[9px] font-black text-theme-muted uppercase tracking-widest">{stat.label}</span>
+                  <p className="text-2xl font-heading font-black text-brand-tactical italic leading-none">{stat.value}</p>
+                  <span className="text-[8px] text-theme-muted uppercase font-bold tracking-wider">{stat.sub}</span>
+                </div>
+              ))}
+            </div>
+          )}
 
           {/* Projection & ROI Grid */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">

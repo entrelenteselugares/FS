@@ -14,6 +14,7 @@
     "@sentry/browser": "^10.52.0",
     "@sentry/react": "^10.53.1",
     "@sentry/tracing": "^7.120.4",
+    "@tanstack/react-query": "^5.100.14",
     "@types/react-window": "^1.8.8",
     "axios": "^1.15.0",
     "date-fns": "^4.1.0",
