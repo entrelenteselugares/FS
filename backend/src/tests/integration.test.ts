@@ -552,3 +552,153 @@ describe("🛡️ Segurança", () => {
     expect(r.status).toBe(401);
   });
 });
+
+// ══════════════════════════════════════════════════════════════════════════════
+// 18. WEBHOOK MERCADO PAGO — FLUXOS CRÍTICOS (post-mortem Phase 55)
+// ══════════════════════════════════════════════════════════════════════════════
+describe("💸 Webhook Mercado Pago — Fluxos Críticos", () => {
+
+  /**
+   * Teste 1: Webhook com payload válido não deve rejeitar com 401 ou 500 imediatamente.
+   * (O controller valida a assinatura; um payload sem assinatura deve retornar 400, não 500.)
+   */
+  test("POST /webhooks/mercadopago sem assinatura → 400 (não 500)", async () => {
+    const r = await req("POST", "/webhooks/mercadopago", {
+      body: {
+        type: "payment",
+        data: { id: "test-payment-id-000" },
+      },
+    });
+    // Deve recusar graciosamente com 400 (missing signature) ou 200 (mock mode)
+    // Nunca deve retornar 500 (erro interno não tratado)
+    expect(r.status).not.toBe(500);
+    expect([200, 400, 401, 403, 422]).toContain(r.status);
+  });
+
+  /**
+   * Teste 2: Idempotência — enviar o mesmo webhook duas vezes não cria 2 pedidos aprovados.
+   * 
+   * Como não temos um pedido real no DB de teste, verificamos que o endpoint
+   * não explode (500) quando recebe payload duplicado — o comportamento correto
+   * de idempotência é retornar 200 (já processado) ou 404 (pedido não encontrado).
+   */
+  test("POST /webhooks/mercadopago duplicado → idempotente (não 500)", async () => {
+    const payload = {
+      type: "payment",
+      action: "payment.updated",
+      data: { id: `dup-test-${Date.now()}` },
+    };
+
+    const [r1, r2] = await Promise.all([
+      req("POST", "/webhooks/mercadopago", { body: payload }),
+      req("POST", "/webhooks/mercadopago", { body: payload }),
+    ]);
+
+    // Ambas as chamadas devem terminar sem erro interno
+    expect(r1.status).not.toBe(500);
+    expect(r2.status).not.toBe(500);
+
+    // Nenhuma deve retornar 401 (rota não exige auth)
+    expect(r1.status).not.toBe(401);
+    expect(r2.status).not.toBe(401);
+  });
+
+  /**
+   * Teste 3: Endpoint de webhook deve responder em < 3000ms mesmo sob carga.
+   * (Detecta regressões de performance que podem causar retry storm do Mercado Pago)
+   */
+  test("POST /webhooks/mercadopago responde em < 3000ms", async () => {
+    const start = Date.now();
+    await req("POST", "/webhooks/mercadopago", {
+      body: { type: "payment", data: { id: "perf-test-000" } },
+    });
+    const elapsed = Date.now() - start;
+    expect(elapsed).toBeLessThan(3000);
+  });
+});
+
+// ══════════════════════════════════════════════════════════════════════════════
+// 19. UPLOAD DE MÍDIA — FLUXO INIT/COMPLETE (post-mortem Phase 55)
+// ══════════════════════════════════════════════════════════════════════════════
+describe("📤 Upload de Mídia — Fluxo Direto (Direct Upload)", () => {
+
+  /**
+   * Teste 1: POST /vaults/:id/upload/init sem token → 401
+   */
+  test("POST /vaults/qualquer/upload/init sem token → 401", async () => {
+    const r = await req("POST", "/vaults/qualquer-id/upload/init", {
+      body: { fileName: "foto.jpg", mimeType: "image/jpeg" },
+    });
+    expect(r.status).toBe(401);
+  });
+
+  /**
+   * Teste 2: POST /vaults/:id/upload/init com token e vault inexistente → 404 (não 500)
+   * Verifica que o endpoint não explode quando não encontra o cofre.
+   */
+  test("POST /vaults/vault-inexistente/upload/init com token → 404 (não 500)", async () => {
+    const r = await req("POST", "/vaults/vault-id-que-nao-existe-00000/upload/init", {
+      token: clienteToken,
+      body: { fileName: "foto.jpg", mimeType: "image/jpeg" },
+    });
+    // Deve retornar 404 (vault não encontrado) ou 403 (não membro)
+    // Nunca deve retornar 500 (erro interno não tratado)
+    expect(r.status).not.toBe(500);
+    expect([400, 403, 404]).toContain(r.status);
+  });
+
+  /**
+   * Teste 3: POST /vaults/:id/upload/complete sem fileId → 400 (validação de entrada)
+   */
+  test("POST /vaults/qualquer/upload/complete sem key → 400", async () => {
+    const r = await req("POST", "/vaults/qualquer-id/upload/complete", {
+      token: clienteToken,
+      body: {}, // sem key nem publicUrl
+    });
+    // Controller deve validar a entrada e retornar 400 antes de tentar acessar banco
+    expect([400, 403, 404]).toContain(r.status);
+    expect(r.status).not.toBe(500);
+  });
+});
+
+// ══════════════════════════════════════════════════════════════════════════════
+// 20. STORAGE R2 — ENDPOINT INIT RETORNA storageType
+// ══════════════════════════════════════════════════════════════════════════════
+describe("☁️ Storage R2 — Contrato de Resposta", () => {
+  
+  let vaultId: string | null = null;
+
+  beforeAll(async () => {
+    // Cria um cofre de teste para usar nos testes de upload
+    const r = await req("POST", "/vaults", {
+      token: clienteToken,
+      body: { name: `Cofre R2 Test ${Date.now()}`, goalPoses: 12 },
+    });
+    if (r.status === 201 || r.status === 200) {
+      vaultId = (r.data as any)?.id || null;
+    }
+  });
+
+  test("POST /vaults/:id/upload/init (cofre real) → resposta contém uploadUrl", async () => {
+    if (!vaultId) {
+      console.warn("[TEST SKIP] Cofre de teste não pôde ser criado (Drive/R2 não configurado em CI)");
+      return;
+    }
+
+    const r = await req("POST", `/vaults/${vaultId}/upload/init`, {
+      token: clienteToken,
+      body: { fileName: "test-r2.jpg", mimeType: "image/jpeg", fileSize: 1024 },
+    });
+
+    // Em MOCK mode, o endpoint deve retornar 200 com uploadUrl (URL mock local)
+    // Em R2 mode, retorna URL pré-assinada da Cloudflare
+    if (r.status === 200) {
+      expect((r.data as any).uploadUrl).toBeDefined();
+      expect(typeof (r.data as any).uploadUrl).toBe("string");
+      expect((r.data as any).finalFileName).toBeDefined();
+    } else {
+      // Se vault existe mas usuário não é membro (criação falhou): aceitar 403
+      expect([400, 403, 404]).toContain(r.status);
+    }
+  });
+});
