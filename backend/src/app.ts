@@ -1,6 +1,7 @@
 import "dotenv/config";
 import express from "express";
 import cors from "cors";
+import helmet from "helmet";
 import rateLimit from "express-rate-limit";
 import routes from "./routes/index";
 import { initSentry } from "./lib/sentry";
@@ -42,6 +43,12 @@ REQUIRED_ENVS.forEach(env => {
   }
 });
 
+if (process.env.NODE_ENV === "production" && process.env.DATABASE_URL) {
+  if (!process.env.DATABASE_URL.includes("6543") && !process.env.DATABASE_URL.includes("pgbouncer=true")) {
+    console.warn("⚠️ AVISO CRÍTICO: DATABASE_URL de produção não parece apontar para um Connection Pooler (ex: porta 6543 do Supabase). Risco de Database Connection Exhaustion no Vercel.");
+  }
+}
+
 // Aviso não-fatal para variáveis opcionais importantes
 if (!process.env.MASTER_EMAIL) {
   console.warn("⚠️  MASTER_EMAIL não configurada — Master Bypass desativado.");
@@ -68,13 +75,24 @@ app.use(cors({
   credentials: true,
 }));
 
+// Proteção de Cabeçalhos (Helmet)
+app.use(helmet({
+  crossOriginResourcePolicy: { policy: "cross-origin" }
+}));
+
 // DEBUG: Log all incoming requests
 app.use((req, _res, next) => {
   console.log(`[DEBUG] ${req.method} ${req.url}`);
   next();
 });
 
-// Rate limiting (Relaxado para desenvolvimento/produção MVP)
+// Rate limiting global e específico
+app.use("/api/auth/login", rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutos
+  max: 5, // Apenas 5 tentativas
+  message: { error: "Muitas tentativas de login falhas. Tente novamente em 15 minutos." }
+}));
+
 app.use("/api/auth", rateLimit({ 
   windowMs: 5 * 60 * 1000, // 5 minutos
   max: 100, // Aumentado de 10 para 100
@@ -106,13 +124,7 @@ app.use("/api", routes);
 Sentry.setupExpressErrorHandler(app);
 
 // Tratamento de erros global
-app.use((err: Error, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
-  console.error("🔥 ERRO NO SERVIDOR:", err);
-  res.status(500).json({ 
-    error: "Erro interno no servidor", 
-    message: err.message,
-    stack: process.env.NODE_ENV !== "production" ? err.stack : undefined
-  });
-});
+import { errorHandler } from "./middleware/error.middleware";
+app.use(errorHandler);
 
 export default app;
