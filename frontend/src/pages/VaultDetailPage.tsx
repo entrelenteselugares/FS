@@ -188,19 +188,23 @@ export default function VaultDetailPage() {
     if (!vault) return;
     setDownloadingAll(true);
     try {
-      const response = await api.get(`/vaults/${vaultId}/download-all`, {
-        responseType: 'blob'
-      });
-      const url = window.URL.createObjectURL(new Blob([response.data]));
-      const link = document.createElement('a');
-      link.href = url;
-      link.setAttribute('download', `${vault.nome}-fotos.zip`);
-      document.body.appendChild(link);
-      link.click();
-      link.parentNode?.removeChild(link);
-    } catch (err) {
-      console.error("[Download All] Erro:", err);
-      alert("Erro ao baixar as fotos.");
+      const res = await api.get(`/vaults/${vaultId}/download-all`);
+      const { downloadUrl, message } = res.data;
+
+      // Abre o link do ZIP pre-assinado numa nova aba (download direto do R2/Worker)
+      window.open(downloadUrl, '_blank');
+      
+      // Feedback ao usuário
+      alert(message || 'Download iniciado!');
+    } catch (err: any) {
+      const code = err.response?.data?.error;
+      if (code === 'SUBSCRIPTION_REQUIRED') {
+        alert('Assine o cofre para baixar todas as fotos.');
+      } else if (code === 'WORKER_NOT_CONFIGURED') {
+        alert('O download em lote ainda não está disponível. Entre em contato com o suporte.');
+      } else {
+        alert('Erro ao gerar o download. Tente novamente.');
+      }
     } finally {
       setDownloadingAll(false);
     }

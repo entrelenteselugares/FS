@@ -7,7 +7,7 @@ import { MercadoPagoService } from "../services/mercadopago.service";
 import { SubscriptionService } from "../services/subscription.service";
 import sharp from "sharp";
 import exifr from "exifr";
-import archiver from "archiver";
+
 import { WhatsAppService } from "../services/whatsapp.service";
 
 /**
@@ -936,97 +936,72 @@ export class VaultController {
     const albumId = req.params.albumId as string;
     const userId = req.user?.userId;
 
-    if (!userId) return res.status(401).json({ error: "Não autenticado." });
+    if (!userId) return res.status(401).json({ error: 'Não autenticado.' });
 
     try {
-      // 1. Validar membro do cofre
       const membership = await prisma.albumMember.findUnique({
         where: { albumId_userId: { albumId, userId } },
         include: { album: true }
       });
 
-      if (!membership) return res.status(403).json({ error: "Você não é membro deste cofre." });
-      if (membership.album.subscriptionStatus === "BLOCKED" || membership.album.subscriptionStatus === "EXPIRED") {
-        return res.status(402).json({ error: "SUBSCRIPTION_REQUIRED", message: "O período gratuito deste cofre expirou." });
+      if (!membership) return res.status(403).json({ error: 'Você não é membro deste cofre.' });
+      if (['BLOCKED', 'EXPIRED'].includes(membership.album.subscriptionStatus)) {
+        return res.status(402).json({ error: 'SUBSCRIPTION_REQUIRED', message: 'O período gratuito deste cofre expirou.' });
       }
 
-      // 2. Buscar mídias aprovadas (ou as que ele enviou)
       const mediaList = await prisma.sharedAlbumMedia.findMany({
         where: {
           albumId,
-          ...(membership.role !== "OWNER" ? {
-            OR: [
-              { status: "APPROVED" },
-              { uploadedById: userId }
-            ]
+          ...(membership.role !== 'OWNER' ? {
+            OR: [{ status: 'APPROVED' }, { uploadedById: userId }]
           } : {})
-        }
+        },
+        select: { fileId: true, webViewLink: true, type: true }
       });
 
       if (mediaList.length === 0) {
-        return res.status(404).json({ error: "Nenhuma foto encontrada para download." });
+        return res.status(404).json({ error: 'Nenhuma foto encontrada para download.' });
       }
 
-      // 3. Configurar cabeçalhos para o ZIP
-      res.setHeader('Content-Type', 'application/zip');
-      res.setHeader('Content-Disposition', `attachment; filename="${membership.album.nome}-fotos.zip"`);
-
-      // 4. Iniciar Archiver
-      const archive = archiver('zip', {
-        zlib: { level: 9 } // Nível máximo de compressão (pode reduzir se quiser mais velocidade)
-      });
-
-      // Se houver erro no archiver, logamos
-      archive.on('error', (err) => {
-        console.error('[DOWNLOAD ALL] Erro no archiver:', err);
-        if (!res.headersSent) {
-          res.status(500).send({ error: "Erro ao gerar o ZIP." });
-        }
-      });
-
-      // Ligar a saída do archiver à resposta HTTP
-      archive.pipe(res);
-
-      // Função auxiliar para esperar stream carregar
-      const appendToArchive = async (media: any) => {
-        try {
-          // Usa proxyMedia logic internamente ou driveService
-          let fileName = "";
-          if (media.webViewLink) {
-            fileName = media.webViewLink.substring(media.webViewLink.lastIndexOf('/') + 1);
-          } else {
-            fileName = media.fileId + (media.type === "VIDEO" ? ".mp4" : ".jpeg");
-          }
-
-          if (media.fileId.startsWith("mock-file-")) {
-            const fs = require('fs');
-            const path = require('path');
-            const filePath = path.join(process.cwd(), 'uploads', 'vaults', fileName);
-            if (fs.existsSync(filePath)) {
-              archive.append(fs.createReadStream(filePath), { name: fileName });
-            }
-          } else {
-            const driveRes = await driveService.getMediaStream(media.fileId);
-            archive.append(driveRes.data as any, { name: fileName });
-          }
-        } catch (err) {
-          console.error(`[DOWNLOAD ALL] Erro ao adicionar mídia ${media.id} ao ZIP:`, err);
-        }
-      };
-
-      // Adicionar arquivos sequencialmente para não estourar memória / limite de conexões
-      for (const media of mediaList) {
-        await appendToArchive(media);
+      // Se Worker não configurado, resposta informativa em vez de travar a Lambda
+      const workerUrl = process.env.WORKER_URL;
+      if (!workerUrl) {
+        return res.status(503).json({
+          error: 'WORKER_NOT_CONFIGURED',
+          message: 'O serviço de download em lote ainda não está ativo. Configure WORKER_URL nas variáveis de ambiente.',
+        });
       }
 
-      // Finalizar e fechar o ZIP
-      await archive.finalize();
+      // Dispara o job no Worker (sem await — retorna jobId imediatamente)
+      const workerRes = await fetch(`${workerUrl}/jobs/zip-vault`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-worker-secret': process.env.WORKER_SECRET || '',
+        },
+        body: JSON.stringify({
+          albumId,
+          albumName: membership.album.nome,
+          mediaList,
+        }),
+      });
+
+      if (!workerRes.ok) {
+        const errText = await workerRes.text();
+        throw new Error(`Worker HTTP ${workerRes.status}: ${errText}`);
+      }
+
+      const { downloadUrl } = await workerRes.json() as { downloadUrl: string };
+
+      return res.json({
+        downloadUrl,
+        message: `ZIP com ${mediaList.length} arquivo(s) pronto para download.`,
+        expiresIn: '1h',
+      });
 
     } catch (error: any) {
-      console.error("[DOWNLOAD ALL] Erro fatal:", error.message);
-      if (!res.headersSent) {
-        return res.status(500).json({ error: "Erro ao iniciar download de todas as fotos." });
-      }
+      console.error('[DOWNLOAD ALL] Erro:', error.message);
+      return res.status(500).json({ error: 'Erro ao iniciar download de todas as fotos.' });
     }
   }
 
