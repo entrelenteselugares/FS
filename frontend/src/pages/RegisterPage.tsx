@@ -109,7 +109,7 @@ export const RegisterPage: React.FC = () => {
         };
       }
 
-      const response = await API.post("/auth/register", finalPayload);
+      await API.post("/auth/register", finalPayload);
       
       // O backend já configurou os cookies HttpOnly
       // Apenas navegamos para a próxima página

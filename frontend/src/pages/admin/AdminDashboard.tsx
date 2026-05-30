@@ -34,7 +34,7 @@ import {
   TrendingUp
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { toast } from "sonner";
+
 
 
 
@@ -107,21 +107,7 @@ interface AdminStats {
   missingLinksCount: number;
 }
 
-interface AdminOrder {
-  id: string;
-  customerName: string;
-  total: number;
-  status: string;
-  createdAt: string;
-}
 
-interface AdminEvent {
-  id: string;
-  title: string;
-  date: string;
-  location: string;
-  _count: { orders: number };
-}
 
 // Mapa de alias de URL → tab key (para deep-link via ?tab=X ou path antigo)
 const TAB_ALIASES: Record<string, string> = {

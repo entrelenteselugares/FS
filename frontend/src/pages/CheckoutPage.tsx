@@ -10,7 +10,7 @@ import { supabase } from "../lib/supabase";
 import { QRCodeSVG } from "qrcode.react";
 
 import { API } from "../lib/api";
-import { trackPurchase } from "../lib/analytics";
+
 import { AuthContext } from "../contexts/AuthContextBase";
 import { useCart } from "../hooks/useCart";
 
