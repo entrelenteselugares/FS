@@ -339,7 +339,7 @@ export default function UnidadeFixaDashboard({
   }, []);
 
   const handleConnectCalendar = () => {
-    window.location.href = `${API.defaults.baseURL}/calendar/connect?token=${localStorage.getItem("fs_token")}`;
+    window.location.href = `${API.defaults.baseURL}/calendar/connect`;
   };
 
   const handleDisconnectCalendar = async () => {

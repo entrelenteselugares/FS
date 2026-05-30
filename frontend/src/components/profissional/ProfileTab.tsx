@@ -49,9 +49,10 @@ export function ProfileTab({ profile, onUpdated, onNotify }: ProfileTabProps) {
         });
 
         if (onNotify) onNotify("Foto de perfil atualizada com sucesso!", "success");
-      } catch (err: any) {
+      } catch (err: unknown) {
         console.error(err);
-        const errMsg = err.response?.data?.details || err.response?.data?.error || "Erro ao enviar foto de perfil.";
+        const error = err as { response?: { data?: { details?: string; error?: string } } };
+        const errMsg = error.response?.data?.details || error.response?.data?.error || "Erro ao enviar foto de perfil.";
         if (onNotify) onNotify(errMsg, "error");
       } finally {
         setUploading(false);
@@ -110,22 +111,29 @@ export function ProfileTab({ profile, onUpdated, onNotify }: ProfileTabProps) {
   return (
     <div className="space-y-12">
       {/* Header Section */}
-      <div>
-        <div className="flex items-center gap-4">
-          <h2 className="text-3xl font-black text-theme-text uppercase tracking-tighter">Meu Perfil</h2>
-          {profile.user?.isVerified && (
-            <div className="px-3 py-1 bg-brand-tactical/10 border border-brand-tactical/30 rounded-full flex items-center gap-2 animate-pulse">
-              <ShieldCheck size={12} className="text-brand-tactical" />
-              <span className="text-[9px] font-black text-brand-tactical uppercase tracking-widest italic">PRO VERIFICADO</span>
-            </div>
-          )}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <div className="flex items-center gap-4">
+            <h2 className="text-3xl font-black text-theme-text uppercase tracking-tighter">Meu Perfil</h2>
+            {profile.user?.isVerified && (
+              <div className="px-3 py-1 bg-brand-tactical/10 border border-brand-tactical/30 rounded-full flex items-center gap-2 animate-pulse">
+                <ShieldCheck size={12} className="text-brand-tactical" />
+                <span className="text-[9px] font-black text-brand-tactical uppercase tracking-widest italic">PRO VERIFICADO</span>
+              </div>
+            )}
+          </div>
+          <p className="text-[10px] text-theme-muted uppercase tracking-[0.4em] mt-2 font-black italic">Gerenciamento de Identidade e Ativos Técnicos</p>
         </div>
-        <p className="text-[10px] text-theme-muted uppercase tracking-[0.4em] mt-2 font-black italic">Gerenciamento de Identidade e Ativos Técnicos</p>
+        
+        <div className="bg-theme-bg-muted border border-theme-border rounded-xl p-4 flex flex-col items-end">
+          <span className="text-[9px] font-black text-theme-text-muted uppercase tracking-widest">Visualizações do Perfil</span>
+          <span className="text-2xl font-black text-brand-tactical tracking-tighter">{profile.profileViews || 0}</span>
+        </div>
       </div>
 
-      <ProfileStepper user={profile.user as any} profile={profile as any} />
+      <ProfileStepper user={profile.user as unknown as React.ComponentProps<typeof ProfileStepper>["user"]} profile={profile as unknown as React.ComponentProps<typeof ProfileStepper>["profile"]} />
 
-      <ProfessionalBadgesShowcase badges={(profile as any).badges} />
+      <ProfessionalBadgesShowcase badges={(profile as unknown as { badges: React.ComponentProps<typeof ProfessionalBadgesShowcase>["badges"] }).badges || []} />
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
         {/* Left Column: Data & Specialties */}

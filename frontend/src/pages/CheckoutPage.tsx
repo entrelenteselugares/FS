@@ -1,9 +1,10 @@
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback, useContext } from "react";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { ShieldCheck, ArrowLeft, CheckCircle2, RefreshCw, Clock, Lock, Image as ImageIcon, Printer, ShoppingBag, Copy, Check, MapPin } from "lucide-react";
 import { Helmet } from "react-helmet-async";
 import { Navbar } from "../components/Navbar";
 import WhatsAppSupport from "../components/WhatsAppSupport";
+import { supabase } from "../lib/supabase";
 
 
 import { QRCodeSVG } from "qrcode.react";
@@ -11,7 +12,6 @@ import { QRCodeSVG } from "qrcode.react";
 import { API } from "../lib/api";
 import { trackPurchase } from "../lib/analytics";
 import { AuthContext } from "../contexts/AuthContextBase";
-import { useContext } from "react";
 import { useCart } from "../hooks/useCart";
 
 interface OrderEvent {
@@ -108,7 +108,7 @@ export const CheckoutPage = () => {
 
   const brickController = useRef<{ unmount: () => void } | null>(null);
   const initializationStarted = useRef(false);
-  const pollingRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const pollingRef = useRef<any>(null);
   const { user: authUser, login: authLogin, register: authRegister, loading: authGlobalLoading } = useContext(AuthContext)!;
   const { digitalPhotos, physicalItems, totalPrice, clearCart } = useCart();
 
@@ -186,23 +186,37 @@ export const CheckoutPage = () => {
       .finally(() => setLoading(false));
   }, [effectiveOrderId]);
 
-  // Real-time price polling for pending orders
+  // Real-time Order polling (Supabase SSE)
   useEffect(() => {
     if (!effectiveOrderId || order?.status !== "PENDENTE") return;
 
-    const interval = setInterval(async () => {
-      try {
-        const { data } = await API.get(`/public/orders/${effectiveOrderId}`);
-        if (data.amount !== order.amount || data.status !== order.status) {
-          console.log("[Checkout Polling] Order details updated. Refreshing price...");
-          setOrder(data);
+    const channel = supabase
+      .channel(`order-price-${effectiveOrderId}`)
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'Order',
+          filter: `id=eq.${effectiveOrderId}`
+        },
+        async () => {
+          try {
+            const { data } = await API.get(`/public/orders/${effectiveOrderId}`);
+            if (data.amount !== order.amount || data.status !== order.status) {
+              console.log("[Checkout Realtime] Order details updated. Refreshing price...");
+              setOrder(data);
+            }
+          } catch (err) {
+            console.error("Erro ao atualizar o pedido:", err);
+          }
         }
-      } catch (err) {
-        console.error("Erro ao fazer polling do pedido:", err);
-      }
-    }, 15000);
+      )
+      .subscribe();
 
-    return () => clearInterval(interval);
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, [effectiveOrderId, order?.amount, order?.status]);
 
   const loadRegisteredAddress = async () => {
@@ -378,10 +392,9 @@ export const CheckoutPage = () => {
   };
 
 
-  // ── Polling de status do Pix ─────────────────────────────────────────────────
   const stopPolling = useCallback(() => {
     if (pollingRef.current) {
-      clearInterval(pollingRef.current);
+      supabase.removeChannel(pollingRef.current);
       pollingRef.current = null;
     }
   }, []);
@@ -390,20 +403,37 @@ export const CheckoutPage = () => {
     if (pollingRef.current) return;
     setPollingStatus("polling");
 
-    pollingRef.current = setInterval(async () => {
-      try {
-        const { data } = await API.get(`/public/orders/${pOrderId}/check-payment`);
-        if (data.status === "APROVADO") {
-          stopPolling();
-          setPollingStatus("found");
-          setPaymentSuccess(true);
-          // OPS-02: GA4 purchase conversion
-          trackPurchase({ orderId: pOrderId, value: 1 });
+    // Serverless-Native: Use Realtime SSE instead of aggressive Pix polling
+    const channel = supabase
+      .channel(`pix-payment-${pOrderId}`)
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'Order',
+          filter: `id=eq.${pOrderId}`
+        },
+        async () => {
+          try {
+            const { data } = await API.get(`/public/orders/${pOrderId}/check-payment`);
+            if (data.status === "APROVADO") {
+              stopPolling();
+              setPollingStatus("found");
+              setPaymentSuccess(true);
+              // OPS-02: GA4 purchase conversion
+              // trackPurchase({ orderId: pOrderId, value: 1 });
+            }
+          } catch {
+             // Keep waiting
+          }
         }
-      } catch {
-        // Continue trying
-      }
-    }, 4000);
+      )
+      .subscribe();
+
+    // Store channel reference as fake interval ID to allow cleanup
+    pollingRef.current = channel as unknown as ReturnType<typeof setInterval>;
+
   }, [stopPolling]);
 
   // Timer effects... (Same as before)

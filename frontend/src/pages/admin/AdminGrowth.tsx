@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { Plus, Tag, Phone, X, ArrowRight } from "lucide-react";
+import { Plus, Tag, Phone, X, ArrowRight, BarChart3 } from "lucide-react";
 import { API } from "../../lib/api";
 import { toast } from "sonner";
 import { QRCodeSVG } from "qrcode.react";
@@ -16,9 +16,21 @@ interface Coupon {
   expiresAt?: string | null;
 }
 
+interface AnalyticsData {
+  marketplace: {
+    funnel: { profileViews: number; eventViews: number; leads: number; orders: number; };
+    topProfessionals: Array<{ id: string; nome: string; views: number; bookings: number; conversionRate: number; }>;
+  };
+  coupons: Array<{
+    id: string; code: string; discountPct: number | null; discountAbs: number | null;
+    usedCount: number; actualPaidUses: number; totalRevenueGenerated: number; active: boolean;
+  }>;
+}
+
 export function AdminGrowth() {
-  const [activeTab, setActiveTab] = useState<"COUPONS" | "WHATSAPP">("COUPONS");
+  const [activeTab, setActiveTab] = useState<"COUPONS" | "WHATSAPP" | "ANALYTICS">("COUPONS");
   const [coupons, setCoupons] = useState<Coupon[]>([]);
+  const [analyticsData, setAnalyticsData] = useState<AnalyticsData | null>(null);
   const [waStatus, setWaStatus] = useState<{connected?: boolean, qrCode?: string} | null>(null);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -42,6 +54,10 @@ export function AdminGrowth() {
       } else if (activeTab === "WHATSAPP") {
         const { data } = await API.get("/admin/whatsapp/status");
         setWaStatus(data);
+      } else if (activeTab === "ANALYTICS") {
+        const { data: marketplace } = await API.get("/analytics/admin/marketplace");
+        const { data: couponsData } = await API.get("/analytics/marketing/coupons");
+        setAnalyticsData({ marketplace, coupons: couponsData });
       }
     } catch (err) {
       console.error(err);
@@ -80,8 +96,9 @@ export function AdminGrowth() {
       setIsModalOpen(false);
       fetchData();
       toast.success("Cupom criado com sucesso! 🏷️");
-    } catch (err: any) {
-      setFormError(err?.response?.data?.error || "Erro ao criar cupom.");
+    } catch (err: unknown) {
+      const error = err as { response?: { data?: { error?: string } } };
+      setFormError(error?.response?.data?.error || "Erro ao criar cupom.");
     } finally {
       setCreating(false);
     }
@@ -131,10 +148,11 @@ export function AdminGrowth() {
         {[
           { id: "COUPONS", icon: Tag, label: "Cupons Genéricos" },
           { id: "WHATSAPP", icon: Phone, label: "Motor WhatsApp" },
+          { id: "ANALYTICS", icon: BarChart3, label: "Relatórios & Analytics" },
         ].map((tab) => (
           <button
             key={tab.id}
-            onClick={() => setActiveTab(tab.id as "COUPONS" | "WHATSAPP")}
+            onClick={() => setActiveTab(tab.id as "COUPONS" | "WHATSAPP" | "ANALYTICS")}
             className={`flex items-center gap-2 px-6 py-4 text-[10px] font-black uppercase tracking-widest whitespace-nowrap transition-colors border-b-2 ${
               activeTab === tab.id ? "border-brand-tactical text-brand-tactical" : "border-transparent text-theme-text-muted hover:text-theme-text"
             }`}
@@ -206,7 +224,7 @@ export function AdminGrowth() {
               </div>
             )}
           </div>
-        ) : (
+        ) : activeTab === "WHATSAPP" ? (
           <div className="p-8 border border-theme-border bg-theme-bg-muted/50 rounded-3xl flex flex-col md:flex-row gap-8 items-center justify-center min-h-[400px]">
             {waStatus?.connected ? (
               <div className="text-center space-y-6">
@@ -237,6 +255,61 @@ export function AdminGrowth() {
               <div className="text-center space-y-4">
                 <p className="text-[10px] font-black text-theme-text-muted uppercase tracking-widest">Motor de WhatsApp Offline</p>
                 <button onClick={fetchData} className="px-6 py-3 bg-brand-tactical text-brand-text text-[10px] font-black uppercase tracking-widest">Tentar Iniciar Sessão</button>
+              </div>
+            )}
+          </div>
+        ) : (
+          <div className="space-y-8">
+            {/* Marketplace Funnel */}
+            {analyticsData?.marketplace && (
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                {[
+                  { label: "Profile Views", value: analyticsData.marketplace.funnel.profileViews },
+                  { label: "Event Views", value: analyticsData.marketplace.funnel.eventViews },
+                  { label: "Total Leads", value: analyticsData.marketplace.funnel.leads },
+                  { label: "Total Orders", value: analyticsData.marketplace.funnel.orders },
+                ].map((stat, i) => (
+                  <div key={i} className="p-6 bg-theme-bg-muted border border-theme-border rounded-2xl">
+                    <p className="text-[10px] font-black uppercase text-theme-text-muted tracking-widest">{stat.label}</p>
+                    <p className="text-3xl font-black text-brand-tactical mt-2">{stat.value}</p>
+                  </div>
+                ))}
+              </div>
+            )}
+            
+            {/* Top Professionals */}
+            {analyticsData?.marketplace?.topProfessionals && (
+              <div className="bg-theme-bg-muted border border-theme-border rounded-2xl p-6">
+                <h3 className="text-sm font-black uppercase tracking-widest text-theme-text mb-4">Top Profissionais (Conversão)</h3>
+                <div className="space-y-4">
+                  {analyticsData.marketplace.topProfessionals.map((pro, idx: number) => (
+                    <div key={pro.id} className="flex justify-between items-center text-sm">
+                      <span className="font-bold">{idx + 1}. {pro.nome}</span>
+                      <span className="text-theme-text-muted">{pro.conversionRate}% ({pro.bookings} reservas / {pro.views} views)</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Coupons Efficiency */}
+            {analyticsData?.coupons && (
+              <div className="bg-theme-bg-muted border border-theme-border rounded-2xl p-6">
+                <h3 className="text-sm font-black uppercase tracking-widest text-theme-text mb-4">Eficiência de Cupons</h3>
+                <div className="space-y-4">
+                  {analyticsData.coupons.map((c) => (
+                    <div key={c.id} className="flex justify-between items-center text-sm border-b border-theme-border/50 pb-2">
+                      <div>
+                        <span className="font-black text-brand-tactical">{c.code}</span>
+                        <span className="text-xs text-theme-text-muted ml-2">({c.usedCount} usos)</span>
+                      </div>
+                      <div className="text-right">
+                        <p className="font-bold">Receita Gerada: R$ {Number(c.totalRevenueGenerated).toFixed(2)}</p>
+                        <p className="text-[10px] text-theme-text-muted">Pedidos Pagos: {c.actualPaidUses}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
             )}
           </div>

@@ -130,6 +130,7 @@ export interface ProfileData {
   }>;
   cartorioProfissional?: ResidentUnit[];
   cartorios?: ResidentUnit[];
+  profileViews?: number;
 }
 
 export interface Partner {

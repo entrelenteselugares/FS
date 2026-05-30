@@ -165,9 +165,9 @@ export class GoogleDriveService {
    * Realiza o upload de uma mídia diretamente para a pasta do álbum.
    * Utiliza thumbnailLink para performance no frontend conforme diretrizes executivas.
    */
-  async uploadMedia({ folderId, fileName, buffer, mimeType }: { folderId: string, fileName: string, buffer: Buffer, mimeType: string }): Promise<any> {
+  async uploadMedia({ folderId, fileName, filePath, mimeType }: { folderId: string, fileName: string, filePath: string, mimeType: string }): Promise<any> {
     if (!this.drive) {
-      console.warn(`[DRIVE MOCK] Gravando arquivo localmente (em /uploads/vaults): ${fileName}`);
+      console.warn(`[DRIVE MOCK] Copiando arquivo localmente (em /uploads/vaults): ${fileName}`);
       const mockId = `mock-file-${Date.now()}`;
       
       const uploadDir = path.join(process.cwd(), 'uploads', 'vaults');
@@ -175,8 +175,8 @@ export class GoogleDriveService {
         fs.mkdirSync(uploadDir, { recursive: true });
       }
 
-      const filePath = path.join(uploadDir, fileName);
-      fs.writeFileSync(filePath, buffer);
+      const destPath = path.join(uploadDir, fileName);
+      fs.copyFileSync(filePath, destPath);
 
       const appUrl = process.env.BACKEND_URL || process.env.APP_URL || 'http://localhost:3002';
       const fileUrl = `${appUrl}/uploads/vaults/${fileName}`;
@@ -188,14 +188,8 @@ export class GoogleDriveService {
       };
     }
 
-    // Workaround para Serverless (Vercel): O googleapis precisa do tamanho exato do arquivo
-    // para fazer o upload corretamente. Readable.from(buffer) frequentemente falha com erro 500.
-    const os = require('os');
-    const tmpFilePath = path.join(os.tmpdir(), fileName);
-    fs.writeFileSync(tmpFilePath, buffer);
-
     try {
-      console.log(`[DRIVE] Iniciando upload: ${fileName} (${buffer.length} bytes)`);
+      console.log(`[DRIVE] Iniciando upload: ${fileName} from ${filePath}`);
       
       const file = await this.withRetry(() => this.drive!.files.create({
         requestBody: {
@@ -204,16 +198,11 @@ export class GoogleDriveService {
         },
         media: {
           mimeType: mimeType,
-          body: fs.createReadStream(tmpFilePath),
+          body: fs.createReadStream(filePath),
         },
         supportsAllDrives: true,
         fields: 'id, name, webViewLink, thumbnailLink',
       } as any));
-
-      // Limpar o arquivo temporário
-      if (fs.existsSync(tmpFilePath)) {
-        fs.unlinkSync(tmpFilePath);
-      }
 
       // Liberar acesso de leitura para quem tem o link (Necessário para exibição no App)
       await this.withRetry(() => this.drive!.permissions.create({
@@ -227,10 +216,6 @@ export class GoogleDriveService {
 
       return file.data;
     } catch (error: any) {
-      if (fs.existsSync(tmpFilePath)) {
-        fs.unlinkSync(tmpFilePath);
-      }
-      
       console.error('=========================================');
       console.error('[DRIVE] ❌ ERRO CRÍTICO NO UPLOAD');
       console.error(' - Mensagem:', error.message);
@@ -243,9 +228,110 @@ export class GoogleDriveService {
       if (error.message && (error.message.includes('invalid_grant') || error.message.includes('auth') || error.message.includes('credential') || error.message.includes('expired') || error.message.includes('revoked'))) {
         console.warn(`[DRIVE] ⚠️ Erro de credenciais detectado no upload. Alternando para MODO MOCK dinamicamente.`);
         this.drive = null;
-        return this.uploadMedia({ folderId, fileName, buffer, mimeType });
+        return this.uploadMedia({ folderId, fileName, filePath, mimeType });
       }
       
+      throw error;
+    }
+  }
+
+  /**
+   * INICIA UMA SESSÃO DE RESUMABLE UPLOAD DIRETO PARA O FRONTEND.
+   * Contorna o limite de 4.5MB da Vercel retornando uma URL para o qual
+   * o cliente (navegador) fará o PUT diretamente para o Google Drive.
+   */
+  async createResumableUploadUrl({ folderId, fileName, mimeType }: { folderId: string, fileName: string, mimeType: string }): Promise<string> {
+    if (!this.drive) {
+      console.warn(`[DRIVE MOCK] Retornando MOCK URL para upload resumable: ${fileName}`);
+      const appUrl = process.env.BACKEND_URL || process.env.APP_URL || 'http://localhost:3002';
+      return `${appUrl}/api/mock/resumable-upload`; 
+    }
+
+    try {
+      console.log(`[DRIVE] Solicitando URL Resumable para: ${fileName}`);
+      
+      // Para pegar a URL resumable, precisamos usar fetch ou axios manualmente com o Token
+      // A biblioteca googleapis faz isso por baixo dos panos apenas quando passamos a stream.
+      // Aqui, pegamos o token e fazemos a requisição manual:
+      
+      const authClient = (this.drive as any).context?._options?.auth || (this.drive as any)._options?.auth;
+      const accessToken = await authClient.getAccessToken();
+      const token = accessToken.token;
+
+      if (!token) throw new Error("Não foi possível obter Access Token do Google Drive");
+
+      const metadata = {
+        name: fileName,
+        parents: [folderId]
+      };
+
+      const response = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=resumable', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json; charset=UTF-8',
+          'X-Upload-Content-Type': mimeType
+        },
+        body: JSON.stringify(metadata)
+      });
+
+      if (!response.ok) {
+        const errText = await response.text();
+        throw new Error(`Google API HTTP ${response.status}: ${errText}`);
+      }
+
+      // O Google Drive retorna a URL temporária de upload no header 'Location'
+      const uploadUrl = response.headers.get('location');
+      
+      if (!uploadUrl) {
+        throw new Error("Google Drive não retornou a URL de location.");
+      }
+
+      return uploadUrl;
+
+    } catch (error: any) {
+      console.error('[DRIVE] ❌ ERRO AO CRIAR SESSÃO RESUMABLE:', error.message);
+      if (error.message && (error.message.includes('invalid_grant') || error.message.includes('auth'))) {
+         console.warn(`[DRIVE] ⚠️ Erro de credenciais. Alternando para MODO MOCK dinamicamente.`);
+         this.drive = null;
+         return this.createResumableUploadUrl({ folderId, fileName, mimeType });
+      }
+      throw error;
+    }
+  }
+
+  /**
+   * Finaliza o fluxo do Resumable. O cliente fez o PUT da imagem e pegou o ID.
+   * Agora nós damos permissão de leitura (anyone with link) e pegamos a thumbnail.
+   */
+  async finalizeResumableUpload(fileId: string): Promise<any> {
+    if (!this.drive) {
+      console.warn(`[DRIVE MOCK] Finalizando upload MOCK para fileId: ${fileId}`);
+      return {
+        id: fileId,
+        webViewLink: `mock-url-${fileId}`,
+        thumbnailLink: `mock-url-${fileId}`
+      };
+    }
+
+    try {
+      // 1. Libera o arquivo para visualização
+      await this.withRetry(() => this.drive!.permissions.create({
+        fileId: fileId,
+        requestBody: { role: 'reader', type: 'anyone' },
+        supportsAllDrives: true,
+      }));
+
+      // 2. Busca os metadados gerados pelo Drive (inclui Thumbnail)
+      const file = await this.withRetry(() => this.drive!.files.get({
+        fileId,
+        fields: 'id, name, webViewLink, thumbnailLink',
+        supportsAllDrives: true,
+      }));
+
+      return file.data;
+    } catch (error: any) {
+      console.error('[DRIVE] ❌ ERRO AO FINALIZAR RESUMABLE:', error.message);
       throw error;
     }
   }

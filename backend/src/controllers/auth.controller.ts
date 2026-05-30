@@ -106,8 +106,19 @@ export class AuthController {
 
       console.log(`[AUTH] Login bem-sucedido para: ${cleanEmail}`);
 
+      // Serverless-Native / Security: HTTP-Only Secure Cookies for JWT
+      const cookieOptions = {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax' as const,
+        maxAge: 7 * 24 * 60 * 60 * 1000 // 7 dias
+      };
+
+      res.cookie('token', token, cookieOptions);
+      res.cookie('refreshToken', refreshToken, { ...cookieOptions, maxAge: 30 * 24 * 60 * 60 * 1000 });
+
       return res.json({ 
-        token, 
+        token, // Mantemos por compatibilidade temporária de clients legados, mas o ideal é remover
         refreshToken,
         user: fullUser
       });
@@ -257,6 +268,17 @@ export class AuthController {
         include: { franchiseProfile: true }
       });
 
+      // Serverless-Native / Security: HTTP-Only Secure Cookies for JWT
+      const cookieOptions = {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax' as const,
+        maxAge: 7 * 24 * 60 * 60 * 1000 // 7 dias
+      };
+
+      res.cookie('token', token, cookieOptions);
+      res.cookie('refreshToken', refreshToken, { ...cookieOptions, maxAge: 30 * 24 * 60 * 60 * 1000 });
+
       return res.status(201).json({ 
         token,
         refreshToken,
@@ -316,10 +338,33 @@ export class AuthController {
       const user = await prisma.user.findUnique({ where: { id: payload.userId } });
       if (!user) throw new Error();
       const newPayload = { userId: user.id, role: user.role, nome: user.nome, email: user.email };
-      return res.json({ token: generateToken(newPayload), refreshToken: generateRefreshToken(newPayload) });
+      const newToken = generateToken(newPayload);
+      const newRefreshToken = generateRefreshToken(newPayload);
+      
+      const cookieOptions = {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax' as const,
+      };
+
+      res.cookie('token', newToken, { ...cookieOptions, maxAge: 7 * 24 * 60 * 60 * 1000 });
+      res.cookie('refreshToken', newRefreshToken, { ...cookieOptions, maxAge: 30 * 24 * 60 * 60 * 1000 });
+
+      return res.json({ token: newToken, refreshToken: newRefreshToken });
     } catch (e) {
       return res.status(401).json({ error: "Token inválido" });
     }
+  }
+
+  static async logout(req: Request, res: Response) {
+    const cookieOptions = {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax' as const,
+    };
+    res.clearCookie('token', cookieOptions);
+    res.clearCookie('refreshToken', cookieOptions);
+    return res.json({ success: true, message: 'Logout concluído' });
   }
 
   static async checkEmail(req: Request, res: Response) {

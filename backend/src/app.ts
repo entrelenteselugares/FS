@@ -3,6 +3,9 @@ import express from "express";
 import cors from "cors";
 import helmet from "helmet";
 import rateLimit from "express-rate-limit";
+import RedisStore from "rate-limit-redis";
+import Redis from "ioredis";
+import cookieParser from "cookie-parser";
 import routes from "./routes/index";
 import { initSentry } from "./lib/sentry";
 import * as Sentry from "@sentry/node";
@@ -58,6 +61,7 @@ if (!process.env.MASTER_EMAIL) {
 app.set("trust proxy", 1);
 
 // ── MIDDLEWARES DE SEGURANÇA & PARSERS ───────────────────────────────────────
+app.use(cookieParser());
 app.use(cors({
   origin: (origin, cb) => {
     if (!origin || 
@@ -86,28 +90,62 @@ app.use((req, _res, next) => {
   next();
 });
 
-// Rate limiting global e específico
-app.use("/api/auth/login", rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutos
-  max: 5, // Apenas 5 tentativas
-  message: { error: "Muitas tentativas de login falhas. Tente novamente em 15 minutos." }
+// ── RATE LIMITING NATIVO (SERVERLESS) ──────────────────────────────────────────
+// IMPORTANTE: Na Vercel (Serverless), a memória RAM não é persistida entre requests concorrentes.
+// Usar rate-limit em memória é INÚTIL e uma falha de segurança fatal.
+// O Redis é OBRIGATÓRIO para rate-limit em produção num ambiente Serverless.
+
+const isProduction = process.env.NODE_ENV === "production";
+const redisUrl = process.env.REDIS_URL || process.env.KV_URL; // Suporte a Upstash/Vercel KV
+
+let redisClient: Redis | undefined;
+let rateLimitStore: RedisStore | undefined;
+
+if (redisUrl) {
+  redisClient = new Redis(redisUrl);
+  rateLimitStore = new RedisStore({
+    sendCommand: (...args: string[]) => redisClient!.call(...args),
+  });
+  console.log("[SECURITY] Serverless-Native Redis Rate Limiter Ativado.");
+} else if (isProduction) {
+  console.error("❌ FALHA CRÍTICA DE ARQUITETURA: REDIS_URL não está configurado em produção.");
+  console.error("   O rate-limiting em memória (RAM) NÃO FUNCIONA na Vercel (Serverless).");
+  console.error("   O sistema está completamente VULNERÁVEL a ataques de Força Bruta e DDoS.");
+  console.error("   Prossiga com extrema cautela ou configure o Upstash Redis imediatamente.");
+}
+
+const createRateLimiter = (options: { windowMs: number, max: number, message: string }) => {
+  return rateLimit({
+    windowMs: options.windowMs,
+    max: options.max,
+    skip: () => !isProduction, // Desativa localmente para testes
+    store: rateLimitStore, // Usa Redis se disponível, senão cai pro fallback inútil em memória
+    message: { error: options.message }
+  });
+};
+
+app.use("/api/auth/login", createRateLimiter({
+  windowMs: 15 * 60 * 1000, 
+  max: 5, 
+  message: "Muitas tentativas de login falhas. Tente novamente em 15 minutos."
 }));
 
-app.use("/api/auth", rateLimit({ 
-  windowMs: 5 * 60 * 1000, // 5 minutos
-  max: 100, // Aumentado de 10 para 100
-  message: { error: "Muitas tentativas. Tente novamente em breve." } 
+app.use("/api/auth", createRateLimiter({ 
+  windowMs: 5 * 60 * 1000, 
+  max: 100,
+  message: "Muitas tentativas. Tente novamente em breve." 
 }));
 
-app.use("/api/checkout", rateLimit({ 
+app.use("/api/checkout", createRateLimiter({ 
   windowMs: 60 * 1000, 
-  max: 10,
-  message: { error: "Muitas requisições de checkout." } 
+  max: 20,
+  message: "Muitas tentativas de checkout." 
 }));
 
-app.use("/api/public", rateLimit({ 
+app.use("/api/webhooks", createRateLimiter({ 
   windowMs: 60 * 1000, 
-  max: 60 
+  max: 50,
+  message: "Rate limit excedido." 
 }));
 
 // Body parsers

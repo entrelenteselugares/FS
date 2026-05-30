@@ -111,15 +111,8 @@ export const RegisterPage: React.FC = () => {
 
       const response = await API.post("/auth/register", finalPayload);
       
-      // Logar automaticamente salvando o token e dados do usuário
-      const { token, refreshToken } = response.data;
-      localStorage.setItem("fs_token", token);
-      if (refreshToken) {
-        localStorage.setItem("fs_refresh_token", refreshToken);
-      }
-      
-      // Notificamos o sistema que estamos logados antes de navegar
-      API.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+      // O backend já configurou os cookies HttpOnly
+      // Apenas navegamos para a próxima página
 
       const target = "/minha-conta";
 

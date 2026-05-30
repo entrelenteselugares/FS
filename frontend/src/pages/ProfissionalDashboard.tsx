@@ -332,7 +332,7 @@ export default function ProfissionalDashboard({
 
   const handleConnectCalendar = () => {
     // Redirect to backend OAuth initiator
-    window.location.href = `${API.defaults.baseURL}/calendar/connect?token=${localStorage.getItem("fs_token")}`;
+    window.location.href = `${API.defaults.baseURL}/calendar/connect`;
   };
 
   const handleDisconnectCalendar = async () => {

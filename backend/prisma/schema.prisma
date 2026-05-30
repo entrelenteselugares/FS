@@ -207,6 +207,7 @@ model Event {
   coupons            Coupon[]
   leads              Lead[]
   coverPosition      String?             @default("center")
+  views              Int                 @default(0)
 
   @@map("events")
 }
@@ -281,6 +282,7 @@ model Profissional {
   user                  User                   @relation(fields: [userId], references: [id])
   serviceBookings       ServiceBooking[]
   albums                PortfolioAlbum[]
+  profileViews          Int                    @default(0)
 
   @@map("profissionais")
 }

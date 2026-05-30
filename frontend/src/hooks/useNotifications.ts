@@ -22,39 +22,22 @@ export function useNotifications() {
 
   const fetchUnreadCount = useCallback(async () => {
     if (!user) return;
-    const token = localStorage.getItem("fs_token");
-    if (!token) return; // no auth token, skip request
     try {
       const res = await api.get("/notifications/unread-count");
       setUnreadCount(res.data.count);
     } catch (err: any) {
-      if (err?.response?.status === 401) {
-        // Token likely expired or invalid – clear and redirect to login
-        localStorage.removeItem("fs_token");
-        localStorage.removeItem("fs_refresh_token");
-        window.location.href = "/login?session=expired";
-        return;
-      }
       console.error("Failed to fetch unread count:", err);
     }
   }, [user]);
 
   const fetchFeed = useCallback(async () => {
     if (!user) return;
-    const token = localStorage.getItem("fs_token");
-    if (!token) return;
     setLoading(true);
     try {
       const res = await api.get("/notifications");
       setNotifications(res.data.notifications);
       setUnreadCount(res.data.notifications.filter((n: AppNotification) => !n.read).length);
     } catch (err: any) {
-      if (err?.response?.status === 401) {
-        localStorage.removeItem("fs_token");
-        localStorage.removeItem("fs_refresh_token");
-        window.location.href = "/login?session=expired";
-        return;
-      }
       console.error("Failed to fetch notifications feed:", err);
     } finally {
       setLoading(false);

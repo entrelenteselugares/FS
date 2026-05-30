@@ -42,9 +42,9 @@ router.get("/professional/:userId/conversion", requireAuth, async (req: any, res
     const totalRevenue = paidOrders.reduce((sum, o) => sum + Number(o.valor), 0);
     const ticketMedio = totalPaidOrders > 0 ? totalRevenue / totalPaidOrders : 0;
 
-    // Estimated pageviews: 10x total order attempts until real tracking is added
-    const pageViews = Math.max(totalOrders * 10, 1);
-    const conversionRate = ((totalPaidOrders / pageViews) * 100).toFixed(2);
+    // Use real tracking data
+    const pageViews = prof.profileViews || 0;
+    const conversionRate = pageViews > 0 ? ((totalPaidOrders / pageViews) * 100).toFixed(2) : "0.00";
 
     return res.json({
       professionalId: prof.id,
@@ -86,18 +86,17 @@ router.get("/event/:id/funnel", requireAuth, async (req: any, res) => {
     const totalOrders = orders.length;
     const paidOrders = orders.filter((o) => o.hasPaid).length;
 
-    // Estimated funnel until real telemetry is available
-    const pageViews = Math.max(totalOrders * 15, 1);
-    const addCart = Math.max(Math.floor(totalOrders * 0.4), totalOrders);
+    // Use real tracking data
+    const pageViews = event.views || 0;
+    const addCart = Math.max(Math.floor(totalOrders * 0.4), totalOrders); // Not tracked explicitly yet
     const converted = paidOrders;
 
     return res.json({
       eventId,
       title: event.title,
       funnel: { pageViews, addCart, checkouts: totalOrders, converted },
-      conversionFromView: ((converted / pageViews) * 100).toFixed(2),
-      conversionFromCart:
-        addCart > 0 ? ((converted / addCart) * 100).toFixed(2) : "0.00",
+      conversionFromView: pageViews > 0 ? ((converted / pageViews) * 100).toFixed(2) : "0.00",
+      conversionFromCart: addCart > 0 ? ((converted / addCart) * 100).toFixed(2) : "0.00",
     });
   } catch (error) {
     console.error("[Analytics] Error fetching event funnel:", error);
@@ -142,6 +141,55 @@ router.get("/marketing/coupons", requireAuth, async (req: any, res) => {
     return res.json(report);
   } catch (error) {
     console.error("[Analytics] Error fetching marketing coupons:", error);
+    return res.status(500).json({ error: "Erro interno no servidor" });
+  }
+});
+
+// GET /admin/marketplace
+// Returns overall marketplace analytics
+router.get("/admin/marketplace", requireAuth, async (req: any, res) => {
+  try {
+    if (req.user.role !== "ADMIN") {
+      return res.status(403).json({ error: "Acesso negado." });
+    }
+
+    const totalEvents = await prisma.event.aggregate({ _sum: { views: true } });
+    const totalProfileViews = await prisma.profissional.aggregate({ _sum: { profileViews: true } });
+    const totalLeads = await prisma.lead.count();
+    const totalOrders = await prisma.order.count({ where: { status: { in: ["PAGO", "APROVADO"] } } });
+
+    const professionals = await prisma.profissional.findMany({
+      where: { user: { active: true } },
+      include: {
+        user: { select: { nome: true } },
+        _count: { select: { serviceBookings: true } }
+      }
+    });
+
+    const proStats = professionals.map(p => {
+      const views = p.profileViews || 0;
+      const bookings = p._count.serviceBookings || 0;
+      const conversion = views > 0 ? (bookings / views) * 100 : 0;
+      return {
+        id: p.id,
+        nome: p.user.nome,
+        views,
+        bookings,
+        conversionRate: Number(conversion.toFixed(2))
+      };
+    }).sort((a, b) => b.conversionRate - a.conversionRate).slice(0, 10);
+
+    return res.json({
+      funnel: {
+        eventViews: totalEvents._sum.views || 0,
+        profileViews: totalProfileViews._sum.profileViews || 0,
+        leads: totalLeads,
+        orders: totalOrders
+      },
+      topProfessionals: proStats
+    });
+  } catch (error) {
+    console.error("[Analytics] Error fetching admin marketplace:", error);
     return res.status(500).json({ error: "Erro interno no servidor" });
   }
 });

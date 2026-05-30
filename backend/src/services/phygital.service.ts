@@ -215,12 +215,25 @@ export class PhygitalService {
         if (!foundVault.folderId) throw new Error("Cofre sem infraestrutura de storage (Google Drive).");
         
         console.log(`[PHYGITAL] Upload RAW para Google Drive (Vault: ${foundVault.nome})`);
-        driveFile = await driveService.uploadMedia({
-          folderId: foundVault.folderId,
-          fileName: `${referenceCode}.jpg`,
-          buffer: rawImageBuffer, // Para cofre, sempre envia o RAW
-          mimeType: "image/jpeg"
-        });
+        
+        const os = require('os');
+        const fs = require('fs');
+        const path = require('path');
+        const tmpPath = path.join(os.tmpdir(), `phygital_${referenceCode}_${Date.now()}.jpg`);
+        
+        try {
+          fs.writeFileSync(tmpPath, rawImageBuffer);
+
+          driveFile = await driveService.uploadMedia({
+            folderId: foundVault.folderId,
+            fileName: `${referenceCode}.jpg`,
+            filePath: tmpPath, // Use disk to avoid OOM in uploadMedia
+            mimeType: "image/jpeg"
+          });
+        } finally {
+          if (fs.existsSync(tmpPath)) fs.unlinkSync(tmpPath);
+        }
+        
         rawPublicUrl = driveFile.webViewLink!;
         printPublicUrl = rawPublicUrl;
         galleryPublicUrl = rawPublicUrl;

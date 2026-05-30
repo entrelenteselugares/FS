@@ -9,8 +9,8 @@ Este documento descreve a arquitetura técnica da plataforma **Foto Segundo**, f
 
 A plataforma Foto Segundo é um ecossistema **Enterprise** estruturado em 9 camadas de responsabilidade clara:
 
-1. **Cloud Core (Vercel/API):** Orquestrador serverless de alta disponibilidade.
-2. **Persistence Layer (Supabase/Prisma):** Banco de dados relacional com auditoria nativa.
+1. **Cloud Core (Vercel Edge & Serverless):** Orquestrador serverless nativo com funções desmembradas (sem monolitos) e Edge Middleware para controle de tráfego.
+2. **Persistence Layer (Supabase/Prisma):** Banco de dados relacional com auditoria nativa e assinaturas Realtime (SSE).
 3. **Hybrid Cold Storage (Google Drive):** Armazenamento de ativos de alta resolução.
 4. **Financial Engine (Mercado Pago/PIX):** Fluxo transacional blindado e splits de comissão.
 5. **IoT Edge (Printer Agent):** Fulfillment automático de impressões na ponta.
@@ -62,12 +62,12 @@ Configuração via `event.vertical` (campo no banco) e controlada no `AdminEvent
 3. **Acesso:** O cliente acessa `/flash/:shortId`, digita o PIN e visualiza a foto em sessão anônima.
 4. **Conversão:** Ao clicar em resgatar, o cliente é levado ao registro e a foto é vinculada ao seu `userId` permanentemente.
 
-### 🖨️ Web-to-Print IoT Engine
+### 🖨️ Web-to-Print IoT Engine (Serverless Native)
 
-1. **Webhook:** O backend recebe confirmação de pagamento do Mercado Pago.
-2. **Queue:** O pedido entra na fila de impressão do evento.
-3. **Heartbeat:** O agente de impressão local envia telemetria constante para o backend.
-4. **Pull/Print:** O agente detecta o pedido, baixa o ativo do Google Drive e envia para o spooler da impressora local.
+1. **Webhook:** O backend recebe confirmação de pagamento do Mercado Pago e persiste no Supabase.
+2. **Queue:** O pedido entra na fila de impressão do evento no PostgreSQL.
+3. **Realtime Sync:** O frontend e os agentes de impressão assinam o **Supabase Realtime (WebSockets/SSE)**. Mudanças no banco empurram o evento automaticamente para os clientes sem polling.
+4. **Pull/Print:** O agente detecta o pedido push, baixa o ativo do Google Drive e envia para o spooler da impressora local. (Polling agressivo de `setInterval` é estritamente proibido para evitar exaustão de pool de conexão da Vercel).
 
 ### 📸 Client-Side Photo Compositing & Printing Engine
 
@@ -109,13 +109,23 @@ Para permitir o fulfillment imediato de fotos físicas pelo fotógrafo ou monito
 
 ---
 
-## 5. Segurança e Integridade
+## 5. Segurança e Integridade (Defesa em Profundidade)
 
-- **Auth:** JWT para sessões curtas e Refresh Tokens para persistência.
+- **Auth (Anti-XSS):** JWT (Acesso) e Refresh Tokens enviados exclusivamente via **`httpOnly`, `Secure` e `SameSite=Strict` Cookies**. O armazenamento em `localStorage` é proibido.
+- **Rate Limit (Anti-DDoS):** Limitação de tráfego em Edge Middleware usando Redis (ex: Upstash) para evitar cold starts no bloqueio de bots e IPs maliciosos.
 - **Cron Security:** Endpoints `/cron/*` protegidos por `CRON_SECRET` via Bearer token.
 - **Coupon Security:** Validação server-side de usos máximos, data de expiração e eventId restrito.
 - **Cash Payment Security:** Apenas usuários com role `ADMIN | PROFISSIONAL | FRANCHISEE` podem aprovar pagamentos em dinheiro.
 - **Audit:** Todas as operações críticas (Logins, Pagamentos, Uploads) são registradas no `GamificationLedger` ou logs de auditoria.
+
+---
+
+## 6. Anti-Padrões Proibidos (Serverless Constraints)
+
+Para evitar exaustão do banco e cobranças excessivas de nuvem, as seguintes práticas são **bloqueadas arquiteturalmente**:
+1. **Polling:** Usar `setInterval` para bater na API constantemente é proibido. Use WebSockets/Supabase Realtime.
+2. **Monolito de Backend:** Fazer bundle do Express inteiro em um único arquivo (ex: `server-v2.js` via `esbuild`) causa _cold starts_ imensos. As rotas da API devem ser nativas da nuvem (desmembradas e isoladas em múltiplas lambdas otimizadas).
+3. **Locks em Memória:** Usar variáveis em RAM no servidor para filas ou locks (como rate limit puro do Express) é inválido pois contêineres na Vercel são efêmeros e descentralizados.
 
 ---
 

@@ -98,6 +98,12 @@ export class EventController {
         return res.status(404).json({ error: "Evento não encontrado" });
       }
 
+      // Increment views asynchronously
+      prisma.event.update({
+        where: { id: event.id },
+        data: { views: { increment: 1 } }
+      }).catch(e => console.error("[Analytics] Error incrementing event views:", e));
+
       // 1. Identifica o usuário (Query ou JWT)
       const currentUserId = (userId as string) || (authUser?.userId);
 

@@ -723,6 +723,12 @@ export class MarketplaceController {
 
       if (!prof) return res.status(404).json({ error: "Profissional não encontrado." });
 
+      // Increment profile views asynchronously
+      prisma.profissional.update({
+        where: { id: prof.id },
+        data: { profileViews: { increment: 1 } }
+      }).catch(e => console.error("[Analytics] Error incrementing profile views:", e));
+
       // Check if this professional has an active PRO subscription
       const sub = await prisma.subscription.findFirst({
         where: { userId: prof.userId, type: "PRO", status: "ACTIVE" }

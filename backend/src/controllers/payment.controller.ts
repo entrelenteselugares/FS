@@ -391,18 +391,10 @@ export class PaymentController {
       try {
         const mpPaymentId = String(data.id);
 
-        // ── IDEMPOTÊNCIA: Verifica se já foi processado (Regra Absoluta 7.3) ──
-        const jaProcessado = await prisma.order.findFirst({
-          where: { 
-            paymentId: mpPaymentId,
-            status: "APROVADO"
-          }
-        });
-
-        if (jaProcessado) {
-          console.log(`[Webhook] Pagamento ${mpPaymentId} já processado. Ignorando.`);
-          return res.json({ ok: true, skipped: true });
-        }
+        // ── IDEMPOTÊNCIA ATÔMICA (v17) ──────────────────────────────────────────
+        // A verificação antiga usava findFirst + update separados = race condition.
+        // Agora usamos updateMany com WHERE status = 'PENDENTE'.
+        // Se count === 0, o webhook já foi processado. Sem race condition.
 
         const paymentData = await MercadoPagoService.getPaymentStatus(mpPaymentId);
         
@@ -417,18 +409,21 @@ export class PaymentController {
           if (updatedOrders.length === 0 && paymentData.external_reference) {
             const [realOrderId] = String(paymentData.external_reference).split(":");
             console.log(`[Webhook] Pedido não achado por ID ${data.id}. Tentando por Ref: ${realOrderId} (Original: ${paymentData.external_reference})`);
+            
             // ── VERIFICA SE É BOOKING ESCROW ──
             if (realOrderId.startsWith("booking-")) {
               const bookingId = realOrderId.replace("booking-", "");
-              const booking = await prisma.serviceBooking.findUnique({ where: { id: bookingId } });
-              if (booking && booking.status !== "PAID") {
-                await prisma.serviceBooking.update({
-                  where: { id: bookingId },
-                  data: { status: "PAID", paymentId: String(data.id) }
-                });
-                console.log(`✅ Booking Escrow ${booking.id} aprovado via Webhook.`);
-                return res.json({ ok: true, type: "booking" });
+              // ATÔMICO: Só atualiza se status != PAID (impede duplicação)
+              const bookingResult = await prisma.serviceBooking.updateMany({
+                where: { id: bookingId, status: { not: "PAID" } },
+                data: { status: "PAID", paymentId: String(data.id) }
+              });
+              if (bookingResult.count > 0) {
+                console.log(`✅ Booking Escrow ${bookingId} aprovado via Webhook.`);
+              } else {
+                console.log(`[Webhook] Booking ${bookingId} já processado. Ignorando duplicata.`);
               }
+              return res.json({ ok: true, type: "booking", idempotent: bookingResult.count === 0 });
             }
 
             // ── VERIFICA SE É ASSINATURA (COFRE) ──
@@ -436,6 +431,7 @@ export class PaymentController {
               where: { id: realOrderId }
             });
             if (sub) {
+              // Assinaturas usam handleSubscriptionPayment que já tem sua própria lógica interna
               await SubscriptionService.handleSubscriptionPayment(sub.gatewaySubId || String(data.id), paymentData.status);
               console.log(`✅ Assinatura ${sub.id} ativada via Webhook.`);
               return res.json({ ok: true, type: "subscription" });
@@ -453,14 +449,19 @@ export class PaymentController {
                 where: { id: realOrderId },
                 include: { items: true, franchisee: { include: { franchiseProfile: true } } }
               });
-              if (supplyOrder && supplyOrder.status !== 'PAID') {
-                // 1. Atualiza o status do pedido
-                await prisma.supplyOrder.update({
-                  where: { id: supplyOrder.id },
+              if (supplyOrder) {
+                // ATÔMICO: Só atualiza se status != PAID
+                const supplyResult = await prisma.supplyOrder.updateMany({
+                  where: { id: supplyOrder.id, status: { not: "PAID" } },
                   data: { status: "PAID", paymentId: String(data.id) }
                 });
 
-                // 2. Auto-credita créditos de impressão para produtos digitais (credits_*)
+                if (supplyResult.count === 0) {
+                  console.log(`[Webhook] SupplyOrder ${supplyOrder.id} já processado. Ignorando duplicata.`);
+                  return res.json({ ok: true, type: "supply_order", idempotent: true });
+                }
+
+                // Auto-credita créditos de impressão (só executa se o update acima deu count > 0)
                 if (supplyOrder.franchisee?.franchiseProfile) {
                   for (const item of supplyOrder.items) {
                     if (item.productId.startsWith('credits_')) {
@@ -509,20 +510,31 @@ export class PaymentController {
           }
 
           for (const order of updatedOrders) {
-            await prisma.order.update({
-              where: { id: order.id },
+            // ── TRANSIÇÃO ATÔMICA: PENDENTE → APROVADO ──────────────────────────
+            // updateMany com WHERE status != APROVADO garante que apenas UM webhook
+            // consegue efetuar a transição. Se count === 0, outro webhook já processou.
+            const result = await prisma.order.updateMany({
+              where: { 
+                id: order.id,
+                status: { not: "APROVADO" } // Só transiciona se AINDA não foi aprovado
+              },
               data: { 
                 status: "APROVADO",
                 hasPaid: true,
-                paymentId: String(data.id), // Garante sincronização do ID real do MP
-                paymentMethod: "MANUAL" // No webhook do Pro, geralmente é cartão/pix mas marcamos como processado
+                paymentId: String(data.id),
+                paymentMethod: "MANUAL"
               }
             });
 
-            // Usar o novo método unificado de finalização
+            if (result.count === 0) {
+              console.log(`[Webhook] Pedido ${order.id} já aprovado. Ignorando duplicata do MP (paymentId: ${data.id}).`);
+              continue; // Pula a finalização — já foi feita pelo primeiro webhook
+            }
+
+            // Usar o novo método unificado de finalização (só roda se o update acima deu count > 0)
             await PaymentController.finalizeApprovedOrder(order, order.event, req);
+            console.log(`✅ Pedido ${order.id} aprovado atomicamente via Webhook (paymentId: ${data.id}).`);
           }
-          console.log(`✅ Pagamento ${data.id} aprovado e notificação enviada.`);
         }
       } catch (error: unknown) {
         const msg = error instanceof Error ? error.message : "Erro desconhecido";
@@ -530,7 +542,7 @@ export class PaymentController {
       }
     }
 
-    // Responder sempre 200 ou 201 para o MP parar de tentar enviar
+    // Responder sempre 200 para o MP parar de tentar enviar
     return res.status(200).send("OK");
   }
 

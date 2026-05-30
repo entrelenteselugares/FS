@@ -3,7 +3,8 @@ import multer from "multer";
 import { PortfolioController } from "../controllers/PortfolioController";
 import { requireAuth, requireRole } from "../lib/auth";
 
-const upload = multer({ storage: multer.memoryStorage() });
+import os from "os";
+const upload = multer({ dest: os.tmpdir() });
 const router = Router();
 
 // Public routes

@@ -6,8 +6,32 @@
       "destination": "/api/debug.js"
     },
     {
+      "source": "/api/auth/(.*)",
+      "destination": "/api/auth.js"
+    },
+    {
+      "source": "/api/checkout/(.*)",
+      "destination": "/api/checkout.js"
+    },
+    {
+      "source": "/api/public/(.*)",
+      "destination": "/api/events.js"
+    },
+    {
+      "source": "/api/flash/(.*)",
+      "destination": "/api/events.js"
+    },
+    {
+      "source": "/api/vaults/(.*)",
+      "destination": "/api/events.js"
+    },
+    {
+      "source": "/api/profissional/(.*)",
+      "destination": "/api/events.js"
+    },
+    {
       "source": "/api/(.*)",
-      "destination": "/api/index.js"
+      "destination": "/api/core.js"
     },
     {
       "source": "/(.*)",

@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { API } from "../lib/api";
+import { supabase } from "../lib/supabase";
 import { useAuth } from "../hooks/useAuth";
 import { 
   Printer, ArrowLeft, RefreshCw, CheckCircle2, 
@@ -52,8 +53,27 @@ export default function PrintMonitor() {
     API.get(`/profissional/events/${eventId}`).then(r => setEvent(r.data));
     fetchPrints();
     
-    const interval = setInterval(fetchPrints, 10000); // Polling cada 10s
-    return () => clearInterval(interval);
+    // Serverless-Native: Utiliza WebSockets via Supabase Realtime invés de polling
+    const channel = supabase
+      .channel(`phygital-prints-${eventId}`)
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'PhygitalPrint',
+          filter: `eventId=eq.${eventId}`
+        },
+        (payload) => {
+          console.log("[Supabase Realtime] Print atualizado:", payload);
+          fetchPrints();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, [eventId, fetchPrints]);
 
   const handlePrint = (print: PrintItem) => {

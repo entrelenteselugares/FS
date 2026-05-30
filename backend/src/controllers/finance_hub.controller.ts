@@ -78,75 +78,71 @@ export async function settleProfessional(req: AuthRequest, res: Response): Promi
     const user = await prisma.user.findUnique({ where: { id: userId } });
     if (!user) { res.status(404).json({ error: "Usuário não encontrado." }); return; }
 
-    // 1. Busca todas as ordens AVAILABLE que ainda não foram liquidadas para este usuário
-    const orders = await prisma.order.findMany({
-      where: {
-        status: "APROVADO",
-        payoutStatus: "AVAILABLE",
-        OR: [
-          { event: { captacaoId: userId } },
-          { event: { edicaoId: userId } }
-        ]
-      },
-      include: { event: true }
-    });
+    const result = await prisma.$transaction(async (tx) => {
+        // 1. Busca todas as ordens AVAILABLE que ainda não foram liquidadas para este usuário
+        const orders = await tx.order.findMany({
+          where: {
+            status: "APROVADO",
+            payoutStatus: "AVAILABLE",
+            OR: [
+              { event: { captacaoId: userId } },
+              { event: { edicaoId: userId } }
+            ]
+          },
+          include: { event: true }
+        });
 
-    if (orders.length === 0) {
-      res.status(400).json({ error: "Nenhum saldo disponível para liquidação." });
-      return;
-    }
-
-    // 2. Calcula montante total e agrupa dados
-    let totalAmount = 0;
-    let grossRevenue = 0;
-    orders.forEach(o => {
-      grossRevenue += Number(o.valor);
-      if (o.event.captacaoId === userId) totalAmount += Number(o.splitCaptacao || 0);
-      if (o.event.edicaoId === userId) totalAmount += Number(o.splitEdicao || 0);
-    });
-
-    // 3. Cria um Payout consolidado (usando o modelo WeeklyPayout como base de transação)
-    const payout = await prisma.weeklyPayout.create({
-      data: {
-        weekStart: new Date(), // Representa o momento da liquidação
-        weekEnd: new Date(),
-        totalRevenue: grossRevenue,
-        totalPayout: totalAmount,
-        notesAdmin: notes || `Liquidação avulsa Hub: ${user.nome}`,
-        status: "PAID",
-        paidAt: new Date(),
-        items: {
-          create: {
-            recipientId: userId,
-            recipientName: user.nome,
-            recipientType: "PROFISSIONAL",
-            pixKey: user.pixKey,
-            amount: totalAmount,
-            grossRevenue: grossRevenue,
-            orderCount: orders.length,
-            splitPct: (totalAmount / grossRevenue) * 100,
-            status: "PAID",
-            paidAt: new Date()
-          }
+        if (orders.length === 0) {
+          throw new Error("Nenhum saldo disponível para liquidação.");
         }
-      },
-      include: { items: true }
-    });
 
-    const payoutItem = payout.items[0];
+        // 2. Calcula montante total e agrupa dados
+        let totalAmount = 0;
+        let grossRevenue = 0;
+        orders.forEach(o => {
+          grossRevenue += Number(o.valor);
+          if (o.event.captacaoId === userId) totalAmount += Number(o.splitCaptacao || 0);
+          if (o.event.edicaoId === userId) totalAmount += Number(o.splitEdicao || 0);
+        });
 
-    // 4. Cria os registros de PayoutSettlement para cada ordem e marca como pago
-    await Promise.all(orders.map(o => {
-      let amount = 0;
-      let role = "";
-      if (o.event.captacaoId === userId) { amount += Number(o.splitCaptacao || 0); role = "CAPTACAO"; }
-      if (o.event.edicaoId === userId) { amount += Number(o.splitEdicao || 0); role = "EDICAO"; }
+        // 3. Cria um Payout consolidado (usando o modelo WeeklyPayout como base de transação)
+        const payout = await tx.weeklyPayout.create({
+          data: {
+            weekStart: new Date(), // Representa o momento da liquidação
+            weekEnd: new Date(),
+            totalRevenue: grossRevenue,
+            totalPayout: totalAmount,
+            notesAdmin: notes || `Liquidação avulsa Hub: ${user.nome}`,
+            status: "PAID",
+            paidAt: new Date(),
+            items: {
+              create: {
+                recipientId: userId,
+                recipientName: user.nome,
+                recipientType: "PROFISSIONAL",
+                pixKey: user.pixKey,
+                amount: totalAmount,
+                grossRevenue: grossRevenue,
+                orderCount: orders.length,
+                splitPct: (totalAmount / grossRevenue) * 100,
+                status: "PAID",
+                paidAt: new Date()
+              }
+            }
+          },
+          include: { items: true }
+        });
 
-      return prisma.order.update({
-        where: { id: o.id },
-        data: { payoutStatus: "PAID" }
+        // 4. Marca as ordens como pagas usando updateMany para otimizar conexões do banco
+        await tx.order.updateMany({
+          where: { id: { in: orders.map(o => o.id) } },
+          data: { payoutStatus: "PAID" }
+        });
+
+        return { payout, payoutItem: payout.items[0], totalAmount };
       });
-    }));
+
+      const { payout, payoutItem, totalAmount } = result;
 
     // 5. Enviar Recibo por E-mail (Async)
     try {

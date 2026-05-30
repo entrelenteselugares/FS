@@ -6,217 +6,221 @@ import { AuthRequest } from "../lib/auth";
 import { VaultCycleService } from "../services/vaultCycle.service";
 import { IoTService } from "../services/iot.service";
 import { withRetry } from "../lib/retry";
+import { Deadline } from "../lib/deadline";
 
-export async function runExpirationJob(req?: AuthRequest): Promise<void> {
+const CHUNK_SIZE = 50; // Máximo de registros por lote, por fase
+
+export async function runExpirationJob(req?: AuthRequest): Promise<{
+  phases: Record<string, string>;
+  skipped: string[];
+  elapsed: string;
+}> {
+  const deadline = new Deadline(50); // 50s — 10s de margem para o limite de 60s da Vercel
   const now = new Date();
-  console.log(`[EXPIRATION JOB] Rodando em ${now.toISOString()}`);
-  
+  const report: Record<string, string> = {};
+  const skipped: string[] = [];
+
+  console.log(`[EXPIRATION JOB] Rodando em ${now.toISOString()} — janela: 50s`);
+
   if (req) {
     await audit(req, "CRON_JOB_STARTED", "System", "CRON_EXPIRATION", null, { startTime: now });
   }
 
-  // ── 1. Envia aviso 3 dias antes da expiração ──────
-  const tresDiasParaFrente = new Date(now.getTime() + 3 * 24 * 60 * 60 * 1000);
-
-  const proximosDeExpirar = await withRetry(() => prisma.order.findMany({
-    where: {
-      accessType: { not: null as string | null },
-      accessExpiresAt: {
-        gte: now,
-        lte: tresDiasParaFrente,
+  // ── FASE 1: Avisos de expiração (3 dias antes) ──────────────────────────────
+  if (!deadline.ok()) { skipped.push("phase_1_warnings"); }
+  else {
+    const tresDiasParaFrente = new Date(now.getTime() + 3 * 24 * 60 * 60 * 1000);
+    const proximosDeExpirar = await withRetry(() => prisma.order.findMany({
+      where: {
+        accessType: { not: null as string | null },
+        accessExpiresAt: { gte: now, lte: tresDiasParaFrente },
+        warningsSent: { lt: 1 },
+        deletedAt: null,
       },
-      warningsSent: { lt: 1 },
-      deletedAt: null,
-    },
-    include: {
-      event: { select: { title: true } },
-    },
-  }));
+      include: { event: { select: { title: true } } },
+      take: CHUNK_SIZE, // Nunca processa mais de 50 por vez
+    }));
 
-  for (const order of proximosDeExpirar) {
-    const dias = Math.ceil(
-      ((new Date(order.accessExpiresAt!).getTime() ?? 0) - now.getTime()) / (1000 * 60 * 60 * 24)
-    );
+    let warnCount = 0;
+    for (const order of proximosDeExpirar) {
+      if (!deadline.ok()) { skipped.push("phase_1_warnings_partial"); break; }
 
-    console.log(`[EXPIRATION JOB] Aviso: pedido ${order.id} expira em ${dias} dias`);
-
-    // Envia aviso ao comprador por e-mail
-    const recipientEmail = order.buyerEmail;
-    if (recipientEmail) {
-      NotificationService.sendAccessEmail({
-        to: recipientEmail,
-        buyerName: "Cliente",
-        eventTitle: order.event?.title || "Seu álbum",
-        orderId: order.id,
-        accessLink: `${FRONTEND_URL}/minha-conta`,
-      }).catch((e: unknown) =>
-        console.error(`[EXPIRATION JOB] Erro ao enviar aviso para ${recipientEmail}:`, e)
+      const dias = Math.ceil(
+        ((new Date(order.accessExpiresAt!).getTime() ?? 0) - now.getTime()) / (1000 * 60 * 60 * 24)
       );
+      const recipientEmail = order.buyerEmail;
+      if (recipientEmail) {
+        NotificationService.sendAccessEmail({
+          to: recipientEmail,
+          buyerName: "Cliente",
+          eventTitle: order.event?.title || "Seu álbum",
+          orderId: order.id,
+          accessLink: `${FRONTEND_URL}/minha-conta`,
+        }).catch((e: unknown) =>
+          console.error(`[EXPIRATION JOB] Erro ao enviar aviso para ${recipientEmail}:`, e)
+        );
+      }
+      await prisma.order.update({ where: { id: order.id }, data: { warningsSent: { increment: 1 } } });
+      warnCount++;
     }
-
-    await prisma.order.update({
-      where: { id: order.id },
-      data: { warningsSent: { increment: 1 } },
-    });
+    report["phase_1_warnings"] = `${warnCount}/${proximosDeExpirar.length} avisos enviados`;
+    console.log(`[EXPIRATION JOB] Fase 1: ${report["phase_1_warnings"]} (${deadline.elapsedStr()})`);
   }
 
-  // ── 2. Marca como excluído os pedidos expirados ───
-  const expirados = await withRetry(() => prisma.order.findMany({
-    where: {
-      accessType: { not: null as string | null },
-      accessExpiresAt: { lt: now },
-      deletedAt: null,
-    },
-    include: {
-      event: { select: { title: true, id: true } },
-    },
-  }));
+  // ── FASE 2: Marcação de pedidos expirados ────────────────────────────────────
+  if (!deadline.ok()) { skipped.push("phase_2_expiry"); }
+  else {
+    const expirados = await withRetry(() => prisma.order.findMany({
+      where: {
+        accessType: { not: null as string | null },
+        accessExpiresAt: { lt: now },
+        deletedAt: null,
+      },
+      include: { event: { select: { title: true, id: true } } },
+      take: CHUNK_SIZE,
+    }));
 
-  for (const order of expirados) {
-    console.log(`[EXPIRATION JOB] Excluindo mídia do pedido ${order.id}`);
+    let expiredCount = 0;
+    for (const order of expirados) {
+      if (!deadline.ok()) { skipped.push("phase_2_expiry_partial"); break; }
 
-    await prisma.order.update({
-      where: { id: order.id },
-      data: { deletedAt: now },
-    });
+      await prisma.order.update({ where: { id: order.id }, data: { deletedAt: now } });
 
-    // Se era PUBLIC, verifica se ainda há outros pedidos ativos no evento
-    if (order.accessType === "PUBLIC") {
-      const outrosAtivos = await prisma.order.count({
-        where: {
-          eventId: order.eventId,
-          accessType: "PUBLIC",
-          deletedAt: null,
-          accessExpiresAt: { gte: now },
-        },
-      });
-
-      // Se não há mais pedidos públicos ativos, desativa o evento do portfolio
-      if (outrosAtivos === 0) {
-        await prisma.event.update({
-          where: { id: order.eventId },
-          data: { active: false },
+      if (order.accessType === "PUBLIC") {
+        const outrosAtivos = await prisma.order.count({
+          where: { eventId: order.eventId, accessType: "PUBLIC", deletedAt: null, accessExpiresAt: { gte: now } },
         });
+        if (outrosAtivos === 0) {
+          await prisma.event.update({ where: { id: order.eventId }, data: { active: false } });
+        }
+      }
+      expiredCount++;
+    }
+    report["phase_2_expiry"] = `${expiredCount} pedidos expirados`;
+    console.log(`[EXPIRATION JOB] Fase 2: ${report["phase_2_expiry"]} (${deadline.elapsedStr()})`);
+  }
+
+  // ── FASE 3: Limpeza de curtidas expiradas ─────────────────────────────────
+  if (!deadline.ok()) { skipped.push("phase_3_likes"); }
+  else {
+    const curtidasExpiradas = await prisma.photoLike.deleteMany({
+      where: { expiresAt: { lt: now } },
+    });
+    report["phase_3_likes"] = `${curtidasExpiradas.count} curtidas limpas`;
+    console.log(`[EXPIRATION JOB] Fase 3: ${report["phase_3_likes"]} (${deadline.elapsedStr()})`);
+  }
+
+  // ── FASE 4: Liberação de repasses ─────────────────────────────────────────
+  if (!deadline.ok()) { skipped.push("phase_4_payouts"); }
+  else {
+    const liberaveis = await prisma.order.updateMany({
+      where: { payoutStatus: "PENDING", payoutReadyAt: { lt: now }, status: "APROVADO" },
+      data: { payoutStatus: "AVAILABLE" },
+    });
+    report["phase_4_payouts"] = `${liberaveis.count} repasses liberados`;
+    console.log(`[EXPIRATION JOB] Fase 4: ${report["phase_4_payouts"]} (${deadline.elapsedStr()})`);
+  }
+
+  // ── FASE 5: Encerramento automático por retenção ──────────────────────────
+  if (!deadline.ok()) { skipped.push("phase_5_retention"); }
+  else {
+    const eventosAtivos = await withRetry(() => prisma.event.findMany({
+      where: {
+        active: true,
+        isQuote: false,
+        type: { in: ["FOTO_POINT", "PHOTO_MARKETPLACE", "FLASH_EVENT"] },
+      },
+      include: {
+        captacao: { select: { email: true, nome: true } },
+        cartorioUser: { select: { email: true, nome: true } },
+      },
+      take: CHUNK_SIZE,
+    }));
+
+    let closedCount = 0;
+    for (const event of eventosAtivos) {
+      if (!deadline.ok()) { skipped.push("phase_5_retention_partial"); break; }
+
+      const diffDays = Math.floor((now.getTime() - new Date(event.dataEvento).getTime()) / (1000 * 60 * 60 * 24));
+      // @ts-ignore
+      const retentionLimit = event.retentionDays || (event.isPrivate ? 7 : 15);
+
+      if (diffDays >= retentionLimit) {
+        await prisma.event.update({ where: { id: event.id }, data: { active: false } });
+        const ownerEmail = event.captacao?.email || event.cartorioUser?.email;
+        const ownerName = event.captacao?.nome || event.cartorioUser?.nome || "Parceiro";
+        if (ownerEmail) {
+          NotificationService.notifyEventAutoClosed({ to: ownerEmail, ownerName, eventTitle: event.title })
+            .catch(e => console.error(`[EXPIRATION JOB] Erro ao notificar dono de ${event.id}:`, e));
+        }
+        closedCount++;
       }
     }
+    report["phase_5_retention"] = `${closedCount} eventos encerrados por retenção`;
+    console.log(`[EXPIRATION JOB] Fase 5: ${report["phase_5_retention"]} (${deadline.elapsedStr()})`);
   }
 
-  // ── 3. Limpeza de Curtidas Expiradas (Gamificação) ──
-  const curtidasExpiradas = await prisma.photoLike.deleteMany({
-    where: { expiresAt: { lt: now } },
-  });
+  // ── FASE 6: Auditoria de privacidade de marketplace ──────────────────────
+  if (!deadline.ok()) { skipped.push("phase_6_privacy_audit"); }
+  else {
+    const vendidosExpostos = await prisma.event.findMany({
+      where: { type: "PHOTO_MARKETPLACE", active: false },
+      include: { pedidos: { where: { status: "APROVADO" }, take: 1 } },
+      take: CHUNK_SIZE,
+    });
 
-  if (curtidasExpiradas.count > 0) {
-    console.log(`[EXPIRATION JOB] Limpeza: ${curtidasExpiradas.count} curtidas expiradas removidas.`);
+    let correctedCount = 0;
+    for (const event of vendidosExpostos) {
+      if (!deadline.ok()) { skipped.push("phase_6_privacy_audit_partial"); break; }
+      if (event.pedidos.length > 0) {
+        await prisma.event.update({ where: { id: event.id }, data: { active: true } });
+        correctedCount++;
+      }
+    }
+    report["phase_6_privacy_audit"] = `${correctedCount} marketplaces reativados`;
+    console.log(`[EXPIRATION JOB] Fase 6: ${report["phase_6_privacy_audit"]} (${deadline.elapsedStr()})`);
   }
 
-  console.log(`[EXPIRATION JOB] Concluído. ${proximosDeExpirar.length} avisos, ${expirados.length} exclusões, ${curtidasExpiradas.count} curtidas limpas.`);
-
-  // ── 4. Auditoria de Privacidade de Marketplace (rede de segurança) ──
-  // Verifica apenas eventos marketplace que foram INCORRETAMENTE marcados
-  // como públicos APÓS uma venda (isPrivate deveria ser false por padrão em marketplace).
-  // Não interfere em eventos públicos sem venda — esses são legítimos (à venda).
-  const vendidosExpostos = await prisma.event.findMany({
-    where: {
-      type: "PHOTO_MARKETPLACE",
-      active: false, // Desativados incorretamente
-    },
-    include: {
-      pedidos: { where: { status: "APROVADO" }, take: 1 },
-    },
-  });
-
-  let correctedCount = 0;
-  for (const event of vendidosExpostos) {
-    const temPedidoPago = event.pedidos.length > 0;
-    if (temPedidoPago) {
-      // Reativa marketplace com vendas que foram desativados incorretamente
-      await prisma.event.update({
-        where: { id: event.id },
-        data: { active: true },
-      });
-      correctedCount++;
-      console.log(`[PRIVACY AUDIT] Marketplace ${event.id} reativado (tem pedido pago).`);
+  // ── FASE 7: VaultCycleService (assinaturas de Cofres) ────────────────────
+  if (!deadline.ok()) { skipped.push("phase_7_vault_cycle"); }
+  else {
+    try {
+      await VaultCycleService.processAllDueSubscriptions();
+      report["phase_7_vault_cycle"] = "ok";
+      console.log(`[EXPIRATION JOB] Fase 7: VaultCycle ok (${deadline.elapsedStr()})`);
+    } catch (err) {
+      report["phase_7_vault_cycle"] = `erro: ${(err as Error).message}`;
     }
   }
 
-  if (correctedCount > 0) {
-    console.warn(`[PRIVACY AUDIT] ⚠️  ${correctedCount} eventos marketplace reativados.`);
+  // ── FASE 8: IoT Heartbeat check ──────────────────────────────────────────
+  if (!deadline.ok()) { skipped.push("phase_8_iot"); }
+  else {
+    try {
+      await IoTService.checkOfflineDevices();
+      report["phase_8_iot"] = "ok";
+      console.log(`[EXPIRATION JOB] Fase 8: IoT ok (${deadline.elapsedStr()})`);
+    } catch (err) {
+      report["phase_8_iot"] = `erro: ${(err as Error).message}`;
+    }
+  }
+
+  const elapsed = deadline.elapsedStr();
+
+  if (skipped.length > 0) {
+    console.warn(`[EXPIRATION JOB] ⚠️  ${skipped.length} fases puladas por deadline (${elapsed}):`, skipped);
   } else {
-    console.log(`[PRIVACY AUDIT] ✅ Nenhuma inconsistência de visibilidade encontrada.`);
-  }
-
-  // ── 5. Liberação Automática de Repasses (Phase 06) ──
-  const liberaveis = await prisma.order.updateMany({
-    where: {
-      payoutStatus: "PENDING",
-      payoutReadyAt: { lt: now },
-      status: "APROVADO"
-    },
-    data: {
-      payoutStatus: "AVAILABLE"
-    }
-  });
-
-  if (liberaveis.count > 0) {
-    console.log(`[EXPIRATION JOB] Financeiro: ${liberaveis.count} repasses liberados para repasse.`);
+    console.log(`[EXPIRATION JOB] ✅ Todas as fases concluídas em ${elapsed}`);
   }
 
   if (req) {
-    await audit(req, "CRON_JOB_FINISHED", "System", "CRON_EXPIRATION", null, { 
-      endTime: new Date(), 
-      correctedCount,
-      payoutsReleased: liberaveis.count
+    await audit(req, "CRON_JOB_FINISHED", "System", "CRON_EXPIRATION", null, {
+      endTime: new Date(),
+      report,
+      skipped,
+      elapsed,
     });
   }
 
-  // ── 6. Encerramento Automático de Eventos baseada em Política de Retenção ──
-  // Buscamos todos os eventos ativos para verificar o tempo de retenção
-  const eventosAtivos = await withRetry(() => prisma.event.findMany({
-    where: {
-      active: true,
-      isQuote: false,
-      type: { in: ['FOTO_POINT', 'PHOTO_MARKETPLACE', 'FLASH_EVENT'] }
-    },
-    include: {
-      captacao: { select: { email: true, nome: true } },
-      cartorioUser: { select: { email: true, nome: true } }
-    }
-  }));
-
-  for (const event of eventosAtivos) {
-    const dataEvento = new Date(event.dataEvento);
-    const diffTime = now.getTime() - dataEvento.getTime();
-    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-    
-    // @ts-ignore - retentionDays existe no DB
-    const retentionLimit = event.retentionDays || (event.isPrivate ? 7 : 15);
-
-    if (diffDays >= retentionLimit) {
-      console.log(`[EXPIRATION JOB] Encerrando evento ${event.id} (${event.title}) por expiração de retenção (${diffDays}/${retentionLimit} dias)`);
-      
-      await prisma.event.update({
-        where: { id: event.id },
-        data: { active: false }
-      });
-
-      // Notifica o dono (Captação ou Unidade Fixa)
-      const ownerEmail = event.captacao?.email || event.cartorioUser?.email;
-      const ownerName = event.captacao?.nome || event.cartorioUser?.nome || "Parceiro";
-
-      if (ownerEmail) {
-        NotificationService.notifyEventAutoClosed({
-          to: ownerEmail,
-          ownerName,
-          eventTitle: event.title
-        }).catch(e => console.error(`[EXPIRATION JOB] Erro ao notificar dono de ${event.id}:`, e));
-      }
-    }
-  }
-
-  // ── 7. Processamento de Assinaturas de Cofres (Fase 13) ──
-  await VaultCycleService.processAllDueSubscriptions();
-
-  // ── 8. Monitoramento IoT (Heartbeats) ──
-  await IoTService.checkOfflineDevices();
+  return { phases: report, skipped, elapsed };
 }

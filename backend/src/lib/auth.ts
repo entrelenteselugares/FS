@@ -46,10 +46,13 @@ export const verifyRefreshToken = (token: string): AuthPayload => {
 export const requireAuth = (req: ExpressRequest, res: Response, next: NextFunction) => {
   const authHeader = req.headers.authorization;
   const queryToken = req.query.token as string;
+  const cookieToken = req.cookies?.token;
   let token: string | undefined;
 
   if (authHeader?.startsWith("Bearer ")) {
     token = authHeader.slice(7);
+  } else if (cookieToken) {
+    token = cookieToken;
   } else if (queryToken) {
     token = queryToken;
   }
@@ -81,10 +84,13 @@ export const requireAuth = (req: ExpressRequest, res: Response, next: NextFuncti
 export const optionalAuth = (req: ExpressRequest, res: Response, next: NextFunction) => {
   const authHeader = req.headers.authorization;
   const queryToken = req.query.token as string;
+  const cookieToken = req.cookies?.token;
   let token: string | undefined;
 
   if (authHeader?.startsWith("Bearer ")) {
     token = authHeader.slice(7);
+  } else if (cookieToken) {
+    token = cookieToken;
   } else if (queryToken) {
     token = queryToken;
   }

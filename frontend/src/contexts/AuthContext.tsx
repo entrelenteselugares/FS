@@ -10,51 +10,37 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return localStorage.getItem("fs_active_role");
   });
 
-  const logout = () => {
-    localStorage.removeItem("fs_token");
-    localStorage.removeItem("fs_refresh_token");
+  const logout = async () => {
+    try {
+      await API.post("/auth/logout");
+    } catch {
+      // Ignore errors on logout
+    }
     localStorage.removeItem("fs_active_role");
-    delete API.defaults.headers.common["Authorization"];
     setToken(null);
     setUser(null);
     setActiveRole(null);
+    window.location.href = "/login";
   };
 
   useEffect(() => {
     const initAuth = async () => {
-      const stored = localStorage.getItem("fs_token");
-      const refresh = localStorage.getItem("fs_refresh_token");
-
-      if (stored) {
-        API.defaults.headers.common["Authorization"] = `Bearer ${stored}`;
-        try {
-          const r = await API.get("/auth/me");
-          if (r.data && r.data.nome) {
-            setUser(r.data);
-            setToken(stored);
-          }
-        } catch (err: unknown) {
-          const axiosError = err as { response?: { status: number } };
-          // Se falhou por expiração e temos refresh token, tenta renovar
-          if (axiosError.response?.status === 401 && refresh) {
-            try {
-              const { data } = await API.post("/auth/refresh", { refreshToken: refresh });
-              localStorage.setItem("fs_token", data.token);
-              localStorage.setItem("fs_refresh_token", data.refreshToken);
-              API.defaults.headers.common["Authorization"] = `Bearer ${data.token}`;
-              
-              const meResponse = await API.get("/auth/me");
-              setUser(meResponse.data);
-              setToken(data.token);
-            } catch {
-              logout();
-            }
-          } else {
-            logout();
-          }
+      try {
+        // Tenta buscar o usuário atual (os cookies serão enviados automaticamente)
+        const r = await API.get("/auth/me");
+        if (r.data && r.data.nome) {
+          setUser(r.data);
+          // O token exato não está mais disponível no frontend (HttpOnly), 
+          // usaremos um valor "dummy" apenas para manter a tipagem do Context feliz
+          setToken("cookie-session");
         }
+      } catch (err: unknown) {
+        // Se falhar (ex: 401), não está logado
+        setUser(null);
+        setToken(null);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     };
     
     initAuth();
@@ -73,44 +59,35 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const login = async (email: string, senha: string) => {
-    const { data } = await API.post("/auth/login", { email, senha });
-    localStorage.setItem("fs_token", data.token);
-    localStorage.setItem("fs_refresh_token", data.refreshToken);
-    API.defaults.headers.common["Authorization"] = `Bearer ${data.token}`;
+    await API.post("/auth/login", { email, senha });
     
-    // Fetch full user object to guarantee all nested properties (e.g. verificationStatus)
+    // Fetch full user object
     const meResponse = await API.get("/auth/me");
     const fullUser = meResponse.data;
     
-    setToken(data.token);
+    setToken("cookie-session");
     setUser(fullUser);
     return fullUser as AuthUser;
   };
 
   const register = async (email: string, senha: string, nome: string) => {
-    const { data } = await API.post("/auth/register", { email, senha, nome });
-    localStorage.setItem("fs_token", data.token);
-    localStorage.setItem("fs_refresh_token", data.refreshToken);
-    API.defaults.headers.common["Authorization"] = `Bearer ${data.token}`;
+    await API.post("/auth/register", { email, senha, nome });
     
     const meResponse = await API.get("/auth/me");
     const fullUser = meResponse.data;
 
-    setToken(data.token);
+    setToken("cookie-session");
     setUser(fullUser);
     return fullUser as AuthUser;
   };
 
   const registerExpress = async (email: string, senha: string, nome?: string, whatsapp?: string) => {
-    const { data } = await API.post("/auth/register-express", { email, senha, nome, whatsapp });
-    localStorage.setItem("fs_token", data.token);
-    localStorage.setItem("fs_refresh_token", data.refreshToken);
-    API.defaults.headers.common["Authorization"] = `Bearer ${data.token}`;
+    await API.post("/auth/register-express", { email, senha, nome, whatsapp });
     
     const meResponse = await API.get("/auth/me");
     const fullUser = meResponse.data;
 
-    setToken(data.token);
+    setToken("cookie-session");
     setUser(fullUser);
     return fullUser as AuthUser;
   };

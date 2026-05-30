@@ -9,6 +9,9 @@
 - ✅ **v11.0 Professional Governance & Marketplace Alpha** — Phases 45-46 (shipped)
 - ✅ **v12.0 Unified Marketplace & Portfolio** — Phases 47-51 (shipped)
 - ✅ **v13.0-SCALE Scale & Optimization** — Phases 52-54 (shipped 2026-05-24) — [Archive](file:///.planning/milestones/v13.0-SCALE-ROADMAP.md)
+- ✅ **v14.0 Infrastructure Resilience** — Phase 55 (shipped)
+- ✅ **v14.1 Analytics & Telemetry** — Phase 57 (shipped)
+- ✅ **v14.2 QuotePage UX Refinement** — Phase 56 (shipped)
 
 ## Phases
 
@@ -58,6 +61,20 @@
 
 </details>
 
+<details>
+<summary>✅ v14.0 Infrastructure Resilience (Phase 55) — SHIPPED</summary>
+
+- [x] Phase 55: Infrastructure Resilience — Storage Migration, Observability & Worker Decoupling
+
+</details>
+
+<details>
+<summary>✅ v14.1 Analytics & Telemetry (Phase 57) — SHIPPED</summary>
+
+- [x] Phase 57: Advanced Marketplace Analytics
+
+</details>
+
 ## Backlog (Post-Launch)
 
-- **Phase 55**: Advanced Marketplace Analytics (Analytics dashboard for professional sales conversion rates, event-level traffic analysis, and marketing coupon efficiency reports).
+- (Backlog is currently empty)

@@ -900,15 +900,26 @@ export async function adminUpdateUser(req: AuthRequest, res: Response): Promise<
         if (printCredits !== undefined) {
            const profile = await prisma.franchiseProfile.findUnique({ where: { userId: String(id) } });
            if (profile) {
-              await prisma.creditTransaction.create({
-                data: {
+              // Idempotency check: prevent duplicate transactions within 30 seconds
+              const recentTransaction = await prisma.creditTransaction.findFirst({
+                where: {
                   profileId: profile.id,
-                  amount: printCredits, // Aqui estamos setando o valor total, talvez devesse ser delta?
-                  // Por simplicidade neste MVP, setamos o valor absoluto enviado pelo Admin.
+                  amount: printCredits,
                   type: 'ADJUSTMENT',
-                  description: `Ajuste administrativo de saldo: ${printCredits} crÃ©ditos.`
+                  createdAt: { gte: new Date(Date.now() - 30 * 1000) }
                 }
               });
+
+              if (!recentTransaction) {
+                await prisma.creditTransaction.create({
+                  data: {
+                    profileId: profile.id,
+                    amount: printCredits,
+                    type: 'ADJUSTMENT',
+                    description: `Ajuste administrativo de saldo: ${printCredits} crÃ©ditos.`
+                  }
+                });
+              }
            }
         }
         

@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { API } from "../lib/api";
+import { supabase } from "../lib/supabase";
 
 import { ArrowLeft, QrCode, X, Check, Printer } from "lucide-react";
 import { QRCodeSVG } from "qrcode.react";
@@ -184,8 +185,26 @@ export default function FullMonitor() {
   useEffect(() => {
     API.get(`/profissional/events/${eventId}`).then(r => setEvent(r.data));
     fetchPrints();
-    const interval = setInterval(fetchPrints, 10000);
-    return () => clearInterval(interval);
+    const channel = supabase
+      .channel(`full-monitor-${eventId}`)
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'PhygitalPrint',
+          filter: `eventId=eq.${eventId}`
+        },
+        (payload) => {
+          console.log("[Supabase Realtime] FullMonitor update:", payload);
+          fetchPrints();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, [eventId, fetchPrints]);
 
   // Photos to print (filtered by selection)

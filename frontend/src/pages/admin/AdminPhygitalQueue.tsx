@@ -1,5 +1,6 @@
-﻿import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { API } from '../../lib/api';
+import { supabase } from '../../lib/supabase';
 import { X, RefreshCw, Printer, CheckCircle, Clock } from 'lucide-react';
 
 interface PrintJob {
@@ -38,14 +39,31 @@ export default function AdminPhygitalQueue({ eventId, eventTitle, onClose }: Pro
 
   useEffect(() => {
     fetchJobs();
-    let interval: ReturnType<typeof setInterval> | null = null;
-    if (autoRefresh) {
-      interval = setInterval(fetchJobs, 5000);
-    }
+    
+    if (!autoRefresh) return;
+
+    // Serverless-Native: Utiliza WebSockets via Supabase Realtime
+    const channel = supabase
+      .channel(`admin-queue-${eventId}`)
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'PhygitalPrint',
+          filter: `eventId=eq.${eventId}`
+        },
+        (payload) => {
+          console.log("[Supabase Realtime] Fila de Admin atualizada:", payload);
+          fetchJobs();
+        }
+      )
+      .subscribe();
+
     return () => {
-      if (interval) clearInterval(interval);
+      supabase.removeChannel(channel);
     };
-  }, [fetchJobs, autoRefresh]);
+  }, [fetchJobs, autoRefresh, eventId]);
 
   return (
     <div className="fixed inset-0 z-[70] flex items-center justify-end bg-black/80 backdrop-blur-sm">
