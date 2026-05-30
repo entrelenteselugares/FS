@@ -171,9 +171,12 @@ export const AdminDashboard: React.FC = () => {
 
   useEffect(() => {
     if (location.state?.editEventId) {
-      setEditingEventId(location.state.editEventId);
-      setActiveTab("events");
-      navigate(location.pathname, { replace: true, state: {} });
+      const id = location.state.editEventId;
+      setTimeout(() => {
+        setEditingEventId(id);
+        setActiveTab("events");
+        navigate(location.pathname, { replace: true, state: {} });
+      }, 0);
     }
   }, [location.state?.editEventId, navigate, location.pathname, setActiveTab]);
 
