@@ -392,6 +392,16 @@ export const QuotePage = () => {
     }
   }, [selectedPartnerId, locationType, partners]);
 
+  // Resetar categoria se o parceiro não suporta a categoria atual
+  useEffect(() => {
+    if (locationType === "PARTNER" && currentPartner?.eventTypes?.length) {
+      if (!currentPartner.eventTypes.includes(category)) {
+        setCategory(currentPartner.eventTypes[0]);
+      }
+    }
+  }, [currentPartner, locationType, category]);
+
+
   const handleCepChange = async (val: string) => {
     const clean = val.replace(/\D/g, "").slice(0, 8);
     setCustomCep(clean);
@@ -681,26 +691,30 @@ export const QuotePage = () => {
               <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
                 <label style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", color: THEME.text }}>02. Tipo de Evento</label>
                 <select value={category} onChange={e => setCategory(e.target.value)} className="fs-input" style={{ width: "100%", paddingLeft: 46 }}>
-                  {locationType === "PARTNER" && currentPartner?.eventTypes?.length ? (
-                    currentPartner.eventTypes.map(type => (
-                      <option key={type} value={type}>{type}</option>
-                    ))
-                  ) : (
-                    <>
-                      <option value="CASAMENTO">CASAMENTO</option>
-                      <option value="ANIVERSARIO">ANIVERSÁRIO</option>
-                      <option value="SHOW_FESTIVAL">SHOW / FESTIVAL</option>
-                      <option value="CORPORATIVO">EVENTO CORPORATIVO</option>
-                      <option value="FORMATURA">FORMATURA</option>
-                      <option value="ENSAIO">ENSAIO FOTOGRÁFICO</option>
-                      <option value="BAILE_FESTA">BAILE / FESTA</option>
-                      <option value="CONFRATERNIZACAO">CONFRATERNIZAÇÃO</option>
-                      <option value="CHURRASCO_BUFFET">CHURRASCO / BUFFET</option>
-                      <option value="OUTROS">OUTROS</option>
-                    </>
-                  )}
+                  {(() => {
+                    const EVENT_TYPE_LABELS: Record<string, string> = {
+                      CASAMENTO: "CASAMENTO",
+                      ANIVERSARIO: "ANIVERSÁRIO",
+                      SHOW_FESTIVAL: "SHOW / FESTIVAL",
+                      CORPORATIVO: "EVENTO CORPORATIVO",
+                      FORMATURA: "FORMATURA",
+                      ENSAIO: "ENSAIO FOTOGRÁFICO",
+                      BAILE_FESTA: "BAILE / FESTA",
+                      CONFRATERNIZACAO: "CONFRATERNIZAÇÃO",
+                      CHURRASCO_BUFFET: "CHURRASCO / BUFFET",
+                      OUTROS: "OUTROS",
+                    };
+                    const ALL_EVENT_TYPES = Object.keys(EVENT_TYPE_LABELS);
+                    const types = (locationType === "PARTNER" && currentPartner?.eventTypes?.length)
+                      ? currentPartner.eventTypes
+                      : ALL_EVENT_TYPES;
+                    return types.map(type => (
+                      <option key={type} value={type}>{EVENT_TYPE_LABELS[type] || type}</option>
+                    ));
+                  })()}
                 </select>
               </div>
+
 
               {/* Data e Horário */}
               <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
