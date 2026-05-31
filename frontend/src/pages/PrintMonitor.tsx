@@ -14,6 +14,54 @@ import { FlashEventMonitor } from "../components/profissional/FlashEventMonitor"
 import { PrintSettingsPanel } from "../components/PrintSettingsPanel";
 import type { PhygitalPrint as PrintItem } from "../components/PrintSettingsPanel";
 
+// Utilitário para comprimir a imagem antes do envio (evita erro 413 Payload Too Large no Vercel - Limite 4.5MB)
+const compressImage = async (file: File): Promise<File> => {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.src = URL.createObjectURL(file);
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return resolve(file);
+
+      const MAX_WIDTH = 1920;
+      const MAX_HEIGHT = 1920;
+      let width = img.width;
+      let height = img.height;
+
+      if (width > height) {
+        if (width > MAX_WIDTH) {
+          height *= MAX_WIDTH / width;
+          width = MAX_WIDTH;
+        }
+      } else {
+        if (height > MAX_HEIGHT) {
+          width *= MAX_HEIGHT / height;
+          height = MAX_HEIGHT;
+        }
+      }
+
+      canvas.width = width;
+      canvas.height = height;
+      ctx.drawImage(img, 0, 0, width, height);
+      
+      canvas.toBlob(
+        (blob) => {
+          if (!blob) return resolve(file);
+          const compressedFile = new File([blob], file.name, {
+            type: 'image/jpeg',
+            lastModified: Date.now(),
+          });
+          resolve(compressedFile);
+        },
+        'image/jpeg',
+        0.8
+      );
+    };
+    img.onerror = (error) => reject(error);
+  });
+};
+
 // PhygitalPrint type is imported from PrintSettingsPanel
 
 interface EventInfo {
@@ -126,8 +174,9 @@ export default function PrintMonitor() {
               setLoading(true);
               try {
                 for (const file of Array.from(e.target.files)) {
+                  const compressedFile = await compressImage(file);
                   const formData = new FormData();
-                  formData.append("photo", file);
+                  formData.append("photo", compressedFile);
                   formData.append("eventId", eventId!);
                   formData.append("customerName", "Profissional (Manual)");
                   await API.post("/public/phygital/upload", formData);

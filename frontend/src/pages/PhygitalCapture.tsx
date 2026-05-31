@@ -5,6 +5,53 @@ import { T } from '../lib/theme';
 import { Camera, CheckCircle2, AlertCircle, Loader2, Image as ImageIcon, User as UserIcon, LogOut, ArrowLeft } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 
+// Utilitário para comprimir a imagem antes do envio (evita erro 413 Payload Too Large no Vercel - Limite 4.5MB)
+const compressImage = async (file: File): Promise<File> => {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.src = URL.createObjectURL(file);
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return resolve(file);
+
+      const MAX_WIDTH = 1920;
+      const MAX_HEIGHT = 1920;
+      let width = img.width;
+      let height = img.height;
+
+      if (width > height) {
+        if (width > MAX_WIDTH) {
+          height *= MAX_WIDTH / width;
+          width = MAX_WIDTH;
+        }
+      } else {
+        if (height > MAX_HEIGHT) {
+          width *= MAX_HEIGHT / height;
+          height = MAX_HEIGHT;
+        }
+      }
+
+      canvas.width = width;
+      canvas.height = height;
+      ctx.drawImage(img, 0, 0, width, height);
+      
+      canvas.toBlob(
+        (blob) => {
+          if (!blob) return resolve(file);
+          const compressedFile = new File([blob], file.name, {
+            type: 'image/jpeg',
+            lastModified: Date.now(),
+          });
+          resolve(compressedFile);
+        },
+        'image/jpeg',
+        0.8 // quality
+      );
+    };
+    img.onerror = (error) => reject(error);
+  });
+};
 export default function PhygitalCapture() {
   const [searchParams] = useSearchParams();
   const eventId = searchParams.get('eventId') || searchParams.get('e') || 'EVENT_TESTE';
@@ -132,14 +179,15 @@ export default function PhygitalCapture() {
     setLoading(true);
     setError('');
 
-    const data = new FormData();
-    data.append('photo', file);
-    data.append('customerName', formData.customerName);
-    data.append('customerPhone', formData.customerPhone);
-    data.append('customerEmail', formData.customerEmail);
-    data.append('eventId', eventId);
-
     try {
+      const compressedFile = await compressImage(file);
+      const data = new FormData();
+      data.append('photo', compressedFile);
+      data.append('customerName', formData.customerName);
+      data.append('customerPhone', formData.customerPhone);
+      data.append('customerEmail', formData.customerEmail);
+      data.append('eventId', eventId);
+
       const res = await API.post('/public/phygital/upload', data);
 
       if (res.data && res.data.success) {
