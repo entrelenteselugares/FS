@@ -6,11 +6,13 @@ import { Camera, CheckCircle2, AlertCircle, Loader2, Image as ImageIcon, User as
 import { useAuth } from '../hooks/useAuth';
 
 // Utilitário para comprimir a imagem antes do envio (evita erro 413 Payload Too Large no Vercel - Limite 4.5MB)
-const compressImage = async (file: File): Promise<File> => {
+const compressImage = async (file: File): Promise<Blob | File> => {
   return new Promise((resolve, reject) => {
     const img = new Image();
-    img.src = URL.createObjectURL(file);
+    const objectUrl = URL.createObjectURL(file);
+    img.src = objectUrl;
     img.onload = () => {
+      URL.revokeObjectURL(objectUrl);
       const canvas = document.createElement('canvas');
       const ctx = canvas.getContext('2d');
       if (!ctx) return resolve(file);
@@ -39,17 +41,16 @@ const compressImage = async (file: File): Promise<File> => {
       canvas.toBlob(
         (blob) => {
           if (!blob) return resolve(file);
-          const compressedFile = new File([blob], file.name, {
-            type: 'image/jpeg',
-            lastModified: Date.now(),
-          });
-          resolve(compressedFile);
+          resolve(blob);
         },
         'image/jpeg',
         0.8 // quality
       );
     };
-    img.onerror = (error) => reject(error);
+    img.onerror = (error) => {
+      URL.revokeObjectURL(objectUrl);
+      reject(error);
+    };
   });
 };
 export default function PhygitalCapture() {
@@ -180,9 +181,9 @@ export default function PhygitalCapture() {
     setError('');
 
     try {
-      const compressedFile = await compressImage(file);
+      const compressedBlob = await compressImage(file);
       const data = new FormData();
-      data.append('photo', compressedFile);
+      data.append('photo', compressedBlob, file.name);
       data.append('customerName', formData.customerName);
       data.append('customerPhone', formData.customerPhone);
       data.append('customerEmail', formData.customerEmail);
