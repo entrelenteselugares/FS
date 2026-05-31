@@ -1,5 +1,6 @@
 import { S3Client, PutObjectCommand, GetObjectCommand } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
+import { supabaseAdmin } from '../lib/supabase';
 
 class R2StorageService {
   private s3: S3Client | null = null;
@@ -20,14 +21,20 @@ class R2StorageService {
         },
       });
     } else {
-      console.warn('[R2] Credenciais não configuradas. Operando em MODO MOCK.');
+      console.warn('[R2] Credenciais não configuradas. Operando em modo Supabase Storage (Fallback).');
     }
   }
 
   async createPresignedUploadUrl({ key, mimeType }: { key: string; mimeType: string }): Promise<{ uploadUrl: string; publicUrl: string }> {
     if (!this.s3) {
-      const mockUrl = `http://localhost:3002/api/mock/r2-upload/${key}`;
-      return { uploadUrl: mockUrl, publicUrl: `http://localhost:3002/uploads/mock/${key}` };
+      // Fallback para o Supabase Storage se o R2 não estiver configurado
+      const bucketName = 'vaults';
+      const { data, error } = await supabaseAdmin.storage.from(bucketName).createSignedUploadUrl(key);
+      if (error || !data) {
+        throw new Error(`Falha ao gerar URL assinada no Supabase Storage: ${error?.message}`);
+      }
+      const publicUrl = supabaseAdmin.storage.from(bucketName).getPublicUrl(key).data.publicUrl;
+      return { uploadUrl: data.signedUrl, publicUrl };
     }
     const command = new PutObjectCommand({ Bucket: this.bucket, Key: key, ContentType: mimeType });
     const uploadUrl = await getSignedUrl(this.s3 as any, command, { expiresIn: 900 }); // 15 min
@@ -35,7 +42,12 @@ class R2StorageService {
   }
 
   async deleteObject(key: string): Promise<void> {
-    if (!this.s3) return;
+    if (!this.s3) {
+      // Fallback para o Supabase Storage
+      const bucketName = 'vaults';
+      await supabaseAdmin.storage.from(bucketName).remove([key]);
+      return;
+    }
     const { DeleteObjectCommand } = await import('@aws-sdk/client-s3');
     await this.s3.send(new DeleteObjectCommand({ Bucket: this.bucket, Key: key }));
   }
