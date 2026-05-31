@@ -197,8 +197,13 @@ export default function PhygitalCapture() {
       }
     } catch (err: unknown) {
       if (err && typeof err === 'object' && 'response' in err) {
-        const axiosErr = err as { response?: { data?: { error?: string } } };
-        setError(axiosErr.response?.data?.error || 'Erro ao processar imagem.');
+        const axiosErr = err as { response?: { data?: { error?: string, details?: string } } };
+        const data = axiosErr.response?.data;
+        if (data?.details) {
+          setError(`Erro no Servidor: ${data.details}`);
+        } else {
+          setError(data?.error || 'Erro ao processar imagem.');
+        }
       } else {
         setError(err instanceof Error ? err.message : 'Erro de conexão. Tente novamente.');
       }

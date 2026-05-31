@@ -182,9 +182,10 @@ export default function PrintMonitor() {
                   await API.post("/public/phygital/upload", formData);
                 }
                 fetchPrints();
-              } catch (err) {
+              } catch (err: any) {
                 console.error("Erro no upload manual:", err);
-                alert("Erro ao enviar fotos. Verifique seu saldo ou conexão.");
+                const details = err.response?.data?.details;
+                alert(`Erro ao enviar fotos: ${details || 'Verifique seu saldo, conexão ou configuração do servidor.'}`);
               } finally {
                 setLoading(false);
               }
