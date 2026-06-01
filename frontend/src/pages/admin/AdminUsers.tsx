@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { API } from "../../lib/api";
-import { X, UserPlus, Shield, Trash2, Edit3, Search, CheckCircle2, ArrowRight } from "lucide-react";
+import { X, UserPlus, Shield, Trash2, Edit3, Search, CheckCircle2, ArrowRight, ChevronDown } from "lucide-react";
 import { toast } from "sonner";
 
 interface User {
@@ -346,12 +346,15 @@ export const AdminUsers: React.FC = () => {
                       </div>
                       <div className="space-y-2">
                         <label className="text-[7px] font-black text-theme-muted uppercase tracking-widest block mb-1 opacity-40 italic">Nível de Acesso</label>
-                        <select className="fs-input font-black uppercase appearance-none cursor-pointer" value={formData.role} onChange={e => setFormData({...formData, role: e.target.value})}>
-                          <option value="ADMIN">ADMINISTRADOR</option>
-                          <option value="PROFISSIONAL">PROFISSIONAL / PARCEIRO</option>
-                          <option value="CARTORIO">UNIDADE FIXA / PARCEIRO</option>
-                          <option value="CLIENTE">CLIENTE</option>
-                        </select>
+                        <div className="relative">
+                          <select className="fs-input font-black uppercase appearance-none cursor-pointer w-full" value={formData.role} onChange={e => setFormData({...formData, role: e.target.value})}>
+                            <option value="ADMIN">ADMINISTRADOR</option>
+                            <option value="PROFISSIONAL">PROFISSIONAL / PARCEIRO</option>
+                            <option value="CARTORIO">UNIDADE FIXA / PARCEIRO</option>
+                            <option value="CLIENTE">CLIENTE</option>
+                          </select>
+                          <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-theme-muted pointer-events-none" size={16} />
+                        </div>
                       </div>
                     </div>
                   </div>

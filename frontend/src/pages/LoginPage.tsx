@@ -217,22 +217,12 @@ export const LoginPage: React.FC = () => {
 
       {/* ── RIGHT: Login Panel ── */}
       <div
-        className={`
-          w-full lg:w-[480px] xl:w-[520px] flex flex-col justify-between relative
-          ${isDark ? "bg-zinc-950 border-l border-white/5" : "bg-white border-l border-black/5"}
-          shadow-2xl h-screen overflow-y-auto
-        `}
+        className="w-full lg:w-[480px] xl:w-[520px] flex flex-col justify-between relative bg-theme-bg border-l border-theme-border shadow-2xl h-screen overflow-y-auto"
       >
         {/* Theme toggle */}
         <button
           onClick={toggle}
-          className={`
-            absolute top-6 right-6 p-2.5 rounded-full transition-all z-10
-            ${isDark
-              ? "bg-white/5 hover:bg-white/10 text-white/50 hover:text-white"
-              : "bg-black/5 hover:bg-black/10 text-black/40 hover:text-black"
-            }
-          `}
+          className="absolute top-6 right-6 p-2.5 rounded-full transition-all z-10 bg-theme-bg-muted/50 hover:bg-theme-border text-theme-muted hover:text-theme-text"
           title={isDark ? "Modo claro" : "Modo escuro"}
         >
           {isDark ? <Sun size={16} /> : <Moon size={16} />}
@@ -258,13 +248,13 @@ export const LoginPage: React.FC = () => {
         <div className="flex-1 flex flex-col justify-center px-10 xl:px-14 py-8 space-y-10">
           {/* Heading */}
           <div>
-            <h1 className={`text-4xl xl:text-5xl font-heading font-black uppercase italic leading-none tracking-tighter ${isDark ? "text-white" : "text-zinc-900"}`}>
+            <h1 className="text-4xl xl:text-5xl font-black uppercase italic leading-none tracking-tighter text-theme-text">
               Efetuar
             </h1>
-            <h1 className="text-4xl xl:text-5xl font-heading font-black uppercase italic leading-none tracking-tighter text-brand-tactical">
+            <h1 className="text-4xl xl:text-5xl font-black uppercase italic leading-none tracking-tighter text-brand-tactical">
               Login
             </h1>
-            <p className={`mt-3 text-[10px] font-medium uppercase tracking-widest ${isDark ? "text-white/30" : "text-zinc-400"}`}>
+            <p className="mt-3 text-[10px] font-medium uppercase tracking-widest text-theme-muted">
               Bem-vindo de volta ao sistema
             </p>
           </div>
@@ -280,17 +270,17 @@ export const LoginPage: React.FC = () => {
           <form onSubmit={handleSubmit} className="space-y-5">
             {/* Email */}
             <div className="space-y-2">
-              <label className={`text-[9px] font-black uppercase tracking-[0.3em] ${isDark ? "text-white/40" : "text-zinc-400"}`}>
+              <label className="text-[9px] font-black uppercase tracking-[0.3em] text-theme-muted">
                 Identificação
               </label>
-              <div className={`relative flex items-center rounded-xl border transition-all ${isDark ? "bg-white/5 border-white/10 focus-within:border-brand-tactical/50" : "bg-zinc-50 border-zinc-200 focus-within:border-brand-tactical"}`}>
-                <Mail className="absolute left-4 text-brand-tactical/60" size={14} />
+              <div className="relative flex items-center rounded-xl border border-theme-border bg-theme-bg-muted/30 focus-within:border-brand-tactical transition-all">
+                <Mail className="absolute left-4 text-theme-muted" size={14} />
                 <input
                   type="email"
                   required
                   value={email}
                   onChange={e => setEmail(e.target.value)}
-                  className={`w-full bg-transparent py-4 pl-11 pr-4 text-xs outline-none placeholder:opacity-30 ${isDark ? "text-white placeholder:text-white" : "text-zinc-800 placeholder:text-zinc-400"}`}
+                  className="w-full bg-transparent py-4 pl-11 pr-4 text-xs outline-none text-theme-text placeholder:text-theme-muted placeholder:opacity-50"
                   placeholder="seu@email.com"
                   autoComplete="email"
                 />
@@ -300,31 +290,31 @@ export const LoginPage: React.FC = () => {
             {/* Password */}
             <div className="space-y-2">
               <div className="flex justify-between items-center">
-                <label className={`text-[9px] font-black uppercase tracking-[0.3em] ${isDark ? "text-white/40" : "text-zinc-400"}`}>
+                <label className="text-[9px] font-black uppercase tracking-[0.3em] text-theme-muted">
                   Chave de Acesso
                 </label>
                 <Link
                   to="/forgot-password"
-                  className="text-[8px] font-black uppercase tracking-widest text-brand-tactical hover:text-brand-tactical transition-colors italic"
+                  className="text-[8px] font-black uppercase tracking-widest text-brand-tactical hover:brightness-110 transition-colors italic"
                 >
                   Esqueci a senha →
                 </Link>
               </div>
-              <div className={`relative flex items-center rounded-xl border transition-all ${isDark ? "bg-white/5 border-white/10 focus-within:border-brand-tactical/50" : "bg-zinc-50 border-zinc-200 focus-within:border-brand-tactical"}`}>
-                <Lock className="absolute left-4 text-brand-tactical/60" size={14} />
+              <div className="relative flex items-center rounded-xl border border-theme-border bg-theme-bg-muted/30 focus-within:border-brand-tactical transition-all">
+                <Lock className="absolute left-4 text-theme-muted" size={14} />
                 <input
                   type={showSenha ? "text" : "password"}
                   required
                   value={senha}
                   onChange={e => setSenha(e.target.value)}
-                  className={`w-full bg-transparent py-4 pl-11 pr-12 text-xs outline-none placeholder:opacity-30 ${isDark ? "text-white placeholder:text-white" : "text-zinc-800 placeholder:text-zinc-400"}`}
+                  className="w-full bg-transparent py-4 pl-11 pr-12 text-xs outline-none text-theme-text placeholder:text-theme-muted placeholder:opacity-50"
                   placeholder="••••••••"
                   autoComplete="current-password"
                 />
                 <button
                   type="button"
                   onClick={() => setShowSenha(!showSenha)}
-                  className={`absolute right-4 transition-colors ${isDark ? "text-white/30 hover:text-white/60" : "text-zinc-400 hover:text-zinc-700"}`}
+                  className="absolute right-4 text-theme-muted hover:text-theme-text transition-colors"
                 >
                   {showSenha ? <EyeOff size={16} /> : <Eye size={16} />}
                 </button>
@@ -335,7 +325,7 @@ export const LoginPage: React.FC = () => {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-brand-tactical text-zinc-950 hover:bg-white active:scale-[0.98] font-black uppercase tracking-[0.4em] text-[10px] py-5 transition-all flex items-center justify-center gap-3 group disabled:opacity-30 rounded-xl italic shadow-lg shadow-brand-tactical/20 mt-2"
+              className="fs-btn w-full bg-brand-tactical text-zinc-950 py-5 group italic shadow-lg shadow-brand-tactical/20 mt-2"
             >
               {loading ? (
                 <span className="flex items-center gap-2">
@@ -353,19 +343,19 @@ export const LoginPage: React.FC = () => {
         </div>
 
         {/* Bottom: Footer */}
-        <div className={`px-10 xl:px-14 pb-8 pt-6 border-t flex flex-col gap-4 text-center ${isDark ? "border-white/5" : "border-zinc-100"}`}>
-          <p className={`text-[8px] font-black uppercase tracking-[0.3em] ${isDark ? "text-white/20" : "text-zinc-400"}`}>
+        <div className="px-10 xl:px-14 pb-8 pt-6 border-t border-theme-border flex flex-col gap-4 text-center">
+          <p className="text-[8px] font-black uppercase tracking-[0.3em] text-theme-muted">
             Novo por aqui?{" "}
             <Link
               to="/registro"
-              className={`ml-2 transition-all underline underline-offset-4 ${isDark ? "text-white/50 hover:text-brand-tactical decoration-white/10 hover:decoration-brand-tactical/50" : "text-zinc-600 hover:text-brand-tactical decoration-zinc-200"}`}
+              className="ml-2 transition-all underline underline-offset-4 text-theme-muted hover:text-brand-tactical decoration-theme-border hover:decoration-brand-tactical/50"
             >
               Solicitar Cadastro
             </Link>
           </p>
           <Link
             to="/"
-            className={`text-[8px] font-black uppercase tracking-[0.4em] transition-all italic ${isDark ? "text-white/15 hover:text-white/40" : "text-zinc-300 hover:text-zinc-500"}`}
+            className="text-[8px] font-black uppercase tracking-[0.4em] transition-all italic text-theme-muted opacity-50 hover:opacity-100"
           >
             ← Voltar para a Vitrine
           </Link>

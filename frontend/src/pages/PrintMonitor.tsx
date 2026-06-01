@@ -4,15 +4,24 @@ import { API } from "../lib/api";
 import { supabase } from "../lib/supabase";
 import { useAuth } from "../hooks/useAuth";
 import { 
-  Printer, ArrowLeft, RefreshCw, CheckCircle2, 
+  Printer, ArrowLeft, RefreshCw, CheckCircle2, Check,
   Clock, ExternalLink, Play, Pause, QrCode, X,
   Expand
 } from "lucide-react";
 import { QRCodeSVG } from "qrcode.react";
 import { T } from "../lib/theme";
 import { FlashEventMonitor } from "../components/profissional/FlashEventMonitor";
-import { PrintSettingsPanel } from "../components/PrintSettingsPanel";
-import type { PhygitalPrint as PrintItem } from "../components/PrintSettingsPanel";
+import { NativePrintLayout } from "../components/NativePrintLayout";
+import { useAutoPrintEngine } from "../hooks/useAutoPrintEngine";
+
+export interface PrintItem {
+  id: string;
+  referenceCode: string;
+  imageUrl: string;
+  customerName: string;
+  status: 'PENDING_PRINT' | 'PRINTED' | 'DISPATCHED_MAIL';
+  createdAt: string;
+}
 
 // Utilitário para comprimir a imagem antes do envio (evita erro 413 Payload Too Large no Vercel - Limite 4.5MB)
 const compressImage = async (file: File): Promise<Blob | File> => {
@@ -82,7 +91,15 @@ export default function PrintMonitor() {
   const [autoPrint, setAutoPrint] = useState(false);
   const [lastSync, setLastSync] = useState(new Date());
   const [showQR, setShowQR] = useState(false);
-  const [printTarget, setPrintTarget] = useState<PrintItem | null>(null);
+  const [printTargets, setPrintTargets] = useState<PrintItem[] | null>(null);
+  const [selected, setSelected] = useState<string[]>([]);
+  const [orientation, setOrientation] = useState<'portrait' | 'landscape'>('landscape');
+
+  const toggleSelect = (id: string) => {
+    setSelected(prev =>
+      prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]
+    );
+  };
 
   const captureUrl = `${window.location.origin}/captura?eventId=${eventId}`;
 
@@ -97,6 +114,19 @@ export default function PrintMonitor() {
       setLoading(false);
     }
   }, [eventId]);
+
+  const handlePrintGroup = useCallback((group: PrintItem[], layoutOrientation: 'portrait' | 'landscape') => {
+    setOrientation(layoutOrientation);
+    setPrintTargets(group);
+  }, []);
+
+  useAutoPrintEngine({
+    enabled: autoPrint,
+    prints,
+    eventId: eventId!,
+    onPrintGroup: handlePrintGroup,
+    refetchPrints: fetchPrints
+  });
 
   useEffect(() => {
     API.get(`/profissional/events/${eventId}`).then(r => setEvent(r.data));
@@ -126,19 +156,48 @@ export default function PrintMonitor() {
   }, [eventId, fetchPrints]);
 
   const handlePrint = (print: PrintItem) => {
-    // Open the full-featured print settings panel instead of raw window.open
-    setPrintTarget(print);
+    setPrintTargets([print]);
   };
 
-  const handlePrinted = (print: PrintItem) => {
-    // Mark as printed in backend and close panel
-    API.patch(`/phygital/prints/${print.id}/status`, { status: 'PRINTED' })
-      .then(() => fetchPrints())
-      .catch(err => console.error('Erro ao marcar impressão:', err));
-    setPrintTarget(null);
+  const handlePrintSelected = () => {
+    const selectedPrints = prints.filter(p => selected.includes(p.id));
+    if (selectedPrints.length > 0) {
+      setPrintTargets(selectedPrints);
+    }
+  };
+
+  const handlePrinted = async (targets: PrintItem[]) => {
+    try {
+      await Promise.all(
+        targets.map(p => API.patch(`/phygital/prints/${p.id}/status`, { status: 'PRINTED' }))
+      );
+      fetchPrints();
+      setSelected([]);
+    } catch (err) {
+      console.error('Erro ao marcar impressão:', err);
+    }
+    setPrintTargets(null);
   };
 
   const pendingCount = prints.filter(p => p.status === 'PENDING_PRINT').length;
+
+  useEffect(() => {
+    if (printTargets && printTargets.length > 0) {
+      setTimeout(() => {
+        window.print();
+      }, 300);
+    }
+  }, [printTargets]);
+
+  useEffect(() => {
+    const afterPrint = () => {
+      if (printTargets && printTargets.length > 0) {
+        handlePrinted(printTargets);
+      }
+    };
+    window.addEventListener('afterprint', afterPrint);
+    return () => window.removeEventListener('afterprint', afterPrint);
+  }, [printTargets, handlePrinted]);
 
   if (loading && !event) {
     return (
@@ -151,8 +210,9 @@ export default function PrintMonitor() {
 
   return (
     <div className="min-h-screen bg-theme-bg text-theme-text font-sans selection:bg-brand-tactical/30">
-      {/* Header Fixo */}
-      <div className="sticky top-0 z-50 bg-zinc-950/80 backdrop-blur-xl border-b border-theme-border px-6 py-4 flex items-center justify-between">
+      <div className="print:hidden">
+        {/* Header Fixo */}
+        <div className="sticky top-0 z-50 bg-zinc-950/80 backdrop-blur-xl border-b border-theme-border px-6 py-4 flex items-center justify-between">
         <div className="flex items-center gap-6">
           <button onClick={() => navigate(-1)} className="p-2 hover:bg-white/5 rounded-full transition-all text-zinc-400 hover:text-white">
             <ArrowLeft size={20} />
@@ -209,10 +269,34 @@ export default function PrintMonitor() {
           >
             <QrCode size={12} /> Mostrar QR Code
           </button>
-          <button
-            onClick={() => navigate(`/profissional/monitor/${eventId}/full`)}
-            className="flex items-center gap-2 px-6 py-2.5 rounded-full text-[9px] font-black uppercase tracking-widest bg-brand-tactical text-white hover:brightness-110 transition-all"
+
+          <button 
+            onClick={() => setAutoPrint(!autoPrint)}
+            className={`flex items-center gap-2 px-6 py-2.5 rounded-full text-[9px] font-black uppercase tracking-widest transition-all ${
+              autoPrint 
+                ? 'bg-brand-tactical text-zinc-950 shadow-[0_0_15px_rgba(133,185,172,0.4)] ring-2 ring-brand-tactical/50' 
+                : 'bg-white/5 hover:bg-white/10 text-white/90'
+            }`}
           >
+            <Play size={12} /> Auto-Print {autoPrint ? 'ON' : 'OFF'}
+          </button>
+
+          <div className="hidden md:flex items-center gap-1 bg-theme-bg border border-theme-border p-1 rounded-full mr-2">
+            <button
+              onClick={() => setOrientation('portrait')}
+              className={`px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-all ${orientation === 'portrait' ? 'bg-brand-tactical text-zinc-950 shadow' : 'text-theme-muted hover:text-theme-text'}`}
+            >
+              Retrato
+            </button>
+            <button
+              onClick={() => setOrientation('landscape')}
+              className={`px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-all ${orientation === 'landscape' ? 'bg-brand-tactical text-zinc-950 shadow' : 'text-theme-muted hover:text-theme-text'}`}
+            >
+              Paisagem
+            </button>
+          </div>
+
+          <button onClick={() => navigate(`/profissional/monitor/${eventId}/full`)} className="flex items-center gap-2 px-6 py-2.5 rounded-full text-[9px] font-black uppercase tracking-widest bg-brand-tactical text-white hover:brightness-110 transition-all">
             <Expand size={12} /> Full Screen
           </button>
           <button 
@@ -264,7 +348,18 @@ export default function PrintMonitor() {
         {/* Fila de Impressão */}
         <div className="space-y-6">
           <div className="flex items-center justify-between">
-            <h2 className="text-lg font-black uppercase tracking-tighter italic">Fila de Operação</h2>
+            <div className="flex items-center gap-4">
+              <h2 className="text-lg font-black uppercase tracking-tighter italic">Fila de Operação</h2>
+              {selected.length > 0 && (
+                <button
+                  onClick={handlePrintSelected}
+                  className="px-4 py-2 bg-brand-tactical text-zinc-950 text-[10px] font-black uppercase tracking-widest rounded-full hover:brightness-110 flex items-center gap-2"
+                >
+                  <Printer size={12} />
+                  Imprimir Selecionadas ({selected.length})
+                </button>
+              )}
+            </div>
             <button onClick={fetchPrints} className="p-2 text-zinc-500 hover:text-brand-tactical transition-all">
               <RefreshCw size={16} className={loading ? 'animate-spin' : ''} />
             </button>
@@ -277,11 +372,43 @@ export default function PrintMonitor() {
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {prints.map((print) => (
-                <div key={print.id} className={`group relative bg-theme-card border transition-all duration-500 overflow-hidden ${print.status === 'PENDING_PRINT' ? 'border-brand-tactical/30' : 'border-theme-border opacity-60'}`}>
+              {prints.map((print) => {
+                const isSelected = selected.includes(print.id);
+                return (
+                <div 
+                  key={print.id} 
+                  className={`group relative bg-theme-card border transition-all duration-500 overflow-hidden cursor-pointer ${
+                    isSelected 
+                      ? 'border-brand-tactical border-2 shadow-[0_0_0_4px_rgba(133,185,172,0.18)]' 
+                      : print.status === 'PENDING_PRINT' 
+                        ? 'border-brand-tactical/30' 
+                        : 'border-theme-border opacity-60'
+                  }`}
+                  onClick={(e) => {
+                    // Impede selecionar se clicou no botão de imprimir individual
+                    if ((e.target as HTMLElement).closest('button')) return;
+                    toggleSelect(print.id);
+                  }}
+                >
+                  {/* Selection badge (top-left) */}
+                  <div className="absolute top-3 left-3 z-20">
+                    {isSelected ? (
+                      <div className="w-6 h-6 rounded-full bg-brand-tactical flex items-center justify-center shadow-md shadow-brand-tactical/40 ring-2 ring-white/30">
+                        <Check size={12} className="text-white" strokeWidth={3} />
+                      </div>
+                    ) : (
+                      <div className="w-6 h-6 rounded-full border-2 border-white/40 bg-black/30 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                        <div className="w-2 h-2 rounded-full bg-white/60" />
+                      </div>
+                    )}
+                  </div>
+
                   {/* Thumbnail */}
                   <div className="aspect-[3/2] overflow-hidden relative">
                     <img src={print.imageUrl} alt={print.referenceCode} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+                    {isSelected && (
+                      <div className="absolute inset-0 bg-brand-tactical/10 pointer-events-none" />
+                    )}
                     <div style={{ position: "absolute", top: 12, right: 12, padding: "6px 14px", background: "rgba(0,0,0,0.85)", backdropFilter: "blur(10px)", border: "1px solid rgba(255,255,255,0.1)", color: T.brand, fontSize: 16, fontWeight: 900, fontFamily: T.fontD, fontStyle: "italic", letterSpacing: 1, zIndex: 10 }}>
                       {print.referenceCode}
                     </div>
@@ -312,7 +439,7 @@ export default function PrintMonitor() {
                     </button>
                   </div>
                 </div>
-              ))}
+              )})}
             </div>
           )}
         </div>
@@ -358,15 +485,12 @@ export default function PrintMonitor() {
         </div>
       )}
 
-      {/* Print Settings Panel */}
-      {printTarget && (
-        <PrintSettingsPanel
-          print={printTarget}
-          eventId={eventId!}
-          tenantLogoUrl={event?.tenantLogoUrl}
-          onClose={() => setPrintTarget(null)}
-          onPrinted={() => handlePrinted(printTarget)}
-        />
+      {/* Fechamento do print:hidden */}
+      </div>
+
+      {/* Print Native Layout */}
+      {printTargets && printTargets.length > 0 && (
+        <NativePrintLayout prints={printTargets} orientation={orientation} />
       )}
     </div>
   );

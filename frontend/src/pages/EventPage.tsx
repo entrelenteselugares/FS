@@ -701,11 +701,40 @@ return (
                      </div>
                    )}
                 </div>
-                {(event.description || event.itinerary || event.type === 'FOTO_POINT') && (
-                  <p className="text-base text-theme-text leading-relaxed font-medium italic whitespace-pre-line max-w-4xl mt-2">
-                    {event.description || event.itinerary || (event.type === 'FOTO_POINT' ? "Participe deste ensaio aberto. Capture memórias profissionais em um cenário exclusivo." : "")}
-                  </p>
-                )}
+                {(() => {
+                  let text = event.description || event.itinerary || "";
+                  // Remove raw JSON from BUDGET_BREAKDOWN
+                  text = text.replace(/\[BUDGET_BREAKDOWN\]\s*\{.*?\}/gs, "");
+                  
+                  // Extract only client description if this is an automated quote payload
+                  const clientMatch = text.match(/Descrição do Cliente:\s*(.*)/is);
+                  if (clientMatch && clientMatch[1]) {
+                    text = clientMatch[1].trim();
+                  } else {
+                    // Fallback to strip known auto-generated fields if not explicitly matched
+                    text = text
+                      .replace(/Original:.*?\n/g, "")
+                      .replace(/Convidados:.*?\n/g, "")
+                      .replace(/Uso:.*?\n/g, "")
+                      .replace(/Preferência:.*?\n/g, "")
+                      .replace(/Orçamento Disponível:.*?\n/g, "")
+                      .replace(/Serviços:.*?\n/g, "")
+                      .replace(/Dias:.*?\n/g, "")
+                      .trim();
+                  }
+                  
+                  if (!text && event.type === 'FOTO_POINT') {
+                    text = "Participe deste ensaio aberto. Capture memórias profissionais em um cenário exclusivo.";
+                  }
+
+                  if (!text) return null;
+
+                  return (
+                    <p className="text-base text-theme-text leading-relaxed font-medium italic whitespace-pre-line max-w-4xl mt-2 relative z-10">
+                      {text}
+                    </p>
+                  );
+                })()}
               </div>
             </div>
           </div>

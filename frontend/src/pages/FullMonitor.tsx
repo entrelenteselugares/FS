@@ -5,143 +5,10 @@ import { supabase } from "../lib/supabase";
 
 import { ArrowLeft, QrCode, X, Check, Printer } from "lucide-react";
 import { QRCodeSVG } from "qrcode.react";
+import { NativePrintLayout } from "../components/NativePrintLayout";
 
 // ── Helper: split array into chunks of N ──────────────────────────────────
-function chunkArray<T>(arr: T[], size: number): T[][] {
-  const chunks: T[][] = [];
-  for (let i = 0; i < arr.length; i += size) {
-    chunks.push(arr.slice(i, i + size));
-  }
-  return chunks;
-}
-
-// ── Print override styles (injected inline to bypass global anti-theft rule) ─
-const PRINT_STYLES = `
-@media print {
-  @page {
-    size: A4 portrait;
-    margin: 0 !important;
-  }
-
-  /* Override global anti-theft shield — reveal ONLY the printable area */
-  html, body {
-    margin: 0 !important;
-    padding: 0 !important;
-    background: #ffffff !important;
-    color: #000000 !important;
-    height: auto !important;
-    overflow: visible !important;
-  }
-  body * {
-    visibility: hidden !important;
-  }
-  body #fs-printable-area,
-  body #fs-printable-area * {
-    visibility: visible !important;
-  }
-  /* Suppress the global watermark message */
-  body::after {
-    display: none !important;
-    content: "" !important;
-    visibility: hidden !important;
-  }
-
-  /* Page container — one A4 sheet per page */
-  .fs-print-page {
-    position: relative;
-    width: 210mm;
-    height: 297mm;
-    padding: 14mm;
-    page-break-after: always;
-    page-break-inside: avoid;
-    break-after: page;
-    box-sizing: border-box;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: 1fr 1fr;
-    gap: 10mm;
-    background: #ffffff !important;
-  }
-
-  /* Individual printed photo card */
-  .fs-print-card {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    background: #ffffff !important;
-    border: 1px solid #e4e4e7;
-    border-radius: 6px;
-    padding: 3mm;
-    box-sizing: border-box;
-  }
-
-  .fs-print-img-wrap {
-    flex: 1;
-    overflow: hidden;
-    border-radius: 4px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: #fafafa;
-    min-height: 0;
-  }
-
-  .fs-print-img {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    display: block;
-  }
-
-  .fs-print-footer {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding-top: 2.5mm;
-    width: 100%;
-    border-top: 1px dashed #d4d4d8;
-    margin-top: 2.5mm;
-    flex-shrink: 0;
-  }
-
-  .fs-print-footer-text {
-    display: flex;
-    flex-direction: column;
-    gap: 1mm;
-  }
-
-  .fs-print-name {
-    font-family: 'Inter', sans-serif;
-    font-size: 9.5pt;
-    font-weight: 800;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    color: #18181b !important;
-    margin: 0;
-    line-height: 1.2;
-  }
-
-  .fs-print-code {
-    font-family: 'Courier New', Courier, monospace;
-    font-size: 6.5pt;
-    color: #71717a !important;
-    margin: 0;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-  }
-
-  .fs-print-qr {
-    padding: 2mm;
-    background: #ffffff;
-    border: 0.5mm solid #e4e4e7;
-    border-radius: 4px;
-    flex-shrink: 0;
-  }
-}
-`;
+// NativePrintLayout contains the print styles and structure
 
 export default function FullMonitor() {
   const { eventId } = useParams();
@@ -154,6 +21,7 @@ export default function FullMonitor() {
   const [selected, setSelected] = useState<string[]>([]);
   const [columns, setColumns] = useState<number>(4);
   const [maxPhotos, setMaxPhotos] = useState<number>(8);
+  const [orientation, setOrientation] = useState<'portrait' | 'landscape'>('landscape');
 
   const toggleSelect = (id: string) => {
     setSelected(prev =>
@@ -207,10 +75,7 @@ export default function FullMonitor() {
     };
   }, [eventId, fetchPrints]);
 
-  // Photos to print (filtered by selection)
   const selectedPrints = prints.filter(p => selected.includes(p.id));
-  // Paginate: 4 photos per A4 page
-  const printPages = chunkArray(selectedPrints, 4);
 
   if (loading && !event) {
     return (
@@ -222,15 +87,14 @@ export default function FullMonitor() {
   }
 
   return (
-    <div data-theme="dark" className="min-h-screen bg-theme-bg text-theme-text font-sans selection:bg-brand-tactical/30 relative overflow-hidden">
+    <div data-theme="dark" className="h-screen w-screen bg-theme-bg text-theme-text font-sans selection:bg-brand-tactical/30 relative overflow-hidden">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(20,184,166,0.08),transparent_70%)] pointer-events-none" />
-      {/* ── Inject print-specific styles ───────────────────────────────── */}
-      <style dangerouslySetInnerHTML={{ __html: PRINT_STYLES }} />
+
 
       {/* ══════════════════════════════════════════════════════════════════
           SCREEN VIEW — hidden from browser print dialog
       ══════════════════════════════════════════════════════════════════ */}
-      <div className="print:hidden flex flex-col min-h-screen">
+      <div className="print:hidden flex flex-col h-full overflow-hidden">
         {/* ── Header ─────────────────────────────────────────────────── */}
         <header className="fixed top-0 left-0 right-0 h-16 bg-theme-bg/80 backdrop-blur-lg border-b border-theme-border z-50 flex items-center px-4 md:px-8 gap-4">
           <button
@@ -297,6 +161,22 @@ export default function FullMonitor() {
             )}
 
             {/* Open QR modal */}
+            {/* Print Settings (Orientation) */}
+            <div className="hidden md:flex items-center gap-1 bg-theme-bg-muted border border-theme-border p-1 rounded-full mr-2">
+              <button
+                onClick={() => setOrientation('portrait')}
+                className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-all ${orientation === 'portrait' ? 'bg-brand-tactical text-zinc-950 shadow' : 'text-theme-muted hover:text-theme-text'}`}
+              >
+                Retrato
+              </button>
+              <button
+                onClick={() => setOrientation('landscape')}
+                className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-all ${orientation === 'landscape' ? 'bg-brand-tactical text-zinc-950 shadow' : 'text-theme-muted hover:text-theme-text'}`}
+              >
+                Paisagem
+              </button>
+            </div>
+
             <button
               onClick={() => setShowQR(true)}
               className="flex items-center gap-2 text-xs font-black uppercase tracking-widest bg-theme-bg border border-theme-border text-theme-text hover:border-brand-tactical/50 hover:text-brand-tactical transition-all rounded-full px-4 py-2"
@@ -316,111 +196,119 @@ export default function FullMonitor() {
           </div>
         </header>
 
-        {/* ── Grid of 8 Photo Cards ────────────────────────────────── */}
-        <main className="pt-24 pb-8 px-6 md:px-12 max-w-[100vw] mx-auto flex-1">
-          {prints.length === 0 && !loading ? (
-            <div className="flex flex-col items-center justify-center h-64 gap-4 text-theme-muted">
-              <div className="w-16 h-16 rounded-2xl bg-theme-card border border-theme-border flex items-center justify-center">
-                <Printer size={28} className="opacity-30" />
+        {/* ── Layout Dividido: Grade + Banner Lateral ───────────────── */}
+        <div className="flex pt-16 flex-1 h-full w-full max-w-[100vw] overflow-hidden">
+          
+          {/* Main Content Area (Esquerda) */}
+          <main className="flex-1 overflow-y-auto p-6 md:p-8">
+            {prints.length === 0 && !loading ? (
+              <div className="flex flex-col items-center justify-center h-full min-h-[400px] gap-4 text-theme-muted">
+                <div className="w-16 h-16 rounded-2xl bg-theme-card border border-theme-border flex items-center justify-center">
+                  <Printer size={28} className="opacity-30" />
+                </div>
+                <p className="text-sm font-bold uppercase tracking-widest opacity-50">
+                  Nenhuma foto na fila
+                </p>
               </div>
-              <p className="text-sm font-bold uppercase tracking-widest opacity-50">
-                Nenhuma foto na fila
-              </p>
-            </div>
-          ) : (
-            <section 
-              className="grid gap-5"
-              style={{ gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))` }}
-            >
-              {prints.slice(0, maxPhotos).map(print => {
-                const isSelected = selected.includes(print.id);
-                const photoUrl = `${window.location.origin}/flash/${print.referenceCode}`;
+            ) : (
+              <section 
+                className="grid gap-5"
+                style={{ gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))` }}
+              >
+                {prints.slice(0, maxPhotos).map(print => {
+                  const isSelected = selected.includes(print.id);
 
-                return (
-                  <div
-                    key={print.id}
-                    onClick={() => toggleSelect(print.id)}
-                    className={[
-                      "relative group cursor-pointer select-none",
-                      "bg-theme-card border rounded-2xl overflow-hidden",
-                      "flex flex-col aspect-[2/3]",
-                      "transition-all duration-300 ease-out",
-                      "hover:scale-[1.02] active:scale-[0.97]",
-                      isSelected
-                        ? "border-brand-tactical border-2 shadow-[0_0_0_4px_rgba(133,185,172,0.18),0_8px_30px_rgba(133,185,172,0.12)]"
-                        : "border-theme-border shadow-lg hover:shadow-2xl hover:border-brand-tactical/40",
-                    ].join(" ")}
-                  >
-                    {/* ── Selection badge (top-right) ─── */}
-                    <div className="absolute top-2.5 right-2.5 z-20">
-                      {isSelected ? (
-                        <div className="w-7 h-7 rounded-full bg-brand-tactical flex items-center justify-center shadow-md shadow-brand-tactical/40 ring-2 ring-white/30">
-                          <Check size={14} className="text-white" strokeWidth={3} />
-                        </div>
-                      ) : (
-                        <div className="w-7 h-7 rounded-full border-2 border-white/40 bg-black/30 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                          <div className="w-2 h-2 rounded-full bg-white/60" />
-                        </div>
-                      )}
-                    </div>
+                  return (
+                    <div
+                      key={print.id}
+                      onClick={() => toggleSelect(print.id)}
+                      className={[
+                        "relative group cursor-pointer select-none",
+                        "bg-theme-card border rounded-2xl overflow-hidden",
+                        "flex flex-col aspect-[2/3]",
+                        "transition-all duration-300 ease-out",
+                        "hover:scale-[1.02] active:scale-[0.97]",
+                        isSelected
+                          ? "border-brand-tactical border-2 shadow-[0_0_0_4px_rgba(133,185,172,0.18),0_8px_30px_rgba(133,185,172,0.12)]"
+                          : "border-theme-border shadow-lg hover:shadow-2xl hover:border-brand-tactical/40",
+                      ].join(" ")}
+                    >
+                      {/* ── Selection badge (top-right) ─── */}
+                      <div className="absolute top-2.5 right-2.5 z-20">
+                        {isSelected ? (
+                          <div className="w-7 h-7 rounded-full bg-brand-tactical flex items-center justify-center shadow-md shadow-brand-tactical/40 ring-2 ring-white/30">
+                            <Check size={14} className="text-white" strokeWidth={3} />
+                          </div>
+                        ) : (
+                          <div className="w-7 h-7 rounded-full border-2 border-white/40 bg-black/30 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                            <div className="w-2 h-2 rounded-full bg-white/60" />
+                          </div>
+                        )}
+                      </div>
 
-                    {/* ── Photo ─────────────────────────── */}
-                    <div className="relative overflow-hidden flex-grow bg-zinc-900 flex items-center justify-center">
-                      <img
-                        src={print.imageUrl}
-                        alt={print.referenceCode}
-                        className="absolute inset-0 w-full h-full object-contain transition-transform duration-500 group-hover:scale-105"
-                        draggable={false}
-                      />
-
-                      {/* Selected overlay tint */}
-                      {isSelected && (
-                        <div className="absolute inset-0 bg-brand-tactical/8 pointer-events-none" />
-                      )}
-
-                      {/* ── Individual QR Code overlay (bottom-right) ─ */}
-                      <div
-                        className="absolute bottom-2.5 right-2.5 z-10 p-1.5 bg-white/95 rounded-xl shadow-lg border border-white/80 backdrop-blur-sm opacity-80 group-hover:opacity-100 transition-opacity duration-300"
-                        title={`Escanear foto ${print.referenceCode}`}
-                      >
-                        <QRCodeSVG
-                          value={photoUrl}
-                          size={40}
-                          level="M"
-                          bgColor="transparent"
-                          fgColor="#18181b"
+                      {/* ── Photo ─────────────────────────── */}
+                      <div className="relative overflow-hidden flex-grow bg-zinc-900 flex items-center justify-center">
+                        <img
+                          src={print.imageUrl}
+                          alt={print.referenceCode}
+                          className="absolute inset-0 w-full h-full object-contain transition-transform duration-500 group-hover:scale-105"
+                          draggable={false}
                         />
+
+                        {/* Selected overlay tint */}
+                        {isSelected && (
+                          <div className="absolute inset-0 bg-brand-tactical/8 pointer-events-none" />
+                        )}
+                      </div>
+
+                      {/* ── Card Footer ────────────────────── */}
+                      <div className="px-3.5 py-3 flex justify-between items-center flex-shrink-0 bg-theme-card border-t border-theme-border/40">
+                        <p className="text-sm font-black text-theme-text truncate leading-tight">
+                          {print.customerName || "Convidado"}
+                        </p>
+                        <span className="text-[10px] font-semibold text-theme-muted shrink-0 bg-theme-bg/60 px-2 py-0.5 rounded font-mono">
+                          {new Date(print.createdAt).toLocaleTimeString([], {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          })}
+                        </span>
                       </div>
                     </div>
+                  );
+                })}
+              </section>
+            )}
+          </main>
 
-                    {/* ── Card Footer ────────────────────── */}
-                    <div className="px-3.5 py-3 flex justify-between items-center flex-shrink-0 bg-theme-card border-t border-theme-border/40">
-                      <p className="text-sm font-black text-theme-text truncate leading-tight">
-                        {print.customerName || "Convidado"}
-                      </p>
-                      <span className="text-[10px] font-semibold text-theme-muted shrink-0 bg-theme-bg/60 px-2 py-0.5 rounded font-mono">
-                        {new Date(print.createdAt).toLocaleTimeString([], {
-                          hour: "2-digit",
-                          minute: "2-digit",
-                        })}
-                      </span>
-                    </div>
-                  </div>
-                );
-              })}
-            </section>
-          )}
-        </main>
+          {/* ── Banner Lateral Direito com QR Code ──────────────────── */}
+          <aside className="w-72 xl:w-80 border-l border-theme-border bg-theme-card/30 backdrop-blur-md flex flex-col items-center justify-center p-8 relative overflow-hidden hidden md:flex shrink-0">
+            {/* Background elements para deixar chamativo */}
+            <div className="absolute top-0 left-0 w-full h-1/2 bg-gradient-to-b from-brand-tactical/10 to-transparent pointer-events-none" />
+            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(20,184,166,0.1),transparent_70%)] pointer-events-none" />
 
-        {/* ── Permanent floating QR (bottom-right) ──────────────────── */}
-        <div className="fixed bottom-8 right-8 z-40 bg-white/10 backdrop-blur-md p-6 rounded-3xl shadow-2xl flex flex-col items-center gap-4 w-56 border border-white/20 print:hidden animate-in fade-in slide-in-from-bottom-8 duration-700 hover-lift">
-          <div className="bg-white p-3 rounded-2xl w-full flex justify-center">
-            <QRCodeSVG value={captureUrl} size={160} level="H" />
-          </div>
-          <div className="text-center w-full bg-brand-tactical p-3 rounded-xl shadow-inner">
-            <p className="text-[9px] font-black text-black/60 uppercase tracking-widest leading-none mb-1">Escanear para</p>
-            <p className="text-sm font-black text-black uppercase tracking-widest">Enviar Fotos</p>
-          </div>
+            <div className="relative z-10 w-full max-w-[200px] flex flex-col items-center text-center gap-8">
+              <div className="space-y-2">
+                <div className="w-12 h-1 bg-brand-tactical mx-auto rounded-full mb-4 shadow-[0_0_10px_rgba(20,184,166,0.5)]" />
+                <h3 className="text-2xl font-black uppercase tracking-tighter text-theme-text leading-none">
+                  FOTOGRAFE
+                </h3>
+                <h3 className="text-2xl font-black uppercase tracking-tighter text-theme-text leading-none text-brand-tactical">
+                  E IMPRIMA
+                </h3>
+              </div>
+
+              <div className="bg-white p-3 rounded-[24px] shadow-2xl ring-4 ring-white/10 transform transition-transform hover:scale-105 duration-500">
+                <QRCodeSVG value={captureUrl} size={170} level="H" />
+              </div>
+              
+              <div className="space-y-3 bg-theme-bg/60 p-4 rounded-2xl border border-theme-border w-full">
+                <div className="flex justify-center mb-1"><QrCode size={20} className="text-brand-tactical" /></div>
+                <p className="text-[9px] font-black text-theme-muted uppercase tracking-[0.2em] leading-relaxed">
+                  Aponte a câmera do seu celular para o QR Code acima
+                </p>
+              </div>
+            </div>
+          </aside>
         </div>
 
         {/* ── QR Code Modal ────────────────────────────────────────── */}
@@ -451,59 +339,7 @@ export default function FullMonitor() {
         )}
       </div>
 
-      {/* ══════════════════════════════════════════════════════════════════
-          PRINTABLE AREA — only visible in browser print dialog
-          Completely outside the print:hidden containers above.
-      ══════════════════════════════════════════════════════════════════ */}
-      <div id="fs-printable-area" className="hidden print:block">
-        {selectedPrints.length === 0 ? (
-          // Fallback if somehow print is triggered with no selection
-          <div className="fs-print-page" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <p style={{ fontFamily: 'Inter, sans-serif', fontSize: '14pt', color: '#71717a' }}>
-              Nenhuma foto selecionada.
-            </p>
-          </div>
-        ) : (
-          printPages.map((pageItems, pageIdx) => (
-            <div key={pageIdx} className="fs-print-page">
-              {pageItems.map(p => (
-                <div key={p.id} className="fs-print-card">
-                  {/* Photo */}
-                  <div className="fs-print-img-wrap">
-                    <img
-                      src={p.imageUrl}
-                      alt={p.referenceCode}
-                      className="fs-print-img"
-                      crossOrigin="anonymous"
-                    />
-                  </div>
-
-                  {/* Footer: name + code + scan QR */}
-                  <div className="fs-print-footer">
-                    <div className="fs-print-footer-text">
-                      <p className="fs-print-name">
-                        {p.customerName || "Convidado"}
-                      </p>
-                      <p className="fs-print-code">
-                        #{p.referenceCode}
-                      </p>
-                    </div>
-                    <div className="fs-print-qr">
-                      <QRCodeSVG
-                        value={`${window.location.origin}/flash/${p.referenceCode}`}
-                        size={38}
-                        level="M"
-                        bgColor="#ffffff"
-                        fgColor="#18181b"
-                      />
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          ))
-        )}
-      </div>
+      <NativePrintLayout prints={selectedPrints} orientation={orientation} />
     </div>
   );
 }

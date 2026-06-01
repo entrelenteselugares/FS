@@ -930,7 +930,7 @@ export async function searchProfessionals(req: AuthRequest, res: Response): Prom
   try {
     const pros = await prisma.user.findMany({
       where: {
-        role: { in: ["PROFISSIONAL", "ADMIN"] },
+        role: { in: ["PROFISSIONAL", "ADMIN", "FRANCHISEE"] },
         id: { not: userId },
         OR: [
           { nome: { contains: String(query || ""), mode: "insensitive" } },

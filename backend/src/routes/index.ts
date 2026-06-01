@@ -39,6 +39,7 @@ import vaultRoutes from "./vault.routes";
 import publicRoutes from "./public.routes";
 import franchiseRoutes from "./franchise.routes";
 import { professionalRoutes, requireProOrFranchise } from "./professional.routes";
+import { PhygitalController } from "../controllers/phygital.controller";
 
 const router = Router();
 
@@ -228,6 +229,10 @@ router.post("/ambassador/generate-code",         requireAuth, ReferralController
 router.patch("/ambassador/campaigns/:campaignId/toggle", requireAuth, ReferralController.toggleCampaign);
 
 router.use("/flash", flashRoutes);
+
+// ── PHYGITAL PRINT MONITOR ────────────────────────────────────────────────────
+router.get("/phygital/events/:eventId/prints", requireAuth, PhygitalController.listAllByEvent);
+router.patch("/phygital/prints/:id/status", requireAuth, PhygitalController.confirmPrint);
 
 // ── IN-APP NOTIFICATIONS ──────────────────────────────────────────────────────
 router.get("/notifications", requireAuth, NotificationController.listNotifications);

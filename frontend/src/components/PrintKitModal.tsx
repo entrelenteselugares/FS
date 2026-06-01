@@ -295,7 +295,7 @@ export function PrintKitModal({
   };
 
   return (
-    <div className="fixed inset-0 z-[300] flex items-center justify-center p-4 bg-zinc-950/80 backdrop-blur-md">
+    <div className="fixed inset-0 z-[300] flex items-center justify-center p-4 bg-theme-bg/80 backdrop-blur-xl">
       {/* Hidden high-quality SVG QR Code that we clone for printing */}
       <div id="foto-segundo-hidden-qr" className="hidden" aria-hidden="true">
         <QRCodeSVG value={captureUrl} size={300} level="H" includeMargin={true} />
@@ -305,43 +305,43 @@ export function PrintKitModal({
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 0.95 }}
-        className="w-full max-w-5xl bg-zinc-900 border border-zinc-800 rounded-3xl overflow-hidden flex flex-col md:flex-row h-[90vh] md:h-[80vh] shadow-2xl text-white"
+        className="w-full max-w-5xl bg-theme-card border border-theme-border rounded-[40px] overflow-hidden flex flex-col md:flex-row h-[90vh] md:h-[80vh] shadow-2xl text-theme-text"
       >
         {/* Left: Customization Panel */}
-        <div className="w-full md:w-[420px] p-6 md:p-8 flex flex-col justify-between border-r border-zinc-800 bg-zinc-900/60 overflow-y-auto">
+        <div className="w-full md:w-[420px] p-6 md:p-8 flex flex-col justify-between border-r border-theme-border bg-theme-bg-muted/30 overflow-y-auto custom-scrollbar">
           <div className="space-y-8">
             {/* Header */}
             <div className="flex justify-between items-start">
               <div className="space-y-1">
                 <p className="text-[10px] font-black text-brand-tactical uppercase tracking-widest italic">Kit de Divulgação</p>
-                <h2 className="text-2xl font-heading font-black uppercase italic tracking-tighter">Kit de Impressão</h2>
+                <h2 className="text-2xl font-black uppercase italic tracking-tighter">Kit de Impressão</h2>
               </div>
-              <button onClick={onClose} className="p-2 text-zinc-500 hover:text-white hover:bg-zinc-800 rounded-full transition-all">
+              <button onClick={onClose} className="p-3 text-theme-muted hover:text-white hover:bg-theme-border/50 rounded-full transition-all">
                 <X size={20} />
               </button>
             </div>
 
             {/* Template Selector */}
             <div className="space-y-3">
-              <label className="text-[10px] font-black text-zinc-500 uppercase tracking-widest flex items-center gap-2">
+              <label className="text-[10px] font-black text-theme-muted uppercase tracking-widest flex items-center gap-2">
                 <Layout size={12} className="text-brand-tactical" /> Formato do Banner
               </label>
               <div className="grid grid-cols-3 gap-2">
                 <button
                   onClick={() => setTemplate('TABLE_TENT')}
-                  className={`p-3 rounded-xl border text-xs font-black uppercase tracking-widest transition-all flex flex-col items-center justify-center gap-2 ${template === 'TABLE_TENT' ? 'border-brand-tactical bg-brand-tactical/10 text-brand-tactical' : 'border-zinc-800 bg-zinc-900/40 text-zinc-400 hover:text-white hover:border-zinc-700'}`}
+                  className={`p-3 rounded-xl border text-xs font-black uppercase tracking-widest transition-all flex flex-col items-center justify-center gap-2 ${template === 'TABLE_TENT' ? 'border-brand-tactical bg-brand-tactical/10 text-brand-tactical' : 'border-theme-border bg-theme-bg-muted/40 text-theme-muted hover:text-theme-text hover:border-theme-border/80'}`}
                 >
                   <FileText size={16} /> Display
                 </button>
                 <button
                   onClick={() => setTemplate('POSTER')}
-                  className={`p-3 rounded-xl border text-xs font-black uppercase tracking-widest transition-all flex flex-col items-center justify-center gap-2 ${template === 'POSTER' ? 'border-brand-tactical bg-brand-tactical/10 text-brand-tactical' : 'border-zinc-800 bg-zinc-900/40 text-zinc-400 hover:text-white hover:border-zinc-700'}`}
+                  className={`p-3 rounded-xl border text-xs font-black uppercase tracking-widest transition-all flex flex-col items-center justify-center gap-2 ${template === 'POSTER' ? 'border-brand-tactical bg-brand-tactical/10 text-brand-tactical' : 'border-theme-border bg-theme-bg-muted/40 text-theme-muted hover:text-theme-text hover:border-theme-border/80'}`}
                 >
                   <FileText size={16} /> Pôster A4
                 </button>
                 <button
                   onClick={() => setTemplate('CARDS')}
-                  className={`p-3 rounded-xl border text-xs font-black uppercase tracking-widest transition-all flex flex-col items-center justify-center gap-2 ${template === 'CARDS' ? 'border-brand-tactical bg-brand-tactical/10 text-brand-tactical' : 'border-zinc-800 bg-zinc-900/40 text-zinc-400 hover:text-white hover:border-zinc-700'}`}
+                  className={`p-3 rounded-xl border text-xs font-black uppercase tracking-widest transition-all flex flex-col items-center justify-center gap-2 ${template === 'CARDS' ? 'border-brand-tactical bg-brand-tactical/10 text-brand-tactical' : 'border-theme-border bg-theme-bg-muted/40 text-theme-muted hover:text-theme-text hover:border-theme-border/80'}`}
                 >
                   <FileText size={16} /> Cartões
                 </button>
@@ -350,19 +350,19 @@ export function PrintKitModal({
 
             {/* Theme Selector */}
             <div className="space-y-3">
-              <label className="text-[10px] font-black text-zinc-500 uppercase tracking-widest flex items-center gap-2">
+              <label className="text-[10px] font-black text-theme-muted uppercase tracking-widest flex items-center gap-2">
                 <Palette size={12} className="text-brand-tactical" /> Paleta de Cores
               </label>
-              <div className="flex bg-zinc-950 p-1 border border-zinc-800 rounded-xl">
+              <div className="flex bg-theme-bg p-1 border border-theme-border rounded-xl">
                 <button
                   onClick={() => setTheme('DARK')}
-                  className={`flex-1 py-2 text-[10px] font-black uppercase tracking-widest transition-all rounded-lg ${theme === 'DARK' ? 'bg-zinc-850 text-brand-tactical border border-zinc-750' : 'text-zinc-500 hover:text-white'}`}
+                  className={`flex-1 py-2 text-[10px] font-black uppercase tracking-widest transition-all rounded-lg ${theme === 'DARK' ? 'bg-theme-bg-muted text-brand-tactical border border-theme-border/60' : 'text-theme-muted hover:text-theme-text'}`}
                 >
                   Premium Escuro
                 </button>
                 <button
                   onClick={() => setTheme('LIGHT')}
-                  className={`flex-1 py-2 text-[10px] font-black uppercase tracking-widest transition-all rounded-lg ${theme === 'LIGHT' ? 'bg-zinc-850 text-brand-tactical border border-zinc-750' : 'text-zinc-500 hover:text-white'}`}
+                  className={`flex-1 py-2 text-[10px] font-black uppercase tracking-widest transition-all rounded-lg ${theme === 'LIGHT' ? 'bg-theme-bg-muted text-brand-tactical border border-theme-border/60' : 'text-theme-muted hover:text-theme-text'}`}
                 >
                   Clean Minimalista
                 </button>
@@ -371,90 +371,90 @@ export function PrintKitModal({
 
             {/* Custom Texts */}
             <div className="space-y-4">
-              <label className="text-[10px] font-black text-zinc-500 uppercase tracking-widest flex items-center gap-2">
+              <label className="text-[10px] font-black text-theme-muted uppercase tracking-widest flex items-center gap-2">
                 <FileText size={12} className="text-brand-tactical" /> Customização de Textos
               </label>
               
               <div className="space-y-2">
-                <span className="text-[9px] font-bold text-zinc-500 uppercase tracking-widest">Chamada Principal</span>
+                <span className="text-[9px] font-bold text-theme-muted uppercase tracking-widest">Chamada Principal</span>
                 <input
                   type="text"
                   value={headline}
                   onChange={(e) => setHeadline(e.target.value.toUpperCase())}
                   placeholder="EX: COMPARTILHE SUAS FOTOS AO VIVO"
-                  className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-3 text-xs font-black uppercase tracking-widest text-white focus:outline-none focus:border-brand-tactical transition-all"
+                  className="fs-input"
                 />
               </div>
 
               <div className="space-y-2">
-                <span className="text-[9px] font-bold text-zinc-500 uppercase tracking-widest">Instruções / Detalhes</span>
+                <span className="text-[9px] font-bold text-theme-muted uppercase tracking-widest">Instruções / Detalhes</span>
                 <textarea
                   value={subHeadline}
                   onChange={(e) => setSubHeadline(e.target.value)}
                   placeholder="EX: Escaneie o QR Code e envie suas fotos..."
                   rows={3}
-                  className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-3 text-xs font-medium text-zinc-300 focus:outline-none focus:border-brand-tactical transition-all"
+                  className="fs-input min-h-[80px]"
                 />
               </div>
             </div>
           </div>
 
           {/* Action Buttons */}
-          <div className="space-y-3 pt-6 border-t border-zinc-800">
+          <div className="space-y-3 pt-6 border-t border-theme-border mt-6">
             <button
               onClick={handleCopyLink}
-              className="w-full py-4 border border-zinc-800 rounded-xl text-[10px] font-black uppercase tracking-widest text-zinc-400 hover:text-white hover:bg-zinc-850 transition-all flex items-center justify-center gap-2"
+              className="fs-btn w-full border border-theme-border bg-transparent text-theme-muted hover:text-theme-text hover:border-theme-border/80"
             >
-              {copied ? <Check size={14} className="text-green-500" /> : <Copy size={14} />}
-              {copied ? 'Link de Captura Copiado!' : 'Copiar Link de Captura'}
+              {copied ? <Check size={14} className="text-brand-tactical" /> : <Copy size={14} />}
+              {copied ? 'Link Copiado!' : 'Copiar Link de Captura'}
             </button>
             <button
               onClick={handlePrint}
-              className="w-full py-4 bg-brand-tactical hover:brightness-110 text-black rounded-xl text-[10px] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2 shadow-[0_10px_20px_rgba(20,184,166,0.2)]"
+              className="fs-btn w-full bg-brand-tactical text-zinc-950 shadow-2xl shadow-brand-tactical/20 hover:brightness-110"
             >
-              <Printer size={16} /> Imprimir / Salvar PDF (A4)
+              <Printer size={16} /> Imprimir / PDF (A4)
             </button>
           </div>
         </div>
 
         {/* Right: Live Preview Panel */}
-        <div className="flex-1 bg-zinc-950 p-6 md:p-10 flex items-center justify-center overflow-y-auto min-h-[400px]">
-          <div className="w-full max-w-[340px] md:max-w-[420px] aspect-[1/1.414] bg-white rounded-2xl shadow-2xl overflow-hidden relative border border-zinc-800 flex flex-col justify-between p-6 md:p-8 text-center"
+        <div className="flex-1 bg-theme-bg p-6 md:p-10 flex items-center justify-center overflow-y-auto min-h-[400px]">
+          <div className="w-full max-w-[340px] md:max-w-[420px] aspect-[1/1.414] bg-white rounded-[40px] shadow-2xl overflow-hidden relative border border-theme-border flex flex-col justify-between p-6 md:p-8 text-center"
                style={{
                  background: theme === 'DARK' ? '#09090b' : '#ffffff',
                  color: theme === 'DARK' ? '#ffffff' : '#09090b',
                  borderColor: theme === 'DARK' ? '#27272a' : '#e4e4e7',
                }}>
             {/* Watermark helper for preview */}
-            <div className="absolute top-2 right-4 text-[8px] font-bold text-zinc-500 uppercase tracking-widest select-none pointer-events-none opacity-40">
+            <div className="absolute top-4 right-6 text-[8px] font-bold text-theme-muted uppercase tracking-widest select-none pointer-events-none opacity-40">
               Visualização de Impressão (A4)
             </div>
 
             {template === 'TABLE_TENT' && (
               <div className="h-full flex flex-col justify-between py-4">
                 {/* Top Tent Segment */}
-                <div className="flex-1 flex flex-col justify-center items-center scale-90 border border-dashed border-zinc-700/40 rounded-xl p-4 mb-2">
+                <div className="flex-1 flex flex-col justify-center items-center scale-90 border border-dashed border-theme-border/40 rounded-2xl p-4 mb-2">
                   <img src={tenantLogoUrl || '/logo.png'} style={{ filter: theme === 'DARK' ? 'brightness(0) invert(1)' : 'none' }} className="h-8 object-contain mb-4" alt="Logo" />
                   <h3 className="text-xs font-black text-brand-tactical uppercase tracking-wider mb-2 italic">{headline}</h3>
                   <p className="text-[8px] opacity-80 leading-relaxed mb-3 max-w-[200px]">{subHeadline}</p>
-                  <div className="bg-white p-2 rounded-lg shadow-md mb-2">
+                  <div className="bg-white p-2 rounded-xl shadow-md mb-2">
                     <QRCodeSVG value={captureUrl} size={90} level="H" />
                   </div>
                   <span className="text-[7px] font-bold opacity-40 uppercase tracking-widest">Suas Fotos ao Vivo</span>
                 </div>
                 {/* Fold guide */}
-                <div className="border-t border-dashed border-zinc-700/60 my-2 relative">
-                  <span className="absolute -top-2 left-50 transform -translate-x-50 bg-zinc-950 px-2 text-[6px] font-bold opacity-50 uppercase tracking-wider"
+                <div className="border-t border-dashed border-theme-border/60 my-2 relative">
+                  <span className="absolute -top-2 left-50 transform -translate-x-50 bg-theme-bg px-2 text-[6px] font-bold opacity-50 uppercase tracking-wider"
                         style={{ background: theme === 'DARK' ? '#09090b' : '#ffffff' }}>
                     Dobrar aqui
                   </span>
                 </div>
                 {/* Bottom Tent Segment (Rotated) */}
-                <div className="flex-1 flex flex-col justify-center items-center scale-90 border border-dashed border-zinc-700/40 rounded-xl p-4 mt-2 transform rotate-180">
+                <div className="flex-1 flex flex-col justify-center items-center scale-90 border border-dashed border-theme-border/40 rounded-2xl p-4 mt-2 transform rotate-180">
                   <img src={tenantLogoUrl || '/logo.png'} style={{ filter: theme === 'DARK' ? 'brightness(0) invert(1)' : 'none' }} className="h-8 object-contain mb-4" alt="Logo" />
                   <h3 className="text-xs font-black text-brand-tactical uppercase tracking-wider mb-2 italic">{headline}</h3>
                   <p className="text-[8px] opacity-80 leading-relaxed mb-3 max-w-[200px]">{subHeadline}</p>
-                  <div className="bg-white p-2 rounded-lg shadow-md mb-2">
+                  <div className="bg-white p-2 rounded-xl shadow-md mb-2">
                     <QRCodeSVG value={captureUrl} size={90} level="H" />
                   </div>
                   <span className="text-[7px] font-bold opacity-40 uppercase tracking-widest">Suas Fotos ao Vivo</span>
@@ -502,7 +502,7 @@ export function PrintKitModal({
 
                 <div className="flex-1 flex flex-col justify-center items-center px-4">
                   <span className="text-[8px] font-black text-brand-tactical tracking-[0.3em] uppercase mb-2 italic">LIVE PHOTO STREAMING</span>
-                  <h2 className="text-lg md:text-xl font-heading font-black uppercase tracking-tight italic leading-tight mb-3"
+                  <h2 className="text-lg md:text-xl font-black uppercase tracking-tight italic leading-tight mb-3"
                       style={{ color: theme === 'DARK' ? '#ffffff' : '#09090b' }}>
                     {headline}
                   </h2>
@@ -510,11 +510,11 @@ export function PrintKitModal({
                     {subHeadline}
                   </p>
 
-                  <div className="bg-white p-3 rounded-2xl shadow-xl mb-6 border border-zinc-800/10">
+                  <div className="bg-white p-3 rounded-2xl shadow-xl mb-6 border border-theme-border/10">
                     <QRCodeSVG value={captureUrl} size={110} level="H" />
                   </div>
 
-                  <div className="flex gap-4 p-3 bg-zinc-900/10 border border-zinc-850 rounded-xl scale-95"
+                  <div className="flex gap-4 p-3 bg-theme-bg-muted/10 border border-theme-border rounded-xl scale-95"
                        style={{
                          background: theme === 'DARK' ? 'rgba(255,255,255,0.02)' : 'rgba(0,0,0,0.02)',
                          borderColor: theme === 'DARK' ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)'
@@ -534,7 +534,7 @@ export function PrintKitModal({
                   </div>
                 </div>
 
-                <div className="border-t border-zinc-800/10 pt-4 mt-4">
+                <div className="border-t border-theme-border/10 pt-4 mt-4">
                   <p className="text-[8px] font-black opacity-50 uppercase tracking-widest">{eventTitle}</p>
                   <p className="text-[6px] opacity-35 uppercase tracking-widest mt-1">foto segundo • premium phygital</p>
                 </div>
