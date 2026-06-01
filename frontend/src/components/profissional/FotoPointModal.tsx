@@ -57,18 +57,28 @@ export function FotoPointModal({ onClose, onSuccess, onError, network }: FotoPoi
         isPublicCall,
         references: references.split("\n").filter(r => r.trim() !== ""),
         isPrivate,
-        coverPhotoUrl,
+        // coverPhotoUrl is intentionally excluded from POST to avoid 413.
+        // It is always sent in a separate PATCH below.
         coverPosition,
       });
 
-      // Se a capa é base64 (upload sem eventId), sobe agora que temos o eventId
-      if (coverPhotoUrl && coverPhotoUrl.startsWith("data:") && data.eventId) {
+      // Após criar o evento, enviar a capa em PATCH separado para evitar 413 Payload Too Large.
+      if (coverPhotoUrl && data.eventId) {
         try {
-          await API.patch(`/profissional/events/${data.eventId}/cover`, {
-            imageBase64: coverPhotoUrl,
-            mimeType: coverPhotoUrl.split(";")[0].split(":")[1],
-            coverPosition,
-          });
+          if (coverPhotoUrl.startsWith("data:")) {
+            // Arquivo local comprimido — enviar como base64
+            await API.patch(`/profissional/events/${data.eventId}/cover`, {
+              imageBase64: coverPhotoUrl,
+              mimeType: "image/jpeg",
+              coverPosition,
+            });
+          } else {
+            // URL externa (Google Drive, etc.) — enviar diretamente
+            await API.patch(`/profissional/events/${data.eventId}/cover`, {
+              coverPhotoUrl,
+              coverPosition,
+            });
+          }
         } catch (uploadErr) {
           console.warn("Upload de capa falhou após criação:", uploadErr);
         }
@@ -82,6 +92,7 @@ export function FotoPointModal({ onClose, onSuccess, onError, network }: FotoPoi
       setLoading(false);
     }
   };
+
 
   return createPortal(
     <div className="fixed inset-0 z-[8000] flex items-center justify-center p-0 sm:p-4">
