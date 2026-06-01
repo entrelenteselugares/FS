@@ -166,7 +166,7 @@ export const LoginPage: React.FC = () => {
           {/* Right edge vignette → blends into form panel */}
           <div className={`absolute top-0 right-0 bottom-0 w-32 bg-gradient-to-l ${isDark ? "from-zinc-950" : "from-stone-100"} to-transparent`} />
           {/* Cyan tint overlay for brand color */}
-          <div className="absolute inset-0 bg-cyan-400/5 mix-blend-overlay" />
+          <div className="absolute inset-0 bg-brand-tactical/5 mix-blend-overlay" />
         </div>
 
         {/* Brand watermark on photo side */}
@@ -228,7 +228,7 @@ export const LoginPage: React.FC = () => {
                 style={{ height: 34, objectFit: "contain", filter: "var(--logo-filter)" }}
               />
             </Link>
-            <div className="text-[9px] font-black text-cyan-500 uppercase tracking-[0.5em] italic">
+            <div className="text-[9px] font-black text-brand-tactical uppercase tracking-[0.5em] italic">
               Portal de Acesso
             </div>
           </div>
@@ -241,7 +241,7 @@ export const LoginPage: React.FC = () => {
             <h1 className={`text-4xl xl:text-5xl font-heading font-black uppercase italic leading-none tracking-tighter ${isDark ? "text-white" : "text-zinc-900"}`}>
               Efetuar
             </h1>
-            <h1 className="text-4xl xl:text-5xl font-heading font-black uppercase italic leading-none tracking-tighter text-cyan-400">
+            <h1 className="text-4xl xl:text-5xl font-heading font-black uppercase italic leading-none tracking-tighter text-brand-tactical">
               Login
             </h1>
             <p className={`mt-3 text-[10px] font-medium uppercase tracking-widest ${isDark ? "text-white/30" : "text-zinc-400"}`}>
@@ -263,8 +263,8 @@ export const LoginPage: React.FC = () => {
               <label className={`text-[9px] font-black uppercase tracking-[0.3em] ${isDark ? "text-white/40" : "text-zinc-400"}`}>
                 Identificação
               </label>
-              <div className={`relative flex items-center rounded-xl border transition-all ${isDark ? "bg-white/5 border-white/10 focus-within:border-cyan-500/50" : "bg-zinc-50 border-zinc-200 focus-within:border-cyan-400"}`}>
-                <Mail className="absolute left-4 text-cyan-500/60" size={14} />
+              <div className={`relative flex items-center rounded-xl border transition-all ${isDark ? "bg-white/5 border-white/10 focus-within:border-brand-tactical/50" : "bg-zinc-50 border-zinc-200 focus-within:border-brand-tactical"}`}>
+                <Mail className="absolute left-4 text-brand-tactical/60" size={14} />
                 <input
                   type="email"
                   required
@@ -285,13 +285,13 @@ export const LoginPage: React.FC = () => {
                 </label>
                 <Link
                   to="/forgot-password"
-                  className="text-[8px] font-black uppercase tracking-widest text-cyan-500 hover:text-cyan-400 transition-colors italic"
+                  className="text-[8px] font-black uppercase tracking-widest text-brand-tactical hover:text-brand-tactical transition-colors italic"
                 >
                   Esqueci a senha →
                 </Link>
               </div>
-              <div className={`relative flex items-center rounded-xl border transition-all ${isDark ? "bg-white/5 border-white/10 focus-within:border-cyan-500/50" : "bg-zinc-50 border-zinc-200 focus-within:border-cyan-400"}`}>
-                <Lock className="absolute left-4 text-cyan-500/60" size={14} />
+              <div className={`relative flex items-center rounded-xl border transition-all ${isDark ? "bg-white/5 border-white/10 focus-within:border-brand-tactical/50" : "bg-zinc-50 border-zinc-200 focus-within:border-brand-tactical"}`}>
+                <Lock className="absolute left-4 text-brand-tactical/60" size={14} />
                 <input
                   type={showSenha ? "text" : "password"}
                   required
@@ -315,7 +315,7 @@ export const LoginPage: React.FC = () => {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-cyan-400 text-zinc-950 hover:bg-cyan-300 active:scale-[0.98] font-black uppercase tracking-[0.4em] text-[10px] py-5 transition-all flex items-center justify-center gap-3 group disabled:opacity-30 rounded-xl italic shadow-lg shadow-cyan-400/20 mt-2"
+              className="w-full bg-brand-tactical text-zinc-950 hover:bg-white active:scale-[0.98] font-black uppercase tracking-[0.4em] text-[10px] py-5 transition-all flex items-center justify-center gap-3 group disabled:opacity-30 rounded-xl italic shadow-lg shadow-brand-tactical/20 mt-2"
             >
               {loading ? (
                 <span className="flex items-center gap-2">
@@ -338,7 +338,7 @@ export const LoginPage: React.FC = () => {
             Novo por aqui?{" "}
             <Link
               to="/registro"
-              className={`ml-2 transition-all underline underline-offset-4 ${isDark ? "text-white/50 hover:text-cyan-400 decoration-white/10 hover:decoration-cyan-400/50" : "text-zinc-600 hover:text-cyan-500 decoration-zinc-200"}`}
+              className={`ml-2 transition-all underline underline-offset-4 ${isDark ? "text-white/50 hover:text-brand-tactical decoration-white/10 hover:decoration-brand-tactical/50" : "text-zinc-600 hover:text-brand-tactical decoration-zinc-200"}`}
             >
               Solicitar Cadastro
             </Link>
