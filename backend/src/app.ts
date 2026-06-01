@@ -104,7 +104,7 @@ let rateLimitStore: RedisStore | undefined;
 if (redisUrl) {
   redisClient = new Redis(redisUrl);
   rateLimitStore = new RedisStore({
-    sendCommand: (...args: string[]) => redisClient!.call(...args),
+    sendCommand: (...args: string[]) => redisClient!.call(args[0], ...args.slice(1)) as any,
   });
   console.log("[SECURITY] Serverless-Native Redis Rate Limiter Ativado.");
 } else if (isProduction) {
