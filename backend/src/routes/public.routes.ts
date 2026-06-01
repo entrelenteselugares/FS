@@ -49,7 +49,12 @@ router.post("/orders/:id/manual-payment", PaymentController.manualPayment);
 router.get("/print-catalog", AdminPrintCatalog.getPublicPrintCatalog);
 router.get("/events/:eventId/print-products", AdminPrintCatalog.getEventPrintProducts);
 
+import { AuthController } from "../controllers/auth.controller";
+
 // ── PHYGITAL
 router.post("/phygital/upload", optionalAuth, upload.single("photo"), PhygitalController.upload);
+
+// ── AUTH CHECK PÚBLICO (Usado no Phygital Capture)
+router.get("/auth/check", AuthController.checkEmail);
 
 export default router;
