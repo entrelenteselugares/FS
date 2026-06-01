@@ -105,8 +105,28 @@ export const LoginPage: React.FC = () => {
           .filter((e: { coverPhotoUrl?: string | null }) => e.coverPhotoUrl)
           .map((e: { id: string; coverPhotoUrl: string; title?: string }) => ({ id: e.id, url: e.coverPhotoUrl, title: e.title ?? "" }));
 
-        if (withCovers.length >= 6) {
-          setPhotos(withCovers);
+        if (withCovers.length > 0) {
+          // Repeat available covers to fill the grid nicely
+          let repeated = [...withCovers];
+          while (repeated.length < 18) {
+            repeated = [...repeated, ...withCovers];
+          }
+          setPhotos(repeated.slice(0, 18));
+        } else {
+          // Use beautiful Unsplash fallbacks if no public events have covers
+          const fallbacks = [
+            "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&q=80&w=800",
+            "https://images.unsplash.com/photo-1515169067868-5387ec356754?auto=format&fit=crop&q=80&w=800",
+            "https://images.unsplash.com/photo-1530103862676-de8892bc952f?auto=format&fit=crop&q=80&w=800",
+            "https://images.unsplash.com/photo-1540039155732-d6749b9325f0?auto=format&fit=crop&q=80&w=800",
+            "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&q=80&w=800",
+            "https://images.unsplash.com/photo-1511895426328-dc8714191300?auto=format&fit=crop&q=80&w=800"
+          ];
+          let repeatedFallbacks = fallbacks.map((url, i) => ({ id: `fb-${i}`, url, title: "Foto Segundo" }));
+          while (repeatedFallbacks.length < 18) {
+            repeatedFallbacks = [...repeatedFallbacks, ...repeatedFallbacks];
+          }
+          setPhotos(repeatedFallbacks.slice(0, 18));
         }
       })
       .catch(() => {/* silently keep fallback */});
