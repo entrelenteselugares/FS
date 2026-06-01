@@ -10,9 +10,10 @@ import { PhygitalController } from "../controllers/phygital.controller";
 import { PaymentController } from "../controllers/payment.controller";
 import * as AdminPrintCatalog from "../controllers/print_catalog.controller";
 import multer from "multer";
-import os from "os";
 
-const upload = multer({ dest: os.tmpdir() });
+// Use memory storage — Vercel serverless has no reliable disk write access.
+// The 4.5MB Vercel body limit is handled by client-side compression in the frontend.
+const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 4 * 1024 * 1024 } });
 const router = Router();
 
 // ── Eventos Públicos (Vitrine & Paywall)

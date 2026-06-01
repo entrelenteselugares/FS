@@ -2,9 +2,8 @@ import { Router } from "express";
 import { requireAuth } from "../lib/auth";
 import { VaultController } from "../controllers/vault.controller";
 import multer from "multer";
-import os from "os";
 
-const upload = multer({ dest: os.tmpdir() });
+const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 4 * 1024 * 1024 } });
 const router = Router();
 
 // ── VAULTS (Cofres de Memórias - Fase 11)
