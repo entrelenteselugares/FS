@@ -137,7 +137,7 @@ export default function ClienteArea() {
     setActiveTab(targetTab);
 
     const searchMap: Record<string, string> = {
-      wallet: "wallet",
+      wallet: "files",
       files: "files",
       profile: "menu",
       affiliate: "affiliate",
@@ -288,9 +288,7 @@ export default function ClienteArea() {
   useEffect(() => {
     // 1. Atualização instantânea da aba (não bloqueia UX)
     const section = searchParams.get("s");
-    if (section === "pedidos" || section === "wallet") {
-      setActiveTab("wallet");
-    } else if (section === "fotos" || section === "files") {
+    if (section === "pedidos" || section === "wallet" || section === "fotos" || section === "files") {
       setActiveTab("files");
     } else if (section === "menu") {
       setActiveTab("profile");

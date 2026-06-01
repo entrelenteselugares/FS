@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from "react";
 import { useNavigate, useLocation, useSearchParams, Link } from "react-router-dom";
-import { Home, Search, ShoppingBag, Image, Menu, X, Play, Briefcase, DollarSign, Calendar, Printer, Settings, Lock, Users, User, Image as ImageIcon, LayoutDashboard } from "lucide-react";
+import { Home, Search, ShoppingBag, Image, Menu, X, Play, Briefcase, DollarSign, Calendar, Printer, Settings, Lock, Users, User, LayoutDashboard } from "lucide-react";
 import { useAuth } from "../hooks/useAuth";
 import type { NavItem } from "./DashboardLayout";
 
@@ -29,9 +29,8 @@ export const BottomNav: React.FC = () => {
 
   const NAV_ITEMS = useMemo<NavItem[]>(() => {
     const items: NavItem[] = [
-      { label: "Minhas Memórias", onClick: () => { setDrawerOpen(false); setTimeout(() => navigate("/minha-conta?s=fotos", { replace: true }), 50); }, isActive: location.pathname === "/minha-conta" && s === "fotos", icon: <ImageIcon size={18} /> },
+      { label: "Carrinho", onClick: () => { setDrawerOpen(false); setTimeout(() => navigate("/minha-conta?s=files", { replace: true }), 50); }, isActive: location.pathname === "/minha-conta" && (s === "files" || s === "fotos" || s === "wallet" || s === "pedidos"), icon: <ShoppingBag size={18} /> },
       { label: "Meus Álbuns", onClick: () => { setDrawerOpen(false); setTimeout(() => navigate("/meus-albuns", { replace: true }), 50); }, isActive: location.pathname.startsWith("/meus-albuns"), icon: <Lock size={18} /> },
-      { label: "Carrinho", onClick: () => { setDrawerOpen(false); setTimeout(() => navigate("/minha-conta?s=wallet", { replace: true }), 50); }, isActive: location.pathname === "/minha-conta" && s === "wallet", icon: <ShoppingBag size={18} /> },
       { label: "Indique e Ganhe", onClick: () => { setDrawerOpen(false); setTimeout(() => navigate("/minha-conta?s=affiliate", { replace: true }), 50); }, isActive: location.pathname === "/minha-conta" && s === "affiliate", icon: <Users size={18} /> },
       { label: "Meus Dados", onClick: () => { setDrawerOpen(false); setTimeout(() => navigate("/minha-conta?s=menu", { replace: true }), 50); }, isActive: location.pathname === "/minha-conta" && s === "menu", icon: <User size={18} /> },
     ];
@@ -113,8 +112,8 @@ export const BottomNav: React.FC = () => {
         </button>
 
         <button 
-          onClick={() => navigate("/minha-conta?s=wallet", { replace: true })}
-          className={`flex flex-col items-center gap-1 transition-colors ${location.pathname === "/minha-conta" && (s === "wallet" || s === "pedidos") ? "text-emerald-500" : "text-[var(--text)]/40"}`}
+          onClick={() => navigate("/minha-conta?s=files", { replace: true })}
+          className={`flex flex-col items-center gap-1 transition-colors ${location.pathname === "/minha-conta" && (s === "files" || s === "fotos" || s === "wallet" || s === "pedidos") ? "text-emerald-500" : "text-[var(--text)]/40"}`}
         >
           <ShoppingBag size={20} strokeWidth={1.5} />
           <span className="text-[7.5px] font-bold uppercase tracking-tight">Carrinho</span>

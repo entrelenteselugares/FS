@@ -19,8 +19,7 @@ import {
   Briefcase,
   Calendar,
   Lock,
-  User,
-  Image as ImageIcon
+  User
 } from 'lucide-react';
 import { API as api } from '../../lib/api';
 import { useAuth } from '../../hooks/useAuth';
@@ -63,9 +62,8 @@ const FranchiseDashboard: React.FC = () => {
   const navigate = useNavigate();
   const navItems = useMemo<NavItem[]>(() => {
     const items: NavItem[] = [
-      { label: "Minhas Memórias", onClick: () => navigate("/minha-conta?s=fotos"), isActive: false, icon: <ImageIcon size={18} /> },
+      { label: "Carrinho", onClick: () => navigate("/minha-conta?s=files"), isActive: false, icon: <ShoppingBag size={18} /> },
       { label: "Meus Álbuns", onClick: () => navigate("/meus-albuns"), isActive: false, icon: <Lock size={18} /> },
-      { label: "Carrinho", onClick: () => navigate("/minha-conta?s=wallet"), isActive: false, icon: <ShoppingBag size={18} /> },
       { label: "Indique e Ganhe", onClick: () => navigate("/minha-conta?s=affiliate"), isActive: false, icon: <Users size={18} /> },
       { label: "Meus Dados", onClick: () => navigate("/minha-conta?s=menu"), isActive: false, icon: <User size={18} /> },
     ];
