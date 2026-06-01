@@ -142,20 +142,7 @@ function DateTimePicker({ value, onChange, workingHours }: { value: string; onCh
         {open && (
           <div
             key="picker"
-            style={{
-              position: "absolute", 
-              bottom: "calc(100% + 15px)", 
-              left: "50%", 
-              transform: "translateX(-50%)", 
-              zIndex: 9999,
-              background: "var(--bg-card)", 
-              border: "1px solid var(--border)",
-              width: "min(340px, 92vw)", 
-              padding: "24px", 
-              boxShadow: "0 30px 90px rgba(0,0,0,0.4)",
-              borderRadius: "0",
-              transition: "all 0.2s cubic-bezier(0.16, 1, 0.3, 1)"
-            }}
+            className="calendar-popover"
           >
             {/* Month Navigation */}
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20, padding: "0 4px" }}>
@@ -503,10 +490,13 @@ export const QuotePage = () => {
 
   const [submitting, setSubmitting] = useState(false);
   const [createdQuoteId, setCreatedQuoteId] = useState<string | null>(null);
+  const [submitError, setSubmitError] = useState<string>("");
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (submitting) return;
     setSubmitting(true);
+    setSubmitError("");
 
     const fullAddress = locationType === "PARTNER" 
       ? `Unidade: ${currentPartner?.name || 'Ponto Fixo'} - ${currentPartner?.city || ''}`
@@ -527,9 +517,7 @@ export const QuotePage = () => {
       const { data } = await API.post("/public/quotes", payload);
       
       if (data.checkoutUrl) {
-        // Normaliza para caminho relativo para evitar conflitos de porta em dev
-        const url = new URL(data.checkoutUrl, window.location.origin);
-        navigate(url.pathname);
+        window.location.href = data.checkoutUrl;
       } else {
         // Se for orçamento sob consulta, mostra sucesso
         setCreatedQuoteId(data.eventId);
@@ -539,7 +527,7 @@ export const QuotePage = () => {
     } catch (err: unknown) {
       const error = err as { response?: { data?: { message?: string; error?: string } } };
       const msg = error.response?.data?.message || error.response?.data?.error || "Erro ao processar orçamento. Tente novamente.";
-      alert(msg);
+      setSubmitError(msg);
     } finally {
       setSubmitting(false);
     }
@@ -562,10 +550,32 @@ export const QuotePage = () => {
         input[type=range] { -webkit-appearance: none; background: var(--theme-border); height: 4px; border-radius: 0; }
         input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 20px; width: 20px; background: #85B9AC; border-radius: 0; cursor: pointer; box-shadow: 0 0 15px rgba(133,185,172,0.4); }
 
+        .calendar-popover {
+          position: absolute;
+          bottom: calc(100% + 15px);
+          left: 50%;
+          transform: translateX(-50%);
+          z-index: 9999;
+          background: var(--bg-card);
+          border: 1px solid var(--border);
+          width: min(340px, 92vw);
+          padding: 24px;
+          box-shadow: 0 30px 90px rgba(0,0,0,0.4);
+          border-radius: 0;
+          transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
         @media (max-width: 768px) {
           .mobile-grid-1 { grid-template-columns: 1fr !important; }
           .mobile-stack { flex-direction: column !important; align-items: stretch !important; gap: 15px !important; }
           .mobile-padding { padding: 25px !important; }
+          .calendar-popover {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            bottom: auto;
+            transform: translate(-50%, -50%);
+          }
         }
       `}</style>
 
@@ -738,12 +748,16 @@ export const QuotePage = () => {
                 <button 
                   type="button"
                   onClick={() => {
-                    const isLocalOk = locationType === "PARTNER" ? !!selectedPartnerId : !!customCep;
+                    const isLocalOk = locationType === "PARTNER" ? !!selectedPartnerId : (!!customCep && !!addressData.logradouro);
                     if (isLocalOk && eventDate) {
                       setStep(2);
                       window.scrollTo(0,0);
                     } else {
-                      alert("Por favor, selecione o local e a data do evento.");
+                      if (locationType === "OTHER" && (!addressData.logradouro || !customCep)) {
+                        alert("Por favor, digite um CEP válido para encontrarmos o endereço.");
+                      } else {
+                        alert("Por favor, selecione o local e a data do evento.");
+                      }
                     }
                   }}
                   style={{ background: THEME.accent, color: "black", padding: "15px 30px", fontWeight: 900, fontSize: 12, textTransform: "uppercase", letterSpacing: 2, display: "flex", alignItems: "center", gap: 10, border: "none", cursor: "pointer" }}
@@ -1001,8 +1015,8 @@ export const QuotePage = () => {
                     {showPrices ? new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(totalPrice) : "SOB CONSULTA"}
                   </div>
                 </div>
-                <div style={{ display: "flex", gap: 10 }}>
-                  <button onClick={() => setStep(1)} className="px-8 py-4 border border-theme-border text-theme-muted font-display font-black text-[10px] uppercase tracking-widest hover:text-theme-text transition-all">VOLTAR</button>
+                <div className="mobile-stack" style={{ display: "flex", gap: 10, width: "100%" }}>
+                  <button onClick={() => setStep(1)} style={{ flex: 1 }} className="px-8 py-4 border border-theme-border text-theme-muted font-display font-black text-[10px] uppercase tracking-widest hover:text-theme-text transition-all">VOLTAR</button>
                   <button 
                     onClick={() => {
                       if (selectedServices.length > 0) {
@@ -1012,6 +1026,7 @@ export const QuotePage = () => {
                         alert("Por favor, selecione pelo menos um serviço.");
                       }
                     }}
+                    style={{ flex: 1 }}
                     className="px-8 py-4 bg-emerald-500 text-white font-display font-black text-[10px] uppercase tracking-widest hover:bg-white transition-all shadow-xl shadow-emerald-500/10"
                   >CONTINUAR &rarr;</button>
                 </div>
@@ -1083,6 +1098,13 @@ export const QuotePage = () => {
                 >
                   {submitting ? "PROCESSANDO..." : "RESERVAR E FINALIZAR AGORA"}
                 </button>
+
+                {submitError && (
+                  <div className="p-4 bg-red-500/10 border border-red-500/20 text-red-400 flex items-center justify-center gap-3 mt-4 text-xs font-bold uppercase tracking-widest text-center">
+                    <ShieldCheck size={16} />
+                    <span>{submitError}</span>
+                  </div>
+                )}
              </form>
           </div>
         )}
