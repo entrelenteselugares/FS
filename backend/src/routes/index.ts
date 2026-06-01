@@ -65,6 +65,8 @@ router.post("/push/test",        requireAuth, PushController.sendTestPush);
 router.get("/embaixador/:slug", ReferralController.handleReferral);
 
 // ── MARKETPLACE (Fotos Individuais & Venda Expressa) ──────────────────────────
+import { GrowthController } from "../controllers/growth.controller";
+router.get("/marketplace/coupons/:code/validate", GrowthController.validateCoupon);
 router.post("/marketplace/express-sale",      requireAuth, requireProOrFranchise, MarketplaceController.expressSale);
 router.post("/marketplace/events/:id/media",  requireAuth, requireProOrFranchise, MarketplaceController.addMedia);
 router.post("/marketplace/events/:id/sync-drive", requireAuth, requireProOrFranchise, MarketplaceController.syncEventMedia);
