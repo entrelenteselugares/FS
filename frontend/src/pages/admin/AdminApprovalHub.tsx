@@ -140,31 +140,31 @@ export const AdminApprovalHub: React.FC = () => {
                         <div className="grid grid-cols-2 gap-2 text-[10px]">
                           <div>
                             <p className="text-brand-tactical uppercase font-black tracking-tighter">CNPJ</p>
-                            <p className="text-theme-text font-mono">{app.cartorio?.cnpj}</p>
+                            <p className="text-theme-text font-mono">{app.cartorio?.cnpj || <span className="text-theme-muted italic text-[9px]">Não informado</span>}</p>
                           </div>
                           <div>
                             <p className="text-brand-tactical uppercase font-black tracking-tighter">Cidade</p>
-                            <p className="text-theme-text">{app.cartorio?.cidade}</p>
+                            <p className="text-theme-text">{app.cartorio?.cidade || <span className="text-theme-muted italic text-[9px]">Não informada</span>}</p>
                           </div>
                         </div>
                       </div>
                     )}
                   </div>
 
-                  <div className="flex items-center gap-2">
-                    <button
-                      onClick={() => handleAction(app.id, 'approve')}
-                      disabled={processingId === app.id}
-                      className="flex-1 h-9 bg-brand-tactical hover:bg-brand-tactical/90 disabled:opacity-50 text-brand-text text-[10px] font-black uppercase tracking-widest rounded-lg flex items-center justify-center gap-2 transition-all shadow-lg shadow-brand-tactical/20"
-                    >
-                      {processingId === app.id ? "Processando..." : <><Check size={14} /> Aprovar</>}
-                    </button>
+                  <div className="flex items-center gap-3">
                     <button
                       onClick={() => handleAction(app.id, 'reject')}
                       disabled={processingId === app.id}
-                      className="w-9 h-9 border border-theme-border/60 text-theme-muted hover:text-red-500 hover:border-red-500/50 hover:bg-red-500/10 rounded-lg flex items-center justify-center transition-all"
+                      className="flex-1 h-9 border border-theme-border/60 text-theme-muted hover:text-red-500 hover:border-red-500/50 hover:bg-red-500/10 rounded-lg flex items-center justify-center gap-2 transition-all text-[10px] font-black uppercase tracking-widest"
                     >
-                      <X size={16} />
+                      <X size={14} /> Reprovar
+                    </button>
+                    <button
+                      onClick={() => handleAction(app.id, 'approve')}
+                      disabled={processingId === app.id}
+                      className="flex-1 h-9 bg-brand-tactical hover:bg-brand-tactical/90 disabled:opacity-50 text-black text-[10px] font-black uppercase tracking-widest rounded-lg flex items-center justify-center gap-2 transition-all shadow-lg shadow-brand-tactical/20"
+                    >
+                      {processingId === app.id ? "..." : <><Check size={14} /> Aprovar</>}
                     </button>
                   </div>
                 </div>
