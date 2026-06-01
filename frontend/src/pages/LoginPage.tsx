@@ -94,7 +94,7 @@ export const LoginPage: React.FC = () => {
 
   const { login }       = useAuth();
   const navigate        = useNavigate();
-  const { theme, toggle, isDark } = useTheme();
+  const { toggle, isDark } = useTheme();
 
   // Fetch real photos from public events
   useEffect(() => {
@@ -102,8 +102,8 @@ export const LoginPage: React.FC = () => {
       .then(({ data }) => {
         const events = Array.isArray(data) ? data : (data.events ?? data.data ?? []);
         const withCovers = events
-          .filter((e: any) => e.coverPhotoUrl)
-          .map((e: any) => ({ id: e.id, url: e.coverPhotoUrl, title: e.title ?? "" }));
+          .filter((e: { coverPhotoUrl?: string | null }) => e.coverPhotoUrl)
+          .map((e: { id: string; coverPhotoUrl: string; title?: string }) => ({ id: e.id, url: e.coverPhotoUrl, title: e.title ?? "" }));
 
         if (withCovers.length >= 6) {
           setPhotos(withCovers);
