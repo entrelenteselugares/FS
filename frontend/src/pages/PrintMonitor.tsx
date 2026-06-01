@@ -166,7 +166,7 @@ export default function PrintMonitor() {
     }
   };
 
-  const handlePrinted = async (targets: PrintItem[]) => {
+  const handlePrinted = useCallback(async (targets: PrintItem[]) => {
     try {
       await Promise.all(
         targets.map(p => API.patch(`/phygital/prints/${p.id}/status`, { status: 'PRINTED' }))
@@ -177,7 +177,7 @@ export default function PrintMonitor() {
       console.error('Erro ao marcar impressão:', err);
     }
     setPrintTargets(null);
-  };
+  }, [fetchPrints]);
 
   const pendingCount = prints.filter(p => p.status === 'PENDING_PRINT').length;
 
@@ -212,8 +212,8 @@ export default function PrintMonitor() {
     <div className="min-h-screen bg-theme-bg text-theme-text font-sans selection:bg-brand-tactical/30">
       <div className="print:hidden">
         {/* Header Fixo */}
-        <div className="sticky top-0 z-50 bg-zinc-950/80 backdrop-blur-xl border-b border-theme-border px-6 py-4 flex items-center justify-between">
-        <div className="flex items-center gap-6">
+        <div className="sticky top-0 z-50 bg-zinc-950/80 backdrop-blur-xl border-b border-theme-border px-4 md:px-6 py-4 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div className="flex items-center gap-4 md:gap-6 w-full md:w-auto justify-between md:justify-start">
           <button onClick={() => navigate(-1)} className="p-2 hover:bg-white/5 rounded-full transition-all text-zinc-400 hover:text-white">
             <ArrowLeft size={20} />
           </button>
@@ -223,7 +223,7 @@ export default function PrintMonitor() {
           </div>
         </div>
 
-        <div className="flex items-center gap-4">
+        <div className="flex flex-wrap items-center gap-2 md:gap-4 w-full md:w-auto">
           <input 
             type="file" 
             id="manual-upload" 
@@ -243,9 +243,9 @@ export default function PrintMonitor() {
                   await API.post("/public/phygital/upload", formData);
                 }
                 fetchPrints();
-              } catch (err: any) {
+              } catch (err: unknown) {
                 console.error("Erro no upload manual:", err);
-                const details = err.response?.data?.details;
+                const details = (err as any)?.response?.data?.details;
                 alert(`Erro ao enviar fotos: ${details || 'Verifique seu saldo, conexão ou configuração do servidor.'}`);
               } finally {
                 setLoading(false);

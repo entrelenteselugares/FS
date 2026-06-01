@@ -25,8 +25,8 @@ API.interceptors.response.use(
     const { config, response } = error;
     const originalRequest = config;
 
-    // Se o erro for 401 e não for uma tentativa de login ou refresh
-    if (response?.status === 401 && !originalRequest._retry && !config.url.includes("/auth/login") && !config.url.includes("/auth/refresh")) {
+    // Se o erro for 401 e não for uma tentativa de login, refresh ou checagem de sessão (/auth/me)
+    if (response?.status === 401 && !originalRequest._retry && !config.url.includes("/auth/login") && !config.url.includes("/auth/refresh") && !config.url.includes("/auth/me")) {
       
       if (isRefreshing) {
         return new Promise((resolve, reject) => {

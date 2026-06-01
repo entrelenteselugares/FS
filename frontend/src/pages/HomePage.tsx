@@ -110,7 +110,7 @@ function EventCard({ event, onClick }: { event: Event; onClick: () => void }) {
 
       {/* Content Overlay - Centered on Mobile, Bottom on Desktop */}
       <div className="absolute inset-0 flex flex-col items-center justify-center p-4 z-10 text-center md:hidden">
-        <h3 className="text-xl font-heading font-black text-white uppercase italic tracking-tighter leading-none drop-shadow-2xl">
+        <h3 className="text-base sm:text-lg font-heading font-black text-white uppercase italic tracking-tighter leading-tight drop-shadow-2xl line-clamp-3">
           {event.title}
         </h3>
       </div>

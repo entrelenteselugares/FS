@@ -740,12 +740,12 @@ return (
           </div>
 
           {/* ── QR CODE MODAL (Acessível a todos) ── */}
-          <div className="fixed bottom-10 right-10 z-[200] flex flex-col items-end gap-4 print:hidden pointer-events-none">
+          <div className="fixed bottom-4 right-4 md:bottom-10 md:right-10 z-[200] flex flex-col items-end gap-4 print:hidden pointer-events-none">
             <AnimatePresence>
               {showQrModal && (
                 <motion.div 
                   initial={{ opacity: 0, scale: 0.9, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.9, y: 20 }}
-                  className="bg-[var(--bg-card)] border border-brand-tactical/40 p-8 shadow-2xl mb-4 w-[320px] relative pointer-events-auto"
+                  className="bg-[var(--bg-card)] border border-brand-tactical/40 p-6 md:p-8 shadow-2xl mb-4 w-[90vw] max-w-[320px] md:w-[320px] relative pointer-events-auto"
                 >
                     <div className="absolute top-0 left-0 w-full h-[2px] bg-brand-tactical" />
                     <div className="flex justify-between items-start mb-6">

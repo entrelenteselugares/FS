@@ -229,7 +229,7 @@ export const LoginPage: React.FC = () => {
         </button>
 
         {/* Top: Logo */}
-        <div className="pt-12 px-10 xl:px-14 pb-4">
+        <div className="pt-12 px-6 md:px-10 xl:px-14 pb-4">
           <div className="space-y-3">
             <Link to="/" className="inline-block">
               <img
@@ -245,7 +245,7 @@ export const LoginPage: React.FC = () => {
         </div>
 
         {/* Center: Form */}
-        <div className="flex-1 flex flex-col justify-center px-10 xl:px-14 py-8 space-y-10">
+        <div className="flex-1 flex flex-col justify-center px-6 md:px-10 xl:px-14 py-8 space-y-10">
           {/* Heading */}
           <div>
             <h1 className="text-4xl xl:text-5xl font-black uppercase italic leading-none tracking-tighter text-theme-text">
