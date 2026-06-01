@@ -141,8 +141,5 @@ The API implements rate limiting to prevent abuse:
 - **Public API:** 100 requests per 15 minutes per IP.
 - **IoT Heartbeat:** No specific limit (throttled by agent frequency).
 
-<!-- VERIFY: Base URL for production API -->
-<!-- VERIFY: Rate limit exact values from Express middleware -->
-
 <!-- GSD-DOCS-UPDATE: SUPPLEMENTED -->
-*Documentação verificada e complementada automaticamente via GSD-SDK em 2026-05.*
+*Documentação verificada e atualizada automaticamente via GSD-SDK em 2026-06.*

@@ -11,13 +11,13 @@ Este guia detalha o fluxo de trabalho local para o desenvolvimento e manutençã
 
 ## Instalação e Inicialização
 
-O repositório é configurado com o frontend (`/frontend`) em Vite/React e o backend (`/backend`) em Node.js com Prisma.
+O repositório é configurado com o frontend (`/frontend`) em Vite/React e o backend (`/backend`) usando uma arquitetura híbrida (Express para desenvolvimento local + Hono/Vercel Serverless para Edge).
 
 1. **Clone o repositório e instale as dependências raiz**:
 
    ```bash
    git clone https://github.com/fotosegundo/platform.git
-   cd platform
+   cd foto-segundo
    npm install
    ```
 
@@ -48,7 +48,7 @@ O repositório é configurado com o frontend (`/frontend`) em Vite/React e o bac
    npm run dev
    ```
 
-   *Este comando geralmente inicia o servidor Vite na porta 5173 e o backend na porta correspondente configurada (ex: 3000).*
+   *Este comando inicia o servidor Vite (normalmente porta 3001) e o backend (porta 3002).*
 
 ## Padrões de Código
 
@@ -57,44 +57,47 @@ O repositório é configurado com o frontend (`/frontend`) em Vite/React e o bac
 - **Framework:** React + Vite.
 - **Estilização:** TailwindCSS. Todas as cores principais devem utilizar os tokens configurados em `tailwind.config.js` (`bg-theme-bg`, `text-brand-tactical`, etc.) para suporte automático a Dark Mode e expansões futuras.
 - **Roteamento:** React Router Dom. Novas páginas institucionais devem ser registradas em `App.tsx` e acessíveis via `Navbar` e `Footer`.
+- **Motor Multi-Vertical:** O layout de eventos (`EventPage.tsx`) agora suporta múltiplos verticais. A renderização de componentes deve ser condicional baseada na flag `event.vertical` e `event.type`.
 - **Estado:** Evite complexidade global excessiva se o React Context for suficiente, mantendo componentes o mais puros e "dumb" possível.
 
 ### 🖨️ Componentes e Motores de Impressão (A4 & Fotos)
 
-Se você estiver desenvolvendo ou estendendo as capacidades de impressão (ex: `PrintKitModal.tsx` ou `PrintSettingsPanel.tsx`), siga estas diretrizes:
+Se você estiver desenvolvendo ou estendendo as capacidades de impressão:
 
 - **Estilos CSS @page e Mídias:** Sempre encapsule estilos de formatação física (medidas em milímetros, remoção de cabeçalhos/rodapés do browser) dentro de blocos dedicados para `@media print` ou folhas injetadas em iframes.
-- **Cross-Origin Images:** Imagens externas ou de CDNs devem possuir o atributo `crossOrigin="anonymous"` nas tags `<img>` para que o browser não barre a renderização ou manipulação das fotos pelo motor de composição.
-- **Carregamento Assíncrono:** Sempre aguarde o evento `onload` de todas as tags de imagens no documento de impressão (iframe) antes de disparar o `iframe.contentWindow.print()`. Caso contrário, a impressora imprimirá páginas em branco.
+- **Cross-Origin Images:** Imagens externas ou de CDNs devem possuir o atributo `crossOrigin="anonymous"` nas tags `<img>`.
+- **Carregamento Assíncrono:** Sempre aguarde o evento `onload` de todas as tags de imagens no documento de impressão antes de disparar `window.print()`.
 
-### Backend
+### Backend (Hybrid Hono + Supabase Edge)
 
-- **Framework:** Express / Node.js nativo (servido em arquitetura serverless via Vercel na produção).
-- **ORM:** Prisma. Sempre que houver uma mudança no `schema.prisma`, execute `npx prisma generate` antes de commitar.
-- **Tratamento de Erros:** Todas as chamadas de banco e requisições devem estar envelopadas em blocos `try/catch` para evitar crash global.
+- **Framework:** Hono (Vercel Edge/Serverless) substituindo o Express em rotas pesadas.
+- **ORM:** Prisma. Sempre que houver uma mudança no `schema.prisma`, execute `npx prisma generate`.
+- **Tratamento de Erros:** Todas as requisições devem envelopar `try/catch`. 
+- **Fragmentation Strategy:** Rotas que importam bibliotecas pesadas de manipulação de PDF ou imagem devem residir no backend Vercel/Node em vez do Supabase Edge Functions para evitar estouro do bundle limit (20MB) e de memória (256MB).
 
 ## Testes e Quality Assurance (UAT)
 
 Antes de abrir um Pull Request:
 
-1. Certifique-se de que não existem avisos de lint (variáveis não usadas, imports soltos).
+1. Certifique-se de que não existem avisos de lint ou TypeScript errors. O nosso pipeline bloqueia deployments com tipagens quebradas.
 2. O sistema possui scripts de teste E2E usando Playwright (ex: `test:certify`). Para rodar:
 
    ```bash
    npm run test
    ```
 
-3. Teste o build de produção localmente se estiver tocando em pacotes ou rotas cruciais:
+3. Teste o build de produção localmente se estiver tocando em pacotes cruciais:
 
    ```bash
-   npm run vercel-build
+   npm run build --prefix frontend
+   npm run build --prefix backend
    ```
 
 ## Fluxo do Git
 
 - Trabalhe em branches de feature: `feature/nome-da-feature` ou `fix/nome-do-bug`.
 - Use mensagens de commit convencionais (`feat: ...`, `fix: ...`, `docs: ...`).
-- Sincronize com a branch `main` com frequência para evitar conflitos no motor financeiro ou no esquema Prisma.
+- Atualizações de documentação automáticas podem ser solicitadas via fluxo GSD.
 
 <!-- GSD-DOCS-UPDATE: SUPPLEMENTED -->
-*Documentação verificada e complementada automaticamente via GSD-SDK em 2026-05.*
+*Documentação verificada e atualizada automaticamente via GSD-SDK em 2026-06.*

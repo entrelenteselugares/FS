@@ -54,16 +54,17 @@ We prioritize functional coverage over line coverage. Current benchmarks:
 - **Financial Transactions:** 100%
 - **Flash Event Resgate:** 100%
 - **Admin Management:** > 80%
-- **Multi-Vertical (School/Sports):** > 80%
+- **Multi-Vertical (School/Sports/Event):** > 80%
 - **Growth Engine (Coupons/Affiliates):** > 70%
+- **Custom Service Approval (SVC-SUBMIT):** > 80%
 
 ## CI Integration
 
 Tests are integrated into our CI pipeline (GitHub Actions).
 
-- **Trigger:** Every Push to `main` or `dev`.
+- **Trigger:** Every Push to `main` ou `dev`.
 - **Environment:** A dedicated staging database is used for CI runs.
 - **Artifacts:** Videos and traces are captured for failing tests and available in the CI logs.
 
 <!-- GSD-DOCS-UPDATE: SUPPLEMENTED -->
-*Documentação verificada e complementada automaticamente via GSD-SDK em 2026-05.*
+*Documentação verificada e atualizada automaticamente via GSD-SDK em 2026-06.*

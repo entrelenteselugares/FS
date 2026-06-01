@@ -58,13 +58,13 @@ npm run dev
 
 The application will be available at:
 
-- **Frontend:** `http://localhost:3000` (Vite configured)
+- **Frontend:** `http://localhost:3001` (Vite configured)
 - **Backend:** `http://localhost:3002`
 
 ## Common Setup Issues
 
 - **Prisma Connection Error:** Ensure `DATABASE_URL` is correct and your IP is whitelisted in Supabase.
-- **Vite Port Conflict:** If port 5173 is occupied, Vite will pick another port. Check the terminal output.
+- **Vite Port Conflict:** If port 3001 is occupied, Vite will pick another port. Check the terminal output.
 - **OAuth Callbacks:** Ensure your Google Cloud Console redirect URIs match your local `BACKEND_URL`.
 
 ## Next Steps
@@ -77,4 +77,4 @@ Once the system is running, explore these documents for more details:
 - [API.md](API.md) — Backend endpoint reference.
 
 <!-- GSD-DOCS-UPDATE: SUPPLEMENTED -->
-*Documentação verificada e complementada automaticamente via GSD-SDK em 2026-05.*
+*Documentação verificada e complementada automaticamente via GSD-SDK em 2026-06.*

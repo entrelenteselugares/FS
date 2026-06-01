@@ -311,7 +311,6 @@ export default function EventPage() {
   const [showPrintStore, setShowPrintStore] = useState(false);
   const [showPrintKit, setShowPrintKit] = useState(false);
   const [showQrModal, setShowQrModal] = useState(false);
-  const [showLiveOps, setShowLiveOps] = useState(true);
   const [filterMode, setFilterMode] = useState<"ALL" | "PRO" | "GUEST">("ALL");
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -659,9 +658,9 @@ return (
                 )}
               </motion.div>
             </AnimatePresence>
-            <div className="absolute inset-0 bg-gradient-to-t from-theme-bg via-theme-bg/60 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-theme-bg via-theme-bg/80 to-transparent" />
             
-            <div className="absolute inset-0 flex flex-col justify-end p-6 pt-24 lg:p-12 lg:pt-32 space-y-4">
+            <div className="absolute bottom-0 left-0 w-full px-8 pt-8 pb-4 lg:px-12 lg:pt-12 lg:pb-4 space-y-6">
               <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} className="flex items-center gap-4 mb-6">
                 <div className="h-px w-12 bg-brand-tactical" />
                 <span className="text-[10px] font-black text-brand-tactical uppercase tracking-[0.5em] italic">
@@ -680,21 +679,33 @@ return (
                 {event.title}
               </motion.h1>
 
-              <div className="flex flex-wrap items-center gap-8 text-theme-text-muted">
-                 <div className="flex items-center gap-2">
-                   <Clock size={16} className="text-brand-tactical" />
-                   <span className="text-xs font-black uppercase tracking-[0.2em] text-theme-text-muted italic">{formatDate(event.dataEvento)}</span>
-                 </div>
-                 <div className="flex items-center gap-2">
-                   <MapPin size={16} className="text-brand-tactical" />
-                   <span className="text-xs font-black uppercase tracking-[0.2em] text-theme-text-muted italic">{event.city || (event.location?.startsWith("CEP:") ? null : event.location) || "Ponto Designado"}</span>
-                 </div>
-                 {event.photographer && (
+              <div className="flex flex-col gap-4">
+                <div className="flex flex-wrap items-center gap-8 text-theme-text-muted">
                    <div className="flex items-center gap-2">
-                     <Camera size={16} className="text-brand-tactical" />
-                     <span className="text-xs font-black uppercase tracking-[0.2em] text-brand-tactical italic">Profissional: {event.photographer.nome}</span>
+                     <Clock size={16} className="text-brand-tactical" />
+                     <span className="text-xs font-black uppercase tracking-[0.2em] text-theme-text-muted italic">{formatDate(event.dataEvento)}</span>
                    </div>
-                 )}
+                   <div className="flex items-center gap-2">
+                     <MapPin size={16} className="text-brand-tactical" />
+                     <span className="text-xs font-black uppercase tracking-[0.2em] text-theme-text-muted italic">{event.city || (event.location?.startsWith("CEP:") ? null : event.location) || "Ponto Designado"}</span>
+                   </div>
+                   {event.photographer && (
+                     <div className="flex items-center gap-2">
+                       <Camera size={16} className="text-brand-tactical" />
+                       <span className="text-xs font-black uppercase tracking-[0.2em] text-brand-tactical italic">Profissional: {event.photographer.nome}</span>
+                     </div>
+                   )}
+                   {event.category && (
+                     <div className="flex items-center gap-2">
+                       <span className="text-xs font-black uppercase tracking-[0.2em] text-theme-text italic">{event.category}</span>
+                     </div>
+                   )}
+                </div>
+                {(event.description || event.itinerary || event.type === 'FOTO_POINT') && (
+                  <p className="text-base text-theme-text leading-relaxed font-medium italic whitespace-pre-line max-w-4xl mt-2">
+                    {event.description || event.itinerary || (event.type === 'FOTO_POINT' ? "Participe deste ensaio aberto. Capture memórias profissionais em um cenário exclusivo." : "")}
+                  </p>
+                )}
               </div>
             </div>
           </div>
@@ -750,18 +761,14 @@ return (
               </div>
             </div>
           ) : (
-            <div className="flex-1 p-8 lg:p-12 space-y-16 pb-40">
+            <div className="flex-1 px-8 lg:px-12 pb-40 pt-2 space-y-8">
               
               {/* Bloco de Informações / Roteiro (Prioridade) */}
               {(event.itinerary || event.type === 'FOTO_POINT') && (
                 <div className="max-w-4xl animate-in fade-in slide-in-from-bottom-8 duration-1000 space-y-8">
 
-                  {/* Descrição do roteiro — inline, sem container extra */}
+                  {/* Descrição movida para o header */}
                   <div className="space-y-3">
-                    <p className="text-base md:text-lg text-theme-text-muted leading-relaxed font-medium italic whitespace-pre-line">
-                      {event.description || event.itinerary || (event.type === 'FOTO_POINT' ? "Participe deste ensaio aberto. Capture memórias profissionais em um cenário exclusivo." : "Aguardando definição do roteiro estratégico.")}
-                    </p>
-
                     {event.type === 'FOTO_POINT' && (
                       <div className="flex flex-wrap gap-5 pt-2">
                         <div className="flex items-center gap-2">
@@ -799,32 +806,8 @@ return (
 
               {/* ── Galeria Principal (Marketplace / Live Stream / Guest Photos) ── */}
               {(isMarketplace || (event.type === 'ALBUM_FULL' && step === 'success')) && (
-                <div id="gallery-section" className="space-y-16 animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-300 scroll-mt-20">
-                  <div className="pt-20">
-                    <div className="flex items-center gap-4 mb-10 cursor-pointer group" onClick={() => setShowLiveOps(!showLiveOps)}>
-                      <div className="h-px flex-1 bg-theme-border/20 group-hover:bg-brand-tactical/30 transition-colors" />
-                      
-                      <div className="flex items-center gap-4">
-                        <div
-                          className={`w-2.5 h-2.5 rounded-full ${eventStatus.dotClass}`}
-                          title={eventStatus.label}
-                        />
-                        
-                        <h2 className="font-heading font-black text-2xl lg:text-4xl text-theme-text uppercase italic tracking-widest flex items-center gap-4 group-hover:text-brand-tactical transition-colors">
-                          Live Operations
-                          <motion.span animate={{ rotate: showLiveOps ? 90 : 0 }}>
-                            <ChevronRight size={24} className="text-theme-text-muted group-hover:text-brand-tactical" />
-                          </motion.span>
-                        </h2>
-                      </div>
-
-                      <div className="h-px flex-1 bg-theme-border/20 group-hover:bg-brand-tactical/30 transition-colors" />
-                    </div>
-                    
-                    <p className="text-[11px] text-center text-theme-text-muted uppercase tracking-[0.5em] font-black italic -mt-6 mb-12">
-                      Curadoria instantânea • Alta Performance Phygital
-                    </p>
-
+                <div id="gallery-section" className="space-y-8 animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-300 scroll-mt-20">
+                  <div className="pt-4">                    
                     <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-8">
                       <div className="flex bg-white/5 border border-white/10 rounded-xl overflow-hidden p-1">
                         <button 
@@ -859,14 +842,7 @@ return (
                       )}
                     </div>
                   </div>
-                  <AnimatePresence>
-                    {showLiveOps && (
-                      <motion.div 
-                        initial={{ height: 0, opacity: 0 }} 
-                        animate={{ height: "auto", opacity: 1 }} 
-                        exit={{ height: 0, opacity: 0 }}
-                        className="overflow-hidden"
-                      >
+                  <div className="overflow-visible">
                         {medias.length === 0 ? (
                           <div className="py-16 border border-dashed border-theme-border/40 bg-theme-bg/20 flex flex-col items-center justify-center text-center px-10 group relative overflow-hidden">
                             <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(20,184,166,0.05),transparent_70%)] pointer-events-none" />
@@ -975,9 +951,7 @@ return (
                             />
                           </div>
                         )}
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
+                  </div>
                 </div>
               )}
 

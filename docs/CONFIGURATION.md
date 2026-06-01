@@ -60,3 +60,6 @@ Print engine configuration is persisted in the browser's `localStorage` per even
   "copies": 1
 }
 ```
+
+<!-- GSD-DOCS-UPDATE: SUPPLEMENTED -->
+*Documentação verificada e atualizada automaticamente via GSD-SDK em 2026-06.*
