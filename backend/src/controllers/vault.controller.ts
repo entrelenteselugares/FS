@@ -605,7 +605,7 @@ export class VaultController {
       const title = `${ownerName.toUpperCase()} CONVIDOU VOCÊ PARA O ÁLBUM - ${albumName.toUpperCase()}`;
       const description = "Acesse para ver as fotos e vídeos deste cofre de memórias no Foto Segundo.";
       // Logo default (deve existir na pasta public do frontend)
-      const imageUrl = `${frontendUrl}/logo_black.png`;
+      const imageUrl = `${frontendUrl}/logo.png`;
 
       const html = `
 <!DOCTYPE html>

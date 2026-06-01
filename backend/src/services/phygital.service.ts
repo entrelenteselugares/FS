@@ -96,7 +96,7 @@ export class PhygitalService {
         console.log(`[PHYGITAL] Upload em lote: Mantendo dimensões originais ${w}x${h}`);
       } else {
         // Adicionamos borda branca (Luxury Frame - Estilo Polaroid)
-        const borderSize = Math.floor(w * 0.05); // Reduzido de 10% para 5%
+        const borderSize = Math.floor(w * 0.05); // 5%
         const bottomBorder = Math.floor(borderSize * 3.5); // Borda inferior
         finalWidth = w + (borderSize * 2);
         finalHeight = h + borderSize + bottomBorder;
@@ -104,23 +104,26 @@ export class PhygitalService {
         const compositeLayers: any[] = [];
 
         try {
-          const fs = require('fs');
-          const path = require('path');
-          const logoPath = path.join(__dirname, '..', 'assets', 'logo.png');
-          
-          let logoHeight = Math.floor(bottomBorder * 0.5); // fallback
+          const axios = require('axios');
+          let logoBuffer = null;
+          try {
+            // Buscar a logo do frontend de forma dinâmica para evitar caminhos quebrados na Vercel
+            const frontendUrl = process.env.FRONTEND_URL || 'https://foto-segundo.vercel.app';
+            const res = await axios.get(`${frontendUrl}/logo.png`, { responseType: 'arraybuffer' });
+            logoBuffer = Buffer.from(res.data);
+          } catch (fetchErr: any) {
+            console.log('[PHYGITAL] Não foi possível baixar logo.png', fetchErr.message);
+          }
 
-          if (fs.existsSync(logoPath)) {
-            const logoBuffer = fs.readFileSync(logoPath);
+          if (logoBuffer) {
             const logoWidth = Math.floor(w * 0.35); // 35% da largura da imagem
             const { data: logoResized, info: logoInfo } = await sharp(logoBuffer)
               .resize({ width: logoWidth, withoutEnlargement: true })
               .png()
               .toBuffer({ resolveWithObject: true });
               
-            logoHeight = logoInfo.height;
-            const logoY = h + borderSize + Math.floor((bottomBorder - logoHeight) / 2);
-            const logoX = finalWidth - logoInfo.width - borderSize;
+            const logoY = h + borderSize + Math.floor((bottomBorder - logoInfo.height) / 2);
+            const logoX = Math.floor((finalWidth - logoInfo.width) / 2); // Centralizado
 
             compositeLayers.push({ 
               input: logoResized, 
@@ -129,24 +132,7 @@ export class PhygitalService {
               blend: 'over' 
             });
           }
-
-          // Centralizar verticalmente o bloco de texto usando Y absoluto
-          const textCenterY = Math.floor(bottomBorder / 2);
-          const subtitleY = textCenterY - Math.floor(borderSize * 0.1);
-          const titleY = textCenterY + Math.floor(borderSize * 0.7);
-
-          const refSvg = Buffer.from(`
-            <svg width="${finalWidth}" height="${bottomBorder}" viewBox="0 0 ${finalWidth} ${bottomBorder}">
-              <text x="${borderSize}" y="${subtitleY}" font-family="'Inter', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="${Math.floor(borderSize * 0.35)}px" font-weight="800" fill="#888888" text-anchor="start" letter-spacing="3" text-transform="uppercase">
-                CÓDIGO DA FOTO
-              </text>
-              <text x="${borderSize}" y="${titleY}" font-family="'Inter', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="${Math.floor(borderSize * 0.8)}px" font-weight="900" fill="#111111" text-anchor="start" letter-spacing="1">
-                ${referenceCode.replace('-', ' ')}
-              </text>
-            </svg>
-          `);
-          compositeLayers.push({ input: refSvg, gravity: 'south', blend: 'over' });
-
+          // Removemos o texto SVG para evitar quadrados (missing fonts) no ambiente serverless (Vercel)
         } catch (err) {
           console.error('[PHYGITAL] Erro ao montar polaroid', err);
         }
@@ -160,49 +146,14 @@ export class PhygitalService {
             background: { r: 255, g: 255, b: 255, alpha: 1 }
           })
           .composite(compositeLayers)
-          .jpeg({ quality: 95 }) // Aumentado para 95 para melhor nitidez
+          .jpeg({ quality: 95 })
           .toBuffer();
           
         console.log(`[PHYGITAL] Processamento Polaroid concluído. Dimensões: ${finalWidth}x${finalHeight}`);
       }
 
-      // 6. Gerar Buffer da Galeria (Com Marca D'água Tiled sobre a Foto, não na Borda)
+      // 6. Gerar Buffer da Galeria (Sem Marca D'água Tiled para não sobrepor a foto, a pedido do usuário)
       let galleryImageBuffer = processedImageBuffer;
-      if (!isBulk) {
-        try {
-          const fs = require('fs');
-          const path = require('path');
-          const logoPath = path.join(__dirname, '..', 'assets', 'logo.png');
-          if (fs.existsSync(logoPath)) {
-            const logoBase64 = fs.readFileSync(logoPath).toString('base64');
-            const patternSize = Math.floor(w * 0.4);
-            const logoW = Math.floor(w * 0.25);
-            // SVG cobrindo apenas a área da foto (w x h)
-            const watermarkSvg = Buffer.from(`
-              <svg width="${w}" height="${h}" xmlns="http://www.w3.org/2000/svg">
-                <defs>
-                  <pattern id="wm" patternUnits="userSpaceOnUse" width="${patternSize}" height="${patternSize}" patternTransform="rotate(-25)">
-                    <image href="data:image/png;base64,${logoBase64}" x="0" y="0" width="${logoW}" height="${logoW}" opacity="0.80" preserveAspectRatio="xMidYMid meet" />
-                  </pattern>
-                </defs>
-                <rect width="100%" height="100%" fill="url(#wm)" />
-              </svg>
-            `);
-            const borderSize = Math.floor(w * 0.05);
-            galleryImageBuffer = await sharp(processedImageBuffer)
-              .composite([{
-                input: watermarkSvg,
-                top: borderSize,
-                left: borderSize,
-                blend: 'over'
-              }])
-              .jpeg({ quality: 85 }) // Para galeria web
-              .toBuffer();
-          }
-        } catch (e) {
-          console.error('[PHYGITAL] Erro ao aplicar marca dágua na galeria', e);
-        }
-      }
 
       // 7. Upload para o Storage correspondente (Híbrido)
       let rawPublicUrl = "";
