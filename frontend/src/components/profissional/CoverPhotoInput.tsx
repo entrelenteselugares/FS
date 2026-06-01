@@ -44,35 +44,61 @@ export function CoverPhotoInput({ currentUrl, currentPosition, onChange, onPosit
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Preview local imediato
-    const reader = new FileReader();
-    reader.onload = async (ev) => {
-      const base64 = ev.target?.result as string;
-      setPreview(base64);
+    // Compress the image before creating Base64 to avoid 413 Payload Too Large
+    const objectUrl = URL.createObjectURL(file);
+    const img = new Image();
+    
+    img.onload = async () => {
+      URL.revokeObjectURL(objectUrl);
+      const canvas = document.createElement('canvas');
+      let { width, height } = img;
+      
+      const MAX_SIZE = 1200;
+      if (width > height) {
+        if (width > MAX_SIZE) {
+          height *= MAX_SIZE / width;
+          width = MAX_SIZE;
+        }
+      } else {
+        if (height > MAX_SIZE) {
+          width *= MAX_SIZE / height;
+          height = MAX_SIZE;
+        }
+      }
+      
+      canvas.width = width;
+      canvas.height = height;
+      const ctx = canvas.getContext('2d');
+      ctx?.drawImage(img, 0, 0, width, height);
+      
+      const compressedBase64 = canvas.toDataURL('image/jpeg', 0.8);
+      setPreview(compressedBase64);
 
       if (eventId) {
         // Upload direto para o Supabase via backend
         setUploading(true);
         try {
           const { data } = await API.patch(`/profissional/events/${eventId}/cover`, {
-            imageBase64: base64,
-            mimeType: file.type,
+            imageBase64: compressedBase64,
+            mimeType: 'image/jpeg',
           });
           setPreview(data.coverPhotoUrl);
           onChange(data.coverPhotoUrl);
         } catch (err) {
           console.error("Erro no upload de capa:", err);
-          // Mantém o preview local mesmo se falhar o upload
-          onChange(base64);
+          onChange(compressedBase64);
         } finally {
           setUploading(false);
         }
       } else {
         // Sem eventId: passa o base64 para o pai cuidar (criação)
-        onChange(base64);
+        onChange(compressedBase64);
       }
     };
-    reader.readAsDataURL(file);
+    
+    img.onerror = () => URL.revokeObjectURL(objectUrl);
+    img.src = objectUrl;
+    
     setMode("idle");
   };
 
