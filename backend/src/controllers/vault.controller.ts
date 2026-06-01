@@ -164,7 +164,7 @@ export class VaultController {
       const newMedia = await prisma.sharedAlbumMedia.create({
         data: {
           albumId,
-          uploadedById: memberInfo.id,
+          uploadedById: userId,
           fileId: key,                        // key do R2 em vez de fileId do Drive
           webViewLink: filePublicUrl,          // URL pública do R2
           thumbnailLink: filePublicUrl,        // Sem thumbnail automático; usa a própria URL
