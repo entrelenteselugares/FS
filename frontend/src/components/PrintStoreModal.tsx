@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useLayoutEffect } from "react";
 import * as reactWindow from "react-window";
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const List = (reactWindow as any).List as React.ElementType;
 import { API } from "../lib/api";
 import { useCart } from "../hooks/useCart";
@@ -28,6 +29,7 @@ interface PrintProduct {
   finalPrice: number;
   unit: string;
   maxPhotos?: number | null;
+  imageUrl?: string | null;
 }
 
 const CATEGORY_LABELS: Record<string, string> = {
@@ -379,23 +381,34 @@ export function PrintStoreModal({ eventId, eventTitle, medias = [], unlockedMedi
                           <div 
                             key={product.id}
                             onClick={() => { setSelectedProduct(product); setStep("details"); }}
-                            className="group relative bg-theme-bg-muted/30 border border-theme-border p-10 cursor-pointer hover:border-brand-tactical transition-all duration-500 overflow-hidden"
+                            className="group relative bg-theme-bg-muted/30 border border-theme-border flex flex-col cursor-pointer hover:border-brand-tactical transition-all duration-500 overflow-hidden"
                           >
-                             <div className="absolute top-0 right-0 p-6 opacity-5 group-hover:opacity-20 transition-opacity">
-                                {CATEGORY_ICONS[product.category]}
-                             </div>
-                             <p className="text-[10px] font-black text-brand-tactical uppercase tracking-[0.3em] mb-4 italic">{product.category}</p>
-                             <h3 className="text-2xl font-black text-theme-text uppercase tracking-tight italic mb-4 group-hover:text-brand-tactical transition-colors">{product.name}</h3>
-                             <p className="text-xs text-theme-text-muted leading-relaxed mb-10 italic">{product.description || "Acabamento premium com durabilidade vitalícia."}</p>
-                             <div className="flex items-end justify-between">
-                                <div className="flex items-baseline gap-1">
-                                   <span className="text-xs text-theme-text-muted font-black italic uppercase">R$</span>
-                                   <span className="text-3xl font-black text-theme-text italic tracking-tighter">{product.finalPrice.toFixed(0)}</span>
-                                   <span className="text-xs text-theme-text-muted font-black italic uppercase">,00</span>
+                             {product.imageUrl ? (
+                                <div className="aspect-video w-full overflow-hidden bg-theme-bg-muted relative">
+                                  <img src={product.imageUrl} alt={product.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+                                  <div className="absolute inset-0 bg-gradient-to-t from-theme-bg to-transparent opacity-90" />
                                 </div>
-                                <button className="p-4 bg-brand-tactical/10 border border-brand-tactical/30 text-brand-tactical group-hover:bg-brand-tactical group-hover:text-black transition-all">
-                                   <Plus size={20} />
-                                </button>
+                             ) : (
+                                <div className="aspect-video w-full flex items-center justify-center bg-theme-bg-muted/50 relative border-b border-theme-border/20">
+                                   <div className="opacity-10 group-hover:opacity-30 transition-opacity scale-[3] text-theme-text-muted">{CATEGORY_ICONS[product.category]}</div>
+                                   <div className="absolute inset-0 bg-gradient-to-t from-theme-bg to-transparent opacity-90" />
+                                </div>
+                             )}
+
+                             <div className="p-8 relative z-10 flex-1 flex flex-col">
+                               <p className="text-[10px] font-black text-brand-tactical uppercase tracking-[0.3em] mb-4 italic">{CATEGORY_LABELS[product.category] || product.category}</p>
+                               <h3 className="text-2xl font-black text-theme-text uppercase tracking-tight italic mb-4 group-hover:text-brand-tactical transition-colors">{product.name}</h3>
+                               <p className="text-xs text-theme-text-muted leading-relaxed mb-8 flex-1 italic">{product.description || "Acabamento premium com durabilidade vitalícia."}</p>
+                               <div className="flex items-end justify-between mt-auto">
+                                  <div className="flex items-baseline gap-1">
+                                     <span className="text-xs text-theme-text-muted font-black italic uppercase">R$</span>
+                                     <span className="text-3xl font-black text-theme-text italic tracking-tighter">{product.finalPrice.toFixed(0)}</span>
+                                     <span className="text-xs text-theme-text-muted font-black italic uppercase">,00</span>
+                                  </div>
+                                  <button className="p-4 bg-brand-tactical/10 border border-brand-tactical/30 text-brand-tactical group-hover:bg-brand-tactical group-hover:text-black transition-all">
+                                     <Plus size={20} />
+                                  </button>
+                               </div>
                              </div>
                           </div>
                         ))}

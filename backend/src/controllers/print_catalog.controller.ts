@@ -152,6 +152,7 @@ export async function updatePrintProduct(req: AuthRequest, res: Response): Promi
         ...(req.body.maxPhotos !== undefined && {
           maxPhotos: req.body.maxPhotos === null || req.body.maxPhotos === "" ? null : Number(req.body.maxPhotos),
         }),
+        ...(req.body.imageUrl !== undefined && { imageUrl: req.body.imageUrl || null }),
         ...(req.body.stockType !== undefined && { stockType: req.body.stockType }),
         ...(req.body.externalLink !== undefined && { externalLink: req.body.externalLink || null }),
       },
@@ -179,7 +180,7 @@ export async function createPrintProduct(req: AuthRequest, res: Response): Promi
   const { 
     supplier, category, name, sku, supplierCost, 
     unit, marginPct, sellingPrice, description,
-    minQty, maxQty, maxPhotos 
+    minQty, maxQty, maxPhotos, imageUrl
   } = req.body;
 
   if (!supplier || !category || !name || !sku || supplierCost === undefined) {
@@ -208,6 +209,7 @@ export async function createPrintProduct(req: AuthRequest, res: Response): Promi
         minQty: minQty ? Number(minQty) : null,
         maxQty: maxQty ? Number(maxQty) : null,
         maxPhotos: maxPhotos ? Number(maxPhotos) : null,
+        imageUrl: imageUrl || null,
         stockType: req.body.stockType || "PROPRIO",
         externalLink: req.body.externalLink || null,
       }
@@ -379,7 +381,8 @@ export async function getPublicPrintCatalog(req: Request, res: Response): Promis
       unit: p.unit,
       minQty: p.minQty,
       maxQty: p.maxQty,
-      maxPhotos: p.maxPhotos
+      maxPhotos: p.maxPhotos,
+      imageUrl: p.imageUrl
     }));
 
     res.json(result);
@@ -409,7 +412,8 @@ export async function getEventPrintProducts(req: Request, res: Response): Promis
           : ep.product.sellingPrice !== null 
             ? Number(ep.product.sellingPrice) 
             : Number(ep.product.supplierCost) * (1 + ep.product.marginPct / 100),
-        maxPhotos: ep.product.maxPhotos
+        maxPhotos: ep.product.maxPhotos,
+        imageUrl: ep.product.imageUrl
       }));
       res.json(result);
       return;
@@ -429,7 +433,8 @@ export async function getEventPrintProducts(req: Request, res: Response): Promis
       sellingPrice: p.sellingPrice !== null
         ? Number(p.sellingPrice)
         : Number(p.supplierCost) * (1 + p.marginPct / 100),
-      maxPhotos: p.maxPhotos
+      maxPhotos: p.maxPhotos,
+      imageUrl: p.imageUrl
     }));
 
     res.json(result);

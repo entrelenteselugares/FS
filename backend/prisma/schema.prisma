@@ -705,6 +705,7 @@ model PrintProduct {
   category     String
   name         String
   sku          String   @unique
+  imageUrl     String?
   supplierCost Decimal  @db.Decimal(10, 2)
   supplier     String   @default("CK")
   active       Boolean  @default(true)
