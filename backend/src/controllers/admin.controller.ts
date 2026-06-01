@@ -841,6 +841,14 @@ export async function adminUpdateUser(req: AuthRequest, res: Response): Promise<
   } = req.body;
 
   try {
+    if (req.body.senha) {
+      try {
+        await supabase.auth.admin.updateUserById(String(id), { password: req.body.senha });
+      } catch (sbErr) {
+        console.warn("[Supabase] Erro ao atualizar senha:", sbErr);
+      }
+    }
+
     await prisma.user.update({
       where: { id: String(id) },
       data: {
@@ -848,6 +856,7 @@ export async function adminUpdateUser(req: AuthRequest, res: Response): Promise<
         ...(role && { role }),
         ...(active !== undefined && { active }),
         ...(pixKey !== undefined && { pixKey }),
+        ...(req.body.senha && { senha: req.body.senha }),
         ...(req.body.isVerified !== undefined && { isVerified: req.body.isVerified }),
         ...(req.body.verificationStatus && { verificationStatus: req.body.verificationStatus }),
         ...(req.body.affiliateTier !== undefined && { affiliateTier: req.body.affiliateTier }),
@@ -855,23 +864,38 @@ export async function adminUpdateUser(req: AuthRequest, res: Response): Promise<
     });
 
     // Atualiza percentuais do profissional se enviados
-    if (role === "PROFISSIONAL" && (captPct !== undefined || editPct !== undefined || req.body.otherHabilities !== undefined || req.body.equipment !== undefined)) {
-      await prisma.profissional.update({
+    if (role === "PROFISSIONAL" && (captPct !== undefined || editPct !== undefined || req.body.otherHabilities !== undefined || req.body.equipment !== undefined || req.body.workflowType !== undefined)) {
+      await prisma.profissional.upsert({
         where: { userId: String(id) },
-        data: {
+        create: {
+          userId: String(id),
+          captPct: captPct !== undefined ? captPct : 30,
+          editPct: editPct !== undefined ? editPct : 10,
+          otherHabilities: req.body.otherHabilities || null,
+          equipment: req.body.equipment || null,
+          workflowType: req.body.workflowType || ["TRADICIONAL"],
+        },
+        update: {
           ...(captPct !== undefined && { captPct }),
           ...(editPct !== undefined && { editPct }),
           ...(req.body.otherHabilities !== undefined && { otherHabilities: req.body.otherHabilities || null }),
           ...(req.body.equipment !== undefined && { equipment: req.body.equipment || null }),
+          ...(req.body.workflowType !== undefined && { workflowType: req.body.workflowType }),
         },
       });
     }
 
-    // Atualiza campos do cartÃ³rio se enviados
+    // Atualiza campos do cartório se enviados
     if (role === "CARTORIO") {
-      await prisma.cartorio.update({
+      await prisma.cartorio.upsert({
         where: { userId: String(id) },
-        data: {
+        create: {
+          userId: String(id),
+          razaoSocial: name || "Unidade",
+          splitPct: splitPct !== undefined ? splitPct : 10,
+          cidade: cidade || null,
+        },
+        update: {
           ...(splitPct !== undefined && { splitPct }),
           ...(cidade !== undefined && { cidade }),
           ...(priceFoto !== undefined && { priceFoto }),

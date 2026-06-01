@@ -531,7 +531,7 @@ export default function ClienteArea() {
                     </p>
                   </div>
                   <div className="relative flex items-center justify-center gap-4 flex-wrap">
-                    <button onClick={() => navigate("/")} className="fs-btn bg-brand-tactical text-brand-text flex items-center gap-3">
+                    <button onClick={() => navigate("/vitrine")} className="fs-btn bg-brand-tactical text-brand-text flex items-center gap-3">
                       Explorar Vitrine <ArrowRight size={14} />
                     </button>
                     <button onClick={() => navigate("/cotacao")} className="fs-btn border border-theme-border text-theme-text hover:border-brand-tactical hover:text-brand-tactical transition-colors flex items-center gap-3">
@@ -750,7 +750,7 @@ export default function ClienteArea() {
                     </p>
                   </div>
                   <div className="relative z-10">
-                    <button id="btn-explorar-carteira" onClick={() => navigate("/")} className="fs-btn bg-brand-tactical text-brand-text hover:bg-brand-tactical/90 hover:scale-[1.02] transition-all w-full flex items-center justify-center gap-1.5 sm:gap-3 shadow-lg shadow-brand-tactical/10 hover:shadow-brand-tactical/20 text-[9px] sm:text-xs py-2 sm:py-3">
+                    <button id="btn-explorar-carteira" onClick={() => navigate("/vitrine")} className="fs-btn bg-brand-tactical text-brand-text hover:bg-brand-tactical/90 hover:scale-[1.02] transition-all w-full flex items-center justify-center gap-1.5 sm:gap-3 shadow-lg shadow-brand-tactical/10 hover:shadow-brand-tactical/20 text-[9px] sm:text-xs py-2 sm:py-3">
                       Explorar <ArrowRight size={10} className="sm:w-3.5 sm:h-3.5" />
                     </button>
                   </div>

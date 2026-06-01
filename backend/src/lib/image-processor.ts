@@ -24,33 +24,28 @@ export async function applyWatermark(imageBuffer: Buffer): Promise<Buffer> {
     
     if (logoPath) {
       console.log("[Watermark] Logo encontrado em:", logoPath);
-      // Aplica transparência de 40% ao logo para proteger sem esconder a foto
-      watermark = await sharp(logoPath)
-        .resize({ width: 350 })
-        .ensureAlpha()
-        .composite([{
-          input: Buffer.from([0, 0, 0, Math.round(255 * 0.4)]),
-          raw: { width: 1, height: 1, channels: 4 },
-          tile: true,
-          blend: "dest-in",
-        }])
-        .toBuffer();
+      // Aplica transparência de 40% usando um wrapper SVG para evitar artefatos de tiling
+      const logoBuffer = fs.readFileSync(logoPath);
+      const resized = await sharp(logoBuffer).resize({ width: 350 }).png().toBuffer();
+      const meta = await sharp(resized).metadata();
+      
+      const svg = `
+        <svg width="${meta.width}" height="${meta.height}" xmlns="http://www.w3.org/2000/svg">
+          <image href="data:image/png;base64,${resized.toString('base64')}" x="0" y="0" width="${meta.width}" height="${meta.height}" opacity="0.4" />
+        </svg>
+      `;
+      
+      watermark = await sharp(Buffer.from(svg)).png().toBuffer();
     } else {
-      // Fallback: Texto grande "FOTO SEGUNDO" com sombra — altamente visível
+      // Fallback: Texto grande "FOTO SEGUNDO"
       console.warn("[Watermark] Logo não encontrado. Usando fallback SVG. Candidatos tentados:", candidates);
       const svgText = `
         <svg width="500" height="120" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <filter id="shadow" x="-5%" y="-5%" width="110%" height="110%">
-              <feDropShadow dx="2" dy="2" stdDeviation="3" flood-color="rgba(0,0,0,0.5)" />
-            </filter>
-          </defs>
           <text x="50%" y="55%" text-anchor="middle" dominant-baseline="middle" 
                 font-family="Inter, Helvetica, Arial, sans-serif" 
                 font-size="52" font-weight="900" font-style="italic"
-                fill="rgba(255,255,255,0.6)" 
-                letter-spacing="8"
-                filter="url(#shadow)">FOTO SEGUNDO</text>
+                fill="rgba(255,255,255,0.4)" 
+                letter-spacing="8">FOTO SEGUNDO</text>
         </svg>
       `;
       watermark = await sharp(Buffer.from(svgText)).png().toBuffer();

@@ -33,7 +33,10 @@ import { TermsPage } from "./pages/TermsPage";
 import FranchiseDashboard from "./pages/franchise/FranchiseDashboard";
 import VaultsPage from "./pages/VaultsPage";
 import VaultDetailPage from "./pages/VaultDetailPage";
+import AmbassadorPage from "./pages/AmbassadorPage";
 import InvitationPage from "./pages/InvitationPage";
+import ProfissionaisPage from "./pages/ProfissionaisPage";
+import ProfissionalProfilePage from "./pages/ProfissionalProfilePage";
 import { AboutPage } from "./pages/AboutPage";
 import { PrivacyPage } from "./pages/PrivacyPage";
 import { LgpdPage } from "./pages/LgpdPage";
@@ -44,7 +47,6 @@ import { BusinessLanding } from "./pages/BusinessLanding";
 import FlashUnlockPage from "./pages/FlashUnlockPage";
 import { ClubLandingPage } from "./pages/ClubLandingPage";
 import HelpPage from "./pages/HelpPage";
-import AmbassadorPage from "./pages/AmbassadorPage";
 import { useState, useEffect } from "react";
 import { API as api } from "./lib/api";
 import { T } from "./lib/theme";
@@ -119,6 +121,9 @@ const AnimatedRoutes = () => {
         <Route path="/delivery/:id" element={<LuxuryExperiencePage />} />
         <Route path="/captura" element={<PhygitalCapture />} />
         <Route path="/phygital-capture" element={<PhygitalCapture />} />
+        <Route path="/vitrine" element={<ProfissionaisPage />} />
+        <Route path="/profissionais" element={<ProfissionaisPage />} />
+        <Route path="/pro/:id" element={<ProfissionalProfilePage />} />
         <Route path="/negocios" element={<BusinessLanding />} />
         <Route path="/clube" element={<ClubLandingPage />} />
         <Route path="/flash/:shortId" element={<FlashUnlockPage />} />

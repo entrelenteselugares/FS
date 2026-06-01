@@ -94,7 +94,7 @@ export const AdminUsers: React.FC = () => {
     try {
       if (editingUser) {
         await API.patch(`/admin/users/${editingUser.id}`, {
-          nome: formData.name,
+          name: formData.name,
           email: formData.email,
           role: formData.role,
           pixKey: formData.pixKey,
@@ -102,28 +102,16 @@ export const AdminUsers: React.FC = () => {
           printCredits: formData.printCredits,
           isVerified: formData.isVerified,
           affiliateTier: formData.affiliateTier,
+          otherHabilities: formData.otherHabilities,
+          equipment: formData.equipment,
+          workflowType: formData.workflowType,
+          captPct: Number(formData.captPct),
+          editPct: Number(formData.editPct),
           ...(formData.password ? { senha: formData.password } : {})
         });
 
-        // Atualiza o tier de afiliado separadamente
-        if (editingUser.affiliateTier !== formData.affiliateTier) {
-          await API.patch(`/admin/users/${editingUser.id}/tier`, { tier: formData.affiliateTier });
-        }
       } else {
         await API.post("/admin/users", formData);
-      }
-      
-      if (formData.role === "PROFISSIONAL") {
-          const userId = editingUser ? editingUser.id : (await API.get("/admin/users")).data.find((u: User) => u.email === formData.email)?.id;
-          if (userId) {
-              await API.patch(`/admin/users/${userId}`, {
-                otherHabilities: formData.otherHabilities,
-                equipment: formData.equipment,
-                captPct: Number(formData.captPct),
-                editPct: Number(formData.editPct),
-                workflowType: formData.workflowType
-              });
-          }
       }
 
       setIsModalOpen(false);

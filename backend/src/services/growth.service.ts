@@ -7,7 +7,7 @@ export class GrowthService {
    */
   static async validateCoupon(code: string) {
     const coupon = await prisma.coupon.findUnique({
-      where: { code: code.toUpperCase() }
+      where: { code: code.trim().toUpperCase() }
     });
 
     if (!coupon) {

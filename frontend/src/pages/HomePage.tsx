@@ -333,7 +333,7 @@ export const HomePage = () => {
             </form>
 
             <button id="btn-explorar-vitrine"
-              onClick={() => document.getElementById('vitrine')?.scrollIntoView({ behavior: 'smooth' })}
+              onClick={() => navigate("/vitrine")}
               className="lux-button-tactical px-10 py-4 text-[10px] font-display font-black uppercase tracking-[0.4em] italic shadow-2xl shadow-brand-tactical/20 hidden md:block"
             >
               Explorar Vitrine
