@@ -10,7 +10,7 @@ app.set("trust proxy", 1);
 app.use(cookieParser());
 app.use(cors({ origin: true, credentials: true }));
 app.use(helmet({ crossOriginResourcePolicy: { policy: "cross-origin" } }));
-app.use(express.json());
+app.use(express.json({ limit: "6mb" }));
 
 app.use("/api/auth", authRoutes);
 app.use("/api/auth", driveAuthRoutes);

@@ -13,7 +13,7 @@ app.use(cors({ origin: true, credentials: true }));
 app.use(helmet({ crossOriginResourcePolicy: { policy: "cross-origin" } }));
 
 // Webhook requires raw body for stripe/mercadopago depending on implementation, but in this app it's JSON
-app.use(express.json());
+app.use(express.json({ limit: "6mb" }));
 
 app.use("/api/checkout", checkoutRoutes);
 app.use("/api/webhooks", webhookRoutes);
