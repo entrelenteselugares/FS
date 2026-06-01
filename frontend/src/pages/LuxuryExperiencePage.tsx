@@ -169,7 +169,7 @@ export default function LuxuryExperiencePage() {
           <div className="space-y-4 text-center md:text-left flex-1">
             <p className="text-[10px] font-black text-brand-tactical uppercase tracking-[0.4em] italic">Equipe Responsável</p>
             <h2 className="text-3xl font-heading font-black uppercase italic tracking-tight" style={{ color: T.text }}>
-              {captacaoName || edicaoName ? 'FOTO SEGUNDO' : 'Artista Foto Segundo'}
+              {captacaoName || edicaoName || 'Artista Foto Segundo'}
             </h2>
             <div className="flex flex-col gap-2 pt-2">
               {captacaoName && (
@@ -178,15 +178,15 @@ export default function LuxuryExperiencePage() {
                   <span className="text-xs uppercase font-black tracking-widest text-theme-text">{captacaoName}</span>
                 </div>
               )}
-              {edicaoName && (
+              {edicaoName && edicaoName !== captacaoName && (
                 <div className="flex items-center gap-2 justify-center md:justify-start">
                   <span className="text-[10px] uppercase font-bold tracking-[0.2em] text-brand-tactical">Edição & Cor:</span>
                   <span className="text-xs uppercase font-black tracking-widest text-theme-text">{edicaoName}</span>
                 </div>
               )}
-              {!captacaoName && !edicaoName && (
-                <p className="text-xs uppercase font-medium tracking-widest max-w-md leading-relaxed" style={{ color: T.text2 }}>Sua história capturada com precisão e alma sob a curadoria tática da Foto Segundo.</p>
-              )}
+              <p className="text-xs uppercase font-medium tracking-widest max-w-md leading-relaxed mt-2" style={{ color: T.text2 }}>
+                Sua história capturada com precisão e alma sob a curadoria tática {captacaoName || edicaoName ? 'do nosso artista' : 'da Foto Segundo'}.
+              </p>
             </div>
           </div>
         </div>
