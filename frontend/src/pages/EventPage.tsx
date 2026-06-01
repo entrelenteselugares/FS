@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { createPortal } from "react-dom";
 import { useEventStatus } from "../hooks/useEventStatus";
-import { Check, Printer, QrCode, ShoppingCart, Share2, ChevronRight, ChevronLeft, Image as ImageIcon, Camera, MapPin, ListChecks, Clock, ShieldCheck, CheckCircle2, Lock, UserCircle, Search, X, ExternalLink } from "lucide-react";
+import { Check, Printer, QrCode, ShoppingCart, Share2, ChevronRight, ChevronLeft, Image as ImageIcon, Camera, MapPin, Clock, ShieldCheck, CheckCircle2, Lock, UserCircle, Search, X, ExternalLink } from "lucide-react";
 import { QRCodeCanvas } from "qrcode.react";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { API as api } from "../lib/api";
@@ -28,99 +28,91 @@ const formatDate = (date: string | null | undefined) => {
 };
 
 /**
- * ReferenceCard — exibe uma miniatura ou rich-preview para uma URL de referência.
- * Suporta: imagens diretas, Google Drive, URLs de páginas (Pexels, Pinterest, etc.)
+ * ReferenceCard — suporta IMAGE (upload) e YOUTUBE (embed mudo em loop).
  */
-function ReferenceCard({ url }: { url: string }) {
-  const [preview, setPreview] = useState<{ title?: string; image?: string; description?: string } | null>(null);
+interface RefItem {
+  id?: string;
+  type?: string;      // 'IMAGE' | 'YOUTUBE' — novo model
+  url: string;
+  thumbnailUrl?: string | null;
+}
+
+function ReferenceCard({ item }: { item: RefItem }) {
+  const [open, setOpen] = useState(false);
   const [imgError, setImgError] = useState(false);
 
-  const isBase64 = /^data:image\//i.test(url);
-  const isDirectImage = /\.(jpeg|jpg|gif|png|webp|svg)(\?.*)?$/i.test(url);
-  const driveMatch = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
-  const isDriveExport = url.includes('drive.google.com/uc') || url.includes('drive.google.com/thumbnail');
-  const isRenderableImage = isBase64 || isDirectImage || !!driveMatch || isDriveExport;
+  const isYoutube = item.type === 'YOUTUBE';
+  const thumb = item.thumbnailUrl || item.url;
 
-  const normalizedImageUrl = (() => {
-    if (isBase64) return url;
+  if (isYoutube) {
+    return (
+      <>
+        <div
+          className="aspect-square bg-theme-bg-muted border border-theme-border/20 overflow-hidden rounded-xl relative cursor-pointer group"
+          onClick={() => setOpen(true)}
+        >
+          <img src={thumb} alt="Referência YouTube" className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" />
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="w-10 h-10 rounded-full bg-red-600/90 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+              <span className="text-white text-sm ml-0.5">▶</span>
+            </div>
+          </div>
+        </div>
+        {open && (
+          <div
+            className="fixed inset-0 z-[600] bg-black/90 flex items-center justify-center p-4"
+            onClick={() => setOpen(false)}
+          >
+            <div className="w-full max-w-3xl aspect-video rounded-2xl overflow-hidden" onClick={e => e.stopPropagation()}>
+              <iframe
+                src={item.url}
+                className="w-full h-full"
+                allow="autoplay; encrypted-media"
+                allowFullScreen
+                title="Referência YouTube"
+              />
+            </div>
+          </div>
+        )}
+      </>
+    );
+  }
+
+  // IMAGE (upload direto ou URL legada)
+  const isBase64 = /^data:image\//i.test(item.url);
+  const isDirectImage = /\.(jpeg|jpg|gif|png|webp|svg)(\?.*)?$/i.test(item.url);
+  const driveMatch = item.url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
+  const isDriveExport = item.url.includes('drive.google.com/uc') || item.url.includes('drive.google.com/thumbnail');
+
+  const displayUrl = (() => {
+    if (isBase64) return item.url;
     if (driveMatch) return `https://drive.google.com/thumbnail?id=${driveMatch[1]}&sz=w600`;
-    if (isDriveExport) return url;
-    return url;
+    if (thumb && thumb !== item.url) return thumb;
+    return item.url;
   })();
 
-  useEffect(() => {
-    if (isRenderableImage || isBase64) return;
-    // Fetch rich preview via microlink (gratuito, sem chave)
-    let cancelled = false;
-    const encoded = encodeURIComponent(url);
-    fetch(`https://api.microlink.io/?url=${encoded}&screenshot=false&meta=true`)
-      .then(r => r.json())
-      .then(data => {
-        if (cancelled) return;
-        if (data?.status === 'success' && data?.data) {
-          setPreview({
-            title: data.data.title,
-            image: data.data.image?.url || data.data.screenshot?.url,
-            description: data.data.description,
-          });
-        }
-      })
-      .catch(() => { /* silencia erros de rede */ });
-    return () => { cancelled = true; };
-  }, [url, isRenderableImage, isBase64]);
+  const isRenderable = isBase64 || isDirectImage || !!driveMatch || isDriveExport || !!item.thumbnailUrl;
 
-  // --- Imagem direta / Drive ---
-  if (isRenderableImage) {
+  if (isRenderable && !imgError) {
     return (
-      <div className="aspect-square bg-theme-bg-muted border border-theme-border/20 overflow-hidden rounded-xl block relative">
+      <div className="aspect-square bg-theme-bg-muted border border-theme-border/20 overflow-hidden rounded-xl relative">
         <img
-          src={normalizedImageUrl}
+          src={displayUrl}
           className="w-full h-full object-cover"
           alt="Referência"
           onError={() => setImgError(true)}
         />
-        {imgError && (
-          <div className="absolute inset-0 flex items-center justify-center">
-            <ExternalLink size={24} className="text-theme-text-muted" />
-          </div>
-        )}
       </div>
     );
   }
 
-  // --- Rich preview carregado via microlink ---
-  if (preview?.image) {
-    return (
-      <div className="aspect-square bg-theme-bg-muted border border-theme-border/20 overflow-hidden rounded-xl block relative">
-        <img
-          src={preview.image}
-          className="w-full h-full object-cover"
-          alt="Referência"
-          onError={() => setPreview(null)}
-        />
-      </div>
-    );
-  }
-
-  // --- Fallback genérico ---
-  let hostname = url;
-  try { hostname = new URL(url).hostname.replace('www.', ''); } catch { /* ignore */ }
-  const isLoading = !preview && /^https?:\/\//i.test(url);
-
+  // Fallback
+  let hostname = item.url;
+  try { hostname = new URL(item.url).hostname.replace('www.', ''); } catch { /* ignore */ }
   return (
-    <div className="aspect-square bg-theme-bg-muted border border-theme-border/20 overflow-hidden rounded-xl flex flex-col items-center justify-center p-4 relative">
-      {isLoading ? (
-        <>
-          {/* Skeleton shimmer */}
-          <div className="w-12 h-12 rounded-full bg-theme-border/20 animate-pulse mb-3" />
-          <div className="w-20 h-2 rounded bg-theme-border/20 animate-pulse" />
-        </>
-      ) : (
-        <>
-          <ExternalLink size={24} className="mb-3 opacity-50 group-hover:opacity-100 flex-shrink-0" />
-          <span className="text-[10px] font-black uppercase tracking-widest leading-relaxed italic break-all line-clamp-3">{hostname || url}</span>
-        </>
-      )}
+    <div className="aspect-square bg-theme-bg-muted border border-theme-border/20 overflow-hidden rounded-xl flex flex-col items-center justify-center p-4">
+      <ExternalLink size={24} className="mb-3 opacity-50" />
+      <span className="text-[10px] font-black uppercase tracking-widest break-all line-clamp-3">{hostname}</span>
     </div>
   );
 }
@@ -181,7 +173,8 @@ interface EventData {
   active?: boolean;
   unlockedMediaIds?: string[];
   itinerary?: string | null;
-  references?: string[];
+  references?: string[];         // legacy JSON field
+  eventReferences?: { id: string; type: string; url: string; thumbnailUrl?: string | null }[];
   photographer?: { id: string; nome: string } | null;
   expirationDate?: string | null;
   isExpired?: boolean;
@@ -404,6 +397,13 @@ export default function EventPage() {
       .then((r) => {
         const eventData = r.data;
         setEvent(eventData);
+
+        // Buscar referências técnicas do banco
+        api.get(`/events/${eventData.id}/references`)
+          .then(refRes => {
+            setEvent(prev => prev ? { ...prev, eventReferences: refRes.data || [] } : null);
+          })
+          .catch(() => { /* referências são opcionais */ });
 
 
         const now = new Date();
@@ -754,60 +754,46 @@ return (
               
               {/* Bloco de Informações / Roteiro (Prioridade) */}
               {(event.itinerary || event.type === 'FOTO_POINT') && (
-                <div className="max-w-4xl animate-in fade-in slide-in-from-bottom-8 duration-1000">
-                  <div className="space-y-10">
-                    <div className="space-y-4">
-                      <div className="flex items-center gap-3">
-                        <div className="w-2 h-2 bg-brand-tactical rotate-45" />
-                        <h2 className="text-2xl font-heading font-black italic uppercase text-theme-text tracking-tight">Protocolo da Sessão</h2>
-                      </div>
-                      <div className="h-1 w-20 bg-brand-tactical/30" />
-                    </div>
-                    
-                    <div className="relative p-10 bg-theme-bg-muted/40 border border-theme-border/60 group hover:border-brand-tactical/40 transition-all duration-700">
-                      <div className="absolute top-0 left-0 w-1.5 h-full bg-brand-tactical" />
-                      <div className="space-y-6">
-                        <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 rounded-full bg-brand-tactical/20 flex items-center justify-center text-brand-tactical border border-brand-tactical/30">
-                            <Camera size={14} />
-                          </div>
-                          <div>
-                            <p className="text-[10px] font-black text-brand-tactical uppercase tracking-[0.2em]">{event.type === 'FOTO_POINT' ? "Convite Editorial" : "Diretriz de Operação"}</p>
-                            <p className="text-[10px] text-zinc-500 uppercase font-bold tracking-widest">{event.photographer?.nome || "Fotógrafo Designado"}</p>
-                          </div>
+                <div className="max-w-4xl animate-in fade-in slide-in-from-bottom-8 duration-1000 space-y-8">
+
+                  {/* Descrição do roteiro — inline, sem container extra */}
+                  <div className="space-y-3">
+                    <p className="text-base md:text-lg text-theme-text-muted leading-relaxed font-medium italic whitespace-pre-line">
+                      {event.description || event.itinerary || (event.type === 'FOTO_POINT' ? "Participe deste ensaio aberto. Capture memórias profissionais em um cenário exclusivo." : "Aguardando definição do roteiro estratégico.")}
+                    </p>
+
+                    {event.type === 'FOTO_POINT' && (
+                      <div className="flex flex-wrap gap-5 pt-2">
+                        <div className="flex items-center gap-2">
+                          <ShieldCheck size={13} className="text-brand-tactical" />
+                          <span className="text-[9px] font-black text-zinc-500 uppercase tracking-widest">Proteção de Conteúdo</span>
                         </div>
-                        
-                        <p className="text-lg md:text-xl text-theme-text-muted leading-relaxed font-medium italic whitespace-pre-line">
-                          {event.description || event.itinerary || (event.type === 'FOTO_POINT' ? "Participe deste ensaio aberto. Capture memórias profissionais em um cenário exclusivo." : "Aguardando definição do roteiro estratégico.")}
-                        </p>
-
-                        {event.type === 'FOTO_POINT' && (
-                          <div className="pt-6 border-t border-theme-border/40 flex flex-wrap gap-6">
-                             <div className="flex items-center gap-2">
-                               <ShieldCheck size={14} className="text-brand-tactical" />
-                               <span className="text-[9px] font-black text-zinc-500 uppercase tracking-widest">Proteção de Conteúdo</span>
-                             </div>
-                             <div className="flex items-center gap-2">
-                               <Clock size={14} className="text-brand-tactical" />
-                               <span className="text-[9px] font-black text-zinc-500 uppercase tracking-widest">Live Sync Canon</span>
-                             </div>
-                          </div>
-                        )}
-                      </div>
-                      <ListChecks size={40} className="absolute bottom-6 right-6 text-brand-tactical/5 group-hover:text-brand-tactical/10 transition-colors" />
-                    </div>
-
-                    {event.references && event.references.length > 0 && (
-                      <div className="space-y-6 pt-4">
-                        <p className="text-[10px] font-black text-theme-text-muted uppercase tracking-[0.4em]">Referências Técnicas</p>
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                          {event.references.map((ref, i) => (
-                            <ReferenceCard key={i} url={ref} />
-                          ))}
+                        <div className="flex items-center gap-2">
+                          <Clock size={13} className="text-brand-tactical" />
+                          <span className="text-[9px] font-black text-zinc-500 uppercase tracking-widest">Live Sync Canon</span>
                         </div>
                       </div>
                     )}
                   </div>
+
+                  {/* Referências Técnicas — prioridade: DB (eventReferences) → legado (references) */}
+                  {(() => {
+                    // Usar eventReferences do banco se disponível, senão fallback para JSON legado
+                    const dbRefs = event.eventReferences ?? [];
+                    const legacyRefs: RefItem[] = (event.references ?? []).map(url => ({ type: 'IMAGE', url }));
+                    const allRefs: RefItem[] = dbRefs.length > 0 ? dbRefs : legacyRefs;
+                    if (allRefs.length === 0) return null;
+                    return (
+                      <div className="space-y-4">
+                        <p className="text-[10px] font-black text-theme-text-muted uppercase tracking-[0.4em]">Referências Técnicas</p>
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                          {allRefs.map((r, i) => (
+                            <ReferenceCard key={r.id ?? i} item={r} />
+                          ))}
+                        </div>
+                      </div>
+                    );
+                  })()}
                 </div>
               )}
 

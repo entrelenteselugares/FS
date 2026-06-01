@@ -24,6 +24,7 @@ interface ProfProfile {
   userId: string;
   nome: string;
   profileImageUrl: string | null;
+  coverImageUrl: string | null;
   address: string | null;
   isVerified: boolean;
   services: string[];
@@ -223,27 +224,39 @@ export default function ProfissionalProfilePage() {
         </Link>
       </div>
 
+      {/* Banner / Cover */}
+      <div className="relative w-full h-48 md:h-64 bg-zinc-900 border-b border-zinc-800">
+        {prof.coverImageUrl ? (
+          <img src={prof.coverImageUrl} alt="Cover" className="w-full h-full object-cover opacity-80" />
+        ) : (
+          <div className="w-full h-full flex flex-col items-center justify-center text-zinc-800">
+            <Camera size={64} className="opacity-50" />
+          </div>
+        )}
+        <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/40 to-transparent" />
+      </div>
+
       {/* Hero */}
-      <div className="max-w-5xl mx-auto px-6 py-10">
+      <div className="max-w-5xl mx-auto px-6 pb-10 -mt-20 relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="flex flex-col md:flex-row gap-10 items-start"
+          className="flex flex-col md:flex-row gap-6 md:gap-10 items-start md:items-end"
         >
           {/* Avatar */}
           <div className="relative flex-shrink-0">
-            <div className="w-36 h-36 md:w-48 md:h-48 bg-zinc-800 overflow-hidden border-2 border-zinc-700">
+            <div className="w-32 h-32 md:w-40 md:h-40 rounded-full bg-zinc-800 overflow-hidden border-4 border-zinc-950 shadow-2xl">
               {prof.profileImageUrl ? (
                 <img src={prof.profileImageUrl} alt={prof.nome} className="w-full h-full object-cover" />
               ) : (
-                <div className="w-full h-full flex items-center justify-center text-zinc-600">
-                  <Camera size={48} />
+                <div className="w-full h-full flex items-center justify-center text-zinc-600 bg-zinc-900 text-3xl font-black">
+                  {prof.nome.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2)}
                 </div>
               )}
             </div>
             {prof.isVerified && (
-              <div className="absolute -bottom-3 -right-3 bg-brand-tactical w-10 h-10 flex items-center justify-center border-4 border-zinc-950">
-                <ShieldCheck size={18} className="text-black" />
+              <div className="absolute bottom-2 right-2 bg-brand-tactical w-8 h-8 rounded-full flex items-center justify-center border-2 border-zinc-950 shadow-lg">
+                <ShieldCheck size={14} className="text-black" />
               </div>
             )}
           </div>

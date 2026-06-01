@@ -4,7 +4,8 @@ import { API } from "../../lib/api";
 import type { ProfileData, EquipmentItem } from "./types";
 import { ProfileStepper } from "../ProfileStepper";
 import { ProfessionalBadgesShowcase } from "./ProfessionalBadgesShowcase";
-
+import { CoverPhotoUpload } from "../CoverPhotoUpload";
+import { ProfilePhotoUpload } from "../ProfilePhotoUpload";
 interface ProfileTabProps {
   profile: ProfileData;
   onUpdated: (p: ProfileData) => void;
@@ -18,48 +19,7 @@ export function ProfileTab({ profile, onUpdated, onNotify }: ProfileTabProps) {
     experienceYears: profile.experienceYears || 0,
   });
   const [saving, setSaving] = useState(false);
-  const [uploading, setUploading] = useState(false);
 
-  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    if (file.size > 5 * 1024 * 1024) {
-      if (onNotify) onNotify("A imagem deve ter no máximo 5MB.", "error");
-      return;
-    }
-
-    setUploading(true);
-    const reader = new FileReader();
-    reader.onloadend = async () => {
-      try {
-        const base64String = reader.result as string;
-        const mimeType = file.type;
-        const { data } = await API.post("/auth/profile-photo", {
-          imageBase64: base64String,
-          mimeType,
-        });
-
-        setFormData((prev) => {
-          if (!prev.user) return prev;
-          return {
-            ...prev,
-            user: { ...prev.user, profileImageUrl: data.profileImageUrl }
-          };
-        });
-
-        if (onNotify) onNotify("Foto de perfil atualizada com sucesso!", "success");
-      } catch (err: unknown) {
-        console.error(err);
-        const error = err as { response?: { data?: { details?: string; error?: string } } };
-        const errMsg = error.response?.data?.details || error.response?.data?.error || "Erro ao enviar foto de perfil.";
-        if (onNotify) onNotify(errMsg, "error");
-      } finally {
-        setUploading(false);
-      }
-    };
-    reader.readAsDataURL(file);
-  };
 
   const handleSave = async () => {
     if ((formData.experienceYears ?? 0) > 0 && !formData.firstJobUrl?.trim()) {
@@ -144,34 +104,34 @@ export function ProfileTab({ profile, onUpdated, onNotify }: ProfileTabProps) {
               <span className="text-[11px] font-black uppercase tracking-[0.3em] italic">Credenciais Operacionais</span>
             </div>
 
+
+            {/* Foto de Capa (Panorâmica) */}
+            <div className="flex flex-col gap-2 p-6 bg-theme-bg-muted/30 border border-theme-border/20 rounded-2xl">
+              <div className="space-y-1 text-center md:text-left mb-2">
+                <h4 className="text-[12px] font-black text-theme-text uppercase tracking-wider italic">Foto de Capa</h4>
+                <p className="text-[9px] text-theme-muted uppercase font-bold tracking-widest leading-relaxed">
+                  Esta foto será o banner principal do seu perfil na vitrine.
+                </p>
+              </div>
+              <CoverPhotoUpload 
+                currentCoverUrl={(profile as any).coverImageUrl}
+                onCoverUpdated={(newUrl) => onUpdated({ ...profile, coverImageUrl: newUrl } as any)} 
+              />
+            </div>
+
             {/* Foto de Perfil Premium */}
             <div className="flex flex-col md:flex-row items-center gap-6 p-6 bg-theme-bg-muted/30 border border-theme-border/20 rounded-2xl">
-              <div className="relative group shrink-0">
-                <div className="w-24 h-24 rounded-full border-2 border-brand-tactical overflow-hidden bg-theme-bg flex items-center justify-center text-3xl font-black text-theme-text tracking-tighter">
-                  {formData.user?.profileImageUrl ? (
-                    <img src={formData.user.profileImageUrl || undefined} alt={formData.user.nome || "Foto de Perfil"} className="w-full h-full object-cover" />
-                  ) : (
-                    formData.user?.nome ? formData.user.nome.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2) : "FS"
-                  )}
-                </div>
-                {uploading && (
-                  <div className="absolute inset-0 bg-theme-bg/85 rounded-full flex items-center justify-center">
-                    <div className="w-6 h-6 border-2 border-brand-tactical border-t-transparent rounded-full animate-spin" />
-                  </div>
-                )}
-              </div>
-              <div className="space-y-2 text-center md:text-left">
-                <h4 className="text-[12px] font-black text-theme-text uppercase tracking-wider italic">Foto de Identificação</h4>
-                <p className="text-[9px] text-theme-muted uppercase font-bold tracking-widest leading-relaxed">
-                  Esta foto será exibida na vitrine pública de profissionais e no portal de clientes.
-                </p>
-                <label className="inline-block mt-2">
-                  <span className="fs-btn bg-brand-tactical/10 border border-brand-tactical/30 text-brand-tactical text-[9px] font-black uppercase tracking-widest hover:bg-brand-tactical hover:text-brand-text transition-all italic cursor-pointer py-2 px-4 rounded">
-                    {uploading ? "ENVIANDO..." : "CARREGAR FOTO"}
-                  </span>
-                  <input type="file" accept="image/*" className="hidden" onChange={handleFileChange} disabled={uploading} />
-                </label>
-              </div>
+              <ProfilePhotoUpload 
+                currentProfileUrl={formData.user?.profileImageUrl} 
+                currentNome={formData.user?.nome} 
+                onProfileUpdated={(url) => {
+                  setFormData(prev => {
+                    if (!prev.user) return prev;
+                    return { ...prev, user: { ...prev.user, profileImageUrl: url } };
+                  });
+                  if (onNotify) onNotify("Foto de perfil atualizada com sucesso!", "success");
+                }} 
+              />
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

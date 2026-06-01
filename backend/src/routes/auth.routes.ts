@@ -11,6 +11,7 @@ router.post("/register", AuthController.register);
 router.post("/register-express", AuthController.registerExpress);
 router.post("/apply-role", requireAuth, AuthController.applyRole);
 router.post("/profile-photo", requireAuth, AuthController.uploadProfilePhoto);
+router.post("/cover-photo", requireAuth, AuthController.uploadCoverPhoto);
 router.post("/forgot-password", AuthController.forgotPassword);
 router.post("/reset-password", AuthController.updatePassword);
 router.get("/me", requireAuth, AuthController.me);

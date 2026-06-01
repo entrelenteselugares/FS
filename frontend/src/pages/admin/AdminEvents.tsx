@@ -74,10 +74,63 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
   const [qrModalEvent, setQrModalEvent] = useState<Event | null>(null);
   const [copied, setCopied] = useState(false);
   const [notification, setNotification] = useState<{message: string, type: 'success' | 'error'} | null>(null);
-  const [activeTab, setActiveTab] = useState<'info' | 'equipe' | 'comercial' | 'galeria'>('info');
+  const [activeTab, setActiveTab] = useState<'info' | 'equipe' | 'comercial' | 'galeria' | 'referencias'>('info');
   const [eventMedia, setEventMedia] = useState<EventMediaItem[]>([]); // TODO: Definir interface Media
   const [confirmDelete, setConfirmDelete] = useState<Event | null>(null);
   const [phygitalQueueEvent, setPhygitalQueueEvent] = useState<Event | null>(null);
+
+  // ── Referências Técnicas ──────────────────────────────────────────────
+  interface EventRef { id: string; type: string; url: string; thumbnailUrl?: string | null; }
+  const [eventRefs, setEventRefs] = useState<EventRef[]>([]);
+  const [refUploading, setRefUploading] = useState(false);
+  const [ytInput, setYtInput] = useState("");
+  const refFileInputRef = React.useRef<HTMLInputElement>(null);
+
+  const loadRefs = async (eventId: string) => {
+    try {
+      const { data } = await API.get(`/events/${eventId}/references`);
+      setEventRefs(data);
+    } catch { /* silent */ }
+  };
+
+  const handleUploadRef = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!editingEvent || !e.target.files?.length) return;
+    setRefUploading(true);
+    const formDataRef = new FormData();
+    formDataRef.append("file", e.target.files[0]);
+    try {
+      await API.post(`/admin/events/${editingEvent.id}/references/upload`, formDataRef);
+      loadRefs(editingEvent.id);
+    } catch (err: unknown) {
+      const e = err as { response?: { data?: { error?: string } } };
+      showNotification(e.response?.data?.error || "Erro ao enviar imagem.", 'error');
+    } finally {
+      setRefUploading(false);
+      if (refFileInputRef.current) refFileInputRef.current.value = "";
+    }
+  };
+
+  const handleAddYoutube = async () => {
+    if (!editingEvent || !ytInput.trim()) return;
+    try {
+      await API.post(`/admin/events/${editingEvent.id}/references/youtube`, { url: ytInput.trim() });
+      setYtInput("");
+      loadRefs(editingEvent.id);
+    } catch (err: unknown) {
+      const e = err as { response?: { data?: { error?: string } } };
+      showNotification(e.response?.data?.error || "Link inválido.", 'error');
+    }
+  };
+
+  const handleRemoveRef = async (refId: string) => {
+    if (!editingEvent) return;
+    try {
+      await API.delete(`/admin/events/${editingEvent.id}/references/${refId}`);
+      setEventRefs(prev => prev.filter(r => r.id !== refId));
+    } catch {
+      showNotification("Erro ao remover referência.", 'error');
+    }
+  };
 
   const showNotification = (message: string, type: 'success' | 'error' = 'success') => {
     setNotification({ message, type });
@@ -304,6 +357,9 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
   useEffect(() => {
     if (activeTab === 'galeria' && editingEvent) {
       loadEventMedia(editingEvent.id);
+    }
+    if (activeTab === 'referencias' && editingEvent) {
+      loadRefs(editingEvent.id);
     }
   }, [activeTab, editingEvent]);
 
@@ -601,9 +657,9 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
               </div>
               
               <div className="grid grid-cols-2 md:flex items-center gap-4 md:gap-8 mr-0 md:mr-12">
-                {(['info', 'equipe', 'comercial', 'galeria'] as const).map(t => (
+                {(['info', 'equipe', 'comercial', 'galeria', 'referencias'] as const).map(t => (
                   <button key={t} type="button" onClick={() => setActiveTab(t)} className={`pb-2 text-[10px] font-black uppercase tracking-[0.2em] relative transition-all italic ${activeTab === t ? 'text-brand-tactical' : 'text-theme-muted hover:text-white'}`}>
-                    {t === 'info' ? '1. Essencial' : t === 'equipe' ? '2. Operação' : t === 'comercial' ? '3. Comercial' : '4. Galeria'}
+                    {t === 'info' ? '1. Essencial' : t === 'equipe' ? '2. Operação' : t === 'comercial' ? '3. Comercial' : t === 'galeria' ? '4. Galeria' : '5. Referências'}
                     {activeTab === t && <div className="absolute -bottom-2 left-0 right-0 h-0.5 bg-brand-tactical" />}
                   </button>
                 ))}
@@ -915,35 +971,134 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
                   )}
                 </div>
               )}
+
+              {/* ── Tab 5: Referências Técnicas ── */}
+              {activeTab === 'referencias' && (
+                <div className="animate-in fade-in duration-500 space-y-8">
+                  <div className="flex items-center justify-between border-b border-theme-border pb-4">
+                    <h3 className="text-sm font-black uppercase tracking-widest text-theme-text italic">Referências Técnicas</h3>
+                    <span className={`text-[10px] font-black uppercase tracking-widest ${eventRefs.length >= 6 ? 'text-red-500' : 'text-theme-muted'}`}>{eventRefs.length}/6</span>
+                  </div>
+
+                  {/* Not-saved hint */}
+                  {!editingEvent && (
+                    <div className="py-10 text-center border border-dashed border-theme-border/40 rounded-2xl">
+                      <p className="text-[10px] text-theme-muted uppercase tracking-widest font-black">Salve o evento primeiro para adicionar referências.</p>
+                    </div>
+                  )}
+
+                  {editingEvent && (
+                    <>
+                      {/* Upload controls */}
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {/* Image upload */}
+                        <div className="space-y-3">
+                          <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest block opacity-60 italic">Upload de Imagem</label>
+                          <button
+                            type="button"
+                            disabled={refUploading || eventRefs.length >= 6}
+                            onClick={() => refFileInputRef.current?.click()}
+                            className="w-full py-4 border-2 border-dashed border-theme-border/40 hover:border-brand-tactical/60 rounded-2xl flex items-center justify-center gap-3 text-[10px] font-black uppercase tracking-widest text-theme-muted hover:text-brand-tactical transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+                          >
+                            {refUploading ? (
+                              <><span className="animate-pulse">Enviando...</span></>
+                            ) : (
+                              <><Image size={16} /> Selecionar Imagem (max 4MB)</>
+                            )}
+                          </button>
+                          <input ref={refFileInputRef} type="file" accept="image/*" className="hidden" onChange={handleUploadRef} />
+                        </div>
+
+                        {/* YouTube link */}
+                        <div className="space-y-3">
+                          <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest block opacity-60 italic">Link do YouTube (mudo, em loop)</label>
+                          <div className="flex gap-2">
+                            <input
+                              type="text"
+                              value={ytInput}
+                              onChange={e => setYtInput(e.target.value)}
+                              placeholder="https://youtube.com/watch?v=..."
+                              disabled={eventRefs.length >= 6}
+                              className="flex-1 bg-theme-bg-muted border border-theme-border/60 p-4 text-[10px] text-theme-text font-mono outline-none focus:border-brand-tactical rounded-xl disabled:opacity-40"
+                            />
+                            <button
+                              type="button"
+                              onClick={handleAddYoutube}
+                              disabled={!ytInput.trim() || eventRefs.length >= 6}
+                              className="px-5 bg-brand-tactical text-zinc-950 text-[9px] font-black uppercase tracking-widest rounded-xl hover:brightness-110 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+                            >
+                              Adicionar
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Grid of current references */}
+                      {eventRefs.length === 0 ? (
+                        <div className="py-16 text-center border border-dashed border-theme-border/30 rounded-2xl">
+                          <Image size={36} className="mx-auto text-theme-muted/20 mb-3" strokeWidth={1} />
+                          <p className="text-[9px] text-theme-muted uppercase tracking-widest font-black">Nenhuma referência adicionada.</p>
+                        </div>
+                      ) : (
+                        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                          {eventRefs.map(ref => (
+                            <div key={ref.id} className="relative group rounded-2xl overflow-hidden aspect-video bg-black border border-theme-border/40">
+                              <img
+                                src={ref.thumbnailUrl || ref.url}
+                                alt="Referência"
+                                className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity"
+                              />
+                              {/* YouTube badge */}
+                              {ref.type === 'YOUTUBE' && (
+                                <div className="absolute top-2 left-2 bg-red-600 text-white text-[7px] font-black uppercase px-2 py-0.5 rounded tracking-widest flex items-center gap-1">
+                                  ▶ YouTube
+                                </div>
+                              )}
+                              {/* Remove button */}
+                              <button
+                                type="button"
+                                onClick={() => handleRemoveRef(ref.id)}
+                                className="absolute top-2 right-2 w-7 h-7 bg-black/80 rounded-full flex items-center justify-center text-red-400 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-500/20"
+                              >
+                                <X size={12} />
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </>
+                  )}
+                </div>
+              )}
             </form>
 
             {/* Footer */}
             <div className="p-8 md:p-10 bg-theme-bg-muted/50 border-t border-theme-border flex gap-4 shrink-0 rounded-2xl">
               <button type="button" onClick={() => setIsModalOpen(false)} className="fs-btn flex-1 border border-theme-border text-theme-muted hover:text-white transition-all italic">Cancelar</button>
-              {activeTab !== 'comercial' ? (
-                <button 
-                  type="button" 
-                  onClick={() => { 
-                    const t: Array<'info' | 'equipe' | 'comercial' | 'galeria'> = ['info','equipe','comercial','galeria']; 
+              {activeTab !== 'comercial' && activeTab !== 'referencias' ? (
+                <button
+                  type="button"
+                  onClick={() => {
+                    const t: Array<'info' | 'equipe' | 'comercial' | 'galeria' | 'referencias'> = ['info','equipe','comercial','galeria','referencias'];
                     const currentIndex = t.indexOf(activeTab);
                     if (currentIndex < t.length - 1) setActiveTab(t[currentIndex + 1]);
-                  }} 
+                  }}
                   className="fs-btn flex-[2] bg-theme-border text-theme-text hover:bg-zinc-700 transition-all italic flex items-center justify-center gap-4"
                 >
                   Próximo Passo
                   <ArrowRight size={14} />
                 </button>
-              ) : (
-                <button 
-                  type="submit" 
+              ) : activeTab === 'comercial' ? (
+                <button
+                  type="submit"
                   onClick={handleCreate}
-                  disabled={isUploading} 
+                  disabled={isUploading}
                   className="fs-btn flex-[2] bg-brand-tactical text-zinc-950 shadow-2xl shadow-brand-tactical/20 hover:brightness-110 transition-all italic flex items-center justify-center gap-4"
                 >
                   {isUploading ? "PROCESSANDO..." : (editingEvent ? "SALVAR ALTERAÇÕES" : "CADASTRAR EVENTO")}
                   <ArrowRight size={14} />
                 </button>
-              )}
+              ) : null}
             </div>
           </div>
         </div>

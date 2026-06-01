@@ -40,8 +40,8 @@ export default {
       },
       fontFamily: {
         sans:    ['Inter', 'sans-serif'],
-        display: ['Barlow Condensed', 'sans-serif'],
-        heading: ['Barlow Condensed', 'sans-serif'],
+        display: ['Poppins', 'sans-serif'],
+        heading: ['Poppins', 'sans-serif'],
       },
       animation: {
         'fade-in': 'fadeIn 0.5s ease-out',

@@ -434,21 +434,38 @@ export class MarketplaceController {
         }
       });
 
-      // 4. Se logado, retorna IDs desbloqueados
+      // 4. Se logado ou via guestToken/orderId, retorna IDs desbloqueados
+      const guestToken = req.query.guestToken as string;
+      const orderId = req.query.orderId as string;
       let unlockedMediaIds: string[] = [];
-      if (authUser) {
+
+      if (authUser || guestToken || orderId) {
         const paidOrders = await prisma.order.findMany({
           where: { 
             eventId: event.id, 
-            clienteId: authUser.userId,
-            status: { in: ["PAGO", "APROVADO"] }
+            status: { in: ["PAGO", "APROVADO"] },
+            OR: [
+              ...(authUser ? [{ clienteId: authUser.userId }] : []),
+              ...(guestToken ? [{ guestToken }] : []),
+              ...(orderId ? [{ id: orderId }] : [])
+            ]
           },
           include: { items: true }
         });
+        
         paidOrders.forEach(o => {
           o.items.forEach(item => {
             if (item.mediaId) unlockedMediaIds.push(item.mediaId);
           });
+          // FALLBACK TÁTICO: Recuperar do internalNotes (JSON do carrinho)
+          if (o.items.length === 0 && o.internalNotes) {
+            try {
+              const notes = JSON.parse(o.internalNotes);
+              if (notes.cart && Array.isArray(notes.cart)) {
+                unlockedMediaIds.push(...notes.cart);
+              }
+            } catch (e) { /* ignore */ }
+          }
         });
       }
 
@@ -595,22 +612,11 @@ export class MarketplaceController {
   static async listProfissionais(req: AuthRequest, res: Response) {
     const { search, city, service, lat, lng } = req.query;
     try {
-      // Find users with active PRO subscriptions
-      const activeSubs = await prisma.subscription.findMany({
-        where: { type: "PRO", status: "ACTIVE" },
-        select: { userId: true }
-      });
-      const subscribedUserIds = activeSubs.map(s => s.userId);
-
-      if (subscribedUserIds.length === 0) {
-        return res.json({ profissionais: [] });
-      }
-
       const where: any = {
-        userId: { in: subscribedUserIds },
         user: {
           isVerified: true,
           active: true,
+          role: "PROFISSIONAL",
           ...(search ? { nome: { contains: String(search), mode: "insensitive" } } : {}),
         },
         ...(service ? { services: { has: String(service).toUpperCase() } } : {}),
@@ -686,7 +692,21 @@ export class MarketplaceController {
       // Limita a 60 após o sort/filter
       profissionais = profissionais.slice(0, 60);
 
-      return res.json({ profissionais });
+      const mappedProfissionais = profissionais.map((p: any) => ({
+        id: p.id,
+        userId: p.userId,
+        nome: p.user?.nome || "Profissional",
+        profileImageUrl: p.user?.profileImageUrl || null,
+        coverImageUrl: p.coverImageUrl || null,
+        address: p.user?.address || null,
+        isVerified: p.user?.isVerified || false,
+        services: p.services || [],
+        experienceYears: p.experienceYears || 0,
+        totalMissions: p.totalMissions || 0,
+        agilityPoints: p.agilityPoints || 0,
+      }));
+
+      return res.json({ profissionais: mappedProfissionais });
     } catch (error: any) {
       console.error("[listProfissionais Error]:", error);
       return res.status(500).json({ error: "Erro ao listar profissionais." });
@@ -743,6 +763,7 @@ export class MarketplaceController {
         userId: p.userId,
         nome: p.user.nome,
         profileImageUrl: p.user.profileImageUrl,
+        coverImageUrl: p.coverImageUrl,
         address: p.user.address,
         isVerified: p.user.isVerified,
         services: p.services,

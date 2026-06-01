@@ -8,14 +8,14 @@
 /* ── TEMA ESCURO (padrão) ─────────────────────── */
 :root,
 [data-theme="dark"] {
-  --bg:           #0a0a0a;
-  --bg-card:      #111111;
-  --bg-field:     #0c0c0c;
-  --border:       #1c1c1c;
-  --border-2:     #2a2a2a;
-  --text:         #f0ede8;
-  --text-2:       #a0a0a0;
-  --text-3:       #888888;
+  --bg:           #141918;   /* Inverted WP warm grey/teal */
+  --bg-card:      #1B2220;   /* Slightly lighter */
+  --bg-field:     #171D1C;
+  --border:       #273330;
+  --border-2:     #354542;
+  --text:         #FFFFFD;   /* WP light surface as text */
+  --text-2:       #B0BDBA;
+  --text-3:       #7B8C89;
   --brand:        #85B9AC;
   --brand-dark:   #0d1f1d;
   --brand-border: #1a3530;
@@ -27,7 +27,7 @@
   --glass-border: rgba(255, 255, 255, 0.12);
 
   /* Font Families */
-  --font-d: 'Barlow Condensed', sans-serif;
+  --font-d: 'Poppins', sans-serif;
   --font-b: 'Inter', sans-serif;
 
   /* Legacy aliases */
@@ -47,15 +47,15 @@
 
 /* ── TEMA CLARO ──────────────────────────────── */
 [data-theme="light"] {
-  --bg:           #ffffff;   /* Blanco Galeria */
-  --bg-card:      #f1f5f9;   /* Slate-100 para separação clara de planos */
+  --bg:           #FFFFFD;   /* WP Surface */
+  --bg-card:      #FAFAFA;   /* WP Card Surface */
   --bg-field:     #e2e8f0;   /* Slate-200 para campos */
   --border:       #cbd5e1;   /* Slate-300 para bordas padrão */
   --border-2:     #94a3b8;   /* Slate-400 para bordas ativas/divisórias */
-  --text:         #020617;   /* Slate-950 para contraste máximo */
+  --text:         #56524E;   /* WP Body Text */
   --text-2:       #334155;   /* Slate-700 para corpo */
   --text-3:       #475569;   /* Slate-600 para labels */
-  --brand:        #2d8a7a;   /* Teal tático */
+  --brand:        #85b9ac;   /* WP Primary */
   --brand-dark:   #f0fdfa;
   --brand-border: #ccfbf1;
   --brand-text:   #ffffff;
@@ -66,7 +66,7 @@
   --glass-border: rgba(0, 0, 0, 0.12);
 
   /* Font Families */
-  --font-d: 'Barlow Condensed', sans-serif;
+  --font-d: 'Poppins', sans-serif;
   --font-b: 'Inter', sans-serif;
 
   /* Legacy aliases */
@@ -141,7 +141,7 @@ select, [data-sonner-toast], [data-sonner-toast] * {
     cursor: pointer;
     transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
     border: 1px solid transparent;
-    border-radius: 0.75rem;
+    border-radius: 9999px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -173,7 +173,7 @@ select, [data-sonner-toast], [data-sonner-toast] * {
     letter-spacing: 0.15em;
     color: var(--text);
     outline: none;
-    border-radius: 0.75rem;
+    border-radius: 9999px;
     transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -362,7 +362,7 @@ select, [data-sonner-toast], [data-sonner-toast] * {
   font-weight: 300;
   color: var(--text);
   outline: none;
-  border-radius: 0;
+  border-radius: 9999px;
   transition: all 0.3s ease;
 }
 
@@ -392,6 +392,7 @@ select, [data-sonner-toast], [data-sonner-toast] * {
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   cursor: pointer;
   border: none;
+  border-radius: 9999px;
 }
 
 @media (min-width: 768px) {
@@ -405,6 +406,7 @@ select, [data-sonner-toast], [data-sonner-toast] * {
 .lux-button-primary {
   background-color: var(--text);
   color: var(--bg);
+  border-radius: 9999px;
 }
 
 .lux-button-primary:hover {
@@ -417,6 +419,7 @@ select, [data-sonner-toast], [data-sonner-toast] * {
   background-color: var(--brand);
   color: var(--brand-text);
   box-shadow: 0 10px 20px rgba(133, 185, 172, 0.15);
+  border-radius: 9999px;
 }
 
 .lux-button-tactical:hover {
@@ -429,6 +432,7 @@ select, [data-sonner-toast], [data-sonner-toast] * {
   color: var(--text);
   border: 1px solid var(--border-2);
   box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  border-radius: 9999px;
 }
 
 .lux-button-ghost:hover {

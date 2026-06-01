@@ -13,6 +13,10 @@ interface WelcomeTourProps {
   onComplete: () => void;
 }
 
+// Quando houverem novas ferramentas, basta alterar a versão (ex: v2, v3) 
+// para o tour ser exibido novamente para todos os usuários.
+const TOUR_VERSION = "v1";
+
 const TOUR_DATA: Record<string, TourStep[]> = {
   PROFISSIONAL: [
     { title: "Bem-vindo ao Painel Profissional", description: "Aqui você gerencia suas coberturas, portfólio e ganhos." },
@@ -31,8 +35,12 @@ export const WelcomeTour: React.FC<WelcomeTourProps> = ({ role, onComplete }) =>
   const steps = TOUR_DATA[role] || [];
   
   const [isVisible, setIsVisible] = useState(() => {
-    const hasSeen = localStorage.getItem(`fs_tour_${role}`);
-    return !hasSeen && (TOUR_DATA[role] || []).length > 0;
+    try {
+      const hasSeen = localStorage.getItem(`fs_tour_${TOUR_VERSION}_${role}`);
+      return !hasSeen && (TOUR_DATA[role] || []).length > 0;
+    } catch {
+      return false; // Previne loops no iframe/incognito restrito
+    }
   });
 
   const handleNext = () => {
@@ -44,7 +52,11 @@ export const WelcomeTour: React.FC<WelcomeTourProps> = ({ role, onComplete }) =>
   };
 
   const handleComplete = () => {
-    localStorage.setItem(`fs_tour_${role}`, "true");
+    try {
+      localStorage.setItem(`fs_tour_${TOUR_VERSION}_${role}`, "true");
+    } catch (e) {
+      console.warn("Could not save tour state", e);
+    }
     setIsVisible(false);
     onComplete();
   };

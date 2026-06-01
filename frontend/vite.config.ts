@@ -66,6 +66,9 @@ export default defineConfig({
     host: '0.0.0.0',
     port: 3001,
     strictPort: true,
+    hmr: {
+      clientPort: 3001,
+    },
     proxy: {
       '/api': {
         target: 'http://127.0.0.1:3002',

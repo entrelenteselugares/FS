@@ -186,7 +186,7 @@ export class EventController {
       // 4. Se for Marketplace, buscamos quais mídias específicas foram compradas
       let unlockedMediaIds: string[] = [];
 
-      if (!isRestrictedPrivate && event.type === 'PHOTO_MARKETPLACE' && (currentUserId || guestToken || orderId)) {
+      if (!isRestrictedPrivate && (event.type === 'PHOTO_MARKETPLACE' || event.type === 'FOTO_POINT' || event.type === 'FLASH_EVENT') && (currentUserId || guestToken || orderId)) {
         const paidOrders = await prisma.order.findMany({
           where: { 
             eventId: event.id, 

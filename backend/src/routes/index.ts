@@ -56,6 +56,10 @@ router.use("/profissional", professionalRoutes);
 router.use("/auth", driveAuthRoutes); // Re-mounted to /auth to match original behavior where auth routes and drive routes merged.
 router.use("/portfolio", portfolioRoutes);
 
+// ── Public: Referências Técnicas de Eventos (leitura pública)
+import { EventReferenceController } from "../controllers/EventReferenceController";
+router.get("/events/:eventId/references", EventReferenceController.list);
+
 // ── PUSH NOTIFICATIONS ───────────────────────────────────────────────────────
 router.post("/push/subscribe",   requireAuth, PushController.subscribe);
 router.post("/push/unsubscribe", requireAuth, PushController.unsubscribe);

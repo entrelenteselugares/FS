@@ -133,6 +133,15 @@ export const TouchSelectionGallery: React.FC<TouchSelectionGalleryProps> = ({
                 loading="lazy"
               />
 
+              {/* Watermark Overlay for locked images */}
+              {!isUnlocked && (
+                <div className="absolute inset-0 pointer-events-none flex items-center justify-center overflow-hidden mix-blend-overlay z-10">
+                   <div className="rotate-[-30deg] opacity-40 text-2xl md:text-3xl font-black whitespace-nowrap select-none text-white drop-shadow-md">
+                      FOTO SEGUNDO
+                   </div>
+                </div>
+              )}
+
               {/* Botão de Seleção Rápida (Shortcut Selection Button) */}
               {!isUnlocked && (
                 <button
@@ -201,6 +210,7 @@ export const TouchSelectionGallery: React.FC<TouchSelectionGalleryProps> = ({
                 const fmCleanUrl = fm?.metadata?.rawUrl || fm?.metadata?.printUrl;
                 const fmDisplayUrl = (fmIsUnlocked && fmCleanUrl) ? fmCleanUrl : (fm?.url || '');
                 return (
+                  <>
                   <motion.img
                     key={fm?.id}
                     src={getProxyUrl(fmDisplayUrl)}
@@ -216,6 +226,14 @@ export const TouchSelectionGallery: React.FC<TouchSelectionGalleryProps> = ({
                     }}
                     className="max-w-full max-h-full object-contain touch-none"
                   />
+                  {!fmIsUnlocked && (
+                    <div className="absolute inset-0 pointer-events-none flex items-center justify-center overflow-hidden mix-blend-overlay z-10">
+                       <div className="rotate-[-30deg] opacity-50 text-4xl md:text-7xl font-black whitespace-nowrap select-none text-white drop-shadow-2xl">
+                          FOTO SEGUNDO
+                       </div>
+                    </div>
+                  )}
+                </>
                 );
               })()}
 

@@ -130,6 +130,7 @@ export const BtnPrimary: React.CSSProperties = {
   alignItems:    "center",
   gap:           8,
   transition:    "opacity 0.2s, background-color 0.2s, color 0.2s",
+  borderRadius:  "9999px",
 };
 
 /** Botão secundário outline */
@@ -148,6 +149,7 @@ export const BtnSecondary: React.CSSProperties = {
   alignItems:    "center",
   gap:           8,
   transition:    "border-color 0.2s, color 0.2s, background-color 0.2s",
+  borderRadius:  "9999px",
 };
 
 /** Botão ghost compacto (usado na nav e tabelas) */
@@ -163,6 +165,7 @@ export const BtnGhost: React.CSSProperties = {
   textTransform: "uppercase",
   cursor:        "pointer",
   transition:    "color 0.2s, border-color 0.2s",
+  borderRadius:  "9999px",
 };
 
 // ─────────────────────────────────────────────────────────────────────────────

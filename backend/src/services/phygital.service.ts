@@ -70,16 +70,48 @@ export class PhygitalService {
       // 4. Marca d'água de Proteção (RAW Layer)
       const rawCompositeLayers: any[] = [];
       if (applyWatermark) {
-        console.log(`[PHYGITAL] Aplicando marca d'água de proteção...`);
-        const watermarkSvg = Buffer.from(`
-          <svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}">
-            <style>
-              .wm { font-family: sans-serif; font-weight: 900; fill: rgba(255,255,255,0.3); text-transform: uppercase; font-size: ${Math.floor(w * 0.1)}px; }
-            </style>
-            <text x="50%" y="50%" class="wm" text-anchor="middle" transform="rotate(-45 ${w/2} ${h/2})">FOTO SEGUNDO</text>
-          </svg>
-        `);
-        rawCompositeLayers.push({ input: watermarkSvg, gravity: 'center', blend: 'over' });
+        console.log(`[PHYGITAL] Aplicando marca d'água de proteção com logo PNG...`);
+        try {
+          const path = require('path');
+          const fs = require('fs');
+          
+          // Usa a mesma lógica garantida do polaroid para encontrar a logo
+          const frontendLogoCandidates = [
+            path.resolve(__dirname, "..", "..", "..", "frontend", "public", "logo.png"),
+            path.resolve(process.cwd(), "frontend", "public", "logo.png"),
+            path.resolve(process.cwd(), "..", "frontend", "public", "logo.png"),
+            path.resolve(__dirname, "..", "..", "assets", "logo-fs.png") // Fallback pro backend
+          ];
+          const logoPath = frontendLogoCandidates.find((p: string) => fs.existsSync(p));
+          
+          if (logoPath) {
+             const logoBuffer = fs.readFileSync(logoPath);
+             // Transforma o logo escuro em branco (negate), rotaciona, e aplica opacidade
+             const logoWidth = Math.floor(w * 0.7); // 70% of image width para ser grande no centro
+             const logoTranslucent = await sharp(logoBuffer)
+               .resize({ width: logoWidth })
+               .negate({ alpha: false }) // Transforma logo escuro em logo branco
+               .rotate(-30, { background: { r: 0, g: 0, b: 0, alpha: 0 } }) // Diagonal
+               .ensureAlpha()
+               .composite([{
+                 input: Buffer.from([255, 255, 255, 100]), // ~40% opacidade
+                 raw: { width: 1, height: 1, channels: 4 },
+                 tile: true,
+                 blend: 'dest-in'
+               }])
+               .png()
+               .toBuffer();
+               
+             // Aplica uma única marca d'água gigante no centro (estilo clássico anticópia)
+             rawCompositeLayers.push({ input: logoTranslucent, gravity: 'center', blend: 'over' });
+             
+             console.log(`[PHYGITAL] Marca d'água Branca e Diagonal aplicada com sucesso no centro.`);
+          } else {
+             console.warn("[PHYGITAL] Logo não encontrado, pulando marca d'água para evitar quadrados (missing fonts).");
+          }
+        } catch (e) {
+          console.error("Erro ao aplicar watermark", e);
+        }
       }
 
       // Buffer da Imagem Original (RAW, apenas rotacionada e c/ marca d'água opcional)
@@ -104,15 +136,23 @@ export class PhygitalService {
         const compositeLayers: any[] = [];
 
         try {
-          const axios = require('axios');
+          const path = require('path');
+          const fs = require('fs');
           let logoBuffer = null;
           try {
-            // Buscar a logo do frontend de forma dinâmica para evitar caminhos quebrados na Vercel
-            const frontendUrl = process.env.FRONTEND_URL || 'https://foto-segundo.vercel.app';
-            const res = await axios.get(`${frontendUrl}/logo.png`, { responseType: 'arraybuffer' });
-            logoBuffer = Buffer.from(res.data);
+            // Lemos o logo direto do filesystem para evitar que o Vite retorne o index.html (que gera quadrados no sharp)
+            const frontendLogoCandidates = [
+              path.resolve(__dirname, "..", "..", "..", "frontend", "public", "logo.png"),
+              path.resolve(process.cwd(), "frontend", "public", "logo.png"),
+              path.resolve(process.cwd(), "..", "frontend", "public", "logo.png"),
+              path.resolve(__dirname, "..", "..", "assets", "logo-fs.png") // Fallback pro backend
+            ];
+            const foundFrontendLogo = frontendLogoCandidates.find((p: string) => fs.existsSync(p));
+            if (foundFrontendLogo) {
+              logoBuffer = fs.readFileSync(foundFrontendLogo);
+            }
           } catch (fetchErr: any) {
-            console.log('[PHYGITAL] Não foi possível baixar logo.png', fetchErr.message);
+            console.log('[PHYGITAL] Não foi possível carregar logo localmente', fetchErr.message);
           }
 
           if (logoBuffer) {

@@ -47,6 +47,7 @@ interface Pedido {
   accessExpiresAt?: string | null;
   event: {
     id: string;
+    type?: string;
     slug?: string | null;
     title: string;
     dataEvento: string;
@@ -161,9 +162,8 @@ export default function ClienteArea() {
   
   const NAV_ITEMS = useMemo<NavItem[]>(() => {
     const items: NavItem[] = [
-      { label: "Minhas Memórias", onClick: () => handleTabChange("files"), isActive: activeTab === "files", icon: <ImageIcon size={18} /> },
+      { label: "Carrinho", onClick: () => handleTabChange("files"), isActive: activeTab === "files", icon: <ShoppingBag size={18} /> },
       { label: "Meus Álbuns", onClick: () => navigate("/meus-albuns"), isActive: false, icon: <Lock size={18} /> },
-      { label: "Carrinho", onClick: () => handleTabChange("wallet"), isActive: activeTab === "wallet", icon: <ShoppingBag size={18} /> },
       { label: "Indique e Ganhe", onClick: () => handleTabChange("affiliate"), isActive: activeTab === "affiliate", icon: <Users size={18} /> },
       { label: "Meus Dados", onClick: () => handleTabChange("profile"), isActive: activeTab === "profile", icon: <User size={18} /> },
     ];
@@ -500,7 +500,40 @@ export default function ClienteArea() {
             className="space-y-12"
           >
             {activeTab === "files" ? (
-            <>
+            <div className="space-y-10">
+              {/* Wallet Header Section */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-8">
+                <div className="relative overflow-hidden bg-theme-bg-muted/10 border border-theme-border/40 p-4 sm:p-8 md:p-10 rounded-2xl transition-all duration-500 hover:border-brand-tactical/30 hover:shadow-[0_0_30px_rgba(242,193,46,0.03)] group">
+                  <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-white/5 to-transparent rotate-45 translate-x-12 -translate-y-12 pointer-events-none" />
+                  <div className="relative z-10 space-y-2 sm:space-y-4">
+                    <label className="text-[8px] sm:text-[9px] font-black text-theme-text-muted uppercase tracking-[0.2em] block">Saldo Disponível</label>
+                    <div className="text-2xl sm:text-5xl md:text-6xl font-black italic tracking-tighter text-brand-tactical leading-none">
+                      {formatCurrency(user?.rewardCredits || 0)}
+                    </div>
+                    <p className="text-[8px] sm:text-[10px] text-theme-text-muted font-bold leading-normal sm:leading-relaxed uppercase tracking-widest max-w-xs italic">
+                      Use seu saldo para abater em novos pedidos, impressões ou upgrades Phygital.
+                    </p>
+                  </div>
+                </div>
+                <div className="relative overflow-hidden bg-theme-bg-muted/10 border border-theme-border/40 p-4 sm:p-8 md:p-10 rounded-2xl transition-all duration-500 hover:border-brand-tactical/30 hover:shadow-[0_0_30px_rgba(242,193,46,0.03)] flex flex-col justify-between gap-3 sm:gap-6 group">
+                  <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-white/5 to-transparent rotate-45 translate-x-12 -translate-y-12 pointer-events-none" />
+                  <div className="relative z-10 space-y-2 sm:space-y-4">
+                    <p className="text-[8px] sm:text-[10px] font-black text-theme-text uppercase tracking-widest italic flex items-center gap-1.5 sm:gap-2">
+                      <Zap size={10} className="text-brand-tactical animate-pulse sm:w-3 sm:h-3" /> Como ganhar mais?
+                    </p>
+                    <p className="text-[8px] sm:text-[10px] text-theme-text-muted font-bold leading-relaxed uppercase tracking-widest italic max-w-[280px]">
+                      Indique amigos e ganhe cashback em todas as compras que eles fizerem na plataforma.
+                    </p>
+                  </div>
+                  <button 
+                    onClick={() => handleTabChange("affiliate")}
+                    className="relative z-10 self-start text-[8px] sm:text-[9px] font-black uppercase tracking-[0.2em] text-brand-tactical border border-brand-tactical/30 px-3 sm:px-6 py-2 sm:py-3 hover:bg-brand-tactical hover:text-black transition-all duration-300"
+                  >
+                    Pegar meu Link →
+                  </button>
+                </div>
+              </div>
+
               {/* Espaçamento tático para as memórias */}
               <div className="h-4" />
 
@@ -555,12 +588,60 @@ export default function ClienteArea() {
                   )}
                 </div>
               )}
-            </>
+              {/* ── HISTÓRICO DO LEDGER ── */}
+              <div className="space-y-6">
+                 <div className="flex items-center gap-3">
+                    <div className="h-0.5 w-6 bg-brand-tactical" />
+                    <p className="text-[9px] font-black text-theme-muted uppercase tracking-[0.4em]">Extrato de Recompensas</p>
+                 </div>
+
+                 <div className="bg-theme-bg-muted/10 border border-theme-border/40 rounded-2xl overflow-hidden shadow-sm">
+                    {user?.gamificationLedger && user.gamificationLedger.length > 0 ? (
+                      <div className="divide-y divide-theme-border/10">
+                        {user.gamificationLedger.map(item => (
+                          <div key={item.id} className="p-5 flex items-center justify-between hover:bg-theme-bg-muted/10 transition-all">
+                             <div className="space-y-1">
+                                <div className="flex items-center gap-2">
+                                  <div className="w-1.5 h-1.5 rounded-full bg-brand-tactical" />
+                                  <p className="text-[11px] font-black text-theme-text uppercase tracking-tight italic">
+                                    {item.description}
+                                  </p>
+                                </div>
+                                <p className="text-[8px] text-theme-text-muted font-bold uppercase tracking-widest ml-3">
+                                  {new Date(item.createdAt).toLocaleDateString('pt-BR')} • {item.type}
+                                </p>
+                             </div>
+                             <div className="text-right">
+                               {(item.amount && Number(item.amount) > 0) ? (
+                                 <p className="text-[14px] font-black italic tracking-tighter text-brand-tactical">
+                                    +{formatCurrency(item.amount)}
+                                 </p>
+                               ) : null}
+                               {item.points && (
+                                 <p className="text-[8px] font-black text-theme-text-muted uppercase tracking-widest mt-0.5">
+                                   +{item.points} pts
+                                 </p>
+                               )}
+                             </div>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="p-16 text-center space-y-4">
+                        <ShoppingBag size={32} className="mx-auto text-theme-border/20" />
+                        <p className="text-[10px] text-theme-muted uppercase font-black italic tracking-widest opacity-40">
+                          Sua carteira está aguardando as primeiras recompensas.
+                        </p>
+                      </div>
+                    )}
+                 </div>
+              </div>
+            </div>
           ) : activeTab === "profile" ? (
             <div className="space-y-8">
             <div className="lux-card p-10 max-w-2xl border-l-4 border-l-brand-tactical bg-theme-bg-muted/10">
               <div className="flex flex-col md:flex-row gap-8 items-center md:items-start mb-8 pb-8 border-b border-theme-border/20">
-                <ProfilePhotoUpload />
+                <ProfilePhotoUpload onProfileUpdated={() => window.location.reload()} />
                 <div className="space-y-2 text-center md:text-left">
                   <h2 className="text-xl font-heading font-black text-theme-text uppercase italic tracking-tight">Meus Dados</h2>
                   <p className="text-[11px] font-black text-theme-muted uppercase tracking-[0.4em] italic">Gerencie suas informações de contato e entrega</p>
@@ -723,90 +804,7 @@ export default function ClienteArea() {
               </div>
             )}
             </div>
-          ) : activeTab === "wallet" ? (
-            <div className="space-y-10">
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-8">
-                <div className="relative overflow-hidden bg-theme-bg-muted/10 border border-theme-border/40 p-4 sm:p-8 md:p-10 rounded-2xl transition-all duration-500 hover:border-brand-tactical/30 hover:shadow-[0_0_30px_rgba(242,193,46,0.03)] group">
-                  <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-white/5 to-transparent rotate-45 translate-x-12 -translate-y-12 pointer-events-none" />
-                  <div className="relative z-10 space-y-2 sm:space-y-4">
-                    <label className="text-[8px] sm:text-[9px] font-black text-theme-text-muted uppercase tracking-[0.2em] block">Saldo Disponível</label>
-                    <div className="text-2xl sm:text-5xl md:text-6xl font-black italic tracking-tighter text-brand-tactical leading-none">
-                      {formatCurrency(user?.rewardCredits || 0)}
-                    </div>
-                    <p className="text-[8px] sm:text-[10px] text-theme-text-muted font-bold leading-normal sm:leading-relaxed uppercase tracking-widest max-w-xs italic">
-                      Use seu saldo para abater em novos pedidos, impressões ou upgrades Phygital.
-                    </p>
-                  </div>
-                </div>
-                <div className="relative overflow-hidden bg-theme-bg-muted/10 border border-theme-border/40 p-4 sm:p-8 md:p-10 rounded-2xl transition-all duration-500 hover:border-brand-tactical/30 hover:shadow-[0_0_30px_rgba(242,193,46,0.03)] flex flex-col justify-between gap-3 sm:gap-6 group">
-                  <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-white/5 to-transparent rotate-45 translate-x-12 -translate-y-12 pointer-events-none" />
-                  <div className="relative z-10 space-y-2 sm:space-y-4">
-                    <p className="text-[8px] sm:text-[10px] font-black text-theme-text uppercase tracking-widest italic flex items-center gap-1.5 sm:gap-2">
-                      <Zap size={10} className="text-brand-tactical animate-pulse sm:w-3 sm:h-3" /> Como ganhar mais?
-                    </p>
-                    <p className="text-[10px] sm:text-xs text-theme-text-muted leading-normal sm:leading-relaxed">
-                      Toda compra no <span className="text-brand-tactical font-black">Live Print</span> gera <span className="text-emerald-400 font-bold">5% de cashback</span> imediato.
-                    </p>
-                  </div>
-                  <div className="relative z-10">
-                    <button id="btn-explorar-carteira" onClick={() => navigate("/vitrine")} className="fs-btn bg-brand-tactical text-brand-text hover:bg-brand-tactical/90 hover:scale-[1.02] transition-all w-full flex items-center justify-center gap-1.5 sm:gap-3 shadow-lg shadow-brand-tactical/10 hover:shadow-brand-tactical/20 text-[9px] sm:text-xs py-2 sm:py-3">
-                      Explorar <ArrowRight size={10} className="sm:w-3.5 sm:h-3.5" />
-                    </button>
-                  </div>
-                </div>
-              </div>
-
-              {/* ── HISTÓRICO DO LEDGER ── */}
-              <div className="space-y-6">
-                 <div className="flex items-center gap-3">
-                    <div className="h-0.5 w-6 bg-brand-tactical" />
-                    <p className="text-[9px] font-black text-theme-muted uppercase tracking-[0.4em]">Extrato de Recompensas</p>
-                 </div>
-
-                 <div className="bg-theme-bg-muted/10 border border-theme-border/40 rounded-2xl overflow-hidden shadow-sm">
-                    {user?.gamificationLedger && user.gamificationLedger.length > 0 ? (
-                      <div className="divide-y divide-theme-border/10">
-                        {user.gamificationLedger.map(item => (
-                          <div key={item.id} className="p-5 flex items-center justify-between hover:bg-theme-bg-muted/10 transition-all">
-                             <div className="space-y-1">
-                                <div className="flex items-center gap-2">
-                                  <div className="w-1.5 h-1.5 rounded-full bg-brand-tactical" />
-                                  <p className="text-[11px] font-black text-theme-text uppercase tracking-tight italic">
-                                    {item.description}
-                                  </p>
-                                </div>
-                                <p className="text-[8px] text-theme-text-muted font-bold uppercase tracking-widest ml-3">
-                                  {new Date(item.createdAt).toLocaleDateString('pt-BR')} • {item.type}
-                                </p>
-                             </div>
-                             <div className="text-right">
-                               {(item.amount && Number(item.amount) > 0) ? (
-                                 <p className="text-[14px] font-black italic tracking-tighter text-brand-tactical">
-                                    +{formatCurrency(item.amount)}
-                                 </p>
-                               ) : null}
-                               {item.points && (
-                                 <p className="text-[8px] font-black text-theme-text-muted uppercase tracking-widest mt-0.5">
-                                   +{item.points} pts
-                                 </p>
-                               )}
-                             </div>
-                          </div>
-                        ))}
-                      </div>
-                    ) : (
-                      <div className="p-16 text-center space-y-4">
-                        <ShoppingBag size={32} className="mx-auto text-theme-border/20" />
-                        <p className="text-[10px] text-theme-muted uppercase font-black italic tracking-widest opacity-40">
-                          Sua carteira está aguardando as primeiras recompensas.
-                        </p>
-                      </div>
-                    )}
-                 </div>
-              </div>
-            </div>
-            ) : activeTab === "affiliate" ? (
+          ) : activeTab === "affiliate" ? (
               <AffiliateDashboard />
             ) : null}
           </motion.div>
@@ -1325,16 +1323,18 @@ function PedidoDetalhe({ pedido, loading, onGoToEvent, onChangePrivacy, onRefres
             <div className="flex items-end justify-between">
               <div className="min-w-0 flex-1">
                 <h3 className="text-2xl md:text-3xl font-heading font-black italic tracking-tighter uppercase text-theme-text leading-tight truncate">
-                  {pedido.event.slug?.startsWith('vault-') ? `Álbum: ${pedido.event.title}` : pedido.event.title}
+                  {pedido.event.type === 'ALBUM_FULL' ? `Álbum: ${pedido.event.title}` : pedido.event.title}
                 </h3>
                 <p className="text-[9px] font-bold text-theme-muted uppercase tracking-widest mt-1 whitespace-pre-line">
                   {formatDate(pedido.event.dataEvento)} {pedido.event.city && `• ${pedido.event.city}`}
                   {pedido.event.location && `\n${pedido.event.location}`}
                 </p>
               </div>
-              <button onClick={() => setIsEditing(true)} className="flex-shrink-0 ml-4 text-[9px] font-black uppercase tracking-widest border border-theme-border/50 text-zinc-400 px-3 py-1.5 hover:text-brand-tactical hover:border-brand-tactical transition-colors rounded">
-                Personalizar
-              </button>
+              {pedido.event.type === 'ALBUM_FULL' && (
+                <button onClick={() => setIsEditing(true)} className="flex-shrink-0 ml-4 text-[9px] font-black uppercase tracking-widest border border-theme-border/50 text-zinc-400 px-3 py-1.5 hover:text-brand-tactical hover:border-brand-tactical transition-colors rounded">
+                  Personalizar
+                </button>
+              )}
             </div>
           )}
 
@@ -1493,7 +1493,6 @@ function PedidoDetalhe({ pedido, loading, onGoToEvent, onChangePrivacy, onRefres
                   subtitle="Galeria de Fotos"
                   url={pedido.event.lightroomUrl}
                   disabled={!pedido.event.lightroomUrl}
-                  emptyText="Arquivos em processamento pela equipe"
                 />
               )}
               {pedido.event.temFotoEditada && (
@@ -1503,7 +1502,6 @@ function PedidoDetalhe({ pedido, loading, onGoToEvent, onChangePrivacy, onRefres
                   subtitle="Galeria Premium Editada"
                   url={pedido.event.lightroomUrl}
                   disabled={!pedido.event.lightroomUrl}
-                  emptyText="Seleção de fotos editadas em preparação"
                 />
               )}
               {pedido.event.temVideo && (
@@ -1513,7 +1511,6 @@ function PedidoDetalhe({ pedido, loading, onGoToEvent, onChangePrivacy, onRefres
                   subtitle="Filme Completo do Evento"
                   url={pedido.event.driveUrl}
                   disabled={!pedido.event.driveUrl}
-                  emptyText="Filme do evento em fase de finalização"
                 />
               )}
               {pedido.event.temVideoEditado && (
@@ -1523,7 +1520,6 @@ function PedidoDetalhe({ pedido, loading, onGoToEvent, onChangePrivacy, onRefres
                   subtitle="Corte Especial e Edição Premium"
                   url={pedido.event.driveUrl}
                   disabled={!pedido.event.driveUrl}
-                  emptyText="Vídeo editado premium em finalização"
                 />
               )}
               {pedido.event.temReels && (
@@ -1533,7 +1529,6 @@ function PedidoDetalhe({ pedido, loading, onGoToEvent, onChangePrivacy, onRefres
                   subtitle="Teasers verticais para redes"
                   url={pedido.event.driveUrl}
                   disabled={!pedido.event.driveUrl}
-                  emptyText="Teasers e Reels em fase de edição"
                 />
               )}
               {pedido.event.temFotoImpressa && (
@@ -1542,7 +1537,6 @@ function PedidoDetalhe({ pedido, loading, onGoToEvent, onChangePrivacy, onRefres
                   title="Fotos Impressas"
                   subtitle="Fotos Reveladas Premium"
                   disabled={true}
-                  emptyText="Fotos em fase de revelação laboratorial"
                 />
               )}
               {pedido.event.temAlbumImpresso && (
@@ -1551,7 +1545,6 @@ function PedidoDetalhe({ pedido, loading, onGoToEvent, onChangePrivacy, onRefres
                   title="Álbum Físico Impresso"
                   subtitle="Encadernação Premium de Luxo"
                   disabled={true}
-                  emptyText="Álbum em fase de diagramação/impressão"
                 />
               )}
             </div>
@@ -1593,13 +1586,12 @@ function PedidoDetalhe({ pedido, loading, onGoToEvent, onChangePrivacy, onRefres
 }
 
 
-function MediaActionCard({ icon, title, subtitle, url, disabled, emptyText }: { 
+function MediaActionCard({ icon, title, subtitle, url, disabled }: { 
   icon: React.ReactNode; 
   title: string; 
   subtitle: string; 
   url?: string | null; 
   disabled?: boolean;
-  emptyText: string;
 }) {
   if (disabled) {
     return (
@@ -1607,7 +1599,7 @@ function MediaActionCard({ icon, title, subtitle, url, disabled, emptyText }: {
         <div className="p-3 bg-theme-bg-muted border border-theme-border/20 opacity-40">{icon}</div>
         <div>
           <p className="text-[11px] font-black uppercase tracking-widest mb-1 italic">{title}</p>
-          <p className="text-[10px] font-bold italic opacity-60">{emptyText}</p>
+          <p className="text-[10px] font-bold italic opacity-60">Aguardando Publicação</p>
         </div>
       </div>
     );

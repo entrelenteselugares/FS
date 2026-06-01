@@ -1,18 +1,18 @@
 import React, { useState, useRef, useCallback } from "react";
-import { Upload, Loader2, Check, X } from "lucide-react";
+import { Upload, Loader2, Check, X, Image as ImageIcon } from "lucide-react";
 import Cropper from "react-easy-crop";
 import { API } from "../lib/api";
 import { toast } from "sonner";
 import getCroppedImg from "../utils/cropImage";
-interface ProfilePhotoUploadProps {
-  currentProfileUrl?: string | null;
-  currentNome?: string | null;
-  onProfileUpdated: (newUrl: string) => void;
+
+interface CoverPhotoUploadProps {
+  currentCoverUrl?: string | null;
+  onCoverUpdated: (newUrl: string) => void;
 }
 
-export const ProfilePhotoUpload: React.FC<ProfilePhotoUploadProps> = ({ currentProfileUrl, currentNome, onProfileUpdated }) => {
+export const CoverPhotoUpload: React.FC<CoverPhotoUploadProps> = ({ currentCoverUrl, onCoverUpdated }) => {
   const [uploading, setUploading] = useState(false);
-  const [preview, setPreview] = useState<string | null>(currentProfileUrl || null);
+  const [preview, setPreview] = useState<string | null>(currentCoverUrl || null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Crop states
@@ -57,13 +57,13 @@ export const ProfilePhotoUpload: React.FC<ProfilePhotoUploadProps> = ({ currentP
       setPreview(croppedBase64); // Show optimistic preview
       setImageToCrop(null); // Close modal
 
-      const { data } = await API.post("/auth/profile-photo", {
+      const { data } = await API.post("/auth/cover-photo", {
         imageBase64: croppedBase64,
         mimeType: "image/jpeg"
       });
       
-      onProfileUpdated(data.profileImageUrl);
-      toast.success("Foto de perfil atualizada!");
+      onCoverUpdated(data.coverImageUrl);
+      toast.success("Foto de capa atualizada!");
     } catch (err: unknown) {
       const axiosErr = err as { response?: { data?: { error?: string } } };
       toast.error("Erro ao enviar foto: " + (axiosErr.response?.data?.error || (err instanceof Error ? err.message : "Erro desconhecido")));
@@ -78,26 +78,28 @@ export const ProfilePhotoUpload: React.FC<ProfilePhotoUploadProps> = ({ currentP
 
   return (
     <>
-      <div className="flex flex-col md:flex-row items-center gap-6 w-full">
-        <div className="relative group shrink-0">
-          <div 
-            onClick={triggerUpload}
-            className="w-24 h-24 rounded-full border-2 border-brand-tactical overflow-hidden bg-theme-bg flex items-center justify-center text-3xl font-black text-theme-text tracking-tighter cursor-pointer relative"
-          >
-            {preview ? (
-              <img src={preview} alt="Foto de Perfil" className="w-full h-full object-cover" />
-            ) : (
-              currentNome ? currentNome.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2) : "FS"
-            )}
-            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-              <Upload className="w-6 h-6 text-white" />
-            </div>
-          </div>
-          {uploading && (
-            <div className="absolute inset-0 bg-theme-bg/85 rounded-full flex items-center justify-center pointer-events-none">
-              <div className="w-6 h-6 border-2 border-brand-tactical border-t-transparent rounded-full animate-spin" />
+      <div className="flex flex-col items-start gap-4 w-full">
+        <div className="relative group w-full h-40 bg-theme-bg-muted rounded-2xl overflow-hidden border border-theme-border/20 cursor-pointer" onClick={triggerUpload}>
+          {preview ? (
+            <img src={preview} alt="Cover" className="w-full h-full object-cover" />
+          ) : (
+            <div className="w-full h-full flex flex-col items-center justify-center text-theme-muted gap-2">
+              <ImageIcon className="w-8 h-8 opacity-50" />
+              <span className="text-[10px] font-black uppercase tracking-widest italic">Adicionar Capa (Panorâmica)</span>
             </div>
           )}
+          
+          {uploading && (
+            <div className="absolute inset-0 bg-black/50 flex items-center justify-center z-10">
+              <Loader2 className="w-6 h-6 text-white animate-spin" />
+            </div>
+          )}
+          
+          <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center text-white gap-2">
+            <Upload className="w-6 h-6" />
+            <span className="text-[10px] font-black uppercase tracking-widest italic">Alterar Foto de Capa</span>
+          </div>
+          
           <input 
             type="file" 
             ref={fileInputRef} 
@@ -106,41 +108,27 @@ export const ProfilePhotoUpload: React.FC<ProfilePhotoUploadProps> = ({ currentP
             className="hidden" 
           />
         </div>
-        
-        <div className="space-y-2 text-center md:text-left">
-          <h4 className="text-[12px] font-black text-theme-text uppercase tracking-wider italic">Foto de Identificação (Avatar)</h4>
-          <p className="text-[9px] text-theme-muted uppercase font-bold tracking-widest leading-relaxed">
-            Aparecerá nos cards menores e comentários.
-          </p>
-          <button
-            onClick={triggerUpload}
-            disabled={uploading}
-            className="inline-block mt-2 fs-btn bg-brand-tactical/10 border border-brand-tactical/30 text-brand-tactical text-[9px] font-black uppercase tracking-widest hover:bg-brand-tactical hover:text-brand-text transition-all italic cursor-pointer py-2 px-4 rounded"
-          >
-            {uploading ? "ENVIANDO..." : "CARREGAR FOTO"}
-          </button>
-        </div>
       </div>
 
       {/* Crop Modal */}
       {imageToCrop && (
         <div className="fixed inset-0 z-[100] bg-black/90 flex flex-col items-center justify-center p-4">
-          <div className="w-full max-w-md bg-theme-surface rounded-2xl overflow-hidden shadow-2xl flex flex-col">
+          <div className="w-full max-w-3xl bg-theme-surface rounded-2xl overflow-hidden shadow-2xl flex flex-col">
             <div className="flex justify-between items-center p-4 border-b border-theme-border">
-              <h3 className="font-heading font-black italic text-theme-text uppercase">Ajustar Foto</h3>
+              <h3 className="font-heading font-black italic text-theme-text uppercase">Ajustar Foto de Capa</h3>
               <button onClick={() => setImageToCrop(null)} className="text-theme-text/50 hover:text-theme-text">
                 <X size={20} />
               </button>
             </div>
             
-            <div className="relative w-full h-[400px] bg-black">
+            <div className="relative w-full h-[50vh] min-h-[300px] bg-black">
               <Cropper
                 image={imageToCrop}
                 crop={crop}
                 zoom={zoom}
-                aspect={1}
-                cropShape="round"
-                showGrid={false}
+                aspect={3 / 1} // Panorâmica
+                cropShape="rect"
+                showGrid={true}
                 onCropChange={setCrop}
                 onZoomChange={setZoom}
                 onCropComplete={onCropComplete}
@@ -162,20 +150,20 @@ export const ProfilePhotoUpload: React.FC<ProfilePhotoUploadProps> = ({ currentP
                 />
               </div>
               
-              <div className="flex gap-3 mt-2">
+              <div className="flex gap-3 mt-2 justify-end">
                 <button
                   onClick={() => setImageToCrop(null)}
-                  className="flex-1 py-2 rounded-lg font-bold text-sm bg-theme-bg text-theme-text border border-theme-border uppercase"
+                  className="px-6 py-2 rounded-lg font-bold text-sm bg-theme-bg text-theme-text border border-theme-border uppercase"
                 >
                   Cancelar
                 </button>
                 <button
                   onClick={handleCropSave}
                   disabled={uploading}
-                  className="flex-1 py-2 rounded-lg font-bold text-sm bg-brand-tactical text-black uppercase flex items-center justify-center gap-2"
+                  className="px-8 py-2 rounded-lg font-bold text-sm bg-brand-tactical text-black uppercase flex items-center justify-center gap-2"
                 >
                   {uploading ? <Loader2 size={16} className="animate-spin" /> : <Check size={16} />}
-                  Salvar
+                  Salvar Capa
                 </button>
               </div>
             </div>

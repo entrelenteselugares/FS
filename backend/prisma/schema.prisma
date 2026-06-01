@@ -208,8 +208,22 @@ model Event {
   leads              Lead[]
   coverPosition      String?             @default("center")
   views              Int                 @default(0)
+  eventReferences    EventReference[]
 
   @@map("events")
+}
+
+model EventReference {
+  id           String   @id @default(cuid())
+  eventId      String
+  type         String   @default("IMAGE") // IMAGE | YOUTUBE
+  url          String
+  thumbnailUrl String?
+  order        Int      @default(0)
+  createdAt    DateTime @default(now())
+  event        Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  @@map("event_references")
 }
 
 model Coupon {
@@ -283,6 +297,7 @@ model Profissional {
   serviceBookings       ServiceBooking[]
   albums                PortfolioAlbum[]
   profileViews          Int                    @default(0)
+  coverImageUrl         String?
 
   @@map("profissionais")
 }
@@ -1215,6 +1230,7 @@ model PortfolioImage {
   url            String
   thumbnailUrl   String?
   watermarkedUrl String?
+  isHidden       Boolean        @default(false)
   aiTags         String[]       @default([])
   createdAt      DateTime       @default(now())
   album          PortfolioAlbum @relation(fields: [albumId], references: [id], onDelete: Cascade)

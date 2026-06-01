@@ -19,6 +19,7 @@ export async function getMeusPedidos(req: AuthRequest, res: Response): Promise<v
         event: {
           select: {
             id: true,
+            type: true,
             slug: true,
             title: true,
             dataEvento: true,
@@ -78,6 +79,7 @@ export async function getMeuPedidoDetalhe(req: AuthRequest, res: Response): Prom
         event: {
           select: {
             id: true,
+            type: true,
             slug: true,
             title: true,
             dataEvento: true,
@@ -166,6 +168,11 @@ export async function personalizePedido(req: AuthRequest, res: Response): Promis
       return;
     }
 
+    if (pedido.event.type === 'FOTO_POINT' || pedido.event.type === 'FLASH_EVENT' || pedido.event.type === 'PHOTO_MARKETPLACE') {
+      res.status(403).json({ error: "Este evento é compartilhado e não pode ser personalizado individualmente." });
+      return;
+    }
+
     // Atualiza o evento atrelado.
     // Nota: Em um cenário real multi-tenant, você só deve permitir isso se o evento for "privado" ou "exclusivo" deste cliente.
     // Como cofres e álbuns comprados via convidado são 1:1, a atualização é segura.
@@ -210,6 +217,11 @@ export async function uploadClientCover(req: AuthRequest, res: Response): Promis
 
     if (!pedido) {
       res.status(404).json({ error: "Pedido não encontrado ou acesso negado." });
+      return;
+    }
+
+    if (pedido.event.type === 'FOTO_POINT' || pedido.event.type === 'FLASH_EVENT' || pedido.event.type === 'PHOTO_MARKETPLACE') {
+      res.status(403).json({ error: "Este evento é compartilhado e sua capa não pode ser alterada individualmente." });
       return;
     }
 

@@ -28,7 +28,9 @@ import {
   adminAdjustStock,
   adminGetApplications,
   adminApproveApplication,
-  adminRejectApplication
+  adminRejectApplication,
+  adminListExperienceValidations,
+  adminReviewExperience
 } from "../controllers/admin.controller";
 import { adminGetEventById } from "../controllers/admin_event_detail.controller";
 import { generateWeeklyPayout, listPayouts, markItemPaid, exportPayoutCSV } from "../controllers/payout.controller";
@@ -48,6 +50,8 @@ import { IoTController } from "../controllers/iot.controller";
 import { validate } from "../middleware/validate.middleware";
 import { updateConfigsSchema, serviceCatalogSchema } from "../schemas/admin.schemas";
 import { CRMController } from "../controllers/crm.controller";
+import { EventReferenceController } from "../controllers/EventReferenceController";
+import multer from "multer";
 
 const router = Router();
 
@@ -57,6 +61,7 @@ router.get("/logs", requireAuth, requireRole("ADMIN"), adminGetLogs);
 router.post("/orders/manual", requireAuth, requireRole("ADMIN"), adminCreateManualSale);
 
 // ── Admin: Gestão de Eventos
+const refUpload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 4 * 1024 * 1024 } });
 router.get("/events", requireAuth, requireRole("ADMIN"), adminListEvents);
 router.get("/events/:id", requireAuth, requireRole("ADMIN"), adminGetEventById);
 router.post("/events", requireAuth, requireRole("ADMIN"), adminCreateEvent);
@@ -64,6 +69,12 @@ router.patch("/events/:id", requireAuth, requireRole("ADMIN"), adminUpdateEvent)
 router.patch("/events/:id/cover", requireAuth, requireRole("ADMIN"), adminUploadCover);
 router.patch("/events/:id/preview", requireAuth, requireRole("ADMIN"), adminUploadPreview);
 router.delete("/events/:id", requireAuth, requireRole("ADMIN"), adminDeleteEvent);
+
+// ── Admin: Referências Técnicas de Eventos
+router.get("/events/:eventId/references", requireAuth, requireRole("ADMIN"), EventReferenceController.list);
+router.post("/events/:eventId/references/upload", requireAuth, requireRole("ADMIN"), refUpload.single("file"), EventReferenceController.uploadImage);
+router.post("/events/:eventId/references/youtube", requireAuth, requireRole("ADMIN"), EventReferenceController.addYoutube);
+router.delete("/events/:eventId/references/:refId", requireAuth, requireRole("ADMIN"), EventReferenceController.remove);
 
 // ── Admin: Gestão de Usuários
 router.get("/users", requireAuth, requireRole("ADMIN"), adminListUsers);
@@ -76,6 +87,10 @@ router.patch("/users/:id/tier", requireAuth, requireRole("ADMIN"), AffiliateCont
 router.get("/applications", requireAuth, requireRole("ADMIN"), adminGetApplications);
 router.patch("/applications/:id/approve", requireAuth, requireRole("ADMIN"), adminApproveApplication);
 router.patch("/applications/:id/reject", requireAuth, requireRole("ADMIN"), adminRejectApplication);
+
+// ── VALIDAÇÃO DE EXPERIÊNCIA
+router.get("/experience-validations", requireAuth, requireRole("ADMIN"), adminListExperienceValidations);
+router.patch("/experience-validations/:id/review", requireAuth, requireRole("ADMIN"), adminReviewExperience);
 
 // ── Admin: Gestão de Pedidos
 router.get("/orders", requireAuth, requireRole("ADMIN"), adminListOrders);

@@ -340,7 +340,7 @@ export const HomePage = () => {
             </button>
             <button id="btn-agendar-cobertura"
               onClick={() => navigate("/cotacao")}
-              className="px-8 py-4 text-[10px] font-display font-black uppercase tracking-[0.2em] italic bg-white/5 border border-white/10 text-theme-text hover:bg-theme-text/10 hover:scale-[1.02] transition-all hidden md:block cursor-pointer"
+              className="px-8 py-4 text-[10px] font-display font-black uppercase tracking-[0.2em] italic bg-white/5 border border-white/10 text-theme-text hover:bg-theme-text/10 hover:scale-[1.02] transition-all hidden md:block cursor-pointer rounded-full"
             >
               Agendar Cobertura
             </button>

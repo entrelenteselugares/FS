@@ -170,7 +170,7 @@ export const LoginPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex overflow-hidden bg-theme-bg">
+    <div className="h-screen flex overflow-hidden bg-theme-bg">
       <Helmet>
         <title>Acesso — Foto Segundo</title>
       </Helmet>

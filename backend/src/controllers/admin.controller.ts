@@ -881,6 +881,7 @@ export async function adminUpdateUser(req: AuthRequest, res: Response): Promise<
           ...(req.body.otherHabilities !== undefined && { otherHabilities: req.body.otherHabilities || null }),
           ...(req.body.equipment !== undefined && { equipment: req.body.equipment || null }),
           ...(req.body.workflowType !== undefined && { workflowType: req.body.workflowType }),
+          ...(req.body.isExperienceValidated !== undefined && { isExperienceValidated: req.body.isExperienceValidated }),
         },
       });
     }
@@ -971,6 +972,68 @@ export async function adminUpdateUser(req: AuthRequest, res: Response): Promise<
   } catch (err) {
     console.error("adminUpdateUser:", err);
     res.status(500).json({ error: "Erro ao atualizar usuÃ¡rio." });
+  }
+}
+
+// ── VALIDAÇÃO DE EXPERIÊNCIA ─────────────────────────────────────────
+
+export async function adminListExperienceValidations(req: AuthRequest, res: Response): Promise<void> {
+  try {
+    const profs = await prisma.profissional.findMany({
+      where: {
+        firstJobUrl: { not: null },
+        isExperienceValidated: false,
+        experienceYears: { gt: 0 },
+      },
+      select: {
+        id: true,
+        firstJobUrl: true,
+        experienceYears: true,
+        isExperienceValidated: true,
+        userId: true,
+        user: { select: { id: true, nome: true, email: true } },
+      },
+      orderBy: { user: { createdAt: "asc" } },
+    });
+    res.json(profs);
+  } catch (err) {
+    console.error("adminListExperienceValidations:", err);
+    res.status(500).json({ error: "Erro ao listar validações pendentes." });
+  }
+}
+
+export async function adminReviewExperience(req: AuthRequest, res: Response): Promise<void> {
+  const { id } = req.params; // profissionalId
+  const { approve } = req.body; // boolean
+
+  try {
+    await prisma.profissional.update({
+      where: { id: String(id) },
+      data: { isExperienceValidated: !!approve },
+    });
+
+    if (approve) {
+      const prof = await prisma.profissional.findUnique({
+        where: { id: String(id) },
+        select: { userId: true, experienceYears: true },
+      });
+      if (prof?.userId) {
+        await prisma.notification.create({
+          data: {
+            userId: prof.userId,
+            title: "Experiência Validada ✅",
+            body: `Seus ${prof.experienceYears} anos de experiência foram autenticados pela Foto Segundo. Badge de Pioneiro desbloqueado!`,
+            type: "SYSTEM",
+          },
+        });
+      }
+    }
+
+    await audit(req, approve ? "EXPERIENCE_APPROVED" : "EXPERIENCE_REJECTED", "Profissional", String(id), null, { approve });
+    res.json({ ok: true });
+  } catch (err) {
+    console.error("adminReviewExperience:", err);
+    res.status(500).json({ error: "Erro ao processar validação." });
   }
 }
 
