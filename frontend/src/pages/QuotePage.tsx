@@ -7,7 +7,9 @@ import { useViaCep } from "../hooks/useViaCep";
 
 interface Professional {
   id: string;
-  user: {
+  nome?: string;
+  address?: string;
+  user?: {
     nome: string;
     address?: string;
   };
