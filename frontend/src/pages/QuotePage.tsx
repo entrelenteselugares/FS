@@ -1067,7 +1067,7 @@ export const QuotePage = () => {
                     <option value="">NENHUM (DEIXAR PARA CURADORIA)</option>
                     {pros.map(p => (
                       <option key={p.id} value={p.id}>
-                        {p.user.nome.toUpperCase()} - {p.user.address?.toUpperCase() || "GLOBAL"}
+                        {p.nome?.toUpperCase() || "PROFISSIONAL"} - {p.address?.toUpperCase() || "GLOBAL"}
                       </option>
                     ))}
                   </select>
