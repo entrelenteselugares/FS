@@ -779,7 +779,7 @@ export class EventController {
         const order = await prisma.order.create({
           data: {
             eventId: event.id,
-            valor: totalPrice,
+            valor: totalPrice || 0,
             buyerEmail: email,
             clienteId: targetUser.id,
             tempPassword: tempPassForEmail,
@@ -844,7 +844,7 @@ export class EventController {
 
     } catch (error) {
       console.error("Erro ao processar orçamento:", error);
-      return res.status(500).json({ error: "Falha na Máquina de Vendas. Tente novamente." });
+      return res.status(500).json({ error: "Falha na Máquina de Vendas. Tente novamente.", details: error.message });
     }
   }
 
