@@ -844,7 +844,8 @@ export class EventController {
 
     } catch (error) {
       console.error("Erro ao processar orçamento:", error);
-      return res.status(500).json({ error: "Falha na Máquina de Vendas. Tente novamente.", details: error.message });
+      const errorMsg = error instanceof Error ? error.message : "Erro desconhecido";
+      return res.status(500).json({ error: "Falha na Máquina de Vendas. Tente novamente.", details: errorMsg });
     }
   }
 
