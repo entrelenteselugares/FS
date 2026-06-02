@@ -784,7 +784,8 @@ export class EventController {
             clienteId: targetUser.id,
             tempPassword: tempPassForEmail,
             status: "PENDENTE",
-            manualType: "Pagamento Integral"
+            manualType: "Pagamento Integral",
+            isGuestOrder: !!tempPassForEmail
           }
         });
 
