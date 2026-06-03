@@ -605,7 +605,7 @@ export class EventController {
       }
 
       // Todos os novos eventos começam como inativos até o pagamento/aprovação
-      const isQuote = locationType === "OTHER";
+      const isQuote = (locationType === "OTHER" && req.body.flowType !== "PACKAGE");
       
       // ── LOGICA DE CONVOCAÇÃO TÁTICA (PROXIMIDADE) ──
       // Se houver profissional preferencial (indicado pelo cliente), ele é o titular
@@ -773,7 +773,7 @@ export class EventController {
         }).catch(e => console.error("Erro ao notificar profissional fixo:", e));
       });
 
-      if (locationType === "PARTNER") {
+      if (locationType === "PARTNER" || req.body.flowType === "PACKAGE") {
         const order = await prisma.order.create({
           data: {
             eventId: event.id,

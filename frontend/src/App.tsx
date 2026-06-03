@@ -20,6 +20,9 @@ import { AuthSelectionPage } from "./pages/AuthSelectionPage";
 import { RegisterPage } from "./pages/RegisterPage";
 import ClienteArea from "./pages/ClienteArea";
 import { QuotePage } from "./pages/QuotePage";
+import { PackageFlowPage } from "./pages/quote/PackageFlowPage";
+import { PartnerFlowPage } from "./pages/quote/PartnerFlowPage";
+import { CustomFlowPage } from "./pages/quote/CustomFlowPage";
 import { PartnerLP } from "./pages/PartnerLP";
 import { NotFoundPage } from "./pages/NotFoundPage";
 import { CheckoutPage } from "./pages/CheckoutPage";
@@ -115,6 +118,9 @@ const AnimatedRoutes = () => {
         <Route path="/reset-password" element={<ResetPasswordPage />} />
         <Route path="/forgot-password" element={<ForgotPasswordPage />} />
         <Route path="/cotacao" element={<QuotePage />} />
+        <Route path="/cotacao/pacotes" element={<PackageFlowPage />} />
+        <Route path="/cotacao/unidades" element={<PartnerFlowPage />} />
+        <Route path="/cotacao/customizado" element={<CustomFlowPage />} />
         <Route path="/p/:slug" element={<PartnerLP />} />
         <Route path="/checkout" element={<CheckoutPage />} />
         <Route path="/checkout/:orderId" element={<CheckoutPage />} />

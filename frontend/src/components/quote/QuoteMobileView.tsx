@@ -14,7 +14,8 @@ export const QuoteMobileView = (props: any) => {
     availableServices, selectedServices, setSelectedServices,
     name, setName, email, setEmail, whatsapp, setWhatsapp, attendees, setAttendees,
     submitting, handleSubmit,
-    totalPrice, getServicePrice
+    totalPrice, getServicePrice,
+    flowType
   } = props;
 
   const THEME = {
@@ -59,6 +60,25 @@ export const QuoteMobileView = (props: any) => {
         </div>
       </div>
 
+      {flowType && (
+        <div className="bg-emerald-500/10 border-b border-emerald-500/20 px-4 py-3 flex items-center justify-between shadow-xl">
+          <div className="flex items-center gap-2">
+            <span className="text-emerald-500 text-sm">⭐</span>
+            <div>
+              <div className="text-[9px] font-black uppercase tracking-widest text-emerald-500">Jornada Selecionada</div>
+              <div className="text-xs font-bold text-white">
+                {flowType === "PACKAGE" && "Pacote Fechado: Essencial (R$ 1.900)"}
+                {flowType === "PARTNER" && "Unidade Fixa (Casas Parceiras)"}
+                {flowType === "CUSTOM" && "Orçamento Sob Medida"}
+              </div>
+            </div>
+          </div>
+          <button onClick={() => setStep(0)} className="text-[9px] font-bold uppercase tracking-widest text-zinc-400 hover:text-white border-b border-white/10 pb-0.5">
+            Trocar
+          </button>
+        </div>
+      )}
+
       <div className="flex-1 px-4 py-4 space-y-6">
         <AnimatePresence mode="wait">
           <motion.div
@@ -72,22 +92,7 @@ export const QuoteMobileView = (props: any) => {
             {/* ====== PASSO 1: LOCAL ====== */}
             {step === 1 && (
               <>
-                <div className="grid grid-cols-2 gap-2">
-                  <button
-                    onClick={() => { setLocationType("PARTNER"); setSelectedPartnerId(""); }}
-                    className={`p-3 rounded-lg flex flex-col items-center justify-center gap-2 border transition-all ${locationType === "PARTNER" ? "bg-emerald-500/10 border-emerald-500/50 text-emerald-400" : "bg-zinc-900/50 border-white/5 text-zinc-400"}`}
-                  >
-                    <Building2 size={20} />
-                    <span className="text-[11px] font-bold uppercase tracking-wider">Unidade Fixa</span>
-                  </button>
-                  <button
-                    onClick={() => { setLocationType("OTHER"); setSelectedPartnerId(""); }}
-                    className={`p-3 rounded-lg flex flex-col items-center justify-center gap-2 border transition-all ${locationType === "OTHER" ? "bg-emerald-500/10 border-emerald-500/50 text-emerald-400" : "bg-zinc-900/50 border-white/5 text-zinc-400"}`}
-                  >
-                    <Map size={20} />
-                    <span className="text-[11px] font-bold uppercase tracking-wider">Outro Local</span>
-                  </button>
-                </div>
+                {/* Removidos botões de Local (Unidade Fixa vs Outro Local) pois é decidido na Landing Page pelo flowType */}
 
                 {locationType === "PARTNER" && (
                   <div className="space-y-2">

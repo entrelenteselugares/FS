@@ -247,6 +247,7 @@ node --input-type=commonjs -e "require('./src/tests/integration.test.ts')"
 </tasks>
 
 <verification>
+
 ## Verification
 
 1. `backend/src/tests/integration.test.ts` contém `describe("💸 Webhook Mercado Pago — Fluxos Críticos"`

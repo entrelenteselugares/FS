@@ -27,19 +27,31 @@ Implement UX refinements in the quote/booking flow:
 
 ### Frontend Pages
 
-#### [MODIFY] [QuotePage.tsx](file:///c:/foto-segundo/frontend/src/pages/QuotePage.tsx)
+#### [MODIFY] [QuoteDesktopView.tsx](file:///c:/foto-segundo/frontend/src/components/quote/QuoteDesktopView.tsx) & [QuoteMobileView.tsx](file:///c:/foto-segundo/frontend/src/components/quote/QuoteMobileView.tsx)
 
-- **Event Types:** Filter the `<select>` options for event categories based on `currentPartner.eventTypes` when a partner is selected. Fallback to all options if empty or no partner selected.
-- **Single-Select:**
-  - Change `workflowPref` state from `string[]` to `string` (defaulting to `"TRADICIONAL"`).
-  - Update the "Equipamento" (Mobile/Tradicional) UI to behave as radio buttons. Clicking a selected option does nothing; clicking another switches it.
-  - Apply the same radio-style behavior to "Finalidade" (Pessoal/Business).
-- Ensure both fields remain visible when a Unidade Fixa is selected.
+- **Nova Arquitetura de Passos (5 Passos):**
+  - **Passo 1: Onde e Quando** (Local e Data)
+  - **Passo 2: Dimensionamento** (Tipo de Evento, Duração, Dias, Convidados, Equipamento, Finalidade, Budget)
+  - **Passo 3: A Jornada (Serviços)**
+    - Categorizar os serviços em blocos visuais de linha do tempo: 
+      - *Pré evento:* Ensaios, Save the Date
+      - *Dia do evento:* Fotografia, Vídeo Bruto, Reels, Phygital
+      - *Pós evento:* Álbum Impresso, Edição Premium
+  - **Passo 4: Seus Dados** (Contato, Profissional preferencial, Obs)
+  - **Passo 5: Confirmação** (Protocolo e CTAs)
+- **Single-Select:** Garantir que "Equipamento" e "Finalidade" funcionem como radio buttons exclusivos.
 
 #### [MODIFY] [AdminSettings.tsx](file:///c:/foto-segundo/frontend/src/pages/admin/AdminSettings.tsx)
 
 - Add a multi-checkbox UI section to allow Unidades Fixas (Cartórios) to define their supported `eventTypes`.
 - Update the API payload when saving settings to include the selected `eventTypes`.
+
+## Open Questions
+
+> [!WARNING]
+> Para dividir os serviços em "Pré", "Durante" e "Pós", precisaremos de uma forma de mapear os serviços existentes para essas categorias.
+> Podemos fazer isso no frontend através de um mapeamento estático (hardcoded com base nos nomes ou IDs dos serviços), ou podemos adicionar um campo `fase` no banco de dados para cada serviço.
+> **Como você prefere? Mapeamento rápido no frontend ou controle total via banco de dados/admin?**
 
 ## User Review Required
 

@@ -283,6 +283,7 @@ R2_PUBLIC_URL=https://media.fotosegundo.com.br
 </tasks>
 
 <verification>
+
 ## Verification
 
 1. `npx tsc --noEmit` no backend retorna exit code 0 (zero erros de tipo)

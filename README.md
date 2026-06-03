@@ -39,7 +39,7 @@ cd backend && npx prisma generate
 npm run dev
 ```
 
-1. The application will be running with the API and frontend accessible.
+2. The application will be running with the API and frontend accessible.
 
 ## Core Features & Usage Examples
 

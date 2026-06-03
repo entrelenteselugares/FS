@@ -503,6 +503,7 @@ Adicionar state `const [downloading, setDownloading] = useState(false)` se não 
 </tasks>
 
 <verification>
+
 ## Verification
 
 1. `worker/` diretório existe com `package.json`, `src/index.ts`, `src/jobs/zip-vault.ts`, `Dockerfile`, `.env.example`

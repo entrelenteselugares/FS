@@ -318,11 +318,7 @@ export const HomePage = () => {
 
           <div className="hp-hero-search-desktop animate-reveal" style={{ display: "flex", gap: 16, justifyContent: "center" }}>
             <button id="btn-explorar-vitrine"
-              onClick={() => {
-                const vitrine = document.getElementById("vitrine");
-                if (vitrine) vitrine.scrollIntoView({ behavior: "smooth" });
-                else navigate("/vitrine");
-              }}
+              onClick={() => navigate("/vitrine")}
               className="lux-button-tactical px-10 py-5 text-[11px] font-display font-black uppercase tracking-[0.4em] italic shadow-2xl shadow-brand-tactical/20"
             >
               Explorar Vitrine

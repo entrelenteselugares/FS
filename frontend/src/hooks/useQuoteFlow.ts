@@ -46,7 +46,7 @@ const P = {
 export function useQuoteFlow() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const [step, setStep] = useState(1);
+  const [step, setStep] = useState(0);
   const [loading, setLoading] = useState(true);
   const [partners, setPartners] = useState<Partner[]>([]);
   const [pros, setPros] = useState<Professional[]>([]);
@@ -56,6 +56,7 @@ export function useQuoteFlow() {
   const [isMobileSheetOpen, setIsMobileSheetOpen] = useState(true);
 
   // Form State
+  const [flowType, setFlowType] = useState<"PACKAGE" | "PARTNER" | "CUSTOM" | null>(null);
   const [selectedServices, setSelectedServices] = useState<string[]>([]);
   const [catalog, setCatalog] = useState<Service[]>([]);
 
@@ -266,6 +267,7 @@ export function useQuoteFlow() {
       availableBudget,
       preferredProfessionalId,
       workflowPref,
+      flowType,
       status: "PENDING"
     };
 
@@ -292,7 +294,11 @@ export function useQuoteFlow() {
     const isLocalOk = locationType === "PARTNER" ? !!selectedPartnerId : (!!customCep && !!addressData.logradouro);
     if (step === 1) {
       if (isLocalOk && eventDate) {
-        setStep(2);
+        if (flowType === "PACKAGE") {
+          setStep(3);
+        } else {
+          setStep(2);
+        }
         setIsMobileSheetOpen(true);
         window.scrollTo(0,0);
       } else {
@@ -303,14 +309,21 @@ export function useQuoteFlow() {
         }
       }
     } else if (step === 2) {
-      setStep(3);
+      setStep(flowType === "PACKAGE" ? 4 : 3);
+      setIsMobileSheetOpen(true);
+      window.scrollTo(0,0);
+    } else if (step === 3) {
+      setStep(4);
       setIsMobileSheetOpen(true);
       window.scrollTo(0,0);
     }
   };
 
   const prevStep = () => {
-    if (step > 1) {
+    if (step === 3 && flowType === "PACKAGE") {
+      setStep(1);
+      window.scrollTo(0,0);
+    } else if (step > 0) {
       setStep(step - 1);
       window.scrollTo(0,0);
     } else {
@@ -318,11 +331,32 @@ export function useQuoteFlow() {
     }
   };
 
+  const selectFlow = (type: "PACKAGE" | "PARTNER" | "CUSTOM") => {
+    setFlowType(type);
+    
+    if (type === "PACKAGE") {
+      setLocationType("OTHER"); // By default package uses custom address (CEP)
+      setEventHours(6);
+      setSelectedServices(["foto", "video", "reels"]);
+      setAttendees("100"); // some default
+    } else if (type === "PARTNER") {
+      setLocationType("PARTNER");
+      setSelectedServices([]);
+    } else {
+      setLocationType("OTHER");
+      setSelectedServices([]);
+    }
+    
+    setStep(1);
+    window.scrollTo(0, 0);
+  };
+
   return {
-    step, setStep, nextStep, prevStep,
+    step, setStep, nextStep, prevStep, selectFlow,
     loading, partners, pros,
     preferredProfessionalId, setPreferredProfessionalId,
     isMobileSheetOpen, setIsMobileSheetOpen,
+    flowType,
     selectedServices, setSelectedServices,
     catalog, availableServices,
     attendees, setAttendees,

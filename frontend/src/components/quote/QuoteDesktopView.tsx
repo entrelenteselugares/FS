@@ -1,34 +1,8 @@
-// @ts-nocheck
-import { useState, useEffect, useRef, useMemo } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Users, Calendar, ArrowRight, ShieldCheck, ChevronLeft, ChevronRight, Clock, Home, Zap, Camera, Video, Printer, Smartphone, Building2, GraduationCap, Utensils } from "lucide-react";
-import { API } from "../../lib/api";
-import { useNavigate, Link, useSearchParams } from "react-router-dom";
-import { useAuth } from "../../hooks/useAuth";
-import { useViaCep } from "../../hooks/useViaCep";
+import { useNavigate, Link } from "react-router-dom";
 
-interface Professional {
-  id: string;
-  nome?: string;
-  address?: string;
-  user?: {
-    nome: string;
-    address?: string;
-  };
-}
 
-const P = {
-  COST_SENIOR: 160,
-  COST_AUX: 60,
-  FEE_TOLL: 25,
-  BASE_FREIGHT: 15,
-  KM_RATE: 2.50,
-  SERVICES: [
-    { id: "foto", label: "FOTOGRAFIA DIGITAL", price: 190, required: true, category: "Geral", description: "Cobertura fotográfica profissional." },
-    { id: "video", label: "VÍDEO BRUTO", price: 190, category: "Geral", description: "Captação de vídeo sem edição." },
-    { id: "reels", label: "REELS / MOBILE", price: 120, category: "Geral", description: "Vídeos curtos otimizados para redes sociais." },
-    { id: "impresso", label: "ÁLBUM / IMPRESSA", price: 120, category: "Phygital", description: "Impressão de fotos durante o evento." },
-  ]
-};
 
 const THEME = {
   bg: "var(--bg)",
@@ -64,20 +38,6 @@ interface Partner {
   workingHours?: WorkingHours;
   disabledServices?: string[];
   eventTypes?: string[];
-}
-
-interface UserProfile {
-  nome?: string;
-  email?: string;
-  whatsapp?: string;
-}
-
-interface Service {
-  id: string;
-  name: string;
-  basePrice: number;
-  category?: string;
-  description?: string;
 }
 
 function DateTimePicker({ value, onChange, workingHours }: { value: string; onChange: (v: string) => void; workingHours?: WorkingHours | null }) {
@@ -288,8 +248,8 @@ function DateTimePicker({ value, onChange, workingHours }: { value: string; onCh
   );
 }
 
-export const QuoteDesktopView = (props: any) => {
-  const { step, setStep, nextStep, prevStep, loading, partners, pros, preferredProfessionalId, setPreferredProfessionalId, isMobileSheetOpen, setIsMobileSheetOpen, selectedServices, setSelectedServices, catalog, availableServices, attendees, setAttendees, locationType, setLocationType, usageType, setUsageType, workflowPref, setWorkflowPref, selectedPartnerId, setSelectedPartnerId, category, setCategory, currentPartner, customCep, setCustomCep, handleCepChange, isCepLoading, addressData, setAddressData, addressNumber, setAddressNumber, eventDate, setEventDate, eventHours, setEventHours, eventDays, setEventDays, description, setDescription, availableBudget, setAvailableBudget, name, setName, email, setEmail, whatsapp, setWhatsapp, team, showPrices, getServicePrice, servicesPrice, freight, totalPrice, submitting, createdQuoteId, submitError, handleSubmit } = props;
+export const QuoteDesktopView = (props: Record<string, unknown>) => {
+  const { step, setStep, nextStep, prevStep, loading, partners, pros, preferredProfessionalId, setPreferredProfessionalId, flowType, selectedServices, setSelectedServices, availableServices, attendees, setAttendees, locationType, setLocationType, usageType, setUsageType, workflowPref, setWorkflowPref, selectedPartnerId, setSelectedPartnerId, category, setCategory, currentPartner, customCep, handleCepChange, isCepLoading, addressData, addressNumber, setAddressNumber, eventDate, setEventDate, eventHours, setEventHours, eventDays, setEventDays, description, setDescription, availableBudget, setAvailableBudget, name, setName, email, setEmail, whatsapp, setWhatsapp, showPrices, getServicePrice, totalPrice, submitting, createdQuoteId, submitError, handleSubmit } = props as any;
 
   const navigate = useNavigate();
 
@@ -363,6 +323,61 @@ export const QuoteDesktopView = (props: any) => {
           </h1>
         </header>
 
+        {flowType && flowType !== "PACKAGE" && (
+          <div className="mb-8 p-4 bg-emerald-500/10 border border-emerald-500/20 rounded-xl flex items-center justify-between shadow-xl">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-full bg-emerald-500/20 flex items-center justify-center">
+                <span className="text-emerald-500">⭐</span>
+              </div>
+              <div>
+                <div className="text-[10px] font-black uppercase tracking-widest text-emerald-500">Jornada Selecionada</div>
+                <div className="text-sm font-bold text-theme-text">
+                  {flowType === "PARTNER" && "Unidade Fixa (Casas Parceiras)"}
+                  {flowType === "CUSTOM" && "Orçamento Sob Medida"}
+                </div>
+              </div>
+            </div>
+            <button onClick={() => window.location.href = '/cotacao'} className="text-[10px] font-bold uppercase tracking-widest text-theme-text-muted hover:text-theme-text transition-colors border-b border-theme-border pb-1">
+              Trocar
+            </button>
+          </div>
+        )}
+
+        {flowType === "PACKAGE" && props.availablePackages && (
+          <div className="mb-8">
+            <div className="flex items-center justify-between mb-4">
+              <label className="text-[10px] font-black uppercase tracking-widest text-emerald-500">Escolha o seu Pacote</label>
+              <button onClick={() => window.location.href = '/cotacao'} className="text-[10px] font-bold uppercase tracking-widest text-theme-text-muted hover:text-theme-text transition-colors border-b border-theme-border pb-1">
+                Voltar à Vitrine
+              </button>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {props.availablePackages.map((pkg: any) => (
+                <div 
+                  key={pkg.id}
+                  onClick={() => props.setSelectedPackageId(pkg.id)}
+                  className={`p-5 rounded-xl border cursor-pointer transition-all ${
+                    props.selectedPackageId === pkg.id 
+                      ? "bg-emerald-500/10 border-emerald-500 shadow-[0_0_20px_rgba(16,185,129,0.15)] scale-[1.02]" 
+                      : "bg-theme-bg-muted border-theme-border hover:border-emerald-500/50 hover:bg-theme-bg"
+                  }`}
+                >
+                  <div className="flex items-start justify-between mb-2">
+                    <h4 className="text-sm font-black uppercase tracking-widest text-theme-text">{pkg.name}</h4>
+                    {props.selectedPackageId === pkg.id && <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />}
+                  </div>
+                  <div className="text-[10px] text-theme-text-muted mb-4 uppercase tracking-widest leading-relaxed">
+                    {pkg.desc}
+                  </div>
+                  <div className="text-lg font-black text-emerald-500">
+                    R$ {pkg.price.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
         {/* ─── PASSO 1: Onde e Quando ─── */}
         {step === 1 && (
           <div 
@@ -374,19 +389,9 @@ export const QuoteDesktopView = (props: any) => {
               
               {/* 01. Local do Registro */}
               <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-                <label style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", color: THEME.text }}>01. Local do Registro</label>
-                <div className="mobile-stack" style={{ display: "flex", gap: 8 }}>
-                  <button 
-                    type="button"
-                    onClick={() => setLocationType("PARTNER")}
-                    style={{ flex: 1, padding: 12, border: locationType === "PARTNER" ? `2px solid ${THEME.accent}` : `1px solid ${THEME.border}`, background: locationType === "PARTNER" ? `${THEME.accent}15` : "var(--theme-bg-muted)", boxShadow: locationType === "PARTNER" ? "0 0 15px rgba(133,185,172,0.2)" : "none", fontSize: 10, fontWeight: 900, color: locationType === "PARTNER" ? THEME.accent : THEME.text2, cursor: "pointer" }}
-                  >UNIDADE FIXA</button>
-                  <button 
-                    type="button"
-                    onClick={() => setLocationType("OTHER")}
-                    style={{ flex: 1, padding: 12, border: locationType === "OTHER" ? `2px solid ${THEME.accent}` : `1px solid ${THEME.border}`, background: locationType === "OTHER" ? `${THEME.accent}15` : "var(--theme-bg-muted)", boxShadow: locationType === "OTHER" ? "0 0 15px rgba(133,185,172,0.2)" : "none", fontSize: 10, fontWeight: 900, color: locationType === "OTHER" ? THEME.accent : THEME.text2, cursor: "pointer" }}
-                  >ORÇAMENTO</button>
-                </div>
+                <label style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", color: THEME.text }}>
+                  {locationType === "PARTNER" ? "01. Selecione a Unidade Fixa" : "01. Endereço do Evento"}
+                </label>
 
                 <div className="mobile-grid-1" style={{ display: "grid", gridTemplateColumns: "1fr", gap: 8 }}>
                    {locationType === "PARTNER" ? (
@@ -482,8 +487,7 @@ export const QuoteDesktopView = (props: any) => {
                   onClick={() => {
                     const isLocalOk = locationType === "PARTNER" ? !!selectedPartnerId : (!!customCep && !!addressData.logradouro);
                     if (isLocalOk && eventDate) {
-                      setStep(2);
-                      window.scrollTo(0,0);
+                      nextStep();
                     } else {
                       if (locationType === "OTHER" && (!addressData.logradouro || !customCep)) {
                         alert("Por favor, digite um CEP válido para encontrarmos o endereço.");
@@ -494,7 +498,7 @@ export const QuoteDesktopView = (props: any) => {
                   }}
                   style={{ background: THEME.accent, color: "black", padding: "15px 30px", fontWeight: 900, fontSize: 12, textTransform: "uppercase", letterSpacing: 2, display: "flex", alignItems: "center", gap: 10, border: "none", cursor: "pointer" }}
                 >
-                  PRÓXIMO: CONFIGURAÇÃO <ArrowRight size={16} />
+                  {flowType === "PACKAGE" ? "PRÓXIMO: SEUS DADOS" : "PRÓXIMO: CONFIGURAÇÃO"} <ArrowRight size={16} />
                 </button>
               </div>
             </div>

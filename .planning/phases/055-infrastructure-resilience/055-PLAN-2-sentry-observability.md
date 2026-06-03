@@ -154,6 +154,7 @@ VITE_SENTRY_DSN=
 </tasks>
 
 <verification>
+
 ## Verification
 
 1. `backend/package.json` lista `@sentry/node` como dependência

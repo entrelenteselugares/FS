@@ -5,6 +5,7 @@
 **Source:** PRD Express Path — Post-Mortem Prospectivo (2026-05-30)
 
 <domain>
+
 ## Phase Boundary
 
 Esta fase resolve as 3 causas de morte identificadas no post-mortem prospectivo escrito em 2026-05-30, antes que o incidente real ocorra. Ela NÃO adiciona features de produto. É infraestrutura pura.
@@ -26,6 +27,7 @@ Esta fase resolve as 3 causas de morte identificadas no post-mortem prospectivo 
 </domain>
 
 <decisions>
+
 ## Implementation Decisions
 
 ### 1. Storage: Cloudflare R2
@@ -121,6 +123,7 @@ Esta fase resolve as 3 causas de morte identificadas no post-mortem prospectivo 
 </canonical_refs>
 
 <specifics>
+
 ## Specific Ideas
 
 - R2 Pre-signed PUT URLs devem ter expiração de 15 minutos (suficiente para upload de vídeos em conexões lentas no campo)
@@ -131,6 +134,7 @@ Esta fase resolve as 3 causas de morte identificadas no post-mortem prospectivo 
 </specifics>
 
 <deferred>
+
 ## Deferred Ideas
 
 - Migração do Supabase para Neon.tech (avaliação técnica post-Phase 55, ao atingir 200 eventos/mês)
