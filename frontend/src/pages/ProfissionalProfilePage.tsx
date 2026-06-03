@@ -3,7 +3,7 @@ import { useParams, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
   ShieldCheck, MapPin, Camera, Clock, Star,
-  ChevronLeft, Lock, CheckCircle2, Zap
+  ChevronLeft, Lock, CheckCircle2, Zap, Award, ArrowRight
 } from "lucide-react";
 import { API } from "../lib/api";
 import { Navbar } from "../components/Navbar";
@@ -64,69 +64,65 @@ function BookingModal({
   const fee = (activePrice * 0.2).toFixed(2);
 
   return (
-    <div className="fixed inset-0 z-[5000] flex items-center justify-center p-6 bg-black/90 backdrop-blur-xl">
+    <div className="fixed inset-0 z-[5000] flex items-end sm:items-center justify-center bg-black/80 backdrop-blur-xl">
       <motion.div
-        initial={{ opacity: 0, scale: 0.95, y: 20 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
-        className="w-full max-w-lg bg-zinc-950 border border-brand-tactical/20 p-8 space-y-8 relative"
+        initial={{ opacity: 0, y: 40 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="w-full sm:max-w-lg bg-zinc-950 border border-white/10 sm:rounded-2xl rounded-t-2xl overflow-hidden"
       >
-        <div className="absolute top-0 right-0 w-32 h-32 bg-brand-tactical/10 rounded-full blur-3xl pointer-events-none" />
-
-        <div className="space-y-1 relative z-10">
-          <p className="text-[9px] font-black text-brand-tactical uppercase tracking-widest italic">Taxa de Reserva</p>
-          <h2 className="text-2xl font-heading font-black text-white uppercase italic tracking-tight">
+        {/* Header */}
+        <div className="px-6 pt-6 pb-4 border-b border-white/5">
+          <p className="text-[9px] font-black text-brand-tactical uppercase tracking-widest italic mb-1">Taxa de Reserva</p>
+          <h2 className="text-xl font-heading font-black text-white uppercase italic tracking-tight">
             Reservar {prof.nome}
           </h2>
-          <p className="text-xs text-zinc-500 leading-relaxed">
-            Pague a taxa de 20% (R$ {fee}) para receber o WhatsApp do profissional e alinhar os detalhes finais.
-          </p>
         </div>
 
-        <div className="relative z-10 space-y-4">
-          <div className="p-4 bg-zinc-900 border border-zinc-800">
-            <p className="text-[9px] font-black text-zinc-500 uppercase tracking-widest">Pacote Selecionado</p>
-            <p className="text-sm font-black text-white mt-1">{state.service.name}</p>
-            <div className="flex items-center justify-between mt-2">
-              <span className="text-[10px] text-zinc-500 font-bold">Valor Completo</span>
-              <span className="text-sm font-heading font-black text-white italic">
-                R$ {activePrice.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
-              </span>
+        <div className="px-6 py-5 space-y-4">
+          {/* Package info */}
+          <div className="flex items-center justify-between bg-white/5 rounded-xl p-4">
+            <div>
+              <p className="text-[9px] font-black text-zinc-500 uppercase tracking-widest mb-1">Pacote</p>
+              <p className="text-sm font-black text-white">{state.service.name}</p>
             </div>
-            <div className="flex items-center justify-between">
-              <span className="text-[10px] text-brand-tactical font-black uppercase">Taxa de Reserva (20%)</span>
-              <span className="text-lg font-heading font-black text-brand-tactical italic">R$ {fee}</span>
+            <div className="text-right">
+              <p className="text-xl font-heading font-black text-brand-tactical italic">R$ {fee}</p>
+              <p className="text-[8px] text-zinc-500 font-bold uppercase">taxa (20%)</p>
             </div>
           </div>
 
-          <div className="space-y-2">
-            <label className="text-[9px] font-black text-zinc-500 uppercase tracking-widest">Seu WhatsApp (para contato)</label>
+          {/* Phone input */}
+          <div>
+            <label className="text-[9px] font-black text-zinc-500 uppercase tracking-widest block mb-2">Seu WhatsApp</label>
             <input
-              className="w-full bg-zinc-900 border border-zinc-800 p-3 text-sm text-white placeholder-zinc-600 focus:border-brand-tactical/50 outline-none"
+              className="w-full bg-white/5 border border-white/10 rounded-xl p-3.5 text-sm text-white placeholder-zinc-600 focus:border-brand-tactical/50 outline-none transition-colors"
               placeholder="(11) 99999-9999"
               value={state.phone}
               onChange={e => onChange("phone", e.target.value)}
             />
           </div>
 
-          <div className="p-3 bg-brand-tactical/10 border border-brand-tactical/20 flex items-start gap-3">
-            <Lock size={14} className="text-brand-tactical mt-0.5 flex-shrink-0" />
+          {/* Notice */}
+          <div className="flex items-start gap-3 bg-brand-tactical/5 border border-brand-tactical/15 rounded-xl p-3.5">
+            <Lock size={12} className="text-brand-tactical mt-0.5 flex-shrink-0" />
             <p className="text-[9px] text-zinc-400 leading-relaxed font-medium">
-              Após o pagamento, o WhatsApp de <strong className="text-white">{prof.nome}</strong> será liberado para você por e-mail e notificação. O restante é pago diretamente ao profissional.
+              Após o pagamento, o WhatsApp de <strong className="text-white">{prof.nome}</strong> será liberado por e-mail. O restante é pago diretamente ao profissional.
             </p>
           </div>
         </div>
 
-        <div className="flex gap-3 relative z-10">
+        {/* Actions */}
+        <div className="flex gap-3 px-6 pb-6">
           <button
             onClick={onClose}
-            className="flex-1 px-6 py-4 border border-zinc-800 text-zinc-400 text-[10px] font-black uppercase tracking-widest hover:border-zinc-600 transition-all"
+            className="flex-1 px-4 py-3.5 border border-white/10 rounded-xl text-zinc-400 text-[10px] font-black uppercase tracking-widest hover:border-white/20 transition-all"
           >
             Cancelar
           </button>
           <button
             onClick={onSubmit}
             disabled={state.loading || !state.phone}
-            className="flex-[2] px-6 py-4 bg-brand-tactical text-black text-[10px] font-black uppercase tracking-widest hover:brightness-110 disabled:opacity-40 transition-all"
+            className="flex-[2] px-4 py-3.5 bg-brand-tactical text-black rounded-xl text-[10px] font-black uppercase tracking-widest hover:brightness-110 disabled:opacity-40 transition-all"
           >
             {state.loading ? "PROCESSANDO..." : `PAGAR R$ ${fee}`}
           </button>
@@ -191,7 +187,7 @@ export default function ProfissionalProfilePage() {
   if (loading) {
     return (
       <div className="min-h-screen bg-zinc-950 flex items-center justify-center">
-        <div className="w-12 h-12 border-2 border-brand-tactical border-t-transparent rounded-full animate-spin" />
+        <div className="w-10 h-10 border-2 border-brand-tactical border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
@@ -217,239 +213,254 @@ export default function ProfissionalProfilePage() {
         onSubmit={handleBook}
       />
 
-      {/* Back */}
-      <div className="max-w-5xl mx-auto px-6 pt-8">
-        <Link to="/profissionais" className="inline-flex items-center gap-2 text-[10px] font-black text-zinc-500 uppercase tracking-widest hover:text-brand-tactical transition-colors">
-          <ChevronLeft size={14} /> Voltar ao Diretório
-        </Link>
-      </div>
-
-      {/* Banner / Cover */}
-      <div className="relative w-full h-48 md:h-64 bg-zinc-900 border-b border-zinc-800">
-        {prof.coverImageUrl ? (
-          <img src={prof.coverImageUrl} alt="Cover" className="w-full h-full object-cover opacity-80" />
-        ) : (
-          <div className="w-full h-full flex flex-col items-center justify-center text-zinc-800">
-            <Camera size={64} className="opacity-50" />
-          </div>
-        )}
-        <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/40 to-transparent" />
-      </div>
-
-      {/* Hero */}
-      <div className="max-w-5xl mx-auto px-6 pb-10 -mt-20 relative z-10">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="flex flex-col md:flex-row gap-6 md:gap-10 items-start md:items-end"
-        >
-          {/* Avatar */}
-          <div className="relative flex-shrink-0">
-            <div className="w-32 h-32 md:w-40 md:h-40 rounded-full bg-zinc-800 overflow-hidden border-4 border-zinc-950 shadow-2xl">
-              {prof.profileImageUrl ? (
-                <img src={prof.profileImageUrl} alt={prof.nome} className="w-full h-full object-cover" />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center text-zinc-600 bg-zinc-900 text-3xl font-black">
-                  {prof.nome.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2)}
-                </div>
-              )}
+      {/* ── HERO ── */}
+      <div className="relative">
+        {/* Cover */}
+        <div className="relative h-52 md:h-72 bg-zinc-900 overflow-hidden">
+          {prof.coverImageUrl ? (
+            <img src={prof.coverImageUrl} alt="Cover" className="w-full h-full object-cover opacity-70" />
+          ) : (
+            <div className="w-full h-full bg-gradient-to-br from-zinc-900 via-zinc-800 to-zinc-900 flex items-center justify-center">
+              <Camera size={56} className="text-zinc-700" />
             </div>
-            {prof.isVerified && (
-              <div className="absolute bottom-2 right-2 bg-brand-tactical w-8 h-8 rounded-full flex items-center justify-center border-2 border-zinc-950 shadow-lg">
-                <ShieldCheck size={14} className="text-black" />
-              </div>
-            )}
-          </div>
+          )}
+          <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/20 to-transparent" />
+        </div>
 
-          {/* Info */}
-          <div className="flex-1 space-y-4">
-            <div>
-              <div className="flex items-center gap-3 flex-wrap">
-                <h1 className="text-4xl md:text-5xl font-heading font-black text-white uppercase italic tracking-tighter">
-                  {prof.nome}
-                </h1>
-                {prof.isSubscriber && (
-                  <span className="px-3 py-1 bg-brand-tactical/10 border border-brand-tactical/30 text-brand-tactical text-[8px] font-black uppercase tracking-widest flex items-center gap-1.5">
-                    <Star size={8} fill="currentColor" /> PRO ASSINANTE
-                  </span>
-                )}
-              </div>
-              {city && (
-                <div className="flex items-center gap-4">
-                  <p className="flex items-center gap-1.5 text-sm text-zinc-500 font-bold mt-2">
-                    <MapPin size={14} /> {city}
-                  </p>
-                  {prof.serviceRadiusKm && (
-                    <p className="text-[10px] text-zinc-600 font-black uppercase tracking-widest mt-2 bg-zinc-900 px-2 py-0.5 border border-zinc-800">
-                      Raio: {prof.serviceRadiusKm}km
-                    </p>
+        {/* Back button */}
+        <div className="absolute top-4 left-4">
+          <Link
+            to="/profissionais"
+            className="inline-flex items-center gap-1.5 text-[9px] font-black text-white/70 uppercase tracking-widest bg-black/40 backdrop-blur-sm border border-white/10 px-3 py-2 rounded-full hover:text-brand-tactical transition-colors"
+          >
+            <ChevronLeft size={12} /> Diretório
+          </Link>
+        </div>
+
+        {/* Profile card overlapping cover */}
+        <div className="max-w-5xl mx-auto px-4 md:px-6">
+          <div className="-mt-20 relative z-10 pb-6">
+            <div className="flex flex-col sm:flex-row gap-5 sm:items-end">
+              {/* Avatar */}
+              <div className="relative flex-shrink-0">
+                <div className="w-28 h-28 md:w-32 md:h-32 rounded-2xl bg-zinc-800 overflow-hidden border-4 border-zinc-950 shadow-2xl">
+                  {prof.profileImageUrl ? (
+                    <img src={prof.profileImageUrl} alt={prof.nome} className="w-full h-full object-cover" />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-zinc-500 bg-zinc-900 text-3xl font-black">
+                      {prof.nome.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2)}
+                    </div>
                   )}
                 </div>
-              )}
+                {prof.isVerified && (
+                  <div className="absolute -bottom-1 -right-1 bg-brand-tactical w-7 h-7 rounded-lg flex items-center justify-center border-2 border-zinc-950">
+                    <ShieldCheck size={13} className="text-black" />
+                  </div>
+                )}
+              </div>
+
+              {/* Name + meta */}
+              <div className="flex-1 min-w-0 space-y-2">
+                <div className="flex flex-wrap items-center gap-2">
+                  <h1 className="text-3xl md:text-4xl font-heading font-black text-white uppercase italic tracking-tighter leading-none">
+                    {prof.nome}
+                  </h1>
+                  {prof.isSubscriber && (
+                    <span className="px-2.5 py-1 bg-brand-tactical/10 border border-brand-tactical/30 text-brand-tactical text-[7px] font-black uppercase tracking-widest flex items-center gap-1 rounded-full">
+                      <Star size={7} fill="currentColor" /> PRO
+                    </span>
+                  )}
+                </div>
+
+                {city && (
+                  <div className="flex items-center gap-3 flex-wrap">
+                    <p className="flex items-center gap-1.5 text-xs text-zinc-400 font-semibold">
+                      <MapPin size={12} className="text-brand-tactical" /> {city}
+                    </p>
+                    {prof.serviceRadiusKm && (
+                      <span className="text-[9px] text-zinc-600 font-black uppercase tracking-widest bg-zinc-900 border border-zinc-800 px-2 py-0.5 rounded-full">
+                        Raio {prof.serviceRadiusKm}km
+                      </span>
+                    )}
+                  </div>
+                )}
+
+                {/* Service tags */}
+                <div className="flex flex-wrap gap-1.5">
+                  {prof.services.slice(0, 5).map(s => (
+                    <span key={s} className="px-2.5 py-1 bg-zinc-800/80 border border-zinc-700/50 text-[8px] font-black text-zinc-300 uppercase tracking-wider rounded-full">
+                      {s}
+                    </span>
+                  ))}
+                  {prof.workflowType.includes("MOBILE") && (
+                    <span className="px-2.5 py-1 bg-brand-tactical/10 border border-brand-tactical/30 text-[8px] font-black text-brand-tactical uppercase tracking-wider rounded-full">
+                      Mobile Maker
+                    </span>
+                  )}
+                </div>
+              </div>
             </div>
 
-            {/* Stats row */}
-            <div className="grid grid-cols-3 md:grid-cols-4 gap-4">
+            {/* ── Compact Stats Bar ── */}
+            <div className="mt-5 grid grid-cols-4 gap-2 bg-zinc-900/60 border border-zinc-800/60 rounded-2xl p-3">
               {[
-                { label: "Anos Exp.", value: prof.experienceYears || "—" },
-                { label: "Missões", value: prof.totalMissions },
-                { label: "Entrega Média", value: prof.avgDeliveryHours > 0 ? `${prof.avgDeliveryHours}h` : "—" },
+                { label: "Exp.", value: prof.experienceYears ? `${prof.experienceYears}a` : "—" },
+                { label: "Missões", value: prof.totalMissions ?? 0 },
+                { label: "Entrega", value: prof.avgDeliveryHours > 0 ? `${prof.avgDeliveryHours}h` : "—" },
                 { label: "Pontos", value: prof.agilityPoints, accent: true },
               ].map(s => (
-                <div key={s.label} className="bg-zinc-900 border border-zinc-800 p-4 text-center">
-                  <p className={`text-2xl font-heading font-black italic ${s.accent ? "text-brand-tactical" : "text-white"}`}>
+                <div key={s.label} className="text-center py-2">
+                  <p className={`text-xl font-heading font-black italic leading-none ${s.accent ? "text-brand-tactical" : "text-white"}`}>
                     {s.value}
                   </p>
-                  <p className="text-[8px] text-zinc-600 uppercase tracking-widest font-black mt-1">{s.label}</p>
+                  <p className="text-[7px] text-zinc-600 uppercase tracking-widest font-black mt-1">{s.label}</p>
                 </div>
               ))}
-            </div>
-
-            {/* Services chips */}
-            <div className="flex flex-wrap gap-2">
-              {prof.services.map(s => (
-                <span key={s} className="px-3 py-1 bg-zinc-800 border border-zinc-700 text-[9px] font-black text-zinc-300 uppercase tracking-widest">
-                  {s}
-                </span>
-              ))}
-              {prof.workflowType.includes("MOBILE") && (
-                <span className="px-3 py-1 bg-zinc-800 border border-zinc-700 text-[9px] font-black text-brand-tactical uppercase tracking-widest">
-                  MOBILE MAKER
-                </span>
-              )}
             </div>
 
             {prof.otherHabilities && (
-              <p className="text-sm text-zinc-400 leading-relaxed max-w-xl">{prof.otherHabilities}</p>
+              <p className="mt-4 text-sm text-zinc-400 leading-relaxed max-w-2xl">
+                {prof.otherHabilities}
+              </p>
             )}
           </div>
-        </motion.div>
-      </div>
-
-      {/* Divider */}
-      <div className="max-w-5xl mx-auto px-6">
-        <div className="h-px bg-zinc-800" />
-      </div>
-
-      {/* Packages */}
-      <div className="max-w-5xl mx-auto px-6 py-12 space-y-8">
-        <div className="flex items-center gap-4">
-          <h2 className="text-2xl font-heading font-black text-white uppercase italic">Pacotes Disponíveis</h2>
-          <div className="flex-1 h-px bg-zinc-800" />
         </div>
+      </div>
 
-        {prof.proServices.length === 0 ? (
-          <div className="py-16 text-center border  border-zinc-800">
-            <Camera size={48} className="text-zinc-700 mx-auto mb-4" />
-            <p className="text-zinc-600 text-sm uppercase tracking-widest font-black">
-              Nenhum pacote cadastrado ainda
-            </p>
+      {/* ── BODY ── */}
+      <div className="max-w-5xl mx-auto px-4 md:px-6 space-y-14 pb-20">
+
+        {/* ── PACKAGES ── */}
+        <section>
+          <div className="flex items-center gap-3 mb-6">
+            <Award size={16} className="text-brand-tactical" />
+            <h2 className="text-sm font-heading font-black text-white uppercase italic tracking-widest">Pacotes Disponíveis</h2>
+            <div className="flex-1 h-px bg-zinc-800" />
+            <span className="text-[9px] text-zinc-600 font-black uppercase tracking-widest">
+              {prof.proServices.length} {prof.proServices.length === 1 ? "pacote" : "pacotes"}
+            </span>
           </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {prof.proServices.map(svc => {
-              const activePrice = svc.price || svc.basePrice || 0;
-              const fee = (activePrice * 0.2).toFixed(2);
-              return (
-                <motion.div
-                  key={svc.id}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="bg-zinc-900 border border-zinc-800 hover:border-brand-tactical/30 transition-all p-6 space-y-4"
-                >
-                  <div className="flex items-start justify-between gap-4">
-                    <div className="space-y-1 flex-1">
-                      <h3 className="text-base font-heading font-black text-white uppercase italic">{svc.name}</h3>
-                      {svc.description && (
-                        <p className="text-xs text-zinc-500 leading-relaxed">{svc.description}</p>
+
+          {prof.proServices.length === 0 ? (
+            <div className="py-14 text-center border border-dashed border-zinc-800 rounded-2xl">
+              <Camera size={36} className="text-zinc-700 mx-auto mb-3" />
+              <p className="text-zinc-600 text-xs uppercase tracking-widest font-black">Nenhum pacote cadastrado</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-3 gap-2 md:gap-4">
+              {prof.proServices.map(svc => {
+                const activePrice = svc.price || svc.basePrice || 0;
+                const fee = (activePrice * 0.2).toFixed(2);
+                const hrs = Math.floor(svc.estimatedMinutes / 60);
+                const mins = svc.estimatedMinutes % 60;
+                return (
+                  <motion.div
+                    key={svc.id}
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="group bg-zinc-900/60 border border-zinc-800/60 hover:border-brand-tactical/30 rounded-xl md:rounded-2xl p-2 md:p-5 flex flex-col gap-2 md:gap-4 transition-all hover:shadow-lg hover:shadow-brand-tactical/5"
+                  >
+                    {/* Top */}
+                    <div className="flex flex-col md:flex-row items-start md:justify-between gap-1 md:gap-3">
+                      <div className="flex-1 min-w-0">
+                        <h3 className="text-[9px] md:text-sm font-heading font-black text-white uppercase italic leading-tight line-clamp-3 md:line-clamp-none">{svc.name}</h3>
+                        {svc.description && (
+                          <p className="hidden md:block text-[10px] text-zinc-500 mt-1 leading-relaxed line-clamp-2">{svc.description}</p>
+                        )}
+                      </div>
+                      <div className="flex-shrink-0 md:text-right mt-1 md:mt-0">
+                        <p className="text-[10px] md:text-lg font-heading font-black text-brand-tactical md:text-white italic leading-none">
+                          R$ {activePrice.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
+                        </p>
+                        <p className="hidden md:block text-[7px] text-zinc-600 uppercase tracking-widest font-black mt-0.5">total</p>
+                      </div>
+                    </div>
+
+                    {/* Meta */}
+                    <div className="flex flex-col md:flex-row items-start md:items-center gap-1 md:gap-3 text-[7px] md:text-[9px] text-zinc-500 font-bold uppercase mt-1 md:mt-0">
+                      <span className="flex items-center gap-1">
+                        <Clock size={8} className="md:w-[10px] md:h-[10px]" /> {hrs > 0 ? `${hrs}h` : ""}{mins > 0 ? `${mins}m` : ""}
+                      </span>
+                      <span className="flex items-center gap-1 text-zinc-400 md:text-brand-tactical">
+                        <Zap size={8} className="md:w-[10px] md:h-[10px]" /> <span className="hidden md:inline">Taxa</span> R$ {fee}
+                      </span>
+                    </div>
+
+                    {/* CTA */}
+                    <div className="mt-auto pt-1 md:pt-2">
+                      <div className="hidden md:flex items-center gap-1 text-[8px] text-zinc-700 font-black uppercase tracking-widest mb-2">
+                        <Lock size={8} /> Contato após pagamento
+                      </div>
+                      {user ? (
+                        <button
+                          onClick={() => setBooking({ open: true, service: svc, phone: "", loading: false, checkoutUrl: null })}
+                          className="w-full py-1.5 md:py-3 bg-brand-tactical text-black text-[7px] md:text-[9px] font-black uppercase tracking-widest rounded-lg md:rounded-xl hover:brightness-110 transition-all flex items-center justify-center gap-1 md:gap-2 group-hover:gap-3"
+                        >
+                          <span className="hidden md:inline">Reservar por R$ {fee}</span>
+                          <span className="md:hidden text-center leading-tight">Reservar</span>
+                          <ArrowRight size={8} className="md:w-[11px] md:h-[11px]" />
+                        </button>
+                      ) : (
+                        <Link
+                          to={`/login?redirect=/pro/${prof.id}`}
+                          className="block w-full flex items-center justify-center py-1.5 md:py-3 bg-zinc-800 text-zinc-300 text-center text-[7px] md:text-[9px] font-black uppercase tracking-widest rounded-lg md:rounded-xl hover:bg-zinc-700 transition-all leading-tight"
+                        >
+                          <span className="hidden md:inline">Entrar para reservar</span>
+                          <span className="md:hidden">Entrar</span>
+                        </Link>
                       )}
                     </div>
-                    <div className="text-right flex-shrink-0">
-                      <p className="text-2xl font-heading font-black text-white italic">
-                        R$ {activePrice.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
-                      </p>
-                      <p className="text-[8px] text-zinc-600 uppercase tracking-widest font-black">Valor Total</p>
-                    </div>
-                  </div>
+                  </motion.div>
+                );
+              })}
+            </div>
+          )}
+        </section>
 
-                  <div className="flex items-center gap-4 text-[10px] text-zinc-500 font-bold uppercase">
-                    <span className="flex items-center gap-1.5">
-                      <Clock size={12} /> {Math.floor(svc.estimatedMinutes / 60)}h{svc.estimatedMinutes % 60 > 0 ? `${svc.estimatedMinutes % 60}m` : ""}
-                    </span>
-                    <span className="flex items-center gap-1.5">
-                      <Zap size={12} className="text-brand-tactical" />
-                      <span className="text-brand-tactical">Taxa: R$ {fee}</span>
-                    </span>
-                  </div>
-
-                  <div className="pt-2 border-t border-zinc-800">
-                    <div className="flex items-center gap-2 mb-3 text-[9px] text-zinc-600 uppercase tracking-widest font-black">
-                      <Lock size={10} />
-                      Contato liberado após pagamento da taxa
-                    </div>
-                    {user ? (
-                      <button
-                        onClick={() => setBooking({ open: true, service: svc, phone: "", loading: false, checkoutUrl: null })}
-                        className="w-full py-3.5 bg-brand-tactical text-black text-[10px] font-black uppercase tracking-widest hover:brightness-110 transition-all"
-                      >
-                        Reservar por R$ {fee}
-                      </button>
-                    ) : (
-                      <Link
-                        to={`/login?redirect=/pro/${prof.id}`}
-                        className="block w-full py-3.5 bg-zinc-800 text-zinc-300 text-center text-[10px] font-black uppercase tracking-widest hover:bg-zinc-700 transition-all"
-                      >
-                        Faça login para reservar
-                      </Link>
-                    )}
-                  </div>
-                </motion.div>
-              );
-            })}
-          </div>
-        )}
-
-        {/* Portfolio Masonry */}
+        {/* ── PORTFOLIO ── */}
         {albums.length > 0 && (
-          <div className="pt-8 space-y-8">
-            <div className="flex items-center gap-4">
-              <h2 className="text-2xl font-heading font-black text-white uppercase italic">Portfólio</h2>
+          <section>
+            <div className="flex items-center gap-3 mb-6">
+              <Camera size={16} className="text-brand-tactical" />
+              <h2 className="text-sm font-heading font-black text-white uppercase italic tracking-widest">Portfólio</h2>
               <div className="flex-1 h-px bg-zinc-800" />
             </div>
-            <div className="columns-1 sm:columns-2 md:columns-3 gap-4 space-y-4">
+            <div className="columns-2 sm:columns-3 gap-3 space-y-3">
               {albums.flatMap(album => (album.images || []).map((img: any) => (
-                <div key={img.id} className="break-inside-avoid relative group overflow-hidden bg-zinc-900 border border-zinc-800">
+                <div key={img.id} className="break-inside-avoid relative group overflow-hidden rounded-xl bg-zinc-900 border border-zinc-800/50">
                   <img src={img.watermarkedUrl || img.url} alt="Portfolio" className="w-full object-cover" />
-                  <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
-                    <p className="text-[10px] font-black text-white uppercase tracking-widest">{album.title}</p>
+                  <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
+                    <p className="text-[8px] font-black text-white uppercase tracking-widest truncate">{album.title}</p>
                   </div>
                 </div>
               )))}
             </div>
-          </div>
+          </section>
         )}
 
-        {/* Achievements Showcase */}
+        {/* ── BADGES ── */}
         {prof.badges && prof.badges.length > 0 && (
-          <div className="mt-12 border border-zinc-900 bg-zinc-950/20 p-6 rounded-xl">
+          <section>
             <ProfessionalBadgesShowcase badges={prof.badges} />
-          </div>
+          </section>
         )}
 
-        {/* Trust badges */}
-        <div className="mt-12 grid grid-cols-3 gap-4">
-          {[
-            { icon: <ShieldCheck size={20} />, label: "Verificado pela Foto Segundo", desc: "Identidade e experiência auditadas" },
-            { icon: <Lock size={20} />, label: "Pagamento Seguro", desc: "Processado via Mercado Pago com proteção total" },
-            { icon: <CheckCircle2 size={20} />, label: "Garantia de Contato", desc: "WhatsApp liberado imediatamente após confirmação" },
-          ].map(b => (
-            <div key={b.label} className="p-5 border border-zinc-800 text-center space-y-2">
-              <div className="text-brand-tactical flex justify-center">{b.icon}</div>
-              <p className="text-[9px] font-black text-white uppercase tracking-widest">{b.label}</p>
-              <p className="text-[8px] text-zinc-500 font-medium leading-relaxed">{b.desc}</p>
-            </div>
-          ))}
-        </div>
+        {/* ── TRUST BAR ── */}
+        <section>
+          <div className="grid grid-cols-3 gap-3">
+            {[
+              { icon: <ShieldCheck size={18} />, label: "Verificado", desc: "Identidade auditada pela Foto Segundo" },
+              { icon: <Lock size={18} />, label: "Pagamento Seguro", desc: "Via Mercado Pago com proteção total" },
+              { icon: <CheckCircle2 size={18} />, label: "Contato Garantido", desc: "WhatsApp liberado após confirmação" },
+            ].map(b => (
+              <div key={b.label} className="p-4 bg-zinc-900/40 border border-zinc-800/50 rounded-2xl text-center space-y-2">
+                <div className="text-brand-tactical flex justify-center">{b.icon}</div>
+                <p className="text-[8px] font-black text-white uppercase tracking-wider">{b.label}</p>
+                <p className="text-[7px] text-zinc-500 font-medium leading-relaxed">{b.desc}</p>
+              </div>
+            ))}
+          </div>
+        </section>
       </div>
     </div>
   );

@@ -120,14 +120,14 @@ export default function ProfissionaisPage() {
       </div>
 
       {/* Filters */}
-      <div className="sticky top-0 z-30 bg-black/60 backdrop-blur-xl border-b border-theme-border py-3.5 shadow-2xl">
+      <div className="sticky top-0 z-30 bg-black/60 backdrop-blur-xl border-b border-theme-border py-2 md:py-3.5 shadow-2xl">
         <div className="max-w-4xl mx-auto px-4">
-          <div className="bg-black/80 border-2 border-theme-border focus-within:border-brand-tactical focus-within:shadow-[0_0_20px_rgba(133,185,172,0.2)] p-1.5 rounded-2xl md:rounded-full flex flex-col md:flex-row items-center gap-2 md:gap-3 transition-all duration-300">
+          <div className="bg-black/80 border-2 border-theme-border focus-within:border-brand-tactical focus-within:shadow-[0_0_20px_rgba(133,185,172,0.2)] p-1 md:p-1.5 rounded-xl md:rounded-full grid grid-cols-2 md:flex md:flex-row items-center gap-0 md:gap-3 transition-all duration-300">
             {/* Search Input */}
-            <div className="w-full md:flex-1 relative flex items-center group">
-              <Search size={14} className="absolute left-4 text-theme-text-muted group-focus-within:text-brand-tactical transition-colors" />
+            <div className="col-span-2 md:flex-1 relative flex items-center group border-b md:border-b-0 border-theme-border pb-1 md:pb-0 mb-1 md:mb-0">
+              <Search size={14} className="absolute left-3 text-theme-text-muted group-focus-within:text-brand-tactical transition-colors" />
               <input
-                className="w-full bg-transparent pl-10 pr-8 py-2 text-[11px] font-black uppercase tracking-widest text-theme-text placeholder-theme-text-muted outline-none"
+                className="w-full bg-transparent pl-9 pr-8 py-1.5 md:py-2 text-[10px] md:text-[11px] font-black uppercase tracking-widest text-theme-text placeholder-theme-text-muted outline-none"
                 placeholder="Buscar profissional por nome..."
                 value={search}
                 onChange={e => setSearch(e.target.value)}
@@ -142,32 +142,25 @@ export default function ProfissionaisPage() {
             {/* Vertical Divider (Desktop only) */}
             <div className="hidden md:block h-6 w-px bg-theme-border/60" />
 
-            {/* City Input */}
-            <div className="w-full md:w-32 relative flex items-center group">
-              <MapPin size={13} className="absolute left-3 text-theme-text-muted group-focus-within:text-brand-tactical transition-colors" />
+            {/* City Input & Perto de Mim */}
+            <div className="col-span-1 md:w-40 relative flex items-center group border-r border-theme-border md:border-r-0">
+              <MapPin size={13} className="absolute left-2 md:left-3 text-theme-text-muted group-focus-within:text-brand-tactical transition-colors" />
               <input
-                className="w-full bg-transparent pl-8 pr-3 py-2 text-[11px] font-black uppercase tracking-widest text-theme-text placeholder-theme-text-muted outline-none"
+                className="w-full bg-transparent pl-7 md:pl-8 pr-8 py-1.5 md:py-2 text-[10px] md:text-[11px] font-black uppercase tracking-widest text-theme-text placeholder-theme-text-muted outline-none"
                 placeholder="Cidade..."
                 value={city}
                 onChange={e => setCity(e.target.value)}
               />
-            </div>
-
-            {/* Vertical Divider (Desktop only) */}
-            <div className="hidden md:block h-6 w-px bg-theme-border/60" />
-
-            {/* Perto de Mim (Luxury Badge Button) */}
-            <div className="w-full md:w-auto flex justify-start md:justify-center">
               <button
                 onClick={toggleNearby}
-                className={`w-full md:w-auto px-4 py-2.5 rounded-xl md:rounded-full text-[9px] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-1.5 border-2 ${
+                title="Perto de Mim"
+                className={`absolute right-1 p-1 rounded-full transition-all ${
                   nearby
-                    ? "bg-brand-tactical/20 text-brand-tactical border-brand-tactical shadow-[0_0_15px_rgba(133,185,172,0.3)]"
-                    : "bg-transparent text-theme-text/70 border-transparent hover:border-theme-border hover:text-theme-text"
+                    ? "bg-brand-tactical text-black shadow-[0_0_10px_rgba(133,185,172,0.5)]"
+                    : "text-theme-text-muted hover:text-theme-text hover:bg-theme-bg-muted"
                 }`}
               >
-                <MapPin size={11} className={nearby ? "animate-pulse" : ""} />
-                {nearby ? "Perto de Mim: Sim" : "Perto de Mim"}
+                <MapPin size={10} className={nearby ? "animate-pulse" : ""} />
               </button>
             </div>
 
@@ -175,10 +168,10 @@ export default function ProfissionaisPage() {
             <div className="hidden md:block h-6 w-px bg-theme-border/60" />
 
             {/* Specialty Select */}
-            <div className="w-full md:w-40 relative flex items-center group">
-              <Filter size={12} className="absolute left-3 text-theme-text-muted group-focus-within:text-brand-tactical pointer-events-none transition-colors" />
+            <div className="col-span-1 md:w-40 relative flex items-center group">
+              <Filter size={12} className="absolute left-3 md:left-3 text-theme-text-muted group-focus-within:text-brand-tactical pointer-events-none transition-colors" />
               <select
-                className="w-full bg-transparent pl-8 pr-8 py-2 text-[11px] font-black uppercase tracking-widest text-theme-text outline-none appearance-none cursor-pointer"
+                className="w-full bg-transparent pl-8 md:pl-8 pr-6 md:pr-8 py-1.5 md:py-2 text-[10px] md:text-[11px] font-black uppercase tracking-widest text-theme-text outline-none appearance-none cursor-pointer"
                 value={service}
                 onChange={e => setService(e.target.value)}
               >
@@ -187,7 +180,7 @@ export default function ProfissionaisPage() {
                   <option key={s} value={s} className="bg-theme-bg text-theme-text">{s}</option>
                 ))}
               </select>
-              <div className="absolute right-3 pointer-events-none text-theme-text-muted text-[8px]">▼</div>
+              <div className="absolute right-2 md:right-3 pointer-events-none text-theme-text-muted text-[8px]">▼</div>
             </div>
           </div>
         </div>

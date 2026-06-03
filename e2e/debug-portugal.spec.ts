@@ -5,7 +5,7 @@ const BASE_URL = 'https://foto-segundo.vercel.app';
 const SCREENSHOT_DIR = path.join(process.cwd(), 'ANOTAÇÕES', 'TEST_PRINTS');
 
 test('Debug Cliente Registration', async ({ page }) => {
-  await page.goto(`${BASE_URL}/register`);
+  await page.goto(`/register`);
   await page.waitForLoadState('networkidle');
   await page.screenshot({ path: path.join(SCREENSHOT_DIR, 'debug_1_start.png') });
 

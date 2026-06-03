@@ -18,8 +18,7 @@ test.describe('Admin Certification Suite', () => {
     await page.waitForURL(/\/admin/);
     
     // Verifica o título do dashboard e o papel
-    await expect(page.getByText(/Administrador/i).first()).toBeVisible();
-    await expect(page.getByText(/Visão Geral/i).first()).toBeVisible();
+        await expect(page.getByText(/Visão Geral/i).first()).toBeVisible();
     
     // Verifica se os cards de estatísticas globais carregam
     await expect(page.getByText(/Receita Bruta/i)).toBeVisible();

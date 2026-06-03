@@ -25,7 +25,7 @@ test.describe('Financial Flow: PIX Generation (Campinas)', () => {
 
     // 1. LOGIN DO CLIENTE
     page.on('console', msg => console.log(`[BROWSER] ${msg.type().toUpperCase()}: ${msg.text()}`));
-    await page.goto('http://localhost:3000/login');
+    await page.goto('/login');
     await page.locator('input[type="email"]').fill(`cliente@${domain}`);
     await page.locator('input[type="password"]').fill('123456');
     await page.getByRole('button', { name: /Entrar no Sistema/i }).click();
@@ -33,7 +33,7 @@ test.describe('Financial Flow: PIX Generation (Campinas)', () => {
     await clearPopups(page);
 
     // 2. IR PARA A GALERIA
-    await page.goto(`http://localhost:3000/e/${slug}`);
+    await page.goto(`/e/${slug}`);
     await page.waitForLoadState('networkidle');
     console.log('[PIX-TEST] Galeria carregada. Selecionando mídias...');
 

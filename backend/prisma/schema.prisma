@@ -458,7 +458,10 @@ model ServiceCatalog {
   deliveryDays      Int?
   minQuantity       Int?
   availableInVault  Boolean               @default(false) // Exibir como upsell no Cofre de Memórias
-
+  
+  // Package features
+  isPackage         Boolean               @default(false)
+  packageItems      String[]              @default([]) // Array of ServiceCatalog IDs
   proServices       ProfessionalService[]
 
   @@map("service_catalog")

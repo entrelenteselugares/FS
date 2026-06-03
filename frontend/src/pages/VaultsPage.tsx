@@ -28,55 +28,57 @@ function VaultCard({ vault, onClick }: { vault: Vault; onClick: () => void }) {
       animate={{ opacity: 1, y: 0 }}
       whileHover={{ scale: 1.02 }}
       onClick={onClick}
-      className="group relative flex flex-col items-start bg-theme-bg border border-theme-border rounded-2xl p-6 cursor-pointer transition-all duration-300 overflow-hidden gap-5 shadow-sm hover:shadow-md hover:border-brand-tactical/60"
+      className="group relative flex flex-col items-start bg-theme-bg border border-theme-border rounded-xl md:rounded-2xl p-3 md:p-6 cursor-pointer transition-all duration-300 overflow-hidden gap-3 md:gap-5 shadow-sm hover:shadow-md hover:border-brand-tactical/60"
     >
-      <div className="flex w-full justify-between items-start">
-        <div className="w-12 h-12 bg-brand-tactical/10 border border-brand-tactical/20 rounded-xl flex items-center justify-center">
-          <Lock size={18} className="text-brand-tactical" />
+      <div className="flex w-full justify-between items-start gap-1">
+        <div className="w-8 h-8 md:w-12 md:h-12 shrink-0 bg-brand-tactical/10 border border-brand-tactical/20 rounded-lg md:rounded-xl flex items-center justify-center">
+          <Lock size={16} className="text-brand-tactical md:w-[18px] md:h-[18px]" />
         </div>
-        <span className={`text-[8px] font-black uppercase tracking-widest px-2 py-1 rounded-md ${
+        <span className={`text-[6px] md:text-[8px] font-black uppercase tracking-widest px-1.5 md:px-2 py-0.5 md:py-1 rounded md:rounded-md mt-1 shrink-0 ${
           vault.subscriptionStatus === "ACTIVE"
             ? "text-emerald-500 bg-emerald-500/10 border border-emerald-500/20"
             : vault.subscriptionStatus === "TRIAL"
             ? "text-yellow-500 bg-yellow-500/10 border border-yellow-500/20"
             : "text-red-500 bg-red-500/10 border border-red-500/20"
         }`}>
-          {vault.subscriptionStatus === "ACTIVE" ? "Premium" : vault.subscriptionStatus === "TRIAL" ? "Teste Grátis" : "Bloqueado"}
+          {vault.subscriptionStatus === "ACTIVE" ? "Premium" : vault.subscriptionStatus === "TRIAL" ? "Grátis" : "Bloqueado"}
         </span>
       </div>
 
       {/* Info Area */}
-      <div className="w-full space-y-2 mt-2">
-        <h3 className="text-lg font-black text-theme-text uppercase italic tracking-tight line-clamp-2 leading-tight">
+      <div className="w-full space-y-1.5 md:space-y-2 flex-1 flex flex-col">
+        <h3 className="text-[11px] md:text-lg font-black text-theme-text uppercase italic tracking-tight line-clamp-2 leading-tight">
           {vault.nome}
         </h3>
         
-        {isOwner && (
-          <span className="inline-block text-[8px] font-black text-brand-tactical uppercase tracking-widest bg-brand-tactical/10 border border-brand-tactical/20 px-2 py-0.5 rounded-full mb-2">
-            Proprietário
-          </span>
-        )}
+        <div className="h-4 md:h-6 flex items-center">
+          {isOwner && (
+            <span className="inline-block text-[6px] md:text-[8px] font-black text-brand-tactical uppercase tracking-widest bg-brand-tactical/10 border border-brand-tactical/20 px-1.5 md:px-2 py-0.5 rounded-full">
+              Proprietário
+            </span>
+          )}
+        </div>
 
         {/* Stats */}
-        <div className="flex items-center gap-4 text-theme-muted pt-1">
-          <div className="flex items-center gap-1.5">
-            <Images size={12} className="text-brand-tactical/70" />
-            <span className="text-[10px] font-bold">{vault._count.media} fotos</span>
+        <div className="flex flex-col md:flex-row items-start md:items-center gap-1 md:gap-4 text-theme-muted pt-1">
+          <div className="flex items-center gap-1 md:gap-1.5">
+            <Images size={10} className="text-brand-tactical/70 md:w-3 md:h-3 shrink-0" />
+            <span className="text-[8px] md:text-[10px] font-bold">{vault._count.media} fotos</span>
           </div>
-          <div className="flex items-center gap-1.5">
-            <Users size={12} className="text-brand-tactical/70" />
-            <span className="text-[10px] font-bold">{vault._count.members} membros</span>
+          <div className="flex items-center gap-1 md:gap-1.5">
+            <Users size={10} className="text-brand-tactical/70 md:w-3 md:h-3 shrink-0" />
+            <span className="text-[8px] md:text-[10px] font-bold">{vault._count.members} membros</span>
           </div>
         </div>
       </div>
 
       {/* Progress Area */}
-      <div className="w-full flex flex-col justify-center mt-auto pt-4 border-t border-theme-border/50">
-        <div className="flex justify-between items-center mb-2 px-1">
-          <span className="text-[9px] text-theme-muted uppercase tracking-widest font-bold">Progresso da Meta</span>
-          <span className="text-[10px] font-black text-brand-tactical">{vault._count.media} / {vault.goalPoses}</span>
+      <div className="w-full flex flex-col justify-center mt-auto pt-2 md:pt-4 border-t border-theme-border/50">
+        <div className="flex justify-between items-center mb-1 md:mb-2 px-0 md:px-1">
+          <span className="text-[6px] md:text-[9px] text-theme-muted uppercase tracking-widest font-bold max-w-[60%] truncate">Progresso da Meta</span>
+          <span className="text-[8px] md:text-[10px] font-black text-brand-tactical shrink-0">{vault._count.media} / {vault.goalPoses}</span>
         </div>
-        <div className="w-full h-1.5 bg-theme-bg-muted rounded-full overflow-hidden">
+        <div className="w-full h-1 md:h-1.5 bg-theme-bg-muted rounded-full overflow-hidden">
           <div
             className="h-full bg-brand-tactical rounded-full transition-all duration-700"
             style={{ width: `${progress}%` }}
@@ -294,16 +296,16 @@ export default function VaultsPage() {
 
         {/* Vaults grid */}
         {loading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          <div className="grid grid-cols-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-6">
             {[...Array(3)].map((_, i) => (
-              <div key={i} className="bg-theme-card border border-theme-border rounded-2xl p-6 h-[200px] animate-pulse flex flex-col justify-between">
+              <div key={i} className="bg-theme-card border border-theme-border rounded-xl md:rounded-2xl p-3 md:p-6 h-[160px] md:h-[200px] animate-pulse flex flex-col justify-between">
                 <div className="flex justify-between items-start">
-                  <div className="w-12 h-12 bg-theme-bg-muted rounded-xl border border-white/10" />
-                  <div className="w-16 h-6 bg-theme-bg-muted rounded-full border border-white/10" />
+                  <div className="w-8 h-8 md:w-12 md:h-12 bg-theme-bg-muted rounded-lg md:rounded-xl border border-white/10" />
+                  <div className="w-10 h-4 md:w-16 md:h-6 bg-theme-bg-muted rounded-full border border-white/10" />
                 </div>
-                <div className="space-y-3 mt-4">
-                  <div className="w-3/4 h-6 bg-theme-bg-muted rounded border border-white/10" />
-                  <div className="w-1/2 h-4 bg-theme-bg-muted rounded border border-white/10" />
+                <div className="space-y-2 md:space-y-3 mt-4">
+                  <div className="w-3/4 h-4 md:h-6 bg-theme-bg-muted rounded border border-white/10" />
+                  <div className="w-1/2 h-3 md:h-4 bg-theme-bg-muted rounded border border-white/10" />
                 </div>
                 <div className="w-full h-1 bg-theme-bg-muted rounded-full mt-auto" />
               </div>
@@ -333,7 +335,7 @@ export default function VaultsPage() {
             </button>
           </motion.div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          <div className="grid grid-cols-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-6">
             {vaults.map((vault, i) => (
               <motion.div key={vault.id} transition={{ delay: i * 0.05 }}>
                 <VaultCard vault={vault} onClick={() => navigate(`/meus-albuns/${vault.id}`)} />

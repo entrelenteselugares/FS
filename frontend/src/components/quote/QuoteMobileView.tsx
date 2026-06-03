@@ -91,7 +91,7 @@ export const QuoteMobileView = (props: any) => {
           >
             {/* ====== PASSO 1: LOCAL ====== */}
             {step === 1 && (
-              <>
+              <div className="space-y-6">
                 {/* Removidos botões de Local (Unidade Fixa vs Outro Local) pois é decidido na Landing Page pelo flowType */}
 
                 {locationType === "PARTNER" && (
@@ -116,7 +116,33 @@ export const QuoteMobileView = (props: any) => {
                     </div>
                   </div>
                 )}
-              </>
+
+                {locationType === "OTHER" && (
+                  <div className="space-y-1.5 pt-2">
+                    <label className="text-xs font-semibold text-emerald-500 uppercase tracking-wider ml-1 flex items-center gap-1"><MapPin size={12}/> CEP do Local</label>
+                    <input
+                      type="text"
+                      placeholder="00000-000"
+                      value={customCep}
+                      onChange={(e) => handleCepChange(e.target.value)}
+                      className="w-full bg-zinc-900/50 border border-white/5 rounded-lg p-3 text-sm text-white focus:outline-none focus:border-emerald-500/50"
+                    />
+                    {addressData.logradouro && (
+                      <div className="text-[10px] text-zinc-500 px-1">{addressData.logradouro}, {addressData.cidade}-{addressData.uf}</div>
+                    )}
+                  </div>
+                )}
+
+                <div className="space-y-1.5 pt-2">
+                  <label className="text-xs font-semibold text-zinc-400 uppercase tracking-wider ml-1">Data do Evento</label>
+                  <input
+                    type="date"
+                    value={eventDate}
+                    onChange={(e) => setEventDate(e.target.value)}
+                    className="w-full bg-zinc-900/50 border border-white/5 rounded-lg p-3 text-sm text-white focus:outline-none focus:border-emerald-500/50"
+                  />
+                </div>
+              </div>
             )}
 
             {/* ====== PASSO 2: SERVI�OS ====== */}
@@ -201,19 +227,9 @@ export const QuoteMobileView = (props: any) => {
             {step === 3 && (
               <div className="space-y-4">
                 <div className="space-y-1.5">
-                  <label className="text-xs font-semibold text-zinc-400 uppercase tracking-wider ml-1">Data do Evento</label>
-                  <input
-                    type="date"
-                    value={eventDate}
-                    onChange={(e) => setEventDate(e.target.value)}
-                    className="w-full bg-zinc-900/50 border border-white/5 rounded-lg p-3 text-sm text-white focus:outline-none focus:border-emerald-500/50"
-                  />
-                </div>
-                
-                <div className="space-y-1.5">
                   <label className="text-xs font-semibold text-zinc-400 uppercase tracking-wider ml-1">Convidados (Aprox.)</label>
                   <div className="grid grid-cols-3 gap-2">
-                    {["At� 50", "50-100", "100-200"].map((opt) => (
+                    {["Até 50", "50-100", "100-200"].map((opt) => (
                       <button
                         key={opt}
                         onClick={() => setAttendees(opt)}
@@ -224,22 +240,6 @@ export const QuoteMobileView = (props: any) => {
                     ))}
                   </div>
                 </div>
-
-                {locationType === "OTHER" && (
-                  <div className="space-y-1.5 pt-2">
-                    <label className="text-xs font-semibold text-emerald-500 uppercase tracking-wider ml-1 flex items-center gap-1"><MapPin size={12}/> CEP do Local</label>
-                    <input
-                      type="text"
-                      placeholder="00000-000"
-                      value={customCep}
-                      onChange={(e) => handleCepChange(e.target.value)}
-                      className="w-full bg-zinc-900/50 border border-white/5 rounded-lg p-3 text-sm text-white focus:outline-none focus:border-emerald-500/50"
-                    />
-                    {addressData.logradouro && (
-                      <div className="text-[10px] text-zinc-500 px-1">{addressData.logradouro}, {addressData.cidade}-{addressData.uf}</div>
-                    )}
-                  </div>
-                )}
               </div>
             )}
 

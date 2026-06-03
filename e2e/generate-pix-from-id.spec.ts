@@ -7,7 +7,7 @@ test('Gera PIX e Aguarda Sucesso', async ({ page }) => {
   const orderId = 'cmouqvkvp0001vzxczmxmgcbd';
   test.setTimeout(600000); 
 
-  await page.goto(`http://localhost:3000/checkout?orderId=${orderId}`);
+  await page.goto(`/checkout?orderId=${orderId}`);
   await page.waitForLoadState('networkidle');
   
   console.log('[ROBO] Página de Checkout Carregada.');

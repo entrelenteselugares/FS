@@ -1,7 +1,6 @@
 import { test, expect } from '@playwright/test';
 import path from 'path';
 
-const BASE_URL = 'http://localhost:3000'; 
 const SCREENSHOT_DIR = path.join(process.cwd(), 'ANOTAÇÕES', 'TEST_PRINTS');
 
 test.describe('Portugal Profile Registration Tests (LOCAL)', () => {
@@ -16,8 +15,8 @@ test.describe('Portugal Profile Registration Tests (LOCAL)', () => {
 
   for (const profile of profiles) {
     test(`Register ${profile.id}`, async ({ page }) => {
-      console.log(`[TEST] Navegando para ${BASE_URL}/register...`);
-      await page.goto(`${BASE_URL}/register`);
+      console.log(`[TEST] Navegando para /register...`);
+      await page.goto(`/register`);
       
       // Captura inicial para debug se travar
       await page.screenshot({ path: path.join(SCREENSHOT_DIR, `${profile.id}_debug_start.png`) });

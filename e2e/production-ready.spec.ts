@@ -1,7 +1,6 @@
 import { test, expect } from '@playwright/test';
 import path from 'path';
 
-const BASE_URL = 'http://localhost:3000'; 
 const SCREENSHOT_DIR = path.join(process.cwd(), 'ANOTAÇÕES', 'TEST_PRINTS', 'VALIDATION');
 const ts = Math.floor(Date.now() / 1000);
 
@@ -19,7 +18,7 @@ test.describe('🏁 Production Readiness: Full E2E Audit', () => {
     console.log('[AUDIT] 🚀 Registrando perfis...');
     
     // 1. CLIENTE
-    await page.goto(`${BASE_URL}/register`);
+    await page.goto(`/register`);
     await page.getByText('Cliente Privado').click();
     await page.getByPlaceholder('EX: JOÃO DA SILVA').fill('Audit Cliente');
     await page.getByPlaceholder('(00) 00000-0000').fill('11999999999');
@@ -32,7 +31,7 @@ test.describe('🏁 Production Readiness: Full E2E Audit', () => {
     console.log('✅ Cliente registrado.');
 
     // 2. PROFISSIONAL
-    await page.goto(`${BASE_URL}/register`);
+    await page.goto(`/register`);
     await page.getByText('Profissional da Rede').click();
     await page.getByPlaceholder('EX: JOÃO DA SILVA').fill('Audit Pro');
     await page.getByPlaceholder('(00) 00000-0000').fill('11888888888');
@@ -46,7 +45,7 @@ test.describe('🏁 Production Readiness: Full E2E Audit', () => {
     console.log('✅ Profissional registrado.');
 
     // 3. UNIDADE FIXA
-    await page.goto(`${BASE_URL}/register`);
+    await page.goto(`/register`);
     await page.getByText('Unidade Fixa').click();
     await page.getByPlaceholder('EX: JOÃO DA SILVA').fill('Audit Unidade');
     await page.getByPlaceholder('(00) 00000-0000').fill('11777777777');
@@ -64,7 +63,7 @@ test.describe('🏁 Production Readiness: Full E2E Audit', () => {
 
   test('Step 2: Quotation Engine Simulation', async ({ page }) => {
     console.log('[AUDIT] 📝 Simulando Orçamento...');
-    await page.goto(`${BASE_URL}/cotacao`);
+    await page.goto(`/cotacao`);
     await page.waitForLoadState('networkidle');
     
     await page.getByText('ORÇAMENTO', { exact: true }).first().click();
@@ -97,7 +96,7 @@ test.describe('🏁 Production Readiness: Full E2E Audit', () => {
   test('Step 3: Network & Vault Audit', async ({ page }) => {
     console.log('[AUDIT] 👥 Simulando Rede e Cofres...');
     // Login como Cliente
-    await page.goto(`${BASE_URL}/login`);
+    await page.goto(`/login`);
     await page.getByPlaceholder('seu@email.com').fill(credentials.cli);
     await page.locator('input[type="password"]').fill(credentials.pass);
     await page.getByRole('button', { name: /Entrar no Sistema/i }).click();
@@ -105,12 +104,12 @@ test.describe('🏁 Production Readiness: Full E2E Audit', () => {
     await page.waitForURL(/\/minha-conta/);
     
     // Cofres
-    await page.goto(`${BASE_URL}/cofres`);
+    await page.goto(`/cofres`);
     await page.waitForLoadState('networkidle');
     await page.screenshot({ path: path.join(SCREENSHOT_DIR, '1_Vaults_Audit.png'), fullPage: true });
     
     // Checkout (Visual)
-    await page.goto(`${BASE_URL}/checkout?orderId=AUDIT_${ts}`);
+    await page.goto(`/checkout?orderId=AUDIT_${ts}`);
     await page.waitForLoadState('networkidle');
     await page.screenshot({ path: path.join(SCREENSHOT_DIR, '2_Checkout_Audit.png'), fullPage: true });
     console.log('✅ Rede, Cofres e Checkout visualizados.');
@@ -118,7 +117,7 @@ test.describe('🏁 Production Readiness: Full E2E Audit', () => {
 
   test('Step 4: Professional Dashboard Audit', async ({ page }) => {
     console.log('[AUDIT] 📸 Simulando Dashboard Profissional...');
-    await page.goto(`${BASE_URL}/login`);
+    await page.goto(`/login`);
     await page.getByPlaceholder('seu@email.com').fill(credentials.pro);
     await page.locator('input[type="password"]').fill(credentials.pass);
     await page.getByRole('button', { name: /Entrar no Sistema/i }).click();

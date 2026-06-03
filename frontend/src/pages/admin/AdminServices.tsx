@@ -19,6 +19,8 @@ interface Service {
   allowProfessional: boolean;
   allowMobile: boolean;
   category: string;
+  isPackage?: boolean;
+  packageItems?: string[];
 }
 
 interface PendingService {
@@ -34,6 +36,72 @@ const CATEGORY_ICONS: Record<string, React.ElementType> = {
   POS_EDICAO: Layers, PRE_EVENTO: Camera, LOCACAO: Briefcase, DEFAULT: Briefcase,
 };
 
+
+// --- Package Modal Component ---
+const PackageModal: React.FC<{ onClose: () => void, onSave: (data: any) => void, initialData: any, saving: boolean, services: Service[] }> = ({ onClose, onSave, initialData, saving, services }) => {
+  const [name, setName] = useState(initialData?.name || "");
+  const [description, setDescription] = useState(initialData?.description || "");
+  const [basePrice, setBasePrice] = useState(initialData?.basePrice || 0);
+  const [selectedItems, setSelectedItems] = useState<string[]>(initialData?.packageItems || []);
+
+  const availableServices = services.filter(s => !s.isPackage);
+  const comboPrice = selectedItems.reduce((acc, id) => {
+    const s = availableServices.find(x => x.id === id);
+    return acc + (s?.basePrice || 0);
+  }, 0);
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+      <div className="bg-theme-card border border-theme-border w-full max-w-2xl rounded-2xl p-6 shadow-2xl max-h-[90vh] overflow-y-auto">
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-xl font-heading font-black text-theme-text uppercase italic">{initialData ? 'Editar Pacote' : 'Montar Novo Pacote'}</h2>
+          <button onClick={onClose} className="text-theme-muted hover:text-white"><Trash2 size={20}/></button>
+        </div>
+        <div className="space-y-4">
+          <div>
+            <label className="text-[10px] font-black uppercase text-theme-muted">Nome do Pacote</label>
+            <input className="w-full bg-theme-bg p-3 rounded-lg text-white text-sm outline-none border border-theme-border focus:border-amber-500" value={name} onChange={e => setName(e.target.value)} />
+          </div>
+          <div>
+            <label className="text-[10px] font-black uppercase text-theme-muted">Descrição</label>
+            <textarea className="w-full bg-theme-bg p-3 rounded-lg text-white text-sm outline-none border border-theme-border focus:border-amber-500 h-20" value={description} onChange={e => setDescription(e.target.value)} />
+          </div>
+          <div>
+            <label className="text-[10px] font-black uppercase text-theme-muted block mb-2">Serviços Inclusos no Pacote</label>
+            <div className="grid grid-cols-2 gap-2 max-h-48 overflow-y-auto pr-2">
+              {availableServices.map(s => (
+                <label key={s.id} className="flex items-center gap-2 p-3 border border-theme-border rounded-lg bg-theme-bg cursor-pointer hover:border-amber-500/50">
+                  <input type="checkbox" className="accent-amber-500" checked={selectedItems.includes(s.id)} onChange={(e) => {
+                    if (e.target.checked) setSelectedItems(prev => [...prev, s.id]);
+                    else setSelectedItems(prev => prev.filter(id => id !== s.id));
+                  }}/>
+                  <div>
+                    <p className="text-[10px] font-bold text-theme-text uppercase">{s.name}</p>
+                    <p className="text-[8px] text-theme-muted">{(s.basePrice).toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'})}</p>
+                  </div>
+                </label>
+              ))}
+            </div>
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+             <div className="p-4 bg-theme-bg/50 border border-theme-border rounded-lg">
+                <p className="text-[9px] font-black uppercase text-theme-muted">Valor dos Itens Separados</p>
+                <p className="text-lg font-black text-theme-text line-through opacity-50">{comboPrice.toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'})}</p>
+             </div>
+             <div>
+                <label className="text-[10px] font-black uppercase text-theme-muted">Preço Final do Pacote</label>
+                <input type="number" className="w-full bg-theme-bg p-3 rounded-lg text-amber-500 font-bold text-lg outline-none border border-theme-border focus:border-amber-500" value={basePrice} onChange={e => setBasePrice(Number(e.target.value))} />
+             </div>
+          </div>
+          <button disabled={saving || !name || selectedItems.length === 0} onClick={() => onSave({ name, description, basePrice, packageItems: selectedItems, category: 'PACOTE' })} className="w-full py-4 bg-amber-500 text-black font-black uppercase tracking-widest rounded-lg mt-4 disabled:opacity-50">
+            {saving ? 'Salvando...' : 'Salvar Pacote'}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const formatCurrency = (val: number) =>
   val.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 
@@ -45,7 +113,9 @@ export const AdminServices: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingService, setEditingService] = useState<Service | null>(null);
   const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<"CATALOGO" | "PENDENTES">("CATALOGO");
+  const [activeTab, setActiveTab] = useState<"CATALOGO" | "PENDENTES" | "PACOTES">("CATALOGO");
+  const [isPackageModalOpen, setIsPackageModalOpen] = useState(false);
+  const [editingPackage, setEditingPackage] = useState<Service | null>(null);
 
   // React Query — catálogo
   const { data: services = [], isLoading } = useQuery<Service[]>({
@@ -76,6 +146,27 @@ export const AdminServices: React.FC = () => {
       toast.error("Erro ao processar avaliação.");
     }
   }, [queryClient]);
+
+  const handleSavePackage = useCallback(async (pkgData: Partial<Service>) => {
+    setSaving(true);
+    try {
+      const payload = { ...pkgData, isPackage: true };
+      if (editingPackage) {
+        await API.patch(`/admin/service-catalog/${editingPackage.id}`, payload);
+        toast.success("Pacote atualizado!");
+      } else {
+        await API.post("/admin/service-catalog", payload);
+        toast.success("Pacote criado!");
+      }
+      queryClient.invalidateQueries({ queryKey: ["admin-service-catalog"] });
+      setIsPackageModalOpen(false);
+      setEditingPackage(null);
+    } catch {
+      toast.error("Erro ao salvar pacote.");
+    } finally {
+      setSaving(false);
+    }
+  }, [editingPackage, queryClient]);
 
   const handleSave = useCallback(async (serviceData: Omit<Service, "id">) => {
     setSaving(true);
@@ -110,7 +201,7 @@ export const AdminServices: React.FC = () => {
   }, [confirmDelete, queryClient]);
 
   const filteredServices = useMemo(() =>
-    services.filter(s =>
+    services.filter(s => activeTab === "PACOTES" ? (s as any).isPackage : !(s as any).isPackage).filter(s =>
       (filterCategory === "" || s.category === filterCategory) &&
       (s.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         s.description.toLowerCase().includes(searchTerm.toLowerCase()))
@@ -124,6 +215,15 @@ export const AdminServices: React.FC = () => {
 
   return (
     <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-700 pb-20">
+      {isPackageModalOpen && (
+        <PackageModal
+          onClose={() => { setIsPackageModalOpen(false); setEditingPackage(null); }}
+          onSave={handleSavePackage}
+          initialData={editingPackage}
+          saving={saving}
+          services={services}
+        />
+      )}
       {isModalOpen && (
         <ServiceModal
           onClose={() => { setIsModalOpen(false); setEditingService(null); }}
@@ -138,15 +238,24 @@ export const AdminServices: React.FC = () => {
         <div>
                     <p className="text-theme-muted mt-2 text-sm">Gestão de catálogo, portfólio de serviços e aprovações</p>
         </div>
-        <button onClick={() => setIsModalOpen(true)} className="px-8 py-4 bg-brand-tactical text-[var(--brand-text)] text-[9px] font-black uppercase tracking-[0.4em] shadow-xl hover:brightness-110 transition-all flex items-center gap-3 italic">
+        {activeTab === "PACOTES" ? (
+          <button onClick={() => { setEditingPackage(null); setIsPackageModalOpen(true); }} className="px-8 py-4 bg-amber-500 text-black text-[9px] font-black uppercase tracking-[0.4em] shadow-xl hover:brightness-110 transition-all flex items-center gap-3 italic">
+            <Layers size={14} /> MONTAR PACOTE
+          </button>
+        ) : (
+          <button onClick={() => { setEditingService(null); setIsModalOpen(true); }} className="px-8 py-4 bg-brand-tactical text-[var(--brand-text)] text-[9px] font-black uppercase tracking-[0.4em] shadow-xl hover:brightness-110 transition-all flex items-center gap-3 italic">
           <Plus size={14} /> ADICIONAR SERVIÇO
         </button>
+        )}
       </div>
 
       {/* TABS */}
-      <div className="flex gap-4 border-b border-theme-border pb-4">
+      <div className="flex gap-4 border-b border-theme-border pb-4 overflow-x-auto whitespace-nowrap">
         <button onClick={() => setActiveTab("CATALOGO")} className={`text-[11px] font-black uppercase tracking-widest px-4 py-2 rounded-2xl transition-all ${activeTab === "CATALOGO" ? "bg-brand-tactical text-[var(--brand-text)]" : "text-theme-muted hover:bg-theme-bg-muted"}`}>
           Catálogo Global
+        </button>
+        <button onClick={() => setActiveTab("PACOTES")} className={`text-[11px] font-black uppercase tracking-widest px-4 py-2 rounded-2xl transition-all flex items-center gap-2 ${activeTab === "PACOTES" ? "bg-amber-500 text-black" : "text-theme-muted hover:bg-theme-bg-muted"}`}>
+          Pacotes (Combos)
         </button>
         <button onClick={() => setActiveTab("PENDENTES")} className={`text-[11px] font-black uppercase tracking-widest px-4 py-2 rounded-2xl transition-all flex items-center gap-2 ${activeTab === "PENDENTES" ? "bg-brand-tactical text-[var(--brand-text)]" : "text-theme-muted hover:bg-theme-bg-muted"}`}>
           Aprovações Pendentes
@@ -154,7 +263,7 @@ export const AdminServices: React.FC = () => {
         </button>
       </div>
 
-      {activeTab === "CATALOGO" ? (
+      {activeTab === "CATALOGO" || activeTab === "PACOTES" ? (
         <>
           {/* MÉTRICAS */}
           <div className="max-w-6xl mx-auto w-full grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6">
@@ -205,8 +314,8 @@ export const AdminServices: React.FC = () => {
               <div className="py-32 text-center border  border-theme-border bg-theme-bg-muted/5 space-y-6 rounded-2xl">
                 <Briefcase size={40} className="mx-auto text-theme-muted opacity-20" />
                 <div className="space-y-2">
-                  <p className="text-[11px] font-black text-brand-tactical uppercase tracking-[0.4em] italic">Tabela de Preços e Serviços</p>
-                  <p className="text-[8px] text-theme-muted/60 uppercase tracking-widest">Inicie o seu catálogo para habilitar o gerador de orçamentos.</p>
+                  <p className="text-[11px] font-black text-brand-tactical uppercase tracking-[0.4em] italic">{activeTab === "PACOTES" ? "Catálogo de Pacotes" : "Tabela de Preços e Serviços"}</p>
+                  <p className="text-[8px] text-theme-muted/60 uppercase tracking-widest">{activeTab === "PACOTES" ? "Monte seu primeiro combo de serviços." : "Inicie o seu catálogo para habilitar o gerador de orçamentos."}</p>
                 </div>
               </div>
             ) : filteredServices.map(s => {
@@ -234,7 +343,7 @@ export const AdminServices: React.FC = () => {
                         <span className="text-xl font-heading font-black text-theme-text italic">{formatCurrency(s.basePrice)}</span>
                       </div>
                       <div className="flex gap-3 opacity-0 group-hover:opacity-100 transition-all">
-                        <button onClick={() => { setEditingService(s); setIsModalOpen(true); }} className="p-3 border border-theme-border text-theme-muted hover:text-brand-tactical hover:border-brand-tactical transition-all">
+                        <button onClick={() => { if ((s as any).isPackage) { setEditingPackage(s); setIsPackageModalOpen(true); } else { setEditingService(s); setIsModalOpen(true); } }} className="p-3 border border-theme-border text-theme-muted hover:text-brand-tactical hover:border-brand-tactical transition-all">
                           <Edit3 size={14} />
                         </button>
                         <button onClick={() => setConfirmDelete(s.id)} className="p-3 border border-red-900/30 text-red-900/40 hover:text-red-500 hover:border-red-500 transition-all">
@@ -315,7 +424,7 @@ export const AdminServices: React.FC = () => {
               <div className="w-20 h-20 bg-red-500/10 rounded-2xl flex items-center justify-center border border-red-500/20 mx-auto mb-6"><Trash2 className="text-red-500" size={32} /></div>
               <div className="space-y-2">
                 <h3 className="text-2xl font-black uppercase tracking-tighter text-theme-text italic">Remover Serviço?</h3>
-                <p className="text-[11px] font-black text-brand-tactical uppercase tracking-[0.4em] italic">Tabela de Preços e Serviços</p>
+                <p className="text-[11px] font-black text-brand-tactical uppercase tracking-[0.4em] italic">{activeTab === "PACOTES" ? "Catálogo de Pacotes" : "Tabela de Preços e Serviços"}</p>
               </div>
               <p className="text-[11px] uppercase tracking-[0.2em] leading-relaxed text-theme-muted italic">ESTA AÇÃO IRÁ REMOVER PERMANENTEMENTE O ITEM DO GERADOR DE ORÇAMENTOS DA REDE.</p>
               <div className="grid grid-cols-1 gap-4 pt-4">

@@ -2,6 +2,8 @@ import React, { useState, useMemo } from "react";
 import { useNavigate, useLocation, useSearchParams, Link } from "react-router-dom";
 import { Home, Search, ShoppingBag, Image, Menu, X, Play, Briefcase, DollarSign, Calendar, Printer, Settings, Lock, Users, User, LayoutDashboard } from "lucide-react";
 import { useAuth } from "../hooks/useAuth";
+// ImageIcon alias for portfolio nav item
+const ImageIcon = Image;
 import type { NavItem } from "./DashboardLayout";
 
 export const BottomNav: React.FC = () => {
@@ -21,6 +23,7 @@ export const BottomNav: React.FC = () => {
     "/delivery",
     "/flash",
     "/invitation",
+    "/cotacao",
     // "/meus-albuns",
     // "/minha-conta",
   ];
@@ -38,8 +41,10 @@ export const BottomNav: React.FC = () => {
     if ((user?.role === "PROFISSIONAL" || user?.role === "FRANCHISEE") && user?.verificationStatus === "APPROVED") {
       items.push(
         { label: "ÁREA PROFISSIONAL", isHeader: true },
-        { label: "Minha Agenda", onClick: () => { setDrawerOpen(false); setTimeout(() => navigate("/minha-conta?s=agenda", { replace: true }), 50); }, isActive: location.pathname === "/minha-conta" && s === "agenda", icon: <Play size={18} /> },
-        { label: "Portfólio & Serviços", onClick: () => { setDrawerOpen(false); setTimeout(() => navigate("/minha-conta?s=servicos", { replace: true }), 50); }, isActive: location.pathname === "/minha-conta" && s === "servicos", icon: <Briefcase size={18} /> },
+        { label: "Minha Agenda", onClick: () => { setDrawerOpen(false); setTimeout(() => navigate("/minha-conta?s=agenda", { replace: true }), 50); }, isActive: location.pathname === "/minha-conta" && (s === "agenda" || s === "convites"), icon: <Play size={18} /> },
+        { label: "Meu Portfólio", onClick: () => { setDrawerOpen(false); setTimeout(() => navigate("/minha-conta?s=portfolio", { replace: true }), 50); }, isActive: location.pathname === "/minha-conta" && s === "portfolio", icon: <ImageIcon size={18} /> },
+        { label: "Serviços & Preços", onClick: () => { setDrawerOpen(false); setTimeout(() => navigate("/minha-conta?s=servicos", { replace: true }), 50); }, isActive: location.pathname === "/minha-conta" && s === "servicos", icon: <Briefcase size={18} /> },
+        { label: "Ficha Técnica & Pix", onClick: () => { setDrawerOpen(false); setTimeout(() => navigate("/minha-conta?s=perfil", { replace: true }), 50); }, isActive: location.pathname === "/minha-conta" && s === "perfil", icon: <Settings size={18} /> },
         { label: "Vendas & Ganhos", onClick: () => { setDrawerOpen(false); setTimeout(() => navigate("/minha-conta?s=financeiro", { replace: true }), 50); }, isActive: location.pathname === "/minha-conta" && s === "financeiro", icon: <DollarSign size={18} /> },
         { label: "Agenda Google", onClick: () => { setDrawerOpen(false); setTimeout(() => navigate("/minha-conta?s=calendar", { replace: true }), 50); }, isActive: location.pathname === "/minha-conta" && s === "calendar", icon: <Calendar size={18} /> }
       );

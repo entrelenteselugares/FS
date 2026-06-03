@@ -22,5 +22,7 @@ export const serviceCatalogSchema = z.object({
     allowMobile: z.boolean().optional().default(false),
     category: z.string().min(1, "Category is required"),
     eventTypes: z.array(z.string()).optional().default([]),
+    isPackage: z.boolean().optional().default(false),
+    packageItems: z.array(z.string()).optional().default([]),
   })
 });

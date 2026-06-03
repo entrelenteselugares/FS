@@ -17,7 +17,7 @@ export const QuoteLandingView: React.FC<QuoteLandingViewProps> = ({ selectFlow }
       .then(res => {
         const events = res.data?.events || [];
         const validCovers = events
-          .map((ev: any) => ev.coverPhotoUrl)
+          .map((ev: { coverPhotoUrl: string | null }) => ev.coverPhotoUrl)
           .filter((url: string | null) => url && typeof url === 'string');
           
         if (validCovers.length > 0) {
@@ -64,33 +64,33 @@ export const QuoteLandingView: React.FC<QuoteLandingViewProps> = ({ selectFlow }
       </div>
 
       {/* Hero Section */}
-      <div className="w-full max-w-6xl mx-auto px-6 pt-32 pb-24 relative z-10 flex flex-col items-center text-center min-h-[60vh] justify-center">
-        <div className="inline-flex items-center gap-2 px-5 py-2.5 bg-black/40 backdrop-blur-md border border-white/10 rounded-full mb-8 shadow-2xl">
-          <Sparkles size={14} className="text-emerald-400" />
-          <span className="text-[10px] font-black uppercase tracking-[0.3em] text-white">Eternize Seus Momentos</span>
+      <div className="w-full max-w-6xl mx-auto px-6 pt-24 pb-12 relative z-10 flex flex-col items-center text-center min-h-[40vh] justify-center">
+        <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-black/40 backdrop-blur-md border border-white/10 rounded-full mb-6 shadow-2xl">
+          <Sparkles size={12} className="text-emerald-400" />
+          <span className="text-[9px] font-black uppercase tracking-[0.3em] text-white">Eternize Seus Momentos</span>
         </div>
         
-        <h1 className="text-5xl md:text-7xl font-display font-black tracking-tighter mb-6 leading-[1.1] text-white drop-shadow-2xl">
+        <h1 className="text-4xl md:text-5xl font-display font-black tracking-tighter mb-4 leading-[1.1] text-white drop-shadow-2xl">
           Sua História. <br />
           <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-200 italic pr-2">
             Nossa Lente.
           </span>
         </h1>
         
-        <p className="text-white/80 text-lg md:text-xl max-w-2xl mx-auto mb-16 font-medium drop-shadow-lg">
+        <p className="text-white/80 text-sm md:text-base max-w-xl mx-auto mb-10 font-medium drop-shadow-lg">
           A Foto Segundo oferece a cobertura audiovisual mais premium do mercado.
         </p>
 
-        <div className="flex items-center gap-4 bg-black/40 backdrop-blur-md px-6 py-4 rounded-2xl border border-white/10">
-          <div className="flex -space-x-4">
-            {[1,2,3,4].map(i => (
-              <div key={i} className="w-10 h-10 rounded-full border-2 border-black bg-zinc-800 flex items-center justify-center">
-                <Star size={12} className="text-emerald-400" />
+        <div className="flex items-center gap-3 bg-black/40 backdrop-blur-md px-5 py-3 rounded-2xl border border-white/10">
+          <div className="flex -space-x-3">
+            {[1,2,3].map(i => (
+              <div key={i} className="w-8 h-8 rounded-full border-2 border-black bg-zinc-800 flex items-center justify-center">
+                <Star size={10} className="text-emerald-400" />
               </div>
             ))}
           </div>
-          <div className="text-xs font-bold text-white text-left leading-tight">
-            Mais de 1000 eventos realizados <br/>com sucesso em 2026.
+          <div className="text-[10px] font-bold text-white text-left leading-tight">
+            +1000 eventos realizados <br/>com sucesso em 2026.
           </div>
         </div>
       </div>
@@ -103,115 +103,96 @@ export const QuoteLandingView: React.FC<QuoteLandingViewProps> = ({ selectFlow }
           <p className="text-theme-text-muted text-sm">Escolha a jornada perfeita para o seu evento.</p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 max-w-5xl mx-auto">
           
-          {/* PACOTE ESSENCIAL (The 1900 BRL requested by user) */}
-          <div className="relative group p-8 rounded-2xl bg-theme-bg border border-brand-tactical shadow-[0_0_40px_rgba(var(--brand-rgb),0.15)] flex flex-col hover:-translate-y-2 transition-all duration-300">
-            <div className="absolute top-0 right-8 -translate-y-1/2 bg-brand-tactical text-brand-text px-4 py-1 text-[9px] font-black uppercase tracking-widest flex items-center gap-2">
-              <Crown size={12} /> Mais Vendido
+          {/* PACOTE ESSENCIAL */}
+          <div className="relative group p-6 rounded-xl bg-theme-bg/90 backdrop-blur-md border border-brand-tactical/50 shadow-xl flex flex-col hover:-translate-y-1 transition-all duration-300">
+            <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-brand-tactical text-brand-text px-3 py-0.5 rounded-full text-[8px] font-black uppercase tracking-widest flex items-center gap-1 shadow-lg shadow-brand-tactical/20 whitespace-nowrap">
+              <Crown size={10} /> O Mais Vendido
             </div>
             
-            <h3 className="text-xl font-black uppercase tracking-widest mb-2 text-theme-text">Pacotes Fechados</h3>
-            <p className="text-theme-text-muted text-xs mb-8 min-h-[40px]">
-              Soluções prontas com o melhor custo-benefício. Perfeito para quem quer praticidade.
+            <h3 className="text-lg font-black uppercase tracking-widest text-center text-theme-text mt-2">Pacotes Fechados</h3>
+            <p className="text-theme-text-muted text-[10px] text-center mb-6 px-2 min-h-[30px]">
+              Soluções prontas com o melhor custo-benefício. Praticidade total.
             </p>
 
-            <div className="flex items-baseline gap-2 mb-8 border-b border-theme-border pb-8">
-              <span className="text-3xl font-black text-theme-text">Pacote Essencial</span>
-            </div>
-
-            <ul className="space-y-4 mb-10 flex-1">
+            <div className="space-y-2 mb-6 flex-1">
               {[
                 "6 Horas de Cobertura",
-                "1 Fotógrafo Sênior",
-                "1 Filmmaker",
-                "~200 Fotos Tratadas",
-                "Vídeo Aftermovie"
+                "1 Fotógrafo + 1 Vídeo",
+                "Vídeo Aftermovie",
+                "Fotos Tratadas (High-End)",
               ].map((item, i) => (
-                <li key={i} className="flex items-start gap-3 text-sm font-medium text-theme-text">
-                  <div className="mt-1 w-4 h-4 rounded-full bg-brand-tactical/20 flex items-center justify-center shrink-0">
-                    <Check size={10} className="text-brand-tactical" />
-                  </div>
-                  {item}
-                </li>
+                <div key={i} className="flex items-center gap-2 text-[11px] text-theme-text/90 bg-theme-bg-muted/50 p-2.5 rounded-lg border border-white/5">
+                  <Check size={12} className="text-brand-tactical shrink-0" />
+                  <span className="font-medium truncate">{item}</span>
+                </div>
               ))}
-            </ul>
+            </div>
 
             <button
               onClick={() => selectFlow("PACKAGE")}
-              className="w-full py-4 bg-brand-tactical text-brand-text font-black uppercase tracking-widest text-[11px] hover:bg-brand-tactical/90 transition-colors flex items-center justify-center gap-3 group-hover:shadow-lg group-hover:shadow-brand-tactical/30"
+              className="w-full py-3.5 bg-brand-tactical text-brand-text font-black uppercase tracking-widest text-[10px] rounded-lg hover:brightness-110 transition-all flex items-center justify-center gap-2 group-hover:shadow-lg group-hover:shadow-brand-tactical/30"
             >
-              Escolher Pacote <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+              Escolher Pacote <ArrowRight size={12} className="group-hover:translate-x-1 transition-transform" />
             </button>
           </div>
 
           {/* UNIDADES FIXAS */}
-          <div className="relative group p-8 rounded-2xl bg-theme-bg-muted border border-theme-border flex flex-col hover:-translate-y-2 transition-all duration-300">
-            <h3 className="text-xl font-black uppercase tracking-widest mb-2 text-theme-text">Unidade Fixa</h3>
-            <p className="text-theme-text-muted text-xs mb-8 min-h-[40px]">
-              Já tem local definido? Escolha uma de nossas casas parceiras e veja os serviços exclusivos.
+          <div className="relative group p-6 rounded-xl bg-theme-bg/80 backdrop-blur-md border border-theme-border flex flex-col hover:-translate-y-1 transition-all duration-300">
+            <h3 className="text-lg font-black uppercase tracking-widest text-center text-theme-text mt-2">Unidades Fixas</h3>
+            <p className="text-theme-text-muted text-[10px] text-center mb-6 px-2 min-h-[30px]">
+              Vai casar/festejar em uma das nossas casas parceiras?
             </p>
 
-            <div className="flex items-baseline gap-2 mb-8 border-b border-theme-border pb-8">
-              <span className="text-3xl font-black text-theme-text">Casas Parceiras</span>
-            </div>
-
-            <ul className="space-y-4 mb-10 flex-1 opacity-70">
+            <div className="space-y-2 mb-6 flex-1 opacity-80">
               {[
-                "Lista de parceiros Foto Segundo",
-                "Serviços otimizados pro local",
-                "Facilidade de contratação",
-                "Conhecimento prévio da iluminação",
+                "Pacotes Otimizados pro Local",
+                "Fotógrafos Credenciados",
+                "Condições Exclusivas",
+                "Equipe Especializada",
               ].map((item, i) => (
-                <li key={i} className="flex items-start gap-3 text-sm font-medium text-theme-text">
-                  <div className="mt-1 w-4 h-4 rounded-full bg-theme-border flex items-center justify-center shrink-0">
-                    <Check size={10} className="text-theme-text" />
-                  </div>
-                  {item}
-                </li>
+                <div key={i} className="flex items-center gap-2 text-[11px] text-theme-text/90 bg-theme-bg-muted/50 p-2.5 rounded-lg border border-white/5">
+                  <Check size={12} className="text-theme-text-muted shrink-0" />
+                  <span className="font-medium truncate">{item}</span>
+                </div>
               ))}
-            </ul>
+            </div>
 
             <button
               onClick={() => selectFlow("PARTNER")}
-              className="w-full py-4 border border-theme-text text-theme-text font-black uppercase tracking-widest text-[11px] hover:bg-theme-text hover:text-theme-bg transition-colors flex items-center justify-center gap-3"
+              className="w-full py-3.5 bg-theme-bg-muted border border-theme-border text-theme-text font-black uppercase tracking-widest text-[10px] rounded-lg hover:bg-theme-border hover:text-white transition-all flex items-center justify-center gap-2"
             >
-              Ver Unidades <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+              Ver Unidades <ArrowRight size={12} className="group-hover:translate-x-1 transition-transform" />
             </button>
           </div>
 
           {/* PACOTE CUSTOMIZADO */}
-          <div className="relative group p-8 rounded-2xl bg-theme-bg-muted border border-theme-border flex flex-col hover:-translate-y-2 transition-all duration-300">
-            <h3 className="text-xl font-black uppercase tracking-widest mb-2 text-theme-text">Customizado</h3>
-            <p className="text-theme-text-muted text-xs mb-8 min-h-[40px]">
-              Monte do zero. Escolha cada serviço avulso de acordo com a necessidade do seu evento.
+          <div className="relative group p-6 rounded-xl bg-theme-bg/80 backdrop-blur-md border border-theme-border flex flex-col hover:-translate-y-1 transition-all duration-300">
+            <h3 className="text-lg font-black uppercase tracking-widest text-center text-theme-text mt-2">Customizado</h3>
+            <p className="text-theme-text-muted text-[10px] text-center mb-6 px-2 min-h-[30px]">
+              Monte exatamente do seu jeito, serviço por serviço.
             </p>
 
-            <div className="flex items-baseline gap-2 mb-8 border-b border-theme-border pb-8">
-              <span className="text-3xl font-black text-theme-text">Sob Medida</span>
-            </div>
-
-            <ul className="space-y-4 mb-10 flex-1 opacity-70">
+            <div className="space-y-2 mb-6 flex-1 opacity-80">
               {[
-                "Escolha a quantidade de horas",
-                "Adicione fotógrafos extras",
-                "Escolha serviços adicionais",
-                "Aprovação e proposta por admin",
+                "Horas Avulsas",
+                "Fotógrafos Extras",
+                "Drone e Impressão Local",
+                "Coberturas Gigantes",
               ].map((item, i) => (
-                <li key={i} className="flex items-start gap-3 text-sm font-medium text-theme-text">
-                  <div className="mt-1 w-4 h-4 rounded-full bg-theme-border flex items-center justify-center shrink-0">
-                    <Check size={10} className="text-theme-text" />
-                  </div>
-                  {item}
-                </li>
+                <div key={i} className="flex items-center gap-2 text-[11px] text-theme-text/90 bg-theme-bg-muted/50 p-2.5 rounded-lg border border-white/5">
+                  <Check size={12} className="text-theme-text-muted shrink-0" />
+                  <span className="font-medium truncate">{item}</span>
+                </div>
               ))}
-            </ul>
+            </div>
 
             <button
               onClick={() => selectFlow("CUSTOM")}
-              className="w-full py-4 border border-theme-text text-theme-text font-black uppercase tracking-widest text-[11px] hover:bg-theme-text hover:text-theme-bg transition-colors flex items-center justify-center gap-3"
+              className="w-full py-3.5 bg-theme-bg-muted border border-theme-border text-theme-text font-black uppercase tracking-widest text-[10px] rounded-lg hover:bg-theme-border hover:text-white transition-all flex items-center justify-center gap-2"
             >
-              Montar do Zero <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+              Montar do Zero <ArrowRight size={12} className="group-hover:translate-x-1 transition-transform" />
             </button>
           </div>
 

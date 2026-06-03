@@ -1,7 +1,6 @@
 import { test, expect } from '@playwright/test';
 import path from 'path';
 
-const BASE_URL = 'http://localhost:3000'; 
 const SCREENSHOT_DIR = path.join(process.cwd(), 'ANOTAÇÕES', 'TEST_PRINTS', 'VALIDATION');
 // Usamos o timestamp do log anterior para logar nos usuários criados
 const TS = '1778275986'; 
@@ -11,7 +10,7 @@ test.describe('Robot V3: Feature & Tool Validation', () => {
 
   const loginAndExplore = async (page: any, email: string, dashboardUrl: string, profileName: string, tabs: string[]) => {
     console.log(`[VALIDATION] 🔐 Logando como ${profileName}: ${email}`);
-    await page.goto(`${BASE_URL}/login`);
+    await page.goto(`/login`);
     await page.getByPlaceholder('seu@email.com').fill(email);
     await page.locator('input[type="password"]').fill('123456');
     await page.getByRole('button', { name: /Entrar no Sistema/i }).click();

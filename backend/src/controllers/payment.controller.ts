@@ -1714,7 +1714,8 @@ export class PaymentController {
           where: { orderId: order.id },
           include: { 
             service: true,
-            printProduct: true
+            printProduct: true,
+            media: true
           }
         });
 
@@ -1743,6 +1744,62 @@ export class PaymentController {
                 console.log(`[Fulfillment] Roteando pedido ${order.id} para LAB Parceiro Externo`);
                 await IntegrationService.dispatchToLabPartner(order.id, [item], photos);
               }
+            }
+          }
+        }
+
+        // 3.5. Criação Automática de Álbum (Vault) para Fotos Digitais Compradas
+        const isFullDigitalAccess = order.internalNotes?.includes('"type":"HYBRID"') || 
+                                    order.internalNotes?.includes('"type":"ALBUM_FULL"') ||
+                                    event.type === 'ALBUM_FULL';
+        const mediaItems = orderItems.filter(item => item.mediaId && item.media);
+        if ((mediaItems.length > 0 || isFullDigitalAccess) && order.clienteId) {
+          const vaultSlug = `vault-${order.eventId}-${order.clienteId}`;
+          
+          let album = await tx.sharedAlbum.findUnique({ where: { slug: vaultSlug } });
+          
+          if (!album) {
+            console.log(`[Fulfillment] Criando Álbum Automático para Fotos Digitais. Slug: ${vaultSlug}`);
+            album = await tx.sharedAlbum.create({
+              data: {
+                nome: event.title || "Meu Álbum Digital",
+                slug: vaultSlug,
+                goalPoses: Math.max(36, mediaItems.length),
+                status: "OPEN",
+                subscriptionStatus: "ACTIVE", // Libera o álbum permanentemente para essas fotos
+                ownerId: order.clienteId,
+                members: {
+                  create: {
+                    userId: order.clienteId,
+                    role: "OWNER"
+                  }
+                }
+              }
+            });
+          }
+
+          // Vincular as fotos digitais compradas (ou todas se for acesso total) ao álbum
+          let photosToLink = mediaItems.map(i => i.media!);
+          if (isFullDigitalAccess) {
+            photosToLink = await tx.eventMedia.findMany({ where: { eventId: order.eventId, type: "PHOTO" } });
+          }
+
+          for (const m of photosToLink) {
+            const existingMedia = await tx.sharedAlbumMedia.findFirst({
+              where: { albumId: album.id, fileId: m.id }
+            });
+            if (!existingMedia) {
+              await tx.sharedAlbumMedia.create({
+                data: {
+                  albumId: album.id,
+                  fileId: m.id,
+                  webViewLink: m.url,
+                  thumbnailLink: m.url,
+                  uploadedById: order.clienteId,
+                  status: 'APPROVED',
+                  type: m.type || 'PHOTO'
+                }
+              });
             }
           }
         }

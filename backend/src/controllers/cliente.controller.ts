@@ -43,18 +43,29 @@ export async function getMeusPedidos(req: AuthRequest, res: Response): Promise<v
       orderBy: { createdAt: "desc" },
     });
 
-    const resultado = pedidos.map(p => ({
-      id: p.id,
-      status: p.status,
-      amount: Number(p.valor),
-      createdAt: p.createdAt,
-      event: p.event,
-      hasPaid: p.status === "APROVADO",
-      accessType: p.accessType,
-      accessExpiresAt: p.accessExpiresAt,
-      manualType: p.manualType,
-      items: p.items
-    }));
+    const vaults = await prisma.sharedAlbum.findMany({
+      where: { ownerId: user.userId },
+      select: { id: true, slug: true }
+    });
+
+    const resultado = pedidos.map(p => {
+      const expectedSlug = `vault-${p.event.id}-${user.userId}`;
+      const vault = vaults.find(v => v.slug === expectedSlug);
+
+      return {
+        id: p.id,
+        status: p.status,
+        amount: Number(p.valor),
+        createdAt: p.createdAt,
+        event: p.event,
+        hasPaid: p.status === "APROVADO",
+        accessType: p.accessType,
+        accessExpiresAt: p.accessExpiresAt,
+        manualType: p.manualType,
+        items: p.items,
+        vaultId: vault?.id || null
+      };
+    });
 
     res.json(resultado);
   } catch (err) {
@@ -124,6 +135,12 @@ export async function getMeuPedidoDetalhe(req: AuthRequest, res: Response): Prom
       });
     }
 
+    const expectedSlug = `vault-${pedido.eventId}-${user.userId}`;
+    const vault = await prisma.sharedAlbum.findFirst({
+      where: { slug: expectedSlug, ownerId: user.userId },
+      select: { id: true }
+    });
+
     res.json({
       id: pedido.id,
       status: pedido.status,
@@ -140,6 +157,7 @@ export async function getMeuPedidoDetalhe(req: AuthRequest, res: Response): Prom
         driveUrl: canAccess ? (pedido.event?.driveUrl === "null" ? null : (pedido.event?.driveUrl ?? null)) : null,
       },
       items: pedido.items,
+      vaultId: vault?.id || null,
     });
   } catch (err) {
     console.error("getMeuPedidoDetalhe:", err);

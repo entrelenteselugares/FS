@@ -116,7 +116,11 @@ export async function listPendingServices(req: AuthRequest, res: Response): Prom
       },
       orderBy: { submittedAt: 'asc' }
     });
-    res.json(pending);
+    const formatted = pending.map(p => ({
+      ...p,
+      professional: p.profissional,
+    }));
+    res.json(formatted);
   } catch (err) {
     console.error("listPendingServices:", err);
     res.status(500).json({ error: "Erro ao listar serviços pendentes." });

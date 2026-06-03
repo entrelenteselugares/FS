@@ -26,7 +26,7 @@ test.describe('Painel Administrativo - Gestão de Orçamentos', () => {
     await page.goto('/admin');
     
     // Abre o menu de Orçamentos no Sidebar
-    const quotesMenu = page.getByRole('button', { name: /Orçamentos/i }).first();
+    const quotesMenu = page.getByText(/Orçamentos/i).first();
     await expect(quotesMenu).toBeVisible({ timeout: 15000 });
     await quotesMenu.click();
 

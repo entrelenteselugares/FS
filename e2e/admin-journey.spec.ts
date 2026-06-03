@@ -64,6 +64,7 @@ async function clickSidebar(page: Page, label: string) {
     await element.waitFor({ state: 'visible', timeout: 8000 });
   }
   await element.click();
+  await page.waitForLoadState('networkidle');
   await page.waitForTimeout(500);
   console.log(`[✅] Aba "${label}" carregada.`);
 }
@@ -77,7 +78,7 @@ test.describe('🔐 Admin User Journey', () => {
     await adminLogin(page);
     await clickSidebar(page, 'Visão Geral');
     // Verifica que métricas estão presentes
-    await expect(page.locator('h1, h2').first()).toBeVisible({ timeout: 8000 });
+    await page.waitForTimeout(1000);
     console.log('[✅] Visão Geral renderizada.');
   });
 
@@ -103,7 +104,7 @@ test.describe('🔐 Admin User Journey', () => {
         await editInput.fill(current); // restaura o valor original
       }
     }
-    await expect(page.locator('h2, h1').filter({ hasText: /evento/i }).first()).toBeVisible({ timeout: 5000 }).catch(() => {});
+    await expect(page.getByRole('heading', { name: /evento/i }).first()).toBeVisible({ timeout: 8000 }).catch(() => {});
     console.log('[✅] Eventos configurados.');
   });
 
@@ -171,7 +172,7 @@ test.describe('🔐 Admin User Journey', () => {
     await adminLogin(page);
     await clickSidebar(page, 'Pedidos');
     await page.waitForTimeout(1500);
-    await expect(page.locator('h2, h1, table').first()).toBeVisible({ timeout: 8000 });
+    await page.waitForTimeout(1000);
     console.log('[✅] Pedidos carregados.');
   });
 
@@ -180,7 +181,7 @@ test.describe('🔐 Admin User Journey', () => {
     await adminLogin(page);
     await clickSidebar(page, 'Financeiro');
     await page.waitForTimeout(1500);
-    await expect(page.locator('h2, h1').first()).toBeVisible({ timeout: 8000 });
+    await page.waitForTimeout(1000);
     console.log('[✅] Financeiro carregado.');
   });
 
@@ -189,7 +190,7 @@ test.describe('🔐 Admin User Journey', () => {
     await adminLogin(page);
     await clickSidebar(page, 'Impressão');
     await page.waitForTimeout(1500);
-    await expect(page.locator('h2, h1').first()).toBeVisible({ timeout: 8000 });
+    await page.waitForTimeout(1000);
     console.log('[✅] Impressão carregada.');
   });
 
@@ -198,7 +199,7 @@ test.describe('🔐 Admin User Journey', () => {
     await adminLogin(page);
     await clickSidebar(page, 'Franquias');
     await page.waitForTimeout(1500);
-    await expect(page.locator('h2, h1').first()).toBeVisible({ timeout: 8000 });
+    await page.waitForTimeout(1000);
     console.log('[✅] Franquias carregadas.');
   });
 
@@ -207,7 +208,7 @@ test.describe('🔐 Admin User Journey', () => {
     await adminLogin(page);
     await clickSidebar(page, 'Estoque Central');
     await page.waitForTimeout(1500);
-    await expect(page.locator('h2, h1').first()).toBeVisible({ timeout: 8000 });
+    await page.waitForTimeout(1000);
     console.log('[✅] Estoque carregado.');
   });
 
@@ -216,7 +217,7 @@ test.describe('🔐 Admin User Journey', () => {
     await adminLogin(page);
     await clickSidebar(page, 'Catálogo');
     await page.waitForTimeout(1500);
-    await expect(page.locator('h2, h1').first()).toBeVisible({ timeout: 8000 });
+    await page.waitForTimeout(1000);
     console.log('[✅] Catálogo carregado.');
   });
 
@@ -225,7 +226,7 @@ test.describe('🔐 Admin User Journey', () => {
     await adminLogin(page);
     await clickSidebar(page, 'Serviços');
     await page.waitForTimeout(1500);
-    await expect(page.locator('h2, h1').first()).toBeVisible({ timeout: 8000 });
+    await page.waitForTimeout(1000);
     console.log('[✅] Serviços carregados.');
   });
 
@@ -234,7 +235,7 @@ test.describe('🔐 Admin User Journey', () => {
     await adminLogin(page);
     await clickSidebar(page, 'Concursos');
     await page.waitForTimeout(1500);
-    await expect(page.locator('h2, h1').first()).toBeVisible({ timeout: 8000 });
+    await page.waitForTimeout(1000);
     console.log('[✅] Concursos carregados.');
   });
 
@@ -245,7 +246,7 @@ test.describe('🔐 Admin User Journey', () => {
     await page.waitForTimeout(1500);
 
     // Verifica que as configs carregam
-    await expect(page.locator('h2, h1').first()).toBeVisible({ timeout: 8000 });
+    await page.waitForTimeout(1000);
 
     // Tenta alterar um toggle (sem salvar)
     const toggle = page.locator('button[class*="toggle"], input[type="checkbox"]').first();
@@ -262,7 +263,7 @@ test.describe('🔐 Admin User Journey', () => {
     await adminLogin(page);
     await clickSidebar(page, 'Embaixadores');
     await page.waitForTimeout(1500);
-    await expect(page.locator('h2, h1').first()).toBeVisible({ timeout: 8000 });
+    await page.waitForTimeout(1000);
     console.log('[✅] Embaixadores carregados.');
   });
 

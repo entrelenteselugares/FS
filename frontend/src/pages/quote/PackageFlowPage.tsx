@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { usePackageFlow } from "../../hooks/usePackageFlow";
 import { QuoteDesktopView } from "../../components/quote/QuoteDesktopView";
-import { QuoteMobileView } from "../../components/quote/QuoteMobileView";
+import { PackageMobileView } from "../../components/quote/PackageMobileView";
 
 export const PackageFlowPage = () => {
   const quoteState = usePackageFlow();
@@ -13,5 +13,6 @@ export const PackageFlowPage = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  return isMobile ? <QuoteMobileView {...quoteState} /> : <QuoteDesktopView {...quoteState} />;
+  return isMobile ? <PackageMobileView {...quoteState} /> : <QuoteDesktopView {...quoteState} />;
 };
+

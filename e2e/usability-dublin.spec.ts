@@ -45,7 +45,7 @@ test.describe('Usability Robot: Dublin Accounts Simulation', () => {
   test('Profissional Dublin: navegação completa do painel', async ({ page }) => {
     console.log('[ROBOT] Perfil: Profissional (pro1@dublin.com)');
     await login(page, 'pro1@dublin.com');
-    await expect(page).toHaveURL(/.*\/profissional/);
+    await expect(page).toHaveURL(/.*\/minha-conta/);
 
     await expect(page.getByRole('button', { name: /Visão Geral/i })).toBeVisible();
 

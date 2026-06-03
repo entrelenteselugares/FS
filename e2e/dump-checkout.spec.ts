@@ -7,7 +7,7 @@ test('Dump Checkout HTML', async ({ page }) => {
     await route.fulfill({ json });
   });
 
-  await page.goto('http://localhost:3000/');
+  await page.goto('/');
   await page.waitForLoadState('networkidle');
   
   await page.getByRole('button', { name: 'Agendar', exact: true }).click();

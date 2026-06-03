@@ -53,7 +53,7 @@ test.describe('Teste Automatizado do Carrinho e Checkout', () => {
 
     // 3. Adicionar ao carrinho
     console.log('Tentando clicar em uma foto para adicionar ao carrinho...');
-    const firstPhoto = clientPage.getByTestId('photo-T1'); 
+    const firstPhoto = clientPage.locator('img').nth(1); 
     await firstPhoto.waitFor({ state: 'visible', timeout: 15000 });
     await firstPhoto.click({ force: true });
     

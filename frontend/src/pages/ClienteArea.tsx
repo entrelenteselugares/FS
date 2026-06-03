@@ -886,23 +886,12 @@ interface EventGroup {
 }
 
 function EventGroupRow({ group, now, onSelectPedido }: {
-  group: EventGroup;
+group: EventGroup;
   now: number;
   onSelectPedido: (p: Pedido) => void;
 }) {
   const navigate = useNavigate();
   const { event, pedidos, hasAprovado, hasPendente, latestAprovado, firstPendente } = group;
-
-  const getStatusMessage = (eventDate: string) => {
-    const dt = new Date(eventDate);
-    const diffDays = Math.ceil((dt.getTime() - now) / (1000 * 60 * 60 * 24));
-
-    if (diffDays > 30) return "Preparativos em andamento. O grande dia está sendo planejado!";
-    if (diffDays > 7) return "A contagem regressiva começou! Falta pouco para o seu evento.";
-    if (diffDays > 0) return "Chegou a hora! Estamos prontos para eternizar cada momento.";
-    if (diffDays > -30) return "Evento realizado! Seus arquivos estão em fase de curadoria técnica.";
-    return "Memórias eternizadas. Aproveite cada detalhe do seu álbum.";
-  };
 
   const handleAddServices = (e?: React.MouseEvent) => {
     e?.stopPropagation();
@@ -1035,30 +1024,12 @@ function EventGroupRow({ group, now, onSelectPedido }: {
   );
 }
 
-function Tag({ label, color = "#444" }: { label: string; color?: string }) {
- return (
- <span style={{ 
- fontSize: 9, 
- padding: "3.5px 12px", 
- borderRadius: "0.5rem", 
- border: `1px solid ${color}`, 
- background: `${color}15`,
- color: color, 
- letterSpacing: 0.5, 
- textTransform: "uppercase",
- fontWeight: 800
- }}>
- {label}
- </span>
- );
-}
-
 function PedidoDetalhe({ pedido, loading, onGoToEvent, onChangePrivacy, onRefresh }: {
- pedido: Pedido;
- loading: boolean;
- onGoToEvent: () => void;
- onChangePrivacy: () => void;
- onRefresh: () => void;
+  pedido: Pedido;
+  loading: boolean;
+  onGoToEvent: () => void;
+  onChangePrivacy: () => void;
+  onRefresh: () => void;
 }) {
  const navigate = useNavigate();
  const [isEditing, setIsEditing] = useState(false);

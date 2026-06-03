@@ -1,7 +1,6 @@
 import { test, expect } from '@playwright/test';
 import path from 'path';
 
-const BASE_URL = 'http://localhost:3000';
 const SCREENSHOT_DIR = path.join(process.cwd(), 'ANOTAÇÕES', 'TEST_PRINTS', 'SIM_JAPAO_V3');
 
 const profiles = [
@@ -21,7 +20,7 @@ test.describe('Simulation JAPÃO V3 (@japao.com)', () => {
       console.log(`Starting test for ${profile.role} ${profile.suffix}`);
       
       // 1. Registration
-      await page.goto(`${BASE_URL}/register`);
+      await page.goto(`/register`);
       await page.waitForLoadState('networkidle');
       
       // Select Role

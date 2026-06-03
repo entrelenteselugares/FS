@@ -1,7 +1,6 @@
 import { test, expect } from '@playwright/test';
 import path from 'path';
 
-const BASE_URL = 'http://localhost:3000'; 
 const SCREENSHOT_DIR = path.join(process.cwd(), 'ANOTAÇÕES', 'TEST_PRINTS', 'SIMULATIONS');
 const TS = '1778275986';
 
@@ -10,7 +9,7 @@ test.describe('Robot V5: Final Simulation & Validation', () => {
 
   test('Simulation: Full Quotation Flow', async ({ page }) => {
     console.log('[SIMULATION] 📝 Iniciando Orçamento...');
-    await page.goto(`${BASE_URL}/cotacao`);
+    await page.goto(`/cotacao`);
     await page.waitForLoadState('networkidle');
     
     // Passo 1
@@ -55,7 +54,7 @@ test.describe('Robot V5: Final Simulation & Validation', () => {
 
   test('Simulation: Partner Network & Vaults', async ({ page }) => {
     console.log('[SIMULATION] 👥 Validando Rede e Cofres...');
-    await page.goto(`${BASE_URL}/login`);
+    await page.goto(`/login`);
     await page.getByPlaceholder('seu@email.com').fill(`cli_${TS}@portugal.com`);
     await page.locator('input[type="password"]').fill('123456');
     await page.getByRole('button', { name: /Entrar no Sistema/i }).click();
@@ -63,7 +62,7 @@ test.describe('Robot V5: Final Simulation & Validation', () => {
     await page.waitForURL(/\/minha-conta/);
     
     // Cofres
-    await page.goto(`${BASE_URL}/cofres`);
+    await page.goto(`/cofres`);
     await page.waitForLoadState('networkidle');
     await expect(page.getByText(/Cofre/i).or(page.getByText(/Nenhum cofre/i))).toBeVisible();
     await page.screenshot({ path: path.join(SCREENSHOT_DIR, 'FINAL_Vaults.png') });
@@ -73,7 +72,7 @@ test.describe('Robot V5: Final Simulation & Validation', () => {
 
   test('Simulation: Checkout Rendering', async ({ page }) => {
     console.log('[SIMULATION] 🛒 Validando Checkout...');
-    await page.goto(`${BASE_URL}/checkout?orderId=SIM_FINAL`);
+    await page.goto(`/checkout?orderId=SIM_FINAL`);
     await page.waitForLoadState('networkidle');
     await page.screenshot({ path: path.join(SCREENSHOT_DIR, 'FINAL_Checkout.png') });
     console.log('[SIMULATION] ✅ Checkout renderizado.');

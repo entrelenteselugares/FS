@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { API } from "../lib/api";
+import { useAuth } from "./useAuth";
 
 export const MOCK_PACKAGES = [
   { id: "pocket", name: "Pacote Pocket", price: 900, hours: 4, services: ["foto"], desc: "4h Cobertura • 1 Fotógrafo • 100 Fotos Tratadas" },
@@ -8,6 +9,7 @@ export const MOCK_PACKAGES = [
 ];
 
 export const usePackageFlow = () => {
+  const { user } = useAuth();
   const [step, setStep] = useState(1);
   const [selectedPackageId, setSelectedPackageId] = useState("essencial");
   const [customCep, setCustomCep] = useState("");
@@ -24,6 +26,16 @@ export const usePackageFlow = () => {
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState("");
   const [createdQuoteId, setCreatedQuoteId] = useState<string | null>(null);
+
+  // Auto-fill user data when logged in
+  useEffect(() => {
+    if (user) {
+      if (user.nome && !name) setName(user.nome);
+      if (user.email && !email) setEmail(user.email);
+      if ((user as any).whatsapp && !whatsapp) setWhatsapp((user as any).whatsapp);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user]);
 
   const selectedPackage = MOCK_PACKAGES.find(p => p.id === selectedPackageId) || MOCK_PACKAGES[1];
 

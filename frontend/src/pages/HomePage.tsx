@@ -71,55 +71,51 @@ function EventCard({ event, onClick }: { event: Event; onClick: () => void }) {
   return (
     <div
       onClick={onClick}
-      className="group relative overflow-hidden aspect-[4/5] md:aspect-[4/3] md:rounded-2xl bg-[var(--bg-card)] cursor-pointer border-none transition-transform duration-300 md:hover:scale-105"
+      className="group relative overflow-hidden aspect-[3/4] md:aspect-[4/3] rounded-lg md:rounded-2xl bg-[var(--bg-card)] cursor-pointer border-none transition-transform duration-300 md:hover:scale-105"
     >
       {/* Background Image */}
       <img
         src={event.coverPhotoUrl || fallback}
         alt={event.title}
-        className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 md:group-hover:scale-110"
+        className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
         style={{ objectPosition: event.coverPosition || 'center' }}
         onError={e => { e.currentTarget.src = fallback; }}
       />
 
       {/* Immersive Gradient Overlay - REQUIRED for legibility */}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent z-[1] opacity-90 group-hover:opacity-100 transition-opacity" />
+      <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-transparent opacity-90 group-hover:opacity-100 transition-opacity" />
 
-      {/* Badge de Autoria (Pílula Glassmorphism) - Top Left */}
-      <div className="absolute top-4 left-4 z-10 backdrop-blur-md bg-white/10 border border-white/20 rounded-full px-3 py-1 flex items-center gap-2">
-        <div className="w-5 h-5 rounded-full bg-emerald-500/80 flex items-center justify-center text-[10px] font-black text-black">
-          {event.ownerName?.charAt(0).toUpperCase() || event.cartorio?.charAt(0).toUpperCase() || "FS"}
+      {/* Badge de Autoria - Top Left */}
+      <div className="absolute top-1.5 left-1.5 md:top-3 md:left-3 z-10 flex items-center gap-1.5">
+        <div className="w-4 h-4 md:w-6 md:h-6 rounded-full bg-emerald-500/90 flex items-center justify-center text-[7px] md:text-[10px] font-black text-black shadow-lg">
+          {event.ownerName?.charAt(0).toUpperCase() || event.cartorio?.charAt(0).toUpperCase() || "F"}
         </div>
-        <span className="text-[10px] font-black text-white uppercase tracking-widest truncate max-w-[120px]">
+        <span className="hidden md:inline text-[9px] font-black text-white uppercase tracking-widest truncate max-w-[120px] drop-shadow-md">
           {event.ownerName || event.cartorio || "Foto Segundo"}
         </span>
       </div>
 
       {/* Status Badges - Top Right */}
-      <div className="absolute top-4 right-4 z-10 flex flex-col gap-1 items-end">
+      <div className="absolute top-1.5 right-1.5 md:top-3 md:right-3 z-10 flex flex-col gap-1 items-end">
         {today && (
-          <span className="px-2 py-0.5 bg-emerald-500 text-black text-[8px] font-black uppercase tracking-widest rounded-sm shadow-xl">
+          <span className="px-1.5 py-0.5 bg-emerald-500 text-black text-[7px] md:text-[9px] font-black uppercase tracking-widest rounded-sm shadow-xl">
             HOJE
           </span>
         )}
         {novo && (
-          <span className="px-3 py-1 bg-white/10 backdrop-blur-md text-white text-[8px] font-black uppercase tracking-widest rounded-full border border-white/20 shadow-xl">
+          <span className="px-2 py-0.5 bg-black/40 backdrop-blur-md text-white text-[7px] md:text-[9px] font-black uppercase tracking-widest rounded-full border border-white/20 shadow-xl">
             NOVO
           </span>
         )}
       </div>
 
-      {/* Content Overlay - Centered on Mobile, Bottom on Desktop */}
-      <div className="absolute inset-0 flex flex-col items-center justify-center p-4 z-10 text-center md:hidden">
-        <h3 className="text-base sm:text-lg font-heading font-black text-white uppercase italic tracking-tighter leading-tight drop-shadow-2xl line-clamp-3">
+      {/* Content Overlay - Always Bottom for better subject visibility */}
+      <div className="absolute bottom-0 left-0 w-full p-2 md:p-4 z-10 flex flex-col justify-end">
+        <h3 className="text-[10px] md:text-lg font-heading font-black text-white uppercase italic tracking-tight leading-tight drop-shadow-lg line-clamp-2 mb-0.5 md:mb-1.5">
           {event.title}
         </h3>
-      </div>
-
-      <div className="absolute bottom-0 left-0 w-full p-5 z-10 space-y-1 hidden md:block">
-        <h3 className="text-xl font-heading font-black text-white uppercase italic tracking-tight leading-tight drop-shadow-lg truncate">
-          {event.title}
-        </h3>
+        
+        {/* Metadata for Desktop Only */}
         <div className="hidden md:flex flex-col gap-1 text-white/70 text-[9px] font-black uppercase tracking-widest italic">
           <div className="flex items-center gap-1.5">
             <MapPin size={10} className="text-emerald-500" />
@@ -239,13 +235,15 @@ export const HomePage = () => {
         .chip { transition: all 0.15s; cursor: pointer; }
         @media(max-width:768px){
           .hp-hero-title { font-size: clamp(34px,8vw,52px) !important; line-height: 1 !important; }
-          .hp-steps { flex-direction: column !important; }
+          .hp-steps { display: grid !important; grid-template-columns: repeat(3, 1fr) !important; gap: 8px !important; flex-direction: row !important; }
+          .hp-step-item { border-right: none !important; border-bottom: none !important; padding: 12px 0 !important; }
+          .hp-step-item h3 { font-size: 14px !important; margin-bottom: 4px !important; }
+          .hp-step-item p { font-size: 10px !important; line-height: 1.4 !important; }
+          .hp-step-item > div { font-size: 32px !important; margin-bottom: 6px !important; }
           .hp-footer-inner { flex-direction: column !important; gap: 2rem !important; }
           .hp-footer-cols { gap: 1.5rem !important; }
           .hp-search-container { flex-direction: column !important; }
           .hp-search-input { border-right: 1px solid var(--border-2) !important; border-bottom: none !important; border-top: none !important; }
-          .hp-step-item { border-right: none !important; padding: 16px 0 !important; border-bottom: 1px solid ${T.border} !important; }
-          .hp-step-item:last-child { border-bottom: none !important; }
           .hp-stats { gap: 10px !important; justify-content: space-between !important; flex-wrap: nowrap !important; }
           .hp-stats-item { min-width: auto; }
           .hp-stats-val { font-size: 22px !important; }
@@ -273,7 +271,7 @@ export const HomePage = () => {
            
            /* Immersive Feed for Mobile */
            .hp-event-grid-container { padding: 4px !important; }
-           .hp-event-grid { gap: 8px !important; grid-template-columns: repeat(2, 1fr) !important; }
+           .hp-event-grid { gap: 4px !important; grid-template-columns: repeat(3, 1fr) !important; }
          }
         @media(min-width:769px){
           .hp-mobile-search { display: none !important; }
@@ -492,7 +490,7 @@ export const HomePage = () => {
                 </div>
 
                 {/* Eventos Grid (Full Width on Mobile) */}
-                <div className="grid hp-event-grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+                <div className="grid hp-event-grid grid-cols-3 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
                   {events.map(ev => (
                     <EventCard key={ev.id} event={ev} onClick={() => navigate(`/e/${ev.slug || ev.id}`)} />
                   ))}

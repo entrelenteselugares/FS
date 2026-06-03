@@ -1,7 +1,6 @@
 import { test, expect } from '@playwright/test';
 import path from 'path';
 
-const BASE_URL = 'http://localhost:3000'; 
 const SCREENSHOT_DIR = path.join(process.cwd(), 'ANOTAÇÕES', 'TEST_PRINTS', 'SIMULATIONS');
 
 test.describe('Final Verification Flow', () => {
@@ -9,7 +8,7 @@ test.describe('Final Verification Flow', () => {
 
   test('Flow: Orçamento Express', async ({ page }) => {
     console.log('[SIMULATION] 📝 Orçamento Express...');
-    await page.goto(`${BASE_URL}/cotacao`);
+    await page.goto(`/cotacao`);
     
     // Passo 1: Local
     await page.click('text=ORÇAMENTO');
@@ -41,7 +40,7 @@ test.describe('Final Verification Flow', () => {
 
   test('Flow: Unidade Fixa Booking', async ({ page }) => {
     console.log('[SIMULATION] 🏢 Unidade Fixa Booking...');
-    await page.goto(`${BASE_URL}/cotacao`);
+    await page.goto(`/cotacao`);
     await page.click('text=UNIDADE FIXA');
     
     // Verifica se o select de unidades aparece

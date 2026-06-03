@@ -1,7 +1,6 @@
 import { test, expect } from '@playwright/test';
 import path from 'path';
 
-const BASE_URL = 'http://localhost:3000'; 
 const SCREENSHOT_DIR = path.join(process.cwd(), 'ANOTAÇÕES', 'TEST_PRINTS');
 
 test.describe('Robot V2: Portugal Profile Registration', () => {
@@ -51,7 +50,7 @@ test.describe('Robot V2: Portugal Profile Registration', () => {
     test(`Walkthrough: ${profile.id}`, async ({ page }) => {
       console.log(`[ROBOT] 🚀 Iniciando fluxo para ${profile.id}...`);
       
-      await page.goto(`${BASE_URL}/register`);
+      await page.goto(`/register`);
       await page.waitForLoadState('networkidle');
       await page.screenshot({ path: path.join(SCREENSHOT_DIR, `v2_${profile.id}_0_start.png`) });
 

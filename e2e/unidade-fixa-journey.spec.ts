@@ -47,7 +47,7 @@ test.describe('🏢 Unidade Fixa User Journey', () => {
     await unitLogin(page);
     await clickSidebar(page, 'Agenda Tática');
     // Verifica que métricas estão presentes
-    await expect(page.locator('h1, h2, h3').filter({ hasText: /Agenda/i }).first()).toBeVisible({ timeout: 8000 }).catch(() => {});
+    await expect(page.getByRole('heading', { name: /Agenda/i }).first()).toBeVisible({ timeout: 8000 }).catch(() => {});
     await expect(page.getByText(/Próximas 72h|Standby Estratégico|Missões/i).first()).toBeVisible({ timeout: 8000 });
     console.log('[✅] Agenda Tática renderizada.');
   });

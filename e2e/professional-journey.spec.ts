@@ -136,7 +136,7 @@ test.describe('🛠️ Professional User Journey', () => {
 
     // Confirma que a tab de perfil está ativa (sem erros)
     await expect(
-      page.locator('h2, h1').filter({ hasText: /perfil/i }).first()
+      page.getByRole('heading', { name: /perfil/i }).first()
     ).toBeVisible({ timeout: 5000 }).catch(() => {});
     console.log('[✅] Perfil preenchido com sucesso.');
   });

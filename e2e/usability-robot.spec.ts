@@ -49,7 +49,7 @@ test.describe('Usability Robot: Simulação por Perfil', () => {
   test('Profissional: navegação completa do painel', async ({ page }) => {
     console.log('[ROBOT] Perfil: Profissional Fotógrafo');
     await login(page, 'fotografo@brasil.com.br');
-    await expect(page).toHaveURL(/.*\/profissional/);
+    await expect(page).toHaveURL(/.*\/minha-conta/);
 
     // Aba padrão: Visão Geral (deve estar ativo)
     await expect(page.getByRole('button', { name: /Visão Geral/i })).toBeVisible();
@@ -80,7 +80,7 @@ test.describe('Usability Robot: Simulação por Perfil', () => {
   test('Profissional Editor: login e visão geral', async ({ page }) => {
     console.log('[ROBOT] Perfil: Profissional Editor');
     await login(page, 'editor@brasil.com.br');
-    await expect(page).toHaveURL(/.*\/profissional/);
+    await expect(page).toHaveURL(/.*\/minha-conta/);
     await expect(page.getByRole('button', { name: /Visão Geral/i })).toBeVisible();
     console.log('[ROBOT] ✅ Profissional Editor OK');
   });
@@ -89,7 +89,7 @@ test.describe('Usability Robot: Simulação por Perfil', () => {
   test('Profissional Híbrido: login e aba financeiro', async ({ page }) => {
     console.log('[ROBOT] Perfil: Profissional Híbrido');
     await login(page, 'hibrido@brasil.com.br');
-    await expect(page).toHaveURL(/.*\/profissional/);
+    await expect(page).toHaveURL(/.*\/minha-conta/);
 
     await page.getByRole('button', { name: /Financeiro/i }).click();
     await expect(page.getByText(/Performance Financeira/i)).toBeVisible();
@@ -100,7 +100,7 @@ test.describe('Usability Robot: Simulação por Perfil', () => {
   test('Profissional Mobile: login e visão geral', async ({ page }) => {
     console.log('[ROBOT] Perfil: Profissional Mobile');
     await login(page, 'mobile@brasil.com.br');
-    await expect(page).toHaveURL(/.*\/profissional/);
+    await expect(page).toHaveURL(/.*\/minha-conta/);
     await expect(page.getByRole('button', { name: /Visão Geral/i })).toBeVisible();
     console.log('[ROBOT] ✅ Profissional Mobile OK');
   });
@@ -109,7 +109,7 @@ test.describe('Usability Robot: Simulação por Perfil', () => {
   test('Profissional Mobile Híbrido: login e financeiro', async ({ page }) => {
     console.log('[ROBOT] Perfil: Profissional Mobile Híbrido');
     await login(page, 'mobile-hibrido@brasil.com.br');
-    await expect(page).toHaveURL(/.*\/profissional/);
+    await expect(page).toHaveURL(/.*\/minha-conta/);
     await page.getByRole('button', { name: /Financeiro/i }).click();
     await expect(page.getByText(/Performance Financeira/i)).toBeVisible();
     console.log('[ROBOT] ✅ Profissional Mobile Híbrido OK');
