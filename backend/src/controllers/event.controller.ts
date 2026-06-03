@@ -368,8 +368,8 @@ export class EventController {
       if (sortBy === 'PRICE_DESC') orderBy = { priceBase: 'desc' };
       if (sortBy === 'OLD') orderBy = { dataEvento: 'asc' };
 
-      const [events, total] = await Promise.all([
-        prisma.event.findMany({
+      const total = await prisma.event.count({ where });
+      const events = await prisma.event.findMany({
           where,
           take,
           skip,
@@ -405,9 +405,7 @@ export class EventController {
               }
             }
           }
-        }),
-        prisma.event.count({ where })
-      ]);
+        });
 
       const pages = Math.ceil(total / take);
 

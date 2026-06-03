@@ -137,7 +137,7 @@ app.get('/events', async (c) => {
     if (sortBy === 'PRICE_DESC') orderBy = { priceBase: 'desc' };
     if (sortBy === 'OLD') orderBy = { dataEvento: 'asc' };
 
-    const [events, total] = await Promise.all([
+    const total = await prisma.event.count({ where });`n    const events = await
       prisma.event.findMany({
         where,
         take,
