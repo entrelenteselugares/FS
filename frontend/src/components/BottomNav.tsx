@@ -29,7 +29,7 @@ export const BottomNav: React.FC = () => {
 
   const NAV_ITEMS = useMemo<NavItem[]>(() => {
     const items: NavItem[] = [
-      { label: "Carrinho", onClick: () => { setDrawerOpen(false); setTimeout(() => navigate("/minha-conta?s=files", { replace: true }), 50); }, isActive: location.pathname === "/minha-conta" && (s === "files" || s === "fotos" || s === "wallet" || s === "pedidos"), icon: <ShoppingBag size={18} /> },
+      { label: "Compras", onClick: () => { setDrawerOpen(false); setTimeout(() => navigate("/minha-conta?s=files", { replace: true }), 50); }, isActive: location.pathname === "/minha-conta" && (s === "files" || s === "fotos" || s === "wallet" || s === "pedidos"), icon: <ShoppingBag size={18} /> },
       { label: "Meus Álbuns", onClick: () => { setDrawerOpen(false); setTimeout(() => navigate("/meus-albuns", { replace: true }), 50); }, isActive: location.pathname.startsWith("/meus-albuns"), icon: <Lock size={18} /> },
       { label: "Indique e Ganhe", onClick: () => { setDrawerOpen(false); setTimeout(() => navigate("/minha-conta?s=affiliate", { replace: true }), 50); }, isActive: location.pathname === "/minha-conta" && s === "affiliate", icon: <Users size={18} /> },
       { label: "Meus Dados", onClick: () => { setDrawerOpen(false); setTimeout(() => navigate("/minha-conta?s=menu", { replace: true }), 50); }, isActive: location.pathname === "/minha-conta" && s === "menu", icon: <User size={18} /> },
@@ -116,7 +116,7 @@ export const BottomNav: React.FC = () => {
           className={`flex flex-col items-center gap-1 transition-colors ${location.pathname === "/minha-conta" && (s === "files" || s === "fotos" || s === "wallet" || s === "pedidos") ? "text-emerald-500" : "text-[var(--text)]/40"}`}
         >
           <ShoppingBag size={20} strokeWidth={1.5} />
-          <span className="text-[7.5px] font-bold uppercase tracking-tight">Carrinho</span>
+          <span className="text-[7.5px] font-bold uppercase tracking-tight">Compras</span>
         </button>
 
         <button 

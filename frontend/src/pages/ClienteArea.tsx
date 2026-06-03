@@ -162,7 +162,7 @@ export default function ClienteArea() {
  
  const NAV_ITEMS = useMemo<NavItem[]>(() => {
  const items: NavItem[] = [
- { label: "Carrinho", onClick: () => handleTabChange("files"), isActive: activeTab === "files", icon: <ShoppingBag size={18} /> },
+  { label: "Histórico de Compras", onClick: () => handleTabChange("files"), isActive: activeTab === "files", icon: <ShoppingBag size={18} /> },
  { label: "Meus Álbuns", onClick: () => navigate("/meus-albuns"), isActive: false, icon: <Lock size={18} /> },
  { label: "Indique e Ganhe", onClick: () => handleTabChange("affiliate"), isActive: activeTab === "affiliate", icon: <Users size={18} /> },
  { label: "Meus Dados", onClick: () => handleTabChange("profile"), isActive: activeTab === "profile", icon: <User size={18} /> },
@@ -556,9 +556,9 @@ export default function ClienteArea() {
  <div className="absolute -top-2 -right-2 w-4 h-4 bg-brand-tactical rounded-full" />
  </div>
  <div className="relative space-y-3">
- <p className="text-xl font-heading font-black text-theme-text uppercase tracking-tight">Arquivo em Standby</p>
+ <p className="text-xl font-heading font-black text-theme-text uppercase tracking-tight">Histórico Vazio</p>
  <p className="text-[10px] font-medium text-theme-muted uppercase tracking-widest max-w-md mx-auto leading-relaxed px-4">
- Nenhuma memória adquirida ainda.<br className="hidden sm:inline" /> Explore a vitrine ou solicite uma cobertura exclusiva.
+ Você ainda não realizou nenhuma compra.<br className="hidden sm:inline" /> Explore a vitrine ou solicite uma cobertura exclusiva.
  </p>
  </div>
  <div className="relative flex items-center justify-center gap-4 flex-wrap">
@@ -886,235 +886,153 @@ interface EventGroup {
 }
 
 function EventGroupRow({ group, now, onSelectPedido }: {
- group: EventGroup;
- now: number;
- onSelectPedido: (p: Pedido) => void;
+  group: EventGroup;
+  now: number;
+  onSelectPedido: (p: Pedido) => void;
 }) {
- const navigate = useNavigate();
- const { event, pedidos, hasAprovado, hasPendente, latestAprovado, firstPendente } = group;
+  const navigate = useNavigate();
+  const { event, pedidos, hasAprovado, hasPendente, latestAprovado, firstPendente } = group;
 
- const getStatusMessage = (eventDate: string) => {
- const dt = new Date(eventDate);
- const diffDays = Math.ceil((dt.getTime() - now) / (1000 * 60 * 60 * 24));
+  const getStatusMessage = (eventDate: string) => {
+    const dt = new Date(eventDate);
+    const diffDays = Math.ceil((dt.getTime() - now) / (1000 * 60 * 60 * 24));
 
- if (diffDays > 30) return "Preparativos em andamento. O grande dia está sendo planejado!";
- if (diffDays > 7) return "A contagem regressiva começou! Falta pouco para o seu evento.";
- if (diffDays > 0) return "Chegou a hora! Estamos prontos para eternizar cada momento.";
- if (diffDays > -30) return "Evento realizado! Seus arquivos estão em fase de curadoria técnica.";
- return "Memórias eternizadas. Aproveite cada detalhe do seu álbum.";
- };
+    if (diffDays > 30) return "Preparativos em andamento. O grande dia está sendo planejado!";
+    if (diffDays > 7) return "A contagem regressiva começou! Falta pouco para o seu evento.";
+    if (diffDays > 0) return "Chegou a hora! Estamos prontos para eternizar cada momento.";
+    if (diffDays > -30) return "Evento realizado! Seus arquivos estão em fase de curadoria técnica.";
+    return "Memórias eternizadas. Aproveite cada detalhe do seu álbum.";
+  };
 
- const handleAddServices = (e?: React.MouseEvent) => {
- e?.stopPropagation();
- const dt = new Date(event.dataEvento);
- const diffDays = Math.ceil((dt.getTime() - now) / (864e5));
+  const handleAddServices = (e?: React.MouseEvent) => {
+    e?.stopPropagation();
+    const dt = new Date(event.dataEvento);
+    const diffDays = Math.ceil((dt.getTime() - now) / (864e5));
 
- if (diffDays > 10) {
- navigate(`/e/${event.id}?intent=upgrade`);
- } else {
- const msg = `Olá! Gostaria de adicionar mais serviços ao meu evento "${event.title}". Vi que para pedidos com menos de 7 dias úteis da data, a inclusão está sujeita à disponibilidade da agenda dos profissionais.`;
- window.open(`https://wa.me/5519981150440?text=${encodeURIComponent(msg)}`, "_blank");
- }
- };
+    if (diffDays > 10) {
+      navigate(`/e/${event.id}?intent=upgrade`);
+    } else {
+      const msg = `Olá! Gostaria de adicionar mais serviços ao meu evento "${event.title}". Vi que para pedidos com menos de 7 dias úteis da data, a inclusão está sujeita à disponibilidade da agenda dos profissionais.`;
+      window.open(`https://wa.me/5519981150440?text=${encodeURIComponent(msg)}`, "_blank");
+    }
+  };
 
- const accessExpiresAt = latestAprovado?.accessExpiresAt;
- const diff = accessExpiresAt ? new Date(accessExpiresAt).getTime() - now : null;
- const daysLeft = diff ? Math.ceil(diff / (1000 * 60 * 60 * 24)) : null;
- const isExpiringSoon = daysLeft !== null && daysLeft <= 7 && daysLeft > 0;
+  const purchaseDate = new Date(pedidos[0].createdAt).toLocaleDateString("pt-BR", { day: 'numeric', month: 'long' });
+  const eventDateFmt = formatDate(event.dataEvento);
+  const isCofre = event?.slug?.startsWith('vault-') || pedidos[0]?.manualType === 'COFRE';
+  const displayTitle = isCofre ? `Ordem de Cofre: ${event.title}` : event.title;
 
- if (!hasAprovado) {
- return (
- <div className="relative group border border-amber-500/20 bg-amber-500/[0.01] hover:border-amber-500/40 transition-all duration-500 overflow-hidden rounded-2xl p-4 sm:p-6 animate-in fade-in slide-in-from-top-4 duration-300">
- <div className="flex flex-row items-center gap-4 md:gap-6">
- {/* Small elegant Thumbnail */}
- <div className="relative w-16 h-16 sm:w-24 sm:h-24 bg-zinc-950 overflow-hidden border-2 border-theme-border rounded-xl shrink-0">
- {event.coverPhotoUrl ? (
- <img 
- src={event.coverPhotoUrl.toString().trim().replace(/\s/g, '')} 
- alt="" 
- className="w-full h-full object-cover grayscale brightness-30 blur-[1px] transition-all duration-1000 group-hover:scale-105" 
- style={{ objectPosition: event.coverPosition || 'center' }}
- onError={(e) => {
- const target = e.target as HTMLImageElement;
- target.onerror = null;
- target.src = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiMzZjNmNDYiIHN0cm9rZS13aWR0aD0iMiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PHJlY3Qgd2lkdGg9IjE4IiBoZWlnaHQ9IjE4IiB4PSIzIiB5PSIzIiByeD0iMiIgcnk9IjIiLz48Y2lyY2xlIGN4PSI5IiBjeT0iOSIgcj0iMiIvPjxwYXRoIGQ9Im0yMSAxNS0zLjA4Ni0zLjA4NmEyIDIgMCAwIDAtMi44MjggMEw2IDIxIi8+PC9zdmc+';
- target.className = 'w-full h-full object-contain p-4 opacity-30 transition-all duration-1000 group-hover:scale-105';
- }}
- />
- ) : (
- <div className="w-full h-full flex items-center justify-center bg-zinc-900">
- <ImageIcon size={20} className="text-zinc-800" />
- </div>
- )}
- <div className="absolute inset-0 flex flex-col items-center justify-center bg-theme-bg-muted/70">
- <Lock size={14} className="text-amber-500" />
- </div>
- </div>
+  return (
+    <div className="mb-6 space-y-3">
+      {/* Date Header like ML */}
+      <h3 className="text-xs font-black text-theme-text uppercase tracking-widest pl-2">
+        {purchaseDate}
+      </h3>
 
- {/* Info */}
- <div className="flex-1 min-w-0 space-y-1 sm:space-y-1.5">
- <div className="flex flex-wrap items-center gap-2">
- <span className="text-[7px] sm:text-[8px] font-black text-amber-500 uppercase tracking-widest bg-amber-500/10 px-2 py-0.5 rounded-full border border-amber-500/20">
- Acesso Bloqueado
- </span>
- <span className="text-[8px] text-theme-text-muted font-bold uppercase tracking-wider">
- {formatDate(event.dataEvento)}
- </span>
- </div>
- <h4 className="text-sm sm:text-lg font-heading font-black tracking-tight uppercase leading-tight text-theme-text truncate">
- {event?.slug?.startsWith('vault-') || pedidos[0]?.manualType === 'COFRE' ? `Ordem de Cofre: ${event.title}` : event.title}
- </h4>
- <p className="text-[9px] text-theme-text-muted truncate max-w-md hidden sm:block">
- {getStatusMessage(event.dataEvento)}
- </p>
- </div>
+      <div className={`relative bg-theme-bg border transition-all duration-300 rounded-lg shadow-sm ${
+        hasPendente ? 'border-amber-500/40' : 'border-theme-border'
+      }`}>
+        {/* ML Style Status Header */}
+        <div className="flex items-center gap-3 border-b border-theme-border/50 px-4 py-3 sm:px-6">
+          <div className="flex-1">
+            <span className={`text-[11px] font-black uppercase tracking-widest ${hasAprovado ? 'text-emerald-500' : 'text-amber-500'}`}>
+              {hasAprovado ? 'Acesso Liberado' : 'Pagamento Pendente'}
+            </span>
+            <p className="text-[10px] text-theme-text-muted font-medium mt-1">
+              Data do evento: <strong className="text-theme-text">{eventDateFmt}</strong>
+            </p>
+          </div>
+        </div>
 
- {/* Actions */}
- <div className="shrink-0 flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
- <button 
- onClick={() => firstPendente ? onSelectPedido(firstPendente) : navigate(getEventUrl(pedidos[0]))}
- className="px-2.5 py-1.5 sm:px-4 sm:py-2 border border-theme-border text-theme-text hover:border-brand-tactical hover:text-brand-tactical text-[8px] sm:text-[9px] font-black uppercase tracking-widest transition-all rounded-lg text-center"
- >
- Ver Detalhes
- </button>
- <button
- onClick={() => firstPendente && navigate(`/checkout?orderId=${firstPendente.id}`)}
- className="px-2.5 py-1.5 sm:px-4 sm:py-2 bg-amber-500 hover:bg-amber-600 text-black text-[8px] sm:text-[9px] font-black uppercase tracking-widest transition-all rounded-lg shadow-lg shadow-amber-500/15 text-center "
- >
- Desbloquear
- </button>
- </div>
- </div>
- </div>
- );
- }
+        {/* ML Style Body */}
+        <div className="flex flex-col sm:flex-row gap-4 p-4 sm:p-6">
+          {/* Thumbnail */}
+          <div className="w-20 h-20 sm:w-24 sm:h-24 bg-zinc-900 border border-theme-border rounded-md overflow-hidden shrink-0">
+            {event.coverPhotoUrl ? (
+              <img 
+                src={event.coverPhotoUrl.toString().trim().replace(/\s/g, '')} 
+                alt="" 
+                className={`w-full h-full object-cover ${hasAprovado ? '' : 'grayscale brightness-50'}`} 
+                style={{ objectPosition: event.coverPosition || 'center' }}
+                onError={(e) => {
+                  const target = e.target as HTMLImageElement;
+                  target.style.display = 'none';
+                }}
+              />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center">
+                <ImageIcon size={24} className="text-zinc-800" />
+              </div>
+            )}
+          </div>
 
- return (
- <div
- className={`relative group border transition-all duration-500 overflow-hidden rounded-xl ${
- hasPendente ? 'border-amber-500/40 bg-amber-500/[0.02]' : 'border-theme-border bg-theme-bg/60 backdrop-blur-sm'
- } hover:border-brand-tactical/50`}
- style={{
- boxShadow: isExpiringSoon ? "0 0 20px rgba(245, 158, 11, 0.05)" : "none"
- }}
- >
- <div className="flex flex-col sm:flex-row items-stretch">
- {/* Thumbnail Section */}
- <div className="relative w-full sm:w-48 md:w-64 h-48 sm:h-auto shrink-0 bg-zinc-950 overflow-hidden border-b sm:border-b-0 sm:border-r border-theme-border">
- {event.coverPhotoUrl ? (
- <img 
- src={event.coverPhotoUrl.toString().trim().replace(/\s/g, '')} 
- alt="" 
- className={`w-full h-full object-cover transition-all duration-1000 group-hover:scale-105 ${hasAprovado ? '' : 'grayscale brightness-40 blur-[2px]'}`} 
- style={{ objectPosition: event.coverPosition || 'center' }}
- />
- ) : (
- <div className="w-full h-full flex items-center justify-center bg-zinc-900">
- <ImageIcon size={32} className="text-zinc-800" />
- </div>
- )}
- 
- <div className="absolute inset-0 bg-gradient-to-t sm:bg-gradient-to-r from-theme-bg/80 sm:from-theme-bg/40 via-transparent to-transparent pointer-events-none" />
- 
- {!hasAprovado && (
- <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-theme-bg-muted/40 backdrop-blur-[2px]">
- <div className="p-2 bg-theme-bg border border-theme-border rounded-full shadow-lg">
- <Clock size={16} className="text-amber-500" />
- </div>
- <p className="text-[8px] font-black text-theme-text uppercase tracking-[0.3em] bg-theme-bg/80 px-2 py-0.5 rounded">Bloqueado</p>
- </div>
- )}
- </div>
+          {/* Details */}
+          <div className="flex-1 min-w-0 flex flex-col justify-center">
+            <h4 className="text-sm md:text-base font-black tracking-tight text-theme-text mb-1">
+              {displayTitle}
+            </h4>
+            <p className="text-[10px] text-theme-text-muted mb-3 flex items-center gap-1.5">
+              <MapPin size={10} /> {event.city || event.location || "Digital"}
+            </p>
+            
+            {/* Items Bought */}
+            <div className="space-y-1">
+              <p className="text-[10px] font-medium text-theme-text-muted">
+                {pedidos.length} {pedidos.length === 1 ? 'item' : 'itens'} • Vendido por <strong className="text-brand-tactical">Foto Segundo</strong>
+              </p>
+              {pedidos.slice(0, 2).map(p => (
+                <p key={p.id} className="text-[10px] text-theme-text-muted truncate">
+                  - {p.manualType || "Pacote de Serviços"} ({formatCurrency(p.amount)})
+                </p>
+              ))}
+              {pedidos.length > 2 && (
+                <p className="text-[10px] text-theme-text-muted">
+                  + {pedidos.length - 2} outros itens
+                </p>
+              )}
+            </div>
+          </div>
 
- {/* Content */}
- <div className="flex-1 flex flex-col justify-between p-4 md:p-6 min-w-0 bg-theme-bg/40">
- <div className="flex justify-between items-start gap-4">
- <div className="min-w-0">
- <div className="flex items-center gap-2 mb-2">
- <span className="text-[8px] font-black text-brand-tactical uppercase tracking-widest px-2 py-0.5 bg-brand-tactical/10 rounded border border-brand-tactical/20">
- Álbum
- </span>
- <span className="text-[9px] text-theme-text-muted font-bold uppercase tracking-wider">
- {formatDate(event.dataEvento)}
- </span>
- </div>
- <h4 className="text-lg md:text-xl font-heading font-black tracking-tighter uppercase leading-tight text-theme-text line-clamp-2" title={event.title}>
- {event?.slug?.startsWith('vault-') || pedidos[0]?.manualType === 'COFRE' ? `Cofre: ${event.title}` : event.title}
- </h4>
- <p className="text-[10px] text-theme-text-muted uppercase tracking-widest mt-1 flex items-center gap-1.5 truncate">
- <MapPin size={10} /> {event.city || event.location || "Digital"}
- </p>
- </div>
- 
- {/* Tags */}
- <div className="flex flex-col gap-1 items-end shrink-0 hidden sm:flex">
- {event.temFoto && <Tag label="Foto" />}
- {event.temVideo && <Tag label="Vídeo" />}
- {event.temReels && <Tag label="Reels" color="var(--brand-tactical)" />}
- </div>
- </div>
-
- <div className="mt-4 space-y-3">
- {/* Status Line Compact */}
- <div className="flex items-center gap-2 text-[10px] text-theme-text-muted font-medium bg-theme-bg-muted/50 px-3 py-2 rounded-lg border border-theme-border/50">
- <Zap size={12} className="text-brand-tactical shrink-0" />
- <span className="truncate">{getStatusMessage(event.dataEvento)}</span>
- </div>
-
- {/* Histórico Compacto */}
- {pedidos.length > 0 && (
- <div className="flex flex-wrap gap-2">
- {pedidos.map(p => (
- <button key={p.id} onClick={() => onSelectPedido(p)} className="flex items-center gap-1.5 px-2.5 py-1.5 bg-theme-bg border border-theme-border rounded-md hover:border-brand-tactical group/order transition-all">
- <div className={`w-1.5 h-1.5 rounded-full ${p.hasPaid ? 'bg-emerald-400' : 'bg-amber-400 animate-pulse'}`} />
- <span className="text-[8px] font-black uppercase tracking-widest text-theme-text-muted group-hover/order:text-theme-text max-w-[120px] truncate">{p.manualType || "Investimento"}</span>
- <span className={`text-[9px] font-black ml-1 ${p.hasPaid ? 'text-emerald-400' : 'text-amber-400'}`}>{formatCurrency(p.amount)}</span>
- </button>
- ))}
- </div>
- )}
- </div>
-
- <div className="mt-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-t border-theme-border/50 pt-4">
- <div className="flex items-center gap-3">
- {hasAprovado && isExpiringSoon && (
- <span className="text-[9px] font-black text-amber-500 uppercase tracking-widest bg-amber-500/10 px-2 py-1 rounded border border-amber-500/20">
- Expira em {daysLeft}d
- </span>
- )}
- </div>
- 
- <div className="flex items-center gap-2 sm:gap-3 w-full sm:w-auto">
- <button 
- onClick={(e) => {
- e.stopPropagation();
- if (new Date(event.dataEvento).getTime() > now) {
- handleAddServices(e);
- } else {
- const url = getEventUrl(pedidos[0]);
- navigate(url.includes('?') ? `${url}&action=print` : `${url}?action=print`);
- }
- }}
- className="flex-1 sm:flex-none fs-btn !px-4 !py-2.5 border border-theme-border text-theme-text-muted hover:text-brand-tactical hover:border-brand-tactical text-[9px]"
- >
- {new Date(event.dataEvento).getTime() > now ? "Upgrade" : "Revelar"}
- </button>
-
- {hasAprovado ? (
- <button onClick={() => navigate(getEventUrl(pedidos[0]))} className="flex-1 sm:flex-none fs-btn bg-brand-tactical text-black !px-5 !py-2.5 flex items-center justify-center gap-2">
- Acessar <ArrowRight size={14} />
- </button>
- ) : (
- <button onClick={() => firstPendente && navigate(`/checkout?orderId=${firstPendente.id}`)} className="flex-1 sm:flex-none fs-btn bg-amber-500 text-theme-text !px-5 !py-2.5 shadow-lg shadow-amber-500/20">
- Desbloquear
- </button>
- )}
- </div>
- </div>
- </div>
- </div>
- </div>
- );
+          {/* Action Buttons */}
+          <div className="shrink-0 flex flex-row sm:flex-col items-center justify-center gap-2 sm:w-40 border-t sm:border-t-0 sm:border-l border-theme-border/50 pt-4 sm:pt-0 sm:pl-6">
+            {hasAprovado ? (
+              <>
+                <button 
+                  onClick={() => onSelectPedido(latestAprovado!)} 
+                  className="w-full fs-btn bg-brand-tactical text-black !px-4 !py-2 text-[10px]"
+                >
+                  Ver Compra
+                </button>
+                <button 
+                  onClick={() => navigate(getEventUrl(pedidos[0]))} 
+                  className="w-full fs-btn bg-theme-bg border border-theme-border text-theme-text !px-4 !py-2 text-[10px] hover:border-brand-tactical hover:text-brand-tactical"
+                >
+                  Acessar
+                </button>
+                {new Date(event.dataEvento).getTime() > now && (
+                  <button 
+                    onClick={handleAddServices} 
+                    className="w-full text-brand-tactical text-[10px] font-bold hover:underline"
+                  >
+                    Comprar Novamente
+                  </button>
+                )}
+              </>
+            ) : (
+              <>
+                <button 
+                  onClick={() => firstPendente && navigate(`/checkout?orderId=${firstPendente.id}`)} 
+                  className="w-full fs-btn bg-amber-500 text-black !px-4 !py-2 text-[10px]"
+                >
+                  Ver Compra
+                </button>
+              </>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 function Tag({ label, color = "#444" }: { label: string; color?: string }) {

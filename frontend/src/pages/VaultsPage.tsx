@@ -222,7 +222,7 @@ export default function VaultsPage() {
 
   const NAV_ITEMS = useMemo(() => {
     const items: Array<{ label: string; onClick?: () => void; isActive?: boolean; icon?: React.ReactNode; isHeader?: boolean }> = [
-      { label: "Carrinho", onClick: () => navigate("/minha-conta?s=files"), isActive: false, icon: <ShoppingBag size={18} /> },
+      { label: "Histórico de Compras", onClick: () => navigate("/minha-conta?s=files"), isActive: false, icon: <ShoppingBag size={18} /> },
       { label: "Meus Álbuns", onClick: () => {}, isActive: true, icon: <Lock size={18} /> },
       { label: "Indique e Ganhe", onClick: () => navigate("/minha-conta?s=affiliate"), isActive: false, icon: <Users size={18} /> },
       { label: "Meus Dados", onClick: () => navigate("/minha-conta?s=menu"), isActive: false, icon: <User size={18} /> },

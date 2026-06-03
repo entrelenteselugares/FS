@@ -62,7 +62,7 @@ export const Navbar: React.FC<NavbarProps> = ({ tenantLogoUrl }) => {
 
           <button 
             onClick={() => setCartOpen(true)}
-            title="Meu Carrinho"
+            title="Minhas Compras"
             className="relative p-2 border rounded-md transition-all hover:bg-brand-tactical/10 group"
             style={{ 
               borderColor: T.border,
