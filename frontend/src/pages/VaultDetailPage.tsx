@@ -8,7 +8,7 @@ import {
   Lock, Upload, Heart, Share2, 
   ChevronLeft, ChevronRight, Loader2, Camera,
   Printer, Zap, Star, Settings, Video, PlayCircle, Download,
-  RotateCcw, RotateCw
+  RotateCcw, RotateCw, Layers
 } from "lucide-react";
 import { Helmet } from "react-helmet-async";
 import { T } from "../lib/theme";
@@ -564,9 +564,9 @@ export default function VaultDetailPage() {
             
             <button 
               onClick={() => setIsServiceStoreOpen(true)}
-              className="flex-1 md:flex-none flex items-center justify-center gap-2 bg-purple-500 hover:bg-purple-400 text-black border-2 border-purple-500 text-[10px] font-black uppercase tracking-widest px-4 py-2.5 rounded-lg transition-all shadow-lg shadow-purple-500/20"
+              className="flex-1 md:flex-none flex items-center justify-center gap-2 bg-theme-bg-muted border-2 border-theme-border hover:border-brand-tactical text-theme-text hover:text-brand-tactical text-[10px] font-black uppercase tracking-widest px-4 py-2.5 rounded-lg transition-all"
             >
-              <Video size={14} />
+              <Layers size={14} />
               Serviços
             </button>
 
@@ -797,9 +797,9 @@ export default function VaultDetailPage() {
 
           <button 
             onClick={() => setIsServiceStoreOpen(true)}
-            className="flex flex-col items-center gap-1 text-purple-400 hover:text-purple-300 transition-colors ml-2"
+            className="flex flex-col items-center gap-1 text-zinc-400 hover:text-brand-tactical transition-colors ml-2"
           >
-            <Video size={20} />
+            <Layers size={20} />
             <span className="text-[9px] font-black uppercase tracking-widest text-center">Serviços</span>
           </button>
           

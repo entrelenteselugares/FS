@@ -1,5 +1,5 @@
 // @ts-nocheck
-﻿import { useState, useEffect, useRef, useMemo } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { Users, Calendar, ArrowRight, ShieldCheck, ChevronLeft, ChevronRight, Clock, Home, Zap, Camera, Video, Printer, Smartphone, Building2, GraduationCap, Utensils } from "lucide-react";
 import { API } from "../../lib/api";
 import { useNavigate, Link, useSearchParams } from "react-router-dom";
@@ -16,18 +16,17 @@ interface Professional {
   };
 }
 
-// ÔöÇÔöÇ Configura├º├Áes de Precifica├º├úo (Tactical Engine) ­ƒøí´©ÅÔÜÖ´©Å ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
 const P = {
-  COST_SENIOR: 160, // Custo interno de refer├¬ncia
+  COST_SENIOR: 160,
   COST_AUX: 60,
   FEE_TOLL: 25,
   BASE_FREIGHT: 15,
   KM_RATE: 2.50,
   SERVICES: [
-    { id: "foto", label: "FOTOGRAFIA DIGITAL", price: 190, required: true, category: "Geral", description: "Cobertura fotogr├ífica profissional." },
-    { id: "video", label: "V├ìDEO BRUTO", price: 190, category: "Geral", description: "Capta├º├úo de v├¡deo sem edi├º├úo." },
-    { id: "reels", label: "REELS / MOBILE", price: 120, category: "Geral", description: "V├¡deos curtos otimizados para redes sociais." },
-    { id: "impresso", label: "├üLBUM / IMPRESSA", price: 120, category: "Phygital", description: "Impress├úo de fotos durante o evento." },
+    { id: "foto", label: "FOTOGRAFIA DIGITAL", price: 190, required: true, category: "Geral", description: "Cobertura fotográfica profissional." },
+    { id: "video", label: "VÍDEO BRUTO", price: 190, category: "Geral", description: "Captação de vídeo sem edição." },
+    { id: "reels", label: "REELS / MOBILE", price: 120, category: "Geral", description: "Vídeos curtos otimizados para redes sociais." },
+    { id: "impresso", label: "ÁLBUM / IMPRESSA", price: 120, category: "Phygital", description: "Impressão de fotos durante o evento." },
   ]
 };
 
@@ -42,10 +41,9 @@ const THEME = {
   fontB: "var(--font-b)",
 };
 
-// ÔöÇÔöÇ DateTimePicker Customizado (Tactical Theme) ­ƒôà­ƒøí´©Å ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
-const MONTHS_PT = ["Janeiro","Fevereiro","Mar├ºo","Abril","Maio","Junho",
+const MONTHS_PT = ["Janeiro","Fevereiro","Março","Abril","Maio","Junho",
   "Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
-const DAYS_PT = ["Dom","Seg","Ter","Qua","Qui","Sex","S├íb"];
+const DAYS_PT = ["Dom","Seg","Ter","Qua","Qui","Sex","Sáb"];
 
 interface DayConfig {
   open: string;
@@ -123,7 +121,7 @@ function DateTimePicker({ value, onChange, workingHours }: { value: string; onCh
 
   const displayValue = value
     ? new Intl.DateTimeFormat("pt-BR", { day:"2-digit", month:"long", year:"numeric" })
-        .format(new Date(value.split("T")[0] + "T12:00")) + " ├ás " + hour + ":" + minute + "h"
+        .format(new Date(value.split("T")[0] + "T12:00")) + " às " + hour + ":" + minute + "h"
     : "";
 
   return (
@@ -137,7 +135,7 @@ function DateTimePicker({ value, onChange, workingHours }: { value: string; onCh
             color: displayValue ? "var(--text)" : "var(--text-3)"
           }}
         >
-          {displayValue || "SELECIONE A DATA E HOR├üRIO"}
+          {displayValue || "SELECIONE A DATA E HORÁRIO"}
         </div>
       </div>
 
@@ -161,14 +159,14 @@ function DateTimePicker({ value, onChange, workingHours }: { value: string; onCh
                   display: "flex", alignItems: "center", justifyContent: "center",
                   transition: "all 0.2s"
                 }}
-                title="M├¬s Anterior"
+                title="Mês Anterior"
               >
                 <ChevronLeft size={18} />
               </button>
               
               <div style={{ textAlign: "center" }}>
                 <div style={{ fontSize: 12, fontWeight: 900, color: THEME.text, textTransform: "uppercase", letterSpacing: 2 }}>
-                  {MONTHS_PT[viewDate.getMonth()] || "M├¬s"}
+                  {MONTHS_PT[viewDate.getMonth()] || "Mês"}
                 </div>
                 <div style={{ fontSize: 9, fontWeight: 700, color: THEME.accent, opacity: 0.8, letterSpacing: 1 }}>
                   {viewDate.getFullYear()}
@@ -187,7 +185,7 @@ function DateTimePicker({ value, onChange, workingHours }: { value: string; onCh
                   display: "flex", alignItems: "center", justifyContent: "center",
                   transition: "all 0.2s"
                 }}
-                title="Pr├│ximo M├¬s"
+                title="Próximo Mês"
               >
                 <ChevronRight size={18} />
               </button>
@@ -210,7 +208,6 @@ function DateTimePicker({ value, onChange, workingHours }: { value: string; onCh
                 const dayStr = day ? `${y}-${m}-${String(day).padStart(2,"0")}` : "";
                 const isPast = dayStr && dayStr < today;
                 
-                // L├│gica de dia fechado ­ƒøí´©Å
                 let isClosed = false;
                 if (day && workingHours) {
                   const dateObj = new Date(y, Number(m) - 1, day);
@@ -238,7 +235,7 @@ function DateTimePicker({ value, onChange, workingHours }: { value: string; onCh
                     }}
                   >
                     {day || ""}
-                    {isClosed && <div style={{ fontSize: 6, position: "absolute", bottom: 2, left: "50%", transform: "translateX(-50%)" }}>Ô£û</div>}
+                    {isClosed && <div style={{ fontSize: 6, position: "absolute", bottom: 2, left: "50%", transform: "translateX(-50%)" }}>✗</div>}
                   </button>
                 );
               })}
@@ -248,13 +245,12 @@ function DateTimePicker({ value, onChange, workingHours }: { value: string; onCh
             <div style={{ marginTop: 16, paddingTop: 16, borderTop: `1px solid ${THEME.border}` }}>
               <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10 }}>
                 <Clock size={13} color={THEME.accent} />
-                <span style={{ fontSize: 10, fontWeight: 800, color: THEME.text2, textTransform: "uppercase", letterSpacing: 2 }}>Hor├írio do Evento</span>
+                <span style={{ fontSize: 10, fontWeight: 800, color: THEME.text2, textTransform: "uppercase", letterSpacing: 2 }}>Horário do Evento</span>
               </div>
               <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                 <select value={hour} onChange={e => updateTime(e.target.value, minute)}
                   style={{ flex: 1, background: "var(--theme-bg-muted)", border: `1px solid ${THEME.border}`, color: THEME.text, padding: "10px 8px", fontSize: 18, fontWeight: 900, textAlign: "center", borderRadius: 0, cursor: "pointer" }}>
                   {Array.from({length: 24}, (_, i) => String(i).padStart(2,"0")).map(h => {
-                     // Oculta horas fora do expediente se parceiro selecionado ­ƒøí´©Å
                      let isWorkingHour = true;
                      if (selectedDate && workingHours) {
                        const dateObj = new Date(selectedDate + "T12:00");
@@ -283,7 +279,7 @@ function DateTimePicker({ value, onChange, workingHours }: { value: string; onCh
             {selectedDate && (
               <button onClick={() => setOpen(false)}
                 style={{ width: "100%", marginTop: 16, background: THEME.accent, color: "var(--theme-text-on-brand)", border: "none", padding: "12px", fontSize: 10, fontWeight: 900, textTransform: "uppercase", letterSpacing: 3, cursor: "pointer" }}>
-                CONFIRMAR DATA E HOR├üRIO
+                CONFIRMAR DATA E HORÁRIO
               </button>
             )}
           </div>
@@ -295,6 +291,8 @@ function DateTimePicker({ value, onChange, workingHours }: { value: string; onCh
 export const QuoteDesktopView = (props: any) => {
   const { step, setStep, nextStep, prevStep, loading, partners, pros, preferredProfessionalId, setPreferredProfessionalId, isMobileSheetOpen, setIsMobileSheetOpen, selectedServices, setSelectedServices, catalog, availableServices, attendees, setAttendees, locationType, setLocationType, usageType, setUsageType, workflowPref, setWorkflowPref, selectedPartnerId, setSelectedPartnerId, category, setCategory, currentPartner, customCep, setCustomCep, handleCepChange, isCepLoading, addressData, setAddressData, addressNumber, setAddressNumber, eventDate, setEventDate, eventHours, setEventHours, eventDays, setEventDays, description, setDescription, availableBudget, setAvailableBudget, name, setName, email, setEmail, whatsapp, setWhatsapp, team, showPrices, getServicePrice, servicesPrice, freight, totalPrice, submitting, createdQuoteId, submitError, handleSubmit } = props;
 
+  const navigate = useNavigate();
+
   return (
     <div className="min-h-screen bg-theme-bg text-theme-text font-b selection:bg-emerald-500 selection:text-black py-10 md:py-20 px-4">
       {loading && (
@@ -303,7 +301,7 @@ export const QuoteDesktopView = (props: any) => {
           <div className="relative z-10 flex flex-col items-center gap-8">
             <div className="w-px h-16 bg-gradient-to-b from-transparent via-emerald-500 to-transparent" />
             <div className="text-[18px] font-display font-black uppercase tracking-[0.8em] italic text-theme-text">FOTO SEGUNDO</div>
-            <div className="text-[9px] font-black uppercase tracking-[0.4em] text-emerald-500 animate-pulse">Configurando Motor T├ítico</div>
+            <div className="text-[9px] font-black uppercase tracking-[0.4em] text-emerald-500 animate-pulse">Configurando Motor Tático</div>
             <div className="w-px h-16 bg-gradient-to-t from-transparent via-emerald-500 to-transparent" />
           </div>
         </div>
@@ -359,12 +357,13 @@ export const QuoteDesktopView = (props: any) => {
           <div 
             className="text-[10px] font-black text-emerald-500 mb-4 uppercase tracking-[0.5em] italic" 
             style={{ opacity: 0.8 }}
-          >Solicita├º├úo de Or├ºamento</div>
+          >Solicitação de Orçamento</div>
           <h1 className="text-4xl md:text-6xl font-display font-black uppercase tracking-tighter leading-none text-theme-text">
             ETERNIZE SEU <span className="text-theme-subtle italic">EVENTO</span>
           </h1>
         </header>
 
+        {/* ─── PASSO 1: Onde e Quando ─── */}
         {step === 1 && (
           <div 
             style={{ opacity: 1, transform: "none" }}
@@ -373,7 +372,7 @@ export const QuoteDesktopView = (props: any) => {
             <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
               <label style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", color: THEME.accent, letterSpacing: 2 }}>Passo 1: Onde e Quando</label>
               
-              {/* 1. Onde ser├í o registro? */}
+              {/* 01. Local do Registro */}
               <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
                 <label style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", color: THEME.text }}>01. Local do Registro</label>
                 <div className="mobile-stack" style={{ display: "flex", gap: 8 }}>
@@ -386,7 +385,7 @@ export const QuoteDesktopView = (props: any) => {
                     type="button"
                     onClick={() => setLocationType("OTHER")}
                     style={{ flex: 1, padding: 12, border: locationType === "OTHER" ? `2px solid ${THEME.accent}` : `1px solid ${THEME.border}`, background: locationType === "OTHER" ? `${THEME.accent}15` : "var(--theme-bg-muted)", boxShadow: locationType === "OTHER" ? "0 0 15px rgba(133,185,172,0.2)" : "none", fontSize: 10, fontWeight: 900, color: locationType === "OTHER" ? THEME.accent : THEME.text2, cursor: "pointer" }}
-                  >OR├çAMENTO</button>
+                  >ORÇAMENTO</button>
                 </div>
 
                 <div className="mobile-grid-1" style={{ display: "grid", gridTemplateColumns: "1fr", gap: 8 }}>
@@ -431,7 +430,7 @@ export const QuoteDesktopView = (props: any) => {
                              </div>
                              <input 
                                required 
-                               placeholder="N┬║" 
+                               placeholder="Nº" 
                                value={addressNumber} 
                                onChange={e => setAddressNumber(e.target.value)} 
                                className="fs-input" 
@@ -459,38 +458,9 @@ export const QuoteDesktopView = (props: any) => {
                 </div>
               </div>
 
-              {/* Tipo de Evento */}
+              {/* 02. Data e Horário */}
               <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-                <label style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", color: THEME.text }}>02. Tipo de Evento</label>
-                <select value={category} onChange={e => setCategory(e.target.value)} className="fs-input" style={{ width: "100%", paddingLeft: 46 }}>
-                  {(() => {
-                    const EVENT_TYPE_LABELS: Record<string, string> = {
-                      CASAMENTO: "CASAMENTO",
-                      ANIVERSARIO: "ANIVERS├üRIO",
-                      SHOW_FESTIVAL: "SHOW / FESTIVAL",
-                      CORPORATIVO: "EVENTO CORPORATIVO",
-                      FORMATURA: "FORMATURA",
-                      ENSAIO: "ENSAIO FOTOGR├üFICO",
-                      BAILE_FESTA: "BAILE / FESTA",
-                      CONFRATERNIZACAO: "CONFRATERNIZA├ç├âO",
-                      CHURRASCO_BUFFET: "CHURRASCO / BUFFET",
-                      OUTROS: "OUTROS",
-                    };
-                    const ALL_EVENT_TYPES = Object.keys(EVENT_TYPE_LABELS);
-                    const types = (locationType === "PARTNER" && currentPartner?.eventTypes?.length)
-                      ? currentPartner.eventTypes
-                      : ALL_EVENT_TYPES;
-                    return types.map(type => (
-                      <option key={type} value={type}>{EVENT_TYPE_LABELS[type] || type}</option>
-                    ));
-                  })()}
-                </select>
-              </div>
-
-
-              {/* Data e Hor├írio */}
-              <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-                <label style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", color: THEME.text }}>03. Data e Hor├írio do Evento</label>
+                <label style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", color: THEME.text }}>02. Data e Horário do Evento</label>
                 <DateTimePicker 
                   value={eventDate} 
                   onChange={setEventDate} 
@@ -498,7 +468,7 @@ export const QuoteDesktopView = (props: any) => {
                 />
               </div>
 
-              {/* Bot├Áes de A├º├úo Passo 1 */}
+              {/* Botões Passo 1 */}
               <div style={{ borderTop: `1px solid ${THEME.border}`, paddingTop: 20, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                 <button 
                   type="button"
@@ -516,7 +486,7 @@ export const QuoteDesktopView = (props: any) => {
                       window.scrollTo(0,0);
                     } else {
                       if (locationType === "OTHER" && (!addressData.logradouro || !customCep)) {
-                        alert("Por favor, digite um CEP v├ílido para encontrarmos o endere├ºo.");
+                        alert("Por favor, digite um CEP válido para encontrarmos o endereço.");
                       } else {
                         alert("Por favor, selecione o local e a data do evento.");
                       }
@@ -524,26 +494,55 @@ export const QuoteDesktopView = (props: any) => {
                   }}
                   style={{ background: THEME.accent, color: "black", padding: "15px 30px", fontWeight: 900, fontSize: 12, textTransform: "uppercase", letterSpacing: 2, display: "flex", alignItems: "center", gap: 10, border: "none", cursor: "pointer" }}
                 >
-                  PR├ôXIMO: CONFIGURA├ç├âO <ArrowRight size={16} />
+                  PRÓXIMO: CONFIGURAÇÃO <ArrowRight size={16} />
                 </button>
               </div>
             </div>
           </div>
         )}
 
+        {/* ─── PASSO 2: Configuração e Serviços ─── */}
         {step === 2 && (
           <div 
             style={{ opacity: 1, transform: "none" }}
             className="lux-card mobile-padding editorial-shadow"
           >
             <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
-              <label style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", color: THEME.accent, letterSpacing: 2 }}>Passo 2: Configura├º├úo e Servi├ºos</label>
+              <label style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", color: THEME.accent, letterSpacing: 2 }}>Passo 2: Configuração e Serviços</label>
 
-              {/* Dura├º├úo do Evento */}
+              {/* 01. Tipo de Evento — movido para o passo 2 */}
+              <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+                <label style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", color: THEME.text }}>01. Tipo de Evento</label>
+                <select value={category} onChange={e => setCategory(e.target.value)} className="fs-input" style={{ width: "100%", paddingLeft: 46 }}>
+                  {(() => {
+                    const EVENT_TYPE_LABELS: Record<string, string> = {
+                      CASAMENTO: "CASAMENTO",
+                      ANIVERSARIO: "ANIVERSÁRIO",
+                      SHOW_FESTIVAL: "SHOW / FESTIVAL",
+                      CORPORATIVO: "EVENTO CORPORATIVO",
+                      FORMATURA: "FORMATURA",
+                      ENSAIO: "ENSAIO FOTOGRÁFICO",
+                      BAILE_FESTA: "BAILE / FESTA",
+                      CONFRATERNIZACAO: "CONFRATERNIZAÇÃO",
+                      CHURRASCO_BUFFET: "CHURRASCO / BUFFET",
+                      OUTROS: "OUTROS",
+                    };
+                    const ALL_EVENT_TYPES = Object.keys(EVENT_TYPE_LABELS);
+                    const types = (locationType === "PARTNER" && currentPartner?.eventTypes?.length)
+                      ? currentPartner.eventTypes
+                      : ALL_EVENT_TYPES;
+                    return types.map(type => (
+                      <option key={type} value={type}>{EVENT_TYPE_LABELS[type] || type}</option>
+                    ));
+                  })()}
+                </select>
+              </div>
+
+              {/* Duração do Evento */}
               {(locationType === "OTHER" || (locationType === "PARTNER" && !currentPartner?.hideDuration)) && (
                 <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                    <label style={{ fontSize: 10, fontWeight: 900, textTransform: "uppercase", color: THEME.text2, letterSpacing: 1 }}>Dura├º├úo do Registro</label>
+                    <label style={{ fontSize: 10, fontWeight: 900, textTransform: "uppercase", color: THEME.text2, letterSpacing: 1 }}>Duração do Registro</label>
                     <span style={{ fontSize: 11, fontWeight: 900, color: THEME.accent }}>{eventHours} HORAS</span>
                   </div>
                   <div style={{ position: "relative", display: "flex", alignItems: "center", opacity: (locationType === "PARTNER" && currentPartner?.fixedTime) ? 0.6 : 1 }}>
@@ -566,7 +565,7 @@ export const QuoteDesktopView = (props: any) => {
                     <span>1H</span><span>3H</span><span>6H</span><span>9H</span><span>12H</span>
                   </div>
                   {locationType === "PARTNER" && currentPartner?.fixedTime && (
-                    <span style={{ fontSize: 7, color: THEME.accent, fontWeight: 800, textTransform: "uppercase", marginTop: 4 }}>Dura├º├úo Fixa da Unidade</span>
+                    <span style={{ fontSize: 7, color: THEME.accent, fontWeight: 800, textTransform: "uppercase", marginTop: 4 }}>Duração Fixa da Unidade</span>
                   )}
                 </div>
               )}
@@ -600,10 +599,10 @@ export const QuoteDesktopView = (props: any) => {
                 </div>
               )}
 
-              {/* Convidados, Tipo de Uso e Prefer├¬ncia de Equipamento */}
+              {/* Convidados, Equipamento e Finalidade */}
               <div className="mobile-grid-1" style={{ display: "grid", gridTemplateColumns: locationType === "OTHER" ? "repeat(4, 1fr)" : "1fr 1fr", gap: 20 }}>
                 <div>
-                  <label style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", marginBottom: 10, display: "block", color: THEME.text }}>N├║mero de Convidados</label>
+                  <label style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", marginBottom: 10, display: "block", color: THEME.text }}>Número de Convidados</label>
                   <div style={{ position: "relative", display: "flex", alignItems: "center" }}>
                     <Users size={16} style={{ position: "absolute", left: 18, color: THEME.accent, pointerEvents: "none", zIndex: 1 }} />
                     <input
@@ -656,14 +655,14 @@ export const QuoteDesktopView = (props: any) => {
                 )}
                 {locationType === "OTHER" && (
                   <div>
-                    <label style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", marginBottom: 10, display: "block", color: THEME.text }}>Budget Dispon├¡vel</label>
+                    <label style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", marginBottom: 10, display: "block", color: THEME.text }}>Budget Disponível</label>
                     <div style={{ position: "relative", display: "flex", alignItems: "center" }}>
                       <span style={{ position: "absolute", left: 18, color: THEME.accent, fontWeight: 900, fontSize: 12 }}>R$</span>
                       <input
                         type="text"
                         inputMode="numeric"
                         value={availableBudget}
-                        placeholder="VALOR DISPON├ìVEL"
+                        placeholder="VALOR DISPONÍVEL"
                         onChange={e => setAvailableBudget(e.target.value.replace(/\D/g, ""))}
                         className="fs-input"
                         style={{ width: "100%", paddingLeft: 42, minHeight: 52 }}
@@ -673,9 +672,9 @@ export const QuoteDesktopView = (props: any) => {
                 )}
               </div>
 
-              {/* Servi├ºos Categorizados */}
+              {/* Serviços Categorizados */}
               <div>
-                <label style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", marginBottom: 16, display: "block", color: THEME.text, letterSpacing: 2 }}>Selecione os Servi├ºos</label>
+                <label style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", marginBottom: 16, display: "block", color: THEME.text, letterSpacing: 2 }}>Selecione os Serviços</label>
                 
                 {(() => {
                   const categories = Array.from(new Set(availableServices.map(s => s.category || "Geral")));
@@ -690,14 +689,13 @@ export const QuoteDesktopView = (props: any) => {
                           const isSelected = selectedServices.includes(s.id);
                           const cleanName = s.name.replace(/\(UPGRADE\)/gi, "").trim();
                           
-                          // Mapeamento de ├ìcones
                           const getIcon = (_id: string, name: string) => {
                             const n = name.toLowerCase();
                             if (n.includes("phygital") || n.includes("impressa")) return <Printer size={18} />;
                             if (n.includes("video") || n.includes("cinema")) return <Video size={18} />;
                             if (n.includes("reels") || n.includes("smartphone")) return <Smartphone size={18} />;
                             if (n.includes("corporativo") || n.includes("linkedin")) return <Building2 size={18} />;
-                            if (n.includes("gastron├┤mico")) return <Utensils size={18} />;
+                            if (n.includes("gastronômico")) return <Utensils size={18} />;
                             if (n.includes("escolar")) return <GraduationCap size={18} />;
                             if (n.includes("casamento")) return <Zap size={18} />;
                             return <Camera size={18} />;
@@ -769,7 +767,7 @@ export const QuoteDesktopView = (props: any) => {
                 })()}
               </div>
 
-              {/* Rodap├® Din├ómico de Pre├ºo */}
+              {/* Rodapé Dinâmico de Preço */}
               <div style={{ borderTop: `1px solid ${THEME.border}`, paddingTop: 20, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                 <div>
                   <div style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", color: THEME.text2, letterSpacing: 2 }}>Total Estimado</div>
@@ -785,7 +783,7 @@ export const QuoteDesktopView = (props: any) => {
                         setStep(3);
                         window.scrollTo(0,0);
                       } else {
-                        alert("Por favor, selecione pelo menos um servi├ºo.");
+                        alert("Por favor, selecione pelo menos um serviço.");
                       }
                     }}
                     style={{ flex: 1 }}
@@ -797,9 +795,10 @@ export const QuoteDesktopView = (props: any) => {
           </div>
         )}
 
+        {/* ─── PASSO 3: Seus Dados ─── */}
         {step === 3 && (
           <div className="mobile-padding" style={{ background: THEME.bgCard, border: `1px solid ${THEME.border}`, padding: "clamp(20px, 5vw, 40px)" }}>
-             <button onClick={() => setStep(2)} style={{ color: THEME.text2, fontSize: 10, fontWeight: 800, marginBottom: 30, background: "none", border: "none", cursor: "pointer" }}>&larr; VOLTAR PARA CONFIGURA├ç├âO</button>
+             <button onClick={() => setStep(2)} style={{ color: THEME.text2, fontSize: 10, fontWeight: 800, marginBottom: 30, background: "none", border: "none", cursor: "pointer" }}>&larr; VOLTAR PARA CONFIGURAÇÃO</button>
              
              <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 30 }}>
                 <label style={{ fontSize: 11, fontWeight: 900, textTransform: "uppercase", letterSpacing: 2, color: THEME.accent, marginBottom: 10 }}>Passo 3: Seus Dados</label>
@@ -833,11 +832,11 @@ export const QuoteDesktopView = (props: any) => {
                       </option>
                     ))}
                   </select>
-                  <p className="text-[9px] text-white/20 italic">Selecione um profissional espec├¡fico para priorizar seu atendimento.</p>
+                  <p className="text-[9px] text-white/20 italic">Selecione um profissional específico para priorizar seu atendimento.</p>
                 </div>
 
                 <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-                  <label style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", color: THEME.text2 }}>Observa├º├Áes do Evento</label>
+                  <label style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", color: THEME.text2 }}>Observações do Evento</label>
                   <textarea value={description} onChange={e => setDescription(e.target.value)} rows={4} placeholder="CONTE-NOS MAIS DETALHES..." className="fs-input" />
                 </div>
 
@@ -871,6 +870,7 @@ export const QuoteDesktopView = (props: any) => {
           </div>
         )}
 
+        {/* ─── PASSO 4: Confirmação ─── */}
         {step === 4 && (
           <div style={{ textAlign: "center", padding: "80px 40px", background: "var(--theme-bg-muted)", border: "1px solid var(--theme-border)" }} className="relative overflow-hidden">
             <div className="absolute inset-0 bg-emerald-500/5 blur-[100px] rounded-full opacity-30" />
@@ -879,17 +879,17 @@ export const QuoteDesktopView = (props: any) => {
               <div style={{ width: 80, height: 80, background: "var(--theme-bg)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 30px", border: "1px solid var(--theme-border)" }}>
                 <ShieldCheck size={40} className="text-emerald-500" />
               </div>
-              <h2 className="text-4xl md:text-6xl font-display font-black text-theme-text uppercase italic tracking-tighter mb-8 leading-none">Solicita├º├úo Enviada</h2>
+              <h2 className="text-4xl md:text-6xl font-display font-black text-theme-text uppercase italic tracking-tighter mb-8 leading-none">Solicitação Enviada</h2>
               
               {createdQuoteId && (
                 <div style={{ background: "var(--theme-bg)", border: "1px solid var(--theme-border)", padding: "20px 40px", marginBottom: 40, display: "inline-block" }}>
-                  <span className="text-[9px] font-black text-theme-muted uppercase tracking-[0.3em] block mb-2">Protocolo de Seguran├ºa</span>
+                  <span className="text-[9px] font-black text-theme-muted uppercase tracking-[0.3em] block mb-2">Protocolo de Segurança</span>
                   <span className="text-2xl font-display font-black text-emerald-500 tracking-[0.15em] italic">ORC-{createdQuoteId.slice(-6).toUpperCase()}</span>
                 </div>
               )}
 
               <p className="text-xs font-bold text-theme-muted uppercase tracking-widest max-w-md mx-auto leading-relaxed mb-12">
-                Recebemos seu briefing t├®cnico. Nossa curadoria analisar├í a viabilidade e entrar├í em contato atrav├®s de <span className="text-theme-text">{email}</span> para os pr├│ximos passos.
+                Recebemos seu briefing técnico. Nossa curadoria analisará a viabilidade e entrará em contato através de <span className="text-theme-text">{email}</span> para os próximos passos.
               </p>
               
               <div className="flex flex-col gap-4 max-w-sm mx-auto">
