@@ -137,46 +137,44 @@ app.get('/events', async (c) => {
     if (sortBy === 'PRICE_DESC') orderBy = { priceBase: 'desc' };
     if (sortBy === 'OLD') orderBy = { dataEvento: 'asc' };
 
-    const total = await prisma.event.count({ where });`n    const events = await
-      prisma.event.findMany({
-        where,
-        take,
-        skip,
-        orderBy,
-        select: {
-          id: true,
-          slug: true,
-          title: true,
-          dataEvento: true,
-          location: true,
-          coverPhotoUrl: true,
-          priceBase: true,
-          priceEarly: true,
-          type: true,
-          category: true,
-          temFoto: true,
-          temVideo: true,
-          temReels: true,
-          city: true,
-          captacao: {
-            select: {
-              nome: true
-            }
-          },
-          cartorioUser: {
-            select: {
-              nome: true,
-              cartorio: {
-                select: {
-                  cidade: true
-                }
+    const total = await prisma.event.count({ where });
+    const events = await prisma.event.findMany({
+      where,
+      take,
+      skip,
+      orderBy,
+      select: {
+        id: true,
+        slug: true,
+        title: true,
+        dataEvento: true,
+        location: true,
+        coverPhotoUrl: true,
+        priceBase: true,
+        priceEarly: true,
+        type: true,
+        category: true,
+        temFoto: true,
+        temVideo: true,
+        temReels: true,
+        city: true,
+        captacao: {
+          select: {
+            nome: true
+          }
+        },
+        cartorioUser: {
+          select: {
+            nome: true,
+            cartorio: {
+              select: {
+                cidade: true
               }
             }
           }
         }
-      }),
-      prisma.event.count({ where })
-    ]);
+      }
+    });
 
     const pages = Math.ceil(total / take);
 
