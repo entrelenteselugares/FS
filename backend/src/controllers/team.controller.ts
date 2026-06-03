@@ -17,7 +17,7 @@ export async function getTeam(req: AuthRequest, res: Response): Promise<void> {
         profissionais: {
           include: {
             profissional: {
-              include: { user: { select: { id: true, nome: true, email: true, whatsapp: true } } }
+              include: { user: { select: { id: true, nome: true, email: true, whatsapp: true, profileImageUrl: true } } }
             }
           }
         }
@@ -36,7 +36,7 @@ export async function getTeam(req: AuthRequest, res: Response): Promise<void> {
             profissionais: {
               include: {
                 profissional: {
-                  include: { user: { select: { id: true, nome: true, email: true, whatsapp: true } } }
+                  include: { user: { select: { id: true, nome: true, email: true, whatsapp: true, profileImageUrl: true } } }
                 }
               }
             }
@@ -58,7 +58,7 @@ export async function getTeam(req: AuthRequest, res: Response): Promise<void> {
         }
       },
       include: {
-        user: { select: { id: true, nome: true, email: true, whatsapp: true } }
+        user: { select: { id: true, nome: true, email: true, whatsapp: true, profileImageUrl: true } }
       },
       orderBy: { user: { nome: "asc" } }
     });
@@ -74,6 +74,7 @@ export async function getTeam(req: AuthRequest, res: Response): Promise<void> {
       nome: p.user.nome,
       email: p.user.email,
       whatsapp: p.user.whatsapp,
+      profileImageUrl: p.user.profileImageUrl,
       services: p.services,
       cameras: p.cameras,
       // "FIXO" | "ROTATIVO" | null (sem vínculo = rotativo geral)

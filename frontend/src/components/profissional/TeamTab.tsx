@@ -8,6 +8,7 @@ interface ProfissionalEquipe {
   nome: string;
   email: string;
   whatsapp: string;
+  profileImageUrl?: string | null;
   services: string[];
   cameras: string[];
   vinculo: "FIXO" | "ROTATIVO" | null;
@@ -107,7 +108,12 @@ export function TeamTab() {
             <div key={p.id} className={`lux-card p-0 overflow-hidden group transition-all duration-700 hover:border-brand-tactical/30 ${vinculo === "FIXO" ? 'border-brand-tactical/40 ring-1 ring-brand-tactical/10' : ''}`}>
               <div className="flex flex-col md:flex-row md:items-stretch">
                   <div className={`md:w-24 flex items-center justify-center border-b md:border-b-0 md:border-r border-theme-border transition-colors ${vinculo === "FIXO" ? 'bg-brand-tactical/10' : 'bg-theme-bg'}`}>
-                    {vinculo === "FIXO" ? (
+                    {p.profileImageUrl ? (
+                      <div className="w-12 h-12 rounded-full overflow-hidden border border-theme-border flex items-center justify-center relative">
+                         <img src={p.profileImageUrl} alt={p.nome} className="w-full h-full object-cover" />
+                         {vinculo === "FIXO" && <Star size={12} className="absolute bottom-0 right-0 text-brand-tactical fill-brand-tactical bg-theme-bg rounded-full p-0.5" />}
+                      </div>
+                    ) : vinculo === "FIXO" ? (
                       <Star size={24} className="text-brand-tactical fill-brand-tactical animate-in zoom-in duration-500" />
                     ) : vinculo === "ROTATIVO" ? (
                       <Users2 size={24} className="text-blue-400 opacity-60" />
