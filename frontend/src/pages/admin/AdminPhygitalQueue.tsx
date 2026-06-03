@@ -96,7 +96,7 @@ export default function AdminPhygitalQueue({ eventId, eventTitle, onClose }: Pro
               <p className="text-[10px] font-black uppercase tracking-widest">Sincronizando Fila...</p>
             </div>
           ) : jobs.length === 0 ? (
-            <div className="h-64 flex flex-col items-center justify-center text-zinc-500 gap-4 border-2 border-dashed border-theme-border rounded-2xl">
+            <div className="h-64 flex flex-col items-center justify-center text-zinc-500 gap-4 border-2  border-theme-border rounded-2xl">
               <Printer size={40} className="opacity-20" />
               <p className="text-[10px] font-black uppercase tracking-widest opacity-40">Nenhuma foto enviada ainda.</p>
             </div>

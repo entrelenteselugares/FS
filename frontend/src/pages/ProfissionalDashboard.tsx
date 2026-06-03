@@ -472,7 +472,7 @@ export default function ProfissionalDashboard({
                     onClick={() => setIsFlashModalOpen(true)}
                   />
                 ) : (
-                  <div className="bg-theme-bg-muted/30 border border-theme-border/40 p-6 flex items-center justify-center text-center opacity-40 grayscale group hover:grayscale-0 transition-all">
+                  <div className="bg-theme-bg-muted border border-theme-border p-6 flex items-center justify-center text-center opacity-40 grayscale group hover:grayscale-0 transition-all">
                     <div className="space-y-2">
                        <Printer size={24} className="mx-auto mb-2 opacity-20 group-hover:opacity-100 transition-opacity" />
                        <p className="text-[9px] font-black uppercase tracking-widest leading-relaxed max-w-[140px] mx-auto italic">Recurso exclusivo para franqueados ativos</p>
@@ -602,7 +602,7 @@ export default function ProfissionalDashboard({
                         </div>
                       </div>
 
-                      <div className="p-6 border border-theme-border bg-theme-bg-muted/30 rounded-2xl">
+                      <div className="p-6 border border-theme-border bg-theme-bg-muted rounded-2xl">
                         <p className="text-[9px] text-theme-muted uppercase font-black tracking-widest text-center italic">
                           DICA: Todas as reservas confirmadas no sistema são enviadas automaticamente para o seu Google Calendar.
                         </p>
@@ -628,7 +628,7 @@ export default function ProfissionalDashboard({
               user?.franchiseProfile ? (
                 <div className="space-y-8 animate-in fade-in duration-500">
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div className="bg-theme-bg border border-theme-border p-10 relative overflow-hidden group rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300">
+                    <div className="bg-theme-bg border-2 border-theme-border p-10 relative overflow-hidden group rounded-2xl shadow-sm hover:shadow-md transition-all duration-300">
                       <div className="absolute top-0 left-0 w-full h-1 bg-brand-tactical/20 group-hover:bg-brand-tactical transition-colors" />
                       <label className="text-[9px] font-black text-theme-muted uppercase tracking-widest block mb-4">Saldo Disponível</label>
                       <div className={`text-7xl font-display font-black italic tracking-tighter ${user.franchiseProfile.printCredits < 50 ? 'text-amber-500' : 'text-brand-tactical'}`}>
@@ -664,7 +664,7 @@ export default function ProfissionalDashboard({
                         </button>
                         <button 
                           onClick={() => { const w = window.open("https://wa.me/5519981150440?text=Olá! Preciso de assistência técnica para minha unidade Foto Segundo.", "_blank"); if (w) w.opener = null; }}
-                          className="w-full py-3 border border-theme-border text-theme-muted font-black text-[9px] uppercase tracking-widest hover:border-brand-tactical/30 hover:bg-theme-bg-muted/50 hover:text-brand-tactical hover:scale-[1.02] transition-all rounded-xl cursor-pointer"
+                          className="w-full py-3 border border-theme-border text-theme-muted font-black text-[9px] uppercase tracking-widest hover:border-brand-tactical/30 hover:bg-theme-bg-muted hover:text-brand-tactical hover:scale-[1.02] transition-all rounded-xl cursor-pointer"
                         >
                           ASSISTÊNCIA TÉCNICA
                         </button>
@@ -680,14 +680,14 @@ export default function ProfissionalDashboard({
                     </div>
                     
                     {supplyOrders.length === 0 ? (
-                      <div className="py-12 text-center border border-dashed border-theme-border/20 bg-theme-bg-muted/30 rounded-xl">
+                      <div className="py-12 text-center border  border-theme-border bg-theme-bg-muted rounded-xl">
                         <p className="text-[10px] text-theme-muted font-black uppercase tracking-widest">Nenhum pedido realizado</p>
                       </div>
                     ) : (
                       <div className="overflow-x-auto">
                         <table className="w-full text-left border-collapse">
                           <thead>
-                            <tr className="border-b border-theme-border/20 text-[9px] font-black text-theme-text uppercase tracking-widest">
+                            <tr className="border-b border-theme-border text-[9px] font-black text-theme-text uppercase tracking-widest">
                               <th className="py-4 px-2">Data</th>
                               <th className="py-4 px-2">Itens</th>
                               <th className="py-4 px-2">Total</th>
@@ -696,7 +696,7 @@ export default function ProfissionalDashboard({
                           </thead>
                           <tbody>
                             {supplyOrders.map((order) => (
-                              <tr key={order.id} className="border-b border-theme-border/20 hover:bg-theme-bg-muted/50 transition-colors">
+                              <tr key={order.id} className="border-b border-theme-border hover:bg-theme-bg-muted transition-colors">
                                 <td className="py-4 px-2 text-[10px] text-theme-text font-mono">
                                   {new Date(order.createdAt).toLocaleDateString('pt-BR')}
                                 </td>
@@ -796,7 +796,7 @@ export default function ProfissionalDashboard({
                             </div>
                           ))
                         ) : (
-                          <div className="p-10 border border-dashed border-theme-border/40 text-center space-y-4 rounded-2xl">
+                          <div className="p-10 border  border-theme-border text-center space-y-4 rounded-2xl">
                               <p className="text-[10px] text-theme-muted uppercase font-black italic tracking-widest">Nenhum evento designado para você neste momento.</p>
                               <p className="text-[8px] text-theme-muted/60 uppercase font-bold max-w-xs mx-auto leading-relaxed">Fique atento à sua agenda. Quando um admin vincular sua franquia a um evento, ele aparecerá aqui para impressão.</p>
                           </div>
@@ -880,7 +880,7 @@ export default function ProfissionalDashboard({
           className="fixed inset-0 z-[1000] flex items-center justify-center p-6"
           style={{ background: T.overlay, backdropFilter: "blur(20px)" }}
         >
-          <div onClick={(e) => e.stopPropagation()} className="w-full max-w-2xl bg-theme-bg border border-theme-border/60 shadow-2xl animate-in zoom-in duration-300">
+          <div onClick={(e) => e.stopPropagation()} className="w-full max-w-2xl bg-theme-bg border border-theme-border shadow-2xl animate-in zoom-in duration-300">
             {selected.type === 'FOTO_POINT' ? (
               <FotoPointEditModal
                 event={selected}

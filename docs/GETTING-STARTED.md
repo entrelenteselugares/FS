@@ -1,4 +1,5 @@
 <!-- generated-by: gsd-doc-writer -->
+
 # Getting Started: Foto Segundo
 
 Welcome to the Foto Segundo development guide. Follow these steps to set up your local environment and get the platform running.
@@ -77,4 +78,5 @@ Once the system is running, explore these documents for more details:
 - [API.md](API.md) — Backend endpoint reference.
 
 <!-- GSD-DOCS-UPDATE: SUPPLEMENTED -->
-*Documentação verificada e complementada automaticamente via GSD-SDK em 2026-06.*
+
+_Documentação verificada e complementada automaticamente via GSD-SDK em 2026-06._

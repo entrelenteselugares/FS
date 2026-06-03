@@ -83,24 +83,36 @@ export default function ProfissionaisPage() {
     <div className="min-h-screen bg-theme-bg">
       <Navbar />
 
-      {/* Hero */}
-      <div className="relative overflow-hidden border-b border-theme-border/20 bg-theme-surface">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(133,185,172,0.08),transparent_70%)]" />
-        <div className="max-w-6xl mx-auto px-6 py-20 relative z-10">
+      {/* Header com Dark Glassmorphism */}
+      <div className="relative overflow-hidden border-b border-theme-border bg-black min-h-[350px] flex flex-col justify-center">
+        <div 
+          className="absolute inset-0 w-full h-full object-cover z-0"
+          style={{ 
+            backgroundImage: "url('https://images.unsplash.com/photo-1542038784456-1ea8e935640e?auto=format&fit=crop&q=80&w=2000')",
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            filter: "brightness(0.3) saturate(1.2)"
+          }} 
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/40 to-[var(--bg)] z-0 pointer-events-none" />
+
+        <div className="max-w-6xl mx-auto px-6 py-20 relative z-10 w-full">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             className="space-y-6 text-center"
           >
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-brand-tactical/10 border border-brand-tactical/20 text-brand-tactical text-[10px] font-black uppercase tracking-widest italic">
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-brand-tactical/10 border border-brand-tactical text-brand-tactical text-[10px] font-black uppercase tracking-widest italic shadow-[0_0_15px_rgba(133,185,172,0.2)]">
               <Star size={10} fill="currentColor" />
               Fotógrafos Verificados
             </div>
-            <h1 className="text-5xl md:text-7xl font-heading font-black text-theme-text uppercase italic tracking-tighter leading-none">
+            
+            <h1 className="text-5xl md:text-7xl font-heading font-black text-white uppercase italic tracking-tighter leading-none drop-shadow-2xl">
               Diretório de<br />
-              <span className="text-brand-tactical">Profissionais</span>
+              <span className="text-brand-tactical" style={{ textShadow: "0 0 30px var(--brand)" }}>Profissionais</span>
             </h1>
-            <p className="text-theme-text/70 text-sm max-w-lg mx-auto font-medium leading-relaxed">
+            
+            <p className="text-white/80 text-sm max-w-lg mx-auto font-medium leading-relaxed drop-shadow-md">
               Encontre fotógrafos verificados pela Foto Segundo para coberturas, retratos, eventos corporativos e mais.
             </p>
           </motion.div>
@@ -108,15 +120,14 @@ export default function ProfissionaisPage() {
       </div>
 
       {/* Filters */}
-      {/* Filters */}
-      <div className="sticky top-0 z-30 bg-theme-surface/80 backdrop-blur-xl border-b border-theme-border/50 py-3.5">
+      <div className="sticky top-0 z-30 bg-black/60 backdrop-blur-xl border-b border-theme-border py-3.5 shadow-2xl">
         <div className="max-w-4xl mx-auto px-4">
-          <div className="bg-theme-bg/60 border border-theme-border/80 p-1.5 rounded-2xl md:rounded-full flex flex-col md:flex-row items-center gap-2 md:gap-3 shadow-xl backdrop-blur-md">
+          <div className="bg-black/80 border-2 border-theme-border focus-within:border-brand-tactical focus-within:shadow-[0_0_20px_rgba(133,185,172,0.2)] p-1.5 rounded-2xl md:rounded-full flex flex-col md:flex-row items-center gap-2 md:gap-3 transition-all duration-300">
             {/* Search Input */}
-            <div className="w-full md:flex-1 relative flex items-center">
-              <Search size={14} className="absolute left-4 text-theme-text/50" />
+            <div className="w-full md:flex-1 relative flex items-center group">
+              <Search size={14} className="absolute left-4 text-theme-text-muted group-focus-within:text-brand-tactical transition-colors" />
               <input
-                className="w-full bg-transparent pl-10 pr-8 py-2 text-xs text-theme-text placeholder-theme-text/50 focus:outline-none"
+                className="w-full bg-transparent pl-10 pr-8 py-2 text-[11px] font-black uppercase tracking-widest text-theme-text placeholder-theme-text-muted outline-none"
                 placeholder="Buscar profissional por nome..."
                 value={search}
                 onChange={e => setSearch(e.target.value)}
@@ -131,11 +142,11 @@ export default function ProfissionaisPage() {
             {/* Vertical Divider (Desktop only) */}
             <div className="hidden md:block h-6 w-px bg-theme-border/60" />
 
-            {/* City Input (Sleeker and smaller width) */}
-            <div className="w-full md:w-32 relative flex items-center">
-              <MapPin size={13} className="absolute left-3 text-theme-text/50" />
+            {/* City Input */}
+            <div className="w-full md:w-32 relative flex items-center group">
+              <MapPin size={13} className="absolute left-3 text-theme-text-muted group-focus-within:text-brand-tactical transition-colors" />
               <input
-                className="w-full bg-transparent pl-8 pr-3 py-2 text-xs text-theme-text placeholder-theme-text/50 focus:outline-none"
+                className="w-full bg-transparent pl-8 pr-3 py-2 text-[11px] font-black uppercase tracking-widest text-theme-text placeholder-theme-text-muted outline-none"
                 placeholder="Cidade..."
                 value={city}
                 onChange={e => setCity(e.target.value)}
@@ -149,10 +160,10 @@ export default function ProfissionaisPage() {
             <div className="w-full md:w-auto flex justify-start md:justify-center">
               <button
                 onClick={toggleNearby}
-                className={`w-full md:w-auto px-3.5 py-2 rounded-xl md:rounded-full text-[9px] font-black uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 border ${
+                className={`w-full md:w-auto px-4 py-2.5 rounded-xl md:rounded-full text-[9px] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-1.5 border-2 ${
                   nearby
-                    ? "bg-brand-tactical text-black border-brand-tactical shadow-md shadow-brand-tactical/25"
-                    : "bg-theme-surface hover:bg-theme-surface-hover text-theme-text/70 border-theme-border hover:border-brand-tactical/35 hover:text-theme-text"
+                    ? "bg-brand-tactical/20 text-brand-tactical border-brand-tactical shadow-[0_0_15px_rgba(133,185,172,0.3)]"
+                    : "bg-transparent text-theme-text/70 border-transparent hover:border-theme-border hover:text-theme-text"
                 }`}
               >
                 <MapPin size={11} className={nearby ? "animate-pulse" : ""} />
@@ -164,31 +175,30 @@ export default function ProfissionaisPage() {
             <div className="hidden md:block h-6 w-px bg-theme-border/60" />
 
             {/* Specialty Select */}
-            <div className="w-full md:w-36 relative flex items-center">
-              <Filter size={12} className="absolute left-3 text-theme-text/50 pointer-events-none" />
+            <div className="w-full md:w-40 relative flex items-center group">
+              <Filter size={12} className="absolute left-3 text-theme-text-muted group-focus-within:text-brand-tactical pointer-events-none transition-colors" />
               <select
-                className="w-full bg-transparent pl-8 pr-8 py-2 text-xs text-theme-text focus:outline-none appearance-none cursor-pointer font-bold"
+                className="w-full bg-transparent pl-8 pr-8 py-2 text-[11px] font-black uppercase tracking-widest text-theme-text outline-none appearance-none cursor-pointer"
                 value={service}
                 onChange={e => setService(e.target.value)}
               >
-                <option value="" className="bg-theme-surface">Todas as áreas</option>
+                <option value="" className="bg-theme-bg text-theme-text">Todas as Áreas</option>
                 {SERVICE_OPTIONS.map(s => (
-                  <option key={s} value={s} className="bg-theme-surface">{s}</option>
+                  <option key={s} value={s} className="bg-theme-bg text-theme-text">{s}</option>
                 ))}
               </select>
-              <div className="absolute right-3 pointer-events-none text-theme-text/50 text-[10px]">▼</div>
+              <div className="absolute right-3 pointer-events-none text-theme-text-muted text-[8px]">▼</div>
             </div>
           </div>
         </div>
       </div>
-
 
       {/* Grid */}
       <div className="max-w-6xl mx-auto px-6 py-12">
         {loading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {[...Array(6)].map((_, i) => (
-              <div key={i} className="h-72 bg-theme-surface/50 border border-theme-border animate-pulse" />
+              <div key={i} className="h-72 bg-theme-bg-muted border border-theme-border shadow-sm animate-pulse rounded-2xl" />
             ))}
           </div>
         ) : profs.length === 0 ? (
@@ -209,7 +219,7 @@ export default function ProfissionaisPage() {
               <p className="text-[10px] text-theme-text/60 uppercase tracking-widest font-black">
                 {profs.length} profissional{profs.length !== 1 ? "is" : ""} disponível{profs.length !== 1 ? "is" : ""}
               </p>
-              <div className="h-px flex-1 bg-theme-border mx-6" />
+              <div className="h-px flex-1 bg-theme-border/40 mx-6" />
               <p className="text-[10px] text-brand-tactical uppercase tracking-widest font-black italic">Ordenados por Pontuação</p>
             </div>
 
@@ -224,9 +234,9 @@ export default function ProfissionaisPage() {
                     transition={{ delay: i * 0.05 }}
                   >
                     <Link to={`/pro/${prof.id}`} className="group block">
-                      <div className="bg-theme-surface border border-theme-border group-hover:border-brand-tactical/40 transition-all duration-300 overflow-hidden">
+                      <div className="bg-theme-bg-muted border-2 border-theme-border group-hover:border-brand-tactical/50 transition-all duration-300 overflow-hidden shadow-sm group-hover:shadow-[0_0_20px_rgba(133,185,172,0.15)] rounded-2xl">
                         {/* Avatar Banner */}
-                        <div className="relative h-40 bg-gradient-to-br from-theme-surface-hover to-theme-surface flex items-end overflow-hidden group-hover:border-brand-tactical/40 transition-all border-b border-theme-border/20">
+                        <div className="relative h-40 bg-theme-surface flex items-end overflow-hidden group-hover:border-brand-tactical/40 transition-all border-b-2 border-theme-border">
                           {/* Banner Image */}
                           <div className="absolute inset-0">
                             {prof.coverImageUrl ? (

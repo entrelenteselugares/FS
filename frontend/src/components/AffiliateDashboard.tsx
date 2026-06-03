@@ -50,12 +50,12 @@ export function AffiliateDashboard() {
     return (
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6 pt-24">
         {[...Array(4)].map((_, i) => (
-          <div key={i} className="bg-theme-card border border-theme-border/60 rounded-2xl p-6 h-[120px] animate-pulse flex flex-col justify-between">
+          <div key={i} className="bg-theme-card border border-theme-border rounded-2xl p-6 h-[120px] animate-pulse flex flex-col justify-between">
              <div className="flex justify-between items-start">
-                <div className="w-10 h-10 bg-white/5 rounded-xl border border-white/10" />
-                <div className="w-20 h-4 bg-white/5 rounded border border-white/10" />
+                <div className="w-10 h-10 bg-theme-bg-muted rounded-xl border border-white/10" />
+                <div className="w-20 h-4 bg-theme-bg-muted rounded border border-white/10" />
              </div>
-             <div className="w-full h-8 bg-white/5 rounded border border-white/10 mt-auto" />
+             <div className="w-full h-8 bg-theme-bg-muted rounded border border-white/10 mt-auto" />
           </div>
         ))}
       </div>
@@ -64,7 +64,7 @@ export function AffiliateDashboard() {
 
   if (!data) {
     return (
-      <div className="p-12 text-center border border-dashed border-theme-border/40 rounded-2xl bg-theme-bg-muted/5">
+      <div className="p-12 text-center border  border-theme-border rounded-2xl bg-theme-bg-muted/5">
         <p className="text-[10px] font-black uppercase tracking-widest text-theme-text-muted italic">Não foi possível carregar as informações do seu painel de indicações.</p>
       </div>
     );
@@ -78,7 +78,7 @@ export function AffiliateDashboard() {
       <div className={`p-8 rounded-2xl border transition-all duration-500 ${
         isVip 
           ? 'bg-gradient-to-r from-brand-tactical/10 to-amber-600/10 border-brand-tactical/30 shadow-[0_0_30px_rgba(242,193,46,0.03)]' 
-          : 'bg-theme-bg-muted/10 border-theme-border/40 hover:border-theme-border/60'
+          : 'bg-theme-bg border-theme-border hover:border-theme-border'
       }`}>
         <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
           <div className="space-y-2">
@@ -95,7 +95,7 @@ export function AffiliateDashboard() {
           <div className="w-full lg:w-auto space-y-2">
             <label className="text-[9px] font-black uppercase tracking-widest text-theme-text-muted block italic">Seu Link de Convite</label>
             <div className="flex items-center gap-2">
-              <code className="bg-theme-bg-field px-4 py-2.5 rounded-xl text-theme-text-muted font-mono text-xs border border-theme-border/60 flex items-center min-h-[44px] select-all truncate max-w-xs md:max-w-md">
+              <code className="bg-theme-bg-field px-4 py-2.5 rounded-xl text-theme-text-muted font-mono text-xs border border-theme-border flex items-center min-h-[44px] select-all truncate max-w-xs md:max-w-md">
                 {window.location.host}/register?ref={data.referralCode}
               </code>
               <button 
@@ -112,7 +112,7 @@ export function AffiliateDashboard() {
       {/* Stats Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
         {/* L1 Network */}
-        <div className="bg-theme-bg-muted/10 border border-theme-border/40 p-4 sm:p-6 rounded-2xl hover:border-theme-border/60 transition-all duration-500 group relative overflow-hidden">
+        <div className="bg-theme-bg border border-theme-border p-4 sm:p-6 rounded-2xl hover:border-theme-border transition-all duration-500 group relative overflow-hidden">
           <div className="absolute top-0 right-0 w-16 h-16 bg-gradient-to-br from-white/5 to-transparent rotate-45 translate-x-8 -translate-y-8" />
           <div className="flex items-center gap-2 sm:gap-3 mb-2 sm:mb-4">
             <div className="p-1.5 sm:p-2 bg-brand-tactical/10 text-brand-tactical rounded-xl border border-brand-tactical/20">
@@ -124,7 +124,7 @@ export function AffiliateDashboard() {
         </div>
 
         {/* L1 Earnings */}
-        <div className="bg-theme-bg-muted/10 border border-theme-border/40 p-4 sm:p-6 rounded-2xl hover:border-theme-border/60 transition-all duration-500 group relative overflow-hidden">
+        <div className="bg-theme-bg border border-theme-border p-4 sm:p-6 rounded-2xl hover:border-theme-border transition-all duration-500 group relative overflow-hidden">
           <div className="absolute top-0 right-0 w-16 h-16 bg-gradient-to-br from-white/5 to-transparent rotate-45 translate-x-8 -translate-y-8" />
           <div className="flex items-center gap-2 sm:gap-3 mb-2 sm:mb-4">
             <div className="p-1.5 sm:p-2 bg-emerald-500/10 text-emerald-400 rounded-xl border border-emerald-500/20">
@@ -138,7 +138,7 @@ export function AffiliateDashboard() {
         </div>
 
         {/* L2 Network */}
-        <div className={`bg-theme-bg-muted/10 border border-theme-border/40 p-4 sm:p-6 rounded-2xl transition-all duration-500 group relative overflow-hidden ${isVip ? 'hover:border-theme-border/60' : 'opacity-80 grayscale'}`}>
+        <div className={`bg-theme-bg border border-theme-border p-4 sm:p-6 rounded-2xl transition-all duration-500 group relative overflow-hidden ${isVip ? 'hover:border-theme-border' : 'opacity-80 grayscale'}`}>
           <div className="absolute top-0 right-0 w-16 h-16 bg-gradient-to-br from-white/5 to-transparent rotate-45 translate-x-8 -translate-y-8" />
           {!isVip && (
              <div className="absolute inset-0 bg-theme-bg/95 backdrop-blur-[1px] flex flex-col items-center justify-center z-10 p-3 sm:p-4 text-center">
@@ -156,7 +156,7 @@ export function AffiliateDashboard() {
         </div>
 
         {/* L2 Earnings */}
-        <div className={`bg-theme-bg-muted/10 border border-theme-border/40 p-4 sm:p-6 rounded-2xl transition-all duration-500 group relative overflow-hidden ${isVip ? 'hover:border-theme-border/60' : 'opacity-80 grayscale'}`}>
+        <div className={`bg-theme-bg border border-theme-border p-4 sm:p-6 rounded-2xl transition-all duration-500 group relative overflow-hidden ${isVip ? 'hover:border-theme-border' : 'opacity-80 grayscale'}`}>
           <div className="absolute top-0 right-0 w-16 h-16 bg-gradient-to-br from-white/5 to-transparent rotate-45 translate-x-8 -translate-y-8" />
            {!isVip && (
              <div className="absolute inset-0 bg-theme-bg/95 backdrop-blur-[1px] flex flex-col items-center justify-center z-10 p-3 sm:p-4 text-center">
@@ -184,7 +184,7 @@ export function AffiliateDashboard() {
         
         <div className="grid grid-cols-2 gap-3 sm:gap-6">
            {/* Liberado para Saque Card */}
-           <div className="bg-theme-bg-muted/10 border border-theme-border/40 p-4 sm:p-6 rounded-2xl hover:border-theme-border/60 transition-all duration-500 group relative overflow-hidden">
+           <div className="bg-theme-bg border border-theme-border p-4 sm:p-6 rounded-2xl hover:border-theme-border transition-all duration-500 group relative overflow-hidden">
               <div className="absolute top-0 right-0 w-16 h-16 bg-gradient-to-br from-white/5 to-transparent rotate-45 translate-x-8 -translate-y-8 pointer-events-none" />
               <div className="flex items-center gap-2 sm:gap-3 mb-2 sm:mb-4">
                 <div className="p-1.5 sm:p-2 bg-brand-tactical/10 text-brand-tactical rounded-xl border border-brand-tactical/20">
@@ -198,10 +198,10 @@ export function AffiliateDashboard() {
            </div>
 
            {/* Em Processamento Card */}
-           <div className="bg-theme-bg-muted/10 border border-theme-border/40 p-4 sm:p-6 rounded-2xl hover:border-theme-border/60 transition-all duration-500 group relative overflow-hidden">
+           <div className="bg-theme-bg border border-theme-border p-4 sm:p-6 rounded-2xl hover:border-theme-border transition-all duration-500 group relative overflow-hidden">
               <div className="absolute top-0 right-0 w-16 h-16 bg-gradient-to-br from-white/5 to-transparent rotate-45 translate-x-8 -translate-y-8 pointer-events-none" />
               <div className="flex items-center gap-2 sm:gap-3 mb-2 sm:mb-4">
-                <div className="p-1.5 sm:p-2 bg-theme-bg-muted text-theme-text-muted rounded-xl border border-theme-border/20">
+                <div className="p-1.5 sm:p-2 bg-theme-bg-muted text-theme-text-muted rounded-xl border border-theme-border">
                   <Clock size={16} className="sm:w-[18px] sm:h-[18px]" />
                 </div>
                 <h3 className="text-[8px] sm:text-[9px] font-black text-theme-text-muted uppercase tracking-widest">Em Processamento</h3>
@@ -215,7 +215,7 @@ export function AffiliateDashboard() {
 
       {/* Help Note */}
       {!isVip && (
-        <div className="p-6 bg-brand-tactical/5 border border-brand-tactical/20 rounded-xl flex items-start gap-4 animate-in fade-in slide-in-from-bottom-2 duration-700">
+        <div className="p-6 bg-brand-tactical/10 border border-brand-tactical/20 rounded-xl flex items-start gap-4 animate-in fade-in slide-in-from-bottom-2 duration-700">
           <Trophy className="text-brand-tactical mt-0.5 shrink-0" size={20} />
           <div className="space-y-1">
             <h4 className="font-heading font-black text-brand-tactical uppercase tracking-widest text-[11px] italic">Quer faturar na profundidade?</h4>

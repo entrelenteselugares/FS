@@ -8,7 +8,7 @@ export function PartnershipsPage() {
       <SEO title="Parcerias e Afiliados | Foto Segundo" description="Seja um ponto autorizado da rede Foto Segundo e gere receita passiva." />
       
       {/* Header Minimalista */}
-      <header className="fixed top-0 left-0 right-0 h-16 bg-theme-bg/80 backdrop-blur-lg border-b border-theme-border/40 z-50 flex items-center px-4 md:px-8">
+      <header className="fixed top-0 left-0 right-0 h-16 bg-theme-bg/80 backdrop-blur-lg border-b border-theme-border z-50 flex items-center px-4 md:px-8">
         <Link to="/" className="text-brand-tactical hover:brightness-110 transition-all flex items-center gap-2 text-xs font-black tracking-widest uppercase italic">
           <ArrowLeft size={16} /> Voltar para o início
         </Link>
@@ -31,7 +31,7 @@ export function PartnershipsPage() {
 
         {/* Intro */}
         <section className="mb-20">
-          <div className="bg-brand-tactical/5 border border-brand-tactical/20 p-8 md:p-12 rounded-3xl text-center">
+          <div className="bg-brand-tactical/10 border border-brand-tactical/20 p-8 md:p-12 rounded-3xl text-center">
             <Handshake className="text-brand-tactical mx-auto mb-6" size={48} />
             <p className="text-lg md:text-xl font-light leading-relaxed max-w-3xl mx-auto">
               Se você tem um estabelecimento físico com fluxo de clientes que realizam ou planejam eventos — cartório, buffet, espaço de festas, floricultura, loja de noivas, academia, clube — você pode se tornar uma <strong className="text-brand-tactical font-black">Unidade Fixa Autorizada</strong> da rede.
@@ -51,7 +51,7 @@ export function PartnershipsPage() {
               { i: <Wallet size={24} />, t: "Receita Passiva (Split)", d: "A cada venda, você recebe automaticamente sua comissão pelo Split Dinâmico, direto na sua Wallet." },
               { i: <LayoutDashboard size={24} />, t: "Painel Exclusivo", d: "Acompanhe em tempo real todos os leads gerados, eventos vinculados e seu extrato financeiro." }
             ].map((s, idx) => (
-              <div key={idx} className="bg-theme-bg-muted border border-theme-border/40 p-8 rounded-2xl relative overflow-hidden group hover:border-brand-tactical/50 transition-colors">
+              <div key={idx} className="bg-theme-bg-muted border border-theme-border p-8 rounded-2xl relative overflow-hidden group hover:border-brand-tactical/50 transition-colors">
                 <div className="text-[120px] font-black italic absolute -right-6 -bottom-10 text-theme-border/20 group-hover:text-brand-tactical/5 transition-colors z-0 pointer-events-none">
                   {idx + 1}
                 </div>
@@ -72,15 +72,15 @@ export function PartnershipsPage() {
           <h2 className="text-3xl font-black uppercase italic tracking-tight mb-12 text-center">
             Quem pode ser <span className="text-brand-tactical">Parceiro</span>
           </h2>
-          <div className="overflow-hidden rounded-2xl border border-theme-border/60">
+          <div className="overflow-hidden rounded-2xl border border-theme-border">
             <table className="w-full text-left">
-              <thead className="bg-theme-bg-muted/80 text-xs uppercase tracking-widest">
+              <thead className="bg-theme-bg-muted text-xs uppercase tracking-widest">
                 <tr>
-                  <th className="p-5 font-black text-theme-text border-b border-theme-border/40">Perfil de Negócio</th>
-                  <th className="p-5 font-black text-theme-text border-b border-theme-border/40 hidden md:table-cell">Exemplo de Caso de Uso</th>
+                  <th className="p-5 font-black text-theme-text border-b border-theme-border">Perfil de Negócio</th>
+                  <th className="p-5 font-black text-theme-text border-b border-theme-border hidden md:table-cell">Exemplo de Caso de Uso</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-theme-border/40 bg-theme-bg-muted/30 text-sm">
+              <tbody className="divide-y divide-theme-border/40 bg-theme-bg-muted text-sm">
                 {[
                   { p: "Cartórios e registros civis", e: "Casamentos e uniões estáveis" },
                   { p: "Buffets e espaços de eventos", e: "Festas, formaturas, confraternizações" },
@@ -89,7 +89,7 @@ export function PartnershipsPage() {
                   { p: "Hotéis e pousadas", e: "Eventos corporativos e comemorações" },
                   { p: "Escolas e faculdades", e: "Formaturas e colações de grau" }
                 ].map((row, idx) => (
-                  <tr key={idx} className="hover:bg-theme-bg-muted/80 transition-colors">
+                  <tr key={idx} className="hover:bg-theme-bg-muted transition-colors">
                     <td className="p-5 font-bold text-theme-text flex items-center gap-3">
                       <BadgeCheck size={16} className="text-brand-tactical" /> {row.p}
                     </td>
@@ -126,7 +126,7 @@ export function PartnershipsPage() {
         </section>
 
         {/* Afiliados Digitais */}
-        <section className="mb-24 border border-theme-border/60 bg-theme-bg-muted p-8 md:p-12 rounded-3xl relative overflow-hidden">
+        <section className="mb-24 border border-theme-border bg-theme-bg-muted p-8 md:p-12 rounded-3xl relative overflow-hidden">
           <div className="absolute right-0 top-0 opacity-5 pointer-events-none">
             <Users size={300} />
           </div>
@@ -137,7 +137,7 @@ export function PartnershipsPage() {
             <p className="text-theme-text-muted font-light leading-relaxed mb-6">
               Além das unidades físicas, a Foto Segundo possui um programa de afiliados digital com estrutura de dois níveis (L1 e L2). Se você é um criador de conteúdo, influenciador ou profissional do setor de eventos com audiência digital, pode gerar renda indicando a plataforma para sua rede.
             </p>
-            <p className="text-theme-text font-bold text-sm bg-theme-bg p-4 rounded-xl border border-theme-border/40 inline-flex items-center gap-3">
+            <p className="text-theme-text font-bold text-sm bg-theme-bg p-4 rounded-xl border border-theme-border inline-flex items-center gap-3">
               Acesse <span className="text-brand-tactical">Indique e Ganhe</span> dentro da plataforma para gerar seu link exclusivo e acompanhar seus créditos.
             </p>
           </div>
@@ -157,7 +157,7 @@ export function PartnershipsPage() {
         </section>
       </main>
 
-      <footer className="py-8 text-center border-t border-theme-border/40">
+      <footer className="py-8 text-center border-t border-theme-border">
         <p className="text-theme-text-muted text-xs font-bold uppercase tracking-widest mb-1">© 2026 Foto Segundo. Todos os direitos reservados.</p>
         <p className="text-brand-tactical/50 text-[10px] font-black italic uppercase tracking-[0.3em]">Protocolo Editorial de Imagem e Cinema</p>
       </footer>

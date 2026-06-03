@@ -1,4 +1,5 @@
 # RELATÓRIO DE AUDITORIA GLOBAL — Foto Segundo
+
 **Phase 31: End-to-End Visual Audit & Process Verification**  
 **Data:** 2026-05-14 | **Auditoria:** Milestone 6
 
@@ -37,6 +38,7 @@
 ## 🔴 ACTION REQUIRED (Itens que precisam de correção)
 
 ### A-01 · Admin: URLs diretas redirecionam para Visão Geral
+
 **Observado:** As rotas `/admin/payouts`, `/admin/configs`, `/admin/users` retornam
 a Visão Geral em vez da seção correspondente. O menu lateral existe mas as URLs
 não são deep-linkáveis.  
@@ -45,6 +47,7 @@ não são deep-linkáveis.
 (`/admin/financeiro` com lazy load da tab correta).
 
 ### A-02 · Aba Financeira: Gráfico de Cashflow não renderizou
+
 **Observado:** O screenshot `12_pro_tab_financeiro.png` mostra "PERFORMANCE
 FINANCEIRA" com os blocos de Saldo Disponível e Garantia (Escrow), mas o
 **gráfico de barras do CashflowChart não apareceu** na área visível da tela.  
@@ -55,6 +58,7 @@ o estado vazio ("Nenhuma projeção disponível").
 em produção antes do lançamento.
 
 ### A-03 · CheckoutPage.tsx: Erro de sintaxe corrigido durante auditoria
+
 **Observado:** A linha 6 continha `6: import WhatsAppSupport...` (número de linha
 acidentalmente inserido no código). Causava falha total de compilação do Vite.  
 **Fix aplicado:** ✅ Corrigido e commitado em `fix(phase-30)`.
@@ -64,17 +68,21 @@ acidentalmente inserido no código). Causava falha total de compilação do Vite
 ## 🟡 OBSERVATIONS (Itens para monitorar)
 
 ### O-01 · Abas "Eventos", "Cofres" e "Loja" não encontradas pelo seletor de texto
+
 O script buscou por `button:has-text("Eventos")`, `"Cofres"` e `"Loja"`.
 Essas labels podem ter sido renomeadas na sidebar. Visualmente confirmadas como:
+
 - "Serviços" (que pode ser Loja)
 - "Franquia Print" (que pode ser Cofres/Loja)
 Verificar as labels exatas no `DashboardHeader.tsx`.
 
 ### O-02 · Admin: 2 "Vendas sem Entrega" no painel
+
 O KPI mostra **2 vendas sem entrega** — pedidos físicos aprovados mas sem
 logística processada. Verificar se são pedidos de teste ou pedidos reais pendentes.
 
 ### O-03 · Profissional: Saldo zerado (R$ 0,5 acumulado)
+
 O usuário de teste tem apenas R$ 0,5 provisionado. Normal para ambiente de
 desenvolvimento, mas confirmar que os splits de pedidos reais são calculados
 corretamente antes do go-live.

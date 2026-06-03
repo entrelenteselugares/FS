@@ -34,7 +34,7 @@ export const SchoolAuthenticationGate: React.FC<SchoolAuthenticationGateProps> =
   };
 
   return (
-    <div className="max-w-md mx-auto my-20 p-8 md:p-10 bg-theme-bg-muted/50 border border-theme-border/40 rounded-[30px] animate-in fade-in slide-in-from-bottom-8 duration-700">
+    <div className="max-w-md mx-auto my-20 p-8 md:p-10 bg-theme-bg-muted border border-theme-border rounded-[30px] animate-in fade-in slide-in-from-bottom-8 duration-700">
       <div className="flex flex-col items-center text-center space-y-6 mb-10">
         <div className="w-16 h-16 bg-brand-tactical/10 rounded-full flex items-center justify-center text-brand-tactical border border-brand-tactical/20">
           <GraduationCap size={32} />
@@ -57,7 +57,7 @@ export const SchoolAuthenticationGate: React.FC<SchoolAuthenticationGateProps> =
               value={selectedStudent}
               onChange={(e) => setSelectedStudent(e.target.value)}
               required
-              className="w-full bg-theme-bg/50 border border-theme-border/60 py-4 px-5 text-sm font-black uppercase tracking-wide text-theme-text outline-none focus:border-brand-tactical rounded-xl appearance-none cursor-pointer"
+              className="w-full bg-theme-bg/50 border border-theme-border py-4 px-5 text-sm font-black uppercase tracking-wide text-theme-text outline-none focus:border-brand-tactical rounded-xl appearance-none cursor-pointer"
             >
               <option value="" disabled>SELECIONE NA LISTA...</option>
               {students.map(student => (

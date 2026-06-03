@@ -1,23 +1,24 @@
 <!-- generated-by: gsd-doc-writer -->
+
 # Configuration Guide
 
 Configuration for Foto Segundo is managed primarily through environment variables and a few database/local storage settings.
 
 ## Environment Variables
 
-| Variable | Required | Default | Description |
-|---|---|---|---|
-| `DATABASE_URL` | **Required** | None | Connection URL with pooler for Prisma Client in runtime (e.g. Supabase port 6543) |
-| `DIRECT_URL` | **Required** | None | Direct connection URL for running Prisma migrations (e.g. Supabase port 5432) |
-| `MP_ACCESS_TOKEN` | **Required** | None | Mercado Pago Access Token for the platform account |
-| `MP_WEBHOOK_SECRET` | **Required** | None | Security token for receiving IPN notifications from Mercado Pago |
-| `JWT_SECRET` | **Required** | None | Symmetric key used to sign and validate session tokens |
-| `SMTP_HOST` | Optional | None | SMTP server host for sending emails |
-| `SMTP_PORT` | Optional | 587 | SMTP server port |
-| `SMTP_USER` | Optional | None | SMTP username |
-| `SMTP_PASS` | Optional | None | SMTP password |
-| `FRONTEND_URL` | **Required** | None | Base URL for the frontend application (used in emails) |
-| `STORAGE_PROVIDER` | Optional | `local` | Storage provider driver (`local`, `s3`, `gdrive`) |
+| Variable            | Required     | Default | Description                                                                       |
+| ------------------- | ------------ | ------- | --------------------------------------------------------------------------------- |
+| `DATABASE_URL`      | **Required** | None    | Connection URL with pooler for Prisma Client in runtime (e.g. Supabase port 6543) |
+| `DIRECT_URL`        | **Required** | None    | Direct connection URL for running Prisma migrations (e.g. Supabase port 5432)     |
+| `MP_ACCESS_TOKEN`   | **Required** | None    | Mercado Pago Access Token for the platform account                                |
+| `MP_WEBHOOK_SECRET` | **Required** | None    | Security token for receiving IPN notifications from Mercado Pago                  |
+| `JWT_SECRET`        | **Required** | None    | Symmetric key used to sign and validate session tokens                            |
+| `SMTP_HOST`         | Optional     | None    | SMTP server host for sending emails                                               |
+| `SMTP_PORT`         | Optional     | 587     | SMTP server port                                                                  |
+| `SMTP_USER`         | Optional     | None    | SMTP username                                                                     |
+| `SMTP_PASS`         | Optional     | None    | SMTP password                                                                     |
+| `FRONTEND_URL`      | **Required** | None    | Base URL for the frontend application (used in emails)                            |
+| `STORAGE_PROVIDER`  | Optional     | `local` | Storage provider driver (`local`, `s3`, `gdrive`)                                 |
 
 ## Config File Format
 
@@ -62,4 +63,5 @@ Print engine configuration is persisted in the browser's `localStorage` per even
 ```
 
 <!-- GSD-DOCS-UPDATE: SUPPLEMENTED -->
-*Documentação verificada e atualizada automaticamente via GSD-SDK em 2026-06.*
+
+_Documentação verificada e atualizada automaticamente via GSD-SDK em 2026-06._

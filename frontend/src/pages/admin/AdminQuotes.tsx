@@ -233,7 +233,7 @@ export const AdminQuotes: React.FC = () => {
       <motion.div
         whileHover={{scale:1.015,y:-2}} whileTap={{scale:0.99}}
         onClick={onClick}
-        className={`p-4 border rounded-lg cursor-pointer transition-colors relative overflow-hidden ${selectedQuote?.id===quote.id?"border-brand-tactical bg-brand-tactical/5 shadow-[0_0_20px_rgba(133,185,172,0.15)]":"border-theme-border bg-theme-card/60 hover:border-theme-border-2 hover:bg-theme-card"}`}
+        className={`p-4 border rounded-lg cursor-pointer transition-colors relative overflow-hidden ${selectedQuote?.id===quote.id?"border-brand-tactical bg-brand-tactical/10 shadow-[0_0_20px_rgba(133,185,172,0.15)]":"border-theme-border bg-theme-card/60 hover:border-theme-border-2 hover:bg-theme-card"}`}
       >
         {quote.urgency==="HIGH"&&<div className="absolute top-0 left-0 w-1 h-full bg-red-500"/>}
         <div className="space-y-3 pl-1">
@@ -268,8 +268,8 @@ export const AdminQuotes: React.FC = () => {
   return (
     <div className="space-y-8 animate-in fade-in duration-700">
       {/* Header Padronizado */}
-      <div className="relative border-b border-theme-border/60 pb-8 md:pb-12 space-y-4 md:space-y-6">
-        <div className="absolute -top-10 -left-10 w-40 h-40 bg-brand-tactical/5 blur-3xl rounded-full" />
+      <div className="relative border-b border-theme-border pb-8 md:pb-12 space-y-4 md:space-y-6">
+        <div className="absolute -top-10 -left-10 w-40 h-40 bg-brand-tactical/10 blur-3xl rounded-full" />
         
         <div className="flex flex-col xl:flex-row justify-between items-start xl:items-end gap-6 relative z-10">
           <div>
@@ -324,7 +324,7 @@ export const AdminQuotes: React.FC = () => {
                 </div>
                 <div className="flex flex-col gap-3 overflow-y-auto" style={{maxHeight:"68vh"}}>
                   {colQuotes.length===0?(
-                    <div className="border border-dashed border-theme-border/30 rounded-lg py-12 flex flex-col items-center justify-center gap-3 opacity-40">
+                    <div className="border  border-theme-border rounded-lg py-12 flex flex-col items-center justify-center gap-3 opacity-40">
                       <Briefcase size={20} className="text-theme-text-muted"/>
                       <p className="text-[9px] text-theme-text-muted uppercase tracking-widest font-bold text-center px-4">Nenhum protocolo</p>
                     </div>
@@ -358,7 +358,7 @@ export const AdminQuotes: React.FC = () => {
             <motion.div
               initial={{scale:0.95,opacity:0}} animate={{scale:1,opacity:1}} exit={{scale:0.95,opacity:0}}
               transition={{type:"spring",damping:30,stiffness:300}}
-              className="relative w-full max-w-3xl bg-theme-card border border-theme-border/60 rounded-[40px] overflow-hidden shadow-2xl flex flex-col" style={{maxHeight:"90vh"}}
+              className="relative w-full max-w-3xl bg-theme-card border border-theme-border rounded-[40px] overflow-hidden shadow-2xl flex flex-col" style={{maxHeight:"90vh"}}
             >
               {/* Modal Header */}
               <div className="p-8 md:p-10 border-b border-theme-border flex items-start justify-between shrink-0">
@@ -371,7 +371,7 @@ export const AdminQuotes: React.FC = () => {
                     <p className="text-[9px] font-black uppercase tracking-[0.2em] opacity-40 mt-1">Protocolo: {selectedQuote.id.toUpperCase()}</p>
                   </div>
                 </div>
-                <button onClick={()=>setSelectedQuote(null)} className="p-3 hover:bg-white/5 rounded-full transition-all text-theme-muted"><X size={24}/></button>
+                <button onClick={()=>setSelectedQuote(null)} className="p-3 hover:bg-theme-bg-muted rounded-full transition-all text-theme-muted"><X size={24}/></button>
               </div>
               {/* Tab Nav */}
               <div className="px-8 md:px-10 pt-4 flex gap-1 border-b border-theme-border shrink-0 overflow-x-auto no-scrollbar">
@@ -405,9 +405,9 @@ export const AdminQuotes: React.FC = () => {
                     <div>
                       <h4 className="text-[9px] font-black text-brand-tactical uppercase tracking-widest border-l border-brand-tactical pl-3 italic mb-3">Serviços</h4>
                       <div className="flex flex-wrap gap-2">
-                        {selectedQuote.temFoto&&<span className="bg-brand-tactical/5 text-brand-tactical text-[8px] font-black px-3 py-1 border border-brand-tactical/20 uppercase tracking-widest flex items-center gap-1 italic rounded"><Camera size={9}/> FOTO</span>}
-                        {selectedQuote.temVideo&&<span className="bg-brand-tactical/5 text-brand-tactical text-[8px] font-black px-3 py-1 border border-brand-tactical/20 uppercase tracking-widest flex items-center gap-1 italic rounded"><Video size={9}/> VÍDEO</span>}
-                        {selectedQuote.temReels&&<span className="bg-brand-tactical/5 text-brand-tactical text-[8px] font-black px-3 py-1 border border-brand-tactical/20 uppercase tracking-widest flex items-center gap-1 italic rounded"><Smartphone size={9}/> REELS</span>}
+                        {selectedQuote.temFoto&&<span className="bg-brand-tactical/10 text-brand-tactical text-[8px] font-black px-3 py-1 border border-brand-tactical/20 uppercase tracking-widest flex items-center gap-1 italic rounded"><Camera size={9}/> FOTO</span>}
+                        {selectedQuote.temVideo&&<span className="bg-brand-tactical/10 text-brand-tactical text-[8px] font-black px-3 py-1 border border-brand-tactical/20 uppercase tracking-widest flex items-center gap-1 italic rounded"><Video size={9}/> VÍDEO</span>}
+                        {selectedQuote.temReels&&<span className="bg-brand-tactical/10 text-brand-tactical text-[8px] font-black px-3 py-1 border border-brand-tactical/20 uppercase tracking-widest flex items-center gap-1 italic rounded"><Smartphone size={9}/> REELS</span>}
                       </div>
                     </div>
                     {(()=>{
@@ -416,7 +416,7 @@ export const AdminQuotes: React.FC = () => {
                       return(
                         <div className="space-y-3">
                           {data && (
-                            <div className="bg-brand-tactical/5 p-4 border border-brand-tactical/20 rounded-xl space-y-3">
+                            <div className="bg-brand-tactical/10 p-4 border border-brand-tactical/20 rounded-xl space-y-3">
                               <div className="flex items-center gap-2 mb-1">
                                 <Zap size={10} className="text-brand-tactical" />
                                 <span className="text-[9px] font-black text-brand-tactical uppercase tracking-widest italic">Análise de Recursos</span>
@@ -449,11 +449,11 @@ export const AdminQuotes: React.FC = () => {
                           <div className="flex items-center gap-1">{n>0&&<span className="bg-brand-tactical text-black px-1.5 py-0.5 rounded text-[8px]">{n}</span>}<Plus size={10}/></div>
                         </button>
                       );})}
-                      <button onClick={()=>addStaffPreset("custom")} className="px-3 py-2 text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest border border-dashed border-theme-border text-theme-text-muted hover:border-brand-tactical hover:text-brand-tactical rounded-lg flex items-center justify-between transition-all">OUTROS <Plus size={10}/></button>
+                      <button onClick={()=>addStaffPreset("custom")} className="px-3 py-2 text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest border  border-theme-border text-theme-text-muted hover:border-brand-tactical hover:text-brand-tactical rounded-lg flex items-center justify-between transition-all">OUTROS <Plus size={10}/></button>
                     </div>
-                    <div className="space-y-2 pt-4 border-t border-theme-border/20">
+                    <div className="space-y-2 pt-4 border-t border-theme-border">
                       <h4 className="text-[9px] font-black text-theme-text uppercase tracking-widest border-l-2 border-brand-tactical pl-2 mb-2">Cachês</h4>
-                      {selectedStaff.length===0?(<div className="py-8 text-center border border-dashed border-theme-border rounded-lg opacity-40"><p className="text-[9px] text-theme-text-muted uppercase tracking-widest">Selecione os papéis</p></div>):selectedStaff.map(s=>(
+                      {selectedStaff.length===0?(<div className="py-8 text-center border  border-theme-border rounded-lg opacity-40"><p className="text-[9px] text-theme-text-muted uppercase tracking-widest">Selecione os papéis</p></div>):selectedStaff.map(s=>(
                         <div key={s.instanceId} className="grid grid-cols-1 sm:grid-cols-[1fr_auto_auto_auto] gap-3 items-center bg-theme-bg p-4 border border-theme-border rounded-xl">
                           <div className="min-w-0 space-y-1">
                             <input type="text" value={s.label} onChange={e=>setSelectedStaff(selectedStaff.map(st=>st.instanceId===s.instanceId?{...st,label:e.target.value.toUpperCase()}:st))}
@@ -549,7 +549,7 @@ export const AdminQuotes: React.FC = () => {
                 )}
               </div>
               {/* Modal Footer */}
-              <div className="p-8 md:p-10 bg-theme-bg-muted/50 border-t border-theme-border flex gap-4 shrink-0 rounded-2xl">
+              <div className="p-8 md:p-10 bg-theme-bg-muted border-t border-theme-border flex gap-4 shrink-0 rounded-2xl">
                 <button onClick={handleReject} className="py-5 px-6 border border-red-500/20 text-red-500 text-[9px] font-black uppercase tracking-[0.2em] hover:bg-red-500 hover:text-white transition-all rounded-[20px] italic">Recusar</button>
                 
                 {selectedQuote.quoteStatus === "CONVERTED" && (
@@ -575,7 +575,7 @@ export const AdminQuotes: React.FC = () => {
         <div className="fixed inset-0 z-[200] flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-theme-bg/80 backdrop-blur-xl animate-in fade-in duration-300" onClick={() => setIsNewQuoteModalOpen(false)} />
           
-          <div className="relative w-full max-w-2xl bg-theme-card border border-theme-border/60 rounded-[40px] overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300 flex flex-col h-[90vh]">
+          <div className="relative w-full max-w-2xl bg-theme-card border border-theme-border rounded-[40px] overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300 flex flex-col h-[90vh]">
             {/* Header */}
             <div className="p-8 md:p-10 border-b border-theme-border flex items-center justify-between shrink-0">
               <div className="flex items-center gap-4">
@@ -587,7 +587,7 @@ export const AdminQuotes: React.FC = () => {
                   <p className="text-[10px] font-black uppercase tracking-[0.2em] opacity-40">Abertura de Protocolo Direto</p>
                 </div>
               </div>
-              <button onClick={() => setIsNewQuoteModalOpen(false)} className="p-3 hover:bg-white/5 rounded-full transition-all text-theme-muted"><X size={24} /></button>
+              <button onClick={() => setIsNewQuoteModalOpen(false)} className="p-3 hover:bg-theme-bg-muted rounded-full transition-all text-theme-muted"><X size={24} /></button>
             </div>
 
             {/* Scrollable Content */}
@@ -595,11 +595,11 @@ export const AdminQuotes: React.FC = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
                   <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest block mb-2 opacity-60 italic">Evento (Título)</label>
-                  <input required placeholder="EX: CASAMENTO ANA & LEO" value={newQuoteData.title} onChange={e => setNewQuoteData({...newQuoteData, title: e.target.value.toUpperCase()})} className="w-full bg-theme-bg-muted border border-theme-border/60 p-4 text-[10px] text-theme-text outline-none focus:border-brand-tactical font-black rounded-xl uppercase" />
+                  <input required placeholder="EX: CASAMENTO ANA & LEO" value={newQuoteData.title} onChange={e => setNewQuoteData({...newQuoteData, title: e.target.value.toUpperCase()})} className="w-full bg-theme-bg-muted border border-theme-border p-4 text-[10px] text-theme-text outline-none focus:border-brand-tactical font-black rounded-xl uppercase" />
                 </div>
                 <div className="space-y-2">
                   <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest block mb-2 opacity-60 italic">Categoria</label>
-                  <select required value={newQuoteData.category} onChange={e => setNewQuoteData({...newQuoteData, category: e.target.value})} className="w-full bg-theme-bg-muted border border-theme-border/60 p-4 text-[10px] text-theme-text outline-none focus:border-brand-tactical font-black rounded-xl uppercase">
+                  <select required value={newQuoteData.category} onChange={e => setNewQuoteData({...newQuoteData, category: e.target.value})} className="w-full bg-theme-bg-muted border border-theme-border p-4 text-[10px] text-theme-text outline-none focus:border-brand-tactical font-black rounded-xl uppercase">
                     <option value="CASAMENTO">Casamento</option>
                     <option value="ANIVERSARIO">Aniversário</option>
                     <option value="SHOW_FESTIVAL">Show/Festival</option>
@@ -611,29 +611,29 @@ export const AdminQuotes: React.FC = () => {
                 </div>
                 <div className="space-y-2">
                   <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest block mb-2 opacity-60 italic">Data do Evento</label>
-                  <input required type="datetime-local" value={newQuoteData.dataEvento} onChange={e => setNewQuoteData({...newQuoteData, dataEvento: e.target.value})} className="w-full bg-theme-bg-muted border border-theme-border/60 p-4 text-[10px] text-theme-text outline-none focus:border-brand-tactical font-black rounded-xl" />
+                  <input required type="datetime-local" value={newQuoteData.dataEvento} onChange={e => setNewQuoteData({...newQuoteData, dataEvento: e.target.value})} className="w-full bg-theme-bg-muted border border-theme-border p-4 text-[10px] text-theme-text outline-none focus:border-brand-tactical font-black rounded-xl" />
                 </div>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
                   <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest block mb-2 opacity-60 italic">Nome do Cliente</label>
-                  <input required placeholder="NOME COMPLETO" value={newQuoteData.clientName} onChange={e => setNewQuoteData({...newQuoteData, clientName: e.target.value.toUpperCase()})} className="w-full bg-theme-bg-muted border border-theme-border/60 p-4 text-[10px] text-theme-text outline-none focus:border-brand-tactical font-black rounded-xl uppercase" />
+                  <input required placeholder="NOME COMPLETO" value={newQuoteData.clientName} onChange={e => setNewQuoteData({...newQuoteData, clientName: e.target.value.toUpperCase()})} className="w-full bg-theme-bg-muted border border-theme-border p-4 text-[10px] text-theme-text outline-none focus:border-brand-tactical font-black rounded-xl uppercase" />
                 </div>
                 <div className="space-y-2">
                   <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest block mb-2 opacity-60 italic">WhatsApp</label>
-                  <input required placeholder="DDD 9XXXX-XXXX" value={newQuoteData.clientPhone} onChange={e => setNewQuoteData({...newQuoteData, clientPhone: e.target.value})} className="w-full bg-theme-bg-muted border border-theme-border/60 p-4 text-[10px] text-brand-tactical outline-none focus:border-brand-tactical font-black rounded-xl" />
+                  <input required placeholder="DDD 9XXXX-XXXX" value={newQuoteData.clientPhone} onChange={e => setNewQuoteData({...newQuoteData, clientPhone: e.target.value})} className="w-full bg-theme-bg-muted border border-theme-border p-4 text-[10px] text-brand-tactical outline-none focus:border-brand-tactical font-black rounded-xl" />
                 </div>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
                   <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest block mb-2 opacity-60 italic">E-mail</label>
-                  <input required type="email" placeholder="CLIENTE@EMAIL.COM" value={newQuoteData.clientEmail} onChange={e => setNewQuoteData({...newQuoteData, clientEmail: e.target.value})} className="w-full bg-theme-bg-muted border border-theme-border/60 p-4 text-[10px] text-theme-text outline-none focus:border-brand-tactical font-black rounded-xl uppercase" />
+                  <input required type="email" placeholder="CLIENTE@EMAIL.COM" value={newQuoteData.clientEmail} onChange={e => setNewQuoteData({...newQuoteData, clientEmail: e.target.value})} className="w-full bg-theme-bg-muted border border-theme-border p-4 text-[10px] text-theme-text outline-none focus:border-brand-tactical font-black rounded-xl uppercase" />
                 </div>
                 <div className="space-y-2">
                   <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest block mb-2 opacity-60 italic">Orçamento (R$)</label>
-                  <input type="number" placeholder="VALOR BASE" value={newQuoteData.priceBase} onChange={e => setNewQuoteData({...newQuoteData, priceBase: Number(e.target.value)})} className="w-full bg-theme-bg-muted border border-theme-border/60 p-4 text-[10px] text-brand-tactical outline-none focus:border-brand-tactical font-black rounded-xl" />
+                  <input type="number" placeholder="VALOR BASE" value={newQuoteData.priceBase} onChange={e => setNewQuoteData({...newQuoteData, priceBase: Number(e.target.value)})} className="w-full bg-theme-bg-muted border border-theme-border p-4 text-[10px] text-brand-tactical outline-none focus:border-brand-tactical font-black rounded-xl" />
                 </div>
               </div>
 
@@ -664,12 +664,12 @@ export const AdminQuotes: React.FC = () => {
 
               <div className="space-y-2">
                 <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest block mb-2 opacity-60 italic">Descrição</label>
-                <textarea required placeholder="DETALHES ADICIONAIS..." value={newQuoteData.description} onChange={e => setNewQuoteData({...newQuoteData, description: e.target.value.toUpperCase()})} className="w-full bg-theme-bg-muted border border-theme-border/60 p-4 text-[10px] text-theme-text outline-none focus:border-brand-tactical h-24 font-bold resize-none rounded-xl uppercase leading-relaxed" />
+                <textarea required placeholder="DETALHES ADICIONAIS..." value={newQuoteData.description} onChange={e => setNewQuoteData({...newQuoteData, description: e.target.value.toUpperCase()})} className="w-full bg-theme-bg-muted border border-theme-border p-4 text-[10px] text-theme-text outline-none focus:border-brand-tactical h-24 font-bold resize-none rounded-xl uppercase leading-relaxed" />
               </div>
             </form>
 
             {/* Footer */}
-            <div className="p-8 md:p-10 bg-theme-bg-muted/50 border-t border-theme-border flex gap-4 shrink-0 rounded-2xl">
+            <div className="p-8 md:p-10 bg-theme-bg-muted border-t border-theme-border flex gap-4 shrink-0 rounded-2xl">
               <button type="button" onClick={() => setIsNewQuoteModalOpen(false)} className="flex-1 py-5 border border-theme-border text-[11px] font-black uppercase tracking-[0.3em] text-theme-muted hover:text-white transition-all rounded-[20px] italic">Cancelar</button>
               <button 
                 type="submit"

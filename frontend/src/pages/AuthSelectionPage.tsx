@@ -57,7 +57,7 @@ export const AuthSelectionPage: React.FC = () => {
           <div
             key={opt.id}
             onClick={() => navigate(`/login?role=${opt.role}`)}
-            className="lux-card group p-5 md:p-10 flex flex-col items-start cursor-pointer transition-all duration-700 bg-theme-bg-muted/40 backdrop-blur-md"
+            className="lux-card group p-5 md:p-10 flex flex-col items-start cursor-pointer transition-all duration-700 bg-theme-bg-muted backdrop-blur-md"
           >
             <div className="mb-4 p-3 bg-theme-bg rounded-xl border border-theme-border shadow-inner opacity-60 group-hover:opacity-100 group-hover:text-brand-tactical transition-all transform group-hover:scale-110 duration-500">
               {opt.icon}

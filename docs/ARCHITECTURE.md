@@ -1,4 +1,5 @@
 <!-- generated-by: gsd-doc-writer -->
+
 # Project Architecture: Foto Segundo
 
 Este documento descreve a arquitetura técnica da plataforma **Foto Segundo**, focando nos fluxos de dados, infraestrutura de storage, motor de automação phygital, suporte multi-vertical e o Growth Engine de retenção de clientes.
@@ -44,6 +45,7 @@ Para garantir escalabilidade e baixo custo, utilizamos uma estratégia de armaze
 A plataforma suporta múltiplos verticais de negócio, orquestrados através de um dashboard adaptativo:
 
 ### 4-Tier Control Panel
+
 - **Master:** Visão global de todas as franquias e eventos na rede Foto Segundo. Controle financeiro master.
 - **Partner (Franchisees/Profissionais):** Visão operacional do evento em curso. Criação de Flash Events (venda de alto volume) e gestão de catálogos customizados.
 - **Consumer (Cliente):** Experiência de compra e galeria premium unificada. Visualização de Extratos (Ledger), arquivos comprados, e cofres de memórias.
@@ -52,12 +54,13 @@ A plataforma suporta múltiplos verticais de negócio, orquestrados através de 
 ### Verticais de Negócios
 
 A interface e as regras de negócio se adaptam aos seguintes modelos:
-| Vertical | Schema | Feature Única | Autenticação |
-|----------|--------|---------------|--------------|
-| `FASHION` / `EVENT` / `COTIDIANO` | Padrão | Galeria pública / Flash Event / Custom Services | Opt-in |
-| `SCHOOL` (Escolar) | `StudentList` | Seleção de aluno antes do acesso | Forçada por turma |
-| `SPORTS` (Esportes) | `BibNumber` | Busca por número de dorsal | Opt-in |
-| `NAUTICO` / `GASTRONOMIA` / `VAREJO` | Dinâmico | Customização dinâmica de UI baseada em flags multi-verticais. | Opt-in |
+
+| Vertical                             | Schema        | Feature Única                                                 | Autenticação      |
+| ------------------------------------ | ------------- | ------------------------------------------------------------- | ----------------- |
+| `FASHION` / `EVENT` / `COTIDIANO`    | Padrão        | Galeria pública / Flash Event / Custom Services               | Opt-in            |
+| `SCHOOL` (Escolar)                   | `StudentList` | Seleção de aluno antes do acesso                              | Forçada por turma |
+| `SPORTS` (Esportes)                  | `BibNumber`   | Busca por número de dorsal                                    | Opt-in            |
+| `NAUTICO` / `GASTRONOMIA` / `VAREJO` | Dinâmico      | Customização dinâmica de UI baseada em flags multi-verticais. | Opt-in            |
 
 ---
 
@@ -66,7 +69,9 @@ A interface e as regras de negócio se adaptam aos seguintes modelos:
 O crescimento exigiu adaptações críticas à infraestrutura serverless original.
 
 ### Supabase & Vercel (Hono Hybrid)
+
 - **Fragmentation Strategy:** Para lidar com os limites de 20MB de tamanho (bundle limit) nas Supabase Edge Functions e 256MB de uso de memória, a arquitetura agora utiliza uma técnica de fragmentação onde rotas pesadas (Processamento de Imagens, Drive Sync Engine) foram migradas para Vercel Serverless Functions usando **Hono** para extrema performance e controle fino do runtime.
+- **Micro-Endpoints de Vitrine Pública:** Visando zerar problemas de Cold Start, as rotas cruciais de abertura da homepage (`/api/public/events` e `/api/public/events/cities`) foram completamente desacopladas do monólito principal (`events.js`) e transferidas para um micro-endpoint otimizado `public-hono.ts`, com empacotamento ultraleve via esbuild.
 - **Bundle Optimization:** Módulos pesados não essenciais foram marcados como externos no bundle das Edge functions, e dependências pesadas de PDF e image processing (Sharp/Canvas) agora rodam exclusivamente nos workers dedicados no lado do Vercel/Node e não na Edge Runtime Deno do Supabase.
 
 ---
@@ -74,25 +79,30 @@ O crescimento exigiu adaptações críticas à infraestrutura serverless origina
 ## 5. Fluxos de Eventos Críticos
 
 ### ⚡ Flash Event & Custom Services
+
 1. **Geração:** Fotógrafo agenda evento relâmpago ou um cliente aprova um serviço customizado (`CustomServiceForm.tsx`).
 2. **Review Administrativo (SVC-SUBMIT):** Administradores aprovam, rejeitam ou mantêm exclusividade na rede (publicando ao `ServiceCatalog`).
 3. **Captura:** O fotógrafo sobe as fotos vinculando-as ao `ShortID`.
 
 ### 🖨️ Web-to-Print IoT Engine (Serverless Native)
+
 1. **Webhook:** O backend recebe confirmação de pagamento do Mercado Pago e persiste no Supabase.
 2. **Queue:** O pedido entra na fila de impressão do evento no PostgreSQL.
 3. **Realtime Sync:** O frontend e os agentes de impressão assinam o **Supabase Realtime (WebSockets/SSE)**. Mudanças no banco empurram o evento automaticamente.
 4. **Pull/Print:** O agente detecta o pedido push, baixa o ativo do Google Drive e envia para a impressora.
 
 ### 📸 Client-Side Photo Compositing & Printing Engine
+
 Composição vetorial em iframe invisível no navegador para impressão de molduras nativas em papel fotográfico (ex: Epson L5290).
 
 ### 💰 Growth Engine — Cupom & Afiliado
+
 Rastreamento de conversão via cookie `fs_referral`. Se o preço cai para R$0 com cupom, ocorre o bypass imediato do MercadoPago gerando order FREE.
 
 ---
 
 ## 6. Segurança e Integridade (Defesa em Profundidade)
+
 - **Auth (Anti-XSS):** JWT (Acesso) via **`httpOnly`, `Secure` e `SameSite=Strict` Cookies**.
 - **Rate Limit (Anti-DDoS):** Upstash Redis / Vercel Edge Middleware.
 - **Cron Security:** Endpoints protegidos por `CRON_SECRET` e `Bearer` token.
@@ -101,6 +111,7 @@ Rastreamento de conversão via cookie `fs_referral`. Se o preço cai para R$0 co
 ---
 
 ## 7. Anti-Padrões Proibidos (Serverless Constraints)
+
 - **Polling:** Proibido uso de `setInterval` para API. Usar WebSockets.
 - **Monolito:** Proibido bundle gigantesco de Express no Vercel que eleva Cold Starts.
 
@@ -146,6 +157,7 @@ graph TD
 ---
 
 ## 9. Key Abstractions
+
 - **Drive Sync Engine (`backend/src/controllers/marketplace.controller.ts`):** Ingestão massiva em lote e extração Regex.
 - **Service Catalog & Custom Pricing (`backend/src/controllers/service_catalog.controller.ts`):** Aprovações admin de `CustomService`.
 - **Order Motor (`payment.controller.ts`):** Splits, cupons, e status fulfillment.
@@ -153,4 +165,5 @@ graph TD
 - **CRM Engine (`crm.service.ts`):** Recuperação de vendas.
 
 <!-- GSD-DOCS-UPDATE: SUPPLEMENTED -->
-*Documentação verificada e atualizada automaticamente via GSD-SDK em 2026-06.*
+
+_Documentação verificada e atualizada automaticamente via GSD-SDK em 2026-06._

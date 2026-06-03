@@ -21,5 +21,6 @@ export const serviceCatalogSchema = z.object({
     allowProfessional: z.boolean().optional().default(true),
     allowMobile: z.boolean().optional().default(false),
     category: z.string().min(1, "Category is required"),
+    eventTypes: z.array(z.string()).optional().default([]),
   })
 });

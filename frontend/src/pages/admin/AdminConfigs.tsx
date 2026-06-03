@@ -125,7 +125,7 @@ export const AdminConfigs: React.FC = () => {
       </div>
 
       {/* TABS */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:flex bg-theme-bg border border-theme-border/60 p-1.5 shadow-sm w-full md:w-auto md:max-w-fit gap-1 rounded-2xl">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:flex bg-theme-bg border border-theme-border p-1.5 shadow-sm w-full md:w-auto md:max-w-fit gap-1 rounded-2xl">
         {(["splits", "payouts", "infra"] as const).map(t => (
           <button
             key={t}
@@ -161,7 +161,7 @@ export const AdminConfigs: React.FC = () => {
       {showGenerateConfirm && (
         <div className="fixed inset-0 z-[600] flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-theme-bg/80 backdrop-blur-xl" onClick={() => setShowGenerateConfirm(false)} />
-          <div className="relative w-full max-w-md bg-theme-card border border-theme-border/60 rounded-[40px] overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300">
+          <div className="relative w-full max-w-md bg-theme-card border border-theme-border rounded-[40px] overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300">
             <div className="p-10 space-y-8 text-center">
               <div className="w-20 h-20 bg-brand-tactical/10 rounded-[30px] flex items-center justify-center border border-brand-tactical/20 mx-auto">
                 <Calculator className="text-brand-tactical" size={32} strokeWidth={1.5} />
@@ -190,8 +190,8 @@ export const AdminConfigs: React.FC = () => {
       {payoutModal && (
         <div className="fixed inset-0 z-[600] flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-theme-bg/80 backdrop-blur-xl" onClick={() => setPayoutModal(null)} />
-          <div className="relative w-full max-w-md bg-theme-card border border-theme-border/60 rounded-[40px] overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300 flex flex-col">
-            <div className="p-8 border-b border-theme-border flex items-center justify-between bg-theme-bg-muted/30 rounded-2xl">
+          <div className="relative w-full max-w-md bg-theme-card border border-theme-border rounded-[40px] overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300 flex flex-col">
+            <div className="p-8 border-b border-theme-border flex items-center justify-between bg-theme-bg-muted rounded-2xl">
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 bg-brand-tactical/10 rounded-2xl flex items-center justify-center border border-brand-tactical/20">
                   <DollarSign className="text-brand-tactical" size={24} strokeWidth={1.5} />
@@ -201,11 +201,11 @@ export const AdminConfigs: React.FC = () => {
                   <p className="text-[10px] font-black uppercase tracking-[0.2em] opacity-40">Registro de Comprovante Pix</p>
                 </div>
               </div>
-              <button onClick={() => setPayoutModal(null)} className="p-3 hover:bg-white/5 rounded-full transition-all text-theme-muted"><X size={24} /></button>
+              <button onClick={() => setPayoutModal(null)} className="p-3 hover:bg-theme-bg-muted rounded-full transition-all text-theme-muted"><X size={24} /></button>
             </div>
             <div className="p-8 space-y-8">
-              <div className="bg-theme-bg-muted/40 border border-theme-border/40 p-8 rounded-[30px] space-y-6">
-                <div className="flex justify-between items-center border-b border-theme-border/20 pb-4">
+              <div className="bg-theme-bg-muted border border-theme-border p-8 rounded-[30px] space-y-6">
+                <div className="flex justify-between items-center border-b border-theme-border pb-4">
                   <span className="text-[8px] font-black text-theme-muted uppercase tracking-widest italic opacity-60">Favorecido</span>
                   <span className="text-[12px] text-theme-text font-black uppercase italic">{payoutModal.name}</span>
                 </div>
@@ -222,7 +222,7 @@ export const AdminConfigs: React.FC = () => {
                     autoFocus value={pixTxId}
                     onChange={e => setPixTxId(e.target.value)}
                     placeholder="COLE O COMPROVANTE..."
-                    className="w-full bg-theme-bg-muted border border-theme-border/60 p-5 pl-12 text-[11px] font-black text-theme-text placeholder:opacity-20 focus:border-brand-tactical outline-none transition-all uppercase rounded-xl"
+                    className="w-full bg-theme-bg-muted border border-theme-border p-5 pl-12 text-[11px] font-black text-theme-text placeholder:opacity-20 focus:border-brand-tactical outline-none transition-all uppercase rounded-xl"
                   />
                 </div>
               </div>

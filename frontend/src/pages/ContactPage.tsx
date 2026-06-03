@@ -10,7 +10,7 @@ export function ContactPage() {
       <Navbar />
       
       {/* Header Minimalista */}
-      <header className="fixed top-0 left-0 right-0 h-16 bg-theme-bg/80 backdrop-blur-lg border-b border-theme-border/40 z-50 flex items-center px-4 md:px-8">
+      <header className="fixed top-0 left-0 right-0 h-16 bg-theme-bg/80 backdrop-blur-lg border-b border-theme-border z-50 flex items-center px-4 md:px-8">
         <Link to="/" className="text-brand-tactical hover:brightness-110 transition-all flex items-center gap-2 text-xs font-black tracking-widest uppercase italic">
           <ArrowLeft size={16} /> Voltar para o início
         </Link>
@@ -33,7 +33,7 @@ export function ContactPage() {
 
         <div className="grid md:grid-cols-2 gap-6 mb-16">
           {/* Suporte */}
-          <div className="bg-theme-bg-muted border border-theme-border/60 p-8 rounded-3xl hover:border-brand-tactical/50 transition-colors">
+          <div className="bg-theme-bg-muted border border-theme-border p-8 rounded-3xl hover:border-brand-tactical/50 transition-colors">
             <div className="w-12 h-12 bg-brand-tactical/10 text-brand-tactical rounded-xl flex items-center justify-center mb-6">
               <HeadphonesIcon size={24} />
             </div>
@@ -45,7 +45,7 @@ export function ContactPage() {
               <MessageSquare size={16} className="text-brand-tactical" /> suporte@fotosegundo.com.br
             </a>
             <p className="text-xs text-theme-text-muted uppercase tracking-widest font-bold mb-6">⏱ Resposta: Até 24h úteis</p>
-            <div className="pt-6 border-t border-theme-border/40">
+            <div className="pt-6 border-t border-theme-border">
               <p className="text-xs font-light text-theme-text-muted leading-relaxed">
                 Antes de enviar, consulte a <Link to="/suporte" className="text-brand-tactical hover:underline font-medium">Central de Ajuda</Link> — a maioria das dúvidas é resolvida por lá.
               </p>
@@ -53,7 +53,7 @@ export function ContactPage() {
           </div>
 
           {/* Parcerias */}
-          <div className="bg-theme-bg-muted border border-theme-border/60 p-8 rounded-3xl hover:border-brand-tactical/50 transition-colors">
+          <div className="bg-theme-bg-muted border border-theme-border p-8 rounded-3xl hover:border-brand-tactical/50 transition-colors">
             <div className="w-12 h-12 bg-brand-tactical/10 text-brand-tactical rounded-xl flex items-center justify-center mb-6">
               <Building2 size={24} />
             </div>
@@ -64,7 +64,7 @@ export function ContactPage() {
             <a href="mailto:parcerias@fotosegundo.com.br" className="text-sm font-bold text-theme-text hover:text-brand-tactical transition-colors flex items-center gap-2 mb-6">
               <MessageSquare size={16} className="text-brand-tactical" /> parcerias@fotosegundo.com.br
             </a>
-            <div className="pt-6 border-t border-theme-border/40">
+            <div className="pt-6 border-t border-theme-border">
               <Link to="/parcerias" className="text-xs font-black uppercase tracking-widest text-brand-tactical hover:brightness-110 flex items-center gap-2">
                 Conhecer o programa <ArrowLeft size={12} className="rotate-180" />
               </Link>
@@ -72,7 +72,7 @@ export function ContactPage() {
           </div>
 
           {/* Profissionais */}
-          <div className="bg-theme-bg-muted border border-theme-border/60 p-8 rounded-3xl hover:border-brand-tactical/50 transition-colors">
+          <div className="bg-theme-bg-muted border border-theme-border p-8 rounded-3xl hover:border-brand-tactical/50 transition-colors">
             <div className="w-12 h-12 bg-brand-tactical/10 text-brand-tactical rounded-xl flex items-center justify-center mb-6">
               <Camera size={24} />
             </div>
@@ -87,7 +87,7 @@ export function ContactPage() {
           </div>
 
           {/* Imprensa */}
-          <div className="bg-theme-bg-muted border border-theme-border/60 p-8 rounded-3xl hover:border-brand-tactical/50 transition-colors">
+          <div className="bg-theme-bg-muted border border-theme-border p-8 rounded-3xl hover:border-brand-tactical/50 transition-colors">
             <div className="w-12 h-12 bg-brand-tactical/10 text-brand-tactical rounded-xl flex items-center justify-center mb-6">
               <Megaphone size={24} />
             </div>
@@ -101,7 +101,7 @@ export function ContactPage() {
           </div>
 
           {/* LGPD */}
-          <div className="bg-theme-bg-muted border border-theme-border/60 p-8 rounded-3xl hover:border-brand-tactical/50 transition-colors">
+          <div className="bg-theme-bg-muted border border-theme-border p-8 rounded-3xl hover:border-brand-tactical/50 transition-colors">
             <div className="w-12 h-12 bg-brand-tactical/10 text-brand-tactical rounded-xl flex items-center justify-center mb-6">
               <ShieldCheck size={24} />
             </div>
@@ -112,7 +112,7 @@ export function ContactPage() {
             <a href="mailto:privacidade@fotosegundo.com.br" className="text-sm font-bold text-theme-text hover:text-brand-tactical transition-colors flex items-center gap-2 mb-6">
               <MessageSquare size={16} className="text-brand-tactical" /> privacidade@fotosegundo.com.br
             </a>
-            <div className="pt-6 border-t border-theme-border/40">
+            <div className="pt-6 border-t border-theme-border">
               <Link to="/privacidade" className="text-xs font-black uppercase tracking-widest text-brand-tactical hover:brightness-110 flex items-center gap-2">
                 Ler Política de Privacidade <ArrowLeft size={12} className="rotate-180" />
               </Link>
@@ -120,7 +120,7 @@ export function ContactPage() {
           </div>
 
           {/* Status */}
-          <div className="bg-theme-bg-muted border border-theme-border/60 p-8 rounded-3xl hover:border-brand-tactical/50 transition-colors flex flex-col justify-between">
+          <div className="bg-theme-bg-muted border border-theme-border p-8 rounded-3xl hover:border-brand-tactical/50 transition-colors flex flex-col justify-between">
             <div>
               <div className="w-12 h-12 bg-brand-tactical/10 text-brand-tactical rounded-xl flex items-center justify-center mb-6">
                 <Activity size={24} />
@@ -130,7 +130,7 @@ export function ContactPage() {
                 Para verificar se há instabilidades em andamento nos serviços ou uploads.
               </p>
             </div>
-            <div className="pt-6 border-t border-theme-border/40">
+            <div className="pt-6 border-t border-theme-border">
               <Link to="/status" className="text-xs font-black uppercase tracking-widest text-brand-tactical hover:brightness-110 flex items-center gap-2">
                 Acessar Painel de Status <ArrowLeft size={12} className="rotate-180" />
               </Link>
@@ -139,7 +139,7 @@ export function ContactPage() {
         </div>
 
         {/* Sede */}
-        <div className="mt-16 text-center border-t border-theme-border/40 pt-16">
+        <div className="mt-16 text-center border-t border-theme-border pt-16">
           <MapPin size={32} className="text-brand-tactical mx-auto mb-6" />
           <h2 className="text-2xl font-black uppercase italic tracking-tight mb-2">Sede</h2>
           <p className="text-theme-text font-medium text-lg uppercase tracking-widest mb-1">Foto Segundo</p>
@@ -148,7 +148,7 @@ export function ContactPage() {
         </div>
       </main>
 
-      <footer className="py-8 text-center border-t border-theme-border/40">
+      <footer className="py-8 text-center border-t border-theme-border">
         <p className="text-theme-text-muted text-xs font-bold uppercase tracking-widest mb-1">© 2026 Foto Segundo. Todos os direitos reservados.</p>
         <p className="text-brand-tactical/50 text-[10px] font-black italic uppercase tracking-[0.3em]">Protocolo Editorial de Imagem e Cinema</p>
       </footer>

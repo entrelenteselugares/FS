@@ -6,7 +6,7 @@ export function AboutPage() {
   return (
     <div className="min-h-screen bg-theme-bg text-theme-text font-sans">
       {/* Header */}
-      <header className="fixed top-0 left-0 right-0 h-16 bg-theme-bg/80 backdrop-blur-lg border-b border-theme-border/40 z-50 flex items-center px-4 md:px-8">
+      <header className="fixed top-0 left-0 right-0 h-16 bg-theme-bg/80 backdrop-blur-lg border-b border-theme-border z-50 flex items-center px-4 md:px-8">
         <Link to="/" className="text-brand-tactical hover:brightness-110 transition-all flex items-center gap-2 text-xs font-black tracking-widest uppercase italic">
           <ArrowLeft size={16} /> Voltar
         </Link>
@@ -66,17 +66,17 @@ export function AboutPage() {
             </h2>
             
             <div className="space-y-8">
-              <div className="bg-theme-bg-muted/40 p-6 md:p-8 rounded-2xl border border-theme-border/40">
+              <div className="bg-theme-bg-muted p-6 md:p-8 rounded-2xl border border-theme-border">
                 <h3 className="text-brand-tactical font-black uppercase tracking-widest text-sm mb-3">Para quem quer contratar um profissional</h3>
                 <p className="text-theme-text-muted font-light leading-relaxed">Agende sua cobertura fotográfica em poucos cliques. Selecione uma unidade fixa autorizada ou solicite um orçamento personalizado, informe os detalhes do seu evento e garanta sua data com pagamento seguro via PIX — parcelado em até 2x. Receba sua galeria editada com qualidade editorial após o evento.</p>
               </div>
 
-              <div className="bg-theme-bg-muted/40 p-6 md:p-8 rounded-2xl border border-theme-border/40">
+              <div className="bg-theme-bg-muted p-6 md:p-8 rounded-2xl border border-theme-border">
                 <h3 className="text-brand-tactical font-black uppercase tracking-widest text-sm mb-3">Para quem quer um álbum colaborativo</h3>
                 <p className="text-theme-text-muted font-light leading-relaxed">Crie um Cofre (Vault) privado para o seu evento, gere um link de convite e compartilhe com seus convidados. Cada um envia as fotos que tirou diretamente pela plataforma — sem compressão, sem perda de qualidade. A galeria se forma em tempo real, os convidados votam nas melhores poses, e você pode materializar as favoritas em impressões físicas entregues na sua casa.</p>
               </div>
 
-              <div className="bg-theme-bg-muted/40 p-6 md:p-8 rounded-2xl border border-theme-border/40">
+              <div className="bg-theme-bg-muted p-6 md:p-8 rounded-2xl border border-theme-border">
                 <h3 className="text-brand-tactical font-black uppercase tracking-widest text-sm mb-3">Para profissionais de audiovisual</h3>
                 <p className="text-theme-text-muted font-light leading-relaxed">A Foto Segundo é a sua central de negócios. Gerencie sua agenda, receba leads qualificados, entregue seus trabalhos e acompanhe seus ganhos — tudo em um único painel. Sem depender de Instagram, sem negociar preço no WhatsApp.</p>
               </div>
@@ -84,7 +84,7 @@ export function AboutPage() {
           </div>
 
           {/* Números */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 py-8 border-y border-theme-border/40">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 py-8 border-y border-theme-border">
             <div>
               <p className="text-theme-text-muted text-xs font-bold uppercase tracking-widest mb-1">Fundação</p>
               <p className="text-theme-text font-black text-xl">2025</p>
@@ -128,10 +128,10 @@ export function AboutPage() {
           </div>
 
           {/* Fale com a gente */}
-          <div className="mt-16 pt-12 border-t border-theme-border/40 text-center">
+          <div className="mt-16 pt-12 border-t border-theme-border text-center">
             <h2 className="text-xl font-black text-theme-text uppercase tracking-tight mb-6">Tem dúvidas ou quer ser parceiro?</h2>
             <div className="flex flex-col sm:flex-row justify-center gap-4">
-              <Link to="/suporte" className="px-8 py-3 bg-theme-bg-muted border border-theme-border/60 text-theme-text font-bold tracking-widest uppercase text-xs rounded-full hover:bg-theme-border/20 transition-all">
+              <Link to="/suporte" className="px-8 py-3 bg-theme-bg-muted border border-theme-border text-theme-text font-bold tracking-widest uppercase text-xs rounded-full hover:bg-theme-border/20 transition-all">
                 Central de Ajuda
               </Link>
               <Link to="/parcerias" className="px-8 py-3 bg-brand-tactical hover:brightness-110 text-white font-black tracking-widest uppercase text-xs rounded-full transition-all">
@@ -142,7 +142,7 @@ export function AboutPage() {
         </section>
       </main>
 
-      <footer className="py-8 text-center border-t border-theme-border/20">
+      <footer className="py-8 text-center border-t border-theme-border">
         <p className="text-theme-text-muted text-xs font-bold uppercase tracking-widest mb-1">© 2026 Foto Segundo. Todos os direitos reservados.</p>
         <p className="text-brand-tactical/50 text-[10px] font-black italic uppercase tracking-[0.3em]">Protocolo Editorial de Imagem e Cinema</p>
       </footer>

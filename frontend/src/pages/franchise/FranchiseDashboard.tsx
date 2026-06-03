@@ -209,7 +209,7 @@ const FranchiseDashboard: React.FC = () => {
         </div>
 
         {/* PRINTER STATUS WIDGET */}
-        <div className={`flex items-center gap-4 px-6 py-4 border border-theme-border bg-theme-bg-muted/50 transition-all ${printerStatus === 'ONLINE' ? 'border-brand-tactical/30' : 'border-red-500/30'}`}>
+        <div className={`flex items-center gap-4 px-6 py-4 border border-theme-border bg-theme-bg-muted transition-all ${printerStatus === 'ONLINE' ? 'border-brand-tactical/30' : 'border-red-500/30'}`}>
           <div className="relative">
             <Printer size={24} className={printerStatus === 'ONLINE' ? 'text-brand-tactical' : 'text-red-500'} />
             <div className={`absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full animate-ping ${printerStatus === 'ONLINE' ? 'bg-brand-tactical' : 'bg-red-500'}`} />
@@ -223,7 +223,7 @@ const FranchiseDashboard: React.FC = () => {
         </div>
 
         {/* REVENUE STATUS WIDGET */}
-        <div className="flex items-center gap-4 px-6 py-4 border border-theme-border bg-theme-bg-muted/50 border-blue-500/30">
+        <div className="flex items-center gap-4 px-6 py-4 border border-theme-border bg-theme-bg-muted border-blue-500/30">
           <div className="relative">
             <DollarSign size={24} className="text-blue-400" />
             <div className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-blue-500 animate-pulse" />
@@ -304,7 +304,7 @@ const FranchiseDashboard: React.FC = () => {
                 </button>
                 <button 
                   onClick={() => handleReorder('PHYSICAL_KIT')}
-                  className="flex-1 bg-transparent border border-theme-border text-theme-text py-5 text-[11px] font-black uppercase tracking-[0.2em] hover:bg-white/5 transition-all flex items-center justify-center gap-3"
+                  className="flex-1 bg-transparent border border-theme-border text-theme-text py-5 text-[11px] font-black uppercase tracking-[0.2em] hover:bg-theme-bg-muted transition-all flex items-center justify-center gap-3"
                 >
                   <Zap size={16} /> Solicitar Kit Físico
                 </button>
@@ -370,7 +370,7 @@ const FranchiseDashboard: React.FC = () => {
               <span className="text-[10px] font-black text-theme-muted uppercase tracking-widest opacity-60">Parceiros Vinculados ({partners.length})</span>
               <div className="space-y-3">
                 {partners.length === 0 ? (
-                  <p className="text-[9px] text-theme-muted uppercase tracking-widest opacity-40 py-4 text-center border border-dashed border-theme-border">
+                  <p className="text-[9px] text-theme-muted uppercase tracking-widest opacity-40 py-4 text-center border  border-theme-border">
                     Nenhum parceiro vinculado ainda.
                   </p>
                 ) : partners.map(p => (
@@ -391,7 +391,7 @@ const FranchiseDashboard: React.FC = () => {
             </div>
 
             {/* B2B WHITE-LABEL SETTINGS */}
-            <div className="space-y-4 pt-4 border-t border-theme-border/20">
+            <div className="space-y-4 pt-4 border-t border-theme-border">
               <div className="flex items-center gap-2 mb-4">
                 <Palette size={16} className="text-brand-tactical" />
                 <span className="text-[10px] font-black text-theme-muted uppercase tracking-widest opacity-80">White-Label (B2B)</span>
@@ -449,7 +449,7 @@ const FranchiseDashboard: React.FC = () => {
 
             {/* COHORT INTEL METRICS */}
             {finance.intel && (
-              <div className="grid grid-cols-3 gap-4 pb-6 border-b border-theme-border/20">
+              <div className="grid grid-cols-3 gap-4 pb-6 border-b border-theme-border">
                 <div>
                   <span className="block text-[8px] font-black text-theme-muted uppercase tracking-widest">Eventos da Rede</span>
                   <span className="text-lg font-black text-white">{finance.intel.networkEvents}</span>
@@ -467,7 +467,7 @@ const FranchiseDashboard: React.FC = () => {
 
             <div className="space-y-4">
               {finance.recentCommissions.length === 0 ? (
-                <p className="text-[9px] text-theme-muted uppercase tracking-widest opacity-40 py-4 text-center border border-dashed border-theme-border">
+                <p className="text-[9px] text-theme-muted uppercase tracking-widest opacity-40 py-4 text-center border  border-theme-border">
                   Nenhuma comissão passiva registrada.
                 </p>
               ) : finance.recentCommissions.map(c => (

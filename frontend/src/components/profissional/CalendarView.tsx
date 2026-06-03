@@ -32,9 +32,9 @@ export function CalendarView({ events, currentMonth, setCurrentMonth, onSelect, 
   ];
 
   return (
-    <div className="bg-theme-bg border border-theme-border/60 rounded-2xl p-6 md:p-10 space-y-8 shadow-2xl relative overflow-hidden">
-      <div className="absolute top-0 right-0 w-32 h-32 bg-brand-tactical/5 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none" />
-      <div className="flex items-center justify-between border-b border-theme-border/60 pb-8 relative z-10">
+    <div className="bg-theme-bg border border-theme-border rounded-2xl p-6 md:p-10 space-y-8 shadow-2xl relative overflow-hidden">
+      <div className="absolute top-0 right-0 w-32 h-32 bg-brand-tactical/10 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none" />
+      <div className="flex items-center justify-between border-b border-theme-border pb-8 relative z-10">
         <div className="flex flex-col md:flex-row gap-6 items-start md:items-center relative z-10">
           <h3 className="text-2xl font-heading font-black text-theme-text uppercase tracking-widest italic">
             {monthNames[month]} {year}
@@ -74,7 +74,7 @@ export function CalendarView({ events, currentMonth, setCurrentMonth, onSelect, 
         {["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sab"].map((d) => (
           <div
             key={d}
-            className="text-center py-5 border-r border-b border-theme-border bg-theme-bg-muted/50 text-[10px] font-black text-theme-muted uppercase italic tracking-widest"
+            className="text-center py-5 border-r border-b border-theme-border bg-theme-bg-muted text-[10px] font-black text-theme-muted uppercase italic tracking-widest"
           >
             {d}
           </div>
@@ -82,7 +82,7 @@ export function CalendarView({ events, currentMonth, setCurrentMonth, onSelect, 
         {days.map((d, i) => (
           <div
             key={i}
-            className="min-h-[120px] p-3 border-r border-b border-theme-border relative hover:bg-brand-tactical/5 transition-all"
+            className="min-h-[120px] p-3 border-r border-b border-theme-border relative hover:bg-brand-tactical/10 transition-all"
           >
             {d && (
               <>

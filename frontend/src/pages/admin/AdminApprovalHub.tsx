@@ -110,8 +110,8 @@ export const AdminApprovalHub: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="relative border-b border-theme-border/60 pb-8 space-y-4">
-        <div className="absolute -top-10 -left-10 w-40 h-40 bg-brand-tactical/5 blur-3xl rounded-full" />
+      <div className="relative border-b border-theme-border pb-8 space-y-4">
+        <div className="absolute -top-10 -left-10 w-40 h-40 bg-brand-tactical/10 blur-3xl rounded-full" />
         <div className="flex flex-col xl:flex-row justify-between items-start xl:items-end gap-6 relative z-10">
           <div>
             <p className="text-theme-muted mt-2 text-sm">Central de aprovações pendentes do sistema</p>
@@ -128,7 +128,7 @@ export const AdminApprovalHub: React.FC = () => {
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-2 border-b border-theme-border/40 pb-0">
+      <div className="flex gap-2 border-b border-theme-border pb-0">
         {([
           { key: "experience", label: "Validação de Experiência", count: expValidations.length, icon: <Star size={14} /> },
           { key: "applications", label: "Aprovações de Acesso", count: applications.length, icon: <ShieldCheck size={14} /> },
@@ -161,11 +161,11 @@ export const AdminApprovalHub: React.FC = () => {
       {activeTab === "experience" && (
         <div>
           {expLoading ? (
-            <div className="py-24 text-center border border-theme-border bg-theme-bg-muted/10 animate-pulse text-[10px] text-theme-muted uppercase tracking-[0.5em] font-black italic rounded-2xl">
+            <div className="py-24 text-center border border-theme-border bg-theme-bg animate-pulse text-[10px] text-theme-muted uppercase tracking-[0.5em] font-black italic rounded-2xl">
               Buscando validações pendentes...
             </div>
           ) : expValidations.length === 0 ? (
-            <div className="bg-theme-surface border border-theme-border/60 rounded-2xl p-12 flex flex-col items-center justify-center text-center gap-4">
+            <div className="bg-theme-surface border border-theme-border rounded-2xl p-12 flex flex-col items-center justify-center text-center gap-4">
               <div className="w-12 h-12 bg-brand-tactical/10 rounded-full flex items-center justify-center text-brand-tactical">
                 <Check size={24} />
               </div>
@@ -186,7 +186,7 @@ export const AdminApprovalHub: React.FC = () => {
                     initial={{ opacity: 0, y: -10 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, scale: 0.95 }}
-                    className="bg-theme-surface border border-theme-border/60 rounded-2xl overflow-hidden hover:border-brand-tactical/30 transition-all"
+                    className="bg-theme-surface border border-theme-border rounded-2xl overflow-hidden hover:border-brand-tactical/30 transition-all"
                   >
                     <div className="p-6 space-y-5">
                       {/* Profissional info */}
@@ -207,7 +207,7 @@ export const AdminApprovalHub: React.FC = () => {
                       </div>
 
                       {/* Link do trabalho */}
-                      <div className="bg-theme-bg-muted/50 border border-theme-border/40 rounded-xl p-4 space-y-2">
+                      <div className="bg-theme-bg-muted border border-theme-border rounded-xl p-4 space-y-2">
                         <div className="flex items-center gap-2 text-theme-muted">
                           <FileText size={12} />
                           <span className="text-[10px] uppercase tracking-wider font-black">Link do Primeiro Trabalho</span>
@@ -231,7 +231,7 @@ export const AdminApprovalHub: React.FC = () => {
                         <button
                           onClick={() => handleReviewExperience(v.id, false)}
                           disabled={processingId === v.id}
-                          className="flex-1 h-10 border border-theme-border/60 text-theme-muted hover:text-red-500 hover:border-red-500/50 hover:bg-red-500/10 rounded-xl flex items-center justify-center gap-2 transition-all text-[10px] font-black uppercase tracking-widest"
+                          className="flex-1 h-10 border border-theme-border text-theme-muted hover:text-red-500 hover:border-red-500/50 hover:bg-red-500/10 rounded-xl flex items-center justify-center gap-2 transition-all text-[10px] font-black uppercase tracking-widest"
                         >
                           <X size={14} /> Reprovar
                         </button>
@@ -256,11 +256,11 @@ export const AdminApprovalHub: React.FC = () => {
       {activeTab === "applications" && (
         <div>
           {loading ? (
-            <div className="py-24 text-center border border-theme-border bg-theme-bg-muted/10 animate-pulse text-[10px] text-theme-muted uppercase tracking-[0.5em] font-black italic rounded-2xl">
+            <div className="py-24 text-center border border-theme-border bg-theme-bg animate-pulse text-[10px] text-theme-muted uppercase tracking-[0.5em] font-black italic rounded-2xl">
               Sincronizando Solicitações Pendentes...
             </div>
           ) : applications.length === 0 ? (
-            <div className="bg-theme-surface border border-theme-border/60 rounded-2xl p-12 flex flex-col items-center justify-center text-center gap-4">
+            <div className="bg-theme-surface border border-theme-border rounded-2xl p-12 flex flex-col items-center justify-center text-center gap-4">
               <div className="w-12 h-12 bg-brand-tactical/10 rounded-full flex items-center justify-center text-brand-tactical">
                 <Check size={24} />
               </div>
@@ -276,7 +276,7 @@ export const AdminApprovalHub: React.FC = () => {
                     initial={{ opacity: 0, scale: 0.95 }}
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.95 }}
-                    className="bg-theme-surface border border-theme-border/60 rounded-2xl overflow-hidden group hover:border-brand-tactical/50 transition-all duration-300"
+                    className="bg-theme-surface border border-theme-border rounded-2xl overflow-hidden group hover:border-brand-tactical/50 transition-all duration-300"
                   >
                     <div className="p-5 space-y-4">
                       <div className="flex items-start justify-between">
@@ -303,7 +303,7 @@ export const AdminApprovalHub: React.FC = () => {
                             </div>
                             <div className="flex flex-wrap gap-1">
                               {app.profissional?.services?.map(s => (
-                                <span key={s} className="bg-theme-surface text-theme-text text-[9px] px-1.5 py-0.5 rounded border border-theme-border/60">{s}</span>
+                                <span key={s} className="bg-theme-surface text-theme-text text-[9px] px-1.5 py-0.5 rounded border border-theme-border">{s}</span>
                               ))}
                             </div>
                             {app.profissional?.otherHabilities && (
@@ -334,7 +334,7 @@ export const AdminApprovalHub: React.FC = () => {
                         <button
                           onClick={() => handleAction(app.id, 'reject')}
                           disabled={processingId === app.id}
-                          className="flex-1 h-9 border border-theme-border/60 text-theme-muted hover:text-red-500 hover:border-red-500/50 hover:bg-red-500/10 rounded-lg flex items-center justify-center gap-2 transition-all text-[10px] font-black uppercase tracking-widest"
+                          className="flex-1 h-9 border border-theme-border text-theme-muted hover:text-red-500 hover:border-red-500/50 hover:bg-red-500/10 rounded-lg flex items-center justify-center gap-2 transition-all text-[10px] font-black uppercase tracking-widest"
                         >
                           <X size={14} /> Reprovar
                         </button>

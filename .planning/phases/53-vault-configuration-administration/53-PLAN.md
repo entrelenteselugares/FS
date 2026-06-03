@@ -23,7 +23,7 @@ Provide the vault owner with a dedicated settings modal to manage album metadata
 - **Component (`VaultSettingsModal.tsx`)**:
   - Accessible via a Gear ⚙️ icon in the `VaultDetailPage` header (only visible to the OWNER).
   - Uses the Midnight Luxury design (dark backgrounds, emerald accents, glassy borders).
-  
+
 ### 3. UI Features - Settings Tabs
 
 - **Tab 1: Geral (General)**:
@@ -32,7 +32,7 @@ Provide the vault owner with a dedicated settings modal to manage album metadata
   - List all `members` fetched from the album details.
   - Provide a "Remover" button next to each member (except the OWNER). Calls the `DELETE` endpoint.
 - **Tab 3: Organização (Sorting Strategy)**:
-  - Radio buttons or Select dropdown to define the *local* sort order of the gallery.
+  - Radio buttons or Select dropdown to define the _local_ sort order of the gallery.
   - Sorting options:
     - Nome do arquivo (if available, fallback to id)
     - Data de Upload (Mais recentes primeiro / Mais antigas)

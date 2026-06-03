@@ -41,11 +41,11 @@ export const SideDrawer: React.FC<SideDrawerProps> = ({
       {/* Drawer Panel */}
       <div className={`absolute inset-y-0 right-0 flex ${width} w-full shadow-2xl`}>
         <div 
-          className="relative flex w-full flex-col bg-theme-bg border-l border-theme-border/40 animate-in slide-in-from-right duration-500 ease-in-out"
+          className="relative flex w-full flex-col bg-theme-bg border-l border-theme-border animate-in slide-in-from-right duration-500 ease-in-out"
           style={{ background: T.bg }}
         >
           {/* Header */}
-          <div className="flex items-center justify-between p-6 border-b border-theme-border/20">
+          <div className="flex items-center justify-between p-6 border-b border-theme-border">
             {title && (
               <h2 className="text-xl font-heading font-black italic uppercase tracking-tighter text-theme-text">
                 {title}

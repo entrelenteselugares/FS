@@ -13,11 +13,11 @@
 
 ### 🔴 Critical (0)
 
-*No critical issues found.*
+_No critical issues found._
 
 ### 🟡 Warning (0)
 
-*No warnings found. The implementation is robust and fully typed.*
+_No warnings found. The implementation is robust and fully typed._
 
 ### 🟢 Info (2)
 

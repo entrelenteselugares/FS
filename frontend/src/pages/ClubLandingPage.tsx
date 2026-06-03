@@ -81,7 +81,7 @@ export const ClubLandingPage = () => {
 
             <div className="space-y-6 pt-4">
               <div className="flex gap-4">
-                <div className="mt-1 w-8 h-8 rounded-full bg-white/5 flex items-center justify-center shrink-0 border border-white/10">
+                <div className="mt-1 w-8 h-8 rounded-full bg-theme-bg-muted flex items-center justify-center shrink-0 border border-white/10">
                   <Printer size={16} className="text-emerald-500" />
                 </div>
                 <div>
@@ -90,7 +90,7 @@ export const ClubLandingPage = () => {
                 </div>
               </div>
               <div className="flex gap-4">
-                <div className="mt-1 w-8 h-8 rounded-full bg-white/5 flex items-center justify-center shrink-0 border border-white/10">
+                <div className="mt-1 w-8 h-8 rounded-full bg-theme-bg-muted flex items-center justify-center shrink-0 border border-white/10">
                   <Camera size={16} className="text-brand-tactical" />
                 </div>
                 <div>
@@ -99,7 +99,7 @@ export const ClubLandingPage = () => {
                 </div>
               </div>
               <div className="flex gap-4">
-                <div className="mt-1 w-8 h-8 rounded-full bg-white/5 flex items-center justify-center shrink-0 border border-white/10">
+                <div className="mt-1 w-8 h-8 rounded-full bg-theme-bg-muted flex items-center justify-center shrink-0 border border-white/10">
                   <Package size={16} className="text-blue-500" />
                 </div>
                 <div>

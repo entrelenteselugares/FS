@@ -28,7 +28,7 @@ export function CashflowChart() {
 
   if (loading) {
     return (
-      <div className="h-[300px] w-full bg-theme-bg-muted/30 border border-theme-border/20 flex items-center justify-center animate-pulse">
+      <div className="h-[300px] w-full bg-theme-bg-muted border border-theme-border flex items-center justify-center animate-pulse">
         <span className="text-[10px] font-black text-theme-muted uppercase tracking-[0.4em] italic">Calculando Projeções...</span>
       </div>
     );
@@ -36,7 +36,7 @@ export function CashflowChart() {
 
   if (error || data.length === 0) {
     return (
-      <div className="h-[300px] w-full bg-theme-bg-muted/30 border border-theme-border/20 flex flex-col items-center justify-center gap-4">
+      <div className="h-[300px] w-full bg-theme-bg-muted border border-theme-border flex flex-col items-center justify-center gap-4">
         <AlertCircle size={24} className="text-theme-muted opacity-30" />
         <span className="text-[10px] font-black text-theme-muted uppercase tracking-[0.4em] italic text-center px-12">
           {error ? "Falha na sincronização de fluxo" : "Nenhuma projeção disponível para os próximos 30 dias"}

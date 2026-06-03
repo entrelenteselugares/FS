@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { API as api } from "../lib/api";
 import { useAuth } from "../hooks/useAuth";
 import { motion } from "framer-motion";
-import { Lock, Plus, Images, Users, ChevronRight, Loader2, Image as ImageIcon, ShoppingBag, User, Play, Briefcase, DollarSign, Calendar, Printer, Settings } from "lucide-react";
+import { Lock, Plus, Images, Users, Loader2, Image as ImageIcon, ShoppingBag, User, Play, Briefcase, DollarSign, Calendar, Printer, Settings } from "lucide-react";
 import { Helmet } from "react-helmet-async";
 import { DashboardLayout } from "../components/DashboardLayout";
 
@@ -26,71 +26,63 @@ function VaultCard({ vault, onClick }: { vault: Vault; onClick: () => void }) {
     <motion.div
       initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
-      whileHover={{ y: -4 }}
+      whileHover={{ scale: 1.02 }}
       onClick={onClick}
-      className="group relative flex flex-col bg-theme-card border border-theme-border/60 hover:border-brand-tactical/40 rounded-2xl p-6 cursor-pointer transition-all duration-500 overflow-hidden"
+      className="group relative flex flex-col items-start bg-theme-bg border border-theme-border rounded-2xl p-6 cursor-pointer transition-all duration-300 overflow-hidden gap-5 shadow-sm hover:shadow-md hover:border-brand-tactical/60"
     >
-      {/* Glow on hover */}
-      <div className="absolute inset-0 bg-brand-tactical/0 group-hover:bg-brand-tactical/[0.03] transition-colors duration-500 pointer-events-none rounded-2xl" />
-
-      {/* Header */}
-      <div className="flex items-start justify-between mb-5">
-        <div className="p-3 bg-brand-tactical/10 border border-brand-tactical/20 rounded-xl">
-          <Lock size={20} className="text-brand-tactical" />
+      <div className="flex w-full justify-between items-start">
+        <div className="w-12 h-12 bg-brand-tactical/10 border border-brand-tactical/20 rounded-xl flex items-center justify-center">
+          <Lock size={18} className="text-brand-tactical" />
         </div>
-        <div className="flex flex-col items-end gap-1">
-          {isOwner && (
-            <span className="text-[9px] font-black text-brand-tactical uppercase tracking-widest bg-brand-tactical/10 border border-brand-tactical/20 px-2 py-0.5 rounded-full">
-              Proprietário
-            </span>
-          )}
-          <span className={`text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full ${
-            vault.subscriptionStatus === "ACTIVE"
-              ? "text-emerald-500 bg-emerald-500/10 border border-emerald-500/20"
-              : vault.subscriptionStatus === "TRIAL"
-              ? "text-yellow-500 bg-yellow-500/10 border border-yellow-500/20"
-              : "text-red-500 bg-red-500/10 border border-red-500/20"
-          }`}>
-            {vault.subscriptionStatus === "ACTIVE" ? "Premium" : vault.subscriptionStatus === "TRIAL" ? "Teste Grátis" : "Bloqueado"}
+        <span className={`text-[8px] font-black uppercase tracking-widest px-2 py-1 rounded-md ${
+          vault.subscriptionStatus === "ACTIVE"
+            ? "text-emerald-500 bg-emerald-500/10 border border-emerald-500/20"
+            : vault.subscriptionStatus === "TRIAL"
+            ? "text-yellow-500 bg-yellow-500/10 border border-yellow-500/20"
+            : "text-red-500 bg-red-500/10 border border-red-500/20"
+        }`}>
+          {vault.subscriptionStatus === "ACTIVE" ? "Premium" : vault.subscriptionStatus === "TRIAL" ? "Teste Grátis" : "Bloqueado"}
+        </span>
+      </div>
+
+      {/* Info Area */}
+      <div className="w-full space-y-2 mt-2">
+        <h3 className="text-lg font-black text-theme-text uppercase italic tracking-tight line-clamp-2 leading-tight">
+          {vault.nome}
+        </h3>
+        
+        {isOwner && (
+          <span className="inline-block text-[8px] font-black text-brand-tactical uppercase tracking-widest bg-brand-tactical/10 border border-brand-tactical/20 px-2 py-0.5 rounded-full mb-2">
+            Proprietário
           </span>
+        )}
+
+        {/* Stats */}
+        <div className="flex items-center gap-4 text-theme-muted pt-1">
+          <div className="flex items-center gap-1.5">
+            <Images size={12} className="text-brand-tactical/70" />
+            <span className="text-[10px] font-bold">{vault._count.media} fotos</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <Users size={12} className="text-brand-tactical/70" />
+            <span className="text-[10px] font-bold">{vault._count.members} membros</span>
+          </div>
         </div>
       </div>
 
-      {/* Name */}
-      <h3 className="text-xl font-black text-theme-text uppercase italic tracking-tight leading-tight mb-1">
-        {vault.nome}
-      </h3>
-
-      {/* Stats */}
-      <div className="flex items-center gap-4 mt-3 mb-5">
-        <div className="flex items-center gap-1.5 text-gray-400">
-          <Images size={13} className="text-brand-tactical/70" />
-          <span className="text-[11px] font-bold">{vault._count.media} fotos</span>
+      {/* Progress Area */}
+      <div className="w-full flex flex-col justify-center mt-auto pt-4 border-t border-theme-border/50">
+        <div className="flex justify-between items-center mb-2 px-1">
+          <span className="text-[9px] text-theme-muted uppercase tracking-widest font-bold">Progresso da Meta</span>
+          <span className="text-[10px] font-black text-brand-tactical">{vault._count.media} / {vault.goalPoses}</span>
         </div>
-        <div className="flex items-center gap-1.5 text-gray-400">
-          <Users size={13} className="text-brand-tactical/70" />
-          <span className="text-[11px] font-bold">{vault._count.members} membros</span>
-        </div>
-      </div>
-
-      {/* Progress bar */}
-      <div className="mt-auto">
-        <div className="flex justify-between items-center mb-2">
-          <span className="text-[10px] text-gray-500 uppercase tracking-widest font-bold">Meta do Ciclo</span>
-          <span className="text-[10px] font-black text-brand-tactical">{vault._count.media}/{vault.goalPoses}</span>
-        </div>
-        <div className="w-full h-1 bg-white/5 rounded-full overflow-hidden">
+        <div className="w-full h-1.5 bg-theme-bg-muted rounded-full overflow-hidden">
           <div
             className="h-full bg-brand-tactical rounded-full transition-all duration-700"
             style={{ width: `${progress}%` }}
           />
         </div>
       </div>
-
-      <ChevronRight
-        size={16}
-        className="absolute right-5 top-1/2 -translate-y-1/2 text-gray-600 group-hover:text-brand-tactical group-hover:translate-x-1 transition-all duration-300"
-      />
     </motion.div>
   );
 }
@@ -154,7 +146,7 @@ function NewVaultModal({ onClose, onCreated }: { onClose: () => void; onCreated:
               value={name}
               onChange={e => setName(e.target.value)}
               placeholder="Ex: Casamento Ana & Pedro"
-              className="w-full bg-theme-bg-field border border-theme-border/60 focus:border-brand-tactical/50 rounded-xl px-4 py-3 text-theme-text text-sm outline-none transition-colors placeholder:text-theme-text-muted/40"
+              className="w-full bg-theme-bg-field border border-theme-border focus:border-brand-tactical/50 rounded-xl px-4 py-3 text-theme-text text-sm outline-none transition-colors placeholder:text-theme-text-muted/40"
             />
           </div>
 
@@ -176,7 +168,7 @@ function NewVaultModal({ onClose, onCreated }: { onClose: () => void; onCreated:
 
           {error && <p className="text-red-400 text-[11px] font-bold">{error}</p>}
 
-          <div className="flex gap-3 pt-4 border-t border-theme-border/20 mt-auto shrink-0">
+          <div className="flex gap-3 pt-4 border-t border-theme-border mt-auto shrink-0">
             <button
               id="btn-cancelar-criar-album"
               type="button"
@@ -288,7 +280,7 @@ export default function VaultsPage() {
 
       <div className="max-w-[1400px] mx-auto px-2 md:px-6 py-6 md:py-10 space-y-8 md:space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
         {/* Page actions */}
-        <div className="flex flex-col md:flex-row md:items-end justify-end gap-6 border-b border-theme-border/60 pb-4">
+        <div className="flex flex-col md:flex-row md:items-end justify-end gap-6 border-b border-theme-border pb-4">
 
           <button
             id="btn-novo-album"
@@ -302,18 +294,18 @@ export default function VaultsPage() {
 
         {/* Vaults grid */}
         {loading ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {[...Array(3)].map((_, i) => (
-              <div key={i} className="bg-theme-card border border-theme-border/60 rounded-2xl p-6 h-[200px] animate-pulse flex flex-col justify-between">
+              <div key={i} className="bg-theme-card border border-theme-border rounded-2xl p-6 h-[200px] animate-pulse flex flex-col justify-between">
                 <div className="flex justify-between items-start">
-                  <div className="w-12 h-12 bg-white/5 rounded-xl border border-white/10" />
-                  <div className="w-16 h-6 bg-white/5 rounded-full border border-white/10" />
+                  <div className="w-12 h-12 bg-theme-bg-muted rounded-xl border border-white/10" />
+                  <div className="w-16 h-6 bg-theme-bg-muted rounded-full border border-white/10" />
                 </div>
                 <div className="space-y-3 mt-4">
-                  <div className="w-3/4 h-6 bg-white/5 rounded border border-white/10" />
-                  <div className="w-1/2 h-4 bg-white/5 rounded border border-white/10" />
+                  <div className="w-3/4 h-6 bg-theme-bg-muted rounded border border-white/10" />
+                  <div className="w-1/2 h-4 bg-theme-bg-muted rounded border border-white/10" />
                 </div>
-                <div className="w-full h-1 bg-white/5 rounded-full mt-auto" />
+                <div className="w-full h-1 bg-theme-bg-muted rounded-full mt-auto" />
               </div>
             ))}
           </div>
@@ -323,7 +315,7 @@ export default function VaultsPage() {
             animate={{ opacity: 1 }}
             className="flex flex-col items-center justify-center py-32 gap-5 text-center bg-theme-card border border-theme-border rounded-2xl"
           >
-            <div className="p-6 bg-brand-tactical/5 border border-brand-tactical/10 rounded-2xl">
+            <div className="p-6 bg-brand-tactical/10 border border-brand-tactical/10 rounded-2xl">
               <Lock size={48} className="text-brand-tactical/40" />
             </div>
             <div className="space-y-2">
@@ -341,7 +333,7 @@ export default function VaultsPage() {
             </button>
           </motion.div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {vaults.map((vault, i) => (
               <motion.div key={vault.id} transition={{ delay: i * 0.05 }}>
                 <VaultCard vault={vault} onClick={() => navigate(`/meus-albuns/${vault.id}`)} />

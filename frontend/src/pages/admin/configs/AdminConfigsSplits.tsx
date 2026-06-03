@@ -28,8 +28,8 @@ export const AdminConfigsSplits: React.FC<Props> = ({
 
   return (
     <div className="space-y-10 animate-in fade-in duration-500">
-      <div className="bg-theme-bg border border-theme-border/60 p-10 flex flex-col md:flex-row items-center gap-10 shadow-sm relative overflow-hidden group rounded-2xl">
-        <div className="p-6 bg-brand-tactical/5 border border-brand-tactical/20 text-brand-tactical rounded-none">
+      <div className="bg-theme-bg border border-theme-border p-10 flex flex-col md:flex-row items-center gap-10 shadow-sm relative overflow-hidden group rounded-2xl">
+        <div className="p-6 bg-brand-tactical/10 border border-brand-tactical/20 text-brand-tactical rounded-none">
           <Shield size={32} />
         </div>
         <div className="flex-1 space-y-2">
@@ -42,11 +42,11 @@ export const AdminConfigsSplits: React.FC<Props> = ({
 
       <div className="grid grid-cols-1 gap-10 items-start max-w-4xl">
         <AdminMenuSection>
-          <div className="flex items-center justify-between border-b border-theme-border/30 pb-6">
+          <div className="flex items-center justify-between border-b border-theme-border pb-6">
             <h3 className="text-[11px] font-black text-theme-text uppercase tracking-[0.4em] flex items-center gap-3">
               <Percent size={14} className="text-brand-tactical" /> Taxas e Margens
             </h3>
-            <div className="px-6 py-2 text-[10px] font-black border tracking-widest italic border-brand-tactical/30 text-brand-tactical bg-brand-tactical/5">
+            <div className="px-6 py-2 text-[10px] font-black border tracking-widest italic border-brand-tactical/30 text-brand-tactical bg-brand-tactical/10">
               MODELO MARKUP ATIVO
             </div>
           </div>
@@ -63,7 +63,7 @@ export const AdminConfigsSplits: React.FC<Props> = ({
                       type="number"
                       value={config.value}
                       onChange={(e) => onChange(config.key, e.target.value)}
-                      className="w-24 bg-theme-bg-muted border-theme-border/60 border text-theme-text text-right py-3 px-4 text-sm focus:outline-none focus:border-brand-tactical transition-all leading-none rounded-xl"
+                      className="w-24 bg-theme-bg-muted border-theme-border border text-theme-text text-right py-3 px-4 text-sm focus:outline-none focus:border-brand-tactical transition-all leading-none rounded-xl"
                     />
                     <span className="text-theme-muted font-black uppercase text-[10px] tracking-widest">%</span>
                   </div>

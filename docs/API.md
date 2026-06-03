@@ -1,4 +1,5 @@
 <!-- generated-by: gsd-doc-writer -->
+
 # API Reference: Foto Segundo
 
 This document describes the REST API for the Foto Segundo platform.
@@ -15,91 +16,93 @@ Most endpoints require a JSON Web Token (JWT).
 
 ### 🔐 Authentication
 
-| Method | Path | Description | Auth |
-|--------|------|-------------|------|
-| `POST` | `/api/auth/login` | Authenticates a user and returns a JWT. | No |
-| `POST` | `/api/auth/register` | Registers a new client account. | No |
-| `POST` | `/api/auth/refresh` | Refreshes the JWT session. | No |
-| `GET` | `/api/auth/me` | Returns current user profile. | Yes |
+| Method | Path                 | Description                             | Auth |
+| ------ | -------------------- | --------------------------------------- | ---- |
+| `POST` | `/api/auth/login`    | Authenticates a user and returns a JWT. | No   |
+| `POST` | `/api/auth/register` | Registers a new client account.         | No   |
+| `POST` | `/api/auth/refresh`  | Refreshes the JWT session.              | No   |
+| `GET`  | `/api/auth/me`       | Returns current user profile.           | Yes  |
 
-### 📸 Events & Phygital
+### 📸 Events & Phygital (Public & Professional)
 
-| Method | Path | Description | Auth |
-|--------|------|-------------|------|
-| `GET` | `/api/public/events` | Lists all public events. | No |
-| `GET` | `/api/public/events/:slug` | Gets detailed info for a specific event. | No |
-| `POST` | `/api/public/quotes` | Submits a new event booking request. | No |
-| `POST` | `/api/public/phygital/upload` | Uploads a photo for instant printing. | No |
-| `POST` | `/api/profissional/flash-event` | Creates a new Flash Event. | Pro |
-| `POST` | `/api/profissional/foto-point` | Creates a new Foto Point event. | Pro |
-| `GET` | `/api/flash/:shortId` | Resolves a Flash Event PIN for anonymous access. | No |
-| `GET` | `/api/flash/:eventId/stats` | Aggregated live metrics for a Flash Event (funnel, print queue). | Pro/Admin |
+> **Architectural Note:** The `/api/public/events` and `/api/public/events/cities` endpoints are now powered by a lightweight **Hono** runtime (`public-hono.ts`) running on Vercel Serverless to ensure 0ms Cold Starts on the Homepage.
+
+| Method | Path                            | Description                                                      | Auth      |
+| ------ | ------------------------------- | ---------------------------------------------------------------- | --------- |
+| `GET`  | `/api/public/events`            | Lists all public events.                                         | No        |
+| `GET`  | `/api/public/events/:slug`      | Gets detailed info for a specific event.                         | No        |
+| `POST` | `/api/public/quotes`            | Submits a new event booking request.                             | No        |
+| `POST` | `/api/public/phygital/upload`   | Uploads a photo for instant printing.                            | No        |
+| `POST` | `/api/profissional/flash-event` | Creates a new Flash Event.                                       | Pro       |
+| `POST` | `/api/profissional/foto-point`  | Creates a new Foto Point event.                                  | Pro       |
+| `GET`  | `/api/flash/:shortId`           | Resolves a Flash Event PIN for anonymous access.                 | No        |
+| `GET`  | `/api/flash/:eventId/stats`     | Aggregated live metrics for a Flash Event (funnel, print queue). | Pro/Admin |
 
 ### 🛒 Marketplace & Checkout
 
-| Method | Path | Description | Auth |
-|--------|------|-------------|------|
-| `POST` | `/api/marketplace/events/:id/media` | Uploads media for unit sale. | Pro |
-| `POST` | `/api/marketplace/events/:id/sync-drive` | Triggers bulk media sync from Google Drive with automated metadata extraction. | Pro |
-| `PATCH` | `/api/marketplace/media/:mediaId/metadata` | Manually updates media metadata (studentId/bibNumber). | Admin |
-| `GET` | `/api/marketplace/events/:id/media` | Lists media for purchase. | Opt |
-| `POST` | `/api/checkout/payment` | Processes a payment via Mercado Pago. | Opt |
-| `GET` | `/api/checkout/shipping-quote` | Calculates shipping for physical orders. | Opt |
+| Method  | Path                                       | Description                                                                    | Auth  |
+| ------- | ------------------------------------------ | ------------------------------------------------------------------------------ | ----- |
+| `POST`  | `/api/marketplace/events/:id/media`        | Uploads media for unit sale.                                                   | Pro   |
+| `POST`  | `/api/marketplace/events/:id/sync-drive`   | Triggers bulk media sync from Google Drive with automated metadata extraction. | Pro   |
+| `PATCH` | `/api/marketplace/media/:mediaId/metadata` | Manually updates media metadata (studentId/bibNumber).                         | Admin |
+| `GET`   | `/api/marketplace/events/:id/media`        | Lists media for purchase.                                                      | Opt   |
+| `POST`  | `/api/checkout/payment`                    | Processes a payment via Mercado Pago.                                          | Opt   |
+| `GET`   | `/api/checkout/shipping-quote`             | Calculates shipping for physical orders.                                       | Opt   |
 
 ### 🏛️ Memory Vaults (Cofres)
 
-| Method | Path | Description | Auth |
-|--------|------|-------------|------|
-| `GET` | `/api/vaults` | Lists user's memory albums. | Yes |
-| `POST` | `/api/vaults` | Creates a new memory album. | Yes |
-| `GET` | `/api/vaults/:albumId` | Gets album details and media. | Yes |
-| `POST` | `/api/vaults/:albumId/subscribe` | Subscribes to a recurring vault plan. | Yes |
+| Method | Path                             | Description                           | Auth |
+| ------ | -------------------------------- | ------------------------------------- | ---- |
+| `GET`  | `/api/vaults`                    | Lists user's memory albums.           | Yes  |
+| `POST` | `/api/vaults`                    | Creates a new memory album.           | Yes  |
+| `GET`  | `/api/vaults/:albumId`           | Gets album details and media.         | Yes  |
+| `POST` | `/api/vaults/:albumId/subscribe` | Subscribes to a recurring vault plan. | Yes  |
 
 ### 🛠️ Professional Services & Approval
 
-| Method | Path | Description | Auth |
-|--------|------|-------------|------|
-| `GET` | `/api/profissional/services` | Lists services registered for the authenticated professional (both custom and imported). | Pro |
-| `POST` | `/api/profissional/services` | Submits a new custom service for admin review. | Pro |
-| `PATCH` | `/api/profissional/services/:id` | Updates a custom service (allowed when reviewStatus is `NEEDS_ADJUSTMENT`). | Pro |
-| `DELETE` | `/api/profissional/services/:id` | Deletes a professional service association or custom service. | Pro |
-| `GET` | `/api/admin/services/pending` | Lists all pending custom services awaiting admin review. | Admin |
-| `PATCH` | `/api/admin/services/:id/review` | Performs admin review on a pending service (approves as exclusive, publishes to network, requests adjustment, or rejects). | Admin |
+| Method   | Path                             | Description                                                                                                                | Auth  |
+| -------- | -------------------------------- | -------------------------------------------------------------------------------------------------------------------------- | ----- |
+| `GET`    | `/api/profissional/services`     | Lists services registered for the authenticated professional (both custom and imported).                                   | Pro   |
+| `POST`   | `/api/profissional/services`     | Submits a new custom service for admin review.                                                                             | Pro   |
+| `PATCH`  | `/api/profissional/services/:id` | Updates a custom service (allowed when reviewStatus is `NEEDS_ADJUSTMENT`).                                                | Pro   |
+| `DELETE` | `/api/profissional/services/:id` | Deletes a professional service association or custom service.                                                              | Pro   |
+| `GET`    | `/api/admin/services/pending`    | Lists all pending custom services awaiting admin review.                                                                   | Admin |
+| `PATCH`  | `/api/admin/services/:id/review` | Performs admin review on a pending service (approves as exclusive, publishes to network, requests adjustment, or rejects). | Admin |
 
 ### 📡 IoT & Administration
 
-| Method | Path | Description | Auth |
-|--------|------|-------------|------|
-| `POST` | `/api/iot/heartbeat` | Telemetry endpoint for Printer Agents. | No |
-| `GET` | `/api/admin/stats` | High-level dashboard statistics. | Admin |
-| `GET` | `/api/admin/events` | Lists all events for administration. | Admin |
-| `GET` | `/api/admin/users` | Lists all users for management. | Admin |
-| `GET` | `/api/admin/payouts` | Lists financial repasses. | Admin |
-| `GET` | `/api/health` | System health check (Ultra-early). | No |
+| Method | Path                 | Description                            | Auth  |
+| ------ | -------------------- | -------------------------------------- | ----- |
+| `POST` | `/api/iot/heartbeat` | Telemetry endpoint for Printer Agents. | No    |
+| `GET`  | `/api/admin/stats`   | High-level dashboard statistics.       | Admin |
+| `GET`  | `/api/admin/events`  | Lists all events for administration.   | Admin |
+| `GET`  | `/api/admin/users`   | Lists all users for management.        | Admin |
+| `GET`  | `/api/admin/payouts` | Lists financial repasses.              | Admin |
+| `GET`  | `/api/health`        | System health check (Ultra-early).     | No    |
 
 ### 📈 CRM & Leads
 
-| Method | Path | Description | Auth |
-|--------|------|-------------|------|
-| `POST` | `/api/public/crm/leads` | Captures a new interest lead from gallery. | No |
-| `GET` | `/api/admin/crm/leads` | Lists all captured leads with metadata. | Admin |
-| `GET` | `/api/admin/crm/abandoned-carts` | Lists pending orders older than 1h. | Admin |
-| `GET` | `/api/admin/crm/stats` | Real-time recovery metrics (revenue, conversion). | Admin |
-| `GET` | `/api/cron/crm-recovery` | Triggers automated recovery emails (Cron). | No* |
-| `POST` | `/api/cron/abandoned-carts` | Triggers abandoned cart recovery job (24h threshold). | Cron* |
+| Method | Path                             | Description                                           | Auth   |
+| ------ | -------------------------------- | ----------------------------------------------------- | ------ |
+| `POST` | `/api/public/crm/leads`          | Captures a new interest lead from gallery.            | No     |
+| `GET`  | `/api/admin/crm/leads`           | Lists all captured leads with metadata.               | Admin  |
+| `GET`  | `/api/admin/crm/abandoned-carts` | Lists pending orders older than 1h.                   | Admin  |
+| `GET`  | `/api/admin/crm/stats`           | Real-time recovery metrics (revenue, conversion).     | Admin  |
+| `GET`  | `/api/cron/crm-recovery`         | Triggers automated recovery emails (Cron).            | No\*   |
+| `POST` | `/api/cron/abandoned-carts`      | Triggers abandoned cart recovery job (24h threshold). | Cron\* |
 
-*Note: `/cron/*` routes require `CRON_SECRET` Bearer token.
+_Note: `/cron/_`routes require`CRON_SECRET` Bearer token.
 
 ### 📈 Growth Engine
 
-| Method | Path | Description | Auth |
-|--------|------|-------------|------|
-| `GET` | `/api/marketplace/coupons/:code/validate` | Validates a coupon code, returning discount details. | No |
-| `GET` | `/api/admin/coupons` | Lists all coupons with usage stats. | Admin |
-| `POST` | `/api/admin/coupons` | Creates a new coupon. | Admin |
-| `GET` | `/api/admin/ambassadors` | Lists all users with Ambassador/Affiliate role. | Admin |
-| `GET` | `/api/admin/whatsapp/status` | Returns WhatsApp session status (connected/disconnected + QR code). | Admin |
-| `GET` | `/api/admin/whatsapp/qr` | Returns the current QR code for WhatsApp session pairing. | Admin |
+| Method | Path                                      | Description                                                         | Auth  |
+| ------ | ----------------------------------------- | ------------------------------------------------------------------- | ----- |
+| `GET`  | `/api/marketplace/coupons/:code/validate` | Validates a coupon code, returning discount details.                | No    |
+| `GET`  | `/api/admin/coupons`                      | Lists all coupons with usage stats.                                 | Admin |
+| `POST` | `/api/admin/coupons`                      | Creates a new coupon.                                               | Admin |
+| `GET`  | `/api/admin/ambassadors`                  | Lists all users with Ambassador/Affiliate role.                     | Admin |
+| `GET`  | `/api/admin/whatsapp/status`              | Returns WhatsApp session status (connected/disconnected + QR code). | Admin |
+| `GET`  | `/api/admin/whatsapp/qr`                  | Returns the current QR code for WhatsApp session pairing.           | Admin |
 
 ## Request/Response Formats
 
@@ -125,13 +128,13 @@ The API uses JSON for all request and response bodies.
 
 ## Error Codes
 
-| Status | Code | Meaning |
-|--------|------|---------|
-| `401` | `UNAUTHORIZED` | Token missing, invalid, or expired. |
-| `403` | `FORBIDDEN` | User does not have the required role (e.g., ADMIN). |
-| `404` | `NOT_FOUND` | The requested resource does not exist. |
-| `422` | `VALIDATION_FAILED` | Request body failed schema validation. |
-| `500` | `INTERNAL_SERVER_ERROR` | An unexpected server error occurred. |
+| Status | Code                    | Meaning                                             |
+| ------ | ----------------------- | --------------------------------------------------- |
+| `401`  | `UNAUTHORIZED`          | Token missing, invalid, or expired.                 |
+| `403`  | `FORBIDDEN`             | User does not have the required role (e.g., ADMIN). |
+| `404`  | `NOT_FOUND`             | The requested resource does not exist.              |
+| `422`  | `VALIDATION_FAILED`     | Request body failed schema validation.              |
+| `500`  | `INTERNAL_SERVER_ERROR` | An unexpected server error occurred.                |
 
 ## Rate Limits
 
@@ -142,4 +145,5 @@ The API implements rate limiting to prevent abuse:
 - **IoT Heartbeat:** No specific limit (throttled by agent frequency).
 
 <!-- GSD-DOCS-UPDATE: SUPPLEMENTED -->
-*Documentação verificada e atualizada automaticamente via GSD-SDK em 2026-06.*
+
+_Documentação verificada e atualizada automaticamente via GSD-SDK em 2026-06._

@@ -3,9 +3,11 @@
 Esta skill define o protocolo de validação para o fotógrafo e provedor de conteúdo.
 
 ## Descrição
+
 Validação do fluxo de criação de eventos, upload massivo de fotos e gestão de ganhos financeiros.
 
 ## Requisitos de Verificação (UAT)
+
 1. **Criação de Eventos:** Suporte a múltiplos tipos de eventos (Flash, Tradicional, Phygital).
 2. **Upload Massivo:** Estabilidade no envio de múltiplas fotos simultâneas para o Google Drive.
 3. **Marca d'Água / Referência:** Verificação se o sistema aplica corretamente o carimbo de identificação nas fotos.
@@ -13,6 +15,7 @@ Validação do fluxo de criação de eventos, upload massivo de fotos e gestão 
 5. **Venda Mobile:** Funcionalidade de venda rápida via interface mobile no campo de atuação.
 
 ## Instruções de Execução
+
 1. Faça login como PROFISSIONAL e acesse o Dashboard.
 2. Crie um novo "Flash Event" e defina o local e data.
 3. Suba 5 fotos de teste e aguarde a confirmação de sincronização com o Drive.

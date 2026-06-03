@@ -14,12 +14,12 @@ export function DashboardStats({ completedEvents, totalEarnings, monthEarnings, 
   ];
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+    <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6">
       {kpis.map((kpi) => (
-        <div key={kpi.label} className={`lux-card rounded-2xl border border-theme-border/60 hover:border-brand-tactical/30 p-4 md:p-6 space-y-2 md:space-y-4 group ${kpi.highlight ? 'border-brand-tactical/50 shadow-brand-tactical/5 bg-brand-tactical/[0.02]' : ''} transition-all`}>
-          <span className="text-[8px] font-black text-theme-muted uppercase tracking-widest italic">{kpi.label}</span>
-          <div className={`text-2xl md:text-3xl font-heading font-black italic leading-none ${kpi.highlight ? 'text-brand-tactical' : 'text-theme-text'}`}>{kpi.value}</div>
-          <div className="text-[8px] font-black text-theme-muted uppercase tracking-widest">{kpi.unit}</div>
+        <div key={kpi.label} className={`bg-theme-bg-muted rounded-xl border border-theme-border hover:border-brand-tactical/30 p-3 md:p-6 space-y-1 md:space-y-4 group flex flex-col justify-between ${kpi.highlight ? 'border-brand-tactical/50 shadow-brand-tactical/5 bg-brand-tactical/[0.02]' : 'shadow-sm'} transition-all min-w-0`}>
+          <span className="text-[7px] md:text-[8px] font-black text-theme-muted uppercase tracking-widest italic line-clamp-2 md:line-clamp-none leading-tight">{kpi.label}</span>
+          <div className={`text-lg md:text-3xl font-heading font-black italic leading-none ${kpi.highlight ? 'text-brand-tactical' : 'text-theme-text'}`}>{kpi.value}</div>
+          <div className="text-[7px] md:text-[8px] font-black text-theme-muted uppercase tracking-widest leading-tight">{kpi.unit}</div>
         </div>
       ))}
     </div>

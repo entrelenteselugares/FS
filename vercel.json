@@ -6,12 +6,32 @@
       "destination": "/api/debug.js"
     },
     {
+      "source": "/api/edge/(.*)",
+      "destination": "/api/edge.js"
+    },
+    {
       "source": "/api/auth/(.*)",
       "destination": "/api/auth.js"
     },
     {
+      "source": "/api/profissional/me",
+      "destination": "/api/profissional-hono.js"
+    },
+    {
+      "source": "/api/profissional/events",
+      "destination": "/api/profissional-hono.js"
+    },
+    {
       "source": "/api/checkout/(.*)",
       "destination": "/api/checkout.js"
+    },
+    {
+      "source": "/api/public/events",
+      "destination": "/api/public-hono.js"
+    },
+    {
+      "source": "/api/public/events/cities",
+      "destination": "/api/public-hono.js"
     },
     {
       "source": "/api/public/(.*)",

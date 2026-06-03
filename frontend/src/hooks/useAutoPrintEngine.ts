@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import { API } from "../lib/api";
 
 export interface PrintItem {
@@ -36,7 +36,7 @@ export function useAutoPrintEngine({ enabled, prints, eventId, onPrintGroup, ref
   };
 
   // Helper to fetch random printed photos for fallback
-  const fetchFallbackPhotos = async (count: number): Promise<PrintItem[]> => {
+  const fetchFallbackPhotos = useCallback(async (count: number): Promise<PrintItem[]> => {
     try {
       const { data } = await API.get(`/phygital/events/${eventId}/prints`);
       // We take printed ones, shuffle them
@@ -46,13 +46,15 @@ export function useAutoPrintEngine({ enabled, prints, eventId, onPrintGroup, ref
       console.error(e);
       return [];
     }
-  };
+  }, [eventId]);
 
   // Process new pending prints
   useEffect(() => {
     if (!enabled) {
-      setPortraitQueue([]);
-      setLandscapeQueue([]);
+      setTimeout(() => {
+        setPortraitQueue([]);
+        setLandscapeQueue([]);
+      }, 0);
       processedIds.current.clear();
       return;
     }
@@ -64,8 +66,8 @@ export function useAutoPrintEngine({ enabled, prints, eventId, onPrintGroup, ref
       pending.forEach(p => processedIds.current.add(p.id));
 
       const processNewPhotos = async () => {
-        let newPortraits: PrintItem[] = [];
-        let newLandscapes: PrintItem[] = [];
+        const newPortraits: PrintItem[] = [];
+        const newLandscapes: PrintItem[] = [];
 
         for (const p of pending) {
           const { w, h } = await getImageDimensions(p.imageUrl);
@@ -98,13 +100,13 @@ export function useAutoPrintEngine({ enabled, prints, eventId, onPrintGroup, ref
 
     if (portraitQueue.length >= 4) {
       const group = portraitQueue.slice(0, 4);
-      setPortraitQueue(prev => prev.slice(4));
+      setTimeout(() => setPortraitQueue(prev => prev.slice(4)), 0);
       trigger(group, 'portrait');
     }
 
     if (landscapeQueue.length >= 4) {
       const group = landscapeQueue.slice(0, 4);
-      setLandscapeQueue(prev => prev.slice(4));
+      setTimeout(() => setLandscapeQueue(prev => prev.slice(4)), 0);
       trigger(group, 'landscape');
     }
   }, [portraitQueue, landscapeQueue, enabled, onPrintGroup, refetchPrints]);
@@ -150,7 +152,7 @@ export function useAutoPrintEngine({ enabled, prints, eventId, onPrintGroup, ref
     return () => {
       if (timerRef.current) clearTimeout(timerRef.current);
     };
-  }, [portraitQueue.length, landscapeQueue.length, enabled, eventId, onPrintGroup]);
+  }, [portraitQueue, landscapeQueue, enabled, eventId, onPrintGroup, fetchFallbackPhotos]);
 
   return { portraitQueue, landscapeQueue };
 }

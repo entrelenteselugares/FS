@@ -22,7 +22,7 @@ function DeadlineTimer({ event, type }: { event: EventItem; type: "FOTO" | "VIDE
 
   if (isDelivered) {
     return (
-      <div className="flex items-center gap-1.5 text-brand-tactical text-[9px] font-black uppercase tracking-widest italic bg-brand-tactical/5 px-2 py-1 rounded-xl border border-brand-tactical/10">
+      <div className="flex items-center gap-1.5 text-brand-tactical text-[9px] font-black uppercase tracking-widest italic bg-brand-tactical/10 px-2 py-1 rounded-xl border border-brand-tactical/10">
         <Check size={10} /> {type === "FOTO" ? "FOTOS OK" : "VÍDEO OK"}
       </div>
     );
@@ -72,25 +72,14 @@ export function AgendaTab({
   onDelegate,
   opportunities,
 }: AgendaTabProps) {
-  const pendingEvents = events.filter(
-    (ev) =>
-      (ev.captacaoId === userId && ev.captacaoStatus === "PENDING") ||
-      (ev.edicaoId === userId && ev.edicaoStatus === "PENDING")
-  );
-  const acceptedEvents = events.filter(
-    (ev) =>
-      (ev.captacaoId === userId && ev.captacaoStatus === "ACCEPTED") ||
-      (ev.edicaoId === userId && ev.edicaoStatus === "ACCEPTED") ||
-      (ev.ownerId === userId)
-  );
-  
+      
   // Combine all relevant events for a unified view
   const displayEvents = useMemo(() => {
     // Collect all unique events
     const all = new Map<string, EventItem>();
-    [...acceptedEvents, ...pendingEvents, ...opportunities].forEach(ev => all.set(ev.id, ev));
+    [...events, ...opportunities].forEach(ev => all.set(ev.id, ev));
     return Array.from(all.values()).sort((a, b) => parseDateSafe(a.dataEvento).getTime() - parseDateSafe(b.dataEvento).getTime());
-  }, [acceptedEvents, pendingEvents, opportunities]);
+  }, [events, opportunities]);
 
   return (
     <div className="space-y-8">
@@ -101,7 +90,7 @@ export function AgendaTab({
               Sincronizando Dados de Campo...
             </div>
           ) : (displayEvents.length === 0 && unitInvites.length === 0) ? (
-            <div className="py-24 text-center bg-theme-bg-muted/20 border border-dashed border-theme-border/40 rounded-2xl text-theme-muted text-[10px] font-black uppercase tracking-[0.2em]">
+            <div className="py-24 text-center bg-theme-bg border  border-theme-border rounded-2xl text-theme-muted text-[10px] font-black uppercase tracking-[0.2em]">
               Nenhum registro encontrado para esta visualização.
             </div>
           ) : (
@@ -110,26 +99,26 @@ export function AgendaTab({
               {opportunities.length > 0 && opportunities.map((ev) => (
                 <div
                   key={ev.id}
-                  className="bg-yellow-400/5 border border-yellow-400/30 rounded-2xl p-5 flex flex-col md:flex-row gap-6 md:gap-10 items-center relative overflow-hidden transition-all group mb-4"
+                  className="bg-yellow-400/5 border border-yellow-400/30 rounded-xl p-3 md:p-4 flex flex-col md:flex-row gap-3 md:gap-6 items-start md:items-center relative overflow-hidden transition-all group mb-3"
                 >
                   <div className="absolute left-0 top-0 h-full w-1.5 bg-yellow-400" />
                   
                   {/* DATA COL */}
-                  <div className="min-w-[80px] flex flex-col items-center md:items-start border-r border-theme-border/20 pr-6">
-                    <div className="text-[9px] font-black text-theme-muted uppercase tracking-widest mb-1">DATA</div>
-                    <div className="text-2xl font-heading font-black text-theme-text italic leading-none uppercase tracking-tighter">
+                  <div className="min-w-[60px] flex flex-row md:flex-col items-center md:items-start border-b md:border-b-0 md:border-r border-theme-border pb-2 md:pb-0 md:pr-4 gap-2 md:gap-0 w-full md:w-auto">
+                    <div className="text-[9px] font-black text-theme-muted uppercase tracking-widest hidden md:block mb-1">DATA</div>
+                    <div className="text-xl md:text-2xl font-heading font-black text-theme-text italic leading-none uppercase tracking-tighter">
                       {parseDateSafe(ev.dataEvento).toLocaleDateString("pt-BR", { day: "2-digit" })}
                     </div>
-                    <div className="text-[10px] font-bold text-yellow-400 uppercase tracking-widest mt-1">
+                    <div className="text-[9px] md:text-[10px] font-bold text-yellow-400 uppercase tracking-widest mt-0 md:mt-1">
                       {parseDateSafe(ev.dataEvento).toLocaleDateString("pt-BR", { month: "short" }).replace(".", "")}
                     </div>
                   </div>
 
                   {/* INFO COL */}
                   <div className="flex-grow space-y-3">
-                    <div className="flex items-center gap-4">
-                      <h3 className="text-xl md:text-2xl font-heading font-black text-theme-text uppercase italic tracking-tight">{ev.title}</h3>
-                      <div className="px-2 py-0.5 text-[9px] font-black border rounded-xl bg-yellow-400/10 text-yellow-400 border-yellow-400/20">
+                    <div className="flex flex-wrap items-center gap-2 md:gap-4">
+                      <h3 className="text-lg md:text-xl font-heading font-black text-theme-text uppercase italic tracking-tight leading-none">{ev.title}</h3>
+                      <div className="px-1.5 py-0.5 text-[8px] font-black border rounded-md bg-yellow-400/10 text-yellow-400 border-yellow-400/20">
                         CHAMADA ABERTA
                       </div>
                     </div>
@@ -153,10 +142,10 @@ export function AgendaTab({
                     </div>
                   </div>
 
-                  <div className="flex flex-col items-center md:items-end gap-3 min-w-[150px]">
+                  <div className="flex flex-col items-start md:items-end gap-2 min-w-[120px] w-full md:w-auto mt-2 md:mt-0">
                     <button 
                       onClick={() => onRespond(ev.id, "ACCEPTED")} 
-                      className="px-8 py-3 bg-yellow-400 text-black text-[10px] font-black uppercase tracking-widest rounded-xl hover:bg-yellow-400/90 hover:scale-[1.02] hover:shadow-xl hover:shadow-yellow-400/20 transition-all flex items-center gap-2 italic shadow-lg shadow-yellow-400/10"
+                      className="w-full md:w-auto px-4 py-2 bg-yellow-400 text-black text-[9px] font-black uppercase tracking-widest rounded-lg hover:bg-yellow-400/90 hover:scale-[1.02] hover:shadow-xl hover:shadow-yellow-400/20 transition-all flex items-center justify-center gap-2 italic shadow-lg shadow-yellow-400/10"
                     >
                       <Check size={14} /> PEGAR AGORA
                     </button>
@@ -168,7 +157,7 @@ export function AgendaTab({
               {unitInvites.length > 0 && unitInvites.map((ui) => (
                 <div
                   key={ui.id}
-                  className="bg-theme-bg-muted/40 border border-brand-tactical/60 rounded-2xl p-4 md:p-6 relative overflow-hidden mb-4"
+                  className="bg-theme-bg-muted border border-brand-tactical/60 rounded-2xl p-4 md:p-6 relative overflow-hidden mb-4"
                 >
                   <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-8 relative z-10">
                     <div className="space-y-4">
@@ -205,27 +194,27 @@ export function AgendaTab({
                     key={ev.id}
                     className={`bg-theme-bg border ${
                       isAccepted ? "cursor-pointer hover:border-brand-tactical/50" : ""
-                    } border-theme-border/60 rounded-2xl p-5 flex flex-col md:flex-row gap-6 md:gap-10 items-center relative overflow-hidden transition-all group mb-4`}
+                    } border-theme-border rounded-xl p-3 md:p-4 flex flex-col md:flex-row gap-3 md:gap-6 items-start md:items-center relative overflow-hidden transition-all group mb-3`}
                     onClick={() => isAccepted && onSelectEvent(ev)}
                   >
                     <div className={`absolute left-0 top-0 h-full w-1.5 ${ev.captacaoStatus === "PENDING" ? "bg-amber-500" : "bg-brand-tactical"}`} />
                     
                     {/* DATA COL */}
-                    <div className="min-w-[80px] flex flex-col items-center md:items-start border-r border-theme-border/20 pr-6">
-                      <div className="text-[9px] font-black text-theme-muted uppercase tracking-widest mb-1">DATA</div>
-                      <div className="text-2xl font-heading font-black text-theme-text italic leading-none uppercase tracking-tighter">
+                    <div className="min-w-[60px] flex flex-row md:flex-col items-center md:items-start border-b md:border-b-0 md:border-r border-theme-border pb-2 md:pb-0 md:pr-4 gap-2 md:gap-0 w-full md:w-auto">
+                      <div className="text-[9px] font-black text-theme-muted uppercase tracking-widest hidden md:block mb-1">DATA</div>
+                      <div className="text-xl md:text-2xl font-heading font-black text-theme-text italic leading-none uppercase tracking-tighter">
                         {parseDateSafe(ev.dataEvento).toLocaleDateString("pt-BR", { day: "2-digit" })}
                       </div>
-                      <div className="text-[10px] font-bold text-brand-tactical uppercase tracking-widest mt-1">
+                      <div className="text-[9px] md:text-[10px] font-bold text-brand-tactical uppercase tracking-widest mt-0 md:mt-1">
                         {parseDateSafe(ev.dataEvento).toLocaleDateString("pt-BR", { month: "short" }).replace(".", "")}
                       </div>
                     </div>
 
                     {/* INFO COL */}
                     <div className="flex-grow space-y-3">
-                      <div className="flex items-center gap-4">
-                        <h3 className="text-xl md:text-2xl font-heading font-black text-theme-text uppercase italic tracking-tight">{ev.title}</h3>
-                        <div className={`px-2 py-0.5 text-[9px] font-black border rounded-xl ${ev.captacaoStatus === "ACCEPTED" ? "bg-brand-tactical/10 text-brand-tactical border-brand-tactical/20" : "bg-amber-500/10 text-amber-500 border-amber-500/20"}`}>
+                      <div className="flex flex-wrap items-center gap-2 md:gap-4">
+                        <h3 className="text-lg md:text-xl font-heading font-black text-theme-text uppercase italic tracking-tight leading-none">{ev.title}</h3>
+                        <div className={`px-1.5 py-0.5 text-[8px] font-black border rounded-md ${ev.captacaoStatus === "ACCEPTED" ? "bg-brand-tactical/10 text-brand-tactical border-brand-tactical/20" : "bg-amber-500/10 text-amber-500 border-amber-500/20"}`}>
                           {ev.captacaoStatus === "ACCEPTED" ? "CONFIRMADO" : "PENDENTE"}
                         </div>
                       </div>
@@ -243,9 +232,9 @@ export function AgendaTab({
                       
                       <div className="flex flex-wrap gap-5 items-center">
                         <div className="flex gap-2.5">
-                          {ev.temFoto && <div className="p-1.5 bg-theme-bg-muted border border-theme-border/60 text-theme-text opacity-70 rounded-xl" title="Foto"><Camera size={12} /></div>}
-                          {ev.temVideo && <div className="p-1.5 bg-theme-bg-muted border border-theme-border/60 text-theme-text opacity-70 rounded-xl" title="Vídeo"><Video size={12} /></div>}
-                          {ev.temReels && <div className="p-1.5 bg-theme-bg-muted border border-theme-border/60 text-theme-text opacity-70 rounded-xl" title="Reels/Mobile"><Smartphone size={12} /></div>}
+                          {ev.temFoto && <div className="p-1.5 bg-theme-bg-muted border border-theme-border text-theme-text opacity-70 rounded-xl" title="Foto"><Camera size={12} /></div>}
+                          {ev.temVideo && <div className="p-1.5 bg-theme-bg-muted border border-theme-border text-theme-text opacity-70 rounded-xl" title="Vídeo"><Video size={12} /></div>}
+                          {ev.temReels && <div className="p-1.5 bg-theme-bg-muted border border-theme-border text-theme-text opacity-70 rounded-xl" title="Reels/Mobile"><Smartphone size={12} /></div>}
                         </div>
                         
                         <div className="h-4 w-[1px] bg-theme-border/20 hidden md:block" />
@@ -259,31 +248,31 @@ export function AgendaTab({
                     </div>
 
                     {/* STATUS/SLA COL */}
-                    <div className="flex flex-col items-center md:items-end gap-3 min-w-[150px]">
-                      <div className="flex flex-col gap-1.5 items-center md:items-end w-full">
+                    <div className="flex flex-col items-start md:items-end gap-2 min-w-[120px] w-full md:w-auto mt-2 md:mt-0 pt-2 md:pt-0 border-t md:border-t-0 border-theme-border">
+                      <div className="flex flex-row md:flex-col gap-1.5 items-center md:items-end w-full">
                         <DeadlineTimer event={ev} type="FOTO" />
                         {ev.temVideo && <DeadlineTimer event={ev} type="VIDEO" />}
                       </div>
                       
                       {!isAccepted && !isOpportunity ? (
-                        <div className="flex gap-2">
-                          <button onClick={(e) => { e.stopPropagation(); onRespond(ev.id, "REJECTED"); }} className="p-2.5 border border-red-500/30 text-red-500 rounded-xl hover:bg-red-500/10 transition-all" title="Recusar">
+                        <div className="flex gap-2 w-full md:w-auto">
+                          <button onClick={(e) => { e.stopPropagation(); onRespond(ev.id, "REJECTED"); }} className="p-2 border border-red-500/30 text-red-500 rounded-lg hover:bg-red-500/10 transition-all flex-1 md:flex-none flex items-center justify-center" title="Recusar">
                             <X size={14} />
                           </button>
                           <button
                             onClick={(e) => { e.stopPropagation(); onDelegate(ev.id); }}
-                            className="px-3 py-2.5 border border-brand-tactical/40 text-brand-tactical text-[9px] font-black uppercase tracking-widest rounded-xl hover:bg-brand-tactical/10 flex items-center gap-2 transition-all"
+                            className="px-2 py-2 border border-brand-tactical/40 text-brand-tactical text-[8px] font-black uppercase tracking-widest rounded-lg hover:bg-brand-tactical/10 flex-1 md:flex-none flex items-center justify-center gap-1 transition-all"
                           >
-                            <Users size={14} /> DELEGAR
+                            <Users size={12} /> DELEGAR
                           </button>
-                          <button onClick={(e) => { e.stopPropagation(); onRespond(ev.id, "ACCEPTED"); }} className="px-5 py-2.5 bg-brand-tactical text-brand-text text-[9px] font-black uppercase tracking-widest rounded-xl hover:bg-brand-tactical/90 hover:scale-[1.02] hover:shadow-lg hover:shadow-brand-tactical/20 transition-all">
-                            <Check size={14} /> ACEITAR
+                          <button onClick={(e) => { e.stopPropagation(); onRespond(ev.id, "ACCEPTED"); }} className="px-3 py-2 bg-brand-tactical text-brand-text text-[8px] font-black uppercase tracking-widest rounded-lg hover:bg-brand-tactical/90 transition-all flex-1 md:flex-none flex items-center justify-center gap-1">
+                            <Check size={12} /> ACEITAR
                           </button>
                         </div>
                       ) : (
-                        <div className="flex items-center gap-3">
-                          <div className="hidden group-hover:block animate-in fade-in slide-in-from-right-2 text-[9px] font-black text-brand-tactical uppercase tracking-[0.2em]">GERENCIAR</div>
-                          <ChevronRight size={20} className="text-theme-muted group-hover:text-brand-tactical transition-all" />
+                        <div className="flex items-center gap-2 w-full md:w-auto justify-end">
+                          <div className="text-[9px] font-black text-brand-tactical uppercase tracking-[0.2em] opacity-80 md:opacity-0 md:group-hover:opacity-100 transition-opacity">GERENCIAR</div>
+                          <ChevronRight size={16} className="text-brand-tactical transition-all" />
                         </div>
                       )}
                     </div>

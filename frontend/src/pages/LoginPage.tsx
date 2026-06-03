@@ -1,11 +1,11 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState } from "react";
 import { isAxiosError } from "axios";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import { Helmet } from "react-helmet-async";
 import { Mail, Lock, Eye, EyeOff, ArrowRight, Sun, Moon } from "lucide-react";
-import { API } from "../lib/api";
 import { useTheme } from "../contexts/ThemeContextCore";
+import { PhotoMosaic } from "../components/PhotoMosaic";
 
 const ROLE_DESTINATIONS: Record<string, string> = {
   ADMIN:        "/admin",
@@ -16,126 +16,17 @@ const ROLE_DESTINATIONS: Record<string, string> = {
   CLIENTE:      "/minha-conta",
 };
 
-// Fallback photos while API loads
-const FALLBACK_PHOTOS = Array.from({ length: 18 }, (_, i) => ({
-  id: `fallback-${i}`,
-  url: null,
-  title: "",
-}));
-
-interface PhotoItem {
-  id: string;
-  url: string | null;
-  title: string;
-}
-
-// Animated photo column with infinite scroll
-function PhotoColumn({ photos, speed, offset = 0 }: { photos: PhotoItem[]; speed: number; offset?: number }) {
-  const colRef = useRef<HTMLDivElement>(null);
-  const posRef = useRef(offset);
-  const rafRef = useRef<number>(0);
-
-  useEffect(() => {
-    const col = colRef.current;
-    if (!col) return;
-
-    const animate = () => {
-      posRef.current -= speed;
-      const half = col.scrollHeight / 2;
-      if (Math.abs(posRef.current) >= half) {
-        posRef.current = 0;
-      }
-      col.style.transform = `translateY(${posRef.current}px)`;
-      rafRef.current = requestAnimationFrame(animate);
-    };
-
-    rafRef.current = requestAnimationFrame(animate);
-    return () => cancelAnimationFrame(rafRef.current);
-  }, [speed, photos]);
-
-  // Duplicate photos for seamless loop
-  const doubled = [...photos, ...photos];
-
-  return (
-    <div className="flex-1 overflow-hidden relative">
-      <div ref={colRef} className="flex flex-col gap-2">
-        {doubled.map((photo, idx) => (
-          <div
-            key={`${photo.id}-${idx}`}
-            className="relative rounded-2xl overflow-hidden flex-shrink-0 group"
-            style={{ height: idx % 3 === 0 ? "260px" : idx % 3 === 1 ? "200px" : "180px" }}
-          >
-            {photo.url ? (
-              <img
-                src={photo.url}
-                alt={photo.title}
-                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                loading="lazy"
-              />
-            ) : (
-              <div className="w-full h-full bg-zinc-800/60 animate-pulse" />
-            )}
-            {/* Overlay */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
 export const LoginPage: React.FC = () => {
   const [email,     setEmail]     = useState("");
   const [senha,     setSenha]     = useState("");
   const [showSenha, setShowSenha] = useState(false);
   const [error,     setError]     = useState("");
   const [loading,   setLoading]   = useState(false);
-  const [photos,    setPhotos]    = useState<PhotoItem[]>(FALLBACK_PHOTOS);
 
   const { login }       = useAuth();
   const navigate        = useNavigate();
   const { toggle, isDark } = useTheme();
 
-  // Fetch real photos from public events
-  useEffect(() => {
-    API.get("/public/events", { params: { limit: 30, page: 1 } })
-      .then(({ data }) => {
-        const events = Array.isArray(data) ? data : (data.events ?? data.data ?? []);
-        const withCovers = events
-          .filter((e: { coverPhotoUrl?: string | null }) => e.coverPhotoUrl)
-          .map((e: { id: string; coverPhotoUrl: string; title?: string }) => ({ id: e.id, url: e.coverPhotoUrl, title: e.title ?? "" }));
-
-        if (withCovers.length > 0) {
-          // Repeat available covers to fill the grid nicely
-          let repeated = [...withCovers];
-          while (repeated.length < 18) {
-            repeated = [...repeated, ...withCovers];
-          }
-          setPhotos(repeated.slice(0, 18));
-        } else {
-          // Use beautiful Unsplash fallbacks if no public events have covers
-          const fallbacks = [
-            "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&q=80&w=800",
-            "https://images.unsplash.com/photo-1515169067868-5387ec356754?auto=format&fit=crop&q=80&w=800",
-            "https://images.unsplash.com/photo-1530103862676-de8892bc952f?auto=format&fit=crop&q=80&w=800",
-            "https://images.unsplash.com/photo-1540039155732-d6749b9325f0?auto=format&fit=crop&q=80&w=800",
-            "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&q=80&w=800",
-            "https://images.unsplash.com/photo-1511895426328-dc8714191300?auto=format&fit=crop&q=80&w=800"
-          ];
-          let repeatedFallbacks = fallbacks.map((url, i) => ({ id: `fb-${i}`, url, title: "Foto Segundo" }));
-          while (repeatedFallbacks.length < 18) {
-            repeatedFallbacks = [...repeatedFallbacks, ...repeatedFallbacks];
-          }
-          setPhotos(repeatedFallbacks.slice(0, 18));
-        }
-      })
-      .catch(() => {/* silently keep fallback */});
-  }, []);
-
-  // Distribute photos across 3 columns
-  const col1 = photos.filter((_, i) => i % 3 === 0);
-  const col2 = photos.filter((_, i) => i % 3 === 1);
-  const col3 = photos.filter((_, i) => i % 3 === 2);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -186,7 +77,7 @@ export const LoginPage: React.FC = () => {
           {/* Right edge vignette → blends into form panel */}
           <div className={`absolute top-0 right-0 bottom-0 w-32 bg-gradient-to-l ${isDark ? "from-zinc-950" : "from-stone-100"} to-transparent`} />
           {/* Cyan tint overlay for brand color */}
-          <div className="absolute inset-0 bg-brand-tactical/5 mix-blend-overlay" />
+          <div className="absolute inset-0 bg-brand-tactical/10 mix-blend-overlay" />
         </div>
 
         {/* Brand watermark on photo side */}
@@ -208,11 +99,7 @@ export const LoginPage: React.FC = () => {
         </div>
 
         {/* 3 scrolling columns */}
-        <div className="flex gap-2 p-2 w-full">
-          <PhotoColumn photos={col1.length >= 2 ? col1 : FALLBACK_PHOTOS.slice(0, 6)} speed={0.4} offset={-80} />
-          <PhotoColumn photos={col2.length >= 2 ? col2 : FALLBACK_PHOTOS.slice(6, 12)} speed={0.28} offset={-200} />
-          <PhotoColumn photos={col3.length >= 2 ? col3 : FALLBACK_PHOTOS.slice(12, 18)} speed={0.5} offset={-40} />
-        </div>
+        <PhotoMosaic />
       </div>
 
       {/* ── RIGHT: Login Panel ── */}
@@ -222,7 +109,7 @@ export const LoginPage: React.FC = () => {
         {/* Theme toggle */}
         <button
           onClick={toggle}
-          className="absolute top-6 right-6 p-2.5 rounded-full transition-all z-10 bg-theme-bg-muted/50 hover:bg-theme-border text-theme-muted hover:text-theme-text"
+          className="absolute top-6 right-6 p-2.5 rounded-full transition-all z-10 bg-theme-bg-muted hover:bg-theme-border text-theme-muted hover:text-theme-text"
           title={isDark ? "Modo claro" : "Modo escuro"}
         >
           {isDark ? <Sun size={16} /> : <Moon size={16} />}
@@ -273,7 +160,7 @@ export const LoginPage: React.FC = () => {
               <label className="text-[9px] font-black uppercase tracking-[0.3em] text-theme-muted">
                 Identificação
               </label>
-              <div className="relative flex items-center rounded-xl border border-theme-border bg-theme-bg-muted/30 focus-within:border-brand-tactical transition-all">
+              <div className="relative flex items-center rounded-xl border border-theme-border bg-theme-bg-muted focus-within:border-brand-tactical transition-all">
                 <Mail className="absolute left-4 text-theme-muted" size={14} />
                 <input
                   type="email"
@@ -300,7 +187,7 @@ export const LoginPage: React.FC = () => {
                   Esqueci a senha →
                 </Link>
               </div>
-              <div className="relative flex items-center rounded-xl border border-theme-border bg-theme-bg-muted/30 focus-within:border-brand-tactical transition-all">
+              <div className="relative flex items-center rounded-xl border border-theme-border bg-theme-bg-muted focus-within:border-brand-tactical transition-all">
                 <Lock className="absolute left-4 text-theme-muted" size={14} />
                 <input
                   type={showSenha ? "text" : "password"}

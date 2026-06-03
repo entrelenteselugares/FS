@@ -8,12 +8,12 @@ The Order Engine is the core financial and fulfillment orchestration layer of Fo
 
 The system supports four distinct sales channels, all routed through the same engine:
 
-| Model | Description | Logic Source |
-| :--- | :--- | :--- |
-| **Marketplace** | Individual photo sales (B2C). | Price per photo (from Event config). |
-| **Crowdfund** | Collective funding (Cotas de Presente). | User-defined contribution amount. |
-| **Express Sale** | Direct point-of-sale (Totem/Balcão). | Fixed unit price with simplified 10% platform fee. |
-| **Budget (CPQ)** | B2B/High-ticket event quotes. | Admin-approved custom values. |
+| Model            | Description                             | Logic Source                                       |
+| :--------------- | :-------------------------------------- | :------------------------------------------------- |
+| **Marketplace**  | Individual photo sales (B2C).           | Price per photo (from Event config).               |
+| **Crowdfund**    | Collective funding (Cotas de Presente). | User-defined contribution amount.                  |
+| **Express Sale** | Direct point-of-sale (Totem/Balcão).    | Fixed unit price with simplified 10% platform fee. |
+| **Budget (CPQ)** | B2B/High-ticket event quotes.           | Admin-approved custom values.                      |
 
 ## 2. Pricing Logic
 

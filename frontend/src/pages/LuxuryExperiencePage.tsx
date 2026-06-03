@@ -283,7 +283,7 @@ export default function LuxuryExperiencePage() {
                         <p className="text-[8px] font-black uppercase tracking-widest text-theme-subtle">Investimento</p>
                         <span className="text-2xl font-display font-black text-emerald-500 italic">R$ {Number(p.sellingPrice).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</span>
                       </div>
-                      <button className="px-8 py-4 bg-white/5 border border-theme-border text-theme-text font-display font-black text-[10px] uppercase tracking-widest hover:bg-white hover:text-black transition-all">
+                      <button className="px-8 py-4 bg-theme-bg-muted border border-theme-border text-theme-text font-display font-black text-[10px] uppercase tracking-widest hover:bg-white hover:text-black transition-all">
                         ENCOMENDAR
                       </button>
                     </div>

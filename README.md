@@ -1,11 +1,12 @@
 <!-- generated-by: gsd-doc-writer -->
+
 # 📸 Foto Segundo | Midnight Luxury Experience
 
 [![Vercel Deployment](https://img.shields.io/badge/Deploy-Vercel-black?style=for-the-badge&logo=vercel)](https://vercel.com)
 [![Prisma](https://img.shields.io/badge/Prisma-ORM-2D3748?style=for-the-badge&logo=prisma)](https://prisma.io)
 [![Supabase](https://img.shields.io/badge/Supabase-Database-3ECF8E?style=for-the-badge&logo=supabase)](https://supabase.com)
 
-**Foto Segundo** é uma plataforma phygital de elite que redefine a entrega de fotografia profissional. Unindo a estética *Midnight Luxury* com automação industrial de impressão e um motor completo de Growth & Retention, transformamos pixels em memórias físicas tangíveis — e conversões em receita recorrente.
+**Foto Segundo** é uma plataforma phygital de elite que redefine a entrega de fotografia profissional. Unindo a estética _Midnight Luxury_ com automação industrial de impressão e um motor completo de Growth & Retention, transformamos pixels em memórias físicas tangíveis — e conversões em receita recorrente.
 
 A arquitetura do sistema agora também suporta múltiplos verticais de negócios (Gastronomia, Náutico, Varejo) orquestrados por um robusto Painel de Controle 4-Tier (Master, Partner, Consumer, Ambassador).
 
@@ -43,14 +44,18 @@ npm run dev
 ## Core Features & Usage Examples
 
 ### 1. Phygital Capture & Live Print
+
 Real-time syncing from camera devices directly to event galleries and print stations.
+
 ```bash
 POST /api/marketplace/events/:eventId/sync-drive
 Authorization: Bearer <token>
 ```
 
 ### 2. Multi-Vertical Support
+
 The adaptive UI engine dynamically switches modes depending on the current tenant and vertical. Flash Events can now be created by professionals seamlessly.
+
 ```bash
 POST /api/profissional/flash-event
 Authorization: Bearer <seu_token>
@@ -65,12 +70,15 @@ Content-Type: application/json
 ```
 
 ### 3. Growth & Retention
+
 Discount coupons, dynamic upselling through the marketplace checkout, and an integrated Ambassador network.
+
 ```bash
 GET /api/marketplace/coupons/PROMO20/validate?eventId=<eventId>
 ```
 
 ## Infrastructure Scaling
+
 The platform operates on a hybrid model to scale backend logic past Supabase Edge Function infrastructure limits using Vercel APIs and Hono fragmentation strategies.
 
 ## Contributing

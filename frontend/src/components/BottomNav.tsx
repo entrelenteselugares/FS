@@ -154,25 +154,25 @@ export const BottomNav: React.FC = () => {
 
       {/* ── Mobile Drawer ── */}
       <aside 
-        className={`fixed inset-y-0 left-0 bg-[var(--bg)] border-r border-theme-border/60 z-[200] w-72 flex flex-col transition-transform duration-300 ease-out md:hidden ${
+        className={`fixed inset-y-0 left-0 bg-[var(--bg)] border-r border-theme-border z-[200] w-72 flex flex-col transition-transform duration-300 ease-out md:hidden ${
           drawerOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
         {/* Brand Header */}
-        <div className="flex items-center justify-between p-4 border-b border-theme-border/60">
+        <div className="flex items-center justify-between p-4 border-b border-theme-border">
           <Link to="/" onClick={() => setDrawerOpen(false)}>
             <img src="/logo.png" alt="Foto Segundo" className="h-6 object-contain" style={{ filter: "var(--logo-filter)" }} />
           </Link>
           <button
             onClick={() => setDrawerOpen(false)}
-            className="p-1.5 text-zinc-500 hover:text-white rounded-lg border border-theme-border/40 transition-colors"
+            className="p-1.5 text-zinc-500 hover:text-white rounded-lg border border-theme-border transition-colors"
           >
             <X size={16} />
           </button>
         </div>
 
         {/* User Info / Guest CTA */}
-        <div className="p-4 border-b border-theme-border/40 bg-[var(--bg-card)]">
+        <div className="p-4 border-b border-theme-border bg-[var(--bg-card)]">
           {user ? (
             <div className="flex items-center gap-3">
               <div className="w-9 h-9 rounded-full bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center font-display font-black text-emerald-500 italic">

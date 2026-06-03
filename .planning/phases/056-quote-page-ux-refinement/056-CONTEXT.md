@@ -55,12 +55,12 @@ This phase refines two UX friction points in the client-facing quote/booking flo
 
 ### Files to modify
 
-| File | Change |
-|------|--------|
-| `frontend/src/pages/QuotePage.tsx` | Filter category dropdown; radio-style for workflowPref & usageType; state type change |
-| `backend/prisma/schema.prisma` | Add `eventTypes String[] @default([])` to `Cartorio` model |
-| `backend/src/controllers/admin.controller.ts` | Expose `eventTypes` in admin cartorio PATCH endpoint |
-| `frontend/src/pages/admin/AdminSettings.tsx` | Add multi-checkbox UI for Unidade Fixa to configure `eventTypes` |
+| File                                          | Change                                                                                |
+| --------------------------------------------- | ------------------------------------------------------------------------------------- |
+| `frontend/src/pages/QuotePage.tsx`            | Filter category dropdown; radio-style for workflowPref & usageType; state type change |
+| `backend/prisma/schema.prisma`                | Add `eventTypes String[] @default([])` to `Cartorio` model                            |
+| `backend/src/controllers/admin.controller.ts` | Expose `eventTypes` in admin cartorio PATCH endpoint                                  |
+| `frontend/src/pages/admin/AdminSettings.tsx`  | Add multi-checkbox UI for Unidade Fixa to configure `eventTypes`                      |
 
 ### Relevant existing patterns
 

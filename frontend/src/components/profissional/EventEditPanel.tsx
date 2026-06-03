@@ -61,7 +61,7 @@ export function EventEditPanel({ event, onUpdated, onClose, onNotify }: EventEdi
         onClick={onClose} 
       />
       
-      <div className="relative w-full h-full sm:h-[90vh] max-w-2xl flex flex-col border-none sm:border border-theme-border/60 rounded-none sm:rounded-[40px] overflow-hidden shadow-2xl z-[10000] bg-theme-card">
+      <div className="relative w-full h-full sm:h-[90vh] max-w-2xl flex flex-col border-none sm:border border-theme-border rounded-none sm:rounded-[40px] overflow-hidden shadow-2xl z-[10000] bg-theme-card">
         
         {/* Header */}
         <div className="p-8 md:p-10 border-b flex items-center justify-between shrink-0" style={{ borderColor: T.border }}>
@@ -74,7 +74,7 @@ export function EventEditPanel({ event, onUpdated, onClose, onNotify }: EventEdi
               <h2 className="text-2xl font-black uppercase italic tracking-tighter" style={{ color: T.text }}>{event.title}</h2>
             </div>
           </div>
-          <button onClick={onClose} className="p-3 hover:bg-white/5 rounded-full transition-all active:scale-90" style={{ color: T.text2 }}>
+          <button onClick={onClose} className="p-3 hover:bg-theme-bg-muted rounded-full transition-all active:scale-90" style={{ color: T.text2 }}>
             <X size={24} />
           </button>
         </div>
@@ -95,7 +95,7 @@ export function EventEditPanel({ event, onUpdated, onClose, onNotify }: EventEdi
                 placeholder="https://adobe.ly/..."
                 value={lrUrl}
                 onChange={(e) => setLrUrl(e.target.value)}
-                className="w-full bg-theme-bg-muted border border-theme-border/40 p-5 text-theme-text outline-none focus:border-brand-tactical/50 transition-all text-xs font-black uppercase rounded-2xl"
+                className="w-full bg-theme-bg-muted border border-theme-border p-5 text-theme-text outline-none focus:border-brand-tactical/50 transition-all text-xs font-black uppercase rounded-2xl"
               />
             </div>
 
@@ -107,7 +107,7 @@ export function EventEditPanel({ event, onUpdated, onClose, onNotify }: EventEdi
                 type="date"
                 value={date}
                 onChange={(e) => setDate(e.target.value)}
-                className="w-full bg-theme-bg-muted border border-theme-border/40 p-5 text-theme-text outline-none focus:border-brand-tactical/50 transition-all text-xs font-black uppercase rounded-2xl"
+                className="w-full bg-theme-bg-muted border border-theme-border p-5 text-theme-text outline-none focus:border-brand-tactical/50 transition-all text-xs font-black uppercase rounded-2xl"
               />
             </div>
 
@@ -119,7 +119,7 @@ export function EventEditPanel({ event, onUpdated, onClose, onNotify }: EventEdi
                 placeholder="https://drive.google.com/..."
                 value={drUrl}
                 onChange={(e) => setDrUrl(e.target.value)}
-                className="w-full bg-theme-bg-muted border border-theme-border/40 p-5 text-theme-text outline-none focus:border-brand-tactical/50 transition-all text-xs font-black uppercase rounded-2xl"
+                className="w-full bg-theme-bg-muted border border-theme-border p-5 text-theme-text outline-none focus:border-brand-tactical/50 transition-all text-xs font-black uppercase rounded-2xl"
               />
             </div>
 
@@ -131,7 +131,7 @@ export function EventEditPanel({ event, onUpdated, onClose, onNotify }: EventEdi
               onChange={() => {/* saved directly via /cover endpoint */}}
             />
 
-            <div className="p-8 bg-brand-tactical/5 border border-brand-tactical/20 rounded-[30px] space-y-6">
+            <div className="p-8 bg-brand-tactical/10 border border-brand-tactical/20 rounded-[30px] space-y-6">
               <div className="flex justify-between items-center">
                 <div className="flex items-center gap-3">
                   <div className="w-8 h-8 rounded-full bg-brand-tactical/20 flex items-center justify-center text-brand-tactical">
@@ -168,7 +168,7 @@ export function EventEditPanel({ event, onUpdated, onClose, onNotify }: EventEdi
         </div>
 
         {/* Footer */}
-        <div className="p-8 md:p-10 bg-theme-bg-muted/80 border-t flex items-center justify-between gap-6 shrink-0" style={{ borderColor: T.border }}>
+        <div className="p-8 md:p-10 bg-theme-bg-muted border-t flex items-center justify-between gap-6 shrink-0" style={{ borderColor: T.border }}>
           <button
             onClick={onClose}
             className="px-8 py-5 text-theme-muted text-[11px] font-black uppercase tracking-widest hover:text-theme-text transition-all italic"

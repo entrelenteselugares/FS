@@ -46,7 +46,7 @@ export const DeliveryView: React.FC<DeliveryViewProps> = ({ event }) => {
           Explore cada fragmento histórico desta celebração.
         </p>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-white/5 border border-white/5">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-theme-bg-muted border border-white/5">
           {/* Botão Lightroom */}
           <motion.a 
             href={event.lightroomUrl || "#"} 

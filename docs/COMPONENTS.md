@@ -1,4 +1,5 @@
 <!-- generated-by: gsd-doc-writer -->
+
 # Frontend Components
 
 ## Core Components

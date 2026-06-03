@@ -49,5 +49,7 @@ A validação foi feita inspecionando os arquivos:
 **Resultado da auditoria:** **APROVADO** (Sem vulnerabilidades ou gaps de segurança pendentes).
 
 ---
+
 <!-- GSD-DOCS-UPDATE: SUPPLEMENTED -->
-*Auditado e verificado via GSD-SDK em 2026-05.*
+
+_Auditado e verificado via GSD-SDK em 2026-05._

@@ -42,6 +42,7 @@ Currently, when a user scans a Phygital QR code (e.g., in `PhygitalCapture.tsx`)
 ## Boundaries
 
 **In scope:**
+
 - UI changes to `PhygitalCapture.tsx` to include password input.
 - Backend support for "express" registration (email + password only).
 - `User` model/logic updates for profile completeness.
@@ -49,6 +50,7 @@ Currently, when a user scans a Phygital QR code (e.g., in `PhygitalCapture.tsx`)
 - Coupon generation logic triggered by profile completion.
 
 **Out of scope:**
+
 - Social login (Google/Apple) integration (separate phase).
 - SMS verification for Express registration.
 - Changes to PRO or ADMIN registration flows (stays full-form only).
@@ -68,26 +70,26 @@ Currently, when a user scans a Phygital QR code (e.g., in `PhygitalCapture.tsx`)
 
 ## Ambiguity Report
 
-| Dimension          | Score | Min  | Status | Notes                              |
-|--------------------|-------|------|--------|------------------------------------|
-| Goal Clarity       | 0.90  | 0.75 | ✓      |                                    |
-| Boundary Clarity   | 0.85  | 0.70 | ✓      |                                    |
-| Constraint Clarity | 0.80  | 0.65 | ✓      |                                    |
-| Acceptance Criteria| 0.85  | 0.70 | ✓      |                                    |
-| **Ambiguity**      | 0.15  | ≤0.20| ✓      |                                    |
+| Dimension           | Score | Min   | Status | Notes |
+| ------------------- | ----- | ----- | ------ | ----- |
+| Goal Clarity        | 0.90  | 0.75  | ✓      |       |
+| Boundary Clarity    | 0.85  | 0.70  | ✓      |       |
+| Constraint Clarity  | 0.80  | 0.65  | ✓      |       |
+| Acceptance Criteria | 0.85  | 0.70  | ✓      |       |
+| **Ambiguity**       | 0.15  | ≤0.20 | ✓      |       |
 
 ## Interview Log
 
-| Round | Perspective    | Question summary         | Decision locked                    |
-|-------|----------------|-------------------------|------------------------------------|
-| 1     | Researcher     | Passwords vs Temp?      | Email + Password on same screen.   |
-| 1     | Researcher     | Redirect?               | No redirect, stay on capture page. |
-| 2     | Simplifier     | Name source?            | Use email prefix before "@".       |
-| 2     | Simplifier     | Definition of Complete? | All "Meu Perfil" fields filled.    |
-| 2     | Boundary Keeper| Banner Location?        | Navbar and Dashboard.              |
+| Round | Perspective     | Question summary        | Decision locked                    |
+| ----- | --------------- | ----------------------- | ---------------------------------- |
+| 1     | Researcher      | Passwords vs Temp?      | Email + Password on same screen.   |
+| 1     | Researcher      | Redirect?               | No redirect, stay on capture page. |
+| 2     | Simplifier      | Name source?            | Use email prefix before "@".       |
+| 2     | Simplifier      | Definition of Complete? | All "Meu Perfil" fields filled.    |
+| 2     | Boundary Keeper | Banner Location?        | Navbar and Dashboard.              |
 
 ---
 
-*Phase: 42-express-registration*
-*Spec created: 2026-05-15*
-*Next step: /gsd-discuss-phase 42 — implementation decisions (how to build what's specified above)*
+_Phase: 42-express-registration_
+_Spec created: 2026-05-15_
+_Next step: /gsd-discuss-phase 42 — implementation decisions (how to build what's specified above)_

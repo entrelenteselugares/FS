@@ -1,9 +1,11 @@
 # Phase 46: Professional Showcase (SHOW) - Implementation Plan
 
 ## 1. Domain
+
 Public directory and profiles for subscribed professionals, with a booking fee (Taxa de Reserva) barrier to unlock direct contact.
 
 ## 2. Database Schema Updates
+
 1. **Subscription Enhancements**:
    - Update `Subscription` model in `schema.prisma` to support Professional subscriptions by making `albumId` optional and adding `type` (VAULT vs PRO).
 2. **Booking Model (`ServiceBooking`)**:
@@ -12,6 +14,7 @@ Public directory and profiles for subscribed professionals, with a booking fee (
    - Relation to `Profissional`.
 
 ## 3. API Endpoints
+
 1. **Directory Queries** (`GET /api/marketplace/profissionais`):
    - Returns a paginated list of professionals where their `User` has an active Pro subscription.
    - Filters: name, city, services.
@@ -26,6 +29,7 @@ Public directory and profiles for subscribed professionals, with a booking fee (
    - Sends an email/notification to both parties with their direct contacts (WhatsApp).
 
 ## 4. UI Components (Frontend)
+
 1. **Public Directory Page (`/profissionais`)**:
    - A grid of professional cards showing their avatar, name, location, and main service.
    - Search bar and location filter.
@@ -39,6 +43,7 @@ Public directory and profiles for subscribed professionals, with a booking fee (
    - Add the autocomplete field "Tem algum profissional de preferência?" in the generic budget form, fetching from `/api/marketplace/profissionais`.
 
 ## 5. Execution Steps
+
 - **Step 1: Schema & DB**: Update `schema.prisma` with `ServiceBooking` and `Subscription` changes. Run `npx prisma db push`.
 - **Step 2: API Services**: Implement `MarketplaceController` for directory and profile endpoints.
 - **Step 3: Booking Engine**: Implement checkout logic for the booking fee, using existing Mercado Pago integrations.

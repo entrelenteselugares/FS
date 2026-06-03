@@ -1,7 +1,7 @@
 # Phase 56 Discussion Log: QuotePage UX Refinement
 
 **Date:** 2026-05-29  
-**Facilitator:** Antigravity  
+**Facilitator:** Antigravity
 
 ---
 

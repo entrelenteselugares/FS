@@ -44,7 +44,7 @@ function KpiCard({ label, value, sub, icon, accent = false }: {
 }) {
   return (
     <div className={`relative overflow-hidden p-6 border transition-all group ${
-      accent ? "bg-brand-tactical/5 border-brand-tactical/30" : "bg-theme-bg-muted/10 border-theme-border/30 hover:border-theme-border/60"
+      accent ? "bg-brand-tactical/10 border-brand-tactical/30" : "bg-theme-bg border-theme-border hover:border-theme-border"
     }`}>
       <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-white/5 to-transparent rotate-45 translate-x-10 -translate-y-10" />
       <div className="relative z-10 space-y-3">
@@ -71,7 +71,7 @@ function FunnelBar({ label, value, max, color }: { label: string; value: number;
         <p className="text-[9px] font-black text-theme-muted uppercase tracking-widest">{label}</p>
         <p className="text-[10px] font-black text-theme-text">{value.toLocaleString("pt-BR")}</p>
       </div>
-      <div className="h-1.5 bg-theme-bg-muted/30 w-full overflow-hidden">
+      <div className="h-1.5 bg-theme-bg-muted w-full overflow-hidden">
         <motion.div
           className={`h-full ${color}`}
           initial={{ width: 0 }}
@@ -207,7 +207,7 @@ export const AmbassadorDashboard = () => {
 
       {/* ── Funnel Visual ── */}
       {t && t.visits > 0 && (
-        <div className="border border-theme-border/30 bg-theme-bg-muted/5 p-8 space-y-5">
+        <div className="border border-theme-border bg-theme-bg-muted/5 p-8 space-y-5">
           <div className="flex items-center gap-3 mb-2">
             <BarChart3 size={14} className="text-brand-tactical" />
             <p className="text-[9px] font-black text-theme-muted uppercase tracking-[0.4em]">Funil de Conversão</p>
@@ -219,7 +219,7 @@ export const AmbassadorDashboard = () => {
       )}
 
       {/* ── Tabs ── */}
-      <div className="flex gap-1 border-b border-theme-border/30">
+      <div className="flex gap-1 border-b border-theme-border">
         {(["overview", "campaigns", "history"] as const).map(t => (
           <button
             key={t}
@@ -247,14 +247,14 @@ export const AmbassadorDashboard = () => {
           {tab === "overview" && (
             <div className="space-y-4">
               {(network?.campaigns ?? []).length === 0 ? (
-                <div className="border border-dashed border-theme-border/40 p-20 text-center space-y-4">
+                <div className="border  border-theme-border p-20 text-center space-y-4">
                   <Users size={36} className="mx-auto text-theme-border/20" />
                   <p className="text-[10px] font-black text-theme-muted uppercase tracking-widest italic">Nenhuma campanha ativa.</p>
                   <p className="text-[9px] text-zinc-600 font-bold max-w-xs mx-auto">Clique em "Gerar Meu Link" para começar a ganhar com indicações.</p>
                 </div>
               ) : (
                 network?.campaigns.map(c => (
-                  <div key={c.id} className="border border-theme-border/20 bg-theme-bg-muted/5 p-6 space-y-4 hover:border-theme-border/40 transition-all">
+                  <div key={c.id} className="border border-theme-border bg-theme-bg-muted/5 p-6 space-y-4 hover:border-theme-border transition-all">
                     <div className="flex items-start justify-between gap-4">
                       <div>
                         <h3 className="text-sm font-black text-theme-text uppercase italic">{c.name}</h3>
@@ -273,7 +273,7 @@ export const AmbassadorDashboard = () => {
                         </button>
                       </div>
                     </div>
-                    <div className="grid grid-cols-3 gap-4 pt-3 border-t border-theme-border/20">
+                    <div className="grid grid-cols-3 gap-4 pt-3 border-t border-theme-border">
                       {[
                         { label: "Cliques", val: c.visits },
                         { label: "Conversões", val: c.conversions },
@@ -286,14 +286,14 @@ export const AmbassadorDashboard = () => {
                       ))}
                     </div>
                     <div className="flex items-center gap-3">
-                      <div className="flex-1 flex items-center gap-2 bg-theme-bg px-3 py-2 border border-theme-border/20">
+                      <div className="flex-1 flex items-center gap-2 bg-theme-bg px-3 py-2 border border-theme-border">
                         <span className="text-[10px] font-mono text-theme-muted truncate">/embaixador/{c.slug}</span>
                         <button onClick={() => copyLink(c.slug)} className="ml-auto text-theme-muted hover:text-brand-tactical transition-colors">
                           {copiedSlug === c.slug ? <Check size={13} className="text-brand-tactical" /> : <Copy size={13} />}
                         </button>
                       </div>
                       <button onClick={() => window.open(`${window.location.origin}/embaixador/${c.slug}`, "_blank")}
-                        className="p-2 border border-theme-border/20 text-theme-muted hover:text-brand-tactical hover:border-brand-tactical/50 transition-all">
+                        className="p-2 border border-theme-border text-theme-muted hover:text-brand-tactical hover:border-brand-tactical/50 transition-all">
                         <ExternalLink size={14} />
                       </button>
                     </div>
@@ -307,7 +307,7 @@ export const AmbassadorDashboard = () => {
           {tab === "campaigns" && (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {(network?.campaigns ?? []).map(c => (
-                <div key={c.id} className={`border p-6 space-y-4 transition-all ${c.active ? "border-theme-border/30" : "border-theme-border/10 opacity-60"}`}>
+                <div key={c.id} className={`border p-6 space-y-4 transition-all ${c.active ? "border-theme-border" : "border-theme-border/10 opacity-60"}`}>
                   <div className="flex items-center justify-between">
                     <p className="text-[10px] font-black text-theme-text uppercase italic">{c.name}</p>
                     <button onClick={() => toggleCampaign(c.id)} disabled={toggling === c.id} className="text-theme-muted hover:text-brand-tactical transition-colors">
@@ -335,12 +335,12 @@ export const AmbassadorDashboard = () => {
                   <div className="w-4 h-4 border-2 border-brand-tactical border-t-transparent rounded-full animate-spin" />
                 </div>
               ) : history.conversions.length === 0 ? (
-                <div className="border border-dashed border-theme-border/30 p-16 text-center">
+                <div className="border  border-theme-border p-16 text-center">
                   <p className="text-[10px] font-black text-theme-muted uppercase tracking-widest italic">Nenhuma conversão ainda.</p>
                 </div>
               ) : (
                 <>
-                  <div className="divide-y divide-theme-border/10 border border-theme-border/20">
+                  <div className="divide-y divide-theme-border/10 border border-theme-border">
                     {history.conversions.map(cv => (
                       <div key={cv.id} className="flex items-center justify-between p-5 hover:bg-theme-bg-muted/5 transition-all">
                         <div className="flex items-center gap-4">
@@ -372,7 +372,7 @@ export const AmbassadorDashboard = () => {
                       <button
                         onClick={() => setHistPage(p => Math.max(1, p - 1))}
                         disabled={histPage === 1}
-                        className="fs-btn border border-theme-border/40 text-theme-muted disabled:opacity-30 flex items-center gap-2"
+                        className="fs-btn border border-theme-border text-theme-muted disabled:opacity-30 flex items-center gap-2"
                       >
                         <ChevronLeft size={14} /> Anterior
                       </button>
@@ -382,7 +382,7 @@ export const AmbassadorDashboard = () => {
                       <button
                         onClick={() => setHistPage(p => Math.min(history.totalPages, p + 1))}
                         disabled={histPage === history.totalPages}
-                        className="fs-btn border border-theme-border/40 text-theme-muted disabled:opacity-30 flex items-center gap-2"
+                        className="fs-btn border border-theme-border text-theme-muted disabled:opacity-30 flex items-center gap-2"
                       >
                         Próxima <ChevronRight size={14} />
                       </button>
@@ -396,7 +396,7 @@ export const AmbassadorDashboard = () => {
       </AnimatePresence>
 
       {/* ── Rules Footer ── */}
-      <div className="p-8 bg-brand-tactical/5 border border-brand-tactical/10 space-y-4">
+      <div className="p-8 bg-brand-tactical/10 border border-brand-tactical/10 space-y-4">
         <h4 className="text-[9px] font-black text-brand-tactical uppercase tracking-[0.3em] italic">Regras de Ouro</h4>
         <ul className="grid grid-cols-1 md:grid-cols-2 gap-3">
           {[

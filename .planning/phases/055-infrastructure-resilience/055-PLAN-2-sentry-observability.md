@@ -20,12 +20,14 @@ Atualmente o sistema usa apenas `console.log` para erros em produção. Quando o
 </objective>
 
 <threat_model>
+
 ## Threat Model
 
-| Ameaça | Severidade | Mitigação |
-|---|---|---|
-| DSN do Sentry exposto no frontend bundle | BAIXA | DSN de frontend é projetado para ser público (Sentry design); não contém credenciais de escrita |
-| PII (dados pessoais) enviado para Sentry | MÉDIA | Configurar `beforeSend` para remover `req.body` em rotas de pagamento e upload |
+| Ameaça                                   | Severidade | Mitigação                                                                                       |
+| ---------------------------------------- | ---------- | ----------------------------------------------------------------------------------------------- |
+| DSN do Sentry exposto no frontend bundle | BAIXA      | DSN de frontend é projetado para ser público (Sentry design); não contém credenciais de escrita |
+| PII (dados pessoais) enviado para Sentry | MÉDIA      | Configurar `beforeSend` para remover `req.body` em rotas de pagamento e upload                  |
+
 </threat_model>
 
 <tasks>
@@ -41,17 +43,20 @@ Atualmente o sistema usa apenas `console.log` para erros em produção. Quando o
 Instalar: `npm install @sentry/node --save` no diretório `backend/`
 
 No topo de `backend/src/index.ts`, ANTES de qualquer outro import de módulo próprio:
+
 ```typescript
-import * as Sentry from '@sentry/node';
+import * as Sentry from "@sentry/node";
 
 Sentry.init({
   dsn: process.env.SENTRY_DSN_BACKEND,
-  environment: process.env.NODE_ENV || 'development',
-  tracesSampleRate: process.env.NODE_ENV === 'production' ? 0.1 : 1.0,
+  environment: process.env.NODE_ENV || "development",
+  tracesSampleRate: process.env.NODE_ENV === "production" ? 0.1 : 1.0,
   beforeSend(event) {
     // Remove dados sensíveis de rotas de pagamento
-    if (event.request?.url?.includes('/webhooks/mercadopago')) {
-      if (event.request.data) { event.request.data = '[REDACTED]'; }
+    if (event.request?.url?.includes("/webhooks/mercadopago")) {
+      if (event.request.data) {
+        event.request.data = "[REDACTED]";
+      }
     }
     return event;
   },
@@ -59,10 +64,12 @@ Sentry.init({
 ```
 
 Após o setup do Express e ANTES do error handler final, adicionar:
+
 ```typescript
 // Sentry error handler — DEVE vir após todas as rotas e ANTES do handler 500 padrão
 Sentry.setupExpressErrorHandler(app);
 ```
+
 </action>
 <acceptance_criteria>
 - `backend/package.json` contém `"@sentry/node"`
@@ -85,18 +92,18 @@ Sentry.setupExpressErrorHandler(app);
 Instalar: `npm install @sentry/react --save` no diretório `frontend/`
 
 No topo de `frontend/src/main.tsx`, ANTES do `ReactDOM.createRoot`:
+
 ```typescript
-import * as Sentry from '@sentry/react';
+import * as Sentry from "@sentry/react";
 
 Sentry.init({
   dsn: import.meta.env.VITE_SENTRY_DSN,
   environment: import.meta.env.MODE,
-  tracesSampleRate: import.meta.env.MODE === 'production' ? 0.05 : 1.0,
-  integrations: [
-    Sentry.browserTracingIntegration(),
-  ],
+  tracesSampleRate: import.meta.env.MODE === "production" ? 0.05 : 1.0,
+  integrations: [Sentry.browserTracingIntegration()],
 });
 ```
+
 </action>
 <acceptance_criteria>
 - `frontend/package.json` contém `"@sentry/react"`
@@ -129,10 +136,12 @@ SENTRY_DSN_BACKEND=
 ```
 
 Adicionar ao `frontend/.env.example` (criar se não existir):
+
 ```env
 # Sentry Frontend — DSN é seguro para ser público (read-only por design do Sentry)
 VITE_SENTRY_DSN=
 ```
+
 </action>
 <acceptance_criteria>
 - `backend/.env.example` contém `SENTRY_DSN_BACKEND=`
@@ -154,12 +163,13 @@ VITE_SENTRY_DSN=
 5. `npx tsc --noEmit` no backend retorna exit code 0
 6. `npx tsc --noEmit` no frontend retorna exit code 0
 7. `backend/.env.example` e `frontend/.env.example` contêm as variáveis Sentry
-</verification>
+   </verification>
 
 <success_criteria>
+
 - Sentry inicializado em ambos backend e frontend sem erros de compilação
 - `.env.example` documenta as variáveis e inclui instruções para configurar alertas no dashboard
 - `beforeSend` no backend remove dados sensíveis de rotas de pagamento antes de enviar para Sentry
-</success_criteria>
+  </success_criteria>
 
 ## PLANNING COMPLETE

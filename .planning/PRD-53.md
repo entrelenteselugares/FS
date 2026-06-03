@@ -1,6 +1,7 @@
 # PRD: Vault Configuration & Administration
 
 ## Goal
+
 The creator of the album (Vault Owner) must have a dedicated configuration panel/modal in the `VaultDetailPage.tsx` or a separate route to manage their album.
 
 ## Features
@@ -25,6 +26,7 @@ The creator of the album (Vault Owner) must have a dedicated configuration panel
    - This uses the existing `AlbumMember` model.
 
 ## UI/UX
+
 - Use the existing Midnight Luxury UI/UX.
 - The settings can be accessed via a "Settings" (gear) icon in the Vault Details header.
 - The UI should be a clean modal or a slide-over panel.

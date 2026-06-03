@@ -160,8 +160,8 @@ export const AdminUsers: React.FC = () => {
     <>
       <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-700 rounded-2xl">
       {/* Header Padronizado */}
-      <div className="relative border-b border-theme-border/60 pb-8 md:pb-12 space-y-4 md:space-y-6">
-        <div className="absolute -top-10 -left-10 w-40 h-40 bg-brand-tactical/5 blur-3xl rounded-full" />
+      <div className="relative border-b border-theme-border pb-8 md:pb-12 space-y-4 md:space-y-6">
+        <div className="absolute -top-10 -left-10 w-40 h-40 bg-brand-tactical/10 blur-3xl rounded-full" />
         
         <div className="flex flex-col xl:flex-row justify-between items-start xl:items-end gap-6 relative z-10">
           <div>
@@ -212,7 +212,7 @@ export const AdminUsers: React.FC = () => {
 
         <div className="space-y-3">
           {/* HEADER TABLE */}
-          <div className="hidden md:grid grid-cols-12 gap-4 px-4 py-2.5 text-[8px] md:text-[9px] font-black text-theme-muted uppercase tracking-[0.4em] border-b border-theme-border/30 bg-zinc-900/20">
+          <div className="hidden md:grid grid-cols-12 gap-4 px-4 py-2.5 text-[8px] md:text-[9px] font-black text-theme-muted uppercase tracking-[0.4em] border-b border-theme-border bg-zinc-900/20">
             <div className="col-span-1">Status</div>
             <div className="col-span-4">Membro / Identidade</div>
             <div className="col-span-3">Nível de Acesso</div>
@@ -223,7 +223,7 @@ export const AdminUsers: React.FC = () => {
           {loading ? (
             <div className="py-20 text-center text-[10px] text-theme-muted uppercase tracking-widest animate-pulse font-black">Sincronizando Base de Dados...</div>
           ) : filteredUsers.length === 0 ? (
-            <div className="py-20 text-center text-[10px] text-theme-muted uppercase tracking-widest font-black border border-dashed border-theme-border">Nenhum membro encontrado.</div>
+            <div className="py-20 text-center text-[10px] text-theme-muted uppercase tracking-widest font-black border  border-theme-border">Nenhum membro encontrado.</div>
           ) : (
             filteredUsers.map(u => {
               const styles = getRoleStyle(u.role);
@@ -302,9 +302,9 @@ export const AdminUsers: React.FC = () => {
         <div className="fixed inset-0 z-[500] flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-theme-bg/80 backdrop-blur-xl animate-in fade-in duration-300" onClick={() => setIsModalOpen(false)} />
           
-          <div className="relative w-full max-w-2xl bg-theme-card border border-theme-border/60 rounded-2xl overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300 flex flex-col h-[90vh]">
+          <div className="relative w-full max-w-2xl bg-theme-card border border-theme-border rounded-2xl overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300 flex flex-col h-[90vh]">
             {/* Header */}
-            <div className="p-8 md:p-10 border-b border-theme-border flex items-center justify-between shrink-0 bg-theme-bg-muted/30 rounded-2xl">
+            <div className="p-8 md:p-10 border-b border-theme-border flex items-center justify-between shrink-0 bg-theme-bg-muted rounded-2xl">
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 bg-brand-tactical/10 rounded-2xl flex items-center justify-center border border-brand-tactical/20">
                   <UserPlus className="text-brand-tactical" size={24} strokeWidth={1.5} />
@@ -314,7 +314,7 @@ export const AdminUsers: React.FC = () => {
                   <p className="text-[10px] font-black uppercase tracking-[0.2em] opacity-40">Protocolo Operacional de Inteligência</p>
                 </div>
               </div>
-              <button onClick={() => setIsModalOpen(false)} className="p-3 hover:bg-white/5 rounded-full transition-all text-theme-muted rounded-xl"><X size={24} /></button>
+              <button onClick={() => setIsModalOpen(false)} className="p-3 hover:bg-theme-bg-muted rounded-full transition-all text-theme-muted rounded-xl"><X size={24} /></button>
             </div>
 
             {/* Content */}
@@ -363,23 +363,23 @@ export const AdminUsers: React.FC = () => {
 
               <div className="space-y-2">
                 <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest block mb-2 opacity-60 italic">Chave PIX (Para Liquidações Financeiras)</label>
-                <input className="w-full bg-theme-bg-muted border border-theme-border/60 p-4 text-[11px] text-theme-text font-black outline-none focus:border-brand-tactical rounded-xl uppercase placeholder:opacity-20 italic" value={formData.pixKey} onChange={e => setFormData({...formData, pixKey: e.target.value})} placeholder="CPF, E-MAIL OU CHAVE ALEATÓRIA" />
+                <input className="w-full bg-theme-bg-muted border border-theme-border p-4 text-[11px] text-theme-text font-black outline-none focus:border-brand-tactical rounded-xl uppercase placeholder:opacity-20 italic" value={formData.pixKey} onChange={e => setFormData({...formData, pixKey: e.target.value})} placeholder="CPF, E-MAIL OU CHAVE ALEATÓRIA" />
               </div>
 
               {formData.role === "PROFISSIONAL" && (
-                <div className="pt-10 border-t border-theme-border/60 space-y-10">
+                <div className="pt-10 border-t border-theme-border space-y-10">
                   <div className="grid grid-cols-2 gap-8">
                     <div className="space-y-2">
                       <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest block mb-1 opacity-40 italic">% Comissão Captação</label>
                       <div className="relative">
-                        <input type="number" className="w-full bg-theme-bg-muted border border-theme-border/60 p-4 text-xl font-black text-brand-tactical outline-none focus:border-brand-tactical rounded-xl" value={formData.captPct} onChange={e => setFormData({...formData, captPct: Number(e.target.value)})} />
+                        <input type="number" className="w-full bg-theme-bg-muted border border-theme-border p-4 text-xl font-black text-brand-tactical outline-none focus:border-brand-tactical rounded-xl" value={formData.captPct} onChange={e => setFormData({...formData, captPct: Number(e.target.value)})} />
                         <span className="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-black text-theme-muted opacity-40">%</span>
                       </div>
                     </div>
                     <div className="space-y-2">
                       <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest block mb-1 opacity-40 italic">% Comissão Edição</label>
                       <div className="relative">
-                        <input type="number" className="w-full bg-theme-bg-muted border border-theme-border/60 p-4 text-xl font-black text-brand-tactical outline-none focus:border-brand-tactical rounded-xl" value={formData.editPct} onChange={e => setFormData({...formData, editPct: Number(e.target.value)})} />
+                        <input type="number" className="w-full bg-theme-bg-muted border border-theme-border p-4 text-xl font-black text-brand-tactical outline-none focus:border-brand-tactical rounded-xl" value={formData.editPct} onChange={e => setFormData({...formData, editPct: Number(e.target.value)})} />
                         <span className="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-black text-theme-muted opacity-40">%</span>
                       </div>
                     </div>
@@ -387,7 +387,7 @@ export const AdminUsers: React.FC = () => {
 
                   <div className="space-y-2">
                     <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest block mb-2 opacity-60 italic">Ativos & Hardware de Trabalho</label>
-                    <textarea className="w-full bg-theme-bg-muted border border-theme-border/60 p-4 text-[11px] text-theme-text font-black outline-none focus:border-brand-tactical rounded-xl h-24 resize-none uppercase placeholder:opacity-20" value={formData.equipment} onChange={e => setFormData({...formData, equipment: e.target.value})} placeholder="CÂMERAS, LENTES, DRONES, ETC..." />
+                    <textarea className="w-full bg-theme-bg-muted border border-theme-border p-4 text-[11px] text-theme-text font-black outline-none focus:border-brand-tactical rounded-xl h-24 resize-none uppercase placeholder:opacity-20" value={formData.equipment} onChange={e => setFormData({...formData, equipment: e.target.value})} placeholder="CÂMERAS, LENTES, DRONES, ETC..." />
                   </div>
 
                   <div className="space-y-4">
@@ -415,8 +415,8 @@ export const AdminUsers: React.FC = () => {
               )}
 
               {/* ── SEÇÃO DE FRANQUIA ── */}
-              <div className="pt-10 border-t border-theme-border/60 space-y-6">
-                <div className="flex items-center justify-between bg-theme-bg-muted/30 p-6 rounded-2xl border border-theme-border/40">
+              <div className="pt-10 border-t border-theme-border space-y-6">
+                <div className="flex items-center justify-between bg-theme-bg-muted p-6 rounded-2xl border border-theme-border">
                   <div className="space-y-1">
                     <label className="text-[10px] font-black text-theme-text uppercase tracking-widest italic">Ponto de Impressão (Phygital)</label>
                     <p className="text-[8px] text-theme-muted uppercase font-bold opacity-40">Habilitar este usuário como franqueado phygital ativo</p>
@@ -431,7 +431,7 @@ export const AdminUsers: React.FC = () => {
                 </div>
 
                 {formData.isFranchise && (
-                  <div className="p-6 bg-brand-tactical/5 border border-brand-tactical/20 rounded-2xl animate-in slide-in-from-top-4 duration-300">
+                  <div className="p-6 bg-brand-tactical/10 border border-brand-tactical/20 rounded-2xl animate-in slide-in-from-top-4 duration-300">
                     <div className="flex items-center justify-between">
                       <div className="space-y-1">
                         <label className="text-[8px] font-black text-brand-tactical uppercase tracking-widest italic">Saldo de Créditos de Impressão</label>
@@ -451,7 +451,7 @@ export const AdminUsers: React.FC = () => {
               {/* ── VERIFICAÇÃO PRO E AFILIADO VIP ── */}
               <div className="pt-6 space-y-4">
                 {formData.role === "PROFISSIONAL" && (
-                  <div className="flex items-center justify-between bg-brand-tactical/5 p-6 rounded-2xl border border-brand-tactical/20">
+                  <div className="flex items-center justify-between bg-brand-tactical/10 p-6 rounded-2xl border border-brand-tactical/20">
                     <div className="space-y-1">
                       <label className="text-[10px] font-black text-brand-tactical uppercase tracking-widest italic">Verificação Elite (PRO)</label>
                       <p className="text-[8px] text-theme-muted uppercase font-bold opacity-40 italic">Habilitar repasse financeiro imediato (F-09 Protocol)</p>
@@ -483,7 +483,7 @@ export const AdminUsers: React.FC = () => {
             </form>
 
             {/* Footer */}
-            <div className="p-8 md:p-10 bg-theme-bg-muted/50 border-t border-theme-border flex gap-4 shrink-0 rounded-2xl">
+            <div className="p-8 md:p-10 bg-theme-bg-muted border-t border-theme-border flex gap-4 shrink-0 rounded-2xl">
               <button type="button" onClick={() => setIsModalOpen(false)} className="fs-btn flex-1 border border-theme-border text-theme-muted hover:text-white transition-all italic">Cancelar</button>
               <button 
                 type="submit" 

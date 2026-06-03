@@ -1,4 +1,5 @@
 <!-- generated-by: gsd-doc-writer -->
+
 # Backend Controllers Overview
 
 This document provides a high-level overview of the backend controllers in the Foto Segundo platform. The platform utilizes an MVC-style routing architecture on the backend, combining Express and Hono via Vercel Serverless.
@@ -36,9 +37,11 @@ This document provides a high-level overview of the backend controllers in the F
 ## Design Patterns
 
 Controllers in this directory follow these conventions:
+
 1. **Fat Services, Thin Controllers:** Most heavy business logic is offloaded to the `/services` layer. Controllers focus on HTTP validation (Zod schemas), parsing headers/tokens, and formatting the response.
 2. **Error Handling:** All controller methods are wrapped in asynchronous `try/catch` blocks or use a wrapper utility to catch exceptions and return unified JSON errors (e.g., `400 BAD REQUEST`, `500 INTERNAL ERROR`).
 3. **Typing:** Strict typing is enforced for `req.body`, `req.query`, and `req.params`.
 
 <!-- GSD-DOCS-UPDATE: SUPPLEMENTED -->
-*Documentação criada automaticamente via GSD-SDK em 2026-06.*
+
+_Documentação criada automaticamente via GSD-SDK em 2026-06._

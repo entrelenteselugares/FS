@@ -70,7 +70,7 @@ function BookingModal({
         animate={{ opacity: 1, scale: 1, y: 0 }}
         className="w-full max-w-lg bg-zinc-950 border border-brand-tactical/20 p-8 space-y-8 relative"
       >
-        <div className="absolute top-0 right-0 w-32 h-32 bg-brand-tactical/5 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute top-0 right-0 w-32 h-32 bg-brand-tactical/10 rounded-full blur-3xl pointer-events-none" />
 
         <div className="space-y-1 relative z-10">
           <p className="text-[9px] font-black text-brand-tactical uppercase tracking-widest italic">Taxa de Reserva</p>
@@ -108,7 +108,7 @@ function BookingModal({
             />
           </div>
 
-          <div className="p-3 bg-brand-tactical/5 border border-brand-tactical/20 flex items-start gap-3">
+          <div className="p-3 bg-brand-tactical/10 border border-brand-tactical/20 flex items-start gap-3">
             <Lock size={14} className="text-brand-tactical mt-0.5 flex-shrink-0" />
             <p className="text-[9px] text-zinc-400 leading-relaxed font-medium">
               Após o pagamento, o WhatsApp de <strong className="text-white">{prof.nome}</strong> será liberado para você por e-mail e notificação. O restante é pago diretamente ao profissional.
@@ -339,7 +339,7 @@ export default function ProfissionalProfilePage() {
         </div>
 
         {prof.proServices.length === 0 ? (
-          <div className="py-16 text-center border border-dashed border-zinc-800">
+          <div className="py-16 text-center border  border-zinc-800">
             <Camera size={48} className="text-zinc-700 mx-auto mb-4" />
             <p className="text-zinc-600 text-sm uppercase tracking-widest font-black">
               Nenhum pacote cadastrado ainda

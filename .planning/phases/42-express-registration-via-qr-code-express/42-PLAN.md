@@ -28,6 +28,7 @@ Implement a frictionless express registration flow for Phygital capture users, i
 <tasks>
 
 ### Wave 1: Database & Backend Auth Foundation
+
 - [ ] **Task 1.1: Update User Schema**
   - **Type:** backend
   - **Files:** `backend/prisma/schema.prisma`
@@ -49,9 +50,10 @@ Implement a frictionless express registration flow for Phygital capture users, i
   - **Verify:** `curl -X POST http://localhost:3001/api/auth/register-express` (mock).
 
 ### Wave 2: Frontend Integration
+
 - [ ] **Task 2.1: Update Auth Types & Context**
   - **Type:** frontend
-  - **Files:** 
+  - **Files:**
     - `frontend/src/contexts/AuthContextBase.ts`
     - `frontend/src/contexts/AuthContext.tsx`
   - **Action:** Add `profileComplete` to `AuthUser` interface and handle it in the provider.
@@ -60,7 +62,7 @@ Implement a frictionless express registration flow for Phygital capture users, i
 - [ ] **Task 2.2: Enhance Phygital Capture Form**
   - **Type:** frontend
   - **Files:** `frontend/src/pages/PhygitalCapture.tsx`
-  - **Action:** 
+  - **Action:**
     - Add logic to check if email exists.
     - If new user, show password field.
     - Modify submission to call `registerExpress` for new users.
@@ -68,6 +70,7 @@ Implement a frictionless express registration flow for Phygital capture users, i
   - **Acceptance Criteria:** Seamless onboarding for non-registered users.
 
 ### Wave 3: Conversion Engine & Rewards
+
 - [ ] **Task 3.1: Profile Completion Logic**
   - **Type:** backend
   - **Files:** `backend/src/controllers/auth.controller.ts` (or profile controller)
@@ -81,9 +84,10 @@ Implement a frictionless express registration flow for Phygital capture users, i
   - **Verify:** Coupon is created in DB.
 
 ### Wave 4: UX Polishing
+
 - [ ] **Task 4.1: Incomplete Profile Banner**
   - **Type:** frontend
-  - **Files:** 
+  - **Files:**
     - `frontend/src/components/IncompleteProfileBanner.tsx` (new)
     - `frontend/src/components/Navbar.tsx`
   - **Action:** Create the banner and integrate it into the Navbar.
@@ -100,10 +104,11 @@ Implement a frictionless express registration flow for Phygital capture users, i
 </verification>
 
 <success_criteria>
+
 - [ ] Frictionless express registration works end-to-end.
 - [ ] `profileComplete` flag correctly tracks user state.
 - [ ] Global banner drives profile completion.
 - [ ] Reward system successfully delivers coupons.
-</success_criteria>
+      </success_criteria>
 
 ## PLANNING COMPLETE

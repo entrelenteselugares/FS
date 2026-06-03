@@ -83,14 +83,14 @@ export function FlashEventMonitor({ eventId }: { eventId: string }) {
         </div>
         <button
           onClick={fetchStats}
-          className="p-2 border border-theme-border/30 text-theme-muted hover:text-brand-tactical hover:border-brand-tactical/40 transition-all"
+          className="p-2 border border-theme-border text-theme-muted hover:text-brand-tactical hover:border-brand-tactical/40 transition-all"
         >
           <RefreshCw size={14} />
         </button>
       </div>
 
       {/* Conversion Rate Highlight */}
-      <div className="p-6 bg-brand-tactical/5 border border-brand-tactical/20 flex items-center gap-6">
+      <div className="p-6 bg-brand-tactical/10 border border-brand-tactical/20 flex items-center gap-6">
         <div className="p-3 bg-brand-tactical/10">
           <TrendingUp size={20} className="text-brand-tactical" />
         </div>
@@ -122,12 +122,12 @@ export function FlashEventMonitor({ eventId }: { eventId: string }) {
         </div>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           {[
-            { label: "Total",     value: stats.cards.total,   color: "text-theme-text",  bg: "bg-theme-bg-muted/10" },
+            { label: "Total",     value: stats.cards.total,   color: "text-theme-text",  bg: "bg-theme-bg" },
             { label: "Não Usados",value: stats.cards.unused,  color: "text-blue-400",    bg: "bg-blue-500/5" },
-            { label: "Utilizados",value: stats.cards.used,    color: "text-brand-tactical", bg: "bg-brand-tactical/5" },
+            { label: "Utilizados",value: stats.cards.used,    color: "text-brand-tactical", bg: "bg-brand-tactical/10" },
             { label: "Resgatados",value: stats.cards.claimed, color: "text-emerald-400", bg: "bg-emerald-500/5" },
           ].map(({ label, value, color, bg }) => (
-            <div key={label} className={`p-4 border border-theme-border/20 ${bg} space-y-2`}>
+            <div key={label} className={`p-4 border border-theme-border ${bg} space-y-2`}>
               <p className="text-[8px] font-black text-theme-muted uppercase tracking-widest">{label}</p>
               <p className={`text-2xl font-black italic tracking-tighter ${color}`}>{value}</p>
             </div>
@@ -154,7 +154,7 @@ export function FlashEventMonitor({ eventId }: { eventId: string }) {
               <span>{stats.prints.done} concluídas</span>
               <span>{printDonePct}%</span>
             </div>
-            <div className="h-1.5 bg-theme-bg-muted/30 w-full overflow-hidden">
+            <div className="h-1.5 bg-theme-bg-muted w-full overflow-hidden">
               <motion.div
                 className="h-full bg-emerald-500"
                 initial={{ width: 0 }}
@@ -172,7 +172,7 @@ export function FlashEventMonitor({ eventId }: { eventId: string }) {
             { label: "Concluídas", value: stats.prints.done,     icon: <CheckCircle2 size={12} />, color: "text-emerald-400" },
             { label: "Com Erro",   value: stats.prints.error,    icon: <XCircle size={12} />,      color: "text-red-400" },
           ].map(({ label, value, icon, color }) => (
-            <div key={label} className="flex items-center gap-3 p-4 border border-theme-border/20 bg-theme-bg-muted/5">
+            <div key={label} className="flex items-center gap-3 p-4 border border-theme-border bg-theme-bg-muted/5">
               <div className={color}>{icon}</div>
               <div>
                 <p className="text-[8px] font-black text-theme-muted uppercase tracking-widest">{label}</p>
@@ -203,7 +203,7 @@ export function FlashEventMonitor({ eventId }: { eventId: string }) {
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0 }}
-            className="flex items-center gap-3 p-4 border border-brand-tactical/30 bg-brand-tactical/5"
+            className="flex items-center gap-3 p-4 border border-brand-tactical/30 bg-brand-tactical/10"
           >
             <Zap size={14} className="text-brand-tactical flex-shrink-0" />
             <p className="text-[9px] font-bold text-brand-tactical uppercase tracking-wide">

@@ -122,7 +122,7 @@ export default function FullMonitor() {
 
           <div className="ml-auto flex items-center gap-3">
             {/* Grid Controls */}
-            <div className="hidden lg:flex items-center gap-2 mr-2 bg-theme-bg-muted/50 px-3 py-1.5 rounded-full border border-theme-border/50">
+            <div className="hidden lg:flex items-center gap-2 mr-2 bg-theme-bg-muted px-3 py-1.5 rounded-full border border-theme-border/50">
               <label className="text-[10px] text-theme-text-muted uppercase font-bold tracking-widest">Colunas:</label>
               <select 
                 value={columns} 
@@ -262,7 +262,7 @@ export default function FullMonitor() {
                       </div>
 
                       {/* ── Card Footer ────────────────────── */}
-                      <div className="px-3.5 py-3 flex justify-between items-center flex-shrink-0 bg-theme-card border-t border-theme-border/40">
+                      <div className="px-3.5 py-3 flex justify-between items-center flex-shrink-0 bg-theme-card border-t border-theme-border">
                         <p className="text-sm font-black text-theme-text truncate leading-tight">
                           {print.customerName || "Convidado"}
                         </p>

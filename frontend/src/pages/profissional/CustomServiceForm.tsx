@@ -61,7 +61,7 @@ export default function CustomServiceForm() {
   return (
     <div className="min-h-screen pb-20" style={{ background: T.bg }}>
       <header className="pt-20 pb-10 border-b border-white/5 relative overflow-hidden">
-        <div className="absolute inset-0 bg-brand-tactical/5 blur-3xl rounded-full -m-64 opacity-30" />
+        <div className="absolute inset-0 bg-brand-tactical/10 blur-3xl rounded-full -m-64 opacity-30" />
         <div className="max-w-[1000px] mx-auto px-4 md:px-6 relative z-10">
           <div className="w-12 h-1 bg-brand-tactical mb-6" />
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-theme-text uppercase tracking-tighter whitespace-normal italic pr-6">

@@ -98,7 +98,7 @@ export function ExpressSaleModal({ network, onClose, onSuccess, onError }: Expre
       />
 
       {/* Modal Container */}
-      <div className="relative w-full h-full sm:h-[80vh] max-w-2xl flex flex-col border-none sm:border border-theme-border/60 rounded-none sm:rounded-[40px] overflow-hidden shadow-2xl z-[10000] bg-theme-card">
+      <div className="relative w-full h-full sm:h-[80vh] max-w-2xl flex flex-col border-none sm:border border-theme-border rounded-none sm:rounded-[40px] overflow-hidden shadow-2xl z-[10000] bg-theme-card">
         {/* Header */}
         <div className="p-8 md:p-10 border-b flex flex-col shrink-0 relative" style={{ borderColor: "var(--theme-border)" }}>
           <div className="flex items-center justify-between">
@@ -113,7 +113,7 @@ export function ExpressSaleModal({ network, onClose, onSuccess, onError }: Expre
                 </h2>
               </div>
             </div>
-            <button onClick={onClose} className="p-3 hover:bg-white/5 rounded-full transition-all active:scale-90 text-theme-text/40">
+            <button onClick={onClose} className="p-3 hover:bg-theme-bg-muted rounded-full transition-all active:scale-90 text-theme-text/40">
               <X size={24} />
             </button>
           </div>
@@ -199,7 +199,7 @@ export function ExpressSaleModal({ network, onClose, onSuccess, onError }: Expre
                           <button
                             key={s.id}
                             onClick={() => addToCart(name, price)}
-                            className="p-3 text-center border border-theme-border/60 bg-theme-bg-muted hover:border-brand-tactical hover:bg-brand-tactical/5 transition-all group"
+                            className="p-3 text-center border border-theme-border bg-theme-bg-muted hover:border-brand-tactical hover:bg-brand-tactical/10 transition-all group"
                           >
                             <div className="text-[10px] font-black text-theme-text uppercase truncate mb-1">{name}</div>
                             <div className="text-[11px] font-black text-brand-tactical italic">R$ {price}</div>
@@ -211,7 +211,7 @@ export function ExpressSaleModal({ network, onClose, onSuccess, onError }: Expre
                     {/* Botão + Adicionar (Compacto) */}
                     <button
                       onClick={() => setShowCustomForm(!showCustomForm)}
-                      className={`flex flex-col items-center justify-center border-2 border-dashed transition-all rounded-xl h-full min-h-[70px] ${showCustomForm ? 'border-brand-tactical bg-brand-tactical/10' : 'border-theme-border/40 hover:border-brand-tactical/60 hover:bg-white/5'}`}
+                      className={`flex flex-col items-center justify-center border-2  transition-all rounded-xl h-full min-h-[70px] ${showCustomForm ? 'border-brand-tactical bg-brand-tactical/10' : 'border-theme-border hover:border-brand-tactical/60 hover:bg-theme-bg-muted'}`}
                     >
                       <Plus className={showCustomForm ? 'text-brand-tactical' : 'text-theme-muted'} size={24} />
                       <span className={`text-[8px] font-black uppercase tracking-widest mt-1 ${showCustomForm ? 'text-brand-tactical' : 'text-theme-muted'}`}>
@@ -256,7 +256,7 @@ export function ExpressSaleModal({ network, onClose, onSuccess, onError }: Expre
                                 setCustomProductName("");
                                 setShowCustomForm(false);
                               }}
-                              className="w-full p-3 text-left border border-theme-border/40 bg-theme-bg hover:border-brand-tactical/50 hover:bg-brand-tactical/5 transition-all flex justify-between items-center group rounded-lg"
+                              className="w-full p-3 text-left border border-theme-border bg-theme-bg hover:border-brand-tactical/50 hover:bg-brand-tactical/10 transition-all flex justify-between items-center group rounded-lg"
                             >
                               <span className="text-[10px] font-black text-theme-text uppercase tracking-tight group-hover:text-brand-tactical">{name}</span>
                               <span className="text-[10px] font-black text-brand-tactical italic">R$ {price}</span>
@@ -268,7 +268,7 @@ export function ExpressSaleModal({ network, onClose, onSuccess, onError }: Expre
                         )}
                       </div>
 
-                      <div className="pt-2 border-t border-theme-border/20 space-y-4">
+                      <div className="pt-2 border-t border-theme-border space-y-4">
                         <div className="flex items-center justify-between">
                           <span className="text-[9px] font-black text-theme-muted uppercase tracking-widest italic opacity-60">Item Personalizado</span>
                           <span className="h-px flex-1 bg-theme-border/10 mx-4" />
@@ -313,7 +313,7 @@ export function ExpressSaleModal({ network, onClose, onSuccess, onError }: Expre
                 </div>
 
                 {/* Cupom de Compras (Cart) */}
-                <div className="space-y-3 pt-4 border-t border-theme-border/30">
+                <div className="space-y-3 pt-4 border-t border-theme-border">
                   <div className="flex justify-between items-center">
                     <label className="text-[10px] font-black text-theme-muted uppercase tracking-widest italic opacity-60">Resumo do Cupom</label>
                     <span className="text-[9px] font-black text-brand-tactical uppercase tracking-widest bg-brand-tactical/10 px-2 py-0.5">{cartItems.length} ITENS</span>
@@ -321,10 +321,10 @@ export function ExpressSaleModal({ network, onClose, onSuccess, onError }: Expre
                   
                   <div className="space-y-2 max-h-[150px] overflow-y-auto no-scrollbar pr-1">
                     {cartItems.length === 0 ? (
-                      <div className="py-8 text-center border border-dashed border-theme-border/40 text-[9px] text-theme-muted uppercase tracking-[0.2em] font-black italic">Aguardando seleção de itens...</div>
+                      <div className="py-8 text-center border  border-theme-border text-[9px] text-theme-muted uppercase tracking-[0.2em] font-black italic">Aguardando seleção de itens...</div>
                     ) : (
                       cartItems.map(item => (
-                        <div key={item.id} className="flex justify-between items-center p-3 bg-theme-bg-muted/50 border border-theme-border/40 group">
+                        <div key={item.id} className="flex justify-between items-center p-3 bg-theme-bg-muted border border-theme-border group">
                           <div className="flex flex-col">
                             <span className="text-[10px] font-black text-theme-text uppercase tracking-tight">{item.name}</span>
                             <span className="text-[11px] font-black text-brand-tactical italic">R$ {Number(item.price).toFixed(2)}</span>
@@ -337,7 +337,7 @@ export function ExpressSaleModal({ network, onClose, onSuccess, onError }: Expre
                     )}
                   </div>
 
-                  <div className="pt-4 flex justify-between items-end border-t border-theme-border/60">
+                  <div className="pt-4 flex justify-between items-end border-t border-theme-border">
                     <div className="space-y-1">
                       <span className="text-[9px] font-black text-theme-muted uppercase tracking-widest block opacity-40">Total do Cupom</span>
                       <div className="text-3xl font-heading font-black text-brand-tactical italic leading-none">R$ {Number(form.amount).toFixed(2).replace(".", ",")}</div>
@@ -384,7 +384,7 @@ export function ExpressSaleModal({ network, onClose, onSuccess, onError }: Expre
                         className={`p-4 text-left text-[11px] font-black uppercase tracking-widest border transition-all ${
                           form.paymentMethod === m.id
                             ? "bg-brand-tactical text-zinc-950 border-brand-tactical shadow-lg"
-                            : "bg-theme-bg-muted border-theme-border/60 text-theme-muted hover:border-brand-tactical/40"
+                            : "bg-theme-bg-muted border-theme-border text-theme-muted hover:border-brand-tactical/40"
                         }`}
                       >
                         {m.label}
@@ -399,7 +399,7 @@ export function ExpressSaleModal({ network, onClose, onSuccess, onError }: Expre
           {/* PHASE 4: Review */}
           {step === 4 && (
             <div className="space-y-6 animate-in zoom-in-95 duration-300">
-              <div className="p-6 bg-brand-tactical/5 border border-brand-tactical/20 space-y-4">
+              <div className="p-6 bg-brand-tactical/10 border border-brand-tactical/20 space-y-4">
                 <div className="flex justify-between items-center border-b border-brand-tactical/10 pb-3">
                   <span className="text-[11px] font-black text-brand-tactical uppercase tracking-widest italic">Borderô de Transação</span>
                   <div className="w-2 h-2 rounded-full bg-brand-tactical animate-pulse" />
@@ -474,7 +474,7 @@ export function ExpressSaleModal({ network, onClose, onSuccess, onError }: Expre
                       navigator.clipboard.writeText(successData.checkoutUrl || "");
                       onSuccess("Link de pagamento copiado com sucesso!");
                     }}
-                    className="w-full py-3 bg-white/5 border border-white/10 text-theme-text text-[9px] font-black uppercase tracking-widest rounded-xl hover:bg-white/10 transition-all text-center font-bold"
+                    className="w-full py-3 bg-theme-bg-muted border border-white/10 text-theme-text text-[9px] font-black uppercase tracking-widest rounded-xl hover:bg-white/10 transition-all text-center font-bold"
                   >
                     COPIAR LINK DE PAGAMENTO
                   </button>
@@ -483,7 +483,7 @@ export function ExpressSaleModal({ network, onClose, onSuccess, onError }: Expre
               )}
 
               {successData.magicLink && (
-                <div className="p-6 bg-theme-bg-muted border border-theme-border/60 rounded-[20px] space-y-4 text-left">
+                <div className="p-6 bg-theme-bg-muted border border-theme-border rounded-[20px] space-y-4 text-left">
                   <label className="text-[9px] font-black text-brand-tactical uppercase tracking-widest italic block">Link de Acesso Rápido do Cliente</label>
                   <div className="flex gap-2">
                     <input 
@@ -506,7 +506,7 @@ export function ExpressSaleModal({ network, onClose, onSuccess, onError }: Expre
 
               <button 
                 onClick={onClose}
-                className="w-full py-5 bg-white/5 border border-white/10 text-theme-text text-[11px] font-black uppercase tracking-[0.3em] hover:bg-white/10 transition-all italic rounded-xl"
+                className="w-full py-5 bg-theme-bg-muted border border-white/10 text-theme-text text-[11px] font-black uppercase tracking-[0.3em] hover:bg-white/10 transition-all italic rounded-xl"
               >
                 FECHAR UNIDADE DE VENDA
               </button>
@@ -515,7 +515,7 @@ export function ExpressSaleModal({ network, onClose, onSuccess, onError }: Expre
         </div>
 
         {/* Footer Navigation */}
-        <div className="p-8 md:p-10 border-t bg-theme-bg-muted/80 flex shrink-0" style={{ borderColor: "var(--theme-border)" }}>
+        <div className="p-8 md:p-10 border-t bg-theme-bg-muted flex shrink-0" style={{ borderColor: "var(--theme-border)" }}>
           {step === 5 ? null : (
             step === 1 ? (
               <button
@@ -529,7 +529,7 @@ export function ExpressSaleModal({ network, onClose, onSuccess, onError }: Expre
               <div className="flex gap-4 w-full">
                 <button
                   onClick={() => setStep((step - 1) as 1 | 2 | 3 | 4 | 5)}
-                  className="flex-1 py-5 bg-white/5 border border-white/10 rounded-2xl text-theme-text text-[10px] font-black uppercase tracking-widest italic hover:bg-white/10 transition-all"
+                  className="flex-1 py-5 bg-theme-bg-muted border border-white/10 rounded-2xl text-theme-text text-[10px] font-black uppercase tracking-widest italic hover:bg-white/10 transition-all"
                 >
                   Voltar
                 </button>

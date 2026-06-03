@@ -148,8 +148,8 @@ export const AdminFinance: React.FC = () => {
   return (
     <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
       {/* Header Padronizado */}
-      <div className="relative border-b border-theme-border/60 pb-8 md:pb-12 space-y-4 md:space-y-6">
-        <div className="absolute -top-10 -left-10 w-40 h-40 bg-brand-tactical/5 blur-3xl rounded-full" />
+      <div className="relative border-b border-theme-border pb-8 md:pb-12 space-y-4 md:space-y-6">
+        <div className="absolute -top-10 -left-10 w-40 h-40 bg-brand-tactical/10 blur-3xl rounded-full" />
         
         <div className="flex flex-col xl:flex-row justify-between items-start xl:items-end gap-6 relative z-10">
           <div>
@@ -188,16 +188,16 @@ export const AdminFinance: React.FC = () => {
       {/* VIEW: REPASSES */}
       {view === "payouts" && (
         <div className="space-y-6 animate-in fade-in duration-500">
-          <div className="flex gap-2 border-b border-theme-border/30 pb-4">
-             <button onClick={() => setPayoutTab("pending")} className={`px-6 py-2 text-[8px] font-black uppercase tracking-widest border transition-all ${payoutTab === 'pending' ? 'border-brand-tactical text-brand-tactical bg-brand-tactical/5' : 'border-theme-border text-theme-muted'}`}>PENDENTES</button>
-             <button onClick={() => setPayoutTab("history")} className={`px-6 py-2 text-[8px] font-black uppercase tracking-widest border transition-all ${payoutTab === 'history' ? 'border-brand-tactical text-brand-tactical bg-brand-tactical/5' : 'border-theme-border text-theme-muted'}`}>HISTÓRICO</button>
+          <div className="flex gap-2 border-b border-theme-border pb-4">
+             <button onClick={() => setPayoutTab("pending")} className={`px-6 py-2 text-[8px] font-black uppercase tracking-widest border transition-all ${payoutTab === 'pending' ? 'border-brand-tactical text-brand-tactical bg-brand-tactical/10' : 'border-theme-border text-theme-muted'}`}>PENDENTES</button>
+             <button onClick={() => setPayoutTab("history")} className={`px-6 py-2 text-[8px] font-black uppercase tracking-widest border transition-all ${payoutTab === 'history' ? 'border-brand-tactical text-brand-tactical bg-brand-tactical/10' : 'border-theme-border text-theme-muted'}`}>HISTÓRICO</button>
           </div>
           
           <div className="space-y-4">
             {loading ? (
-              <div className="py-20 text-center border border-theme-border bg-theme-bg-muted/10 text-[10px] text-theme-muted animate-pulse uppercase tracking-widest font-black italic rounded-2xl">Auditando Fluxo...</div>
+              <div className="py-20 text-center border border-theme-border bg-theme-bg text-[10px] text-theme-muted animate-pulse uppercase tracking-widest font-black italic rounded-2xl">Auditando Fluxo...</div>
             ) : orders.length === 0 ? (
-              <div className="py-24 text-center border border-dashed border-theme-border bg-theme-bg-muted/5 space-y-4 rounded-2xl">
+              <div className="py-24 text-center border  border-theme-border bg-theme-bg-muted/5 space-y-4 rounded-2xl">
                  <ShieldCheck size={32} strokeWidth={1.5} className="mx-auto text-theme-muted opacity-30" />
                  <p className="text-[9px] sm:text-[11px] font-black text-brand-tactical uppercase tracking-[0.2em] sm:tracking-[0.4em] italic truncate max-w-[80vw]">Fluxo de Caixa e Liquidações</p>
               </div>
@@ -268,7 +268,7 @@ export const AdminFinance: React.FC = () => {
           <div className="bg-theme-bg-muted border border-theme-border overflow-x-auto w-full rounded-2xl">
              <table className="w-full text-left border-collapse">
                 <thead>
-                   <tr className="border-b border-theme-border/30 bg-black/10">
+                   <tr className="border-b border-theme-border bg-black/10">
                       <th className="p-4 text-[10px] font-black text-theme-muted uppercase tracking-widest">Profissional</th>
                       <th className="p-4 text-[10px] font-black text-theme-muted uppercase tracking-widest text-center">Pedidos</th>
                       <th className="p-4 text-[10px] font-black text-theme-muted uppercase tracking-widest text-right">Pendente</th>
@@ -282,7 +282,7 @@ export const AdminFinance: React.FC = () => {
                        <td colSpan={5} className="py-24 text-center text-[11px] text-theme-muted uppercase tracking-[0.4em] italic font-black">Nenhum saldo pendente na rede.</td>
                      </tr>
                    ) : balances.map(b => (
-                     <tr key={b.userId} className="group hover:bg-white/5 transition-all">
+                     <tr key={b.userId} className="group hover:bg-theme-bg-muted transition-all">
                         <td className="p-4">
                            <div className="flex flex-col">
                               <span className="text-[12px] font-black text-theme-text uppercase italic">{b.nome}</span>
@@ -351,7 +351,7 @@ export const AdminFinance: React.FC = () => {
                     </div>
 
                     {/* Presets Rápidos */}
-                    <div className="pt-3 border-t border-theme-border/20 space-y-2">
+                    <div className="pt-3 border-t border-theme-border space-y-2">
                        <span className="text-[10px] font-black text-theme-muted uppercase tracking-widest block opacity-50 italic">Presets de Engenharia</span>
                        <div className="flex flex-wrap gap-1.5">
                           <button type="button" onClick={() => setNewExpense({ description: "CARTÃO MICRO SD (Venda Bruta)", amount: 25, category: "INSUMO", date: new Date().toISOString().split('T')[0] })} className="px-2 py-1 bg-theme-bg border border-theme-border text-[10px] font-black text-theme-muted hover:border-brand-tactical hover:text-theme-text transition-all uppercase rounded-2xl">+ CARTÃO SD (R$ 25)</button>
@@ -370,7 +370,7 @@ export const AdminFinance: React.FC = () => {
               <div className="bg-theme-bg-muted border border-theme-border overflow-x-auto w-full rounded-2xl">
                  <table className="w-full text-left border-collapse">
                     <thead>
-                       <tr className="border-b border-theme-border/30 bg-black/10">
+                       <tr className="border-b border-theme-border bg-black/10">
                           <th className="p-4 text-[10px] font-black text-theme-muted uppercase tracking-widest">Data</th>
                           <th className="p-4 text-[10px] font-black text-theme-muted uppercase tracking-widest">Descrição</th>
                           <th className="p-4 text-[10px] font-black text-theme-muted uppercase tracking-widest text-center">Categoria</th>
@@ -384,7 +384,7 @@ export const AdminFinance: React.FC = () => {
                            <td colSpan={5} className="py-16 text-center text-[11px] text-theme-muted uppercase tracking-[0.4em] italic font-black">Nenhuma despesa operacional lançada.</td>
                          </tr>
                        ) : expenses.map(exp => (
-                         <tr key={exp.id} className="group hover:bg-white/5 transition-all">
+                         <tr key={exp.id} className="group hover:bg-theme-bg-muted transition-all">
                              <td className="p-4 text-[11px] text-theme-muted font-black">{fmtDate(exp.date)}</td>
                             <td className="p-4 text-[11px] text-theme-text font-black uppercase tracking-tight">{exp.description}</td>
                             <td className="p-4 text-center">
@@ -413,11 +413,11 @@ export const AdminFinance: React.FC = () => {
               </div>
               
               <div className="space-y-6">
-                 <div className="flex justify-between items-center border-b border-theme-border/20 pb-4">
+                 <div className="flex justify-between items-center border-b border-theme-border pb-4">
                     <span className="text-[11px] font-black text-theme-muted uppercase tracking-widest">Receita Bruta (Matriz)</span>
                     <span className="text-xl font-heading font-black text-theme-text italic">{formatCurrency(financialData.grossRevenue)}</span>
                  </div>
-                 <div className="flex justify-between items-center border-b border-theme-border/20 pb-4 text-red-500">
+                 <div className="flex justify-between items-center border-b border-theme-border pb-4 text-red-500">
                     <span className="text-[11px] font-black uppercase tracking-widest">(-) Despesas Totais</span>
                     <span className="text-xl font-heading font-black italic">{formatCurrency(financialData.totalExpenses)}</span>
                  </div>
@@ -457,7 +457,7 @@ export const AdminFinance: React.FC = () => {
       {confirmModal && (
         <div className="fixed inset-0 z-[500] flex items-center justify-center p-4">
            <div className="absolute inset-0 bg-theme-bg/80 backdrop-blur-xl animate-in fade-in duration-300" onClick={() => setConfirmModal(null)} />
-           <div className="relative w-full max-w-md bg-theme-card border border-theme-border/60 rounded-[40px] overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300">
+           <div className="relative w-full max-w-md bg-theme-card border border-theme-border rounded-[40px] overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300">
               {/* Header */}
               <div className="p-8 md:p-10 border-b border-theme-border flex items-center justify-between shrink-0">
                 <div className="flex items-center gap-4">
@@ -469,7 +469,7 @@ export const AdminFinance: React.FC = () => {
                     <p className="text-[10px] font-black uppercase tracking-[0.2em] opacity-40">Confirmação de Liquidez</p>
                   </div>
                 </div>
-                <button onClick={() => setConfirmModal(null)} className="p-3 hover:bg-white/5 rounded-full transition-all text-theme-muted"><X size={24} /></button>
+                <button onClick={() => setConfirmModal(null)} className="p-3 hover:bg-theme-bg-muted rounded-full transition-all text-theme-muted"><X size={24} /></button>
               </div>
 
               <div className="p-8 md:p-10 space-y-6 text-center">
@@ -480,7 +480,7 @@ export const AdminFinance: React.FC = () => {
               </div>
 
               {/* Footer */}
-              <div className="p-8 md:p-10 bg-theme-bg-muted/50 border-t border-theme-border flex gap-4 shrink-0 rounded-2xl">
+              <div className="p-8 md:p-10 bg-theme-bg-muted border-t border-theme-border flex gap-4 shrink-0 rounded-2xl">
                 <button onClick={() => setConfirmModal(null)} className="flex-1 py-5 border border-theme-border text-[11px] font-black uppercase tracking-[0.3em] text-theme-muted hover:text-white transition-all rounded-[20px] italic">Cancelar</button>
                 <button 
                   onClick={() => handleMarkAsPaid()} 

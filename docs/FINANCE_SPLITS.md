@@ -27,11 +27,11 @@ The platform incentivizes franchisees to onboard high-quality professionals thro
 
 To prevent fraud and manage chargebacks, the system follows a risk-based release policy:
 
-| Professional Status | Release Logic | Reason |
-| :--- | :--- | :--- |
-| **PRO Verified** | **Immediate** | High-trust partners with validated documentation. |
-| **Standard** | **7-Day Hold** | Safety window for fraud detection and refund requests. |
-| **High Value (>R$ 5k)** | **Manual Review** | Fraud prevention for unusual transaction volumes. |
+| Professional Status     | Release Logic     | Reason                                                 |
+| :---------------------- | :---------------- | :----------------------------------------------------- |
+| **PRO Verified**        | **Immediate**     | High-trust partners with validated documentation.      |
+| **Standard**            | **7-Day Hold**    | Safety window for fraud detection and refund requests. |
+| **High Value (>R$ 5k)** | **Manual Review** | Fraud prevention for unusual transaction volumes.      |
 
 ## 4. Auditability
 

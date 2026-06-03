@@ -308,7 +308,7 @@ export function PrintKitModal({
         className="w-full max-w-5xl bg-theme-card border border-theme-border rounded-[40px] overflow-hidden flex flex-col md:flex-row h-[90vh] md:h-[80vh] shadow-2xl text-theme-text"
       >
         {/* Left: Customization Panel */}
-        <div className="w-full md:w-[420px] p-6 md:p-8 flex flex-col justify-between border-r border-theme-border bg-theme-bg-muted/30 overflow-y-auto custom-scrollbar">
+        <div className="w-full md:w-[420px] p-6 md:p-8 flex flex-col justify-between border-r border-theme-border bg-theme-bg-muted overflow-y-auto custom-scrollbar">
           <div className="space-y-8">
             {/* Header */}
             <div className="flex justify-between items-start">
@@ -329,19 +329,19 @@ export function PrintKitModal({
               <div className="grid grid-cols-3 gap-2">
                 <button
                   onClick={() => setTemplate('TABLE_TENT')}
-                  className={`p-3 rounded-xl border text-xs font-black uppercase tracking-widest transition-all flex flex-col items-center justify-center gap-2 ${template === 'TABLE_TENT' ? 'border-brand-tactical bg-brand-tactical/10 text-brand-tactical' : 'border-theme-border bg-theme-bg-muted/40 text-theme-muted hover:text-theme-text hover:border-theme-border/80'}`}
+                  className={`p-3 rounded-xl border text-xs font-black uppercase tracking-widest transition-all flex flex-col items-center justify-center gap-2 ${template === 'TABLE_TENT' ? 'border-brand-tactical bg-brand-tactical/10 text-brand-tactical' : 'border-theme-border bg-theme-bg-muted text-theme-muted hover:text-theme-text hover:border-theme-border'}`}
                 >
                   <FileText size={16} /> Display
                 </button>
                 <button
                   onClick={() => setTemplate('POSTER')}
-                  className={`p-3 rounded-xl border text-xs font-black uppercase tracking-widest transition-all flex flex-col items-center justify-center gap-2 ${template === 'POSTER' ? 'border-brand-tactical bg-brand-tactical/10 text-brand-tactical' : 'border-theme-border bg-theme-bg-muted/40 text-theme-muted hover:text-theme-text hover:border-theme-border/80'}`}
+                  className={`p-3 rounded-xl border text-xs font-black uppercase tracking-widest transition-all flex flex-col items-center justify-center gap-2 ${template === 'POSTER' ? 'border-brand-tactical bg-brand-tactical/10 text-brand-tactical' : 'border-theme-border bg-theme-bg-muted text-theme-muted hover:text-theme-text hover:border-theme-border'}`}
                 >
                   <FileText size={16} /> Pôster A4
                 </button>
                 <button
                   onClick={() => setTemplate('CARDS')}
-                  className={`p-3 rounded-xl border text-xs font-black uppercase tracking-widest transition-all flex flex-col items-center justify-center gap-2 ${template === 'CARDS' ? 'border-brand-tactical bg-brand-tactical/10 text-brand-tactical' : 'border-theme-border bg-theme-bg-muted/40 text-theme-muted hover:text-theme-text hover:border-theme-border/80'}`}
+                  className={`p-3 rounded-xl border text-xs font-black uppercase tracking-widest transition-all flex flex-col items-center justify-center gap-2 ${template === 'CARDS' ? 'border-brand-tactical bg-brand-tactical/10 text-brand-tactical' : 'border-theme-border bg-theme-bg-muted text-theme-muted hover:text-theme-text hover:border-theme-border'}`}
                 >
                   <FileText size={16} /> Cartões
                 </button>
@@ -356,13 +356,13 @@ export function PrintKitModal({
               <div className="flex bg-theme-bg p-1 border border-theme-border rounded-xl">
                 <button
                   onClick={() => setTheme('DARK')}
-                  className={`flex-1 py-2 text-[10px] font-black uppercase tracking-widest transition-all rounded-lg ${theme === 'DARK' ? 'bg-theme-bg-muted text-brand-tactical border border-theme-border/60' : 'text-theme-muted hover:text-theme-text'}`}
+                  className={`flex-1 py-2 text-[10px] font-black uppercase tracking-widest transition-all rounded-lg ${theme === 'DARK' ? 'bg-theme-bg-muted text-brand-tactical border border-theme-border' : 'text-theme-muted hover:text-theme-text'}`}
                 >
                   Premium Escuro
                 </button>
                 <button
                   onClick={() => setTheme('LIGHT')}
-                  className={`flex-1 py-2 text-[10px] font-black uppercase tracking-widest transition-all rounded-lg ${theme === 'LIGHT' ? 'bg-theme-bg-muted text-brand-tactical border border-theme-border/60' : 'text-theme-muted hover:text-theme-text'}`}
+                  className={`flex-1 py-2 text-[10px] font-black uppercase tracking-widest transition-all rounded-lg ${theme === 'LIGHT' ? 'bg-theme-bg-muted text-brand-tactical border border-theme-border' : 'text-theme-muted hover:text-theme-text'}`}
                 >
                   Clean Minimalista
                 </button>
@@ -403,7 +403,7 @@ export function PrintKitModal({
           <div className="space-y-3 pt-6 border-t border-theme-border mt-6">
             <button
               onClick={handleCopyLink}
-              className="fs-btn w-full border border-theme-border bg-transparent text-theme-muted hover:text-theme-text hover:border-theme-border/80"
+              className="fs-btn w-full border border-theme-border bg-transparent text-theme-muted hover:text-theme-text hover:border-theme-border"
             >
               {copied ? <Check size={14} className="text-brand-tactical" /> : <Copy size={14} />}
               {copied ? 'Link Copiado!' : 'Copiar Link de Captura'}
@@ -433,7 +433,7 @@ export function PrintKitModal({
             {template === 'TABLE_TENT' && (
               <div className="h-full flex flex-col justify-between py-4">
                 {/* Top Tent Segment */}
-                <div className="flex-1 flex flex-col justify-center items-center scale-90 border border-dashed border-theme-border/40 rounded-2xl p-4 mb-2">
+                <div className="flex-1 flex flex-col justify-center items-center scale-90 border  border-theme-border rounded-2xl p-4 mb-2">
                   <img src={tenantLogoUrl || '/logo.png'} style={{ filter: theme === 'DARK' ? 'brightness(0) invert(1)' : 'none' }} className="h-8 object-contain mb-4" alt="Logo" />
                   <h3 className="text-xs font-black text-brand-tactical uppercase tracking-wider mb-2 italic">{headline}</h3>
                   <p className="text-[8px] opacity-80 leading-relaxed mb-3 max-w-[200px]">{subHeadline}</p>
@@ -443,14 +443,14 @@ export function PrintKitModal({
                   <span className="text-[7px] font-bold opacity-40 uppercase tracking-widest">Suas Fotos ao Vivo</span>
                 </div>
                 {/* Fold guide */}
-                <div className="border-t border-dashed border-theme-border/60 my-2 relative">
+                <div className="border-t  border-theme-border my-2 relative">
                   <span className="absolute -top-2 left-50 transform -translate-x-50 bg-theme-bg px-2 text-[6px] font-bold opacity-50 uppercase tracking-wider"
                         style={{ background: theme === 'DARK' ? '#09090b' : '#ffffff' }}>
                     Dobrar aqui
                   </span>
                 </div>
                 {/* Bottom Tent Segment (Rotated) */}
-                <div className="flex-1 flex flex-col justify-center items-center scale-90 border border-dashed border-theme-border/40 rounded-2xl p-4 mt-2 transform rotate-180">
+                <div className="flex-1 flex flex-col justify-center items-center scale-90 border  border-theme-border rounded-2xl p-4 mt-2 transform rotate-180">
                   <img src={tenantLogoUrl || '/logo.png'} style={{ filter: theme === 'DARK' ? 'brightness(0) invert(1)' : 'none' }} className="h-8 object-contain mb-4" alt="Logo" />
                   <h3 className="text-xs font-black text-brand-tactical uppercase tracking-wider mb-2 italic">{headline}</h3>
                   <p className="text-[8px] opacity-80 leading-relaxed mb-3 max-w-[200px]">{subHeadline}</p>
@@ -514,7 +514,7 @@ export function PrintKitModal({
                     <QRCodeSVG value={captureUrl} size={110} level="H" />
                   </div>
 
-                  <div className="flex gap-4 p-3 bg-theme-bg-muted/10 border border-theme-border rounded-xl scale-95"
+                  <div className="flex gap-4 p-3 bg-theme-bg border border-theme-border rounded-xl scale-95"
                        style={{
                          background: theme === 'DARK' ? 'rgba(255,255,255,0.02)' : 'rgba(0,0,0,0.02)',
                          borderColor: theme === 'DARK' ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)'

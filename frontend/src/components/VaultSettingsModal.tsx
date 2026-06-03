@@ -112,7 +112,7 @@ export function VaultSettingsModal({ isOpen, onClose, vault, onUpdate, sortConfi
                   <p className="text-[10px] text-zinc-500 font-medium">{vault.nome}</p>
                 </div>
               </div>
-              <button onClick={onClose} className="p-2 text-zinc-400 hover:text-white bg-white/5 rounded-full transition-colors">
+              <button onClick={onClose} className="p-2 text-zinc-400 hover:text-white bg-theme-bg-muted rounded-full transition-colors">
                 <X size={16} />
               </button>
             </div>
@@ -176,7 +176,7 @@ export function VaultSettingsModal({ isOpen, onClose, vault, onUpdate, sortConfi
                           className={`flex flex-col items-start p-4 rounded-xl border transition-all text-left ${
                             goalPoses === preset.qty
                               ? "bg-emerald-500/10 border-emerald-500/60 ring-1 ring-emerald-500/40"
-                              : "bg-black/30 border-white/5 hover:bg-white/5 hover:border-white/15"
+                              : "bg-black/30 border-white/5 hover:bg-theme-bg-muted hover:border-white/15"
                           }`}
                         >
                           <div className="flex items-center gap-2 mb-2">
@@ -241,7 +241,7 @@ export function VaultSettingsModal({ isOpen, onClose, vault, onUpdate, sortConfi
                       { id: "ORIENTATION_HORZ", label: "Orientação (Horizontais primeiro)" }
                     ].map(opt => (
                       <label key={opt.id} className={`flex items-center gap-3 p-4 rounded-xl border cursor-pointer transition-all ${
-                        sortConfig === opt.id ? "bg-emerald-500/10 border-emerald-500/50" : "bg-black/20 border-white/5 hover:bg-white/5"
+                        sortConfig === opt.id ? "bg-emerald-500/10 border-emerald-500/50" : "bg-black/20 border-white/5 hover:bg-theme-bg-muted"
                       }`}>
                         <div className={`w-4 h-4 rounded-full border flex items-center justify-center ${
                           sortConfig === opt.id ? "border-emerald-500" : "border-zinc-600"

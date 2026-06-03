@@ -21,7 +21,7 @@ export function StatusPage() {
       <Navbar />
       
       {/* Header Minimalista */}
-      <header className="fixed top-0 left-0 right-0 h-16 bg-theme-bg/80 backdrop-blur-lg border-b border-theme-border/40 z-50 flex items-center px-4 md:px-8">
+      <header className="fixed top-0 left-0 right-0 h-16 bg-theme-bg/80 backdrop-blur-lg border-b border-theme-border z-50 flex items-center px-4 md:px-8">
         <Link to="/" className="text-brand-tactical hover:brightness-110 transition-all flex items-center gap-2 text-xs font-black tracking-widest uppercase italic">
           <ArrowLeft size={16} /> Voltar para o início
         </Link>
@@ -57,16 +57,16 @@ export function StatusPage() {
           <h3 className="text-sm font-black uppercase italic tracking-widest mb-6 flex items-center gap-2 text-theme-text-muted">
             <Activity size={16} className="text-brand-tactical" /> Componentes Monitorados
           </h3>
-          <div className="bg-theme-bg-muted border border-theme-border/40 rounded-2xl overflow-hidden divide-y divide-theme-border/40">
+          <div className="bg-theme-bg-muted border border-theme-border rounded-2xl overflow-hidden divide-y divide-theme-border/40">
             {components.map((comp, idx) => (
-              <div key={idx} className="p-4 sm:p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 hover:bg-theme-bg-muted/80 transition-colors">
+              <div key={idx} className="p-4 sm:p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 hover:bg-theme-bg-muted transition-colors">
                 <div className="flex items-center gap-4">
                   <div className={`w-10 h-10 ${comp.bg} ${comp.color} rounded-xl flex items-center justify-center shrink-0`}>
                     {comp.icon}
                   </div>
                   <span className="font-bold text-theme-text">{comp.name}</span>
                 </div>
-                <div className="flex items-center gap-2 px-4 py-2 bg-theme-bg border border-theme-border/40 rounded-full w-full sm:w-auto justify-center">
+                <div className="flex items-center gap-2 px-4 py-2 bg-theme-bg border border-theme-border rounded-full w-full sm:w-auto justify-center">
                   <span className={`w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.8)] animate-pulse`} />
                   <span className="text-xs font-black uppercase tracking-widest text-emerald-500">{comp.status}</span>
                 </div>
@@ -80,14 +80,14 @@ export function StatusPage() {
           <h3 className="text-sm font-black uppercase italic tracking-widest mb-6 text-theme-text-muted">
             Histórico de Incidentes
           </h3>
-          <div className="bg-theme-bg-muted border border-theme-border/40 p-8 rounded-2xl text-center">
+          <div className="bg-theme-bg-muted border border-theme-border p-8 rounded-2xl text-center">
             <p className="text-theme-text font-light italic">Nenhum incidente registrado nos últimos 90 dias.</p>
           </div>
         </section>
 
         {/* O que fazer / Notificações */}
         <div className="grid md:grid-cols-2 gap-6">
-          <section className="bg-brand-tactical/5 border border-brand-tactical/20 p-8 rounded-3xl">
+          <section className="bg-brand-tactical/10 border border-brand-tactical/20 p-8 rounded-3xl">
             <h3 className="text-sm font-black uppercase italic tracking-widest mb-4 flex items-center gap-2 text-brand-tactical">
               <AlertTriangle size={16} /> O que fazer em caso de instabilidade
             </h3>
@@ -104,7 +104,7 @@ export function StatusPage() {
             </Link>
           </section>
 
-          <section className="bg-theme-bg-muted border border-theme-border/40 p-8 rounded-3xl flex flex-col justify-between">
+          <section className="bg-theme-bg-muted border border-theme-border p-8 rounded-3xl flex flex-col justify-between">
             <div>
               <h3 className="text-sm font-black uppercase italic tracking-widest mb-4 flex items-center gap-2 text-theme-text">
                 <Bell size={16} /> Assinar Atualizações
@@ -120,7 +120,7 @@ export function StatusPage() {
         </div>
       </main>
 
-      <footer className="py-8 text-center border-t border-theme-border/40">
+      <footer className="py-8 text-center border-t border-theme-border">
         <p className="text-theme-text-muted text-xs font-bold uppercase tracking-widest mb-1">© 2026 Foto Segundo. Todos os direitos reservados.</p>
         <p className="text-brand-tactical/50 text-[10px] font-black italic uppercase tracking-[0.3em]">Protocolo Editorial de Imagem e Cinema</p>
       </footer>

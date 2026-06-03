@@ -148,7 +148,7 @@ const HelpPage: React.FC = () => {
             </p>
           </div>
 
-          <div className="bg-theme-bg-muted border border-theme-border/60 p-2 md:p-4 flex flex-wrap gap-2 justify-center rounded-2xl">
+          <div className="bg-theme-bg-muted border border-theme-border p-2 md:p-4 flex flex-wrap gap-2 justify-center rounded-2xl">
             {categories.map((cat) => (
               <button
                 key={cat.id}
@@ -156,7 +156,7 @@ const HelpPage: React.FC = () => {
                 className={`flex items-center gap-2 px-4 py-3 rounded-xl transition-all duration-300 font-bold uppercase tracking-widest text-[10px] ${
                   activeCategory === cat.id 
                     ? "bg-brand-tactical text-black shadow-lg shadow-brand-tactical/20" 
-                    : "bg-theme-bg border border-theme-border/40 text-theme-text hover:border-brand-tactical/40"
+                    : "bg-theme-bg border border-theme-border text-theme-text hover:border-brand-tactical/40"
                 }`}
               >
                 {cat.icon}
@@ -182,7 +182,7 @@ const HelpPage: React.FC = () => {
                     <div 
                       key={idx}
                       className={`border transition-all duration-300 rounded-xl overflow-hidden ${
-                        isOpen ? 'border-brand-tactical bg-theme-bg-muted/50' : 'border-theme-border/60 bg-theme-bg-muted hover:border-brand-tactical/40'
+                        isOpen ? 'border-brand-tactical bg-theme-bg-muted' : 'border-theme-border bg-theme-bg-muted hover:border-brand-tactical/40'
                       }`}
                     >
                       <button 
@@ -206,7 +206,7 @@ const HelpPage: React.FC = () => {
                             exit={{ height: 0, opacity: 0 }}
                             className="overflow-hidden"
                           >
-                            <div className="px-6 pb-6 text-theme-text-muted text-sm md:text-base leading-relaxed font-medium pt-2 border-t border-theme-border/20">
+                            <div className="px-6 pb-6 text-theme-text-muted text-sm md:text-base leading-relaxed font-medium pt-2 border-t border-theme-border">
                               {typeof faq.a === 'string' ? (
                                 <p dangerouslySetInnerHTML={{ __html: faq.a.replace(/\*\*(.*?)\*\*/g, '<strong class="text-theme-text">$1</strong>') }} />
                               ) : (
@@ -224,7 +224,7 @@ const HelpPage: React.FC = () => {
           </div>
 
           {/* Contact Section */}
-          <div className="p-8 md:p-12 bg-brand-tactical/5 border border-brand-tactical/20 text-center space-y-6 mt-16 rounded-2xl">
+          <div className="p-8 md:p-12 bg-brand-tactical/10 border border-brand-tactical/20 text-center space-y-6 mt-16 rounded-2xl">
             <HelpCircle size={48} className="mx-auto text-brand-tactical" />
             <div className="space-y-2">
               <h2 className="text-2xl font-black uppercase italic tracking-tight">Não encontrou sua resposta?</h2>
@@ -240,7 +240,7 @@ const HelpPage: React.FC = () => {
       </main>
 
       {/* Footer Minimalista */}
-      <footer className="border-t border-theme-border/40 py-12 px-6">
+      <footer className="border-t border-theme-border py-12 px-6">
         <div className="max-w-4xl mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
           <div className="text-[10px] font-black text-theme-text-muted uppercase tracking-[0.5em] italic">
             © 2026 Foto Segundo • Todos os direitos reservados

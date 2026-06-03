@@ -17,7 +17,14 @@ tech-stack:
 
 key-files:
   created: [backend/src/jobs/escrow-release.job.ts]
-  modified: [backend/prisma/schema.prisma, backend/src/controllers/payment.controller.ts, backend/src/controllers/cron.controller.ts, backend/src/routes/index.ts, backend/src/controllers/payout.controller.ts]
+  modified:
+    [
+      backend/prisma/schema.prisma,
+      backend/src/controllers/payment.controller.ts,
+      backend/src/controllers/cron.controller.ts,
+      backend/src/routes/index.ts,
+      backend/src/controllers/payout.controller.ts,
+    ]
 
 key-decisions:
   - "Rather than creating a complex Wallet/Payout relationship for ServiceBookings, dynamically computed pending/available balance in getMeuSaldoSummary based on ServiceBooking status."
@@ -45,6 +52,7 @@ completed: 2026-05-15
 - **Files modified:** 5
 
 ## Accomplishments
+
 - Added `paymentId` to the `ServiceBooking` Prisma model to track transactions.
 - Updated `PaymentController.mercadopagoWebhook` to intercept transactions prefixed with `booking-` and automatically mark the `ServiceBooking` as `PAID`.
 - Updated `getMeuSaldoSummary` to correctly aggregate `ServiceBooking` values (PENDING if paid, AVAILABLE if released) into the professional's balance.
@@ -57,11 +65,13 @@ completed: 2026-05-15
 2. **Task 3: Webhook and Payout Integration** - `api`
 3. **Task 4: Escrow Release Job** - `api`
 
-*Note: All commits batched at the end of the execution.*
+_Note: All commits batched at the end of the execution._
 
 ## Issues Encountered
+
 - The `ServiceBooking` model was already created by the agent in a previous phase, but `paymentId` was missing. The search tool struggled with file encodings, so `Select-String` via PowerShell was used.
 
 ## Next Phase Readiness
+
 - Escrow flow is fully operational and automatically affects professional's dashboard.
 - Ready for Phase 49 (Proximity Search & Directory).

@@ -50,7 +50,7 @@ export const CountdownTimer = ({ targetDate, onComplete }: CountdownTimerProps) 
       <motion.div 
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="flex items-center justify-center gap-2 lg:gap-4 bg-white/5 border border-theme-border backdrop-blur-xl px-4 py-4 lg:px-8 lg:py-6 rounded-sm w-full max-w-fit mx-auto"
+        className="flex items-center justify-center gap-2 lg:gap-4 bg-theme-bg-muted border border-theme-border backdrop-blur-xl px-4 py-4 lg:px-8 lg:py-6 rounded-sm w-full max-w-fit mx-auto"
       >
         {showDays && (
           <>

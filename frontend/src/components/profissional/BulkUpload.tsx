@@ -107,7 +107,7 @@ export const BulkUpload: React.FC<BulkUploadProps> = ({ eventId, onComplete, onC
         onDragLeave={onDragLeave}
         onDrop={onDrop}
         onClick={() => inputRef.current?.click()}
-        className={`relative flex-1 flex flex-col items-center justify-center border-2 border-dashed transition-all cursor-pointer p-10 m-6 rounded-3xl ${isDragging ? 'border-brand-tactical bg-brand-tactical/10' : 'border-theme-border/40 hover:border-brand-tactical/60 hover:bg-brand-tactical/5'}`}
+        className={`relative flex-1 flex flex-col items-center justify-center border-2  transition-all cursor-pointer p-10 m-6 rounded-3xl ${isDragging ? 'border-brand-tactical bg-brand-tactical/10' : 'border-theme-border hover:border-brand-tactical/60 hover:bg-brand-tactical/10'}`}
       >
         <input 
           type="file" 
@@ -144,7 +144,7 @@ export const BulkUpload: React.FC<BulkUploadProps> = ({ eventId, onComplete, onC
               value={globalTag}
               onChange={(e) => setGlobalTag(e.target.value)}
               placeholder="Opcional: Ex. 104, João Silva"
-              className="w-full bg-theme-bg/50 border border-theme-border/60 p-4 text-[10px] font-black uppercase text-theme-text outline-none focus:border-brand-tactical rounded-xl placeholder:text-theme-text-muted/40"
+              className="w-full bg-theme-bg/50 border border-theme-border p-4 text-[10px] font-black uppercase text-theme-text outline-none focus:border-brand-tactical rounded-xl placeholder:text-theme-text-muted/40"
             />
           </div>
           
@@ -156,7 +156,7 @@ export const BulkUpload: React.FC<BulkUploadProps> = ({ eventId, onComplete, onC
                   initial={{ opacity: 0, scale: 0.9 }}
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.9 }}
-                  className="relative group aspect-square bg-theme-bg-muted border border-theme-border/60 overflow-hidden rounded-xl"
+                  className="relative group aspect-square bg-theme-bg-muted border border-theme-border overflow-hidden rounded-xl"
                 >
                   <img src={f.preview} alt="preview" className="w-full h-full object-cover" />
                   
@@ -205,7 +205,7 @@ export const BulkUpload: React.FC<BulkUploadProps> = ({ eventId, onComplete, onC
             <button 
               onClick={onCancel}
               disabled={isUploading}
-              className="flex-1 py-4 border border-theme-border text-theme-text-muted text-[10px] font-black uppercase tracking-widest hover:bg-white/5 transition-all italic rounded-2xl"
+              className="flex-1 py-4 border border-theme-border text-theme-text-muted text-[10px] font-black uppercase tracking-widest hover:bg-theme-bg-muted transition-all italic rounded-2xl"
             >
               Cancelar
             </button>

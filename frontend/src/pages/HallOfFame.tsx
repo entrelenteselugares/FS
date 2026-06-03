@@ -135,7 +135,7 @@ export const HallOfFame: React.FC = () => {
       )}
 
       {/* Histórico / Galeria de Vencedores */}
-      <section className="bg-theme-bg-muted/30 py-32 border-t border-theme-border">
+      <section className="bg-theme-bg-muted py-32 border-t border-theme-border">
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex items-center gap-4 mb-20 justify-center">
             <Shield size={20} className="text-theme-muted" />

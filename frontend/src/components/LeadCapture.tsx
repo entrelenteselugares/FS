@@ -46,7 +46,7 @@ const LeadCapture: React.FC<LeadCaptureProps> = ({ eventId }) => {
   }
 
   return (
-    <div className="relative p-8 overflow-hidden rounded-[24px] border border-theme-border/20 shadow-2xl bg-gradient-to-br from-theme-bg-muted to-theme-bg group">
+    <div className="relative p-8 overflow-hidden rounded-[24px] border border-theme-border shadow-2xl bg-gradient-to-br from-theme-bg-muted to-theme-bg group">
       <div className="absolute -top-12 -right-12 w-32 h-32 bg-brand-tactical/10 blur-3xl rounded-full group-hover:bg-brand-tactical/20 transition-all duration-700" />
       <div className="relative z-10 space-y-6">
         <div className="space-y-1">
@@ -66,7 +66,7 @@ const LeadCapture: React.FC<LeadCaptureProps> = ({ eventId }) => {
               placeholder="seu@email.com" 
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full bg-theme-bg/50 backdrop-blur-sm border border-theme-border/40 px-10 py-4 text-xs font-medium text-theme-text placeholder:text-theme-text-muted/50 focus:border-brand-tactical transition-all outline-none rounded-xl"
+              className="w-full bg-theme-bg/50 backdrop-blur-sm border border-theme-border px-10 py-4 text-xs font-medium text-theme-text placeholder:text-theme-text-muted/50 focus:border-brand-tactical transition-all outline-none rounded-xl"
               required
             />
           </div>

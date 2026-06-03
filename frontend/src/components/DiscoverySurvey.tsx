@@ -54,7 +54,7 @@ export const DiscoverySurvey: React.FC = () => {
           className="w-full max-w-xl bg-zinc-950 border border-brand-tactical/20 p-10 space-y-10 relative overflow-hidden"
         >
           {/* Background Elements */}
-          <div className="absolute top-0 right-0 w-64 h-64 bg-brand-tactical/5 rounded-full blur-[100px] pointer-events-none" />
+          <div className="absolute top-0 right-0 w-64 h-64 bg-brand-tactical/10 rounded-full blur-[100px] pointer-events-none" />
           
           <div className="space-y-3 relative z-10">
             <p className="text-[10px] font-black text-brand-tactical uppercase tracking-[0.4em] italic">Missão Reconhecimento</p>

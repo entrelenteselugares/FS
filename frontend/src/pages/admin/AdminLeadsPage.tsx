@@ -82,8 +82,8 @@ export const AdminLeadsPage: React.FC = () => {
   return (
     <div className="space-y-12 animate-in fade-in duration-500">
       {/* Header Padronizado */}
-      <div className="relative border-b border-theme-border/60 pb-8 md:pb-12 space-y-4 md:space-y-6">
-        <div className="absolute -top-10 -left-10 w-40 h-40 bg-brand-tactical/5 blur-3xl rounded-full" />
+      <div className="relative border-b border-theme-border pb-8 md:pb-12 space-y-4 md:space-y-6">
+        <div className="absolute -top-10 -left-10 w-40 h-40 bg-brand-tactical/10 blur-3xl rounded-full" />
         
         <div className="flex flex-col xl:flex-row justify-between items-start xl:items-end gap-6 relative z-10">
           <div>
@@ -152,7 +152,7 @@ export const AdminLeadsPage: React.FC = () => {
       </div>
 
       {/* Content */}
-      <div className="bg-theme-bg-muted/30 border border-theme-border overflow-x-auto w-full rounded-2xl">
+      <div className="bg-theme-bg-muted border border-theme-border overflow-x-auto w-full rounded-2xl">
         {activeSubTab === 'abandoned' ? (
           <table className="w-full text-left border-collapse">
             <thead>
@@ -166,7 +166,7 @@ export const AdminLeadsPage: React.FC = () => {
             </thead>
             <tbody className="divide-y divide-theme-border">
               {abandoned.map((item) => (
-                <tr key={item.id} className="hover:bg-brand-tactical/5 transition-colors group">
+                <tr key={item.id} className="hover:bg-brand-tactical/10 transition-colors group">
                   <td className="p-6">
                     <div className="space-y-1">
                       <div className="text-[10px] font-black text-theme-text uppercase italic">{item.cliente?.nome || 'Cliente não identificado'}</div>
@@ -232,7 +232,7 @@ export const AdminLeadsPage: React.FC = () => {
             </thead>
             <tbody className="divide-y divide-theme-border">
               {leads.map((lead) => (
-                <tr key={lead.id} className="hover:bg-brand-tactical/5 transition-colors">
+                <tr key={lead.id} className="hover:bg-brand-tactical/10 transition-colors">
                   <td className="p-6">
                     <div className="flex items-center gap-3">
                       <div className="w-8 h-8 bg-brand-tactical/10 flex items-center justify-center rounded-full text-brand-tactical">

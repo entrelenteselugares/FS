@@ -23,14 +23,14 @@ A execução da ferramenta GSD de auditoria UAT oficial atestou:
 ### Histórico de Verificação por Componente
 
 1. **Atendimento AI WhatsApp (Phase 52 - WPP):**
-   - *Critério:* Cliente envia mensagem e o robô responde com tom natural em < 5 segundos usando dados reais do cofre. (Aprovado ✅)
-   - *Critério:* Geração de link de checkout via chat WhatsApp envia redirecionamento seguro MercadoPago. (Aprovado ✅)
+   - _Critério:_ Cliente envia mensagem e o robô responde com tom natural em < 5 segundos usando dados reais do cofre. (Aprovado ✅)
+   - _Critério:_ Geração de link de checkout via chat WhatsApp envia redirecionamento seguro MercadoPago. (Aprovado ✅)
 2. **Vault Settings & Media Manager (Phase 53 - VCONF):**
-   - *Critério:* Dono do cofre altera o nome e a ordenação de mídias; visualização do cliente atualiza instantaneamente. (Aprovado ✅)
-   - *Critério:* Exclusão de membro remove acessos de visualização nas rotas autenticadas de forma imediata. (Aprovado ✅)
+   - _Critério:_ Dono do cofre altera o nome e a ordenação de mídias; visualização do cliente atualiza instantaneamente. (Aprovado ✅)
+   - _Critério:_ Exclusão de membro remove acessos de visualização nas rotas autenticadas de forma imediata. (Aprovado ✅)
 3. **Badges & Gamification (Phase 54 - BADGE):**
-   - *Critério:* Conclusão de missões e uploads atualizam dinamicamente as medalhas no perfil do profissional. (Aprovado ✅)
-   - *Critério:* Exibição responsiva de badges premium com acabamento estético "Midnight Luxury". (Aprovado ✅)
+   - _Critério:_ Conclusão de missões e uploads atualizam dinamicamente as medalhas no perfil do profissional. (Aprovado ✅)
+   - _Critério:_ Exibição responsiva de badges premium com acabamento estético "Midnight Luxury". (Aprovado ✅)
 
 ---
 
@@ -42,5 +42,7 @@ Durante os testes de certificação final, as seguintes correções foram integr
 - **E2E Timeout:** Tratamento de fechamento do lightbox via tecla Escape, adicionando labels acessíveis nas imagens da galeria e robustez no carregamento assíncrono.
 
 ---
+
 <!-- GSD-DOCS-UPDATE: SUPPLEMENTED -->
-*Auditado e homologado pelo protocolo GSD-UAT em 2026-05.*
+
+_Auditado e homologado pelo protocolo GSD-UAT em 2026-05._

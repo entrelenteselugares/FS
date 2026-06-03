@@ -1,4 +1,5 @@
 <!-- generated-by: gsd-doc-writer -->
+
 # Testing Guide: Foto Segundo
 
 Quality assurance in Foto Segundo is driven by end-to-end (E2E) testing to ensure transaction integrity across all phygital verticals.
@@ -18,15 +19,15 @@ npx playwright install --with-deps
 
 ## Running Tests
 
-| Command | Description |
-|---------|-------------|
-| `npm test` | Runs the main E2E suite (Playwright). |
-| `npm run test:certify` | Executes the launch certification robot (E2E). |
-| `npm run test --prefix backend` | Runs backend resilience tests (Jest). |
+| Command                                         | Description                                        |
+| ----------------------------------------------- | -------------------------------------------------- |
+| `npm test`                                      | Runs the main E2E suite (Playwright).              |
+| `npm run test:certify`                          | Executes the launch certification robot (E2E).     |
+| `npm run test --prefix backend`                 | Runs backend resilience tests (Jest).              |
 | `npx tsx backend/src/tests/flash-scale.test.ts` | Runs the high-concurrency Flash Event stress test. |
-| `npm run test:all --prefix backend` | Runs all backend unit and integration tests. |
-| `npx playwright test --ui` | Opens the Playwright UI for interactive debugging. |
-| `npx playwright show-report` | Views the HTML report of the last test run. |
+| `npm run test:all --prefix backend`             | Runs all backend unit and integration tests.       |
+| `npx playwright test --ui`                      | Opens the Playwright UI for interactive debugging. |
+| `npx playwright show-report`                    | Views the HTML report of the last test run.        |
 
 ## Writing New Tests
 
@@ -38,11 +39,11 @@ npx playwright install --with-deps
 Example Test:
 
 ```typescript
-import { test, expect } from '@playwright/test';
+import { test, expect } from "@playwright/test";
 
-test('should load the home page', async ({ page }) => {
-  await page.goto('/');
-  await expect(page.getByText('Foto Segundo')).toBeVisible();
+test("should load the home page", async ({ page }) => {
+  await page.goto("/");
+  await expect(page.getByText("Foto Segundo")).toBeVisible();
 });
 ```
 
@@ -67,4 +68,5 @@ Tests are integrated into our CI pipeline (GitHub Actions).
 - **Artifacts:** Videos and traces are captured for failing tests and available in the CI logs.
 
 <!-- GSD-DOCS-UPDATE: SUPPLEMENTED -->
-*Documentação verificada e atualizada automaticamente via GSD-SDK em 2026-06.*
+
+_Documentação verificada e atualizada automaticamente via GSD-SDK em 2026-06._

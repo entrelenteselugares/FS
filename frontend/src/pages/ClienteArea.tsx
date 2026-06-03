@@ -12,7 +12,7 @@ import {
   Users, Play, CheckCircle2, ArrowRight, 
   ShoppingBag, ShieldCheck, Clock, Image as ImageIcon,
   Zap, Lock, User, AlertTriangle, Briefcase, Building2, Camera,
-  DollarSign, Calendar, Printer, Settings, Sparkles, LayoutDashboard
+  DollarSign, Calendar, Printer, Settings, Sparkles, LayoutDashboard, MapPin
 } from "lucide-react";
 import { ProfilePhotoUpload } from "../components/ProfilePhotoUpload";
 import { toast } from "sonner";
@@ -465,7 +465,7 @@ export default function ClienteArea() {
               <div 
                 key={m.label} 
                 className={`relative overflow-hidden p-4 sm:p-6 md:p-8 border rounded-2xl transition-all duration-500 group ${
-                  m.highlight ? 'bg-brand-tactical/5 border-brand-tactical/30' : 'bg-theme-bg-muted/10 border-theme-border/40 hover:border-theme-border/80'
+                  m.highlight ? 'bg-brand-tactical/10 border-brand-tactical/30' : 'bg-theme-bg border-theme-border hover:border-theme-border'
                 }`}
                 style={{ animationDelay: `${idx * 150}ms` }}
               >
@@ -501,7 +501,7 @@ export default function ClienteArea() {
             <div className="space-y-10">
               {/* Wallet Header Section */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-8">
-                <div className="relative overflow-hidden bg-theme-bg-muted/10 border border-theme-border/40 p-4 sm:p-8 md:p-10 rounded-2xl transition-all duration-500 hover:border-brand-tactical/30 hover:shadow-[0_0_30px_rgba(242,193,46,0.03)] group">
+                <div className="relative overflow-hidden bg-theme-bg border-2 border-theme-border p-4 sm:p-8 md:p-10 rounded-2xl transition-all duration-500 hover:border-brand-tactical hover:shadow-[0_0_20px_rgba(133,185,172,0.3)] hover:border-brand-tactical group">
                   <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-white/5 to-transparent rotate-45 translate-x-12 -translate-y-12 pointer-events-none" />
                   <div className="relative z-10 space-y-2 sm:space-y-4">
                     <label className="text-[8px] sm:text-[9px] font-black text-theme-text-muted uppercase tracking-[0.2em] block">Saldo Disponível</label>
@@ -513,7 +513,7 @@ export default function ClienteArea() {
                     </p>
                   </div>
                 </div>
-                <div className="relative overflow-hidden bg-theme-bg-muted/10 border border-theme-border/40 p-4 sm:p-8 md:p-10 rounded-2xl transition-all duration-500 hover:border-brand-tactical/30 hover:shadow-[0_0_30px_rgba(242,193,46,0.03)] flex flex-col justify-between gap-3 sm:gap-6 group">
+                <div className="relative overflow-hidden bg-theme-bg border-2 border-theme-border p-4 sm:p-8 md:p-10 rounded-2xl transition-all duration-500 hover:border-brand-tactical hover:shadow-[0_0_20px_rgba(133,185,172,0.3)] hover:border-brand-tactical flex flex-col justify-between gap-3 sm:gap-6 group">
                   <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-white/5 to-transparent rotate-45 translate-x-12 -translate-y-12 pointer-events-none" />
                   <div className="relative z-10 space-y-2 sm:space-y-4">
                     <p className="text-[8px] sm:text-[10px] font-black text-theme-text uppercase tracking-widest italic flex items-center gap-1.5 sm:gap-2">
@@ -548,7 +548,7 @@ export default function ClienteArea() {
                   ))}
                 </div>
               ) : pedidos.length === 0 ? (
-                <div className="relative overflow-hidden border border-dashed border-theme-border/40 p-24 text-center space-y-8">
+                <div className="relative overflow-hidden border  border-theme-border p-24 text-center space-y-8">
                   <div className="absolute inset-0 bg-gradient-to-br from-brand-tactical/5 to-transparent opacity-50" />
                   <div className="relative inline-block">
                     <ImageIcon size={48} className="mx-auto text-theme-border/30" />
@@ -593,11 +593,11 @@ export default function ClienteArea() {
                     <p className="text-[9px] font-black text-theme-muted uppercase tracking-[0.4em]">Extrato de Recompensas</p>
                  </div>
 
-                 <div className="bg-theme-bg-muted/10 border border-theme-border/40 rounded-2xl overflow-hidden shadow-sm">
+                 <div className="bg-theme-bg border-2 border-theme-border rounded-2xl overflow-hidden shadow-sm">
                     {user?.gamificationLedger && user.gamificationLedger.length > 0 ? (
                       <div className="divide-y divide-theme-border/10">
                         {user.gamificationLedger.map(item => (
-                          <div key={item.id} className="p-5 flex items-center justify-between hover:bg-theme-bg-muted/10 transition-all">
+                          <div key={item.id} className="p-5 flex items-center justify-between hover:bg-theme-bg transition-all">
                              <div className="space-y-1">
                                 <div className="flex items-center gap-2">
                                   <div className="w-1.5 h-1.5 rounded-full bg-brand-tactical" />
@@ -637,8 +637,8 @@ export default function ClienteArea() {
             </div>
           ) : activeTab === "profile" ? (
             <div className="space-y-8">
-            <div className="lux-card p-10 max-w-2xl border-l-4 border-l-brand-tactical bg-theme-bg-muted/10">
-              <div className="flex flex-col md:flex-row gap-8 items-center md:items-start mb-8 pb-8 border-b border-theme-border/20">
+            <div className="lux-card p-10 max-w-2xl border-l-4 border-l-brand-tactical bg-theme-bg">
+              <div className="flex flex-col md:flex-row gap-8 items-center md:items-start mb-8 pb-8 border-b border-theme-border">
                 <ProfilePhotoUpload onProfileUpdated={() => window.location.reload()} />
                 <div className="space-y-2 text-center md:text-left">
                   <h2 className="text-xl font-heading font-black text-theme-text uppercase italic tracking-tight">Meus Dados</h2>
@@ -711,7 +711,7 @@ export default function ClienteArea() {
                   {saveSuccess && <span className="text-brand-tactical text-[10px] font-black uppercase tracking-widest">✓ Atualizado</span>}
                 </div>
               </form>
-              <div className="pt-6 border-t border-theme-border/40 space-y-4">
+              <div className="pt-6 border-t border-theme-border space-y-4">
                 <h3 className="text-[9px] font-black text-red-400 uppercase tracking-[0.3em]">Zona de Suporte</h3>
                 <p className="text-[11px] text-theme-muted">Para redefinir sua senha ou solicitar exclusão de dados, entre em contato com nosso suporte.</p>
                 <a href="https://wa.me/5519981150440" target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 text-[10px] font-black text-theme-text uppercase tracking-widest hover:text-brand-tactical transition-colors">
@@ -722,7 +722,7 @@ export default function ClienteArea() {
 
             {/* Role Application Section */}
             {(user?.role === "CLIENTE" || user?.verificationStatus === "PENDING") && (
-              <div className="lux-card p-10 max-w-2xl border-l-4 border-l-emerald-500 bg-theme-bg-muted/10">
+              <div className="lux-card p-10 max-w-2xl border-l-4 border-l-emerald-500 bg-theme-bg">
                 <div className="space-y-6">
                   <div className="flex items-center gap-4">
                     <div className="p-3 bg-emerald-500/10 text-emerald-500 border border-emerald-500/20">
@@ -765,7 +765,7 @@ export default function ClienteArea() {
                               setIsApplying(false);
                             }
                           }}
-                          className="p-6 border border-theme-border/40 hover:border-emerald-500/60 transition-all text-left space-y-3 group bg-theme-bg/20"
+                          className="p-6 border-2 border-theme-border hover:border-emerald-500/60 transition-all text-left space-y-3 group bg-theme-bg/20"
                         >
                           <Camera size={20} className="text-theme-muted group-hover:text-emerald-500 transition-colors" />
                           <div className="space-y-1">
@@ -787,7 +787,7 @@ export default function ClienteArea() {
                               setIsApplying(false);
                             }
                           }}
-                          className="p-6 border border-theme-border/40 hover:border-emerald-500/60 transition-all text-left space-y-3 group bg-theme-bg/20"
+                          className="p-6 border-2 border-theme-border hover:border-emerald-500/60 transition-all text-left space-y-3 group bg-theme-bg/20"
                         >
                           <Building2 size={20} className="text-theme-muted group-hover:text-emerald-500 transition-colors" />
                           <div className="space-y-1">
@@ -927,7 +927,7 @@ function EventGroupRow({ group, now, onSelectPedido }: {
       <div className="relative group border border-amber-500/20 bg-amber-500/[0.01] hover:border-amber-500/40 transition-all duration-500 overflow-hidden rounded-2xl p-4 sm:p-6 animate-in fade-in slide-in-from-top-4 duration-300">
         <div className="flex flex-row items-center gap-4 md:gap-6">
           {/* Small elegant Thumbnail */}
-          <div className="relative w-16 h-16 sm:w-24 sm:h-24 bg-zinc-950 overflow-hidden border border-theme-border/40 rounded-xl shrink-0">
+          <div className="relative w-16 h-16 sm:w-24 sm:h-24 bg-zinc-950 overflow-hidden border-2 border-theme-border rounded-xl shrink-0">
             {event.coverPhotoUrl ? (
               <img 
                 src={event.coverPhotoUrl.toString().trim().replace(/\s/g, '')} 
@@ -991,194 +991,124 @@ function EventGroupRow({ group, now, onSelectPedido }: {
 
   return (
     <div
-      className={`relative group border transition-all duration-500 overflow-hidden rounded-2xl ${
-        hasPendente ? 'border-amber-500/40 bg-amber-500/[0.02]' : 'border-theme-border/40 bg-theme-bg-muted/10'
-       } ${isExpiringSoon ? 'border-amber-500/40' : ''}`}
+      className={`relative group border transition-all duration-500 overflow-hidden rounded-xl ${
+        hasPendente ? 'border-amber-500/40 bg-amber-500/[0.02]' : 'border-theme-border bg-theme-bg/60 backdrop-blur-sm'
+       } hover:border-brand-tactical/50`}
       style={{
         boxShadow: isExpiringSoon ? "0 0 20px rgba(245, 158, 11, 0.05)" : "none"
       }}
     >
-      <div className="flex flex-col lg:flex-row items-stretch gap-4 md:gap-8 p-4 md:p-6 lg:p-8">
+      <div className="flex flex-col sm:flex-row items-stretch">
         {/* Thumbnail Section */}
-        <div className="flex flex-col gap-4">
-          <div className="relative w-full lg:w-56 h-36 lg:h-auto lg:aspect-[3/4] bg-zinc-950 overflow-hidden border border-theme-border/40 group-hover:border-brand-tactical/40 transition-colors shadow-2xl rounded-xl">
-            {event.coverPhotoUrl ? (
-              <img 
-                src={event.coverPhotoUrl.toString().trim().replace(/\s/g, '')} 
-                alt="" 
-                className={`w-full h-full object-cover transition-all duration-1000 group-hover:scale-110 ${hasAprovado ? 'grayscale-0 brightness-110' : 'grayscale brightness-40 blur-[2px]'}`} 
-                style={{ objectPosition: event.coverPosition || 'center' }}
-                onError={(e) => {
-                  const target = e.target as HTMLImageElement;
-                  target.onerror = null;
-                  target.src = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiMzZjNmNDYiIHN0cm9rZS13aWR0aD0iMiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PHJlY3Qgd2lkdGg9IjE4IiBoZWlnaHQ9IjE4IiB4PSIzIiB5PSIzIiByeD0iMiIgcnk9IjIiLz48Y2lyY2xlIGN4PSI5IiBjeT0iOSIgcj0iMiIvPjxwYXRoIGQ9Im0yMSAxNS0zLjA4Ni0zLjA4NmEyIDIgMCAwIDAtMi44MjggMEw2IDIxIi8+PC9zdmc+';
-                  target.className = `w-full h-full object-contain p-6 opacity-30 transition-all duration-1000 group-hover:scale-110`;
-                }}
-              />
-            ) : (
-              <div className="w-full h-full flex items-center justify-center bg-zinc-900">
-                <ImageIcon size={32} className="text-zinc-800" />
-              </div>
-            )}
-            
-            {/* Tactical Overlays */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent pointer-events-none" />
-            
-            {!hasAprovado && (
-              <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-theme-bg-muted/80 backdrop-blur-[1px]">
-                 <div className="p-2 bg-theme-bg border border-theme-border/20 rounded-full">
-                   <Clock size={16} className="text-amber-500" />
-                 </div>
-                 <p className="text-[8px] font-black text-theme-text uppercase tracking-[0.3em]">Acesso Bloqueado</p>
-              </div>
-            )}
-
-            {isExpiringSoon && (
-              <div className="absolute top-4 right-4 px-2 py-1 bg-amber-500 text-black text-[8px] font-black uppercase tracking-widest">
-                Expira em {daysLeft}d
-              </div>
-            )}
-            
-            <div className="absolute bottom-4 left-4 right-4 flex justify-between items-center z-10">
-               <p className="text-[9px] font-black text-zinc-400 uppercase tracking-widest italic">{event.city || "Digital"}</p>
-               <div className="flex gap-1">
-                 {event.temFoto && <div className="w-1 h-1 rounded-full bg-brand-tactical" />}
-                 {event.temVideo && <div className="w-1 h-1 rounded-full bg-emerald-400" />}
-               </div>
+        <div className="relative w-full sm:w-48 md:w-64 h-48 sm:h-auto shrink-0 bg-zinc-950 overflow-hidden border-b sm:border-b-0 sm:border-r border-theme-border">
+          {event.coverPhotoUrl ? (
+            <img 
+              src={event.coverPhotoUrl.toString().trim().replace(/\s/g, '')} 
+              alt="" 
+              className={`w-full h-full object-cover transition-all duration-1000 group-hover:scale-105 ${hasAprovado ? '' : 'grayscale brightness-40 blur-[2px]'}`} 
+              style={{ objectPosition: event.coverPosition || 'center' }}
+            />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center bg-zinc-900">
+              <ImageIcon size={32} className="text-zinc-800" />
             </div>
-          </div>
+          )}
+          
+          <div className="absolute inset-0 bg-gradient-to-t sm:bg-gradient-to-r from-theme-bg/80 sm:from-theme-bg/40 via-transparent to-transparent pointer-events-none" />
+          
+          {!hasAprovado && (
+            <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-theme-bg-muted/40 backdrop-blur-[2px]">
+               <div className="p-2 bg-theme-bg border border-theme-border rounded-full shadow-lg">
+                 <Clock size={16} className="text-amber-500" />
+               </div>
+               <p className="text-[8px] font-black text-theme-text uppercase tracking-[0.3em] bg-theme-bg/80 px-2 py-0.5 rounded">Bloqueado</p>
+            </div>
+          )}
         </div>
 
         {/* Content */}
-        <div className="flex-1 flex flex-col justify-between min-w-0 py-2">
-          <div className="space-y-6">
-            <div className="flex flex-col md:flex-row md:items-start justify-between gap-6">
-              <div className="space-y-2">
-                <div className="flex items-center gap-3">
-                   <div className="h-0.5 w-6 bg-brand-tactical" />
-                   <p className="text-[9px] font-black text-brand-tactical uppercase tracking-[0.4em]">Álbum do Evento</p>
+        <div className="flex-1 flex flex-col justify-between p-4 md:p-6 min-w-0 bg-theme-bg/40">
+          <div className="flex justify-between items-start gap-4">
+             <div className="min-w-0">
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="text-[8px] font-black text-brand-tactical uppercase tracking-widest px-2 py-0.5 bg-brand-tactical/10 rounded border border-brand-tactical/20">
+                    Álbum
+                  </span>
+                  <span className="text-[9px] text-theme-text-muted font-bold uppercase tracking-wider">
+                    {formatDate(event.dataEvento)}
+                  </span>
                 </div>
-                <h4 className="text-xl sm:text-2xl font-heading font-black italic tracking-tighter uppercase leading-none text-theme-text line-clamp-2">
-                  {event?.slug?.startsWith('vault-') || pedidos[0]?.manualType === 'COFRE' ? `Ordem de Cofre: ${event.title}` : event.title}
+                <h4 className="text-lg md:text-xl font-heading font-black italic tracking-tighter uppercase leading-tight text-theme-text line-clamp-2" title={event.title}>
+                  {event?.slug?.startsWith('vault-') || pedidos[0]?.manualType === 'COFRE' ? `Cofre: ${event.title}` : event.title}
                 </h4>
-                <div className="flex items-center gap-3 text-[9px] md:text-[10px] font-bold text-theme-muted uppercase tracking-widest">
-                  <div className="flex items-center gap-1.5"><Clock size={11} /> {formatDate(event.dataEvento)}</div>
-                  <span className="w-1 h-1 rounded-full bg-theme-border" />
-                  <span>{event.city || event.location}</span>
-                </div>
-              </div>
-
-              <div className="flex flex-wrap justify-end gap-1.5 pt-2">
+                <p className="text-[10px] text-theme-text-muted uppercase tracking-widest mt-1 flex items-center gap-1.5 truncate">
+                  <MapPin size={10} /> {event.city || event.location || "Digital"}
+                </p>
+             </div>
+             
+             {/* Tags */}
+             <div className="flex flex-col gap-1 items-end shrink-0 hidden sm:flex">
                 {event.temFoto && <Tag label="Foto" />}
                 {event.temVideo && <Tag label="Vídeo" />}
                 {event.temReels && <Tag label="Reels" color="var(--brand-tactical)" />}
-              </div>
-            </div>
-
-            {/* Tactical Status Card */}
-            <div className="relative p-6 bg-zinc-900/40 border border-theme-border/30 overflow-hidden group/jornada rounded-xl">
-               <div className="absolute top-0 left-0 w-1 h-full bg-brand-tactical opacity-50 group-hover/jornada:opacity-100 transition-opacity" />
-               <div className="relative z-10 space-y-2">
-                 <div className="flex items-center gap-3">
-                    <Zap size={12} className="text-brand-tactical" />
-                    <p className="text-[10px] font-black text-brand-tactical uppercase tracking-widest italic">Status da Operação</p>
-                 </div>
-                 <p className="text-sm md:text-base text-theme-text-muted font-medium leading-relaxed italic">
-                    "{getStatusMessage(event.dataEvento)}"
-                 </p>
-               </div>
-               <div className="absolute top-0 right-0 p-4 opacity-5">
-                  <Clock size={60} />
-               </div>
-            </div>
-
-            {/* Order History Grid */}
-            <div className="space-y-4">
-              <div className="flex items-center gap-3">
-                 <div className="h-px w-6 bg-theme-border/40" />
-                 <p className="text-[9px] font-black text-theme-text-muted uppercase tracking-[0.3em]">Histórico de Aquisições</p>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                {pedidos.map((p: Pedido) => (
-                  <button 
-                    key={p.id} 
-                    onClick={() => onSelectPedido(p)}
-                    className={`flex items-center justify-between p-4 border transition-all duration-300 text-left group/order rounded-xl ${
-                      p.hasPaid 
-                        ? 'border-emerald-500/10 bg-emerald-500/5 hover:border-emerald-500/30' 
-                        : 'border-amber-500/20 bg-amber-500/5 hover:border-amber-500/40'
-                    }`}
-                  >
-                    <div className="min-w-0 flex items-center gap-3">
-                      <div className={`p-2 ${p.hasPaid ? 'bg-emerald-500/10 text-emerald-400' : 'bg-amber-500/10 text-amber-400'}`}>
-                        {p.hasPaid ? <CheckCircle2 size={14} /> : <Clock size={14} />}
-                      </div>
-                      <div className="min-w-0">
-                        <p className="text-[10px] font-black text-theme-text uppercase tracking-widest truncate group-hover/order:text-brand-tactical transition-colors">{p.manualType || "Investimento"}</p>
-                        <p className={`text-[8px] font-black uppercase tracking-widest opacity-60`}>
-                          {p.hasPaid ? "Confirmado" : "Pendente"}
-                        </p>
-                      </div>
-                    </div>
-                    <p className={`text-sm font-black italic ml-4 ${p.hasPaid ? 'text-emerald-400' : 'text-amber-400'}`}>
-                      {formatCurrency(p.amount)}
-                    </p>
-                  </button>
-                ))}
-              </div>
-            </div>
+             </div>
           </div>
 
-          <div className="mt-8 flex flex-col md:flex-row md:items-center justify-between gap-6 border-t border-theme-border/20 pt-6">
-            <div className="flex items-center gap-4">
-              {hasAprovado && (
-                <div className="flex items-center gap-3">
-                  <div className={`w-2 h-2 rounded-full ${isExpiringSoon ? 'bg-amber-500' : 'bg-brand-tactical'}`} />
-                  <p className={`text-[10px] font-black uppercase tracking-widest ${isExpiringSoon ? 'text-amber-500' : 'text-brand-tactical'}`}>
-                    {daysLeft && daysLeft <= 0 ? "Expirado" : `${daysLeft}d restantes — ${latestAprovado?.accessType === "PUBLIC" ? "Público" : "Privado"}`}
-                  </p>
-                </div>
-              )}
-            </div>
+          <div className="mt-4 space-y-3">
+             {/* Status Line Compact */}
+             <div className="flex items-center gap-2 text-[10px] text-theme-text-muted font-medium bg-theme-bg-muted/50 px-3 py-2 rounded-lg border border-theme-border/50">
+                <Zap size={12} className="text-brand-tactical shrink-0" />
+                <span className="truncate">{getStatusMessage(event.dataEvento)}</span>
+             </div>
 
-            <div className="flex flex-wrap items-center gap-4">
+             {/* Histórico Compacto */}
+             {pedidos.length > 0 && (
+                <div className="flex flex-wrap gap-2">
+                  {pedidos.map(p => (
+                    <button key={p.id} onClick={() => onSelectPedido(p)} className="flex items-center gap-1.5 px-2.5 py-1.5 bg-theme-bg border border-theme-border rounded-md hover:border-brand-tactical group/order transition-all">
+                       <div className={`w-1.5 h-1.5 rounded-full ${p.hasPaid ? 'bg-emerald-400' : 'bg-amber-400 animate-pulse'}`} />
+                       <span className="text-[8px] font-black uppercase tracking-widest text-theme-text-muted group-hover/order:text-theme-text max-w-[120px] truncate">{p.manualType || "Investimento"}</span>
+                       <span className={`text-[9px] font-black italic ml-1 ${p.hasPaid ? 'text-emerald-400' : 'text-amber-400'}`}>{formatCurrency(p.amount)}</span>
+                    </button>
+                  ))}
+                </div>
+             )}
+          </div>
+
+          <div className="mt-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-t border-theme-border/50 pt-4">
+            <div className="flex items-center gap-3">
+               {hasAprovado && isExpiringSoon && (
+                  <span className="text-[9px] font-black text-amber-500 uppercase tracking-widest bg-amber-500/10 px-2 py-1 rounded border border-amber-500/20">
+                    Expira em {daysLeft}d
+                  </span>
+               )}
+            </div>
+            
+            <div className="flex items-center gap-2 sm:gap-3 w-full sm:w-auto">
                <button 
-                  onClick={() => {
+                  onClick={(e) => {
+                    e.stopPropagation();
                     if (new Date(event.dataEvento).getTime() > now) {
-                      handleAddServices();
+                      handleAddServices(e);
                     } else {
                       const url = getEventUrl(pedidos[0]);
                       navigate(url.includes('?') ? `${url}&action=print` : `${url}?action=print`);
                     }
                   }}
-                  className="fs-btn border border-theme-border text-theme-text hover:border-brand-tactical hover:text-brand-tactical flex items-center gap-2"
-                >
-                  {new Date(event.dataEvento).getTime() > now ? (
-                    <>
-                      {Math.ceil((new Date(event.dataEvento).getTime() - now) / 864e5) > 10 ? "Fazer Upgrade" : "Solicitar Inclusão"}
-                    </>
-                  ) : (
-                    <>
-                      <ShoppingBag size={12} className="text-brand-tactical" /> REVELAR MEMÓRIAS
-                    </>
-                  )}
-                </button>
+                  className="flex-1 sm:flex-none fs-btn !px-4 !py-2.5 border border-theme-border text-theme-text-muted hover:text-brand-tactical hover:border-brand-tactical text-[9px]"
+               >
+                  {new Date(event.dataEvento).getTime() > now ? "Upgrade" : "Revelar"}
+               </button>
 
-              {hasAprovado ? (
-                <button
-                  onClick={() => navigate(getEventUrl(pedidos[0]))}
-                  className="fs-btn bg-brand-tactical text-brand-text shadow-lg shadow-brand-tactical/20 flex items-center gap-2"
-                >
-                  Acessar Álbum <ArrowRight size={14} />
-                </button>
-              ) : (
-                <button
-                  onClick={() => firstPendente && navigate(`/checkout?orderId=${firstPendente.id}`)}
-                  className="fs-btn bg-amber-500 text-theme-text shadow-lg shadow-amber-500/20"
-                >
-                  Desbloquear Agora
-                </button>
-              )}
+               {hasAprovado ? (
+                  <button onClick={() => navigate(getEventUrl(pedidos[0]))} className="flex-1 sm:flex-none fs-btn bg-brand-tactical text-black !px-5 !py-2.5 flex items-center justify-center gap-2">
+                    Acessar <ArrowRight size={14} />
+                  </button>
+               ) : (
+                  <button onClick={() => firstPendente && navigate(`/checkout?orderId=${firstPendente.id}`)} className="flex-1 sm:flex-none fs-btn bg-amber-500 text-theme-text !px-5 !py-2.5 shadow-lg shadow-amber-500/20">
+                    Desbloquear
+                  </button>
+               )}
             </div>
           </div>
         </div>
@@ -1348,7 +1278,7 @@ function PedidoDetalhe({ pedido, loading, onGoToEvent, onChangePrivacy, onRefres
       <div className="p-6 space-y-8">
         {isEditing && (
           <div className="space-y-6 animate-in fade-in slide-in-from-top-4 duration-500">
-            <div className="flex flex-col gap-5 bg-theme-bg-muted/10 p-6 border border-theme-border/40 rounded-lg">
+            <div className="flex flex-col gap-5 bg-theme-bg p-6 border-2 border-theme-border rounded-lg">
               <div className="space-y-1.5">
                 <label className="text-[8px] font-black text-brand-tactical uppercase tracking-[0.2em]">Identidade do Álbum</label>
                 <input 
@@ -1426,7 +1356,7 @@ function PedidoDetalhe({ pedido, loading, onGoToEvent, onChangePrivacy, onRefres
                 />
               </div>
 
-              <div className="flex gap-3 mt-2 pt-4 border-t border-theme-border/30">
+              <div className="flex gap-3 mt-2 pt-4 border-t border-theme-border">
                 <button 
                   onClick={handleSave} 
                   disabled={isSaving} 
@@ -1445,7 +1375,7 @@ function PedidoDetalhe({ pedido, loading, onGoToEvent, onChangePrivacy, onRefres
           </div>
         )}
         <div className="flex flex-col md:flex-row gap-4">
-          <div className="flex-1 flex items-center justify-between p-4 border border-theme-border/60 bg-theme-bg-muted/5">
+          <div className="flex-1 flex items-center justify-between p-4 border-2 border-theme-border bg-theme-bg">
             <div className="flex items-center gap-3">
               <ShieldCheck size={16} className="text-brand-tactical" />
               <div>
@@ -1461,7 +1391,7 @@ function PedidoDetalhe({ pedido, loading, onGoToEvent, onChangePrivacy, onRefres
           </div>
 
           {pedido.hasPaid && pedido.accessExpiresAt && (
-            <div className="flex items-center justify-between p-4 border border-theme-border/60 bg-theme-bg-muted/5 md:w-64">
+            <div className="flex items-center justify-between p-4 border-2 border-theme-border bg-theme-bg md:w-64">
               <div>
                 <p className="text-[10px] font-black text-theme-muted uppercase tracking-widest">Válido Até</p>
                 <p className="text-sm font-black text-theme-text italic">{formatDate(pedido.accessExpiresAt)}</p>
@@ -1547,7 +1477,7 @@ function PedidoDetalhe({ pedido, loading, onGoToEvent, onChangePrivacy, onRefres
               )}
             </div>
           ) : (
-            <div className="p-6 text-center border border-dashed border-theme-border/40 bg-brand-tactical/5 flex items-center justify-between gap-4">
+            <div className="p-6 text-center border  border-theme-border bg-brand-tactical/10 flex items-center justify-between gap-4">
               <div className="text-left space-y-1">
                 <p className="text-[10px] font-black text-theme-text uppercase tracking-widest italic">Acesso Restrito</p>
                 <p className="text-[9px] text-theme-muted uppercase font-bold tracking-widest">Aguardando pagamento</p>
@@ -1563,7 +1493,7 @@ function PedidoDetalhe({ pedido, loading, onGoToEvent, onChangePrivacy, onRefres
         </div>
 
         {/* Bottom Actions Compactos */}
-        <div className="pt-6 border-t border-theme-border/20 flex gap-3">
+        <div className="pt-6 border-t border-theme-border flex gap-3">
           <button 
             onClick={onGoToEvent} 
             className="flex-1 py-3 border border-theme-border text-[9px] font-black uppercase tracking-[0.2em] text-theme-text hover:border-brand-tactical hover:text-brand-tactical transition-colors"
@@ -1593,8 +1523,8 @@ function MediaActionCard({ icon, title, subtitle, url, disabled }: {
 }) {
   if (disabled) {
     return (
-      <div className="p-6 bg-theme-bg-muted/30 border border-theme-border/30 text-theme-muted flex items-center gap-5 cursor-not-allowed">
-        <div className="p-3 bg-theme-bg-muted border border-theme-border/20 opacity-40">{icon}</div>
+      <div className="p-6 bg-theme-bg-muted border border-theme-border text-theme-muted flex items-center gap-5 cursor-not-allowed">
+        <div className="p-3 bg-theme-bg-muted border border-theme-border opacity-40">{icon}</div>
         <div>
           <p className="text-[11px] font-black uppercase tracking-widest mb-1 italic">{title}</p>
           <p className="text-[10px] font-bold italic opacity-60">Aguardando Publicação</p>
@@ -1608,7 +1538,7 @@ function MediaActionCard({ icon, title, subtitle, url, disabled }: {
       href={url || '#'} 
       target="_blank" 
       rel="noreferrer" 
-      className="group relative flex items-center justify-between p-6 bg-theme-bg-muted/10 border border-theme-border/60 hover:border-brand-tactical hover:bg-brand-tactical/5 transition-all duration-500 overflow-hidden"
+      className="group relative flex items-center justify-between p-6 bg-theme-bg border-2 border-theme-border hover:border-brand-tactical hover:bg-brand-tactical/10 transition-all duration-500 overflow-hidden"
     >
       <div className="absolute inset-0 bg-gradient-to-r from-brand-tactical/0 to-brand-tactical/5 translate-x-[-100%] group-hover:translate-x-0 transition-transform duration-700" />
       <div className="relative z-10 flex items-center gap-5">

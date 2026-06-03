@@ -8,7 +8,7 @@ export function TermsPage() {
       <SEO title="Termos de Uso | Foto Segundo" description="Termos de Uso da plataforma Foto Segundo." />
       
       {/* Header Minimalista */}
-      <header className="fixed top-0 left-0 right-0 h-16 bg-theme-bg/80 backdrop-blur-lg border-b border-theme-border/40 z-50 flex items-center px-4 md:px-8">
+      <header className="fixed top-0 left-0 right-0 h-16 bg-theme-bg/80 backdrop-blur-lg border-b border-theme-border z-50 flex items-center px-4 md:px-8">
         <Link to="/" className="text-brand-tactical hover:brightness-110 transition-all flex items-center gap-2 text-xs font-black tracking-widest uppercase italic">
           <ArrowLeft size={16} /> Voltar para o início
         </Link>
@@ -26,7 +26,7 @@ export function TermsPage() {
           <p className="text-theme-text-muted font-medium text-sm">
             Última atualização: maio de 2026
           </p>
-          <div className="mt-8 p-6 bg-theme-bg-muted border border-theme-border/60 rounded-2xl flex items-start gap-4">
+          <div className="mt-8 p-6 bg-theme-bg-muted border border-theme-border rounded-2xl flex items-start gap-4">
             <FileText className="text-brand-tactical shrink-0 mt-1" size={24} />
             <p className="text-sm md:text-base text-theme-text font-light leading-relaxed">
               Ao acessar ou utilizar a plataforma Foto Segundo ("Plataforma"), você concorda com estes Termos de Uso. Se não concordar com qualquer parte, não utilize a Plataforma.
@@ -44,15 +44,15 @@ export function TermsPage() {
               A Foto Segundo é uma plataforma digital que conecta clientes a profissionais de audiovisual e oferece ferramentas para criação de álbuns colaborativos, contratação de serviços fotográficos e entrega de mídias digitais e físicas.
             </p>
             <div className="grid md:grid-cols-3 gap-4">
-              <div className="bg-theme-bg-muted border border-theme-border/40 p-5 rounded-xl">
+              <div className="bg-theme-bg-muted border border-theme-border p-5 rounded-xl">
                 <h3 className="text-brand-tactical font-black uppercase tracking-widest text-xs mb-2">Contratação Profissional</h3>
                 <p className="text-theme-text-muted text-sm font-light leading-relaxed">Agendamento de cobertura fotográfica com profissionais da rede</p>
               </div>
-              <div className="bg-theme-bg-muted border border-theme-border/40 p-5 rounded-xl">
+              <div className="bg-theme-bg-muted border border-theme-border p-5 rounded-xl">
                 <h3 className="text-brand-tactical font-black uppercase tracking-widest text-xs mb-2">Álbuns Colaborativos</h3>
                 <p className="text-theme-text-muted text-sm font-light leading-relaxed">Criação de cofres privados (Vaults) para upload e votação colaborativa de fotos entre convidados</p>
               </div>
-              <div className="bg-theme-bg-muted border border-theme-border/40 p-5 rounded-xl">
+              <div className="bg-theme-bg-muted border border-theme-border p-5 rounded-xl">
                 <h3 className="text-brand-tactical font-black uppercase tracking-widest text-xs mb-2">Assinatura Premium</h3>
                 <p className="text-theme-text-muted text-sm font-light leading-relaxed">Plano mensal de impressão e entrega das fotos mais votadas</p>
               </div>
@@ -61,7 +61,7 @@ export function TermsPage() {
 
           {/* Seção 3 e 5 em Grid */}
           <div className="grid md:grid-cols-2 gap-8">
-            <section className="bg-theme-bg-muted/50 p-6 rounded-2xl border border-theme-border/40">
+            <section className="bg-theme-bg-muted p-6 rounded-2xl border border-theme-border">
               <h2 className="text-lg font-black uppercase italic tracking-tight mb-4 flex items-center gap-2">
                 <span className="text-brand-tactical">3.</span> Cadastro e Conta
               </h2>
@@ -72,7 +72,7 @@ export function TermsPage() {
               </ul>
             </section>
 
-            <section className="bg-theme-bg-muted/50 p-6 rounded-2xl border border-theme-border/40">
+            <section className="bg-theme-bg-muted p-6 rounded-2xl border border-theme-border">
               <h2 className="text-lg font-black uppercase italic tracking-tight mb-4 flex items-center gap-2">
                 <span className="text-brand-tactical">5.</span> Pagamentos e Reembolsos
               </h2>
@@ -91,7 +91,7 @@ export function TermsPage() {
               <span className="text-brand-tactical">4.</span> Uso Aceitável
             </h2>
             <div className="grid md:grid-cols-2 gap-6">
-              <div className="border border-brand-tactical/30 bg-brand-tactical/5 p-6 rounded-xl">
+              <div className="border border-brand-tactical/30 bg-brand-tactical/10 p-6 rounded-xl">
                 <h3 className="text-sm font-black text-brand-tactical uppercase tracking-widest mb-4 flex items-center gap-2">
                   <Check size={18} /> É permitido
                 </h3>
@@ -155,7 +155,7 @@ export function TermsPage() {
           </section>
 
           {/* Seção 8, 9 e 10 */}
-          <div className="grid md:grid-cols-3 gap-6 pt-8 border-t border-theme-border/40">
+          <div className="grid md:grid-cols-3 gap-6 pt-8 border-t border-theme-border">
             <div className="space-y-4">
               <h2 className="text-sm font-black uppercase italic tracking-widest flex items-center gap-2">
                 <ShieldAlert size={16} className="text-brand-tactical" /> 8. Limitações
@@ -184,7 +184,7 @@ export function TermsPage() {
         </div>
       </main>
 
-      <footer className="py-8 text-center border-t border-theme-border/40">
+      <footer className="py-8 text-center border-t border-theme-border">
         <p className="text-theme-text-muted text-xs font-bold uppercase tracking-widest mb-1">© 2026 Foto Segundo. Todos os direitos reservados.</p>
         <p className="text-brand-tactical/50 text-[10px] font-black italic uppercase tracking-[0.3em]">Protocolo Editorial de Imagem e Cinema</p>
       </footer>

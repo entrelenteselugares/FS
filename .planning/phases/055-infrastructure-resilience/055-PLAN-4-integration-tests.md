@@ -17,12 +17,14 @@ O backend já possui `src/tests/integration.test.ts` rodando com Jest contra o s
 </objective>
 
 <threat_model>
+
 ## Threat Model
 
-| Ameaça | Severidade | Mitigação |
-|---|---|---|
-| Teste de webhook alterar estado real do banco de produção | ALTA | Testes usam o servidor LOCAL (localhost:3001) com o banco de desenvolvimento; webhook de teste nunca usa payload de produção |
-| Teste de idempotência criar registros duplicados permanentes | MÉDIA | Usar `orderId` com timestamp único por run; limpar com afterAll se registro for criado |
+| Ameaça                                                       | Severidade | Mitigação                                                                                                                    |
+| ------------------------------------------------------------ | ---------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| Teste de webhook alterar estado real do banco de produção    | ALTA       | Testes usam o servidor LOCAL (localhost:3001) com o banco de desenvolvimento; webhook de teste nunca usa payload de produção |
+| Teste de idempotência criar registros duplicados permanentes | MÉDIA      | Usar `orderId` com timestamp único por run; limpar com afterAll se registro for criado                                       |
+
 </threat_model>
 
 <tasks>
@@ -43,7 +45,6 @@ Adicionar ao FINAL de `backend/src/tests/integration.test.ts` (após a linha 554
 // 18. WEBHOOK MERCADO PAGO — FLUXOS CRÍTICOS (post-mortem Phase 55)
 // ══════════════════════════════════════════════════════════════════════════════
 describe("💸 Webhook Mercado Pago — Fluxos Críticos", () => {
-
   /**
    * Teste 1: Webhook com payload válido não deve rejeitar com 401 ou 500 imediatamente.
    * (O controller valida a assinatura; um payload sem assinatura deve retornar 400, não 500.)
@@ -63,7 +64,7 @@ describe("💸 Webhook Mercado Pago — Fluxos Críticos", () => {
 
   /**
    * Teste 2: Idempotência — enviar o mesmo webhook duas vezes não cria 2 pedidos aprovados.
-   * 
+   *
    * Como não temos um pedido real no DB de teste, verificamos que o endpoint
    * não explode (500) quando recebe payload duplicado — o comportamento correto
    * de idempotência é retornar 200 (já processado) ou 404 (pedido não encontrado).
@@ -107,7 +108,6 @@ describe("💸 Webhook Mercado Pago — Fluxos Críticos", () => {
 // 19. UPLOAD DE MÍDIA — FLUXO INIT/COMPLETE (post-mortem Phase 55)
 // ══════════════════════════════════════════════════════════════════════════════
 describe("📤 Upload de Mídia — Fluxo Direto (Direct Upload)", () => {
-
   /**
    * Teste 1: POST /vaults/:id/upload/init sem token → 401
    */
@@ -123,10 +123,14 @@ describe("📤 Upload de Mídia — Fluxo Direto (Direct Upload)", () => {
    * Verifica que o endpoint não explode quando não encontra o cofre.
    */
   test("POST /vaults/vault-inexistente/upload/init com token → 404 (não 500)", async () => {
-    const r = await req("POST", "/vaults/vault-id-que-nao-existe-00000/upload/init", {
-      token: clienteToken,
-      body: { fileName: "foto.jpg", mimeType: "image/jpeg" },
-    });
+    const r = await req(
+      "POST",
+      "/vaults/vault-id-que-nao-existe-00000/upload/init",
+      {
+        token: clienteToken,
+        body: { fileName: "foto.jpg", mimeType: "image/jpeg" },
+      },
+    );
     // Deve retornar 404 (vault não encontrado) ou 403 (não membro)
     // Nunca deve retornar 500 (erro interno não tratado)
     expect(r.status).not.toBe(500);
@@ -151,7 +155,6 @@ describe("📤 Upload de Mídia — Fluxo Direto (Direct Upload)", () => {
 // 20. STORAGE R2 — ENDPOINT INIT RETORNA storageType
 // ══════════════════════════════════════════════════════════════════════════════
 describe("☁️ Storage R2 — Contrato de Resposta", () => {
-  
   let vaultId: string | null = null;
 
   beforeAll(async () => {
@@ -167,7 +170,9 @@ describe("☁️ Storage R2 — Contrato de Resposta", () => {
 
   test("POST /vaults/:id/upload/init (cofre real) → resposta contém uploadUrl", async () => {
     if (!vaultId) {
-      console.warn("[TEST SKIP] Cofre de teste não pôde ser criado (Drive/R2 não configurado em CI)");
+      console.warn(
+        "[TEST SKIP] Cofre de teste não pôde ser criado (Drive/R2 não configurado em CI)",
+      );
       return;
     }
 
@@ -189,6 +194,7 @@ describe("☁️ Storage R2 — Contrato de Resposta", () => {
   });
 });
 ```
+
 </action>
 <acceptance_criteria>
 - `integration.test.ts` contém `describe("💸 Webhook Mercado Pago — Fluxos Críticos"`
@@ -216,41 +222,46 @@ cd backend && npx tsc --noEmit
 ```
 
 Se houver erros TypeScript nos novos testes, corrigir antes de prosseguir. Erros comuns esperados:
+
 - `(r.data as any)` pode precisar de cast explícito — já está previsto no código acima
 - `vaultId` pode ter aviso de nullable — já tratado com `if (!vaultId)` guard
 
 Validar que o arquivo não tem sintaxe incorreta rodando:
+
 ```bash
 node --input-type=commonjs -e "require('./src/tests/integration.test.ts')"
 ```
+
 (ou via ts-node: `npx ts-node --noEmit src/tests/integration.test.ts`)
 
 **IMPORTANTE:** NÃO rodar `npm run test:integration` em produção. Esse script bate contra `localhost:3001` e pressupõe o servidor local rodando. É para ambiente de desenvolvimento apenas.
 </action>
 <acceptance_criteria>
+
 - `npx tsc --noEmit` no backend retorna exit code 0
 - `integration.test.ts` tem exatamente 3 novos `describe` blocos adicionados (seções 18, 19, 20)
 - O arquivo não contém nenhuma sintaxe TypeScript inválida (sem `any` sem cast, sem `undefined` não tratado)
-</acceptance_criteria>
-</task>
+  </acceptance_criteria>
+  </task>
 
 </tasks>
 
 <verification>
 ## Verification
 
-1. `backend/src/tests/integration.test.ts` contém `describe("💸 Webhook Mercado Pago — Fluxos Críticos"` 
+1. `backend/src/tests/integration.test.ts` contém `describe("💸 Webhook Mercado Pago — Fluxos Críticos"`
 2. `backend/src/tests/integration.test.ts` contém `describe("📤 Upload de Mídia — Fluxo Direto"`
 3. `backend/src/tests/integration.test.ts` contém `toBeLessThan(3000)` (teste de latência do webhook)
 4. `npx tsc --noEmit` no backend retorna exit code 0
 5. Contagem de `describe(` no arquivo é ≥ 20 (17 existentes + 3 novos)
-</verification>
+   </verification>
 
 <success_criteria>
+
 - Os 3 fluxos críticos do post-mortem têm cobertura de teste formal na suite de integração
 - Os testes rodam com `npm run test:integration` (contra servidor local) sem modificar o framework
 - Os testes são defensivos: usam `not.toBe(500)` e `toContain([200, 400, 404])` em vez de asserts frágeis que quebram em CI sem banco real
 - A latência do webhook é monitorada por teste (< 3000ms) — regressão de performance vira falha de CI
-</success_criteria>
+  </success_criteria>
 
 ## PLANNING COMPLETE

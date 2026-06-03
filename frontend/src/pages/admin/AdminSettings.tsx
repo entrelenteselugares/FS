@@ -70,7 +70,7 @@ export const AdminSettings: React.FC = () => {
         </button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-white/5 border border-theme-border">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-theme-bg-muted border border-theme-border">
         {/* Branding & Identity */}
         <div className="bg-theme-bg p-10 space-y-10 border-b md:border-b-0 md:border-r border-theme-border rounded-2xl">
           <div className="flex items-center gap-4 mb-4">

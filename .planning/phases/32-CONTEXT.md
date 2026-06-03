@@ -1,6 +1,7 @@
 # Phase 32 Context: Production Hardening & Operations
 
 ## 🎯 Decisions
+
 1. **Error Tracking**: Use Sentry.
    - **Org Slug**: `foto-segundo`
    - **DSN**: To be provided via `.env` (SENTRY_DSN).
@@ -20,13 +21,16 @@
    - **Checks**: Database (Prisma `$queryRaw` "SELECT 1") and basic system status.
 
 ## 🏗️ Technical Approach
+
 - **Sentry SDK**: `@sentry/nextjs` (for frontend/API routes) or `@sentry/node` (for standalone backend).
 - **GitHub Action**: Use standard `.github/workflows/verify.yml`.
 - **Health Endpoint**: Simple controller in `backend/src/controllers/health.controller.ts`.
 
 ## 📂 Reusable Assets
+
 - `playwright.config.ts`: Use as the base for CI test command.
 - `backend/src/lib/prisma.ts`: Use for health check connectivity test.
 
 ---
-*Created: 2026-05-14 | Phase 32*
+
+_Created: 2026-05-14 | Phase 32_

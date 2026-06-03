@@ -1,4 +1,5 @@
 <!-- generated-by: gsd-doc-writer -->
+
 # Development Guide
 
 Este guia detalha o fluxo de trabalho local para o desenvolvimento e manutenção da plataforma Foto Segundo.
@@ -48,7 +49,7 @@ O repositório é configurado com o frontend (`/frontend`) em Vite/React e o bac
    npm run dev
    ```
 
-   *Este comando inicia o servidor Vite (normalmente porta 3001) e o backend (porta 3002).*
+   _Este comando inicia o servidor Vite (normalmente porta 3001) e o backend (porta 3002)._
 
 ## Padrões de Código
 
@@ -72,7 +73,7 @@ Se você estiver desenvolvendo ou estendendo as capacidades de impressão:
 
 - **Framework:** Hono (Vercel Edge/Serverless) substituindo o Express em rotas pesadas.
 - **ORM:** Prisma. Sempre que houver uma mudança no `schema.prisma`, execute `npx prisma generate`.
-- **Tratamento de Erros:** Todas as requisições devem envelopar `try/catch`. 
+- **Tratamento de Erros:** Todas as requisições devem envelopar `try/catch`.
 - **Fragmentation Strategy:** Rotas que importam bibliotecas pesadas de manipulação de PDF ou imagem devem residir no backend Vercel/Node em vez do Supabase Edge Functions para evitar estouro do bundle limit (20MB) e de memória (256MB).
 
 ## Testes e Quality Assurance (UAT)
@@ -100,4 +101,5 @@ Antes de abrir um Pull Request:
 - Atualizações de documentação automáticas podem ser solicitadas via fluxo GSD.
 
 <!-- GSD-DOCS-UPDATE: SUPPLEMENTED -->
-*Documentação verificada e atualizada automaticamente via GSD-SDK em 2026-06.*
+
+_Documentação verificada e atualizada automaticamente via GSD-SDK em 2026-06._

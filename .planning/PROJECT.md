@@ -40,28 +40,28 @@ Shipped **v13.0 Scale & Optimization**. The platform has undergone optimization 
 <summary>Archived Milestones</summary>
 
 **v13.0 Scale & Optimization**
-*Goal:* Integrate automated conversational AI for customer engagement (WhatsApp) and implement custom service creations and media management.
-*Outcome:* Delivered Bidirectional WhatsApp AI Attendant (Baileys + Google Gemini Integration), Vault configuration/sorting/ACL controls, and Custom Service Submission with Admin Approval flows.
+_Goal:_ Integrate automated conversational AI for customer engagement (WhatsApp) and implement custom service creations and media management.
+_Outcome:_ Delivered Bidirectional WhatsApp AI Attendant (Baileys + Google Gemini Integration), Vault configuration/sorting/ACL controls, and Custom Service Submission with Admin Approval flows.
 
 **v12.0 Unified Marketplace & Production Go-Live**
-*Goal:* Scale the marketplace with portfolio galleries, booking fee escrow payments, proximity search, and multi-tier affiliate programs.
-*Outcome:* Delivered Portfolio Galleries, Automated Booking Escrow, Proximity Search directory, Multi-Tier Affiliate system, and production telemetry monitoring.
+_Goal:_ Scale the marketplace with portfolio galleries, booking fee escrow payments, proximity search, and multi-tier affiliate programs.
+_Outcome:_ Delivered Portfolio Galleries, Automated Booking Escrow, Proximity Search directory, Multi-Tier Affiliate system, and production telemetry monitoring.
 
 **v11.0 Professional Governance & Marketplace Alpha**
-*Goal:* Enable administrative control over partner applications and provide public visibility for subscribed professionals.
-*Outcome:* Delivered Admin Approval Hub and the initial public Professional Directory with budget request integration.
+_Goal:_ Enable administrative control over partner applications and provide public visibility for subscribed professionals.
+_Outcome:_ Delivered Admin Approval Hub and the initial public Professional Directory with budget request integration.
 
 **v10.0 Professional Network & Engagement**
-*Goal:* Transform the user profile into a growth engine by allowing role transitions and gamifying data completion.
-*Outcome:* Delivered Multi-Profile transitions, Role Switcher, and Gamified Profile Stepper.
+_Goal:_ Transform the user profile into a growth engine by allowing role transitions and gamifying data completion.
+_Outcome:_ Delivered Multi-Profile transitions, Role Switcher, and Gamified Profile Stepper.
 
 **v9.0 B2B & White-Label Expansion**
-*Goal:* Empower franchisees and major partners with custom branding and advanced financial reporting.
-*Outcome:* Delivered Tenant White-Labeling, Custom Branding Renderer, and Advanced Financial Exports for v9.0. Added Express Registration (Phase 42) for frictionless QR onboarding.
+_Goal:_ Empower franchisees and major partners with custom branding and advanced financial reporting.
+_Outcome:_ Delivered Tenant White-Labeling, Custom Branding Renderer, and Advanced Financial Exports for v9.0. Added Express Registration (Phase 42) for frictionless QR onboarding.
 
 **v8.0 MRR Engine**
-*Goal:* Enable recurring monthly revenue through Vault subscriptions.
-*Outcome:* Delivered hybrid free-to-pay vaults, Mercado Pago recurring billing webhook integration, auto-blocking cron jobs, and admin MRR reporting.
+_Goal:_ Enable recurring monthly revenue through Vault subscriptions.
+_Outcome:_ Delivered hybrid free-to-pay vaults, Mercado Pago recurring billing webhook integration, auto-blocking cron jobs, and admin MRR reporting.
 
 **v7.0 Expansão Total e Go-Live**
 
@@ -92,4 +92,5 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-05-24*
+
+_Last updated: 2026-05-24_

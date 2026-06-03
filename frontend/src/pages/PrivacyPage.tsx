@@ -8,7 +8,7 @@ export function PrivacyPage() {
       <SEO title="Política de Privacidade | Foto Segundo" description="Política de Privacidade e Proteção de Dados da plataforma Foto Segundo (LGPD)." />
       
       {/* Header Minimalista */}
-      <header className="fixed top-0 left-0 right-0 h-16 bg-theme-bg/80 backdrop-blur-lg border-b border-theme-border/40 z-50 flex items-center px-4 md:px-8">
+      <header className="fixed top-0 left-0 right-0 h-16 bg-theme-bg/80 backdrop-blur-lg border-b border-theme-border z-50 flex items-center px-4 md:px-8">
         <Link to="/" className="text-brand-tactical hover:brightness-110 transition-all flex items-center gap-2 text-xs font-black tracking-widest uppercase italic">
           <ArrowLeft size={16} /> Voltar para o início
         </Link>
@@ -26,7 +26,7 @@ export function PrivacyPage() {
           <p className="text-theme-text-muted font-medium text-sm">
             Última atualização: maio de 2026
           </p>
-          <div className="mt-8 p-6 bg-brand-tactical/5 border border-brand-tactical/20 rounded-2xl flex items-start gap-4">
+          <div className="mt-8 p-6 bg-brand-tactical/10 border border-brand-tactical/20 rounded-2xl flex items-start gap-4">
             <Shield className="text-brand-tactical shrink-0 mt-1" size={24} />
             <p className="text-sm md:text-base text-theme-text font-light leading-relaxed">
               Esta Política descreve como a Foto Segundo coleta, utiliza, armazena e protege seus dados pessoais, em total conformidade com a <strong className="text-brand-tactical font-black">Lei Geral de Proteção de Dados (LGPD — Lei nº 13.709/2018)</strong>.
@@ -40,7 +40,7 @@ export function PrivacyPage() {
             <h2 className="text-xl font-black uppercase italic tracking-tight mb-6 flex items-center gap-3">
               <span className="text-brand-tactical">1.</span> Controlador dos Dados
             </h2>
-            <div className="bg-theme-bg-muted border border-theme-border/60 p-6 rounded-xl space-y-2">
+            <div className="bg-theme-bg-muted border border-theme-border p-6 rounded-xl space-y-2">
               <p className="font-bold text-theme-text uppercase tracking-wider text-sm">Foto Segundo</p>
               <p className="text-theme-text-muted text-sm">Sumaré, São Paulo — Brasil</p>
               <p className="text-sm mt-4">
@@ -57,7 +57,7 @@ export function PrivacyPage() {
             </h2>
             
             <div className="grid md:grid-cols-2 gap-6">
-              <div className="border border-theme-border/40 p-6 rounded-xl hover:border-brand-tactical/30 transition-colors">
+              <div className="border border-theme-border p-6 rounded-xl hover:border-brand-tactical/30 transition-colors">
                 <h3 className="text-sm font-black text-brand-tactical uppercase tracking-widest mb-4 flex items-center gap-2">
                   <User size={16} /> Fornecidos por você
                 </h3>
@@ -71,7 +71,7 @@ export function PrivacyPage() {
                 </ul>
               </div>
 
-              <div className="border border-theme-border/40 p-6 rounded-xl hover:border-brand-tactical/30 transition-colors">
+              <div className="border border-theme-border p-6 rounded-xl hover:border-brand-tactical/30 transition-colors">
                 <h3 className="text-sm font-black text-brand-tactical uppercase tracking-widest mb-4 flex items-center gap-2">
                   <Eye size={16} /> Coletados automaticamente
                 </h3>
@@ -92,7 +92,7 @@ export function PrivacyPage() {
             <h2 className="text-xl font-black uppercase italic tracking-tight mb-6 flex items-center gap-3">
               <span className="text-brand-tactical">3.</span> Como Usamos seus Dados
             </h2>
-            <div className="overflow-x-auto rounded-xl border border-theme-border/60">
+            <div className="overflow-x-auto rounded-xl border border-theme-border">
               <table className="w-full text-left text-sm">
                 <thead className="bg-theme-bg-muted text-xs uppercase tracking-wider text-theme-text">
                   <tr>
@@ -101,13 +101,13 @@ export function PrivacyPage() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-theme-border/40 text-theme-text-muted">
-                  <tr className="hover:bg-theme-bg-muted/30"><td className="p-4">Criar e gerenciar sua conta</td><td className="p-4">Execução de contrato (Art. 7º, V)</td></tr>
-                  <tr className="hover:bg-theme-bg-muted/30"><td className="p-4">Processar pagamentos e pedidos</td><td className="p-4">Execução de contrato (Art. 7º, V)</td></tr>
-                  <tr className="hover:bg-theme-bg-muted/30"><td className="p-4">Enviar notificações sobre seu evento</td><td className="p-4">Execução de contrato (Art. 7º, V)</td></tr>
-                  <tr className="hover:bg-theme-bg-muted/30"><td className="p-4">Calcular e distribuir splits financeiros</td><td className="p-4">Execução de contrato (Art. 7º, V)</td></tr>
-                  <tr className="hover:bg-theme-bg-muted/30"><td className="p-4">Melhorar a Plataforma e corrigir erros</td><td className="p-4">Legítimo interesse (Art. 7º, IX)</td></tr>
-                  <tr className="hover:bg-theme-bg-muted/30"><td className="p-4">Enviar comunicações de marketing</td><td className="p-4">Consentimento (Art. 7º, I)</td></tr>
-                  <tr className="hover:bg-theme-bg-muted/30"><td className="p-4">Cumprir obrigações legais</td><td className="p-4">Cumprimento de obrigação legal (Art. 7º, II)</td></tr>
+                  <tr className="hover:bg-theme-bg-muted"><td className="p-4">Criar e gerenciar sua conta</td><td className="p-4">Execução de contrato (Art. 7º, V)</td></tr>
+                  <tr className="hover:bg-theme-bg-muted"><td className="p-4">Processar pagamentos e pedidos</td><td className="p-4">Execução de contrato (Art. 7º, V)</td></tr>
+                  <tr className="hover:bg-theme-bg-muted"><td className="p-4">Enviar notificações sobre seu evento</td><td className="p-4">Execução de contrato (Art. 7º, V)</td></tr>
+                  <tr className="hover:bg-theme-bg-muted"><td className="p-4">Calcular e distribuir splits financeiros</td><td className="p-4">Execução de contrato (Art. 7º, V)</td></tr>
+                  <tr className="hover:bg-theme-bg-muted"><td className="p-4">Melhorar a Plataforma e corrigir erros</td><td className="p-4">Legítimo interesse (Art. 7º, IX)</td></tr>
+                  <tr className="hover:bg-theme-bg-muted"><td className="p-4">Enviar comunicações de marketing</td><td className="p-4">Consentimento (Art. 7º, I)</td></tr>
+                  <tr className="hover:bg-theme-bg-muted"><td className="p-4">Cumprir obrigações legais</td><td className="p-4">Cumprimento de obrigação legal (Art. 7º, II)</td></tr>
                 </tbody>
               </table>
             </div>
@@ -135,16 +135,16 @@ export function PrivacyPage() {
               Seus dados <strong className="text-brand-tactical">não são vendidos</strong> a terceiros. Compartilhamos apenas com:
             </p>
             <ul className="grid md:grid-cols-2 gap-4">
-              <li className="bg-theme-bg-muted p-4 rounded-xl border border-theme-border/40 text-sm">
+              <li className="bg-theme-bg-muted p-4 rounded-xl border border-theme-border text-sm">
                 <strong className="text-theme-text block mb-1">Mercado Pago</strong> processamento de pagamentos
               </li>
-              <li className="bg-theme-bg-muted p-4 rounded-xl border border-theme-border/40 text-sm">
+              <li className="bg-theme-bg-muted p-4 rounded-xl border border-theme-border text-sm">
                 <strong className="text-theme-text block mb-1">Profissionais da rede</strong> dados necessários para execução do serviço (nome, contato, localização)
               </li>
-              <li className="bg-theme-bg-muted p-4 rounded-xl border border-theme-border/40 text-sm">
+              <li className="bg-theme-bg-muted p-4 rounded-xl border border-theme-border text-sm">
                 <strong className="text-theme-text block mb-1">Parceiros (Cartórios)</strong> quando a contratação ocorre via unidade parceira
               </li>
-              <li className="bg-theme-bg-muted p-4 rounded-xl border border-theme-border/40 text-sm">
+              <li className="bg-theme-bg-muted p-4 rounded-xl border border-theme-border text-sm">
                 <strong className="text-theme-text block mb-1">Autoridades legais</strong> quando exigido por lei ou ordem judicial
               </li>
             </ul>
@@ -171,7 +171,7 @@ export function PrivacyPage() {
                 </div>
               ))}
             </div>
-            <p className="text-sm text-theme-text bg-brand-tactical/5 p-4 rounded-lg border border-brand-tactical/20">
+            <p className="text-sm text-theme-text bg-brand-tactical/10 p-4 rounded-lg border border-brand-tactical/20">
               Para exercer seus direitos, acesse <strong className="font-black">Meus Dados</strong> no painel ou entre em contato pelo e-mail de privacidade.
             </p>
           </section>
@@ -218,7 +218,7 @@ export function PrivacyPage() {
         </div>
       </main>
 
-      <footer className="py-8 text-center border-t border-theme-border/20">
+      <footer className="py-8 text-center border-t border-theme-border">
         <p className="text-theme-text-muted text-xs font-bold uppercase tracking-widest mb-1">© 2026 Foto Segundo. Todos os direitos reservados.</p>
         <p className="text-brand-tactical/50 text-[10px] font-black italic uppercase tracking-[0.3em]">Protocolo Editorial de Imagem e Cinema</p>
       </footer>

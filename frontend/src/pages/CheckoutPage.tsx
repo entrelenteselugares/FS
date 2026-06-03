@@ -649,7 +649,7 @@ export const CheckoutPage = () => {
       <div className="min-h-screen bg-theme-bg flex flex-col items-center justify-center p-8 text-center">
         <div className="space-y-8 max-w-md animate-in fade-in slide-in-from-bottom-8 duration-700">
           <div className="relative mx-auto w-24 h-24 flex items-center justify-center">
-            <div className="absolute inset-0 bg-white/5 blur-2xl rounded-full" />
+            <div className="absolute inset-0 bg-theme-bg-muted blur-2xl rounded-full" />
             <ShoppingBag size={48} className="text-theme-text-muted" strokeWidth={1} />
           </div>
           <div className="space-y-4">
@@ -723,7 +723,7 @@ export const CheckoutPage = () => {
             </p>
           </div>
           
-          <div className="bg-theme-bg-muted/30 border border-theme-border/40 p-6 space-y-4 text-left">
+          <div className="bg-theme-bg-muted border border-theme-border p-6 space-y-4 text-left">
              <div className="flex justify-between text-[10px] font-black uppercase tracking-widest text-theme-text-muted">
                <span>Itens Digitais</span>
                <span className="text-white">{digitalPhotos.length}</span>
@@ -784,7 +784,7 @@ export const CheckoutPage = () => {
               localStorage.removeItem('fs_last_order_id');
               window.location.reload();
             }}
-            className="w-full py-4 border border-theme-border/40 text-theme-text-muted text-[9px] font-black uppercase tracking-[0.2em] hover:border-theme-border transition-all"
+            className="w-full py-4 border border-theme-border text-theme-text-muted text-[9px] font-black uppercase tracking-[0.2em] hover:border-theme-border transition-all"
           >
             Tentar Novamente
           </button>
@@ -831,7 +831,7 @@ export const CheckoutPage = () => {
       <Navbar tenantLogoUrl={order?.event?.tenantLogoUrl} />
       <WhatsAppSupport message={`Olá! Estou no checkout do pedido ${effectiveOrderId} e preciso de ajuda com o pagamento.`} />
       <div className="flex-1 max-w-7xl mx-auto px-6 py-12 w-full animate-in fade-in duration-700">
-        <div className="flex justify-between items-center mb-12 border-b border-theme-border/20 pb-8">
+        <div className="flex justify-between items-center mb-12 border-b border-theme-border pb-8">
           <button onClick={() => navigate(-1)} className="text-[10px] font-black uppercase tracking-widest text-theme-text-muted hover:text-theme-text transition-all flex items-center gap-2"><ArrowLeft size={14} /> Voltar</button>
           <div className="flex items-center gap-2 text-brand-tactical text-[9px] font-black uppercase tracking-widest"><ShieldCheck size={14} /> Checkout Blindado</div>
         </div>
@@ -851,20 +851,20 @@ export const CheckoutPage = () => {
 
             <div className="space-y-4">
               <div 
-                 className="flex items-center justify-between cursor-pointer group bg-white/5 border border-white/5 p-4 rounded-xl"
+                 className="flex items-center justify-between cursor-pointer group bg-theme-bg-muted border border-white/5 p-4 rounded-xl"
                  onClick={() => setShowItems(!showItems)}
               >
                  <p className="text-[9px] font-black text-zinc-500 group-hover:text-white transition-colors uppercase tracking-widest italic">
                    Resumo da Seleção ({order.items?.length || 0} {(order.items?.length || 0) === 1 ? 'item' : 'itens'})
                  </p>
-                 <div className="w-6 h-6 rounded-md border border-white/10 flex items-center justify-center group-hover:border-white/30 group-hover:bg-white/5 transition-all text-white">
+                 <div className="w-6 h-6 rounded-md border border-white/10 flex items-center justify-center group-hover:border-white/30 group-hover:bg-theme-bg-muted transition-all text-white">
                     {showItems ? "−" : "+"}
                  </div>
               </div>
               {showItems && (
                 <div className="space-y-2 animate-in slide-in-from-top-2 fade-in duration-300">
                   {order.items?.map((item) => (
-                    <div key={item.id} className="flex justify-between items-center p-4 bg-white/5 border border-white/5 rounded-xl">
+                    <div key={item.id} className="flex justify-between items-center p-4 bg-theme-bg-muted border border-white/5 rounded-xl">
                       <div className="flex items-center gap-4">
                         <div className="w-10 h-10 bg-zinc-900 border border-white/10 flex items-center justify-center rounded-lg overflow-hidden">
                           {item.media?.url ? (
@@ -989,7 +989,7 @@ export const CheckoutPage = () => {
             )}
 
             {/* Totais */}
-            <div className="p-8 bg-theme-bg-muted border border-theme-border/20 rounded-3xl space-y-6">
+            <div className="p-8 bg-theme-bg-muted border border-theme-border rounded-3xl space-y-6">
               <div className="flex justify-between items-center text-[10px] font-black text-theme-text-muted uppercase tracking-widest">
                 <span>Subtotal</span>
                 <span className="text-theme-text">R$ {(Number(order.amount) - Number(order.shippingFee || 0)).toFixed(2)}</span>
@@ -1013,7 +1013,7 @@ export const CheckoutPage = () => {
               </div>
 
               {order.internalNotes?.includes("[ROTEAMENTO]") && (
-                <div className="mt-4 p-4 bg-brand-tactical/5 border border-brand-tactical/20 rounded-xl">
+                <div className="mt-4 p-4 bg-brand-tactical/10 border border-brand-tactical/20 rounded-xl">
                   <div className="flex items-center gap-2 text-[8px] font-black text-brand-tactical uppercase tracking-widest italic">
                     <ShieldCheck size={12} /> Produção Regional Ativada
                   </div>

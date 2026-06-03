@@ -78,7 +78,7 @@ export default function PointBalance() {
 
       {/* Progress Bars */}
       <div className="space-y-6 relative z-10 mb-8">
-        <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em] text-theme-muted mb-4 border-b border-theme-border/30 pb-2">
+        <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em] text-theme-muted mb-4 border-b border-theme-border pb-2">
             <TrendingUp size={12} />
             Próximos Resgates
         </div>
@@ -104,7 +104,7 @@ export default function PointBalance() {
         ))}
       </div>
 
-      <div className="bg-theme-bg-muted/50 border border-theme-border/40 p-4 flex gap-4">
+      <div className="bg-theme-bg-muted border border-theme-border p-4 flex gap-4">
         <Info size={18} className="text-brand-olive shrink-0" strokeWidth={1.5} />
         <p className="text-[10px] text-theme-muted font-bold uppercase leading-relaxed tracking-wider">
           Ganhe <span className="text-brand-olive font-black">1 ponto</span> a cada curtida recebida em suas fotos públicas na vitrine do Coletivo. Use seus pontos para resgatar pacotes de mídia ou assinaturas.

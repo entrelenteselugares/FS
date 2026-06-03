@@ -42,6 +42,7 @@ Implement UX refinements in the quote/booking flow:
 - Update the API payload when saving settings to include the selected `eventTypes`.
 
 ## User Review Required
+
 > [!IMPORTANT]
 > The database schema change will require running `npx prisma db push` or generating a migration.
 

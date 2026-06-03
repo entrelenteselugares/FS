@@ -10,6 +10,7 @@ const serializeService = (s: any) => ({
   priceMobile: Number(s.priceMobile || 0),
   allowProfessional: Boolean(s.allowProfessional),
   allowMobile: Boolean(s.allowMobile),
+  eventTypes: s.eventTypes || [],
 });
 
 export async function listServiceCatalog(req: Request, res: Response): Promise<void> {
@@ -39,7 +40,7 @@ export async function adminListServiceCatalog(req: AuthRequest, res: Response): 
 
 export async function adminCreateService(req: AuthRequest, res: Response): Promise<void> {
   try {
-    const { name, description, category, basePrice, priceProfessional, priceMobile, allowProfessional, allowMobile, estimatedMinutes } = req.body;
+    const { name, description, category, basePrice, priceProfessional, priceMobile, allowProfessional, allowMobile, estimatedMinutes, eventTypes } = req.body;
     if (!name || basePrice === undefined) {
       res.status(400).json({ error: "Nome e Preço Base são obrigatórios." });
       return;
@@ -55,6 +56,7 @@ export async function adminCreateService(req: AuthRequest, res: Response): Promi
         allowProfessional: allowProfessional !== undefined ? Boolean(allowProfessional) : true,
         allowMobile: allowMobile !== undefined ? Boolean(allowMobile) : false,
         estimatedMinutes: Number(estimatedMinutes || 60),
+        eventTypes: eventTypes || [],
       }
     });
     res.status(201).json(serializeService(service));
@@ -67,7 +69,7 @@ export async function adminCreateService(req: AuthRequest, res: Response): Promi
 export async function adminUpdateService(req: AuthRequest, res: Response): Promise<void> {
   try {
     const { id } = req.params;
-    const { name, description, category, basePrice, priceProfessional, priceMobile, allowProfessional, allowMobile, estimatedMinutes, active, availableInVault } = req.body;
+    const { name, description, category, basePrice, priceProfessional, priceMobile, allowProfessional, allowMobile, estimatedMinutes, active, availableInVault, eventTypes } = req.body;
     const service = await prisma.serviceCatalog.update({
       where: { id: String(id) },
       data: {
@@ -82,6 +84,7 @@ export async function adminUpdateService(req: AuthRequest, res: Response): Promi
         ...(estimatedMinutes !== undefined && { estimatedMinutes: Number(estimatedMinutes) }),
         ...(active !== undefined && { active }),
         ...(availableInVault !== undefined && { availableInVault: Boolean(availableInVault) }),
+        ...(eventTypes !== undefined && { eventTypes }),
       }
     });
     res.json(serializeService(service));

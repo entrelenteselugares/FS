@@ -1,4 +1,5 @@
 <!-- generated-by: gsd-doc-writer -->
+
 # Deployment Guide
 
 O deploy da Foto Segundo é contínuo e integrado ao repositório GitHub através da **Vercel**, configurada para operar como ambiente Serverless unificado, juntamente com instâncias complementares no Supabase Edge Functions para processos específicos.
@@ -34,6 +35,7 @@ No dashboard da Vercel > **Settings** > **Environment Variables**, garanta que t
 ## Bundle Optimization e Fragmentation
 
 Como a plataforma gera PDFs, envia e-mails em massa com Resend e manipula imagens pesadas (Jimp/Sharp), o deploy pode estourar o limite da Vercel Edge de 1MB/50MB (Free/Pro) ou de memória. Se ocorrerem erros de `Function Payload Too Large` ou lentidão por Cold Starts gigantescos:
+
 - Rotas de PDF generation devem ficar em rotas Vercel Edge exclusivas sem carregar o monólito inteiro ou movidas para Lambdas isoladas.
 - Siga as estratégias em `.planning/knowledge/backend_infrastructure_scaling/`.
 
@@ -53,4 +55,5 @@ Caso seja necessário reverter o deploy:
 - O sistema inclui Sentry para tracking de erros e performance de interface.
 
 <!-- GSD-DOCS-UPDATE: SUPPLEMENTED -->
-*Documentação verificada e atualizada automaticamente via GSD-SDK em 2026-06.*
+
+_Documentação verificada e atualizada automaticamente via GSD-SDK em 2026-06._

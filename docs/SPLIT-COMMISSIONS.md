@@ -32,7 +32,7 @@ When a sale is processed, the system checks the `ProfessionalNetwork` table:
 ```typescript
 if (options?.professionalId) {
   const network = await prisma.professionalNetwork.findFirst({
-    where: { userId: options.professionalId }
+    where: { userId: options.professionalId },
   });
   if (network) {
     // Passive Franchisee commission is triggered

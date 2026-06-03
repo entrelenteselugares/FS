@@ -161,7 +161,7 @@ export const RegisterPage: React.FC = () => {
 
       <div className="w-full max-w-2xl space-y-12">
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-theme-border/20 pb-6">
+        <div className="flex items-center justify-between border-b border-theme-border pb-6">
           <button 
             onClick={() => navigate("/")} 
             className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-theme-text-muted hover:text-theme-text transition-all"
@@ -198,7 +198,7 @@ export const RegisterPage: React.FC = () => {
                 type="button"
                 onClick={() => setRole(r.id as "CLIENTE" | "PROFISSIONAL" | "CARTORIO")}
                 className={`flex flex-col items-center justify-center py-6 px-4 rounded-3xl transition-all duration-500 border ${
-                  role === r.id ? "bg-brand-tactical border-brand-tactical text-black shadow-[0_15px_30px_rgba(133,185,172,0.2)]" : "bg-theme-bg-muted border-theme-border/60 text-theme-text-muted hover:border-theme-border hover:text-theme-text"
+                  role === r.id ? "bg-brand-tactical border-brand-tactical text-black shadow-[0_15px_30px_rgba(133,185,172,0.2)]" : "bg-theme-bg-muted border-theme-border text-theme-text-muted hover:border-theme-border hover:text-theme-text"
                 }`}
               >
                 <div className="mb-2">{r.icon}</div>
@@ -218,7 +218,7 @@ export const RegisterPage: React.FC = () => {
                      required
                      value={formData.nome}
                      onChange={(e) => setFormData({ ...formData, nome: e.target.value })}
-                     className="w-full bg-theme-bg-field border border-theme-border/60 py-4 pl-12 pr-4 text-xs text-theme-text rounded-2xl focus:border-brand-tactical transition-all"
+                     className="w-full bg-theme-bg-field border border-theme-border py-4 pl-12 pr-4 text-xs text-theme-text rounded-2xl focus:border-brand-tactical transition-all"
                      placeholder="EX: JOÃO DA SILVA"
                    />
                  </div>
@@ -233,7 +233,7 @@ export const RegisterPage: React.FC = () => {
                      required
                      value={formData.whatsapp}
                      onChange={(e) => setFormData({ ...formData, whatsapp: e.target.value })}
-                     className="w-full bg-theme-bg-field border border-theme-border/60 py-4 pl-12 pr-4 text-xs text-theme-text rounded-2xl focus:border-brand-tactical transition-all"
+                     className="w-full bg-theme-bg-field border border-theme-border py-4 pl-12 pr-4 text-xs text-theme-text rounded-2xl focus:border-brand-tactical transition-all"
                      placeholder="(00) 00000-0000"
                    />
                  </div>
@@ -248,7 +248,7 @@ export const RegisterPage: React.FC = () => {
                      required
                      value={formData.email}
                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                     className="w-full bg-theme-bg-field border border-theme-border/60 py-4 pl-12 pr-4 text-xs text-theme-text rounded-2xl focus:border-brand-tactical transition-all"
+                     className="w-full bg-theme-bg-field border border-theme-border py-4 pl-12 pr-4 text-xs text-theme-text rounded-2xl focus:border-brand-tactical transition-all"
                      placeholder="EMAIL@DOMINIO.COM"
                    />
                  </div>
@@ -256,7 +256,7 @@ export const RegisterPage: React.FC = () => {
 
                {/* Campos Dinâmicos Profissional */}
                {role === "PROFISSIONAL" && (
-                 <div className="md:col-span-2 space-y-8 p-8 bg-theme-bg-muted border border-theme-border/60 rounded-3xl animate-in fade-in duration-500">
+                 <div className="md:col-span-2 space-y-8 p-8 bg-theme-bg-muted border border-theme-border rounded-3xl animate-in fade-in duration-500">
                     <div className="space-y-4">
                         <p className="text-[10px] font-black text-brand-tactical uppercase tracking-widest italic">Especialidades</p>
                        <div className="flex flex-wrap gap-3">
@@ -295,7 +295,7 @@ export const RegisterPage: React.FC = () => {
                                 if (next.length > 0) setFormData({ ...formData, workflowType: next });
                               }}
                               className={`p-5 flex items-center gap-4 border rounded-2xl transition-all ${
-                                formData.workflowType.includes(type.id) ? "bg-brand-tactical/10 border-brand-tactical text-brand-tactical" : "bg-theme-bg border-theme-border/60 text-theme-muted hover:border-theme-border"
+                                formData.workflowType.includes(type.id) ? "bg-brand-tactical/10 border-brand-tactical text-brand-tactical" : "bg-theme-bg border-theme-border text-theme-muted hover:border-theme-border"
                               }`}
                             >
                               {type.icon}
@@ -309,7 +309,7 @@ export const RegisterPage: React.FC = () => {
 
                {/* Campos Dinâmicos Unidade */}
                {role === "CARTORIO" && (
-                 <div className="md:col-span-2 space-y-8 p-8 bg-theme-bg-muted border border-theme-border/60 rounded-3xl animate-in fade-in duration-500">
+                 <div className="md:col-span-2 space-y-8 p-8 bg-theme-bg-muted border border-theme-border rounded-3xl animate-in fade-in duration-500">
                     <div className="grid grid-cols-2 gap-6">
                        <div className="space-y-2 md:col-span-2">
                           <label className="text-[9px] font-black uppercase tracking-[0.3em] text-zinc-500">Razão Social / Nome Unidade</label>
@@ -318,7 +318,7 @@ export const RegisterPage: React.FC = () => {
                             required
                             value={formData.razaoSocial}
                             onChange={(e) => setFormData({ ...formData, razaoSocial: e.target.value })}
-                            className="w-full bg-theme-bg-field border border-theme-border/60 py-4 px-4 text-xs text-theme-text rounded-2xl focus:border-brand-tactical transition-all"
+                            className="w-full bg-theme-bg-field border border-theme-border py-4 px-4 text-xs text-theme-text rounded-2xl focus:border-brand-tactical transition-all"
                             placeholder="NOME OFICIAL DA UNIDADE"
                           />
                        </div>
@@ -329,7 +329,7 @@ export const RegisterPage: React.FC = () => {
                             required
                             value={formData.cep}
                             onChange={(e) => handleCepChange(e.target.value)}
-                            className="w-full bg-theme-bg-field border border-theme-border/60 py-4 px-4 text-xs text-theme-text rounded-2xl focus:border-brand-tactical transition-all font-mono"
+                            className="w-full bg-theme-bg-field border border-theme-border py-4 px-4 text-xs text-theme-text rounded-2xl focus:border-brand-tactical transition-all font-mono"
                             placeholder="00000-000"
                           />
                        </div>
@@ -340,29 +340,29 @@ export const RegisterPage: React.FC = () => {
                             required
                             value={formData.logradouro}
                             onChange={(e) => setFormData({ ...formData, logradouro: e.target.value })}
-                            className="w-full bg-theme-bg-field border border-theme-border/60 py-4 px-4 text-xs text-theme-text rounded-2xl focus:border-brand-tactical transition-all"
+                            className="w-full bg-theme-bg-field border border-theme-border py-4 px-4 text-xs text-theme-text rounded-2xl focus:border-brand-tactical transition-all"
                             placeholder="RUA / AVENIDA"
                           />
                        </div>
                         <div className="space-y-2">
                            <label className="text-[9px] font-black uppercase tracking-[0.3em] text-zinc-500">Número</label>
-                           <input type="text" required value={formData.numero} onChange={(e) => setFormData({ ...formData, numero: e.target.value })} className="w-full bg-theme-bg-field border border-theme-border/60 py-4 px-4 text-xs text-theme-text rounded-2xl focus:border-brand-tactical transition-all" placeholder="123" />
+                           <input type="text" required value={formData.numero} onChange={(e) => setFormData({ ...formData, numero: e.target.value })} className="w-full bg-theme-bg-field border border-theme-border py-4 px-4 text-xs text-theme-text rounded-2xl focus:border-brand-tactical transition-all" placeholder="123" />
                         </div>
                         <div className="col-span-2 space-y-2">
                            <label className="text-[9px] font-black uppercase tracking-[0.3em] text-zinc-500">Complemento</label>
-                           <input type="text" value={formData.referencia} onChange={(e) => setFormData({ ...formData, referencia: e.target.value })} className="w-full bg-theme-bg-field border border-theme-border/60 py-4 px-4 text-xs text-theme-text rounded-2xl focus:border-brand-tactical transition-all" placeholder="SALA 01, FUNDOS..." />
+                           <input type="text" value={formData.referencia} onChange={(e) => setFormData({ ...formData, referencia: e.target.value })} className="w-full bg-theme-bg-field border border-theme-border py-4 px-4 text-xs text-theme-text rounded-2xl focus:border-brand-tactical transition-all" placeholder="SALA 01, FUNDOS..." />
                         </div>
                         <div className="space-y-2">
                            <label className="text-[9px] font-black uppercase tracking-[0.3em] text-zinc-500">Bairro</label>
-                           <input type="text" required value={formData.bairro} onChange={(e) => setFormData({ ...formData, bairro: e.target.value })} className="w-full bg-theme-bg-field border border-theme-border/60 py-4 px-4 text-xs text-theme-text rounded-2xl focus:border-brand-tactical transition-all" placeholder="PREENCHIDO VIA CEP" />
+                           <input type="text" required value={formData.bairro} onChange={(e) => setFormData({ ...formData, bairro: e.target.value })} className="w-full bg-theme-bg-field border border-theme-border py-4 px-4 text-xs text-theme-text rounded-2xl focus:border-brand-tactical transition-all" placeholder="PREENCHIDO VIA CEP" />
                         </div>
                         <div className="space-y-2">
                            <label className="text-[9px] font-black uppercase tracking-[0.3em] text-zinc-500">Cidade</label>
-                           <input type="text" required value={formData.cidade} onChange={(e) => setFormData({ ...formData, cidade: e.target.value })} className="w-full bg-theme-bg-field border border-theme-border/60 py-4 px-4 text-xs text-theme-text rounded-2xl focus:border-brand-tactical transition-all" placeholder="PREENCHIDA VIA CEP" />
+                           <input type="text" required value={formData.cidade} onChange={(e) => setFormData({ ...formData, cidade: e.target.value })} className="w-full bg-theme-bg-field border border-theme-border py-4 px-4 text-xs text-theme-text rounded-2xl focus:border-brand-tactical transition-all" placeholder="PREENCHIDA VIA CEP" />
                         </div>
                         <div className="space-y-2">
                            <label className="text-[9px] font-black uppercase tracking-[0.3em] text-zinc-500">Estado (UF)</label>
-                           <input type="text" required maxLength={2} value={formData.uf} onChange={(e) => setFormData({ ...formData, uf: e.target.value.toUpperCase() })} className="w-full bg-theme-bg-field border border-theme-border/60 py-4 px-4 text-xs text-theme-text rounded-2xl focus:border-brand-tactical transition-all font-mono uppercase" placeholder="SP" />
+                           <input type="text" required maxLength={2} value={formData.uf} onChange={(e) => setFormData({ ...formData, uf: e.target.value.toUpperCase() })} className="w-full bg-theme-bg-field border border-theme-border py-4 px-4 text-xs text-theme-text rounded-2xl focus:border-brand-tactical transition-all font-mono uppercase" placeholder="SP" />
                         </div>
                     </div>
                  </div>
@@ -377,7 +377,7 @@ export const RegisterPage: React.FC = () => {
                      required
                      value={formData.senha}
                      onChange={(e) => setFormData({ ...formData, senha: e.target.value })}
-                     className="w-full bg-theme-bg-field border border-theme-border/60 py-4 pl-12 pr-12 text-xs text-theme-text rounded-2xl focus:border-brand-tactical transition-all"
+                     className="w-full bg-theme-bg-field border border-theme-border py-4 pl-12 pr-12 text-xs text-theme-text rounded-2xl focus:border-brand-tactical transition-all"
                      placeholder="••••••••"
                    />
                    <button
@@ -398,7 +398,7 @@ export const RegisterPage: React.FC = () => {
               ].map(item => (
                 <label key={item.key} className="flex items-center gap-4 cursor-pointer group py-3">
                    <input type="checkbox" className="hidden" checked={formData[item.key as keyof typeof formData] as boolean} onChange={() => setFormData({ ...formData, [item.key]: !formData[item.key as keyof typeof formData] })} />
-                   <div className={`w-6 h-6 rounded-md border transition-all flex items-center justify-center shrink-0 ${formData[item.key as keyof typeof formData] ? "bg-brand-tactical border-brand-tactical" : "bg-theme-bg-field border-theme-border/60 group-hover:border-brand-tactical/50"}`}>
+                   <div className={`w-6 h-6 rounded-md border transition-all flex items-center justify-center shrink-0 ${formData[item.key as keyof typeof formData] ? "bg-brand-tactical border-brand-tactical" : "bg-theme-bg-field border-theme-border group-hover:border-brand-tactical/50"}`}>
                     {formData[item.key as keyof typeof formData] && <div className="w-2.5 h-2.5 bg-brand-text rounded-sm" />}
                   </div>
                   <p className="text-[10px] text-theme-muted font-black uppercase tracking-[0.2em] italic leading-relaxed select-none">
@@ -419,7 +419,7 @@ export const RegisterPage: React.FC = () => {
         </div>
 
         {/* Footer */}
-        <div className="pt-8 flex flex-col md:flex-row justify-between items-center gap-6 border-t border-theme-border/20">
+        <div className="pt-8 flex flex-col md:flex-row justify-between items-center gap-6 border-t border-theme-border">
            <p className="text-zinc-600 text-[9px] font-black uppercase tracking-[0.3em]">
             Já possui acesso? <Link to="/login" className="text-white hover:text-brand-tactical ml-2 transition-all">Fazer Login</Link>
           </p>

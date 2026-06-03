@@ -1,6 +1,7 @@
 # Phase 50 Plan: Multi-Tier Network Affiliate System
 
 ## Goal
+
 Implementar um sistema de indicação em rede com 2 níveis de comissão (5% direto / 2% indireto VIP), integrado ao fluxo de pagamento existente, com painel visual na área do cliente e controle administrativo de membros VIP.
 
 ---
@@ -12,6 +13,7 @@ Implementar um sistema de indicação em rede com 2 níveis de comissão (5% dir
 **Files Modified:** `backend/prisma/schema.prisma`
 
 **1.1 — Add referral fields to `User` model** (após `affiliatePayoutType`):
+
 ```prisma
 referredById   String?
 affiliateTier  String   @default("STANDARD") // "STANDARD" | "VIP"
@@ -22,6 +24,7 @@ affiliateCommissions AffiliateCommission[]
 ```
 
 **1.2 — Add affiliate split fields to `Order` model** (após `ambassadorId`):
+
 ```prisma
 splitAffiliateL1  Decimal? @db.Decimal(10, 2)
 splitAffiliateL2  Decimal? @db.Decimal(10, 2)
@@ -31,6 +34,7 @@ affiliateCommissions AffiliateCommission[]
 ```
 
 **1.3 — Create `AffiliateCommission` model:**
+
 ```prisma
 model AffiliateCommission {
   id        String   @id @default(cuid())
@@ -47,6 +51,7 @@ model AffiliateCommission {
 ```
 
 **1.4 — Run migrations:**
+
 ```bash
 cd backend && npx prisma db push && npx prisma generate
 ```
@@ -70,32 +75,42 @@ export class AffiliateService {
   /** Resolve chain: retorna l1Id (indicador direto) e l2Id (indicador do L1, se VIP) */
   static async resolveChain(buyerUserId: string) {
     const buyer = await prisma.user.findUnique({
-      where: { id: buyerUserId }, select: { referredById: true }
+      where: { id: buyerUserId },
+      select: { referredById: true },
     });
     if (!buyer?.referredById) return { l1Id: null, l2Id: null };
 
     const l1 = await prisma.user.findUnique({
       where: { id: buyer.referredById },
-      select: { id: true, referredById: true, affiliateTier: true }
+      select: { id: true, referredById: true, affiliateTier: true },
     });
     if (!l1) return { l1Id: null, l2Id: null };
 
-    const l2Id = (l1.affiliateTier === "VIP" && l1.referredById) ? l1.referredById : null;
+    const l2Id =
+      l1.affiliateTier === "VIP" && l1.referredById ? l1.referredById : null;
     return { l1Id: l1.id, l2Id };
   }
 
   /** Registra comissões e credita em rewardCredits */
-  static async recordCommissions(orderId: string, l1Id: string | null, l1Amount: number, l2Id: string | null, l2Amount: number) {
+  static async recordCommissions(
+    orderId: string,
+    l1Id: string | null,
+    l1Amount: number,
+    l2Id: string | null,
+    l2Amount: number,
+  ) {
     const entries = [];
-    if (l1Id && l1Amount > 0) entries.push({ userId: l1Id, orderId, level: 1, amount: l1Amount });
-    if (l2Id && l2Amount > 0) entries.push({ userId: l2Id, orderId, level: 2, amount: l2Amount });
+    if (l1Id && l1Amount > 0)
+      entries.push({ userId: l1Id, orderId, level: 1, amount: l1Amount });
+    if (l2Id && l2Amount > 0)
+      entries.push({ userId: l2Id, orderId, level: 2, amount: l2Amount });
     if (!entries.length) return;
 
     await prisma.affiliateCommission.createMany({ data: entries });
     for (const e of entries) {
       await prisma.user.update({
         where: { id: e.userId },
-        data: { rewardCredits: { increment: e.amount } }
+        data: { rewardCredits: { increment: e.amount } },
       });
     }
   }
@@ -106,18 +121,25 @@ export class AffiliateService {
       prisma.user.findUnique({
         where: { id: userId },
         select: {
-          referralCode: true, affiliateTier: true, rewardCredits: true,
+          referralCode: true,
+          affiliateTier: true,
+          rewardCredits: true,
           referrals: {
-            select: { id: true, nome: true, createdAt: true,
-              referrals: { select: { id: true, nome: true, createdAt: true } }
-            }
-          }
-        }
+            select: {
+              id: true,
+              nome: true,
+              createdAt: true,
+              referrals: { select: { id: true, nome: true, createdAt: true } },
+            },
+          },
+        },
       }),
       prisma.affiliateCommission.findMany({
-        where: { userId }, orderBy: { createdAt: "desc" }, take: 20,
-        include: { order: { select: { valor: true, createdAt: true } } }
-      })
+        where: { userId },
+        orderBy: { createdAt: "desc" },
+        take: 20,
+        include: { order: { select: { valor: true, createdAt: true } } },
+      }),
     ]);
     return {
       referralCode: user?.referralCode,
@@ -145,6 +167,7 @@ export class AffiliateService {
 **3.1 — Add `buyerUserId?: string` to options param**
 
 **3.2 — Insert affiliate chain resolution after the ambassador block (after L154):**
+
 ```typescript
 // ── BUSCA COMISSÃO AFILIADO ──
 let affiliateL1Id: string | undefined;
@@ -153,7 +176,9 @@ let affiliateL1Amount = 0;
 let affiliateL2Amount = 0;
 
 if (options?.buyerUserId) {
-  const { l1Id, l2Id } = await AffiliateService.resolveChain(options.buyerUserId);
+  const { l1Id, l2Id } = await AffiliateService.resolveChain(
+    options.buyerUserId,
+  );
   if (l1Id) {
     affiliateL1Id = l1Id;
     affiliateL2Id = l2Id || undefined;
@@ -164,19 +189,43 @@ if (options?.buyerUserId) {
 ```
 
 **3.3 — Include affiliate in matriz calculation (L177):**
+
 ```typescript
-const matriz = +(amount - (captacao + edicao + cartorio + franchisee + ambassador + affiliateL1Amount + affiliateL2Amount)).toFixed(2);
-return { matriz, captacao, edicao, cartorio, franchisee, passiveFranchiseeId,
-         ambassador, ambassadorId, affiliateL1Id, affiliateL2Id, affiliateL1Amount, affiliateL2Amount };
+const matriz = +(
+  amount -
+  (captacao +
+    edicao +
+    cartorio +
+    franchisee +
+    ambassador +
+    affiliateL1Amount +
+    affiliateL2Amount)
+).toFixed(2);
+return {
+  matriz,
+  captacao,
+  edicao,
+  cartorio,
+  franchisee,
+  passiveFranchiseeId,
+  ambassador,
+  ambassadorId,
+  affiliateL1Id,
+  affiliateL2Id,
+  affiliateL1Amount,
+  affiliateL2Amount,
+};
 ```
 
 **3.4 — Pass `buyerUserId` from checkout calls in `payment.controller.ts`:**
+
 ```typescript
 // Nos dois calls a calculateSplits() (checkout e processPayment), adicionar:
-buyerUserId: finalUserId || resolvedClienteId || undefined
+buyerUserId: finalUserId || resolvedClienteId || undefined;
 ```
 
 **3.5 — Persist affiliate fields to Order (create + update):**
+
 ```typescript
 splitAffiliateL1: affiliateL1Amount || null,
 splitAffiliateL2: affiliateL2Amount || null,
@@ -185,12 +234,15 @@ affiliateL2Id: affiliateL2Id || null,
 ```
 
 **3.6 — Call `recordCommissions` in `finalizeApprovedOrder()` after order status update:**
+
 ```typescript
 if (order.affiliateL1Id && order.splitAffiliateL1) {
   await AffiliateService.recordCommissions(
     order.id,
-    order.affiliateL1Id, Number(order.splitAffiliateL1),
-    order.affiliateL2Id || null, Number(order.splitAffiliateL2 || 0)
+    order.affiliateL1Id,
+    Number(order.splitAffiliateL1),
+    order.affiliateL2Id || null,
+    Number(order.splitAffiliateL2 || 0),
   );
 }
 ```
@@ -200,12 +252,14 @@ if (order.affiliateL1Id && order.splitAffiliateL1) {
 ### Task 50-04 — AffiliateController & Routes
 
 **Files Created:**
+
 - `backend/src/controllers/affiliate.controller.ts`
 - `backend/src/routes/affiliate.routes.ts`
 
 **File Modified:** `backend/src/app.ts`
 
 **Endpoints:**
+
 ```typescript
 // GET /api/affiliate/dashboard   → AffiliateService.getDashboardData(req.user.id)
 // PATCH /api/admin/users/:id/affiliate-tier  → update affiliateTier (requireRole ADMIN)
@@ -213,15 +267,20 @@ if (order.affiliateL1Id && order.splitAffiliateL1) {
 ```
 
 **Referral cookie capture** — In `POST /api/auth/register`:
+
 ```typescript
 const affiliateRef = req.cookies?.fs_affiliate_ref;
 if (affiliateRef) {
-  const referrer = await prisma.user.findFirst({ where: { referralCode: affiliateRef }, select: { id: true } });
+  const referrer = await prisma.user.findFirst({
+    where: { referralCode: affiliateRef },
+    select: { id: true },
+  });
   if (referrer) newUserData.referredById = referrer.id;
 }
 ```
 
 **Register routes in app.ts:**
+
 ```typescript
 import affiliateRoutes from "./routes/affiliate.routes";
 app.use("/api/affiliate", affiliateRoutes);
@@ -238,12 +297,14 @@ app.use("/api/affiliate", affiliateRoutes);
 O componente chama `GET /api/affiliate/dashboard` e renderiza dinamicamente:
 
 **Para STANDARD:**
+
 - Badge: "🟡 Membro Standard"
 - Link copiável (`/registro?ref=CODE`) com botão "Copiar"
 - KPIs: "X contatos diretos", "Total ganho: R$ X"
 - Extrato de comissões L1 (tabela de 20 mais recentes)
 
 **Para VIP:**
+
 - Badge: "💎 Membro VIP — Rede Completa"
 - Tudo do STANDARD +
 - `AffiliateTree` component: lista L1 com sub-lista de L2 para cada um
@@ -259,21 +320,25 @@ O componente chama `GET /api/affiliate/dashboard` e renderiza dinamicamente:
 **File Modified:** `frontend/src/pages/ClienteArea.tsx`
 
 **6.1 — Type update (L20):**
+
 ```tsx
 type ActiveTab = "files" | "profile" | "wallet" | "embaixador" | "rede";
 ```
 
 **6.2 — NAV_ITEMS: Add after "Programa Embaixador" (L113):**
+
 ```tsx
 { label: "Minha Rede", onClick: () => setActiveTab("rede"), isActive: activeTab === "rede", icon: <Network size={18} /> },
 ```
 
 **6.3 — PAGE_TITLES: Add (L117):**
+
 ```tsx
 rede: { title: "Minha Rede", subtitle: "Indique e ganhe comissões passivas.", prefix: "Programa de Afiliados" },
 ```
 
 **6.4 — URL section param handler (after L186):**
+
 ```tsx
 } else if (section === "rede") {
   setActiveTab("rede");
@@ -281,6 +346,7 @@ rede: { title: "Minha Rede", subtitle: "Indique e ganhe comissões passivas.", p
 ```
 
 **6.5 — Tab render (after embaixador block at L666):**
+
 ```tsx
 ) : activeTab === "rede" ? (
   <AffiliateDashboard />
@@ -288,6 +354,7 @@ rede: { title: "Minha Rede", subtitle: "Indique e ganhe comissões passivas.", p
 ```
 
 **6.6 — Imports:**
+
 ```tsx
 import { AffiliateDashboard } from "../components/AffiliateDashboard";
 import { Network } from "lucide-react";
@@ -300,30 +367,37 @@ import { Network } from "lucide-react";
 **File Modified:** `frontend/src/pages/admin/AdminUsers.tsx`
 
 **7.1 — Add "Afiliado" column to users table:**
+
 ```tsx
 <td>
-  <span className={`text-[9px] font-black uppercase tracking-widest px-2 py-1 border ${
-    user.affiliateTier === "VIP" 
-      ? "text-emerald-400 border-emerald-500/30 bg-emerald-500/10" 
-      : "text-theme-muted border-theme-border/20"
-  }`}>
+  <span
+    className={`text-[9px] font-black uppercase tracking-widest px-2 py-1 border ${
+      user.affiliateTier === "VIP"
+        ? "text-emerald-400 border-emerald-500/30 bg-emerald-500/10"
+        : "text-theme-muted border-theme-border/20"
+    }`}
+  >
     {user.affiliateTier === "VIP" ? "💎 VIP" : "○ Standard"}
   </span>
 </td>
 ```
 
 **7.2 — Toggle VIP action button:**
+
 ```tsx
 <button onClick={() => toggleAffiliateTier(user.id, user.affiliateTier)}>
   {user.affiliateTier === "VIP" ? "↓ Standard" : "↑ Promover VIP"}
 </button>
 ```
+
 Calls `PATCH /api/admin/users/:id/affiliate-tier` with `{ tier: "VIP" | "STANDARD" }`.
 
 **7.3 — VIP counter banner:**
+
 ```tsx
 <div>Membros VIP Ativos: {vipCount} / 50</div>
 ```
+
 Fetches from `GET /api/affiliate/vip-count`.
 
 ---
@@ -343,4 +417,4 @@ Fetches from `GET /api/affiliate/vip-count`.
 
 ---
 
-*Plan: 2026-05-17 | Phase 50 | Multi-Tier Network Affiliate System*
+_Plan: 2026-05-17 | Phase 50 | Multi-Tier Network Affiliate System_

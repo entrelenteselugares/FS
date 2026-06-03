@@ -81,7 +81,7 @@ export default function AccessTypeModal({ orderId, eventTitle, isPrimaryClient, 
             onClick={() => setSelected("PUBLIC")}
             className={`w-full text-left p-4 border transition-all duration-300 relative group
               ${selected === "PUBLIC" 
-                ? "bg-brand-tactical/5 border-brand-tactical shadow-[0_0_20px_-10px_rgba(133,185,172,0.3)]" 
+                ? "bg-brand-tactical/10 border-brand-tactical shadow-[0_0_20px_-10px_rgba(133,185,172,0.3)]" 
                 : "bg-theme-bg-muted border-theme-border hover:border-theme-text/30"}`}
           >
             <div className="flex justify-between items-start mb-3">

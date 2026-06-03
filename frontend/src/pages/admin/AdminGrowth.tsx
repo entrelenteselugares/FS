@@ -130,8 +130,8 @@ export function AdminGrowth() {
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
       {/* Header */}
-      <div className="relative border-b border-theme-border/60 pb-8 md:pb-12 space-y-4 md:space-y-6">
-        <div className="absolute -top-10 -left-10 w-40 h-40 bg-brand-tactical/5 blur-3xl rounded-full" />
+      <div className="relative border-b border-theme-border pb-8 md:pb-12 space-y-4 md:space-y-6">
+        <div className="absolute -top-10 -left-10 w-40 h-40 bg-brand-tactical/10 blur-3xl rounded-full" />
         <div className="space-y-4 relative z-10">
           <h1 className="text-2xl sm:text-4xl md:text-5xl xl:text-6xl font-heading font-black text-theme-text uppercase tracking-tighter italic leading-none truncate whitespace-nowrap">
             Motor de <span className="text-brand-tactical">Growth</span>
@@ -144,7 +144,7 @@ export function AdminGrowth() {
       </div>
 
       {/* Tabs */}
-      <div className="grid grid-cols-2 md:flex border-b border-theme-border/40 gap-1">
+      <div className="grid grid-cols-2 md:flex border-b border-theme-border gap-1">
         {[
           { id: "COUPONS", icon: Tag, label: "Cupons Genéricos" },
           { id: "WHATSAPP", icon: Phone, label: "Motor WhatsApp" },
@@ -166,7 +166,7 @@ export function AdminGrowth() {
       {/* Content */}
       <div className="pt-4">
         {loading ? (
-          <div className="py-24 text-center border border-theme-border bg-theme-bg-muted/10 animate-pulse text-[10px] text-theme-muted uppercase tracking-[0.5em] font-black italic rounded-2xl">Sincronizando Dados de Crescimento...</div>
+          <div className="py-24 text-center border border-theme-border bg-theme-bg animate-pulse text-[10px] text-theme-muted uppercase tracking-[0.5em] font-black italic rounded-2xl">Sincronizando Dados de Crescimento...</div>
         ) : activeTab === "COUPONS" ? (
           <div className="space-y-4">
             <div className="flex justify-end">
@@ -179,7 +179,7 @@ export function AdminGrowth() {
               </button>
             </div>
             {coupons.length === 0 ? (
-              <div className="p-12 text-center border border-dashed border-theme-border rounded-xl">
+              <div className="p-12 text-center border  border-theme-border rounded-xl">
                 <p className="text-[10px] font-black text-theme-text-muted uppercase tracking-widest">Nenhum cupom ativo</p>
               </div>
             ) : (
@@ -225,7 +225,7 @@ export function AdminGrowth() {
             )}
           </div>
         ) : activeTab === "WHATSAPP" ? (
-          <div className="p-8 border border-theme-border bg-theme-bg-muted/50 rounded-3xl flex flex-col md:flex-row gap-8 items-center justify-center min-h-[400px]">
+          <div className="p-8 border border-theme-border bg-theme-bg-muted rounded-3xl flex flex-col md:flex-row gap-8 items-center justify-center min-h-[400px]">
             {waStatus?.connected ? (
               <div className="text-center space-y-6">
                 <div className="w-24 h-24 bg-emerald-500/10 rounded-full flex items-center justify-center mx-auto">
@@ -320,7 +320,7 @@ export function AdminGrowth() {
       {isModalOpen && (
         <div className="fixed inset-0 z-[1000] flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-theme-bg/80 backdrop-blur-xl" onClick={() => setIsModalOpen(false)} />
-          <div className="relative w-full max-w-md bg-theme-card border border-theme-border/60 rounded-[32px] overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300">
+          <div className="relative w-full max-w-md bg-theme-card border border-theme-border rounded-[32px] overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300">
             {/* Header */}
             <div className="p-8 border-b border-theme-border flex items-center justify-between">
               <div className="flex items-center gap-4">
@@ -332,7 +332,7 @@ export function AdminGrowth() {
                   <p className="text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest opacity-40">Criar cupom de desconto</p>
                 </div>
               </div>
-              <button onClick={() => setIsModalOpen(false)} className="p-2 hover:bg-white/5 rounded-full transition-all text-theme-muted">
+              <button onClick={() => setIsModalOpen(false)} className="p-2 hover:bg-theme-bg-muted rounded-full transition-all text-theme-muted">
                 <X size={20} />
               </button>
             </div>

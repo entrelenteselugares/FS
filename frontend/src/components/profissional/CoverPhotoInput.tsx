@@ -165,14 +165,14 @@ export function CoverPhotoInput({ currentUrl, currentPosition, onChange, onPosit
           <button
             type="button"
             onClick={() => setMode("url")}
-            className="flex-1 h-20 border border-dashed border-theme-border/60 text-theme-muted hover:border-brand-tactical/50 hover:text-brand-tactical transition-all flex flex-col items-center justify-center gap-2 text-[10px] font-black uppercase tracking-widest bg-theme-bg-muted/30 rounded-[30px]"
+            className="flex-1 h-20 border  border-theme-border text-theme-muted hover:border-brand-tactical/50 hover:text-brand-tactical transition-all flex flex-col items-center justify-center gap-2 text-[10px] font-black uppercase tracking-widest bg-theme-bg-muted rounded-[30px]"
           >
             <LinkIcon size={18} /> Link / Drive
           </button>
           <button
             type="button"
             onClick={() => fileRef.current?.click()}
-            className="flex-1 h-20 border border-dashed border-theme-border/60 text-theme-muted hover:border-brand-tactical/50 hover:text-brand-tactical transition-all flex flex-col items-center justify-center gap-2 text-[10px] font-black uppercase tracking-widest bg-theme-bg-muted/30 rounded-[30px]"
+            className="flex-1 h-20 border  border-theme-border text-theme-muted hover:border-brand-tactical/50 hover:text-brand-tactical transition-all flex flex-col items-center justify-center gap-2 text-[10px] font-black uppercase tracking-widest bg-theme-bg-muted rounded-[30px]"
           >
             <Upload size={18} /> Upload
           </button>
@@ -214,14 +214,14 @@ export function CoverPhotoInput({ currentUrl, currentPosition, onChange, onPosit
           <button
             type="button"
             onClick={() => setMode("url")}
-            className="flex-1 py-4 border border-theme-border/60 text-theme-muted hover:border-brand-tactical/50 hover:text-brand-tactical transition-all text-[9px] font-black uppercase tracking-widest flex items-center justify-center gap-2 italic rounded-xl"
+            className="flex-1 py-4 border border-theme-border text-theme-muted hover:border-brand-tactical/50 hover:text-brand-tactical transition-all text-[9px] font-black uppercase tracking-widest flex items-center justify-center gap-2 italic rounded-xl"
           >
             <LinkIcon size={14} /> TROCAR LINK
           </button>
           <button
             type="button"
             onClick={() => fileRef.current?.click()}
-            className="flex-1 py-4 border border-theme-border/60 text-theme-muted hover:border-brand-tactical/50 hover:text-brand-tactical transition-all text-[9px] font-black uppercase tracking-widest flex items-center justify-center gap-2 italic rounded-xl"
+            className="flex-1 py-4 border border-theme-border text-theme-muted hover:border-brand-tactical/50 hover:text-brand-tactical transition-all text-[9px] font-black uppercase tracking-widest flex items-center justify-center gap-2 italic rounded-xl"
           >
             <Upload size={14} /> TROCAR ARQUIVO
           </button>

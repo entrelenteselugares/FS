@@ -79,7 +79,7 @@ export const CoverPhotoUpload: React.FC<CoverPhotoUploadProps> = ({ currentCover
   return (
     <>
       <div className="flex flex-col items-start gap-4 w-full">
-        <div className="relative group w-full h-40 bg-theme-bg-muted rounded-2xl overflow-hidden border border-theme-border/20 cursor-pointer" onClick={triggerUpload}>
+        <div className="relative group w-full h-40 bg-theme-bg-muted rounded-2xl overflow-hidden border border-theme-border cursor-pointer" onClick={triggerUpload}>
           {preview ? (
             <img src={preview} alt="Cover" className="w-full h-full object-cover" />
           ) : (

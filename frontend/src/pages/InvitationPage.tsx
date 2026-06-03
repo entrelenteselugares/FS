@@ -100,7 +100,7 @@ export default function InvitationPage() {
           {invitation?.album?.nome}
         </h1>
 
-        <div className="flex items-center gap-6 mb-12 py-4 px-8 bg-white/5 border border-white/10 rounded-2xl">
+        <div className="flex items-center gap-6 mb-12 py-4 px-8 bg-theme-bg-muted border border-white/10 rounded-2xl">
           <div className="flex flex-col items-center">
              <span className="text-lg font-black text-white">{invitation?.album?._count?.media || 0}</span>
              <span className="text-[9px] font-bold text-gray-500 uppercase tracking-widest">Fotos</span>

@@ -100,7 +100,7 @@ export const AdminAmbassadors: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="py-24 text-center border border-theme-border bg-theme-bg-muted/10 animate-pulse text-[10px] text-theme-muted uppercase tracking-[0.5em] font-black italic rounded-2xl">
+      <div className="py-24 text-center border border-theme-border bg-theme-bg animate-pulse text-[10px] text-theme-muted uppercase tracking-[0.5em] font-black italic rounded-2xl">
         Sincronizando Engine de Afiliados...
 
 
@@ -113,8 +113,8 @@ export const AdminAmbassadors: React.FC = () => {
   return (
     <div className="p-8 space-y-8 animate-in fade-in duration-700">
       {/* Header Padronizado */}
-      <div className="relative border-b border-theme-border/60 pb-8 md:pb-12 space-y-4 md:space-y-6">
-        <div className="absolute -top-10 -left-10 w-40 h-40 bg-brand-tactical/5 blur-3xl rounded-full" />
+      <div className="relative border-b border-theme-border pb-8 md:pb-12 space-y-4 md:space-y-6">
+        <div className="absolute -top-10 -left-10 w-40 h-40 bg-brand-tactical/10 blur-3xl rounded-full" />
         
         <div className="flex flex-col xl:flex-row justify-between items-start xl:items-end gap-6 relative z-10">
           <div>
@@ -160,7 +160,7 @@ export const AdminAmbassadors: React.FC = () => {
       </div>
 
       {/* Table */}
-      <div className="bg-theme-bg-muted/30 border border-theme-border overflow-x-auto w-full rounded-2xl">
+      <div className="bg-theme-bg-muted border border-theme-border overflow-x-auto w-full rounded-2xl">
         <table className="w-full text-left">
           <thead>
             <tr className="border-b border-theme-border text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest text-theme-subtle">
@@ -212,7 +212,7 @@ export const AdminAmbassadors: React.FC = () => {
                       className={`p-2 rounded-lg transition-all ${
                         c.active
                           ? 'text-emerald-500 hover:bg-emerald-500/10'
-                          : 'text-zinc-500 hover:bg-white/5'
+                          : 'text-zinc-500 hover:bg-theme-bg-muted'
                       }`}
                     >
                       <Power size={14} />
@@ -237,7 +237,7 @@ export const AdminAmbassadors: React.FC = () => {
         <div className="fixed inset-0 z-[1000] flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-theme-bg/80 backdrop-blur-xl animate-in fade-in duration-300" onClick={() => setIsModalOpen(false)} />
           
-          <div className="relative w-full max-w-lg bg-theme-card border border-theme-border/60 rounded-[40px] overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300 flex flex-col h-[85vh]">
+          <div className="relative w-full max-w-lg bg-theme-card border border-theme-border rounded-[40px] overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300 flex flex-col h-[85vh]">
             {/* Header */}
             <div className="p-8 md:p-10 border-b border-theme-border flex items-center justify-between shrink-0">
               <div className="flex items-center gap-4">
@@ -249,7 +249,7 @@ export const AdminAmbassadors: React.FC = () => {
                   <p className="text-[10px] font-black uppercase tracking-[0.2em] opacity-40">Engenharia de Escala e Referral</p>
                 </div>
               </div>
-              <button onClick={() => setIsModalOpen(false)} className="p-3 hover:bg-white/5 rounded-full transition-all text-theme-muted"><X size={24} /></button>
+              <button onClick={() => setIsModalOpen(false)} className="p-3 hover:bg-theme-bg-muted rounded-full transition-all text-theme-muted"><X size={24} /></button>
             </div>
 
             {/* Content */}
@@ -260,7 +260,7 @@ export const AdminAmbassadors: React.FC = () => {
                   type="text" required
                   value={formData.name}
                   onChange={e => setFormData({...formData, name: e.target.value})}
-                  className="w-full bg-theme-bg-muted border border-theme-border/60 p-4 text-[10px] text-theme-text font-black outline-none focus:border-brand-tactical rounded-xl uppercase"
+                  className="w-full bg-theme-bg-muted border border-theme-border p-4 text-[10px] text-theme-text font-black outline-none focus:border-brand-tactical rounded-xl uppercase"
                   placeholder="Ex: Verão 2026"
                 />
               </div>
@@ -271,7 +271,7 @@ export const AdminAmbassadors: React.FC = () => {
                   type="text" required
                   value={formData.slug}
                   onChange={e => setFormData({...formData, slug: e.target.value.toLowerCase().replace(/\s/g, '-')})}
-                  className="w-full bg-theme-bg-muted border border-theme-border/60 p-4 text-[10px] text-theme-text font-mono outline-none focus:border-brand-tactical rounded-xl"
+                  className="w-full bg-theme-bg-muted border border-theme-border p-4 text-[10px] text-theme-text font-mono outline-none focus:border-brand-tactical rounded-xl"
                   placeholder="verao-26"
                 />
               </div>
@@ -282,7 +282,7 @@ export const AdminAmbassadors: React.FC = () => {
                   required
                   value={formData.ownerId}
                   onChange={e => setFormData({...formData, ownerId: e.target.value})}
-                  className="w-full bg-theme-bg-muted border border-theme-border/60 p-4 text-[10px] text-theme-text font-black outline-none focus:border-brand-tactical rounded-xl cursor-pointer"
+                  className="w-full bg-theme-bg-muted border border-theme-border p-4 text-[10px] text-theme-text font-black outline-none focus:border-brand-tactical rounded-xl cursor-pointer"
                 >
                   <option value="">Selecione um usuário...</option>
                   {users.map(u => (
@@ -297,7 +297,7 @@ export const AdminAmbassadors: React.FC = () => {
                   <select 
                     value={formData.rewardType}
                     onChange={e => setFormData({...formData, rewardType: e.target.value})}
-                    className="w-full bg-theme-bg-muted border border-theme-border/60 p-4 text-[10px] text-theme-text font-black outline-none focus:border-brand-tactical rounded-xl cursor-pointer"
+                    className="w-full bg-theme-bg-muted border border-theme-border p-4 text-[10px] text-theme-text font-black outline-none focus:border-brand-tactical rounded-xl cursor-pointer"
                   >
                     <option value="CREDIT">Crédito (Loja)</option>
                     <option value="CASH">Dinheiro (PIX)</option>
@@ -309,13 +309,13 @@ export const AdminAmbassadors: React.FC = () => {
                     type="number" required
                     value={formData.rewardValue}
                     onChange={e => setFormData({...formData, rewardValue: Number(e.target.value)})}
-                    className="w-full bg-theme-bg-muted border border-theme-border/60 p-4 text-[10px] text-brand-tactical font-black outline-none focus:border-brand-tactical rounded-xl"
+                    className="w-full bg-theme-bg-muted border border-theme-border p-4 text-[10px] text-brand-tactical font-black outline-none focus:border-brand-tactical rounded-xl"
                   />
                 </div>
               </div>
 
               {/* Seleção de Categorias/Serviços */}
-              <div className="space-y-6 pt-4 border-t border-theme-border/20">
+              <div className="space-y-6 pt-4 border-t border-theme-border">
                 <div>
                   <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-theme-text mb-4">Escopo da Campanha</h3>
                   <p className="text-[9px] text-theme-muted uppercase tracking-wider mb-6 opacity-60">Selecione as categorias ou serviços que ativam a recompensa</p>
@@ -348,7 +348,7 @@ export const AdminAmbassadors: React.FC = () => {
                   };
 
                   return (
-                    <div key={category} className="space-y-4 bg-theme-bg-muted/30 p-6 rounded-3xl border border-theme-border/40">
+                    <div key={category} className="space-y-4 bg-theme-bg-muted p-6 rounded-3xl border border-theme-border">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
                           <div className={`w-2 h-2 rounded-full ${isCategorySelected ? 'bg-brand-tactical' : 'bg-zinc-800'}`} />
@@ -417,7 +417,7 @@ export const AdminAmbassadors: React.FC = () => {
             </form>
 
             {/* Footer */}
-            <div className="p-8 md:p-10 bg-theme-bg-muted/50 border-t border-theme-border flex gap-4 shrink-0 rounded-2xl">
+            <div className="p-8 md:p-10 bg-theme-bg-muted border-t border-theme-border flex gap-4 shrink-0 rounded-2xl">
               <button type="button" onClick={() => setIsModalOpen(false)} className="flex-1 py-5 border border-theme-border text-[11px] font-black uppercase tracking-[0.3em] text-theme-muted hover:text-white transition-all rounded-[20px] italic">Cancelar</button>
               <button 
                 type="submit"

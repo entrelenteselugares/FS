@@ -88,7 +88,7 @@ export function NotificationBell() {
                 )}
                 <button 
                   onClick={() => setIsOpen(false)} 
-                  className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-zinc-400 hover:text-white hover:bg-white/10 transition-all"
+                  className="w-10 h-10 rounded-full bg-theme-bg-muted flex items-center justify-center text-zinc-400 hover:text-white hover:bg-white/10 transition-all"
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -103,7 +103,7 @@ export function NotificationBell() {
                 </div>
               ) : notifications.length === 0 ? (
                 <div className="h-full flex flex-col items-center justify-center text-center p-12 space-y-6">
-                  <div className="w-20 h-20 bg-white/5 rounded-full flex items-center justify-center border border-white/5 opacity-20">
+                  <div className="w-20 h-20 bg-theme-bg-muted rounded-full flex items-center justify-center border border-white/5 opacity-20">
                     <BellOff size={40} className="text-white" />
                   </div>
                   <div className="space-y-2">
@@ -119,7 +119,7 @@ export function NotificationBell() {
                       onClick={() => handleNotificationClick(notif)}
                       className={`group relative p-6 rounded-[24px] border transition-all cursor-pointer overflow-hidden ${
                         !notif.read 
-                          ? 'bg-brand-tactical/5 border-brand-tactical/20' 
+                          ? 'bg-brand-tactical/10 border-brand-tactical/20' 
                           : 'bg-white/[0.02] border-white/5 hover:border-white/10'
                       }`}
                     >
@@ -141,7 +141,7 @@ export function NotificationBell() {
                             {notif.body}
                           </p>
                         </div>
-                        <div className="flex items-center justify-center w-8 h-8 rounded-full bg-white/5 text-zinc-600 group-hover:text-brand-tactical group-hover:bg-brand-tactical/10 transition-all self-center">
+                        <div className="flex items-center justify-center w-8 h-8 rounded-full bg-theme-bg-muted text-zinc-600 group-hover:text-brand-tactical group-hover:bg-brand-tactical/10 transition-all self-center">
                           <ArrowRight size={14} />
                         </div>
                       </div>

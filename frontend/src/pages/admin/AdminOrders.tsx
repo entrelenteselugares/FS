@@ -156,8 +156,8 @@ export const AdminOrders: React.FC = () => {
   return (
     <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
       {/* Header Padronizado */}
-      <div className="relative border-b border-theme-border/60 pb-8 md:pb-12 space-y-4 md:space-y-6">
-        <div className="absolute -top-10 -left-10 w-40 h-40 bg-brand-tactical/5 blur-3xl rounded-full" />
+      <div className="relative border-b border-theme-border pb-8 md:pb-12 space-y-4 md:space-y-6">
+        <div className="absolute -top-10 -left-10 w-40 h-40 bg-brand-tactical/10 blur-3xl rounded-full" />
         
         <div className="flex flex-col xl:flex-row justify-between items-start xl:items-end gap-6 relative z-10">
           <div>
@@ -210,7 +210,7 @@ export const AdminOrders: React.FC = () => {
       </div>
 
       {/* FILTROS DE STATUS */}
-      <div className="grid grid-cols-2 md:flex items-center gap-2 md:gap-3 border-b border-theme-border/30 pb-6">
+      <div className="grid grid-cols-2 md:flex items-center gap-2 md:gap-3 border-b border-theme-border pb-6">
          <Filter size={14} className="text-theme-muted mr-2" />
          {(['ALL', 'QUITADO', 'PARCIAL', 'PENDENTE'] as const).map(f => (
            <button
@@ -226,7 +226,7 @@ export const AdminOrders: React.FC = () => {
       {/* LISTA DE PROJETOS AUDITADOS */}
       <div className="space-y-4">
         {loading ? (
-          <div className="py-24 text-center border border-theme-border bg-theme-bg-muted/10 rounded-2xl">
+          <div className="py-24 text-center border border-theme-border bg-theme-bg rounded-2xl">
             <div className="text-[10px] text-theme-muted animate-pulse uppercase tracking-[0.5em] font-black italic">Auditando Ledger Financeiro...</div>
           </div>
         ) : groupedOrders.length > 0 ? (
@@ -234,7 +234,7 @@ export const AdminOrders: React.FC = () => {
             <div key={group.eventId} className="animate-in fade-in duration-500">
                <div 
                  onClick={() => setExpandedId(expandedId === group.eventId ? null : group.eventId)}
-                 className={`flex flex-col md:flex-row md:items-center justify-between gap-4 md:gap-6 p-4 md:p-5 border transition-all cursor-pointer relative overflow-hidden ${expandedId === group.eventId ? 'border-brand-tactical bg-brand-tactical/5 shadow-inner' : 'border-theme-border bg-theme-bg-muted hover:border-zinc-500'}`}
+                 className={`flex flex-col md:flex-row md:items-center justify-between gap-4 md:gap-6 p-4 md:p-5 border transition-all cursor-pointer relative overflow-hidden ${expandedId === group.eventId ? 'border-brand-tactical bg-brand-tactical/10 shadow-inner' : 'border-theme-border bg-theme-bg-muted hover:border-zinc-500'}`}
                >
                   <div className="flex items-center gap-6">
                      <div className={`p-3 border ${expandedId === group.eventId ? 'border-brand-tactical text-brand-tactical' : 'border-theme-border text-theme-muted'}`}>
@@ -290,10 +290,10 @@ export const AdminOrders: React.FC = () => {
 
                {/* LEDGER DE PARCELAS */}
                {expandedId === group.eventId && (
-                 <div className="bg-theme-bg-muted/30 border-x border-b border-theme-border/40 p-4 md:p-6 lg:p-8 animate-in slide-in-from-top-4 duration-500 overflow-x-auto no-scrollbar rounded-2xl">
+                 <div className="bg-theme-bg-muted border-x border-b border-theme-border p-4 md:p-6 lg:p-8 animate-in slide-in-from-top-4 duration-500 overflow-x-auto no-scrollbar rounded-2xl">
                     <table className="w-full text-left border-collapse min-w-[600px]">
                        <thead>
-                          <tr className="border-b border-theme-border/20">
+                          <tr className="border-b border-theme-border">
                              <th className="py-4 text-[10px] font-bold text-theme-muted uppercase tracking-wider opacity-90">ID Ledger</th>
                              <th className="py-4 text-[10px] font-bold text-theme-muted uppercase tracking-wider opacity-90">Método / Data</th>
                              <th className="py-4 text-center text-[10px] font-bold text-theme-muted uppercase tracking-wider opacity-90">Divisão (Splits)</th>
@@ -304,7 +304,7 @@ export const AdminOrders: React.FC = () => {
                        </thead>
                        <tbody className="divide-y divide-theme-border/20">
                           {group.orders.sort((a,b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()).map(o => (
-                            <tr key={o.id} className="group hover:bg-white/5 transition-all">
+                            <tr key={o.id} className="group hover:bg-theme-bg-muted transition-all">
                                <td className="py-5 font-mono text-[10px] text-theme-muted group-hover:text-theme-text transition-colors">#{o.id.toUpperCase()}</td>
                                <td className="py-5">
                                   <div className="flex items-center gap-3">
@@ -402,7 +402,7 @@ export const AdminOrders: React.FC = () => {
             </div>
           ))
         ) : (
-          <div className="py-32 text-center border border-dashed border-theme-border bg-theme-bg-muted/10 space-y-6 rounded-2xl">
+          <div className="py-32 text-center border  border-theme-border bg-theme-bg space-y-6 rounded-2xl">
              <div className="relative inline-block">
                 <div className="absolute inset-0 bg-theme-border/20 rounded-full animate-ping" />
                 <ArrowUpRight size={48} className="text-theme-muted relative z-10" />
@@ -417,9 +417,9 @@ export const AdminOrders: React.FC = () => {
         <div className="fixed inset-0 z-[500] flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-theme-bg/80 backdrop-blur-xl animate-in fade-in duration-300" onClick={() => setSelectedOrderForDetails(null)} />
           
-          <div className="relative w-full max-w-2xl bg-theme-card border border-theme-border/60 rounded-[40px] overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300 flex flex-col h-[85vh]">
+          <div className="relative w-full max-w-2xl bg-theme-card border border-theme-border rounded-[40px] overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300 flex flex-col h-[85vh]">
             {/* Header */}
-            <div className="p-8 md:p-10 border-b border-theme-border flex items-center justify-between shrink-0 bg-theme-bg-muted/30 rounded-2xl">
+            <div className="p-8 md:p-10 border-b border-theme-border flex items-center justify-between shrink-0 bg-theme-bg-muted rounded-2xl">
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 bg-brand-tactical/10 rounded-2xl flex items-center justify-center border border-brand-tactical/20">
                   <Receipt className="text-brand-tactical" size={24} />
@@ -429,20 +429,20 @@ export const AdminOrders: React.FC = () => {
                   <p className="text-[10px] font-black uppercase tracking-[0.2em] opacity-40">Protocolo de Auditoria #{selectedOrderForDetails.id.toUpperCase()}</p>
                 </div>
               </div>
-              <button onClick={() => setSelectedOrderForDetails(null)} className="p-3 hover:bg-white/5 rounded-full transition-all text-theme-muted"><X size={24} /></button>
+              <button onClick={() => setSelectedOrderForDetails(null)} className="p-3 hover:bg-theme-bg-muted rounded-full transition-all text-theme-muted"><X size={24} /></button>
             </div>
 
             {/* Content */}
             <div className="flex-1 overflow-y-auto p-8 md:p-10 space-y-10 custom-scrollbar bg-theme-card">
               <div className="grid grid-cols-2 gap-6">
-                <div className="bg-theme-bg-muted/50 p-6 rounded-[30px] border border-theme-border/60 space-y-4 shadow-inner">
+                <div className="bg-theme-bg-muted p-6 rounded-[30px] border border-theme-border space-y-4 shadow-inner">
                   <span className="block text-[8px] font-black text-theme-muted uppercase tracking-widest opacity-40 italic">Informações do Cliente</span>
                   <div className="space-y-1">
                     <div className="text-sm font-black text-theme-text uppercase italic tracking-tighter">{selectedOrderForDetails.user?.nome || "CONVIDADO"}</div>
                     <div className="text-[10px] text-theme-muted font-bold lowercase opacity-60">{selectedOrderForDetails.buyerEmail || selectedOrderForDetails.user?.email}</div>
                   </div>
                 </div>
-                <div className="bg-theme-bg-muted/50 p-6 rounded-[30px] border border-theme-border/60 space-y-4 shadow-inner text-right">
+                <div className="bg-theme-bg-muted p-6 rounded-[30px] border border-theme-border space-y-4 shadow-inner text-right">
                   <span className="block text-[8px] font-black text-theme-muted uppercase tracking-widest opacity-40 italic">Temporalidade & Status</span>
                   <div className="space-y-1">
                     <div className={`text-xs font-black uppercase tracking-[0.2em] italic ${selectedOrderForDetails.status === 'APROVADO' ? 'text-brand-tactical' : 'text-amber-500'}`}>
@@ -454,19 +454,19 @@ export const AdminOrders: React.FC = () => {
               </div>
 
               <div className="space-y-6">
-                <div className="flex items-center justify-between border-b border-theme-border/60 pb-4">
+                <div className="flex items-center justify-between border-b border-theme-border pb-4">
                   <h4 className="text-[10px] font-black uppercase tracking-[0.4em] text-theme-text italic">Composição do Carrinho</h4>
                   <span className="text-[9px] font-black text-theme-muted uppercase tracking-widest italic opacity-40">{selectedOrderForDetails.items?.length || 0} Itens Registrados</span>
                 </div>
 
                 {(!selectedOrderForDetails.items || selectedOrderForDetails.items.length === 0) ? (
-                  <div className="p-10 text-center bg-theme-bg-muted/30 border border-dashed border-theme-border/60 rounded-[30px]">
+                  <div className="p-10 text-center bg-theme-bg-muted border  border-theme-border rounded-[30px]">
                     <p className="text-[9px] sm:text-[11px] font-black text-brand-tactical uppercase tracking-[0.2em] sm:tracking-[0.4em] italic truncate max-w-[80vw]">Nenhum item detalhado neste pedido</p>
                   </div>
                 ) : (
                   <div className="space-y-4">
                     {selectedOrderForDetails.items.map(item => (
-                      <div key={item.id} className="flex items-center justify-between p-6 bg-theme-bg-muted/50 border border-theme-border/60 rounded-[24px] group hover:border-brand-tactical transition-all shadow-sm">
+                      <div key={item.id} className="flex items-center justify-between p-6 bg-theme-bg-muted border border-theme-border rounded-[24px] group hover:border-brand-tactical transition-all shadow-sm">
                         <div className="flex-1 space-y-1">
                           <div className="text-[11px] font-black text-theme-text uppercase tracking-widest italic">
                             {item.quantity}x {item.service?.name || item.printProduct?.title || (item.mediaId ? `Foto (Digital)` : "Item de Inventário")}
@@ -487,7 +487,7 @@ export const AdminOrders: React.FC = () => {
             </div>
 
             {/* Footer */}
-            <div className="p-8 md:p-10 bg-theme-bg-muted/50 border-t border-theme-border flex gap-6 items-center shrink-0 rounded-2xl">
+            <div className="p-8 md:p-10 bg-theme-bg-muted border-t border-theme-border flex gap-6 items-center shrink-0 rounded-2xl">
                <div className="flex-1 space-y-1">
                   <span className="text-[8px] font-black text-theme-muted uppercase tracking-[0.4em] italic opacity-40">Liquidado no Ledger</span>
                   <div className="text-3xl font-black italic tracking-tighter text-brand-tactical">{formatCurrency(selectedOrderForDetails.amount)}</div>

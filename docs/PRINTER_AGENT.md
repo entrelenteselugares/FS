@@ -17,8 +17,8 @@ The agent follows a **Poll-based architecture** to bypass firewall/NAT issues of
 1. **Queue Fetch**: The agent requests `PENDING_PRINT` jobs from `/api/phygital/events/:eventId/queue`.
 2. **Sequential Download**: Photos are downloaded to a local `temp/` folder using the unique `referenceCode` as the filename.
 3. **Print Execution**:
-    - **Linux (Raspberry Pi)**: Uses the `lp` command (CUPS) with the `-d` (destination) flag.
-    - **Windows**: Uses PowerShell's `Start-Process -Verb Print`.
+   - **Linux (Raspberry Pi)**: Uses the `lp` command (CUPS) with the `-d` (destination) flag.
+   - **Windows**: Uses PowerShell's `Start-Process -Verb Print`.
 4. **Server Confirmation**: Upon successful spooling, the agent notifies the backend via `/api/phygital/prints/:id/status`.
 5. **Auto-Cleanup**: Local files are deleted after 10 seconds to save disk space and maintain privacy.
 
@@ -30,10 +30,10 @@ The agent follows a **Poll-based architecture** to bypass firewall/NAT issues of
 
 ## 4. Configuration (`.env`)
 
-| Variable | Description |
-| :--- | :--- |
-| `BACKEND_URL` | The URL of the Foto Segundo API (e.g., Vercel or Local). |
-| `EVENT_ID` | The unique ID or Slug of the event being served. |
-| `PRINTER_NAME` | The local name of the printer (e.g., `EPSON_L3250`). |
-| `AGENT_TOKEN` | Secure token for admin-level queue access. |
-| `MOCK_MODE` | Set to `true` to simulate printing for dry runs. |
+| Variable       | Description                                              |
+| :------------- | :------------------------------------------------------- |
+| `BACKEND_URL`  | The URL of the Foto Segundo API (e.g., Vercel or Local). |
+| `EVENT_ID`     | The unique ID or Slug of the event being served.         |
+| `PRINTER_NAME` | The local name of the printer (e.g., `EPSON_L3250`).     |
+| `AGENT_TOKEN`  | Secure token for admin-level queue access.               |
+| `MOCK_MODE`    | Set to `true` to simulate printing for dry runs.         |

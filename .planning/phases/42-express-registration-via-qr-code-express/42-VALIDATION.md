@@ -6,11 +6,13 @@
 ## 🧪 Verification Strategy
 
 ### 1. Build & Types
+
 - [ ] Backend compiles without errors.
 - [ ] Frontend compiles without errors.
 - [ ] Prisma types generated and used correctly.
 
 ### 2. Functional Tests (UAT)
+
 - [ ] **Express Registration**:
   - Access `/phygital-capture` with a new email.
   - See password field appear.
@@ -30,5 +32,6 @@
   - Verify a coupon is generated and visible in the user's account.
 
 ### 3. Automated Validation
+
 - [ ] Run `npx prisma db push` to verify schema integrity.
 - [ ] Run `npm run build` in both frontend and backend.

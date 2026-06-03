@@ -103,7 +103,7 @@ export const ProfessionalBadgesShowcase: React.FC<ProfessionalBadgesShowcaseProp
         </div>
 
         {/* Progress Ring and count */}
-        <div className="flex items-center gap-3 bg-theme-bg-muted/10 border border-theme-border/20 px-4 py-2 rounded-lg">
+        <div className="flex items-center gap-3 bg-theme-bg border border-theme-border px-4 py-2 rounded-lg">
           <div className="space-y-0.5 text-right">
             <p className="text-[8px] font-black text-theme-muted uppercase tracking-widest">
               Medalhas Ativas
@@ -112,7 +112,7 @@ export const ProfessionalBadgesShowcase: React.FC<ProfessionalBadgesShowcaseProp
               {unlockedCount} de {badges.length} Desbloqueadas
             </p>
           </div>
-          <div className="w-9 h-9 relative flex items-center justify-center bg-slate-950 border border-theme-border/40 rounded-full overflow-hidden">
+          <div className="w-9 h-9 relative flex items-center justify-center bg-slate-950 border border-theme-border rounded-full overflow-hidden">
             <div 
               className="absolute inset-0 bg-brand-tactical/20 transition-all duration-700" 
               style={{ height: `${(unlockedCount / badges.length) * 100}%`, bottom: 0, top: 'auto' }}

@@ -51,8 +51,8 @@ export const AdminOverview: React.FC<OverviewProps> = ({ stats, recentOrders = [
   return (
     <div className="space-y-12 relative overflow-hidden rounded-2xl">
       {/* Header Padronizado */}
-      <div className="relative border-b border-theme-border/60 pb-8 md:pb-12 space-y-4 md:space-y-6">
-        <div className="absolute -top-10 -left-10 w-40 h-40 bg-brand-tactical/5 blur-3xl rounded-full" />
+      <div className="relative border-b border-theme-border pb-8 md:pb-12 space-y-4 md:space-y-6">
+        <div className="absolute -top-10 -left-10 w-40 h-40 bg-brand-tactical/10 blur-3xl rounded-full" />
         
         <div className="flex flex-col xl:flex-row justify-between items-start xl:items-end gap-6 relative z-10">
           <div>
@@ -62,7 +62,7 @@ export const AdminOverview: React.FC<OverviewProps> = ({ stats, recentOrders = [
       </div>
 
       {/* KPI Section */}
-      <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-px bg-white/5 border border-theme-border shadow-2xl rounded-2xl overflow-hidden">
+      <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-px bg-theme-bg-muted border border-theme-border shadow-2xl rounded-2xl overflow-hidden">
         
         {/* KPI Card Template */}
         {[
@@ -112,7 +112,7 @@ export const AdminOverview: React.FC<OverviewProps> = ({ stats, recentOrders = [
       </div>
 
       {/* Ambient Glow */}
-      <div className="absolute top-0 right-0 -mr-32 -mt-32 w-96 h-96 bg-brand-tactical/5 blur-[120px] rounded-full pointer-events-none" />
+      <div className="absolute top-0 right-0 -mr-32 -mt-32 w-96 h-96 bg-brand-tactical/10 blur-[120px] rounded-full pointer-events-none" />
     </div>
   );
 };

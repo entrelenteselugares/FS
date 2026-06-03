@@ -8,14 +8,14 @@ This retroactive visual audit evaluates the design quality and visual execution 
 
 **Phase 54: Custom Service Submission & Admin Approval** — Overall: **24/24** (Perfect Execution)
 
-| Pillar | Score | Assessment |
-|--------|-------|------------|
-| Copywriting | **4/4** | Professional Portuguese copywriting, clear placeholders, and descriptive labels. |
-| Visuals | **4/4** | Perfect alignment with the design system. Sharp corner styling (`borderRadius: 0`) applied to all cards, modals, and buttons. |
-| Color | **4/4** | Legibility contrast resolved dynamically for both dark/light modes using `--brand-text` transitions. |
-| Typography | **4/4** | Excellent typography scaling and strict font family boundaries. |
-| Spacing | **4/4** | Flawless form grid alignment, responsive gaps, and elegant list paddings. |
-| Experience Design | **4/4** | Excellent UX flow, instant feedback toasts, real-time pending counters, and straightforward modals. |
+| Pillar            | Score   | Assessment                                                                                                                    |
+| ----------------- | ------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| Copywriting       | **4/4** | Professional Portuguese copywriting, clear placeholders, and descriptive labels.                                              |
+| Visuals           | **4/4** | Perfect alignment with the design system. Sharp corner styling (`borderRadius: 0`) applied to all cards, modals, and buttons. |
+| Color             | **4/4** | Legibility contrast resolved dynamically for both dark/light modes using `--brand-text` transitions.                          |
+| Typography        | **4/4** | Excellent typography scaling and strict font family boundaries.                                                               |
+| Spacing           | **4/4** | Flawless form grid alignment, responsive gaps, and elegant list paddings.                                                     |
+| Experience Design | **4/4** | Excellent UX flow, instant feedback toasts, real-time pending counters, and straightforward modals.                           |
 
 ---
 
@@ -58,4 +58,4 @@ This retroactive visual audit evaluates the design quality and visual execution 
 
 ## 🛠️ Recommended Visual Fixes
 
-1. *None pending.* All border-radius and light/dark theme contrast legibility fixes have been implemented and verified.
+1. _None pending._ All border-radius and light/dark theme contrast legibility fixes have been implemented and verified.

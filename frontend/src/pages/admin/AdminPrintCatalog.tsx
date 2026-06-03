@@ -145,21 +145,21 @@ export const AdminPrintCatalog: React.FC = () => {
 
       {/* DASHBOARD DE MÉTRICAS */}
       <div className="max-w-6xl mx-auto w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
-         <div className="bg-theme-bg border border-theme-border/60 p-6 space-y-3 shadow-sm group hover:border-brand-tactical/40 transition-all rounded-2xl">
+         <div className="bg-theme-bg border border-theme-border p-6 space-y-3 shadow-sm group hover:border-brand-tactical/40 transition-all rounded-2xl">
             <div className="flex justify-between items-start"><span className="text-[8px] font-black text-theme-muted uppercase tracking-widest italic">Mix Ativo</span><Package className="text-brand-tactical" size={14} strokeWidth={1.5} /></div>
             <div className="flex items-baseline gap-2">
                <span className="text-3xl font-heading font-black text-theme-text italic">{stats.activeCount}</span>
                <span className="text-[10px] font-bold text-theme-muted uppercase tracking-widest">/ {stats.totalCount} ITENS</span>
             </div>
          </div>
-         <div className="bg-theme-bg border border-theme-border/60 p-6 space-y-3 shadow-sm group hover:border-brand-tactical/40 transition-all rounded-2xl">
+         <div className="bg-theme-bg border border-theme-border p-6 space-y-3 shadow-sm group hover:border-brand-tactical/40 transition-all rounded-2xl">
             <div className="flex justify-between items-start"><span className="text-[8px] font-black text-theme-muted uppercase tracking-widest italic">Margem Média</span><TrendingUp className="text-brand-tactical" size={14} strokeWidth={1.5} /></div>
             <div className="flex items-baseline gap-2">
                <span className="text-3xl font-heading font-black text-theme-text italic">{stats.avgMargin.toFixed(1)}%</span>
                <span className="text-[10px] font-bold text-theme-muted uppercase tracking-widest">PROPORCIONAL</span>
             </div>
          </div>
-          <div className="bg-theme-bg border border-theme-border/60 p-6 space-y-3 shadow-sm group hover:border-brand-tactical/40 transition-all rounded-2xl">
+          <div className="bg-theme-bg border border-theme-border p-6 space-y-3 shadow-sm group hover:border-brand-tactical/40 transition-all rounded-2xl">
             <div className="flex justify-between items-start"><span className="text-[8px] font-black text-theme-muted uppercase tracking-widest italic">Hub de Produção</span><Layers className="text-brand-tactical" size={14} strokeWidth={1.5} /></div>
             <div className="flex items-baseline gap-2">
                <span className="text-3xl font-heading font-black text-theme-text italic">OPERACIONAL</span>
@@ -176,27 +176,27 @@ export const AdminPrintCatalog: React.FC = () => {
                value={searchTerm}
                onChange={e => setSearchTerm(e.target.value)}
                placeholder="BUSCAR NO CATÁLOGO..." 
-               className="w-full bg-theme-bg border border-theme-border/60 p-4 pl-12 text-[10px] text-theme-text font-black outline-none focus:border-brand-tactical transition-all uppercase tracking-widest placeholder:text-theme-muted/40 rounded-2xl" 
+               className="w-full bg-theme-bg border border-theme-border p-4 pl-12 text-[10px] text-theme-text font-black outline-none focus:border-brand-tactical transition-all uppercase tracking-widest placeholder:text-theme-muted/40 rounded-2xl" 
             />
          </div>
          <select 
             value={filterCategory}
             onChange={e => setFilterCategory(e.target.value)}
-            className="px-6 py-4 bg-theme-bg border border-theme-border/60 text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest text-theme-text outline-none focus:border-brand-tactical transition-all cursor-pointer rounded-2xl"
+            className="px-6 py-4 bg-theme-bg border border-theme-border text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest text-theme-text outline-none focus:border-brand-tactical transition-all cursor-pointer rounded-2xl"
          >
             <option value="">TODAS AS CATEGORIAS</option>
             {Object.entries(CATEGORY_LABELS).map(([k, v]) => <option key={k} value={k}>{v.label}</option>)}
          </select>
          <button 
             onClick={() => setShowInactive(!showInactive)}
-            className="px-8 py-4 bg-theme-bg border border-theme-border/60 text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest text-theme-muted hover:text-white flex items-center gap-3 transition-all rounded-2xl"
+            className="px-8 py-4 bg-theme-bg border border-theme-border text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest text-theme-muted hover:text-white flex items-center gap-3 transition-all rounded-2xl"
          >
             {showInactive ? <Eye size={14} /> : <EyeOff size={14} />} {showInactive ? 'OCULTAR INATIVOS' : 'EXIBIR TODOS'}
          </button>
       </div>
 
       {loading ? (
-        <div className="py-32 text-center border border-dashed border-theme-border bg-theme-bg-muted/5 space-y-4 animate-pulse rounded-2xl">
+        <div className="py-32 text-center border  border-theme-border bg-theme-bg-muted/5 space-y-4 animate-pulse rounded-2xl">
            <Layers size={32} className="mx-auto text-theme-muted opacity-30" />
            <p className="text-[9px] sm:text-[11px] font-black text-brand-tactical uppercase tracking-[0.2em] sm:tracking-[0.4em] italic truncate max-w-[80vw]">Precificação e Portfólio de Impressão</p>
         </div>
@@ -214,7 +214,7 @@ export const AdminPrintCatalog: React.FC = () => {
                   {/* CATEGORY HEADER */}
                   <div 
                     onClick={() => toggleCategory(catId)}
-                    className="p-5 border-b border-theme-border/40 flex items-center justify-between cursor-pointer hover:bg-theme-bg-muted/30 transition-all rounded-2xl"
+                    className="p-5 border-b border-theme-border flex items-center justify-between cursor-pointer hover:bg-theme-bg-muted transition-all rounded-2xl"
                   >
                      <div className="flex items-center gap-4">
                         <div className="w-1.5 h-1.5 rounded-full" style={{ background: catInfo.color }} />
@@ -225,7 +225,7 @@ export const AdminPrintCatalog: React.FC = () => {
                         <div className="flex items-center gap-2 group/bulk" onClick={e => e.stopPropagation()}>
                            <input 
                               placeholder="MARGEM %" 
-                              className="w-16 bg-theme-bg-muted border border-theme-border/40 p-1.5 text-[9px] text-center font-black outline-none focus:border-brand-tactical rounded-2xl" 
+                              className="w-16 bg-theme-bg-muted border border-theme-border p-1.5 text-[9px] text-center font-black outline-none focus:border-brand-tactical rounded-2xl" 
                               onKeyDown={e => {
                                  if (e.key === 'Enter') handleBulkMargin(catId, parseFloat(e.currentTarget.value));
                               }}
@@ -240,7 +240,7 @@ export const AdminPrintCatalog: React.FC = () => {
                   {isExpanded && (
                      <div className="divide-y divide-theme-border/20 overflow-x-auto">
                         {/* TABLE HEADER */}
-                        <div className="min-w-[900px] grid grid-cols-[40px_1fr_100px_80px_80px_80px_80px_150px_110px] gap-4 p-4 bg-theme-bg-muted/20 text-[7px] font-black uppercase tracking-widest text-theme-muted italic">
+                        <div className="min-w-[900px] grid grid-cols-[40px_1fr_100px_80px_80px_80px_80px_150px_110px] gap-4 p-4 bg-theme-bg text-[7px] font-black uppercase tracking-widest text-theme-muted italic">
                            <div>STATUS</div>
                            <div>IDENTIFICAÇÃO DO PRODUTO</div>
                            <div className="text-right">CUSTO</div>
@@ -253,7 +253,7 @@ export const AdminPrintCatalog: React.FC = () => {
                         </div>
 
                         {catProducts.map(p => (
-                              <div key={p.id} className={`min-w-[900px] grid grid-cols-[40px_1fr_100px_80px_80px_80px_80px_150px_110px] gap-4 p-4 items-center group transition-all ${!p.active ? 'opacity-40 grayscale' : 'hover:bg-theme-bg-muted/40'}`}>
+                              <div key={p.id} className={`min-w-[900px] grid grid-cols-[40px_1fr_100px_80px_80px_80px_80px_150px_110px] gap-4 p-4 items-center group transition-all ${!p.active ? 'opacity-40 grayscale' : 'hover:bg-theme-bg-muted'}`}>
                                  <button 
                                     onClick={() => handleUpdate(p.id, { active: !p.active })}
                                     className="text-theme-muted hover:text-brand-tactical transition-all"
@@ -345,7 +345,7 @@ function NewSupplierModal({ onClose, onSave }: { onClose: () => void, onSave: ()
   });
   const [loading, setLoading] = useState(false);
 
-  const inputClass = "w-full bg-theme-bg-muted border border-theme-border/60 p-4 text-[10px] text-theme-text font-black outline-none focus:border-brand-tactical transition-all uppercase placeholder:text-theme-muted/30 rounded-xl";
+  const inputClass = "w-full bg-theme-bg-muted border border-theme-border p-4 text-[10px] text-theme-text font-black outline-none focus:border-brand-tactical transition-all uppercase placeholder:text-theme-muted/30 rounded-xl";
   const labelClass = "text-[8px] font-black text-theme-muted uppercase tracking-widest block mb-2 opacity-60 italic";
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -364,7 +364,7 @@ function NewSupplierModal({ onClose, onSave }: { onClose: () => void, onSave: ()
     <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-theme-bg/80 backdrop-blur-xl animate-in fade-in duration-300" onClick={onClose} />
       
-      <div className="relative w-full max-w-md bg-theme-card border border-theme-border/60 rounded-[40px] overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300">
+      <div className="relative w-full max-w-md bg-theme-card border border-theme-border rounded-[40px] overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300">
         <div className="p-8 md:p-10 border-b border-theme-border flex items-center justify-between">
           <div className="flex items-center gap-4">
             <div className="w-12 h-12 bg-brand-tactical/10 rounded-2xl flex items-center justify-center border border-brand-tactical/20">
@@ -375,7 +375,7 @@ function NewSupplierModal({ onClose, onSave }: { onClose: () => void, onSave: ()
               <p className="text-[10px] font-black uppercase tracking-[0.2em] opacity-40">Gestão de Suprimentos</p>
             </div>
           </div>
-          <button onClick={onClose} className="p-3 hover:bg-white/5 rounded-full transition-all text-theme-muted"><X size={24} /></button>
+          <button onClick={onClose} className="p-3 hover:bg-theme-bg-muted rounded-full transition-all text-theme-muted"><X size={24} /></button>
         </div>
 
         <form onSubmit={handleSubmit} className="p-8 md:p-10 space-y-6">
@@ -423,7 +423,7 @@ function NewProductModal({ onClose, onSave, suppliers, onRefreshSuppliers }: {
   });
   const [loading, setLoading] = useState(false);
 
-  const inputClass = "w-full bg-theme-bg-muted border border-theme-border/60 p-4 text-[10px] text-theme-text font-black outline-none focus:border-brand-tactical transition-all uppercase placeholder:text-theme-muted/30 rounded-xl";
+  const inputClass = "w-full bg-theme-bg-muted border border-theme-border p-4 text-[10px] text-theme-text font-black outline-none focus:border-brand-tactical transition-all uppercase placeholder:text-theme-muted/30 rounded-xl";
   const labelClass = "text-[8px] font-black text-theme-muted uppercase tracking-widest block mb-2 opacity-60 italic";
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -446,7 +446,7 @@ function NewProductModal({ onClose, onSave, suppliers, onRefreshSuppliers }: {
        {showNewSupplier && <NewSupplierModal onClose={() => setShowNewSupplier(false)} onSave={onRefreshSuppliers} />}
        <div className="absolute inset-0 bg-theme-bg/80 backdrop-blur-xl animate-in fade-in duration-300" onClick={onClose} />
        
-       <div className="relative w-full max-w-2xl bg-theme-card border border-theme-border/60 rounded-[40px] overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300 flex flex-col h-[85vh]">
+       <div className="relative w-full max-w-2xl bg-theme-card border border-theme-border rounded-[40px] overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300 flex flex-col h-[85vh]">
           {/* Header */}
           <div className="p-8 md:p-10 border-b border-theme-border flex items-center justify-between shrink-0">
             <div className="flex items-center gap-4">
@@ -458,7 +458,7 @@ function NewProductModal({ onClose, onSave, suppliers, onRefreshSuppliers }: {
                 <p className="text-[10px] font-black uppercase tracking-[0.2em] opacity-40">Expansão de Mix de Produtos</p>
               </div>
             </div>
-            <button onClick={onClose} className="p-3 hover:bg-white/5 rounded-full transition-all text-theme-muted"><X size={24} /></button>
+            <button onClick={onClose} className="p-3 hover:bg-theme-bg-muted rounded-full transition-all text-theme-muted"><X size={24} /></button>
           </div>
 
           {/* Scrollable Content */}
@@ -477,7 +477,7 @@ function NewProductModal({ onClose, onSave, suppliers, onRefreshSuppliers }: {
                   <button 
                     type="button"
                     onClick={() => setShowNewSupplier(true)}
-                    className="px-4 bg-theme-bg-muted border border-theme-border/60 text-brand-tactical hover:bg-brand-tactical/10 transition-all rounded-xl flex items-center justify-center"
+                    className="px-4 bg-theme-bg-muted border border-theme-border text-brand-tactical hover:bg-brand-tactical/10 transition-all rounded-xl flex items-center justify-center"
                   >
                     <Plus size={18} />
                   </button>
@@ -513,7 +513,7 @@ function NewProductModal({ onClose, onSave, suppliers, onRefreshSuppliers }: {
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-6 border-t border-theme-border/20">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-6 border-t border-theme-border">
               <div className="space-y-2">
                 <label className={labelClass}>Custo Fornecedor (R$)</label>
                 <input required type="number" step="0.01" className={inputClass} value={form.supplierCost} onChange={e => setForm({...form, supplierCost: e.target.value})} placeholder="0,00" />
@@ -526,7 +526,7 @@ function NewProductModal({ onClose, onSave, suppliers, onRefreshSuppliers }: {
           </form>
 
           {/* Footer */}
-          <div className="p-8 md:p-10 bg-theme-bg-muted/50 border-t border-theme-border flex gap-4 shrink-0 rounded-2xl">
+          <div className="p-8 md:p-10 bg-theme-bg-muted border-t border-theme-border flex gap-4 shrink-0 rounded-2xl">
             <button type="button" onClick={onClose} className="flex-1 py-5 border border-theme-border text-[11px] font-black uppercase tracking-[0.3em] text-theme-muted hover:text-white transition-all rounded-[20px] italic">Cancelar</button>
             <button 
               type="submit" 

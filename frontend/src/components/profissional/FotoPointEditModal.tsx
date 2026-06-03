@@ -84,7 +84,7 @@ export function FotoPointEditModal({ event, onClose, onSuccess, onError, network
                 Editar {event.title}
               </h3>
             </div>
-            <button type="button" onClick={onClose} className="p-2 hover:bg-white/5 text-theme-muted hover:text-cyan-400 transition-all">
+            <button type="button" onClick={onClose} className="p-2 hover:bg-theme-bg-muted text-theme-muted hover:text-cyan-400 transition-all">
               <X size={24} />
             </button>
           </div>
@@ -98,7 +98,7 @@ export function FotoPointEditModal({ event, onClose, onSuccess, onError, network
                   required
                   value={formData.title}
                   onChange={e => setFormData({ ...formData, title: e.target.value })}
-                  className="w-full bg-white/5 border border-white/10 p-5 pl-14 text-theme-text outline-none focus:border-cyan-400/50 transition-all text-xs font-bold"
+                  className="w-full bg-theme-bg-muted border border-white/10 p-5 pl-14 text-theme-text outline-none focus:border-cyan-400/50 transition-all text-xs font-bold"
                   placeholder="Ex: Foto Point Morumbi"
                 />
               </div>
@@ -113,7 +113,7 @@ export function FotoPointEditModal({ event, onClose, onSuccess, onError, network
                   required
                   value={formData.priceUnit}
                   onChange={e => setFormData({ ...formData, priceUnit: Number(e.target.value) })}
-                  className="w-full bg-white/5 border border-white/10 p-5 pl-14 text-theme-text outline-none focus:border-cyan-400/50 transition-all text-xs font-bold"
+                  className="w-full bg-theme-bg-muted border border-white/10 p-5 pl-14 text-theme-text outline-none focus:border-cyan-400/50 transition-all text-xs font-bold"
                   placeholder="R$ 20,00"
                 />
               </div>
@@ -127,7 +127,7 @@ export function FotoPointEditModal({ event, onClose, onSuccess, onError, network
                   required
                   value={formData.location}
                   onChange={e => setFormData({ ...formData, location: e.target.value })}
-                  className="w-full bg-white/5 border border-white/10 p-5 pl-14 text-theme-text outline-none focus:border-cyan-400/50 transition-all text-xs font-bold"
+                  className="w-full bg-theme-bg-muted border border-white/10 p-5 pl-14 text-theme-text outline-none focus:border-cyan-400/50 transition-all text-xs font-bold"
                   placeholder="Ex: Em frente ao Portal Principal"
                 />
               </div>
@@ -142,7 +142,7 @@ export function FotoPointEditModal({ event, onClose, onSuccess, onError, network
                 required
                 value={formData.dataEvento}
                 onChange={e => setFormData({ ...formData, dataEvento: e.target.value })}
-                className="w-full bg-white/5 border border-white/10 p-5 text-theme-text outline-none focus:border-cyan-400/50 transition-all text-xs font-bold"
+                className="w-full bg-theme-bg-muted border border-white/10 p-5 text-theme-text outline-none focus:border-cyan-400/50 transition-all text-xs font-bold"
               />
             </div>
 
@@ -152,7 +152,7 @@ export function FotoPointEditModal({ event, onClose, onSuccess, onError, network
                 <button
                   type="button"
                   onClick={() => setFormData({ ...formData, isPrivate: !formData.isPrivate })}
-                  className={`flex-1 p-5 border text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-3 transition-all ${!formData.isPrivate ? "bg-cyan-400 text-black border-cyan-400" : "bg-white/5 border-white/10 text-theme-muted hover:text-white"}`}
+                  className={`flex-1 p-5 border text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-3 transition-all ${!formData.isPrivate ? "bg-cyan-400 text-black border-cyan-400" : "bg-theme-bg-muted border-white/10 text-theme-muted hover:text-white"}`}
                 >
                   {formData.isPrivate ? <EyeOff size={16} /> : <Eye size={16} />}
                   {formData.isPrivate ? "Privado" : "Público"}
@@ -176,7 +176,7 @@ export function FotoPointEditModal({ event, onClose, onSuccess, onError, network
                   required
                   value={formData.itinerary}
                   onChange={e => setFormData({ ...formData, itinerary: e.target.value })}
-                  className="w-full bg-white/5 border border-white/10 p-5 pl-14 text-theme-text outline-none focus:border-cyan-400/50 transition-all text-xs font-bold min-h-[100px]"
+                  className="w-full bg-theme-bg-muted border border-white/10 p-5 pl-14 text-theme-text outline-none focus:border-cyan-400/50 transition-all text-xs font-bold min-h-[100px]"
                   placeholder="Ex: 5 fotos posadas, entrega digital em 24h..."
                 />
               </div>
@@ -188,7 +188,7 @@ export function FotoPointEditModal({ event, onClose, onSuccess, onError, network
                 <input
                   value={newRef}
                   onChange={e => setNewRef(e.target.value)}
-                  className="flex-1 bg-white/5 border border-white/10 p-4 text-theme-text outline-none focus:border-cyan-400/50 transition-all text-xs"
+                  className="flex-1 bg-theme-bg-muted border border-white/10 p-4 text-theme-text outline-none focus:border-cyan-400/50 transition-all text-xs"
                   placeholder="Ex: Estilo P&B, Pose Dramática..."
                 />
                 <button
@@ -234,7 +234,7 @@ export function FotoPointEditModal({ event, onClose, onSuccess, onError, network
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 py-5 bg-white/5 border border-white/10 text-theme-muted text-[11px] font-black uppercase tracking-widest hover:text-white transition-all italic"
+              className="flex-1 py-5 bg-theme-bg-muted border border-white/10 text-theme-muted text-[11px] font-black uppercase tracking-widest hover:text-white transition-all italic"
             >
               Descartar
             </button>

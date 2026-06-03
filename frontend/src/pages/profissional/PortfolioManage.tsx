@@ -201,7 +201,7 @@ export default function PortfolioManage({ isTab = false }: PortfolioManageProps)
       {/* Header */}
       {!isTab ? (
         <header className="pt-20 pb-10 border-b border-white/5 relative overflow-hidden">
-          <div className="absolute inset-0 bg-brand-tactical/5 blur-3xl rounded-full -m-64 opacity-30" />
+          <div className="absolute inset-0 bg-brand-tactical/10 blur-3xl rounded-full -m-64 opacity-30" />
           <div className="max-w-[1600px] mx-auto px-4 md:px-6 relative z-10 flex flex-col md:flex-row md:items-end justify-between gap-6">
             <div>
               <div className="w-12 h-1 bg-brand-tactical mb-6" />
@@ -221,7 +221,7 @@ export default function PortfolioManage({ isTab = false }: PortfolioManageProps)
           </div>
         </header>
       ) : (
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8 border-b border-theme-border/20 pb-6">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8 border-b border-theme-border pb-6">
           <div>
             <h2 className="text-2xl font-heading font-black text-theme-text uppercase tracking-widest italic leading-none">
               Gerenciar <span className="text-brand-tactical">Portfólio</span>
@@ -377,9 +377,9 @@ export default function PortfolioManage({ isTab = false }: PortfolioManageProps)
                       transition={{ duration: 0.25 }}
                       className="overflow-hidden"
                     >
-                      <div className="border-t border-theme-border/40 p-4">
+                      <div className="border-t border-theme-border p-4">
                         {(!album.images || album.images.length === 0) ? (
-                          <div className="py-12 text-center text-[10px] text-theme-muted uppercase tracking-widest border border-dashed border-theme-border/30 rounded-xl">
+                          <div className="py-12 text-center text-[10px] text-theme-muted uppercase tracking-widest border  border-theme-border rounded-xl">
                             Nenhuma foto neste álbum. Clique em "Adicionar" para enviar.
                           </div>
                         ) : (
@@ -438,7 +438,7 @@ export default function PortfolioManage({ isTab = false }: PortfolioManageProps)
           })}
 
           {albums.length === 0 && !isCreating && (
-            <div className="py-20 text-center border border-dashed border-white/10 rounded-2xl text-theme-muted text-xs font-black uppercase tracking-widest">
+            <div className="py-20 text-center border  border-white/10 rounded-2xl text-theme-muted text-xs font-black uppercase tracking-widest">
               Nenhum álbum criado. Adicione seu primeiro trabalho ao portfólio.
             </div>
           )}

@@ -7,15 +7,17 @@
 ## 1. Análise do Estado Atual do Banco de Dados
 
 ### Modelo `User` (schema.prisma L12-77)
+
 O `User` já possui campos relevantes que **reaproveitamos** sem conflito:
 
-| Campo Existente | Status | Uso na Fase 50 |
-|---|---|---|
-| `referralCode String? @unique` | ✅ Existe | Serve como código de convite único — já é o link de indicação |
-| `rewardCredits Decimal @default(0)` | ✅ Existe | Acumulação de ganhos do afiliado |
-| `affiliatePayoutType String @default("CREDIT")` | ✅ Existe | Modalidade de resgate (crédito vs. saque) |
+| Campo Existente                                 | Status    | Uso na Fase 50                                                |
+| ----------------------------------------------- | --------- | ------------------------------------------------------------- |
+| `referralCode String? @unique`                  | ✅ Existe | Serve como código de convite único — já é o link de indicação |
+| `rewardCredits Decimal @default(0)`             | ✅ Existe | Acumulação de ganhos do afiliado                              |
+| `affiliatePayoutType String @default("CREDIT")` | ✅ Existe | Modalidade de resgate (crédito vs. saque)                     |
 
 **Campos NOVOS necessários:**
+
 ```prisma
 referredById  String?   // Self-reference: quem indicou este usuário
 affiliateTier String    @default("STANDARD") // "STANDARD" | "VIP"
@@ -29,9 +31,11 @@ referrals     User[]    @relation("UserReferrals")
 ## 2. Análise do Fluxo de Split Financeiro
 
 ### `PricingService.calculateSplits()` (pricing.service.ts L77-180)
+
 Método central que já calcula: `matriz | captacao | edicao | cartorio | franchisee | ambassador`.
 
 **Fluxo atual:**
+
 1. Deduz `shippingFee` e `supplierCost` para obter `netAmount`
 2. Calcula splits de parceiros (captacao, edicao, cartorio) sobre `netAmount`
 3. Busca `passiveFranchiseeId` via `ProfessionalNetwork` (comissão B2B passiva)
@@ -56,9 +60,11 @@ matriz = amount - (captacao + edicao + cartorio + affiliateL1 + affiliateL2)
 ```
 
 ### Modelo `Order` (schema.prisma L322-381)
+
 Campos existentes para splits: `splitCaptacao`, `splitEdicao`, `splitCartorio`, `splitFranchisee`, `splitMatriz`, `ambassadorId`.
 
 **Campos NOVOS necessários no `Order`:**
+
 ```prisma
 splitAffiliateL1   Decimal?  @db.Decimal(10, 2)
 splitAffiliateL2   Decimal?  @db.Decimal(10, 2)
@@ -71,9 +77,11 @@ affiliateL2Id      String?   // userId do indicador indireto (VIP)
 ## 3. Infraestrutura de Rastreamento de Comissões
 
 ### Opção A: Reutilizar `GamificationLedger`
+
 Já possui `userId`, `type`, `amount`, `orderId`. Basta criar entradas com `type: "AFFILIATE_L1"` ou `"AFFILIATE_L2"`.
 
 ### Opção B: Nova tabela `AffiliateCommission`
+
 ```prisma
 model AffiliateCommission {
   id        String   @id @default(cuid())
@@ -83,7 +91,7 @@ model AffiliateCommission {
   amount    Decimal  @db.Decimal(10, 2)
   status    String   @default("PENDING") // PENDING | PAID
   createdAt DateTime @default(now())
-  
+
   user  User  @relation(fields: [userId], references: [id])
   order Order @relation(fields: [orderId], references: [id])
 }
@@ -110,6 +118,7 @@ A regra dos 50 é **operacional**, não técnica. O admin vê o contador no pain
 ## 5. Rastreamento do Link de Indicação
 
 ### Mecanismo de Cookie (padrão atual para ambassador)
+
 O sistema atual já usa `req.cookies?.fs_referral` para rastrear o `ambassadorId`. O mesmo mecanismo pode ser reutilizado para afiliados:
 
 1. **URL de convite:** `/registro?ref=REFERRALCODE` (usando `referralCode` existente do User)
@@ -136,16 +145,22 @@ O sistema atual já usa `req.cookies?.fs_referral` para rastrear o `ambassadorId
 ## 7. Painel Frontend (`/minha-conta`)
 
 ### Componentes Existentes para Reaproveitar
+
 - Verificar `/frontend/src/pages/` para a página atual de conta do cliente
 - O menu lateral existente da conta do cliente deve ser identificado e estendido
 
 ### Lógica de Exibição Condicional
+
 ```tsx
 // VIP: Mostra árvore de indicações (L1 + L2) + ganhos passivos
 // STANDARD: Mostra apenas link de convite + ganhos de L1
-{user.affiliateTier === "VIP" 
-  ? <AffiliateDashboardVIP /> 
-  : <AffiliateDashboardStandard />}
+{
+  user.affiliateTier === "VIP" ? (
+    <AffiliateDashboardVIP />
+  ) : (
+    <AffiliateDashboardStandard />
+  );
+}
 ```
 
 ---
@@ -153,6 +168,7 @@ O sistema atual já usa `req.cookies?.fs_referral` para rastrear o `ambassadorId
 ## 8. Endpoint Admin para Gestão de VIPs
 
 `PATCH /api/admin/users/:id/affiliate-tier`
+
 - Body: `{ tier: "VIP" | "STANDARD" }`
 - Guard: `requireRole("ADMIN")`
 - Resposta: user atualizado + contagem total de VIPs
@@ -161,12 +177,12 @@ O sistema atual já usa `req.cookies?.fs_referral` para rastrear o `ambassadorId
 
 ## 9. Impacto nas Margens (Simulação Final)
 
-| Cenário | Valor Pedido | L1 (5%) | L2 (2%) | Overhead Total | Matriz Restante |
-|---|---|---|---|---|---|
-| Compra sem indicação | R$ 100 | R$ 0 | R$ 0 | 0% | R$ 100 |
-| Compra com L1 STANDARD | R$ 100 | R$ 5 | R$ 0 | 5% | R$ 95 |
-| Compra com L1 VIP | R$ 100 | R$ 5 | R$ 2 | 7% | R$ 93 |
-| Compra com L1 VIP + cartorio 10% | R$ 100 | R$ 5 | R$ 2 | 17% | R$ 83 |
+| Cenário                          | Valor Pedido | L1 (5%) | L2 (2%) | Overhead Total | Matriz Restante |
+| -------------------------------- | ------------ | ------- | ------- | -------------- | --------------- |
+| Compra sem indicação             | R$ 100       | R$ 0    | R$ 0    | 0%             | R$ 100          |
+| Compra com L1 STANDARD           | R$ 100       | R$ 5    | R$ 0    | 5%             | R$ 95           |
+| Compra com L1 VIP                | R$ 100       | R$ 5    | R$ 2    | 7%             | R$ 93           |
+| Compra com L1 VIP + cartorio 10% | R$ 100       | R$ 5    | R$ 2    | 17%            | R$ 83           |
 
 > Conclusão: Overhead máximo de 7% é sustentável. Mesmo com todos os splits ativos (cartorio 10% + captacao 30%), a Matriz retém margens positivas sobre os seus 30-40% de share operacional.
 
@@ -174,17 +190,17 @@ O sistema atual já usa `req.cookies?.fs_referral` para rastrear o `ambassadorId
 
 ## 10. Arquivos a Criar/Modificar
 
-| Arquivo | Ação | Descrição |
-|---|---|---|
-| `backend/prisma/schema.prisma` | Editar | Add `referredById`, `affiliateTier`, `AffiliateCommission` model, add `splitAffiliateL1/L2`, `affiliateL1/2Id` em `Order` |
-| `backend/src/services/affiliate.service.ts` | Criar | Service com `resolveAffiliateChain()`, `recordCommission()` |
-| `backend/src/services/pricing.service.ts` | Editar | Integrar chamada ao AffiliateService no `calculateSplits()` |
-| `backend/src/controllers/affiliate.controller.ts` | Criar | Endpoints: `GET /rede`, `GET /comissoes`, admin tier toggle |
-| `backend/src/routes/affiliate.routes.ts` | Criar | Rotas autenticadas para painel de afiliado |
-| `frontend/src/pages/account/AffiliatePage.tsx` | Criar | Painel de afiliado (VIP + STANDARD views) |
-| `frontend/src/components/account/AffiliateTree.tsx` | Criar | Componente de árvore de indicações |
-| `frontend/src/pages/account/AccountPage.tsx` (ou similar) | Editar | Add tab "Minha Rede" no menu da conta |
+| Arquivo                                                   | Ação   | Descrição                                                                                                                 |
+| --------------------------------------------------------- | ------ | ------------------------------------------------------------------------------------------------------------------------- |
+| `backend/prisma/schema.prisma`                            | Editar | Add `referredById`, `affiliateTier`, `AffiliateCommission` model, add `splitAffiliateL1/L2`, `affiliateL1/2Id` em `Order` |
+| `backend/src/services/affiliate.service.ts`               | Criar  | Service com `resolveAffiliateChain()`, `recordCommission()`                                                               |
+| `backend/src/services/pricing.service.ts`                 | Editar | Integrar chamada ao AffiliateService no `calculateSplits()`                                                               |
+| `backend/src/controllers/affiliate.controller.ts`         | Criar  | Endpoints: `GET /rede`, `GET /comissoes`, admin tier toggle                                                               |
+| `backend/src/routes/affiliate.routes.ts`                  | Criar  | Rotas autenticadas para painel de afiliado                                                                                |
+| `frontend/src/pages/account/AffiliatePage.tsx`            | Criar  | Painel de afiliado (VIP + STANDARD views)                                                                                 |
+| `frontend/src/components/account/AffiliateTree.tsx`       | Criar  | Componente de árvore de indicações                                                                                        |
+| `frontend/src/pages/account/AccountPage.tsx` (ou similar) | Editar | Add tab "Minha Rede" no menu da conta                                                                                     |
 
 ---
 
-*Research completed: 2026-05-17 | Phase 50*
+_Research completed: 2026-05-17 | Phase 50_

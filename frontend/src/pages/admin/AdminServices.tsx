@@ -163,7 +163,7 @@ export const AdminServices: React.FC = () => {
               { label: "Ticket Base Médio", value: formatCurrency(stats.avgPrice), suffix: "ESTIMADO", icon: TrendingUp },
               { label: "Diversidade", value: stats.categories, suffix: "CATEGORIAS", icon: Filter },
             ].map(({ label, value, suffix, icon: Icon }) => (
-              <div key={label} className="bg-theme-bg border border-theme-border/60 p-6 space-y-3 shadow-sm group hover:border-brand-tactical/40 transition-all rounded-2xl">
+              <div key={label} className="bg-theme-bg border border-theme-border p-6 space-y-3 shadow-sm group hover:border-brand-tactical/40 transition-all rounded-2xl">
                 <div className="flex justify-between items-start">
                   <span className="text-[8px] font-black text-theme-muted uppercase tracking-widest italic">{label}</span>
                   <Icon className="text-brand-tactical" size={14} />
@@ -180,9 +180,9 @@ export const AdminServices: React.FC = () => {
           <div className="flex flex-col md:flex-row gap-4">
             <div className="relative flex-1 group">
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-theme-muted group-focus-within:text-brand-tactical transition-colors" size={14} />
-              <input value={searchTerm} onChange={e => setSearchTerm(e.target.value)} placeholder="BUSCAR SERVIÇO OU DESCRIÇÃO..." className="w-full bg-theme-bg border border-theme-border/60 p-4 pl-12 text-[10px] text-theme-text font-black outline-none focus:border-brand-tactical transition-all uppercase tracking-widest placeholder:text-theme-muted/40 rounded-2xl" />
+              <input value={searchTerm} onChange={e => setSearchTerm(e.target.value)} placeholder="BUSCAR SERVIÇO OU DESCRIÇÃO..." className="w-full bg-theme-bg border border-theme-border p-4 pl-12 text-[10px] text-theme-text font-black outline-none focus:border-brand-tactical transition-all uppercase tracking-widest placeholder:text-theme-muted/40 rounded-2xl" />
             </div>
-            <select value={filterCategory} onChange={e => setFilterCategory(e.target.value)} className="px-6 py-4 bg-theme-bg border border-theme-border/60 text-[9px] font-black uppercase tracking-widest text-theme-text outline-none focus:border-brand-tactical transition-all cursor-pointer rounded-2xl">
+            <select value={filterCategory} onChange={e => setFilterCategory(e.target.value)} className="px-6 py-4 bg-theme-bg border border-theme-border text-[9px] font-black uppercase tracking-widest text-theme-text outline-none focus:border-brand-tactical transition-all cursor-pointer rounded-2xl">
               <option value="">TODAS AS CATEGORIAS</option>
               <option value="FOTOGRAFIA">FOTOGRAFIA</option>
               <option value="VIDEO">VÍDEO</option>
@@ -197,12 +197,12 @@ export const AdminServices: React.FC = () => {
           {/* LISTAGEM */}
           <div className="space-y-4">
             {isLoading ? (
-              <div className="py-32 text-center border border-dashed border-theme-border bg-theme-bg-muted/5 space-y-4 animate-pulse rounded-2xl">
+              <div className="py-32 text-center border  border-theme-border bg-theme-bg-muted/5 space-y-4 animate-pulse rounded-2xl">
                 <Zap size={32} className="mx-auto text-theme-muted opacity-30" />
                 <p className="text-[11px] font-black text-brand-tactical uppercase tracking-[0.4em] italic">Carregando Catálogo...</p>
               </div>
             ) : filteredServices.length === 0 ? (
-              <div className="py-32 text-center border border-dashed border-theme-border bg-theme-bg-muted/5 space-y-6 rounded-2xl">
+              <div className="py-32 text-center border  border-theme-border bg-theme-bg-muted/5 space-y-6 rounded-2xl">
                 <Briefcase size={40} className="mx-auto text-theme-muted opacity-20" />
                 <div className="space-y-2">
                   <p className="text-[11px] font-black text-brand-tactical uppercase tracking-[0.4em] italic">Tabela de Preços e Serviços</p>
@@ -215,10 +215,10 @@ export const AdminServices: React.FC = () => {
                 <div key={s.id} className="bg-theme-bg-muted border border-theme-border rounded-2xl group hover:border-brand-tactical/50 transition-all overflow-hidden shadow-sm">
                   <div className="p-6 md:p-8 flex flex-col lg:flex-row lg:items-center justify-between gap-8">
                     <div className="flex-1 flex items-start gap-6">
-                      <div className="p-4 bg-theme-bg-muted border border-theme-border/40 text-brand-tactical rounded-2xl"><Icon size={20} /></div>
+                      <div className="p-4 bg-theme-bg-muted border border-theme-border text-brand-tactical rounded-2xl"><Icon size={20} /></div>
                       <div className="space-y-2">
                         <div className="flex items-center gap-3">
-                          <span className="px-2 py-0.5 border border-theme-border/60 text-[7px] font-black uppercase tracking-widest text-theme-muted">{s.category}</span>
+                          <span className="px-2 py-0.5 border border-theme-border text-[7px] font-black uppercase tracking-widest text-theme-muted">{s.category}</span>
                           <h4 className="text-lg font-heading font-black text-theme-text uppercase tracking-tighter italic leading-none">{s.name}</h4>
                         </div>
                         <div className="flex flex-wrap gap-2 mt-1">
@@ -228,13 +228,13 @@ export const AdminServices: React.FC = () => {
                         <p className="text-[10px] text-theme-muted uppercase tracking-widest font-medium max-w-xl leading-relaxed italic opacity-80 mt-1">{s.description}</p>
                       </div>
                     </div>
-                    <div className="lg:w-80 flex items-center justify-between lg:justify-end gap-10 border-t lg:border-t-0 pt-6 lg:pt-0 border-theme-border/20">
+                    <div className="lg:w-80 flex items-center justify-between lg:justify-end gap-10 border-t lg:border-t-0 pt-6 lg:pt-0 border-theme-border">
                       <div className="text-right">
                         <span className="text-[8px] font-black text-theme-muted uppercase tracking-widest block mb-1">Preço Sugerido</span>
                         <span className="text-xl font-heading font-black text-theme-text italic">{formatCurrency(s.basePrice)}</span>
                       </div>
                       <div className="flex gap-3 opacity-0 group-hover:opacity-100 transition-all">
-                        <button onClick={() => { setEditingService(s); setIsModalOpen(true); }} className="p-3 border border-theme-border/60 text-theme-muted hover:text-brand-tactical hover:border-brand-tactical transition-all">
+                        <button onClick={() => { setEditingService(s); setIsModalOpen(true); }} className="p-3 border border-theme-border text-theme-muted hover:text-brand-tactical hover:border-brand-tactical transition-all">
                           <Edit3 size={14} />
                         </button>
                         <button onClick={() => setConfirmDelete(s.id)} className="p-3 border border-red-900/30 text-red-900/40 hover:text-red-500 hover:border-red-500 transition-all">
@@ -252,7 +252,7 @@ export const AdminServices: React.FC = () => {
         /* APROVAÇÕES PENDENTES */
         <div className="space-y-4">
           {pendingServices.length === 0 ? (
-            <div className="py-32 text-center border border-dashed border-theme-border bg-theme-bg-muted/5 space-y-6 rounded-2xl">
+            <div className="py-32 text-center border  border-theme-border bg-theme-bg-muted/5 space-y-6 rounded-2xl">
               <Check size={40} className="mx-auto text-brand-tactical opacity-50" />
               <div className="space-y-2">
                 <p className="text-[11px] font-black text-theme-text uppercase tracking-widest italic">Tudo limpo!</p>
@@ -295,9 +295,9 @@ export const AdminServices: React.FC = () => {
       )}
 
       {/* COMPLIANCE BANNER */}
-      <div className="bg-theme-bg border border-theme-border/60 p-10 flex flex-col md:flex-row items-center gap-10 shadow-sm relative overflow-hidden group rounded-2xl">
+      <div className="bg-theme-bg border border-theme-border p-10 flex flex-col md:flex-row items-center gap-10 shadow-sm relative overflow-hidden group rounded-2xl">
         <div className="absolute top-0 right-0 p-10 opacity-[0.03] group-hover:opacity-[0.07] transition-opacity"><DollarSign size={120} /></div>
-        <div className="p-6 bg-brand-tactical/5 border border-brand-tactical/20 text-brand-tactical rounded-full"><AlertCircle size={32} /></div>
+        <div className="p-6 bg-brand-tactical/10 border border-brand-tactical/20 text-brand-tactical rounded-full"><AlertCircle size={32} /></div>
         <div className="flex-1 space-y-2 text-center md:text-left">
           <h4 className="text-[11px] font-black uppercase tracking-[0.5em] text-theme-text italic">Diretrizes de Precificação e Compliance</h4>
           <p className="text-[9px] text-theme-muted uppercase tracking-widest font-medium leading-relaxed max-w-3xl">

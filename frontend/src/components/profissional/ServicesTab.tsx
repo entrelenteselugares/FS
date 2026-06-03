@@ -73,7 +73,7 @@ export function ServicesTab({ profile, catalogServices, onAddService, onRemoveSe
     <div className="space-y-6">
 
       {/* Pricing Matrix */}
-      <div className="bg-theme-bg border border-theme-border/60 rounded-2xl p-4 sm:p-6 md:p-12 space-y-8 md:space-y-12">
+      <div className="bg-theme-bg-muted border border-theme-border rounded-2xl p-4 sm:p-6 md:p-12 space-y-8 md:space-y-12 shadow-sm">
         <div className="space-y-2">
           <h3 className="text-xl sm:text-2xl font-heading font-black text-theme-text uppercase tracking-widest italic leading-none">
             Matriz de <span className="text-brand-tactical">Precificação</span>
@@ -86,10 +86,10 @@ export function ServicesTab({ profile, catalogServices, onAddService, onRemoveSe
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-12">
           <div className="space-y-4">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-theme-bg-muted border border-theme-border/60 rounded-xl text-brand-tactical"><Clock size={16} /></div>
+              <div className="p-2 bg-theme-bg border border-theme-border rounded-xl text-brand-tactical shadow-sm"><Clock size={16} /></div>
               <label className="text-[11px] font-black text-theme-text uppercase tracking-widest italic">Valor Hora Automático (R$)</label>
             </div>
-            <div className="w-full bg-theme-bg-muted/30 border border-theme-border/40 rounded-xl p-4 sm:p-5 text-lg sm:text-xl font-heading font-black text-theme-text/40 italic flex justify-between items-center">
+            <div className="w-full bg-theme-bg border-2 border-theme-border rounded-xl p-4 sm:p-5 text-lg sm:text-xl font-heading font-black text-theme-text/80 italic flex justify-between items-center shadow-md">
               <span>{Number(profile?.hourlyRate || 0).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</span>
               <ShieldCheck size={16} className="text-brand-tactical animate-pulse" />
             </div>
@@ -100,10 +100,10 @@ export function ServicesTab({ profile, catalogServices, onAddService, onRemoveSe
 
           <div className="space-y-4">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-theme-bg-muted border border-theme-border/60 rounded-xl text-brand-tactical"><Zap size={16} /></div>
+              <div className="p-2 bg-theme-bg border border-theme-border rounded-xl text-brand-tactical shadow-sm"><Zap size={16} /></div>
               <label className="text-[11px] font-black text-theme-text uppercase tracking-widest italic">Multiplicador Técnico</label>
             </div>
-            <div className="w-full bg-theme-bg-muted/50 border border-theme-border/60 rounded-xl p-4 sm:p-5 text-lg sm:text-xl font-heading font-black text-brand-tactical italic flex justify-between items-center">
+            <div className="w-full bg-theme-bg border-2 border-theme-border rounded-xl p-4 sm:p-5 text-lg sm:text-xl font-heading font-black text-brand-tactical italic flex justify-between items-center shadow-md">
               <span>{profile?.equipmentMultiplier || "1.0"}</span>
               <span className="text-[8px] font-black uppercase text-theme-muted tracking-tighter">Nível de Ativos</span>
             </div>
@@ -118,7 +118,7 @@ export function ServicesTab({ profile, catalogServices, onAddService, onRemoveSe
       </div>
 
       {/* My Services Vitrine */}
-      <div className="bg-theme-bg border border-theme-border/60 rounded-2xl p-4 sm:p-6 md:p-12 space-y-8 md:space-y-10">
+      <div className="bg-theme-bg border border-theme-border rounded-2xl p-4 sm:p-6 md:p-12 space-y-8 md:space-y-10">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4">
           <div className="space-y-2">
             <h3 className="text-xl sm:text-2xl font-heading font-black text-theme-text uppercase tracking-widest italic leading-none">
@@ -147,9 +147,9 @@ export function ServicesTab({ profile, catalogServices, onAddService, onRemoveSe
             {profile.proServices.map((svc) => (
               <div
                 key={svc.id}
-                className="group flex flex-col sm:flex-row justify-between items-start sm:items-center rounded-2xl p-4 sm:p-6 bg-theme-bg-muted/30 border border-theme-border/40 hover:border-brand-tactical/40 transition-all relative overflow-hidden gap-6"
+                className="group flex flex-col sm:flex-row justify-between items-start sm:items-center rounded-2xl p-4 sm:p-6 bg-theme-bg border-2 border-theme-border shadow-sm hover:shadow-md hover:border-brand-tactical/60 transition-all relative overflow-hidden gap-6"
               >
-                <div className="absolute left-0 top-0 h-full w-1 bg-brand-tactical opacity-20 group-hover:opacity-100 transition-all" />
+                <div className="absolute left-0 top-0 h-full w-1.5 bg-brand-tactical opacity-50 group-hover:opacity-100 transition-all" />
                 <div className="space-y-2 flex-1">
                   <div className="flex items-center gap-3">
                     <Briefcase size={14} className="text-brand-tactical" />
@@ -189,7 +189,7 @@ export function ServicesTab({ profile, catalogServices, onAddService, onRemoveSe
                         <button
                           onClick={() => { setEditingServiceId(null); setLocalError(null); }}
                           disabled={loadingUpdate}
-                          className="p-2 bg-theme-bg-muted border border-theme-border/60 hover:bg-theme-bg/60 text-theme-muted transition-all rounded-xl cursor-pointer"
+                          className="p-2 bg-theme-bg-muted border border-theme-border hover:bg-theme-bg/60 text-theme-muted transition-all rounded-xl cursor-pointer"
                           title="Cancelar"
                         >
                           <X size={14} />
@@ -236,14 +236,14 @@ export function ServicesTab({ profile, catalogServices, onAddService, onRemoveSe
             ))}
           </div>
         ) : (
-          <div className="py-12 text-center text-theme-muted uppercase text-[9px] font-black tracking-widest rounded-2xl bg-theme-bg-muted/20 border border-dashed border-theme-border/40">
+          <div className="py-12 text-center text-theme-muted uppercase text-[9px] font-black tracking-widest rounded-2xl bg-theme-bg border  border-theme-border">
             Sua vitrine está vazia. Importe itens do catálogo abaixo ou crie um personalizado.
           </div>
         )}
       </div>
 
       {/* Global Catalog */}
-      <div className="bg-theme-bg border border-theme-border/60 rounded-2xl p-4 sm:p-6 md:p-12 space-y-8 md:space-y-12">
+      <div className="bg-theme-bg border border-theme-border rounded-2xl p-4 sm:p-6 md:p-12 space-y-8 md:space-y-12">
         <div className="space-y-2">
           <h3 className="text-xl sm:text-2xl font-heading font-black text-theme-text uppercase tracking-widest italic leading-none">
             Catálogo Geral da <span className="text-brand-tactical">Rede</span>
@@ -262,7 +262,7 @@ export function ServicesTab({ profile, catalogServices, onAddService, onRemoveSe
             return (
               <div
                 key={cat.id}
-                className="flex flex-col md:flex-row justify-between md:items-center rounded-2xl p-4 sm:p-6 bg-theme-bg-muted border border-theme-border/40 group hover:border-brand-tactical/30 transition-all gap-4 sm:gap-8 relative overflow-hidden"
+                className="flex flex-col md:flex-row justify-between md:items-center rounded-2xl p-4 sm:p-6 bg-theme-bg border-2 border-theme-border shadow-sm group hover:border-brand-tactical/50 hover:shadow-md transition-all gap-4 sm:gap-8 relative overflow-hidden"
               >
                 <div className="space-y-2 md:space-y-3">
                   <div className="text-base font-black text-theme-text uppercase tracking-tight italic">{cat.name}</div>
@@ -276,7 +276,7 @@ export function ServicesTab({ profile, catalogServices, onAddService, onRemoveSe
                     </div>
                   </div>
                 </div>
-                <div className="flex items-center justify-between md:justify-end gap-4 sm:gap-12 w-full md:w-auto border-t border-theme-border/20 pt-4 md:pt-0 md:border-t-0">
+                <div className="flex items-center justify-between md:justify-end gap-4 sm:gap-12 w-full md:w-auto border-t border-theme-border pt-4 md:pt-0 md:border-t-0">
                   <div className="text-left md:text-right space-y-0.5">
                     <div className="flex items-center md:justify-end gap-1.5 text-[8px] font-black text-brand-tactical uppercase tracking-widest italic">
                       <TrendingUp size={10} /> Valor Sugerido p/ Você

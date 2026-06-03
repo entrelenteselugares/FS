@@ -10,5 +10,5 @@ Controle total, segurança e supervisão da arquitetura do Foto Segundo.
    ![Passo 2](../../testes/admin/gestao-eventos/02-soft-delete.png)
 3. **Aprovação Manual:** Caso o webhook do Mercado Pago falhe por erro de rede (Timeout), você pode acessar os detalhes do pedido no painel e forçar a "Aprovação Manual" para liberar o link do cofre para o cliente.
    ![Passo 3](../../testes/admin/gestao-eventos/03-aprovacao-manual.png)
-4. **Ledger Financeiro:** Visualize o fluxo imutável na aba "Finanças". Lá estarão registrados todos os *splits* estáticos (salvos em decimais, não em %) garantindo compliance nas prestações de contas entre os fotógrafos e a matriz.
+4. **Ledger Financeiro:** Visualize o fluxo imutável na aba "Finanças". Lá estarão registrados todos os _splits_ estáticos (salvos em decimais, não em %) garantindo compliance nas prestações de contas entre os fotógrafos e a matriz.
    ![Passo 4](../../testes/admin/gestao-eventos/04-ledger.png)

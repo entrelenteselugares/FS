@@ -449,6 +449,7 @@ model ServiceCatalog {
   createdAt         DateTime              @default(now())
   updatedAt         DateTime              @updatedAt
   category          String                @default("FOTOGRAFIA")
+  eventTypes        String[]              @default([])
 
   // MVP Phase 54 fields
   pricingType       String                @default("FIXED") // FIXED, HOURLY, PER_UNIT

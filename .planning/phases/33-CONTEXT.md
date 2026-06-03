@@ -1,6 +1,7 @@
 # Phase 33 Context: Mobile-First & PWA implementation
 
 ## 🎯 Decisions
+
 1. **PWA Library**: Use `vite-plugin-pwa`.
    - **Mode**: `generateSW`.
    - **Manifest**: Dark theme branding, icon maskable, "standalone" display.
@@ -17,11 +18,13 @@
    - **Responsive Grid**: Dynamic columns (2 to 4) based on screen width.
 
 ## 🏗️ Technical Approach
+
 - **Service Worker**: Auto-register via `vite-plugin-pwa`.
-- **UI Components**: 
+- **UI Components**:
   - Refactor `SelectionGallery.tsx` for touch events.
   - Implement `PushNotificationManager` component.
 - **API**: Create `backend/src/controllers/push.controller.ts` for subscription management.
 
 ---
-*Created: 2026-05-14 | Phase 33*
+
+_Created: 2026-05-14 | Phase 33_

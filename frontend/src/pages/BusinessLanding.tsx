@@ -10,7 +10,7 @@ export function BusinessLanding() {
       <Navbar />
       
       {/* Header Minimalista */}
-      <header className="fixed top-0 left-0 right-0 h-16 bg-theme-bg/80 backdrop-blur-lg border-b border-theme-border/40 z-50 flex items-center px-4 md:px-8">
+      <header className="fixed top-0 left-0 right-0 h-16 bg-theme-bg/80 backdrop-blur-lg border-b border-theme-border z-50 flex items-center px-4 md:px-8">
         <Link to="/" className="text-brand-tactical hover:brightness-110 transition-all flex items-center gap-2 text-xs font-black tracking-widest uppercase italic">
           <ArrowLeft size={16} /> Voltar para o início
         </Link>
@@ -33,7 +33,7 @@ export function BusinessLanding() {
 
         {/* Intro */}
         <section className="mb-20">
-          <div className="bg-brand-tactical/5 border border-brand-tactical/20 p-8 md:p-12 rounded-3xl text-center">
+          <div className="bg-brand-tactical/10 border border-brand-tactical/20 p-8 md:p-12 rounded-3xl text-center">
             <Camera className="text-brand-tactical mx-auto mb-6" size={48} />
             <p className="text-lg md:text-xl font-light leading-relaxed max-w-3xl mx-auto">
               Se você é fotógrafo, videomaker, editor, drone operator ou qualquer profissional do universo audiovisual, a plataforma é a sua central de negócios: <strong className="text-brand-tactical font-black">mais clientes, menos burocracia, pagamento garantido.</strong>
@@ -64,7 +64,7 @@ export function BusinessLanding() {
             </div>
 
             {/* Solução */}
-            <div className="border border-brand-tactical/30 bg-brand-tactical/5 p-8 md:p-10 rounded-3xl">
+            <div className="border border-brand-tactical/30 bg-brand-tactical/10 p-8 md:p-10 rounded-3xl">
               <h2 className="text-xl font-black text-brand-tactical uppercase italic tracking-tight mb-6 flex items-center gap-2">
                 <ShieldCheck size={24} /> O que oferecemos
               </h2>
@@ -97,7 +97,7 @@ export function BusinessLanding() {
               { i: <Edit3 size={28} />, t: "Editor", d: "Recebe material bruto de captações da rede e realiza a edição dentro dos padrões editoriais. Remunerado por job." },
               { i: <Video size={28} />, t: "Ponto Fixo (Flash Event)", d: "Atua em locais de alto fluxo (praias, pontos turísticos) criando eventos instantâneos e vendendo fotos avulsas na hora." }
             ].map((m, idx) => (
-              <div key={idx} className="bg-theme-bg-muted border border-theme-border/40 p-8 rounded-2xl hover:border-brand-tactical/50 transition-colors">
+              <div key={idx} className="bg-theme-bg-muted border border-theme-border p-8 rounded-2xl hover:border-brand-tactical/50 transition-colors">
                 <div className="w-14 h-14 bg-brand-tactical/10 text-brand-tactical rounded-xl flex items-center justify-center mb-6">
                   {m.i}
                 </div>
@@ -154,7 +154,7 @@ export function BusinessLanding() {
         </section>
 
         {/* Requisitos */}
-        <section className="mb-24 border-t border-theme-border/40 pt-16">
+        <section className="mb-24 border-t border-theme-border pt-16">
           <h2 className="text-2xl font-black uppercase italic tracking-tight mb-8 text-center">
             Requisitos <span className="text-brand-tactical">Mínimos</span>
           </h2>
@@ -165,7 +165,7 @@ export function BusinessLanding() {
               "Disponibilidade de prazos",
               "Conta bancária para repasses"
             ].map((req, idx) => (
-              <div key={idx} className="bg-theme-bg-muted border border-theme-border/40 p-5 rounded-xl text-center">
+              <div key={idx} className="bg-theme-bg-muted border border-theme-border p-5 rounded-xl text-center">
                 <Target className="text-brand-tactical mx-auto mb-3" size={20} />
                 <p className="text-sm text-theme-text-muted font-light">{req}</p>
               </div>
@@ -187,7 +187,7 @@ export function BusinessLanding() {
         </section>
       </main>
 
-      <footer className="py-8 text-center border-t border-theme-border/40">
+      <footer className="py-8 text-center border-t border-theme-border">
         <p className="text-theme-text-muted text-xs font-bold uppercase tracking-widest mb-1">© 2026 Foto Segundo. Todos os direitos reservados.</p>
         <p className="text-brand-tactical/50 text-[10px] font-black italic uppercase tracking-[0.3em]">Protocolo Editorial de Imagem e Cinema</p>
       </footer>

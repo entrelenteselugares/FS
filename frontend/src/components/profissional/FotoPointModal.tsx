@@ -103,7 +103,7 @@ export function FotoPointModal({ onClose, onSuccess, onError, network }: FotoPoi
       />
 
       {/* Modal Container */}
-      <div className="relative w-full h-full sm:h-[85vh] max-w-2xl flex flex-col border-none sm:border border-theme-border/60 rounded-none sm:rounded-[40px] overflow-hidden shadow-2xl z-[10000] bg-theme-card">
+      <div className="relative w-full h-full sm:h-[85vh] max-w-2xl flex flex-col border-none sm:border border-theme-border rounded-none sm:rounded-[40px] overflow-hidden shadow-2xl z-[10000] bg-theme-card">
         
         {/* Header */}
         <div className="p-8 md:p-10 border-b flex items-center justify-between shrink-0" style={{ borderColor: "var(--theme-border)" }}>
@@ -116,7 +116,7 @@ export function FotoPointModal({ onClose, onSuccess, onError, network }: FotoPoi
               <h2 className="text-2xl font-black uppercase italic tracking-tighter text-theme-text leading-none">Configurar Ponto de Venda</h2>
             </div>
           </div>
-          <button onClick={onClose} className="p-3 hover:bg-white/5 rounded-full transition-all active:scale-90 text-theme-text/40">
+          <button onClick={onClose} className="p-3 hover:bg-theme-bg-muted rounded-full transition-all active:scale-90 text-theme-text/40">
             <X size={24} />
           </button>
         </div>
@@ -251,7 +251,7 @@ export function FotoPointModal({ onClose, onSuccess, onError, network }: FotoPoi
               onChange={setCoverPhotoUrl} 
             />
 
-            <div className="pt-4 border-t border-theme-border/30">
+            <div className="pt-4 border-t border-theme-border">
               <TeamSelector 
                 label="Responsável pela Captação"
                 network={network}

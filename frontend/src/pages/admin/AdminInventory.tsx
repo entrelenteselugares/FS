@@ -111,8 +111,8 @@ export default function AdminInventory() {
   return (
     <div className="space-y-10 animate-in fade-in duration-700 pb-20">
       {/* Header Padronizado */}
-      <div className="relative border-b border-theme-border/60 pb-8 md:pb-12 space-y-4 md:space-y-6">
-        <div className="absolute -top-10 -left-10 w-40 h-40 bg-brand-tactical/5 blur-3xl rounded-full" />
+      <div className="relative border-b border-theme-border pb-8 md:pb-12 space-y-4 md:space-y-6">
+        <div className="absolute -top-10 -left-10 w-40 h-40 bg-brand-tactical/10 blur-3xl rounded-full" />
         
         <div className="flex flex-col xl:flex-row justify-between items-start xl:items-end gap-6 relative z-10">
           <div>
@@ -177,7 +177,7 @@ export default function AdminInventory() {
       </div>
 
       {/* Tabela de Produtos */}
-      <div className="border border-theme-border bg-theme-bg-muted/30 shadow-sm overflow-x-auto w-full rounded-2xl">
+      <div className="border border-theme-border bg-theme-bg-muted shadow-sm overflow-x-auto w-full rounded-2xl">
         <table className="w-full text-left border-collapse">
           <thead>
             <tr className="bg-theme-bg-muted">
@@ -193,7 +193,7 @@ export default function AdminInventory() {
             ) : filteredProducts.length === 0 ? (
               <tr><td colSpan={4} className="p-20 text-center text-theme-muted text-[10px] font-black uppercase tracking-widest">Nenhum produto encontrado.</td></tr>
             ) : filteredProducts.map(p => (
-              <tr key={p.id} className="hover:bg-theme-bg-muted/50 transition-all group">
+              <tr key={p.id} className="hover:bg-theme-bg-muted transition-all group">
                 <td className="p-6">
                   <div className="flex flex-col">
                     <span className="text-sm font-black text-theme-text uppercase italic tracking-tight">{p.name}</span>
@@ -254,7 +254,7 @@ export default function AdminInventory() {
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-theme-bg/80 backdrop-blur-xl animate-in fade-in duration-300" onClick={() => setShowCreateModal(false)} />
           
-          <div className="relative w-full max-w-2xl bg-theme-card border border-theme-border/60 rounded-[40px] overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300 flex flex-col h-[85vh]">
+          <div className="relative w-full max-w-2xl bg-theme-card border border-theme-border rounded-[40px] overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300 flex flex-col h-[85vh]">
             {/* Header */}
             <div className="p-8 md:p-10 border-b border-theme-border flex items-center justify-between shrink-0">
               <div className="flex items-center gap-4">
@@ -266,7 +266,7 @@ export default function AdminInventory() {
                   <p className="text-[10px] font-black uppercase tracking-[0.2em] opacity-40">Gestão de Suprimentos Matriz</p>
                 </div>
               </div>
-              <button onClick={() => setShowCreateModal(false)} className="p-3 hover:bg-white/5 rounded-full transition-all text-theme-muted"><X size={24} /></button>
+              <button onClick={() => setShowCreateModal(false)} className="p-3 hover:bg-theme-bg-muted rounded-full transition-all text-theme-muted"><X size={24} /></button>
             </div>
 
             {/* Content */}
@@ -277,7 +277,7 @@ export default function AdminInventory() {
                   <input 
                     required
                     type="text"
-                    className="w-full bg-theme-bg-muted border border-theme-border/60 p-4 text-[10px] font-bold text-theme-text uppercase outline-none focus:border-brand-tactical rounded-xl"
+                    className="w-full bg-theme-bg-muted border border-theme-border p-4 text-[10px] font-bold text-theme-text uppercase outline-none focus:border-brand-tactical rounded-xl"
                     placeholder="EX: ÁLBUM 20X20 PREMIUM"
                     value={newData.name}
                     onChange={e => setNewData({...newData, name: e.target.value.toUpperCase()})}
@@ -288,7 +288,7 @@ export default function AdminInventory() {
                   <input 
                     required
                     type="text"
-                    className="w-full bg-theme-bg-muted border border-theme-border/60 p-4 text-[10px] font-bold text-theme-text uppercase outline-none focus:border-brand-tactical rounded-xl"
+                    className="w-full bg-theme-bg-muted border border-theme-border p-4 text-[10px] font-bold text-theme-text uppercase outline-none focus:border-brand-tactical rounded-xl"
                     placeholder="EX: ALB_20X20_PREM"
                     value={newData.sku}
                     onChange={e => setNewData({...newData, sku: e.target.value.toUpperCase()})}
@@ -300,7 +300,7 @@ export default function AdminInventory() {
                 <div className="space-y-2">
                   <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest block mb-2 opacity-60 italic">Categoria</label>
                   <select 
-                    className="w-full bg-theme-bg-muted border border-theme-border/60 p-4 text-[10px] font-bold text-theme-text uppercase outline-none focus:border-brand-tactical cursor-pointer rounded-xl"
+                    className="w-full bg-theme-bg-muted border border-theme-border p-4 text-[10px] font-bold text-theme-text uppercase outline-none focus:border-brand-tactical cursor-pointer rounded-xl"
                     value={newData.category}
                     onChange={e => setNewData({...newData, category: e.target.value})}
                   >
@@ -313,7 +313,7 @@ export default function AdminInventory() {
                 <div className="space-y-2">
                   <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest block mb-2 opacity-60 italic">Tipo de Gestão</label>
                   <select 
-                    className="w-full bg-theme-bg-muted border border-theme-border/60 p-4 text-[10px] font-bold text-theme-text uppercase outline-none focus:border-brand-tactical cursor-pointer rounded-xl"
+                    className="w-full bg-theme-bg-muted border border-theme-border p-4 text-[10px] font-bold text-theme-text uppercase outline-none focus:border-brand-tactical cursor-pointer rounded-xl"
                     value={newData.stockType}
                     onChange={e => setNewData({...newData, stockType: e.target.value})}
                   >
@@ -328,7 +328,7 @@ export default function AdminInventory() {
                 <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest block mb-2 opacity-60 italic">Link de Afiliado / Dropshipping (Opcional)</label>
                 <input 
                   type="text"
-                  className="w-full bg-theme-bg-muted border border-theme-border/60 p-4 text-[10px] font-bold text-theme-text outline-none focus:border-brand-tactical rounded-xl"
+                  className="w-full bg-theme-bg-muted border border-theme-border p-4 text-[10px] font-bold text-theme-text outline-none focus:border-brand-tactical rounded-xl"
                   placeholder="https://produto.mercadolivre.com.br/..."
                   value={newData.externalLink}
                   onChange={e => setNewData({...newData, externalLink: e.target.value})}
@@ -337,7 +337,7 @@ export default function AdminInventory() {
             </form>
 
             {/* Footer */}
-            <div className="p-8 md:p-10 bg-theme-bg-muted/50 border-t border-theme-border flex gap-4 shrink-0 rounded-2xl">
+            <div className="p-8 md:p-10 bg-theme-bg-muted border-t border-theme-border flex gap-4 shrink-0 rounded-2xl">
               <button onClick={() => setShowCreateModal(false)} className="flex-1 py-5 border border-theme-border text-[11px] font-black uppercase tracking-[0.3em] text-theme-muted hover:text-white transition-all rounded-[20px] italic">Cancelar</button>
               <button 
                 type="submit"
@@ -357,7 +357,7 @@ export default function AdminInventory() {
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-theme-bg/80 backdrop-blur-xl animate-in fade-in duration-300" onClick={() => setShowAdjustModal(null)} />
           
-          <div className="relative w-full max-w-md bg-theme-card border border-theme-border/60 rounded-[40px] overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300">
+          <div className="relative w-full max-w-md bg-theme-card border border-theme-border rounded-[40px] overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300">
             {/* Header */}
             <div className="p-8 md:p-10 border-b border-theme-border flex items-center justify-between shrink-0">
               <div className="flex items-center gap-4">
@@ -369,7 +369,7 @@ export default function AdminInventory() {
                   <p className="text-[10px] font-black uppercase tracking-[0.2em] opacity-40">Movimentação de Ativos</p>
                 </div>
               </div>
-              <button onClick={() => setShowAdjustModal(null)} className="p-3 hover:bg-white/5 rounded-full transition-all text-theme-muted"><X size={24} /></button>
+              <button onClick={() => setShowAdjustModal(null)} className="p-3 hover:bg-theme-bg-muted rounded-full transition-all text-theme-muted"><X size={24} /></button>
             </div>
 
             <div className="p-8 md:p-10 space-y-8">
@@ -385,11 +385,11 @@ export default function AdminInventory() {
                 ))}
               </div>
 
-              <div className="bg-theme-bg-muted p-8 border border-theme-border/60 text-center space-y-4 rounded-2xl">
+              <div className="bg-theme-bg-muted p-8 border border-theme-border text-center space-y-4 rounded-2xl">
                 <div className="flex items-center justify-between max-w-[200px] mx-auto">
-                  <button onClick={() => setAdjustData({...adjustData, quantity: Math.max(1, adjustData.quantity - 1)})} className="text-theme-text text-3xl font-black w-12 h-12 bg-white/5 rounded-full hover:bg-white/10 transition-colors">-</button>
+                  <button onClick={() => setAdjustData({...adjustData, quantity: Math.max(1, adjustData.quantity - 1)})} className="text-theme-text text-3xl font-black w-12 h-12 bg-theme-bg-muted rounded-full hover:bg-white/10 transition-colors">-</button>
                   <div className="text-4xl font-black text-theme-text italic">{adjustData.quantity}</div>
-                  <button onClick={() => setAdjustData({...adjustData, quantity: adjustData.quantity + 1})} className="text-theme-text text-3xl font-black w-12 h-12 bg-white/5 rounded-full hover:bg-white/10 transition-colors">+</button>
+                  <button onClick={() => setAdjustData({...adjustData, quantity: adjustData.quantity + 1})} className="text-theme-text text-3xl font-black w-12 h-12 bg-theme-bg-muted rounded-full hover:bg-white/10 transition-colors">+</button>
                 </div>
                 <p className="text-[9px] text-theme-muted font-black uppercase tracking-widest">Unidades para movimentar</p>
               </div>
@@ -397,7 +397,7 @@ export default function AdminInventory() {
               <input 
                 type="text" 
                 placeholder="DESCRIÇÃO DO AJUSTE (OPCIONAL)"
-                className="w-full bg-theme-bg-muted border border-theme-border/60 p-4 text-[10px] font-bold text-theme-text uppercase focus:border-brand-tactical outline-none rounded-xl"
+                className="w-full bg-theme-bg-muted border border-theme-border p-4 text-[10px] font-bold text-theme-text uppercase focus:border-brand-tactical outline-none rounded-xl"
                 value={adjustData.description}
                 onChange={e => setAdjustData({...adjustData, description: e.target.value.toUpperCase()})}
               />

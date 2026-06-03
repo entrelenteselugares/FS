@@ -57,7 +57,7 @@ export function FlashEventModal({ onClose, onSuccess, onError, network }: FlashE
       />
 
       {/* Modal Container */}
-      <div className="relative w-full h-full sm:h-[80vh] max-w-xl flex flex-col border-none sm:border border-theme-border/60 rounded-none sm:rounded-[40px] overflow-hidden shadow-2xl z-[10000] bg-theme-card">
+      <div className="relative w-full h-full sm:h-[80vh] max-w-xl flex flex-col border-none sm:border border-theme-border rounded-none sm:rounded-[40px] overflow-hidden shadow-2xl z-[10000] bg-theme-card">
         
         {/* Header */}
         <div className="p-8 md:p-10 border-b flex items-center justify-between shrink-0" style={{ borderColor: "var(--theme-border)" }}>
@@ -70,7 +70,7 @@ export function FlashEventModal({ onClose, onSuccess, onError, network }: FlashE
               <h2 className="text-2xl font-black uppercase italic tracking-tighter text-theme-text leading-none">Foto Print Live</h2>
             </div>
           </div>
-          <button onClick={onClose} className="p-3 hover:bg-white/5 rounded-full transition-all active:scale-90 text-theme-text/40">
+          <button onClick={onClose} className="p-3 hover:bg-theme-bg-muted rounded-full transition-all active:scale-90 text-theme-text/40">
             <X size={24} />
           </button>
         </div>
@@ -115,7 +115,7 @@ export function FlashEventModal({ onClose, onSuccess, onError, network }: FlashE
               />
             </div>
             
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="space-y-2">
                 <label className="text-[10px] font-black text-theme-muted uppercase tracking-widest italic flex items-center gap-2">
                   <Calendar size={12} /> Data
@@ -131,28 +131,32 @@ export function FlashEventModal({ onClose, onSuccess, onError, network }: FlashE
 
               <div className="space-y-2">
                 <label className="text-[10px] font-black text-theme-muted uppercase tracking-widest italic flex items-center gap-2">
-                  <Clock size={12} /> Início — Término
+                  <Clock size={12} /> Início
                 </label>
-                <div className="flex items-center gap-2">
-                  <input
-                    type="time"
-                    required
-                    value={startTime}
-                    onChange={e => setStartTime(e.target.value)}
-                    className="w-full bg-theme-bg-muted border border-theme-border p-4 text-theme-text outline-none focus:border-yellow-400/50 transition-all font-black text-xs italic"
-                  />
-                  <input
-                    type="time"
-                    required
-                    value={endTime}
-                    onChange={e => setEndTime(e.target.value)}
-                    className="w-full bg-theme-bg-muted border border-theme-border p-4 text-theme-text outline-none focus:border-yellow-400/50 transition-all font-black text-xs italic"
-                  />
-                </div>
+                <input
+                  type="time"
+                  required
+                  value={startTime}
+                  onChange={e => setStartTime(e.target.value)}
+                  className="w-full bg-theme-bg-muted border border-theme-border p-4 text-theme-text outline-none focus:border-yellow-400/50 transition-all font-black text-xs italic"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-[10px] font-black text-theme-muted uppercase tracking-widest italic flex items-center gap-2">
+                  <Clock size={12} /> Término
+                </label>
+                <input
+                  type="time"
+                  required
+                  value={endTime}
+                  onChange={e => setEndTime(e.target.value)}
+                  className="w-full bg-theme-bg-muted border border-theme-border p-4 text-theme-text outline-none focus:border-yellow-400/50 transition-all font-black text-xs italic"
+                />
               </div>
             </div>
 
-            <div className="pt-4 border-t border-theme-border/30">
+            <div className="pt-4 border-t border-theme-border">
               <TeamSelector 
                 label="Quem irá capturar?"
                 network={network}

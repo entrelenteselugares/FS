@@ -6,6 +6,7 @@ import { Helmet } from "react-helmet-async";
 import { T } from "../lib/theme";
 import { DICT } from "../lib/dictionary";
 import { Navbar } from "../components/Navbar";
+import { PhotoMosaic } from "../components/PhotoMosaic";
 import { MapPin, Calendar, Search } from "lucide-react";
 
 interface Event {
@@ -284,29 +285,26 @@ export const HomePage = () => {
       <Navbar />
 
       {/* ── HERO ─────────────────────────────────────────────────────────── */}
-      <section className="hp-hero-section" style={{ 
+      <section className="hp-hero-section relative overflow-hidden flex flex-col items-center text-center justify-center min-h-[60vh] md:min-h-[75vh]" style={{ 
         padding: "clamp(24px, 5vw, 40px) 24px 32px", 
-        background: "linear-gradient(to bottom, var(--bg-card), var(--bg))",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        textAlign: "center",
-        position: "relative",
-        overflow: "hidden",
-        minHeight: "auto"
       }}>
-        {/* Subtle Background Glow */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full bg-brand-tactical/5 blur-[120px] rounded-full opacity-30 -translate-y-1/2 pointer-events-none" />
+        {/* Animated Mosaic Background */}
+        <div className="absolute inset-0 z-0">
+          <PhotoMosaic opacity={0.8} />
+          {/* Intense Dark Overlay for legibility */}
+          <div className="absolute inset-0 bg-black/70 md:bg-black/80 pointer-events-none" />
+          <div className="absolute inset-0 bg-gradient-to-t from-var(--bg) to-transparent pointer-events-none" />
+        </div>
 
         <div style={{ maxWidth: 1200, position: "relative", zIndex: 10 }}>
           <p className="hp-hero-tagline animate-reveal" style={{ fontSize: 10, fontFamily: T.fontB, fontWeight: 400, letterSpacing: "0.5em", textTransform: "uppercase", color: T.brand, marginBottom: 16, opacity: 0.8 }}>
             {DICT.HERO_TAGLINE}
           </p>
 
-          <h1 className="hp-hero-title animate-reveal" style={{
+          <h1 className="hp-hero-title animate-reveal text-white drop-shadow-2xl" style={{
             fontFamily: T.fontD, fontWeight: 900,
-            fontSize: "clamp(32px, 7vw, 80px)",
-            lineHeight: 0.85, color: "var(--text)",
+            fontSize: "clamp(28px, 6vw, 64px)",
+            lineHeight: 0.85,
             textTransform: "uppercase", letterSpacing: "-0.04em",
             margin: "0 0 24px",
           }}>
@@ -314,33 +312,24 @@ export const HomePage = () => {
             <em style={{ fontStyle: "italic", color: T.brand, display: "block", whiteSpace: "nowrap" }}>{DICT.HERO_TITLE_PART2_ITALIC}</em>
           </h1>
 
-          <p className="hp-hero-desc animate-reveal" style={{ fontSize: 13, color: "var(--text-2)", fontWeight: 300, maxWidth: 650, lineHeight: 1.5, margin: "0 auto 32px", fontFamily: T.fontB }}>
+          <p className="hp-hero-desc animate-reveal text-white/80 drop-shadow-md" style={{ fontSize: 13, fontWeight: 300, maxWidth: 650, lineHeight: 1.5, margin: "0 auto 32px", fontFamily: T.fontB }}>
             {DICT.HERO_DESCRIPTION}
           </p>
 
-          <div className="hp-hero-search-desktop animate-reveal" style={{ display: "flex", gap: 12, justifyContent: "center" }}>
-            {/* Mobile-only Search Bar inside Hero */}
-            <form onSubmit={e => { e.preventDefault(); fetchEvents(query, 1); }} className="md:hidden w-full relative mb-0 group mt-2">
-              <Search size={14} className="absolute left-4 top-1/2 -translate-y-1/2 text-theme-text-muted group-focus-within:text-brand-tactical group-focus-within:scale-110 transition-all duration-300" />
-              <input
-                id="mobile-search-input"
-                value={query}
-                onChange={e => setQuery(e.target.value)}
-                onKeyDown={e => e.key === "Enter" && fetchEvents(query, 1)}
-                placeholder="Pesquise por evento, noivos..."
-                className="w-full bg-theme-bg-muted/80 border border-theme-border/40 focus:border-brand-tactical focus:ring-2 focus:ring-brand-tactical/20 text-theme-text pl-10 pr-4 py-2.5 rounded-lg text-[10px] font-black uppercase tracking-wider outline-none shadow-md transition-all duration-300 focus:scale-[1.02] placeholder:text-theme-text-muted"
-              />
-            </form>
-
+          <div className="hp-hero-search-desktop animate-reveal" style={{ display: "flex", gap: 16, justifyContent: "center" }}>
             <button id="btn-explorar-vitrine"
-              onClick={() => navigate("/vitrine")}
-              className="lux-button-tactical px-10 py-4 text-[10px] font-display font-black uppercase tracking-[0.4em] italic shadow-2xl shadow-brand-tactical/20 hidden md:block"
+              onClick={() => {
+                const vitrine = document.getElementById("vitrine");
+                if (vitrine) vitrine.scrollIntoView({ behavior: "smooth" });
+                else navigate("/vitrine");
+              }}
+              className="lux-button-tactical px-10 py-5 text-[11px] font-display font-black uppercase tracking-[0.4em] italic shadow-2xl shadow-brand-tactical/20"
             >
               Explorar Vitrine
             </button>
             <button id="btn-agendar-cobertura"
               onClick={() => navigate("/cotacao")}
-              className="px-8 py-4 text-[10px] font-display font-black uppercase tracking-[0.2em] italic bg-white/5 border border-white/10 text-theme-text hover:bg-theme-text/10 hover:scale-[1.02] transition-all hidden md:block cursor-pointer rounded-full"
+              className="px-8 py-5 text-[11px] font-display font-black uppercase tracking-[0.2em] italic bg-white/10 backdrop-blur-md border border-white/20 text-white hover:bg-white/20 hover:scale-[1.02] transition-all cursor-pointer rounded-full"
             >
               Agendar Cobertura
             </button>
@@ -369,7 +358,7 @@ export const HomePage = () => {
                 <select id="select-cidade-mobile" 
                   value={selectedCity}
                   onChange={e => { setSelectedCity(e.target.value); setPage(1); }}
-                  className="bg-theme-bg-muted border border-theme-border/40 text-theme-text pl-3 pr-5 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest outline-none appearance-none shadow-sm cursor-pointer hover:border-brand-tactical/50 transition-colors"
+                  className="bg-theme-bg-muted border border-theme-border text-theme-text pl-3 pr-5 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest outline-none appearance-none shadow-sm cursor-pointer hover:border-brand-tactical/50 transition-colors"
                 >
                   <option value="" className="bg-theme-bg text-theme-text">🗺️ Cidades</option>
                   {availableCities.map(c => (
@@ -383,7 +372,7 @@ export const HomePage = () => {
                 <select id="select-categoria-mobile" 
                   value={selectedType}
                   onChange={e => { setSelectedType(e.target.value); setPage(1); }}
-                  className="bg-theme-bg-muted border border-theme-border/40 text-theme-text pl-3 pr-5 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest outline-none appearance-none shadow-sm cursor-pointer hover:border-brand-tactical/50 transition-colors"
+                  className="bg-theme-bg-muted border border-theme-border text-theme-text pl-3 pr-5 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest outline-none appearance-none shadow-sm cursor-pointer hover:border-brand-tactical/50 transition-colors"
                 >
                   <option value="" className="bg-theme-bg text-theme-text">🏷️ Categorias</option>
                   <option value="ALBUM_FULL" className="bg-theme-bg text-theme-text">Álbuns</option>
@@ -398,7 +387,7 @@ export const HomePage = () => {
                 <select id="select-ordenacao-mobile" 
                   value={sortBy}
                   onChange={e => { setSortBy(e.target.value); setPage(1); }}
-                  className="bg-theme-bg-muted border border-theme-border/40 text-theme-text pl-3 pr-5 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest outline-none appearance-none shadow-sm cursor-pointer hover:border-brand-tactical/50 transition-colors"
+                  className="bg-theme-bg-muted border border-theme-border text-theme-text pl-3 pr-5 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest outline-none appearance-none shadow-sm cursor-pointer hover:border-brand-tactical/50 transition-colors"
                 >
                   <option value="" className="bg-theme-bg text-theme-text">⏱️ Recentes</option>
                   <option value="OLD" className="bg-theme-bg text-theme-text">Antigos</option>
@@ -413,7 +402,7 @@ export const HomePage = () => {
           </div>
 
           {/* Header with Search & Filters (Desktop — hidden on mobile) */}
-          <div className="hp-vitrine-header-desktop flex flex-col lg:flex-row lg:items-center justify-between gap-3 mb-2 border-b border-theme-border/20 pb-4 pt-2 px-8">
+          <div className="hp-vitrine-header-desktop flex flex-col lg:flex-row lg:items-center justify-between gap-3 mb-2 border-b border-theme-border pb-4 pt-2 px-8">
             <div style={{ borderLeft: `2px solid ${T.brand}`, paddingLeft: 12 }}>
               <p style={{ fontSize: 9, fontFamily: T.fontD, fontWeight: 900, color: "var(--theme-text-muted)", letterSpacing: "0.2em", textTransform: "uppercase", margin: "0 0 2px", fontStyle: 'italic' }}>{DICT.LATEST_REGISTERS_TAG}</p>
               <h2 style={{ fontFamily: T.fontD, fontWeight: 900, fontSize: "clamp(24px,3.5vw,32px)", color: "var(--text)", textTransform: "uppercase", margin: 0, lineHeight: 1 }}>
@@ -432,7 +421,7 @@ export const HomePage = () => {
                   onChange={e => setQuery(e.target.value)}
                   onKeyDown={e => e.key === "Enter" && fetchEvents(query, 1)}
                   placeholder="Nome do evento ou titular..."
-                  className="w-full bg-theme-bg-muted border border-theme-border/40 pl-12 pr-4 py-4 text-[11px] font-display font-black uppercase tracking-widest text-theme-text focus:bg-theme-bg-muted/80 transition-all outline-none italic"
+                  className="w-full bg-theme-bg-muted border border-theme-border pl-12 pr-4 py-4 text-[11px] font-display font-black uppercase tracking-widest text-theme-text focus:bg-theme-bg-muted transition-all outline-none italic"
                 />
               </form>
 
@@ -441,7 +430,7 @@ export const HomePage = () => {
                 <select id="select-cidade-desktop" 
                   value={selectedCity}
                   onChange={e => { setSelectedCity(e.target.value); setPage(1); }}
-                  className="bg-theme-bg-muted border border-theme-border/40 px-4 py-4 text-[9px] font-black uppercase tracking-widest text-theme-text/40 focus:text-theme-text outline-none cursor-pointer hover:bg-theme-bg-muted/80 transition-colors italic appearance-none"
+                  className="bg-theme-bg-muted border border-theme-border px-4 py-4 text-[9px] font-black uppercase tracking-widest text-theme-text/40 focus:text-theme-text outline-none cursor-pointer hover:bg-theme-bg-muted transition-colors italic appearance-none"
                 >
                   <option value="" className="bg-theme-bg text-theme-text">Todas as Cidades</option>
                   {availableCities.map(c => (
@@ -452,7 +441,7 @@ export const HomePage = () => {
                 <select id="select-categoria-desktop" 
                   value={selectedType}
                   onChange={e => { setSelectedType(e.target.value); setPage(1); }}
-                  className="bg-theme-bg-muted border border-theme-border/40 px-4 py-4 text-[9px] font-black uppercase tracking-widest text-theme-text/40 focus:text-theme-text outline-none cursor-pointer hover:bg-theme-bg-muted/80 transition-colors italic appearance-none"
+                  className="bg-theme-bg-muted border border-theme-border px-4 py-4 text-[9px] font-black uppercase tracking-widest text-theme-text/40 focus:text-theme-text outline-none cursor-pointer hover:bg-theme-bg-muted transition-colors italic appearance-none"
                 >
                   <option value="" className="bg-theme-bg text-theme-text">Todas as Categorias</option>
                   <option value="ALBUM_FULL" className="bg-theme-bg text-theme-text">Álbum Completo</option>
@@ -464,7 +453,7 @@ export const HomePage = () => {
                 <select id="select-ordenacao-desktop" 
                   value={sortBy}
                   onChange={e => { setSortBy(e.target.value); setPage(1); }}
-                  className="bg-theme-bg-muted border border-theme-border/40 px-4 py-4 text-[9px] font-black uppercase tracking-widest text-theme-text/40 focus:text-theme-text outline-none cursor-pointer hover:bg-theme-bg-muted/80 transition-colors italic appearance-none"
+                  className="bg-theme-bg-muted border border-theme-border px-4 py-4 text-[9px] font-black uppercase tracking-widest text-theme-text/40 focus:text-theme-text outline-none cursor-pointer hover:bg-theme-bg-muted transition-colors italic appearance-none"
                 >
                   <option value="">Data (Recentes)</option>
                   <option value="OLD" className="bg-theme-bg text-theme-text">Data (Antigos)</option>
@@ -480,7 +469,7 @@ export const HomePage = () => {
           {loading ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-1">
               {[...Array(8)].map((_, i) => (
-                <div key={i} className="bg-white/5 aspect-[4/3] animate-pulse" />
+                <div key={i} className="bg-theme-bg-muted aspect-[4/3] animate-pulse" />
               ))}
             </div>
           ) : events.length === 0 ? (
@@ -492,7 +481,19 @@ export const HomePage = () => {
               <div className="space-y-4 hp-event-grid-container px-0 md:px-8">
 
 
-                {/* Mobile Specific Search - Removed because it was duplicated */}
+                {/* Mobile Specific Search */}
+                <div className="hp-mobile-search px-4 pb-4">
+                  <form onSubmit={e => { e.preventDefault(); fetchEvents(query, 1); }} className="relative flex-1 group w-full">
+                    <Search size={14} className="absolute left-4 top-1/2 -translate-y-1/2 text-theme-text-muted transition-colors" />
+                    <input
+                      value={query}
+                      onChange={e => setQuery(e.target.value)}
+                      onKeyDown={e => e.key === "Enter" && fetchEvents(query, 1)}
+                      placeholder="Buscar evento..."
+                      className="w-full bg-theme-bg-muted border border-theme-border pl-11 pr-4 py-3.5 text-[10px] font-black uppercase tracking-widest text-theme-text focus:border-brand-tactical/50 transition-all outline-none italic rounded-full shadow-sm"
+                    />
+                  </form>
+                </div>
 
                 {/* Eventos Grid (Full Width on Mobile) */}
                 <div className="grid hp-event-grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">

@@ -11,6 +11,7 @@ interface Service {
   allowProfessional: boolean;
   allowMobile: boolean;
   category: string;
+  eventTypes?: string[];
 }
 
 interface Props {
@@ -21,7 +22,7 @@ interface Props {
 }
 
 const inputClass =
-  "w-full bg-theme-bg-muted border border-theme-border/60 p-4 text-[10px] text-theme-text font-black outline-none focus:border-brand-tactical transition-all uppercase placeholder:text-theme-muted/30 rounded-2xl";
+  "w-full bg-theme-bg-muted border border-theme-border p-4 text-[10px] text-theme-text font-black outline-none focus:border-brand-tactical transition-all uppercase placeholder:text-theme-muted/30 rounded-2xl";
 const labelClass =
   "text-[8px] font-black text-theme-muted uppercase tracking-widest block mb-2 opacity-60 italic";
 
@@ -35,6 +36,7 @@ export const ServiceModal: React.FC<Props> = ({ onClose, onSave, initialData, sa
     allowProfessional: initialData?.allowProfessional ?? true,
     allowMobile: initialData?.allowMobile ?? false,
     category: initialData?.category || "FOTOGRAFIA",
+    eventTypes: initialData?.eventTypes || [],
   });
 
   const update = (patch: Partial<typeof form>) => setForm(prev => ({ ...prev, ...patch }));
@@ -42,7 +44,7 @@ export const ServiceModal: React.FC<Props> = ({ onClose, onSave, initialData, sa
   return (
     <div className="fixed inset-0 z-[500] flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-theme-bg/80 backdrop-blur-xl animate-in fade-in duration-300" onClick={onClose} />
-      <div className="relative w-full max-w-2xl bg-theme-card border border-theme-border/60 rounded-2xl overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300 flex flex-col h-[85vh]">
+      <div className="relative w-full max-w-2xl bg-theme-card border border-theme-border rounded-2xl overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300 flex flex-col h-[85vh]">
         {/* Header */}
         <div className="p-8 md:p-10 border-b border-theme-border flex items-center justify-between shrink-0">
           <div className="flex items-center gap-4">
@@ -56,7 +58,7 @@ export const ServiceModal: React.FC<Props> = ({ onClose, onSave, initialData, sa
               <p className="text-[10px] font-black uppercase tracking-[0.2em] opacity-40">Configuração de Tabela e Valor de Entrega</p>
             </div>
           </div>
-          <button onClick={onClose} className="p-3 hover:bg-white/5 rounded-full transition-all text-theme-muted">
+          <button onClick={onClose} className="p-3 hover:bg-theme-bg-muted rounded-full transition-all text-theme-muted">
             <X size={24} />
           </button>
         </div>
@@ -83,12 +85,49 @@ export const ServiceModal: React.FC<Props> = ({ onClose, onSave, initialData, sa
               </div>
             </div>
 
-            <div className="space-y-2">
+            <div className="space-y-2 pt-6 border-t border-theme-border">
+              <label className={labelClass}>
+                Tipos de Evento Permitidos
+                <span className="ml-2 normal-case text-theme-muted opacity-70">(Deixe vazio para permitir todos)</span>
+              </label>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                {[
+                  { id: "CASAMENTO", label: "CASAMENTO" },
+                  { id: "ANIVERSARIO", label: "ANIVERSÁRIO" },
+                  { id: "SHOW_FESTIVAL", label: "SHOW / FESTIVAL" },
+                  { id: "CORPORATIVO", label: "EVENTO CORPORATIVO" },
+                  { id: "FORMATURA", label: "FORMATURA" },
+                  { id: "ENSAIO", label: "ENSAIO FOTOGRÁFICO" },
+                  { id: "BAILE_FESTA", label: "BAILE / FESTA" },
+                  { id: "CONFRATERNIZACAO", label: "CONFRATERNIZAÇÃO" },
+                  { id: "CHURRASCO_BUFFET", label: "CHURRASCO / BUFFET" },
+                  { id: "OUTROS", label: "OUTROS" }
+                ].map(type => (
+                  <label key={type.id} className="flex items-center gap-2 cursor-pointer select-none">
+                    <input 
+                      type="checkbox" 
+                      checked={form.eventTypes.includes(type.id)} 
+                      onChange={e => {
+                        if (e.target.checked) {
+                          update({ eventTypes: [...form.eventTypes, type.id] });
+                        } else {
+                          update({ eventTypes: form.eventTypes.filter((t: string) => t !== type.id) });
+                        }
+                      }}
+                      className="w-3.5 h-3.5 text-brand-tactical border-theme-border bg-theme-bg-muted rounded" 
+                    />
+                    <span className="text-[9px] font-black uppercase tracking-widest text-theme-text">{type.label}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            <div className="space-y-2 pt-6 border-t border-theme-border">
               <label className={labelClass}>Descrição da Entrega</label>
               <textarea rows={3} className={`${inputClass} normal-case resize-none`} value={form.description} onChange={e => update({ description: e.target.value })} placeholder="O que o cliente recebe neste pacote?" />
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-6 border-t border-theme-border/20">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-6 border-t border-theme-border">
               <div className="space-y-2">
                 <label className={labelClass}>Preço Sugerido (R$)</label>
                 <div className="relative">
@@ -104,13 +143,13 @@ export const ServiceModal: React.FC<Props> = ({ onClose, onSave, initialData, sa
             </div>
 
             {/* Perfis Elegíveis */}
-            <div className="space-y-4 pt-6 border-t border-theme-border/20">
+            <div className="space-y-4 pt-6 border-t border-theme-border">
               <label className={labelClass}>Tipo de Serviço &amp; Precificação Individual</label>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* Profissional */}
-                <div className={`p-6 border rounded-2xl transition-all ${form.allowProfessional ? "border-brand-tactical/40 bg-brand-tactical/5" : "border-theme-border/60 bg-theme-bg-muted/10"}`}>
+                <div className={`p-6 border rounded-2xl transition-all ${form.allowProfessional ? "border-brand-tactical/40 bg-brand-tactical/10" : "border-theme-border bg-theme-bg"}`}>
                   <label className="flex items-center gap-3 cursor-pointer select-none mb-4">
-                    <input type="checkbox" checked={form.allowProfessional} onChange={e => update({ allowProfessional: e.target.checked })} className="w-4 h-4 text-brand-tactical border-theme-border/60 bg-theme-bg-muted rounded" />
+                    <input type="checkbox" checked={form.allowProfessional} onChange={e => update({ allowProfessional: e.target.checked })} className="w-4 h-4 text-brand-tactical border-theme-border bg-theme-bg-muted rounded" />
                     <span className="text-[10px] font-black uppercase tracking-widest text-theme-text">Profissional</span>
                   </label>
                   {form.allowProfessional && (
@@ -124,9 +163,9 @@ export const ServiceModal: React.FC<Props> = ({ onClose, onSave, initialData, sa
                   )}
                 </div>
                 {/* Mobile */}
-                <div className={`p-6 border rounded-2xl transition-all ${form.allowMobile ? "border-amber-500/40 bg-amber-500/5" : "border-theme-border/60 bg-theme-bg-muted/10"}`}>
+                <div className={`p-6 border rounded-2xl transition-all ${form.allowMobile ? "border-amber-500/40 bg-amber-500/5" : "border-theme-border bg-theme-bg"}`}>
                   <label className="flex items-center gap-3 cursor-pointer select-none mb-4">
-                    <input type="checkbox" checked={form.allowMobile} onChange={e => update({ allowMobile: e.target.checked })} className="w-4 h-4 text-amber-500 border-theme-border/60 bg-theme-bg-muted rounded" />
+                    <input type="checkbox" checked={form.allowMobile} onChange={e => update({ allowMobile: e.target.checked })} className="w-4 h-4 text-amber-500 border-theme-border bg-theme-bg-muted rounded" />
                     <span className="text-[10px] font-black uppercase tracking-widest text-theme-text">Mobile</span>
                   </label>
                   {form.allowMobile && (
@@ -144,7 +183,7 @@ export const ServiceModal: React.FC<Props> = ({ onClose, onSave, initialData, sa
           </div>
 
           {/* Footer */}
-          <div className="p-8 md:p-10 bg-theme-bg-muted/50 border-t border-theme-border flex gap-4 shrink-0 rounded-2xl">
+          <div className="p-8 md:p-10 bg-theme-bg-muted border-t border-theme-border flex gap-4 shrink-0 rounded-2xl">
             <button type="button" onClick={onClose} className="flex-1 py-5 border border-theme-border text-[11px] font-black uppercase tracking-[0.3em] text-theme-muted hover:text-white transition-all rounded-2xl italic">
               Cancelar
             </button>

@@ -17,7 +17,7 @@
 
 ## 🛡️ FASE ATUAL: Congelamento de Código e Validação Final
 
-Decisão estratégica tomada: **Congelamento de Novas Features (Feature Freeze)**. 
+Decisão estratégica tomada: **Congelamento de Novas Features (Feature Freeze)**.
 A infraestrutura de IA foi preparada no banco (campos adormecidos), mas a implementação do motor está suspensa. O foco total agora é garantir que 100% do que foi construído até aqui opere com estabilidade impecável.
 
 ## 🚧 Em Andamento (Foco Atual)

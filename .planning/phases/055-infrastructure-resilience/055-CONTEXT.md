@@ -10,6 +10,7 @@
 Esta fase resolve as 3 causas de morte identificadas no post-mortem prospectivo escrito em 2026-05-30, antes que o incidente real ocorra. Ela NÃO adiciona features de produto. É infraestrutura pura.
 
 **O que esta fase entrega:**
+
 1. Migração do storage de Google Drive → Cloudflare R2 (sem limite de quota, sem risco de banimento)
 2. Sentry instalado com alertas de error rate no webhook de pagamento
 3. `downloadAllMedia` e processamento Phygital movidos para Worker dedicado fora da Vercel
@@ -17,6 +18,7 @@ Esta fase resolve as 3 causas de morte identificadas no post-mortem prospectivo 
 5. 3 testes de integração cobrindo os fluxos críticos de pagamento e upload
 
 **O que esta fase NÃO entrega:**
+
 - Novas features de produto
 - Analytics (Phase 56)
 - Migração de banco de dados (Supabase → Neon é opcional, post-phase 55)
@@ -92,22 +94,27 @@ Esta fase resolve as 3 causas de morte identificadas no post-mortem prospectivo 
 </decisions>
 
 <canonical_refs>
+
 ## Canonical References
 
 **Downstream agents MUST read these before planning or implementing.**
 
 ### Storage atual (a ser migrado)
+
 - `backend/src/services/googleDrive.service.ts` — implementação atual de storage, métodos `createResumableUploadUrl`, `finalizeResumableUpload`, `uploadFile`, `deleteItem`
 - `backend/src/controllers/vault.controller.ts` — endpoints de upload (`initResumableUpload`, `completeResumableUpload`) que precisam ser redirecionados para R2
 
 ### Pagamento (webhook a ser protegido)
+
 - `backend/src/controllers/payment.controller.ts` — lógica de idempotência já implementada, base para o teste de integração
 
 ### Worker atual (a ser externalizado)
+
 - `backend/src/controllers/vault.controller.ts#downloadAllMedia` — função de ZIP a mover para o Worker
 - `backend/src/services/phygital.service.ts` — processamento de pedidos físicos a mover para o Worker
 
 ### Ambiente e configuração
+
 - `backend/.env.example` — deve receber as novas variáveis R2, Sentry, Worker, Upstash
 - `.planning/phases/2c4e7c2c/post_mortem_6_meses.md` — diagnóstico e roadmap de sobrevivência (referência de prioridades)
 
@@ -134,5 +141,5 @@ Esta fase resolve as 3 causas de morte identificadas no post-mortem prospectivo 
 
 ---
 
-*Phase: 055-infrastructure-resilience*
-*Context gathered: 2026-05-30 via PRD Express Path (post-mortem prospectivo)*
+_Phase: 055-infrastructure-resilience_
+_Context gathered: 2026-05-30 via PRD Express Path (post-mortem prospectivo)_

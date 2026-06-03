@@ -11,6 +11,7 @@ depends_on: []
 ## Context
 
 The `Subscription` model, `SubscriptionService`, and `VaultController.subscribe` already exist in the codebase, but are incomplete:
+
 - `Subscription` model is missing `trialEndsAt`, `planPrice`, and `preapprovalId` fields.
 - `SharedAlbum` is missing a `trialEndsAt` field and a `status` field for BLOCKED state.
 - The `SubscriptionService.createVaultSubscription` does NOT actually call the MP Preapproval API — it only creates a local `Order` without a real gateway preapproval.
@@ -32,6 +33,7 @@ The `Subscription` model, `SubscriptionService`, and `VaultController.subscribe`
    - `BLOCKED` status to the `SubscriptionStatus` enum
 
 3. Run migration:
+
 ```bash
 cd backend && npx prisma migrate dev --name "add-subscription-trial-fields"
 ```
@@ -41,6 +43,7 @@ cd backend && npx prisma migrate dev --name "add-subscription-trial-fields"
 **File:** `backend/src/controllers/vault.controller.ts` — `createAlbum()`
 
 After creating the `SharedAlbum`, compute and set `trialEndsAt`:
+
 ```typescript
 const trialEndsAt = new Date();
 trialEndsAt.setDate(trialEndsAt.getDate() + 30);
@@ -62,7 +65,7 @@ const mpResponse = await MercadoPagoService.createPreapproval({
   auto_recurring: {
     frequency: 1,
     frequency_type: "months",
-    transaction_amount: 19.90,
+    transaction_amount: 19.9,
     currency_id: "BRL",
   },
   payer_email: album.owner.email,
@@ -75,9 +78,9 @@ await prisma.subscription.update({
   where: { albumId },
   data: {
     preapprovalId: mpResponse.id,
-    planPrice: 19.90,
-    status: "PENDING"
-  }
+    planPrice: 19.9,
+    status: "PENDING",
+  },
 });
 
 // 3. Return the init_point URL for redirect
@@ -85,13 +88,14 @@ return {
   subscriptionId: subscription.id,
   initPoint: mpResponse.init_point,
   preapprovalId: mpResponse.id,
-  amount: 19.90
+  amount: 19.9,
 };
 ```
 
 **File:** `backend/src/services/mercadopago.service.ts`
 
 Add a `createPreapproval()` static method:
+
 ```typescript
 static async createPreapproval(data: {
   reason: string;
@@ -119,6 +123,7 @@ static async createPreapproval(data: {
 **File:** `backend/src/routes/index.ts`
 
 Register a dedicated route for MP subscription webhooks:
+
 ```typescript
 router.post("/webhooks/mp-subscription", async (req, res) => {
   const { type, data } = req.body;
@@ -132,11 +137,12 @@ router.post("/webhooks/mp-subscription", async (req, res) => {
 **File:** `backend/src/services/subscription.service.ts`
 
 Add `handlePreapprovalWebhook(preapprovalId: string)`:
+
 ```typescript
 static async handlePreapprovalWebhook(preapprovalId: string) {
   // 1. Fetch current status from MP
   const mpData = await MercadoPagoService.getPreapproval(preapprovalId);
-  
+
   const statusMap: Record<string, SubscriptionStatus> = {
     authorized: "ACTIVE",
     paused: "PAST_DUE",
@@ -144,11 +150,11 @@ static async handlePreapprovalWebhook(preapprovalId: string) {
     pending: "PENDING",
   };
   const newStatus = statusMap[mpData.status] ?? "PENDING";
-  
+
   // 2. Update local subscription + vault subscriptionStatus
   const sub = await prisma.subscription.findFirst({ where: { preapprovalId } });
   if (!sub) return;
-  
+
   await prisma.subscription.update({
     where: { id: sub.id },
     data: {
@@ -180,6 +186,7 @@ static async handlePreapprovalWebhook(preapprovalId: string) {
 **File:** `backend/src/services/mercadopago.service.ts`
 
 Add `getPreapproval(preapprovalId: string)`:
+
 ```typescript
 static async getPreapproval(preapprovalId: string) {
   const response = await axios.get(

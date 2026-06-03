@@ -20,8 +20,8 @@ export const AdminConfigsInfra: React.FC<Props> = ({ configs, saving, onChange, 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
 
         {/* Branding */}
-        <div className="bg-theme-bg border border-theme-border/60 p-10 space-y-10 shadow-sm rounded-2xl">
-          <div className="flex items-center gap-4 border-b border-theme-border/30 pb-6">
+        <div className="bg-theme-bg border border-theme-border p-10 space-y-10 shadow-sm rounded-2xl">
+          <div className="flex items-center gap-4 border-b border-theme-border pb-6">
             <Palette size={16} className="text-brand-tactical" />
             <h3 className="text-[11px] font-black text-theme-text uppercase tracking-[0.4em]">Identidade Visual Tática</h3>
           </div>
@@ -39,7 +39,7 @@ export const AdminConfigsInfra: React.FC<Props> = ({ configs, saving, onChange, 
                         type="text"
                         value={config.value}
                         onChange={e => onChange(key, e.target.value)}
-                        className="w-full bg-theme-bg-muted border border-theme-border/60 p-4 text-[11px] font-black text-theme-text uppercase tracking-widest outline-none focus:border-brand-tactical transition-all rounded-2xl"
+                        className="w-full bg-theme-bg-muted border border-theme-border p-4 text-[11px] font-black text-theme-text uppercase tracking-widest outline-none focus:border-brand-tactical transition-all rounded-2xl"
                       />
                       <input
                         type="color"
@@ -56,8 +56,8 @@ export const AdminConfigsInfra: React.FC<Props> = ({ configs, saving, onChange, 
         </div>
 
         {/* Governance */}
-        <div className="bg-theme-bg border border-theme-border/60 p-10 space-y-10 shadow-sm rounded-2xl">
-          <div className="flex items-center gap-4 border-b border-theme-border/30 pb-6">
+        <div className="bg-theme-bg border border-theme-border p-10 space-y-10 shadow-sm rounded-2xl">
+          <div className="flex items-center gap-4 border-b border-theme-border pb-6">
             <Lock size={16} className="text-brand-tactical" />
             <h3 className="text-[11px] font-black text-theme-text uppercase tracking-[0.4em]">Protocolos de Governança</h3>
           </div>
@@ -71,9 +71,9 @@ export const AdminConfigsInfra: React.FC<Props> = ({ configs, saving, onChange, 
               const isOn = config.value === "true";
               const Icon = item.icon;
               return (
-                <div key={item.key} className="flex items-center justify-between p-6 bg-theme-bg-muted/30 border border-theme-border/40 group hover:border-brand-tactical transition-all rounded-2xl">
+                <div key={item.key} className="flex items-center justify-between p-6 bg-theme-bg-muted border border-theme-border group hover:border-brand-tactical transition-all rounded-2xl">
                   <div className="flex items-center gap-6">
-                    <div className={`p-4 border ${isOn ? 'border-brand-tactical text-brand-tactical bg-brand-tactical/5' : 'border-theme-border/60 text-theme-muted'}`}>
+                    <div className={`p-4 border ${isOn ? 'border-brand-tactical text-brand-tactical bg-brand-tactical/10' : 'border-theme-border text-theme-muted'}`}>
                       <Icon size={20} />
                     </div>
                     <div>
@@ -96,7 +96,7 @@ export const AdminConfigsInfra: React.FC<Props> = ({ configs, saving, onChange, 
 
       {/* Pricing Policy */}
       <div className="bg-theme-bg border border-brand-tactical/30 p-10 space-y-8 shadow-sm rounded-2xl">
-        <div className="flex items-center gap-4 border-b border-theme-border/30 pb-6">
+        <div className="flex items-center gap-4 border-b border-theme-border pb-6">
           <DollarSign size={16} className="text-brand-tactical" />
           <div>
             <h3 className="text-[11px] font-black text-theme-text uppercase tracking-[0.4em]">Política de Precificação Mínima</h3>
@@ -113,7 +113,7 @@ export const AdminConfigsInfra: React.FC<Props> = ({ configs, saving, onChange, 
                   type="number" min="1" step="0.5"
                   value={hourlyRateConfig.value}
                   onChange={e => onChange("min_hourly_rate", e.target.value)}
-                  className="flex-1 bg-theme-bg-muted border border-theme-border/60 rounded-2xl p-4 text-2xl font-heading font-black text-theme-text italic focus:outline-none focus:border-brand-tactical transition-all"
+                  className="flex-1 bg-theme-bg-muted border border-theme-border rounded-2xl p-4 text-2xl font-heading font-black text-theme-text italic focus:outline-none focus:border-brand-tactical transition-all"
                 />
                 <span className="text-[9px] font-black text-theme-muted uppercase tracking-widest">/hora</span>
               </div>
@@ -123,7 +123,7 @@ export const AdminConfigsInfra: React.FC<Props> = ({ configs, saving, onChange, 
             </div>
             <div className="grid grid-cols-3 gap-3">
               {[60, 120, 180, 240, 360, 480].map(minutes => (
-                <div key={minutes} className="p-4 bg-theme-bg-muted/40 border border-theme-border/20 rounded-xl text-center">
+                <div key={minutes} className="p-4 bg-theme-bg-muted border border-theme-border rounded-xl text-center">
                   <p className="text-[8px] font-black text-theme-muted uppercase tracking-widest mb-1">{minutes}min</p>
                   <p className="text-base font-heading font-black text-brand-tactical italic">€{(hourlyRate * minutes / 60).toFixed(2)}</p>
                 </div>

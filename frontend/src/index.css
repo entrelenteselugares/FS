@@ -162,27 +162,27 @@ select, [data-sonner-toast], [data-sonner-toast] * {
 }
 
 .fs-input {
-    width: 100%;
-    background-color: var(--bg-field);
-    border: 1px solid var(--border);
-    padding: 1.15rem 1.5rem;
-    font-size: 11px;
-    font-family: var(--font-b);
-    font-weight: 900;
-    text-transform: uppercase;
-    letter-spacing: 0.15em;
-    color: var(--text);
-    outline: none;
-    border-radius: 9999px;
-    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.fs-input:focus {
-    border-color: var(--brand);
-    background-color: var(--bg);
-    box-shadow: 0 0 0 1px var(--brand);
-    padding-left: 1.75rem;
-}
+      width: 100%;
+      background-color: var(--bg-field);
+      border: 1px solid var(--border);
+      padding: 0.75rem 1rem;
+      font-size: 11px;
+      font-family: var(--font-b);
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: var(--text);
+      outline: none;
+      border-radius: 8px;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  
+  .fs-input:focus {
+      border-color: var(--brand);
+      background-color: var(--bg);
+      box-shadow: 0 0 0 1px var(--brand);
+      padding-left: 1.25rem;
+  }
 
 .fs-input::placeholder {
     color: var(--text-3);

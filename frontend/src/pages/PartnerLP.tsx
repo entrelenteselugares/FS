@@ -195,7 +195,7 @@ export const PartnerLP: React.FC = () => {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-white/5 border border-theme-border shadow-2xl overflow-hidden">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-theme-bg-muted border border-theme-border shadow-2xl overflow-hidden">
             {activeServices.map((svc) => {
               const localPrice = (partner.servicePrices as Record<string, number> | null)?.[svc.id];
               const displayPrice = localPrice ?? svc.basePrice;
@@ -250,8 +250,8 @@ export const PartnerLP: React.FC = () => {
                   key={day}
                   className={`p-4 sm:p-6 border text-center transition-all ${
                     config.closed
-                      ? "border-theme-border/30 bg-theme-bg-muted/10 opacity-50"
-                      : "border-brand-tactical/20 bg-brand-tactical/5 hover:bg-brand-tactical/10"
+                      ? "border-theme-border bg-theme-bg opacity-50"
+                      : "border-brand-tactical/20 bg-brand-tactical/10 hover:bg-brand-tactical/10"
                   }`}
                 >
                   <p className="text-[9px] font-black uppercase tracking-widest text-theme-muted mb-3 sm:mb-4">
@@ -295,7 +295,7 @@ export const PartnerLP: React.FC = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-12 mobile-gap">
           {recentEvents.length === 0 ? (
-            <div className="col-span-full py-20 text-center border border-dashed border-theme-border text-[10px] text-theme-muted uppercase tracking-widest">
+            <div className="col-span-full py-20 text-center border  border-theme-border text-[10px] text-theme-muted uppercase tracking-widest">
               Aguardando primeiros registros oficiais.
             </div>
           ) : recentEvents.map((evt) => (

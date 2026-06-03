@@ -411,7 +411,7 @@ export default function UnidadeFixaDashboard({
 
         {/* Header Seção Editorial */}
         <div className="relative mb-6">
-          <div className="absolute -top-10 -left-10 w-40 h-40 bg-brand-tactical/5 blur-3xl rounded-full pointer-events-none" />
+          <div className="absolute -top-10 -left-10 w-40 h-40 bg-brand-tactical/10 blur-3xl rounded-full pointer-events-none" />
           
           <div className="flex flex-col xl:flex-row justify-end items-start xl:items-end gap-6 relative z-10">
             <div className="flex flex-wrap items-center gap-4 w-full xl:w-auto">
@@ -424,9 +424,9 @@ export default function UnidadeFixaDashboard({
         </div>
         {/* Tier & Growth Section */}
         {!loading && stats?.user?.franchiseProfile && (
-          <div className="bg-theme-bg border-l-4 border-l-brand-tactical border border-theme-border/60 p-6 md:p-10 flex flex-col md:flex-row items-center justify-between gap-10 group overflow-hidden relative">
+          <div className="bg-theme-bg border-l-4 border-l-brand-tactical border border-theme-border p-6 md:p-10 flex flex-col md:flex-row items-center justify-between gap-10 group overflow-hidden relative">
             <div className="absolute top-0 right-0 p-10 opacity-[0.02] pointer-events-none group-hover:scale-110 transition-transform duration-700">
-                           <div className="w-20 h-20 md:w-24 md:h-24 bg-theme-bg-muted/40 border-2 border-brand-tactical flex items-center justify-center rotate-45 group-hover:rotate-[135deg] transition-all duration-700">
+                           <div className="w-20 h-20 md:w-24 md:h-24 bg-theme-bg-muted border-2 border-brand-tactical flex items-center justify-center rotate-45 group-hover:rotate-[135deg] transition-all duration-700">
                   <div className="-rotate-45 group-hover:-rotate-[135deg] transition-all duration-700 text-brand-tactical text-center">
                     <p className="text-[8px] font-black uppercase tracking-widest leading-none mb-1">Nível</p>
                     <Star size={24} fill="currentColor" className="mx-auto" />
@@ -491,7 +491,7 @@ export default function UnidadeFixaDashboard({
 
         {/* KPIs Dashboard */}
         {!loading && stats && (
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-px bg-theme-border/20 border border-theme-border/20 shadow-2xl">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-px bg-theme-border/20 border border-theme-border shadow-2xl">
             {[
               { label: "Operações / Mês", value: String(stats.eventosMes ?? 0), icon: <Calendar size={14} /> },
               user?.franchiseProfile 
@@ -500,7 +500,7 @@ export default function UnidadeFixaDashboard({
               { label: "Conversões", value: String(stats.totalVendas ?? 0), icon: <Users2 size={14} /> },
               { label: "Repasse Previsto", value: formatCurrency(stats.repasseEstimado ?? 0), icon: <DollarSign size={14} />, highlight: !user?.franchiseProfile },
             ].map((m) => (
-              <div key={m.label} className="bg-theme-bg-muted/40 p-4 md:p-6 space-y-2 md:space-y-4 group hover:bg-theme-bg-muted/60 transition-all duration-500">
+              <div key={m.label} className="bg-theme-bg-muted p-4 md:p-6 space-y-2 md:space-y-4 group hover:bg-theme-bg-muted transition-all duration-500">
                 <div className="flex items-center gap-2 md:gap-3">
                   <div className={`p-1.5 md:p-2 rounded-none ${m.highlight ? 'bg-brand-tactical text-brand-text' : 'bg-theme-border/40 text-theme-muted'}`}>
                     {m.icon}
@@ -527,8 +527,8 @@ export default function UnidadeFixaDashboard({
             {tab === "agenda" && (
           <div className="space-y-10">
             {/* Tactical Summary Bar */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-theme-border/20 border border-theme-border/20 shadow-xl overflow-hidden">
-               <div className="bg-theme-bg-muted/30 p-6 flex items-center gap-5">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-theme-border/20 border border-theme-border shadow-xl overflow-hidden">
+               <div className="bg-theme-bg-muted p-6 flex items-center gap-5">
                   <div className="w-10 h-10 rounded-full bg-brand-tactical/10 flex items-center justify-center text-brand-tactical border border-brand-tactical/20">
                     <Calendar size={18} />
                   </div>
@@ -542,7 +542,7 @@ export default function UnidadeFixaDashboard({
                     }).length} Missões</p>
                   </div>
                </div>
-               <div className="bg-theme-bg-muted/30 p-6 flex items-center gap-5">
+               <div className="bg-theme-bg-muted p-6 flex items-center gap-5">
                   <div className="w-10 h-10 rounded-full bg-blue-500/10 flex items-center justify-center text-blue-500 border border-blue-500/20">
                     <Users2 size={18} />
                   </div>
@@ -551,7 +551,7 @@ export default function UnidadeFixaDashboard({
                     <p className="text-sm font-black text-theme-text uppercase italic">{teamData.length} Agentes</p>
                   </div>
                </div>
-               <div className="bg-theme-bg-muted/30 p-6 flex items-center gap-5">
+               <div className="bg-theme-bg-muted p-6 flex items-center gap-5">
                   <div className="w-10 h-10 rounded-full bg-amber-500/10 flex items-center justify-center text-amber-500 border border-amber-500/20">
                     <ShieldCheck size={18} />
                   </div>
@@ -571,7 +571,7 @@ export default function UnidadeFixaDashboard({
               ) : eventos.length === 0 ? (
                 <div className="relative group overflow-hidden">
                   <div className="absolute inset-0 bg-gradient-to-br from-brand-tactical/5 to-transparent opacity-50" />
-                  <div className="relative p-12 md:p-24 border border-theme-border/40 text-center space-y-8 backdrop-blur-sm">
+                  <div className="relative p-12 md:p-24 border border-theme-border text-center space-y-8 backdrop-blur-sm">
                     <div className="relative inline-block">
                       <Calendar size={48} className="mx-auto text-theme-border/30" />
                       <div className="absolute -top-2 -right-2 w-4 h-4 bg-brand-tactical rounded-full animate-ping" />
@@ -594,10 +594,10 @@ export default function UnidadeFixaDashboard({
               ) : (
                 <div className="grid grid-cols-1 gap-4">
                   {eventos.map((ev) => (
-                    <div key={ev.id} className="lux-card p-0 overflow-hidden group hover:border-brand-tactical/30 transition-all duration-700">
+                    <div key={ev.id} className="lux-card p-0 overflow-hidden group hover:border-brand-tactical transition-all duration-500 bg-theme-bg border-2 border-theme-border hover:shadow-[0_0_20px_rgba(133,185,172,0.3)]">
                       <div className="flex flex-col md:flex-row">
                         {/* Data Column */}
-                        <div className="md:w-24 bg-theme-bg-muted/40 p-4 md:p-6 flex flex-col items-center justify-center border-b md:border-b-0 md:border-r border-theme-border/60 group-hover:bg-brand-tactical/5 transition-colors">
+                        <div className="md:w-24 bg-theme-bg-muted p-4 md:p-6 flex flex-col items-center justify-center border-b md:border-b-0 md:border-r border-theme-border group-hover:bg-brand-tactical/10 transition-colors">
                            <span className="text-[8px] font-black text-brand-tactical uppercase tracking-tighter mb-0.5">{new Date(ev.date).toLocaleDateString('pt-BR', { month: 'long' })}</span>
                            <span className="text-2xl md:text-3xl font-heading font-black text-theme-text italic leading-none">{new Date(ev.date).getDate()}</span>
                            <span className="text-[9px] font-bold text-theme-muted uppercase tracking-widest mt-1">{new Date(ev.date).getFullYear()}</span>
@@ -641,7 +641,7 @@ export default function UnidadeFixaDashboard({
                            </div>
                            
                            {/* Sub-bar */}
-                           <div className="pt-6 border-t border-theme-border/40 flex items-center justify-between">
+                           <div className="pt-6 border-t border-theme-border flex items-center justify-between">
                               <div className="flex items-center gap-6">
                                  <div className="flex items-center gap-2">
                                     <DollarSign size={12} className="text-brand-tactical" />
@@ -669,7 +669,7 @@ export default function UnidadeFixaDashboard({
           <div className="space-y-10">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
               {/* Consolidation Info */}
-              <div className="lg:col-span-2 lux-card p-6 md:p-8 border-l-4 border-l-brand-tactical bg-gradient-to-br from-brand-tactical/[0.03] to-transparent relative overflow-hidden">
+              <div className="lg:col-span-2 lux-card p-6 md:p-8 border-l-4 border-l-brand-tactical bg-theme-bg border-2 border-theme-border shadow-[0_0_15px_rgba(133,185,172,0.1)] relative overflow-hidden">
                 <div className="absolute top-0 right-0 p-8 opacity-[0.03] pointer-events-none">
                   <ShieldCheck size={100} />
                 </div>
@@ -692,7 +692,7 @@ export default function UnidadeFixaDashboard({
               </div>
 
               {/* PIX Destination Widget */}
-              <div className="lux-card p-6 md:p-8 flex flex-col justify-between bg-theme-bg-muted/20 border-dashed border-theme-border/60">
+              <div className="lux-card p-6 md:p-8 flex flex-col justify-between bg-theme-bg border-2 border-theme-border border-2 border-theme-border shadow-md">
                  <div className="space-y-4">
                     <p className="text-[9px] font-black text-theme-muted uppercase tracking-[0.3em]">Destino da Liquidação</p>
                     <div className="flex items-center gap-4">
@@ -715,8 +715,8 @@ export default function UnidadeFixaDashboard({
             </div>
 
             {/* Financial History Table */}
-            <div className="lux-card overflow-hidden">
-              <div className="p-8 border-b border-theme-border/60 flex flex-col sm:flex-row justify-between items-center bg-theme-bg-muted/10 gap-6">
+            <div className="lux-card overflow-hidden bg-theme-bg border-2 border-theme-border">
+              <div className="p-8 border-b-2 border-theme-border flex flex-col sm:flex-row justify-between items-center bg-theme-bg gap-6">
                 <div className="flex items-center gap-4">
                    <div className="h-8 w-1 bg-brand-tactical" />
                    <p className="text-[10px] font-black text-theme-text uppercase tracking-[0.4em] italic">Livro de Liquidações Históricas</p>
@@ -747,7 +747,7 @@ export default function UnidadeFixaDashboard({
                           <p className="text-[9px] font-black text-theme-muted uppercase tracking-[0.2em]">Protocolo Semanal · {formatDate(r.payout.weekStart)} — {formatDate(r.payout.weekEnd)}</p>
                           <div className="flex items-center gap-6">
                             <span className="text-3xl font-heading font-black italic text-theme-text tracking-tighter group-hover:scale-105 transition-transform origin-left">{formatCurrency(r.amount)}</span>
-                            <div className="flex items-center gap-3 px-3 py-1 bg-theme-bg border border-theme-border/60">
+                            <div className="flex items-center gap-3 px-3 py-1 bg-theme-bg border border-theme-border">
                                <span className="text-[8px] font-black text-theme-muted uppercase tracking-widest">{r.orderCount} OPERAÇÕES</span>
                             </div>
                           </div>
@@ -763,7 +763,7 @@ export default function UnidadeFixaDashboard({
                         </div>
                         <span className={`text-[10px] font-black uppercase tracking-[0.2em] px-6 py-3 border-2 transition-all ${
                           r.status === "PAID" 
-                            ? 'bg-brand-tactical/5 border-brand-tactical text-brand-tactical' 
+                            ? 'bg-brand-tactical/10 border-brand-tactical text-brand-tactical' 
                             : 'bg-amber-500/5 border-amber-500 text-amber-500 animate-pulse'
                         }`}>
                           {r.status === "PAID" ? "LIQUIDADO" : "PENDENTE"}
@@ -786,7 +786,7 @@ export default function UnidadeFixaDashboard({
         {/* ── AGENDA GOOGLE ── */}
         {tab === "calendar" && (
           <div className="space-y-8 animate-in fade-in duration-500">
-            <div className="lux-card p-10 border-l-4 border-l-brand-tactical bg-gradient-to-br from-brand-tactical/[0.03] to-transparent relative overflow-hidden">
+            <div className="lux-card p-10 border-l-4 border-l-brand-tactical bg-theme-bg border-2 border-theme-border shadow-[0_0_15px_rgba(133,185,172,0.1)] relative overflow-hidden">
               <div className="absolute top-0 right-0 p-10 opacity-[0.03] pointer-events-none">
                 <Calendar size={120} />
               </div>
@@ -801,7 +801,7 @@ export default function UnidadeFixaDashboard({
             <div className="max-w-3xl space-y-6">
               {!calendarStatus?.connected ? (
                 <div className="bg-theme-bg border border-theme-border p-10 text-center space-y-6">
-                  <div className="w-20 h-20 bg-theme-bg-muted/40 border border-theme-border flex items-center justify-center text-theme-muted mx-auto">
+                  <div className="w-20 h-20 bg-theme-bg-muted border border-theme-border flex items-center justify-center text-theme-muted mx-auto">
                     <Calendar size={32} />
                   </div>
                   <div className="space-y-2">
@@ -865,7 +865,7 @@ export default function UnidadeFixaDashboard({
                     </div>
                   </div>
 
-                  <div className="p-6 border border-theme-border bg-theme-bg-muted/30">
+                  <div className="p-6 border border-theme-border bg-theme-bg-muted">
                     <p className="text-[9px] text-theme-muted uppercase font-black tracking-widest text-center italic">
                       DICA: Todas as reservas confirmadas no sistema serão enviadas automaticamente para o seu Google Calendar.
                     </p>
@@ -879,7 +879,7 @@ export default function UnidadeFixaDashboard({
         {/* Ã¢â€â‚¬Ã¢â€â‚¬ MONITOR DE FILA Ã¢â€â‚¬Ã¢â€â‚¬ */}
         {tab === "monitor" && (
           <div className="space-y-10">
-            <div className="lux-card p-10 border-l-4 border-l-brand-tactical bg-gradient-to-br from-brand-tactical/[0.03] to-transparent relative overflow-hidden">
+            <div className="lux-card p-10 border-l-4 border-l-brand-tactical bg-theme-bg border-2 border-theme-border shadow-[0_0_15px_rgba(133,185,172,0.1)] relative overflow-hidden">
               <div className="absolute top-0 right-0 p-10 opacity-[0.03] pointer-events-none">
                 <Printer size={120} />
               </div>
@@ -893,7 +893,7 @@ export default function UnidadeFixaDashboard({
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {eventos.map(ev => (
-                <div key={ev.id} className="lux-card p-6 space-y-6 group hover:border-brand-tactical/40 transition-all duration-500">
+                <div key={ev.id} className="lux-card p-6 space-y-6 group hover:border-brand-tactical transition-all duration-500 bg-theme-bg border-2 border-theme-border hover:shadow-[0_0_20px_rgba(133,185,172,0.3)]">
                   <div className="space-y-2">
                     <div className="flex items-center gap-2">
                        <div className="w-2 h-2 rounded-full bg-brand-tactical animate-pulse" />
@@ -903,7 +903,7 @@ export default function UnidadeFixaDashboard({
                     <p className="text-[9px] font-bold text-theme-muted uppercase tracking-widest">{formatDate(ev.date)} · {ev.location}</p>
                   </div>
 
-                  <div className="pt-4 border-t border-theme-border/30 flex items-center justify-between">
+                  <div className="pt-4 border-t border-theme-border flex items-center justify-between">
                     <div className="space-y-1">
                       <p className="text-[8px] font-black text-theme-muted uppercase tracking-widest">Status da Fila</p>
                       <p className="text-[11px] font-black text-theme-text uppercase italic">Monitor de Rede</p>
@@ -919,7 +919,7 @@ export default function UnidadeFixaDashboard({
               ))}
               
               {eventos.length === 0 && (
-                <div className="col-span-full py-20 border border-dashed border-theme-border flex flex-col items-center justify-center gap-4 text-center">
+                <div className="col-span-full py-20 border  border-theme-border flex flex-col items-center justify-center gap-4 text-center">
                    <Printer size={48} className="text-theme-border/30" />
                    <p className="text-[10px] font-black text-theme-muted uppercase tracking-[0.4em]">Nenhum evento detectado para monitoramento.</p>
                 </div>
@@ -932,7 +932,7 @@ export default function UnidadeFixaDashboard({
         {tab === "configuracoes" && (
           <div className="space-y-12">
             {/* Header / Intro */}
-            <div className="lux-card p-10 border-l-4 border-l-brand-tactical bg-gradient-to-br from-brand-tactical/[0.03] to-transparent relative overflow-hidden">
+            <div className="lux-card p-10 border-l-4 border-l-brand-tactical bg-theme-bg border-2 border-theme-border shadow-[0_0_15px_rgba(133,185,172,0.1)] relative overflow-hidden">
               <div className="absolute top-0 right-0 p-10 opacity-[0.03] pointer-events-none">
                 <Settings size={120} />
               </div>
@@ -945,7 +945,7 @@ export default function UnidadeFixaDashboard({
             </div>
 
             {/* PIX STRATEGIC KEY */}
-            <div className="lux-card p-10 bg-theme-bg-muted/10 border-dashed border-theme-border/60">
+            <div className="lux-card p-10 bg-theme-bg border-2 border-theme-border border-2 border-theme-border shadow-md">
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-10">
                 <div className="space-y-4">
                   <h4 className="text-[10px] font-black text-theme-text uppercase tracking-[0.5em] italic flex items-center gap-3">
@@ -981,11 +981,11 @@ export default function UnidadeFixaDashboard({
                 <div className="h-px w-full bg-gradient-to-r from-theme-border/60 to-transparent" />
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-theme-border/20 border border-theme-border/20 shadow-2xl overflow-hidden">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-theme-border/20 border border-theme-border shadow-2xl overflow-hidden">
                 {globalServices.map(svc => {
                   const isDisabled = disabledServices.includes(svc.id);
                   return (
-                    <div key={svc.id} className={`p-8 flex flex-col justify-between gap-8 group transition-all duration-700 ${isDisabled ? 'bg-theme-bg-muted/10 opacity-50 grayscale' : 'bg-theme-bg-muted/30 hover:bg-theme-bg-muted/50'}`}>
+                    <div key={svc.id} className={`p-8 flex flex-col justify-between gap-8 group transition-all duration-700 ${isDisabled ? 'bg-theme-bg opacity-50 grayscale' : 'bg-theme-bg-muted hover:bg-theme-bg-muted'}`}>
                       <div className="space-y-4">
                         <div className="flex items-center justify-between">
                           <div className="space-y-1">
@@ -1016,7 +1016,7 @@ export default function UnidadeFixaDashboard({
                           disabled={isDisabled}
                           value={localPrices[svc.id] || ""} 
                           onChange={e => setLocalPrices({ ...localPrices, [svc.id]: Number(e.target.value) })}
-                          className="w-full bg-theme-bg border border-theme-border/60 p-5 pl-14 text-2xl font-heading font-black text-theme-text focus:border-brand-tactical outline-none transition-all italic placeholder:text-theme-muted/10 disabled:opacity-30"
+                          className="w-full bg-theme-bg border border-theme-border p-5 pl-14 text-2xl font-heading font-black text-theme-text focus:border-brand-tactical outline-none transition-all italic placeholder:text-theme-muted/10 disabled:opacity-30"
                           placeholder={String(svc.basePrice)}
                         />
                       </div>
@@ -1051,7 +1051,7 @@ export default function UnidadeFixaDashboard({
                           if (isSelected) setEventTypes(prev => prev.filter(t => t !== type.id));
                           else setEventTypes(prev => [...prev, type.id]);
                         }}
-                        className={`p-4 border transition-all text-left flex items-center justify-between group ${isSelected ? 'border-brand-tactical bg-brand-tactical/10' : 'border-theme-border bg-theme-bg hover:bg-theme-bg-muted/50'}`}
+                        className={`p-4 border transition-all text-left flex items-center justify-between group ${isSelected ? 'border-brand-tactical bg-brand-tactical/10' : 'border-theme-border bg-theme-bg hover:bg-theme-bg-muted'}`}
                       >
                         <span className={`text-[10px] font-black uppercase tracking-widest ${isSelected ? 'text-brand-tactical' : 'text-theme-text'}`}>{type.label}</span>
                         <div className={`w-4 h-4 border flex items-center justify-center ${isSelected ? 'border-brand-tactical bg-brand-tactical' : 'border-theme-border'}`}>
@@ -1076,8 +1076,8 @@ export default function UnidadeFixaDashboard({
             </div>
 
             {/* SEO & LANDING - PRESENÇA DIGITAL */}
-            <div className="lux-card p-10 space-y-12 bg-theme-bg-muted/10 border-l-4 border-l-theme-text">
-               <div className="flex flex-col md:flex-row justify-between items-end gap-6 border-b border-theme-border/40 pb-10">
+            <div className="lux-card p-10 space-y-12 bg-theme-bg border-2 border-theme-border border-l-4 border-l-theme-text">
+               <div className="flex flex-col md:flex-row justify-between items-end gap-6 border-b-2 border-theme-border pb-10">
                   <div className="space-y-3">
                     <h3 className="text-2xl font-heading font-black text-theme-text uppercase italic tracking-tight flex items-center gap-4">
                       <Share2 size={24} className="text-brand-tactical" />
@@ -1096,14 +1096,14 @@ export default function UnidadeFixaDashboard({
                   <div className="space-y-3">
                     <label className="text-[9px] font-black text-theme-muted uppercase tracking-[0.4em] ml-1 opacity-60">Slug Identificador (URL)</label>
                     <div className="flex items-center gap-2 text-theme-muted/40 font-black text-[10px] mb-1">{window.location.host.toLowerCase()}/p/</div>
-                    <input value={lpSlug} onChange={e => setLpSlug(e.target.value)} className="w-full bg-transparent border-b border-theme-border/60 py-3 text-sm font-black text-theme-text focus:border-brand-tactical outline-none transition-all" placeholder="UNIDADE-EXEMPLO" />
+                    <input value={lpSlug} onChange={e => setLpSlug(e.target.value)} className="w-full bg-transparent border-b-2 border-theme-border py-3 text-sm font-black text-theme-text focus:border-brand-tactical outline-none transition-all" placeholder="UNIDADE-EXEMPLO" />
                   </div>
 
                   <div className="space-y-3">
                     <label className="text-[9px] font-black text-theme-muted uppercase tracking-[0.4em] ml-1 opacity-60">Contato de Operação (WhatsApp)</label>
                     <div className="relative group">
                       <Phone size={14} className="absolute left-0 top-1/2 -translate-y-1/2 text-theme-muted/40 group-focus-within:text-brand-tactical transition-colors" />
-                      <input value={lpPhone} onChange={e => setLpPhone(e.target.value)} className="w-full bg-transparent border-b border-theme-border/60 py-3 pl-8 text-sm font-black text-theme-text focus:border-brand-tactical outline-none transition-all" placeholder="(00) 00000-0000" />
+                      <input value={lpPhone} onChange={e => setLpPhone(e.target.value)} className="w-full bg-transparent border-b-2 border-theme-border py-3 pl-8 text-sm font-black text-theme-text focus:border-brand-tactical outline-none transition-all" placeholder="(00) 00000-0000" />
                     </div>
                   </div>
 
@@ -1111,17 +1111,17 @@ export default function UnidadeFixaDashboard({
                     <label className="text-[9px] font-black text-theme-muted uppercase tracking-[0.4em] ml-1 opacity-60">Logradouro Institucional</label>
                     <div className="relative group">
                       <MapPin size={14} className="absolute left-0 top-1/2 -translate-y-1/2 text-theme-muted/40 group-focus-within:text-brand-tactical transition-colors" />
-                      <input value={lpAddress} onChange={e => setLpAddress(e.target.value)} className="w-full bg-transparent border-b border-theme-border/60 py-3 pl-8 text-sm font-black text-theme-text focus:border-brand-tactical outline-none transition-all" placeholder="RUA EXECUTIVA, 100 - CENTRO" />
+                      <input value={lpAddress} onChange={e => setLpAddress(e.target.value)} className="w-full bg-transparent border-b-2 border-theme-border py-3 pl-8 text-sm font-black text-theme-text focus:border-brand-tactical outline-none transition-all" placeholder="RUA EXECUTIVA, 100 - CENTRO" />
                     </div>
                   </div>
 
                   <div className="md:col-span-2 space-y-3">
                     <label className="text-[9px] font-black text-theme-muted uppercase tracking-[0.4em] ml-1 opacity-60">Manifesto / Descrição da Unidade</label>
-                    <textarea value={lpDescription} onChange={e => setLpDescription(e.target.value)} rows={3} className="w-full bg-transparent border-b border-theme-border/60 py-3 text-xs font-medium text-theme-text focus:border-brand-tactical outline-none resize-none leading-relaxed" placeholder="Descreva o propósito e a infraestrutura desta unidade..." />
+                    <textarea value={lpDescription} onChange={e => setLpDescription(e.target.value)} rows={3} className="w-full bg-transparent border-b-2 border-theme-border py-3 text-xs font-medium text-theme-text focus:border-brand-tactical outline-none resize-none leading-relaxed" placeholder="Descreva o propósito e a infraestrutura desta unidade..." />
                   </div>
 
                   {/* Operational Controls Bar */}
-                  <div className="md:col-span-2 bg-theme-bg-muted/30 p-8 border border-theme-border/40 space-y-8">
+                  <div className="md:col-span-2 bg-theme-bg-muted p-8 border border-theme-border space-y-8">
                      <div className="flex flex-col sm:flex-row items-center justify-between gap-8">
                         <div className="space-y-1">
                           <p className="text-[10px] font-black text-theme-text uppercase italic">Parâmetros de Cobertura</p>
@@ -1148,7 +1148,7 @@ export default function UnidadeFixaDashboard({
                   </div>
                   
                   {/* GRADE DE FUNCIONAMENTO */}
-                  <div className="md:col-span-2 space-y-10 border-t border-theme-border/60 pt-12">
+                  <div className="md:col-span-2 space-y-10 border-t border-theme-border pt-12">
                      <div className="flex items-center gap-4">
                        <div className="h-8 w-1 bg-brand-tactical" />
                        <p className="text-[10px] font-black text-theme-text uppercase tracking-[0.4em] italic">Grade de Disponibilidade Semanal</p>
@@ -1161,12 +1161,12 @@ export default function UnidadeFixaDashboard({
                            thu: "Quinta", fri: "Sexta", sat: "Sábado", sun: "Domingo" 
                          };
                          return (
-                           <div key={day} className={`p-6 border transition-all duration-500 ${config.closed ? 'bg-theme-bg-muted/10 border-theme-border/40 opacity-60' : 'bg-theme-bg border-theme-border/60 hover:border-brand-tactical/40 shadow-xl shadow-black/5'}`}>
+                           <div key={day} className={`p-6 border transition-all duration-500 ${config.closed ? 'bg-theme-bg border-theme-border opacity-60' : 'bg-theme-bg border-theme-border hover:border-brand-tactical/40 shadow-xl shadow-black/5'}`}>
                               <div className="flex items-center justify-between mb-6">
                                  <span className="text-[10px] font-black text-theme-text uppercase tracking-widest">{dayNames[day]}</span>
                                  <button 
                                    onClick={() => setWorkingHours({...workingHours, [day]: {...config, closed: !config.closed}})}
-                                   className={`px-3 py-1 text-[8px] font-black uppercase tracking-widest border transition-all ${config.closed ? 'bg-theme-border text-theme-text' : 'bg-brand-tactical/5 border-brand-tactical text-brand-tactical'}`}
+                                   className={`px-3 py-1 text-[8px] font-black uppercase tracking-widest border transition-all ${config.closed ? 'bg-theme-border text-theme-text' : 'bg-brand-tactical/10 border-brand-tactical text-brand-tactical'}`}
                                  >
                                    {config.closed ? "FECHADO" : "ABERTO"}
                                  </button>
@@ -1197,7 +1197,7 @@ export default function UnidadeFixaDashboard({
                                    <button
                                      type="button"
                                      onClick={() => { const isAllDay = config.open === "00:00" && config.close === "23:59"; setWorkingHours({...workingHours, [day]: {...config, open: isAllDay ? "09:00" : "00:00", close: isAllDay ? "18:00" : "23:59"}}); }}
-                                     className={`w-full py-1.5 text-[7px] font-black uppercase tracking-widest border transition-all ${ config.open === "00:00" && config.close === "23:59" ? "bg-brand-tactical border-brand-tactical text-zinc-950" : "border-theme-border/40 text-theme-muted hover:text-brand-tactical hover:border-brand-tactical/40" }`}
+                                     className={`w-full py-1.5 text-[7px] font-black uppercase tracking-widest border transition-all ${ config.open === "00:00" && config.close === "23:59" ? "bg-brand-tactical border-brand-tactical text-zinc-950" : "border-theme-border text-theme-muted hover:text-brand-tactical hover:border-brand-tactical/40" }`}
                                    >
                                      {config.open === "00:00" && config.close === "23:59" ? "✓ 24 Horas" : "24 Horas"}
                                    </button>
@@ -1224,7 +1224,7 @@ export default function UnidadeFixaDashboard({
         {/* Ã¢â€â‚¬Ã¢â€â‚¬ FRANQUIA Ã¢â€â‚¬Ã¢â€â‚¬ */}
         {tab === "franquia" && user?.franchiseProfile && (
           <div className="space-y-10 animate-in fade-in duration-500">
-            <div className="lux-card p-10 border-l-4 border-l-brand-tactical bg-gradient-to-br from-brand-tactical/[0.03] to-transparent relative overflow-hidden">
+            <div className="lux-card p-10 border-l-4 border-l-brand-tactical bg-theme-bg border-2 border-theme-border shadow-[0_0_15px_rgba(133,185,172,0.1)] relative overflow-hidden">
                <div className="absolute top-0 right-0 p-10 opacity-[0.03] pointer-events-none">
                  <Printer size={120} />
                </div>
@@ -1236,8 +1236,8 @@ export default function UnidadeFixaDashboard({
                </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-theme-border/20 border border-theme-border/20 shadow-2xl">
-              <div className="bg-theme-bg-muted/40 p-8 space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-theme-border/20 border border-theme-border shadow-2xl">
+              <div className="bg-theme-bg-muted p-8 space-y-4">
                  <div className="flex items-center gap-3">
                    <div className="p-2 bg-brand-tactical/10 text-brand-tactical">
                      <Printer size={16} />
@@ -1250,7 +1250,7 @@ export default function UnidadeFixaDashboard({
                  <p className="text-[9px] font-bold text-theme-muted uppercase tracking-widest">FOTOS DISPONÍVEIS</p>
               </div>
 
-              <div className="bg-theme-bg-muted/40 p-8 space-y-4">
+              <div className="bg-theme-bg-muted p-8 space-y-4">
                  <div className="flex items-center gap-3">
                    <div className="p-2 bg-blue-500/10 text-blue-500">
                      <ShieldCheck size={16} />
@@ -1263,7 +1263,7 @@ export default function UnidadeFixaDashboard({
                  <p className="text-[9px] font-bold text-theme-muted uppercase tracking-widest">VINCULADO À REDE</p>
               </div>
 
-              <div className="bg-theme-bg-muted/40 p-8 space-y-4">
+              <div className="bg-theme-bg-muted p-8 space-y-4">
                  <div className="flex items-center gap-3">
                    <div className="p-2 bg-theme-border/40 text-theme-muted">
                      <DollarSign size={16} />
@@ -1317,7 +1317,7 @@ export default function UnidadeFixaDashboard({
                     eventos.map(ev => (
                       <div key={ev.id} className="bg-theme-bg border border-theme-border p-6 flex flex-col md:flex-row items-center justify-between gap-6 hover:border-brand-tactical/30 transition-all group">
                          <div className="flex items-center gap-5">
-                            <div className="w-12 h-12 bg-theme-bg-muted/40 border border-theme-border flex items-center justify-center text-brand-tactical group-hover:scale-110 transition-transform">
+                            <div className="w-12 h-12 bg-theme-bg-muted border border-theme-border flex items-center justify-center text-brand-tactical group-hover:scale-110 transition-transform">
                                <Printer size={20} />
                             </div>
                             <div>
@@ -1334,7 +1334,7 @@ export default function UnidadeFixaDashboard({
                       </div>
                     ))
                   ) : (
-                    <div className="p-10 border border-dashed border-theme-border/40 text-center space-y-4">
+                    <div className="p-10 border  border-theme-border text-center space-y-4">
                        <p className="text-[10px] font-black text-theme-muted uppercase font-black italic tracking-widest">Nenhum evento vinculado à sua unidade.</p>
                        <p className="text-[8px] text-theme-muted/60 uppercase font-bold max-w-xs mx-auto leading-relaxed">Quando um admin vincular sua franquia a um evento, ele aparecerá aqui para controle de Live Print.</p>
                     </div>
@@ -1387,7 +1387,7 @@ export default function UnidadeFixaDashboard({
         {/* ── AGENDA GOOGLE ── */}
         {tab === "calendar" && (
           <div className="space-y-10 animate-in fade-in duration-500">
-            <div className="lux-card p-10 border-l-4 border-l-brand-tactical bg-theme-bg-muted/10 relative overflow-hidden">
+            <div className="lux-card p-10 border-l-4 border-l-brand-tactical bg-theme-bg border-2 border-theme-border relative overflow-hidden">
                <div className="absolute top-0 right-0 p-10 opacity-[0.03] pointer-events-none">
                  <Calendar size={120} />
                </div>
@@ -1399,8 +1399,8 @@ export default function UnidadeFixaDashboard({
                </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-theme-border/20 border border-theme-border/20 shadow-2xl">
-               <div className="bg-theme-bg-muted/40 p-10 space-y-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-theme-border/20 border border-theme-border shadow-2xl">
+               <div className="bg-theme-bg-muted p-10 space-y-8">
                   <div className="space-y-2">
                     <p className="text-[10px] font-black text-brand-tactical uppercase tracking-widest">Status da Conexão</p>
                     <div className="flex items-center gap-3">
@@ -1429,7 +1429,7 @@ export default function UnidadeFixaDashboard({
                           </button>
                           <button 
                             onClick={() => window.open("/api/calendar/connect", "_blank")}
-                            className="px-6 py-4 border border-theme-border text-theme-text font-black text-[10px] uppercase tracking-widest hover:bg-white/5 transition-all"
+                            className="px-6 py-4 border border-theme-border text-theme-text font-black text-[10px] uppercase tracking-widest hover:bg-theme-bg-muted transition-all"
                           >
                             RECONECTAR
                           </button>
@@ -1445,7 +1445,7 @@ export default function UnidadeFixaDashboard({
                   )}
                </div>
 
-               <div className="bg-theme-bg-muted/40 p-10 space-y-6">
+               <div className="bg-theme-bg-muted p-10 space-y-6">
                   <h4 className="text-[10px] font-black text-theme-text uppercase tracking-widest">Como Funciona?</h4>
                   <ul className="space-y-4">
                      {[
@@ -1508,7 +1508,7 @@ export default function UnidadeFixaDashboard({
                     setCopied(true);
                     setTimeout(() => setCopied(false), 2000);
                   }}
-                  className="w-full flex items-center justify-center gap-4 py-4 bg-theme-bg-muted/50 border border-theme-border text-[10px] font-black uppercase tracking-widest hover:bg-theme-border transition-all italic"
+                  className="w-full flex items-center justify-center gap-4 py-4 bg-theme-bg-muted border border-theme-border text-[10px] font-black uppercase tracking-widest hover:bg-theme-border transition-all italic"
                 >
                   {copied ? (
                     <><Check size={16} className="text-brand-tactical" /> Protocolo Copiado</>

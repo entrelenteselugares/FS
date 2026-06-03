@@ -106,7 +106,7 @@ export function ProfileTab({ profile, onUpdated, onNotify }: ProfileTabProps) {
 
 
             {/* Foto de Capa (Panorâmica) */}
-            <div className="flex flex-col gap-2 p-6 bg-theme-bg-muted/30 border border-theme-border/20 rounded-2xl">
+            <div className="flex flex-col gap-2 p-6 bg-theme-bg-muted border border-theme-border rounded-2xl">
               <div className="space-y-1 text-center md:text-left mb-2">
                 <h4 className="text-[12px] font-black text-theme-text uppercase tracking-wider italic">Foto de Capa</h4>
                 <p className="text-[9px] text-theme-muted uppercase font-bold tracking-widest leading-relaxed">
@@ -120,7 +120,7 @@ export function ProfileTab({ profile, onUpdated, onNotify }: ProfileTabProps) {
             </div>
 
             {/* Foto de Perfil Premium */}
-            <div className="flex flex-col md:flex-row items-center gap-6 p-6 bg-theme-bg-muted/30 border border-theme-border/20 rounded-2xl">
+            <div className="flex flex-col md:flex-row items-center gap-6 p-6 bg-theme-bg-muted border border-theme-border rounded-2xl">
               <ProfilePhotoUpload 
                 currentProfileUrl={formData.user?.profileImageUrl} 
                 currentNome={formData.user?.nome} 
@@ -151,7 +151,7 @@ export function ProfileTab({ profile, onUpdated, onNotify }: ProfileTabProps) {
                   onChange={(e) => setFormData({ ...formData, user: { ...formData.user, whatsapp: e.target.value } })}
                 />
               </div>
-              <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-6 gap-4 p-6 bg-theme-bg-muted/30 border border-theme-border/20 rounded-2xl">
+              <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-6 gap-4 p-6 bg-theme-bg-muted border border-theme-border rounded-2xl">
                 <div className="md:col-span-6 flex items-center gap-2 mb-2">
                   <div className="h-0.5 w-4 bg-brand-tactical" />
                   <label className="text-[9px] font-black text-theme-muted uppercase tracking-widest italic opacity-60">Endereço de Entrega / Base Operacional</label>
@@ -320,7 +320,7 @@ export function ProfileTab({ profile, onUpdated, onNotify }: ProfileTabProps) {
                         }}
                         className={`p-4 border text-left transition-all flex items-center gap-4 relative ${
                           isActive
-                            ? "bg-brand-tactical/5 border-brand-tactical shadow-[0_0_20px_rgba(133,185,172,0.1)]"
+                            ? "bg-brand-tactical/10 border-brand-tactical shadow-[0_0_20px_rgba(133,185,172,0.1)]"
                             : "bg-theme-bg-muted border-theme-border text-theme-muted hover:border-brand-tactical/20"
                         }`}
                       >
@@ -388,7 +388,7 @@ export function ProfileTab({ profile, onUpdated, onNotify }: ProfileTabProps) {
                        if (onNotify) onNotify("Geolocalização não disponível.", "error");
                      }
                    }}
-                   className="w-full p-4 border border-dashed border-brand-tactical/30 text-brand-tactical text-[8px] md:text-[10px] font-black uppercase tracking-wider md:tracking-widest hover:bg-brand-tactical/5 transition-all flex flex-col md:flex-row items-center justify-center gap-2 md:gap-3 text-center"
+                   className="w-full p-4 border  border-brand-tactical/30 text-brand-tactical text-[8px] md:text-[10px] font-black uppercase tracking-wider md:tracking-widest hover:bg-brand-tactical/10 transition-all flex flex-col md:flex-row items-center justify-center gap-2 md:gap-3 text-center"
                 >
                   {formData.baseLocationLat ? `GPS: ${formData.baseLocationLat.toFixed(4)}, ${formData.baseLocationLng?.toFixed(4)} (Atualizar)` : "CALIBRAR MINHA LOCALIZAÇÃO GPS ATUAL"}
                 </button>
@@ -434,8 +434,8 @@ export function ProfileTab({ profile, onUpdated, onNotify }: ProfileTabProps) {
 
         {/* Right Column: Inventory & Save */}
         <div className="space-y-10">
-          <div className="p-8 bg-theme-bg-muted/50 border border-theme-border space-y-8 relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-32 h-32 bg-brand-tactical/5 rounded-full blur-3xl pointer-events-none" />
+          <div className="p-8 bg-theme-bg-muted border border-theme-border space-y-8 relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-brand-tactical/10 rounded-full blur-3xl pointer-events-none" />
             
             <div className="flex justify-between items-center relative z-10">
               <div className="space-y-1">
@@ -477,7 +477,7 @@ export function ProfileTab({ profile, onUpdated, onNotify }: ProfileTabProps) {
                 </div>
               ))}
               {(formData.equipmentList || []).length === 0 && (
-                <div className="py-20 text-center space-y-4 border border-dashed border-theme-border/40">
+                <div className="py-20 text-center space-y-4 border  border-theme-border">
                   <div className="flex justify-center text-theme-muted/20"><Briefcase size={48} /></div>
                   <p className="text-[9px] text-theme-muted uppercase tracking-[0.2em] italic font-black">Nenhum ativo técnico registrado</p>
                 </div>

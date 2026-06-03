@@ -30,7 +30,7 @@ export function OpportunitiesModal({
         </div>
         <div className="grid grid-cols-1 gap-4">
           {unitInvitesCount > 0 && (
-            <div className="bg-brand-tactical/5 p-6 border border-brand-tactical/20 hover:border-brand-tactical transition-all">
+            <div className="bg-brand-tactical/10 p-6 border border-brand-tactical/20 hover:border-brand-tactical transition-all">
               <div className="text-[9px] font-black text-brand-tactical uppercase tracking-[0.2em] mb-2 italic">Expansão de Rede</div>
               <div className="text-xl font-heading font-black text-theme-text italic leading-none">
                 {unitInvitesCount} {unitInvitesCount === 1 ? "CONVITE DE UNIDADE" : "CONVITES DE UNIDADE"}
@@ -38,7 +38,7 @@ export function OpportunitiesModal({
             </div>
           )}
           {pendingEventsCount > 0 && (
-            <div className="bg-theme-bg-muted/40 p-6 border border-theme-border/60 hover:border-brand-tactical/40 transition-all">
+            <div className="bg-theme-bg-muted p-6 border border-theme-border hover:border-brand-tactical/40 transition-all">
               <div className="text-[9px] font-black text-theme-muted uppercase tracking-[0.2em] mb-2 italic">Chamados de Campo</div>
               <div className="text-xl font-heading font-black text-theme-text italic leading-none">
                 {pendingEventsCount} {pendingEventsCount === 1 ? "TRABALHO DISPONÍVEL" : "TRABALHOS DISPONÍVEIS"}

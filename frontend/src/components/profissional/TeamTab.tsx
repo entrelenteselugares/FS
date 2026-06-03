@@ -93,7 +93,7 @@ export function TeamTab() {
                   placeholder="Buscar por nome, email ou serviço..."
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
-                  className="w-full pl-12 pr-4 py-3 bg-theme-bg border border-theme-border/60 text-theme-text text-sm focus:border-brand-tactical/50 outline-none transition-colors"
+                  className="w-full pl-12 pr-4 py-3 bg-theme-bg border border-theme-border text-theme-text text-sm focus:border-brand-tactical/50 outline-none transition-colors"
                 />
               </div>
           </div>
@@ -106,7 +106,7 @@ export function TeamTab() {
           return (
             <div key={p.id} className={`lux-card p-0 overflow-hidden group transition-all duration-700 hover:border-brand-tactical/30 ${vinculo === "FIXO" ? 'border-brand-tactical/40 ring-1 ring-brand-tactical/10' : ''}`}>
               <div className="flex flex-col md:flex-row md:items-stretch">
-                  <div className={`md:w-24 flex items-center justify-center border-b md:border-b-0 md:border-r border-theme-border/60 transition-colors ${vinculo === "FIXO" ? 'bg-brand-tactical/5' : 'bg-theme-bg-muted/20'}`}>
+                  <div className={`md:w-24 flex items-center justify-center border-b md:border-b-0 md:border-r border-theme-border transition-colors ${vinculo === "FIXO" ? 'bg-brand-tactical/10' : 'bg-theme-bg'}`}>
                     {vinculo === "FIXO" ? (
                       <Star size={24} className="text-brand-tactical fill-brand-tactical animate-in zoom-in duration-500" />
                     ) : vinculo === "ROTATIVO" ? (
@@ -130,7 +130,7 @@ export function TeamTab() {
 
                         <div className="flex flex-wrap gap-3">
                           {p.services.length > 0 ? p.services.map(s => (
-                            <span key={s} className="px-4 py-1.5 bg-theme-bg border border-theme-border/60 text-[9px] font-black text-theme-text uppercase tracking-widest group-hover:border-brand-tactical/30 transition-colors">
+                            <span key={s} className="px-4 py-1.5 bg-theme-bg border border-theme-border text-[9px] font-black text-theme-text uppercase tracking-widest group-hover:border-brand-tactical/30 transition-colors">
                               {s}
                             </span>
                           )) : (
@@ -141,7 +141,7 @@ export function TeamTab() {
 
                     <div className="flex flex-col gap-3">
                         <p className="text-[8px] font-black text-theme-muted uppercase tracking-[0.4em] text-center md:text-right mb-1 opacity-60">Status de vínculo</p>
-                        <div className="flex items-center gap-1 bg-theme-bg-muted/40 p-1.5 border border-theme-border/60 rounded-sm">
+                        <div className="flex items-center gap-1 bg-theme-bg-muted p-1.5 border border-theme-border rounded-sm">
                           {([null, "ROTATIVO", "FIXO"] as const).map(tipo => (
                             <button
                               key={String(tipo)}

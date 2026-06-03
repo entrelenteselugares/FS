@@ -62,10 +62,10 @@ export function ProfileModal({ profile, onClose, onUpdated }: ProfileModalProps)
     <div className="fixed inset-0 z-[6000] flex items-center justify-center p-4 md:p-8 animate-in fade-in duration-300 backdrop-blur-xl bg-black/40">
       <div className="w-full max-w-5xl max-h-[90vh] bg-theme-bg border border-theme-border flex flex-col relative overflow-hidden shadow-[0_0_100px_rgba(0,0,0,0.1)]">
         <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-brand-tactical/50 to-transparent" />
-        <div className="absolute top-0 right-0 w-64 h-64 bg-brand-tactical/5 rounded-full blur-[100px] -mr-32 -mt-32 pointer-events-none" />
+        <div className="absolute top-0 right-0 w-64 h-64 bg-brand-tactical/10 rounded-full blur-[100px] -mr-32 -mt-32 pointer-events-none" />
 
         {/* Header */}
-        <div className="flex justify-between items-center px-8 md:px-12 py-8 border-b border-theme-border/60 relative z-10">
+        <div className="flex justify-between items-center px-8 md:px-12 py-8 border-b border-theme-border relative z-10">
           <div className="space-y-1">
             <h2 className="text-3xl font-heading font-black text-theme-text uppercase italic tracking-tighter leading-none">
               Configuração de Perfil
@@ -174,7 +174,7 @@ export function ProfileModal({ profile, onClose, onUpdated }: ProfileModalProps)
                             }}
                             className={`p-4 border text-left transition-all flex items-center gap-4 relative ${
                               isActive
-                                ? "bg-brand-tactical/5 border-brand-tactical shadow-[0_0_20px_rgba(133,185,172,0.1)]"
+                                ? "bg-brand-tactical/10 border-brand-tactical shadow-[0_0_20px_rgba(133,185,172,0.1)]"
                                 : "bg-theme-bg-muted border-theme-border text-theme-muted hover:border-brand-tactical/20"
                             }`}
                           >
@@ -233,7 +233,7 @@ export function ProfileModal({ profile, onClose, onUpdated }: ProfileModalProps)
 
             {/* Right Column: Inventory */}
             <div className="space-y-10">
-              <div className="p-8 bg-theme-bg-muted/50 border border-theme-border space-y-8">
+              <div className="p-8 bg-theme-bg-muted border border-theme-border space-y-8">
                 <div className="flex justify-between items-center">
                   <div className="space-y-1">
                     <p className="text-[11px] font-black text-brand-tactical uppercase tracking-[0.3em] italic">Inventário Técnico</p>
@@ -274,7 +274,7 @@ export function ProfileModal({ profile, onClose, onUpdated }: ProfileModalProps)
                     </div>
                   ))}
                   {(formData.equipmentList || []).length === 0 && (
-                    <div className="py-20 text-center space-y-4 border border-dashed border-theme-border/40">
+                    <div className="py-20 text-center space-y-4 border  border-theme-border">
                       <div className="flex justify-center text-theme-muted/20"><Briefcase size={48} /></div>
                       <p className="text-[9px] text-theme-muted uppercase tracking-[0.2em] italic font-black">Nenhum ativo técnico registrado</p>
                     </div>
@@ -293,7 +293,7 @@ export function ProfileModal({ profile, onClose, onUpdated }: ProfileModalProps)
         </div>
 
         {/* Footer */}
-        <div className="p-8 md:p-12 border-t border-theme-border/60 bg-theme-bg flex justify-end gap-6 relative z-10">
+        <div className="p-8 md:p-12 border-t border-theme-border bg-theme-bg flex justify-end gap-6 relative z-10">
           <button onClick={onClose} className="px-8 py-5 text-theme-muted text-[11px] font-black uppercase tracking-[0.3em] hover:text-theme-text transition-all italic">
             Descartar
           </button>

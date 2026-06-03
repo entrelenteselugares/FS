@@ -239,7 +239,7 @@ export default function PhygitalCapture() {
 
         <button 
           onClick={() => window.location.reload()}
-          className="mt-12 text-[10px] font-black uppercase tracking-[0.3em] py-4 px-8 border border-theme-border hover:bg-white/5 transition-all"
+          className="mt-12 text-[10px] font-black uppercase tracking-[0.3em] py-4 px-8 border border-theme-border hover:bg-theme-bg-muted transition-all"
           style={{ color: T.text }}
         >
           Enviar Outra Foto
@@ -275,7 +275,7 @@ export default function PhygitalCapture() {
               </button>
             </div>
           ) : (
-            <div className="flex items-center gap-3 px-4 py-2 bg-white/5 border border-white/10 rounded-full">
+            <div className="flex items-center gap-3 px-4 py-2 bg-theme-bg-muted border border-white/10 rounded-full">
                <UserIcon size={12} className="opacity-40" />
                <span className="text-[10px] font-black uppercase tracking-widest opacity-40">Modo Identificação Pendente</span>
             </div>
@@ -409,7 +409,7 @@ export default function PhygitalCapture() {
                   type="password" 
                   value={password} 
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full bg-brand-tactical/5 border border-brand-tactical/20 p-4 rounded-xl text-sm focus:border-brand-tactical transition-all outline-none"
+                  className="w-full bg-brand-tactical/10 border border-brand-tactical/20 p-4 rounded-xl text-sm focus:border-brand-tactical transition-all outline-none"
                   placeholder="********"
                   style={{ color: T.text }}
                 />

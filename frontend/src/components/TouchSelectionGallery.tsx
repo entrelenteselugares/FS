@@ -117,7 +117,7 @@ export const TouchSelectionGallery: React.FC<TouchSelectionGalleryProps> = ({
               className={`relative aspect-[3/4] overflow-hidden border-2 transition-all duration-300 active:scale-95 select-none ${
                 isUnlocked ? "border-brand-tactical shadow-lg shadow-brand-tactical/10" : 
                 isSelected ? "border-emerald-500 scale-95 shadow-xl shadow-emerald-500/20" : 
-                "border-theme-border/40"
+                "border-theme-border"
               }`}
               onTouchStart={() => !isUnlocked && handleTouchStart(m.shortId, m.url)}
               onTouchEnd={handleTouchEnd}
@@ -195,7 +195,7 @@ export const TouchSelectionGallery: React.FC<TouchSelectionGalleryProps> = ({
               </div>
               <button 
                 onClick={() => setFullscreenIndex(null)}
-                className="w-12 h-12 flex items-center justify-center bg-white/5 rounded-full text-white"
+                className="w-12 h-12 flex items-center justify-center bg-theme-bg-muted rounded-full text-white"
                 aria-label="Fechar visualização"
               >
                 <X size={24} />
@@ -242,14 +242,14 @@ export const TouchSelectionGallery: React.FC<TouchSelectionGalleryProps> = ({
                 <button 
                   onClick={(e) => { e.stopPropagation(); prevPhoto(); }}
                   disabled={fullscreenIndex === 0}
-                  className={`w-14 h-14 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-white pointer-events-auto transition-all ${fullscreenIndex === 0 ? "opacity-20" : "hover:bg-brand-tactical hover:text-black"}`}
+                  className={`w-14 h-14 rounded-full bg-theme-bg-muted border border-white/10 flex items-center justify-center text-white pointer-events-auto transition-all ${fullscreenIndex === 0 ? "opacity-20" : "hover:bg-brand-tactical hover:text-black"}`}
                 >
                   <ChevronLeft size={32} />
                 </button>
                 <button 
                   onClick={(e) => { e.stopPropagation(); nextPhoto(); }}
                   disabled={fullscreenIndex === medias.length - 1}
-                  className={`w-14 h-14 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-white pointer-events-auto transition-all ${fullscreenIndex === medias.length - 1 ? "opacity-20" : "hover:bg-brand-tactical hover:text-black"}`}
+                  className={`w-14 h-14 rounded-full bg-theme-bg-muted border border-white/10 flex items-center justify-center text-white pointer-events-auto transition-all ${fullscreenIndex === medias.length - 1 ? "opacity-20" : "hover:bg-brand-tactical hover:text-black"}`}
                 >
                   <ChevronRight size={32} />
                 </button>

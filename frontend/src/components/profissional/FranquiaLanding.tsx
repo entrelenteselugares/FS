@@ -53,7 +53,7 @@ export function FranquiaLanding() {
             </button>
             <button 
               onClick={() => setShowCalc(!showCalc)}
-              className="px-8 py-4 border border-white/30 text-white font-display font-black text-xs uppercase tracking-widest hover:bg-white/5 transition-all flex items-center gap-3 rounded-xl"
+              className="px-8 py-4 border border-white/30 text-white font-display font-black text-xs uppercase tracking-widest hover:bg-theme-bg-muted transition-all flex items-center gap-3 rounded-xl"
             >
               SIMULAR CAPEX <Calculator size={16} />
             </button>
@@ -105,7 +105,7 @@ export function FranquiaLanding() {
             className="overflow-hidden"
           >
             <div className="bg-zinc-950 border border-brand-tactical/30 p-12 md:p-20 relative overflow-hidden rounded-2xl shadow-2xl">
-              <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-brand-tactical/5 blur-[120px] rounded-full -mr-64 -mt-64 pointer-events-none" />
+              <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-brand-tactical/10 blur-[120px] rounded-full -mr-64 -mt-64 pointer-events-none" />
               
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 relative z-10">
                 {/* Controls */}

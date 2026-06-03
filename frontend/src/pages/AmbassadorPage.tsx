@@ -76,7 +76,7 @@ export default function AmbassadorPage() {
           className="flex flex-col items-center gap-4 mb-16"
         >
           <img src="/logo.png" alt="Foto Segundo" className="h-6 md:h-8 object-contain filter invert opacity-80" />
-          <div className="h-px w-12 bg-brand-tactical/50" />
+          <div className="h-px w-12 bg-brand-tactical/100" />
         </motion.div>
 
         {/* Invitation Hero */}

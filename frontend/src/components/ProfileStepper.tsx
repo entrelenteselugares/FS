@@ -26,7 +26,7 @@ export const ProfileStepper: React.FC<ProfileStepperProps> = ({ user, profile })
   const nextStep = steps.find(s => !s.done);
 
   return (
-    <div className="lux-card p-6 border-l-4 border-l-brand-tactical bg-theme-bg-muted/10 overflow-hidden relative">
+    <div className="lux-card p-6 border-l-4 border-l-brand-tactical bg-theme-bg overflow-hidden relative">
       <div className="absolute top-0 right-0 p-8 opacity-[0.03] pointer-events-none">
         <Trophy size={80} />
       </div>

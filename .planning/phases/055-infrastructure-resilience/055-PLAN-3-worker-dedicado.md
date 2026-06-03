@@ -23,13 +23,15 @@ O `downloadAllMedia` atual baixa todos os arquivos do Drive, faz ZIP em memória
 </objective>
 
 <threat_model>
+
 ## Threat Model
 
-| Ameaça | Severidade | Mitigação |
-|---|---|---|
-| Worker exposto publicamente sem auth | ALTA | Header `X-Worker-Secret` obrigatório em todas as rotas do Worker; rejeitado com 401 se ausente/incorreto |
-| Job ZIP consome memória ilimitada com cofre gigante | MÉDIA | Usar streaming com `archiver.pipe(upload-stream-r2)` em vez de buffer em memória; agrupar em lotes de 20 arquivos |
-| URL pré-assinada de download vaza zip privado | BAIXA | URL expira em 1h; inclui albumId no caminho para auditoria |
+| Ameaça                                              | Severidade | Mitigação                                                                                                         |
+| --------------------------------------------------- | ---------- | ----------------------------------------------------------------------------------------------------------------- |
+| Worker exposto publicamente sem auth                | ALTA       | Header `X-Worker-Secret` obrigatório em todas as rotas do Worker; rejeitado com 401 se ausente/incorreto          |
+| Job ZIP consome memória ilimitada com cofre gigante | MÉDIA      | Usar streaming com `archiver.pipe(upload-stream-r2)` em vez de buffer em memória; agrupar em lotes de 20 arquivos |
+| URL pré-assinada de download vaza zip privado       | BAIXA      | URL expira em 1h; inclui albumId no caminho para auditoria                                                        |
+
 </threat_model>
 
 <tasks>
@@ -45,6 +47,7 @@ O `downloadAllMedia` atual baixa todos os arquivos do Drive, faz ZIP em memória
 Criar o diretório `worker/` na raiz do projeto com a seguinte estrutura:
 
 **`worker/package.json`:**
+
 ```json
 {
   "name": "foto-segundo-worker",
@@ -79,11 +82,12 @@ Criar o diretório `worker/` na raiz do projeto com a seguinte estrutura:
 ```
 
 **`worker/src/index.ts`:**
+
 ```typescript
-import 'dotenv/config';
-import express from 'express';
-import cors from 'cors';
-import { zipVaultRouter } from './jobs/zip-vault';
+import "dotenv/config";
+import express from "express";
+import cors from "cors";
+import { zipVaultRouter } from "./jobs/zip-vault";
 
 const app = express();
 app.use(cors());
@@ -91,22 +95,25 @@ app.use(express.json());
 
 // Auth middleware — todas as rotas exigem WORKER_SECRET
 app.use((req, res, next) => {
-  const secret = req.headers['x-worker-secret'];
+  const secret = req.headers["x-worker-secret"];
   if (!process.env.WORKER_SECRET || secret !== process.env.WORKER_SECRET) {
-    return res.status(401).json({ error: 'Unauthorized' });
+    return res.status(401).json({ error: "Unauthorized" });
   }
   next();
 });
 
-app.use('/jobs', zipVaultRouter);
+app.use("/jobs", zipVaultRouter);
 
-app.get('/health', (_req, res) => res.json({ status: 'ok', ts: new Date().toISOString() }));
+app.get("/health", (_req, res) =>
+  res.json({ status: "ok", ts: new Date().toISOString() }),
+);
 
 const PORT = process.env.PORT || 3003;
 app.listen(PORT, () => console.log(`[WORKER] Rodando na porta ${PORT}`));
 ```
 
 **`worker/tsconfig.json`:**
+
 ```json
 {
   "compilerOptions": {
@@ -122,6 +129,7 @@ app.listen(PORT, () => console.log(`[WORKER] Rodando na porta ${PORT}`));
   "include": ["src/**/*"]
 }
 ```
+
 </action>
 <acceptance_criteria>
 - `worker/package.json` existe e contém `"foto-segundo-worker"`
@@ -142,18 +150,22 @@ app.listen(PORT, () => console.log(`[WORKER] Rodando na porta ${PORT}`));
 Criar `worker/src/jobs/zip-vault.ts`:
 
 ```typescript
-import { Router, Request, Response } from 'express';
-import archiver from 'archiver';
-import { S3Client, PutObjectCommand, GetObjectCommand } from '@aws-sdk/client-s3';
-import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
-import { PassThrough } from 'stream';
-import { Upload } from '@aws-sdk/lib-storage';
+import { Router, Request, Response } from "express";
+import archiver from "archiver";
+import {
+  S3Client,
+  PutObjectCommand,
+  GetObjectCommand,
+} from "@aws-sdk/client-s3";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import { PassThrough } from "stream";
+import { Upload } from "@aws-sdk/lib-storage";
 
 const router = Router();
 
 // S3/R2 client
 const s3 = new S3Client({
-  region: 'auto',
+  region: "auto",
   endpoint: `https://${process.env.R2_ACCOUNT_ID}.r2.cloudflarestorage.com`,
   credentials: {
     accessKeyId: process.env.R2_ACCESS_KEY_ID!,
@@ -166,19 +178,21 @@ const s3 = new S3Client({
  * Body: { albumId, albumName, mediaList: [{ fileId, webViewLink, type }] }
  * Response: { downloadUrl } — URL pré-assinada do ZIP no R2, expira em 1h
  */
-router.post('/zip-vault', async (req: Request, res: Response) => {
+router.post("/zip-vault", async (req: Request, res: Response) => {
   const { albumId, albumName, mediaList } = req.body;
-  
+
   if (!albumId || !mediaList?.length) {
-    return res.status(400).json({ error: 'albumId e mediaList são obrigatórios' });
+    return res
+      .status(400)
+      .json({ error: "albumId e mediaList são obrigatórios" });
   }
 
-  const zipKey = `zips/${albumId}/${Date.now()}-${albumName?.replace(/\s+/g, '_') || albumId}.zip`;
+  const zipKey = `zips/${albumId}/${Date.now()}-${albumName?.replace(/\s+/g, "_") || albumId}.zip`;
 
   try {
     // Streaming: archiver → PassThrough → S3 Upload (sem buffer completo em memória)
     const passthrough = new PassThrough();
-    const archive = archiver('zip', { zlib: { level: 1 } }); // nível 1 = speed over compression
+    const archive = archiver("zip", { zlib: { level: 1 } }); // nível 1 = speed over compression
     archive.pipe(passthrough);
 
     // Upload stream para R2
@@ -188,7 +202,7 @@ router.post('/zip-vault', async (req: Request, res: Response) => {
         Bucket: process.env.R2_BUCKET_NAME!,
         Key: zipKey,
         Body: passthrough,
-        ContentType: 'application/zip',
+        ContentType: "application/zip",
       },
     });
 
@@ -196,38 +210,50 @@ router.post('/zip-vault', async (req: Request, res: Response) => {
     const BATCH_SIZE = 20;
     for (let i = 0; i < mediaList.length; i += BATCH_SIZE) {
       const batch = mediaList.slice(i, i + BATCH_SIZE);
-      await Promise.all(batch.map(async (media: any) => {
-        try {
-          const fileUrl = media.webViewLink;
-          const ext = media.type === 'VIDEO' ? '.mp4' : '.jpg';
-          const fileName = `${media.fileId}${ext}`;
-          
-          // Fetch do arquivo de onde quer que esteja (R2 ou Drive via webViewLink)
-          const fetchRes = await fetch(fileUrl);
-          if (!fetchRes.ok) throw new Error(`HTTP ${fetchRes.status} para ${fileUrl}`);
-          const buffer = Buffer.from(await fetchRes.arrayBuffer());
-          archive.append(buffer, { name: fileName });
-        } catch (err: any) {
-          console.error(`[ZIP] Pulando mídia ${media.fileId}: ${err.message}`);
-        }
-      }));
+      await Promise.all(
+        batch.map(async (media: any) => {
+          try {
+            const fileUrl = media.webViewLink;
+            const ext = media.type === "VIDEO" ? ".mp4" : ".jpg";
+            const fileName = `${media.fileId}${ext}`;
+
+            // Fetch do arquivo de onde quer que esteja (R2 ou Drive via webViewLink)
+            const fetchRes = await fetch(fileUrl);
+            if (!fetchRes.ok)
+              throw new Error(`HTTP ${fetchRes.status} para ${fileUrl}`);
+            const buffer = Buffer.from(await fetchRes.arrayBuffer());
+            archive.append(buffer, { name: fileName });
+          } catch (err: any) {
+            console.error(
+              `[ZIP] Pulando mídia ${media.fileId}: ${err.message}`,
+            );
+          }
+        }),
+      );
     }
 
     // Inicia o upload em paralelo com a finalização do archive
-    const [uploadResult] = await Promise.all([upload.done(), archive.finalize()]);
+    const [uploadResult] = await Promise.all([
+      upload.done(),
+      archive.finalize(),
+    ]);
 
     // Gera URL de download pré-assinada (expira em 1h)
     const downloadUrl = await getSignedUrl(
       s3,
-      new GetObjectCommand({ Bucket: process.env.R2_BUCKET_NAME!, Key: zipKey }),
-      { expiresIn: 3600 }
+      new GetObjectCommand({
+        Bucket: process.env.R2_BUCKET_NAME!,
+        Key: zipKey,
+      }),
+      { expiresIn: 3600 },
     );
 
     return res.json({ downloadUrl, zipKey, fileCount: mediaList.length });
-
   } catch (err: any) {
-    console.error('[ZIP] Erro fatal:', err.message);
-    return res.status(500).json({ error: 'Falha ao gerar ZIP', details: err.message });
+    console.error("[ZIP] Erro fatal:", err.message);
+    return res
+      .status(500)
+      .json({ error: "Falha ao gerar ZIP", details: err.message });
   }
 });
 
@@ -235,9 +261,11 @@ export { router as zipVaultRouter };
 ```
 
 Adicionar dependência extra ao `worker/package.json`:
+
 ```json
 "@aws-sdk/lib-storage": "^3.0.0"
 ```
+
 </action>
 <acceptance_criteria>
 - `worker/src/jobs/zip-vault.ts` existe
@@ -335,6 +363,7 @@ static async downloadAllMedia(req: AuthRequest, res: Response) {
 ```
 
 Adicionar ao final de `backend/.env.example`:
+
 ```env
 # ============================================================
 # WORKER — Serviço dedicado para jobs pesados (Railway)
@@ -343,6 +372,7 @@ Adicionar ao final de `backend/.env.example`:
 WORKER_URL=https://seu-worker.up.railway.app
 WORKER_SECRET=uma-senha-secreta-longa-e-aleatoria
 ```
+
 </action>
 <acceptance_criteria>
 - `vault.controller.ts` método `downloadAllMedia` contém `WORKER_NOT_CONFIGURED`
@@ -369,7 +399,7 @@ FROM node:20-alpine
 
 WORKDIR /app
 
-COPY package*.json ./
+COPY package\*.json ./
 RUN npm install --production=false
 
 COPY . .
@@ -377,7 +407,8 @@ RUN npm run build
 
 EXPOSE 3003
 CMD ["npm", "start"]
-```
+
+````
 
 Criar `worker/.env.example`:
 ```env
@@ -398,14 +429,16 @@ R2_PUBLIC_URL=https://media.fotosegundo.com.br
 
 # DATABASE (para o Worker buscar membros e mídias se necessário)
 DATABASE_URL=
-```
+````
 
 Criar `worker/.gitignore`:
+
 ```
 node_modules/
 dist/
 .env
 ```
+
 </action>
 <acceptance_criteria>
 - `worker/Dockerfile` existe e contém `FROM node:20-alpine`
@@ -435,18 +468,20 @@ const handleDownloadAll = async () => {
     const { downloadUrl, message } = res.data;
 
     // Abre o link do ZIP pre-assinado numa nova aba (download direto do R2/Worker)
-    window.open(downloadUrl, '_blank');
-    
+    window.open(downloadUrl, "_blank");
+
     // Feedback ao usuário
-    alert(message || 'Download iniciado!');
+    alert(message || "Download iniciado!");
   } catch (err: any) {
     const code = err.response?.data?.error;
-    if (code === 'SUBSCRIPTION_REQUIRED') {
-      alert('Assine o cofre para baixar todas as fotos.');
-    } else if (code === 'WORKER_NOT_CONFIGURED') {
-      alert('O download em lote ainda não está disponível. Entre em contato com o suporte.');
+    if (code === "SUBSCRIPTION_REQUIRED") {
+      alert("Assine o cofre para baixar todas as fotos.");
+    } else if (code === "WORKER_NOT_CONFIGURED") {
+      alert(
+        "O download em lote ainda não está disponível. Entre em contato com o suporte.",
+      );
     } else {
-      alert('Erro ao gerar o download. Tente novamente.');
+      alert("Erro ao gerar o download. Tente novamente.");
     }
   } finally {
     setDownloading(false);
@@ -457,12 +492,13 @@ const handleDownloadAll = async () => {
 Adicionar state `const [downloading, setDownloading] = useState(false)` se não existir.
 </action>
 <acceptance_criteria>
+
 - `VaultDetailPage.tsx` contém `window.open(downloadUrl, '_blank')`
 - `VaultDetailPage.tsx` contém `WORKER_NOT_CONFIGURED`
 - `VaultDetailPage.tsx` contém `setDownloading`
 - `npx tsc --noEmit` no frontend retorna exit code 0
-</acceptance_criteria>
-</task>
+  </acceptance_criteria>
+  </task>
 
 </tasks>
 
@@ -475,13 +511,14 @@ Adicionar state `const [downloading, setDownloading] = useState(false)` se não 
 4. `backend/.env.example` contém `WORKER_URL=` e `WORKER_SECRET=`
 5. `npx tsc --noEmit` no backend retorna exit code 0
 6. `npx tsc --noEmit` no frontend retorna exit code 0
-</verification>
+   </verification>
 
 <success_criteria>
+
 - A lógica de ZIP está 100% fora da Vercel (em `worker/src/jobs/zip-vault.ts`)
 - O endpoint `GET /vaults/:id/download-all` na Vercel delega ao Worker e retorna em < 2s
 - Se `WORKER_URL` não estiver configurado, o usuário recebe uma mensagem clara em vez de um timeout silencioso de 60s
 - O Worker usa streaming (sem buffer completo em memória) para suportar cofres com 1.000+ fotos
-</success_criteria>
+  </success_criteria>
 
 ## PLANNING COMPLETE
