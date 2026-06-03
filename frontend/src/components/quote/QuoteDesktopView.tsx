@@ -385,7 +385,7 @@ export const QuoteDesktopView = (props: any) => {
                    {locationType === "PARTNER" ? (
                     <select required value={selectedPartnerId} onChange={e => setSelectedPartnerId(e.target.value)} className="fs-input" style={{ width: "100%" }}>
                       <option value="">SELECIONE A UNIDADE FIXA...</option>
-                      {partners && partners.length > 0 && partners.map(p => (
+                      {partners && partners.length > 0 && partners.map((p: any) => (
                         <option key={p.id} value={p.id}>
                           {((p.name || 'Unidade').toUpperCase())} - {((p.city || 'Campinas').toUpperCase())}
                         </option>
@@ -523,7 +523,7 @@ export const QuoteDesktopView = (props: any) => {
                     const types = (locationType === "PARTNER" && currentPartner?.eventTypes?.length)
                       ? currentPartner.eventTypes
                       : ALL_EVENT_TYPES;
-                    return types.map(type => (
+                    return types.map((type: any) => (
                       <option key={type} value={type}>{EVENT_TYPE_LABELS[type] || type}</option>
                     ));
                   })()}
@@ -669,15 +669,15 @@ export const QuoteDesktopView = (props: any) => {
                 <label style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", marginBottom: 16, display: "block", color: THEME.text, letterSpacing: 2 }}>Selecione os Serviços</label>
                 
                 {(() => {
-                  const categories = Array.from(new Set(availableServices.map(s => s.category || "Geral")));
+                  const categories = Array.from(new Set(availableServices.map((s: any) => s.category || "Geral")));
                   
-                  return categories.map(cat => (
+                  return categories.map((cat: any) => (
                     <div key={cat} style={{ marginBottom: 32 }}>
                       <h4 style={{ fontSize: 9, fontWeight: 900, textTransform: "uppercase", color: THEME.accent, letterSpacing: 3, marginBottom: 12, display: "flex", alignItems: "center", gap: 10 }}>
                         <div style={{ width: 12, height: 1, background: THEME.accent }} /> {cat}
                       </h4>
                       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: 12 }}>
-                        {availableServices.filter(s => (s.category || "Geral") === cat).map(s => {
+                        {availableServices.filter((s: any) => (s.category || "Geral") === cat).map((s: any) => {
                           const isSelected = selectedServices.includes(s.id);
                           const cleanName = s.name.replace(/\(UPGRADE\)/gi, "").trim();
                           
@@ -697,8 +697,8 @@ export const QuoteDesktopView = (props: any) => {
                             <div 
                               key={s.id} 
                               onClick={() => {
-                                if (isSelected) setSelectedServices(prev => prev.filter(x => x !== s.id));
-                                else setSelectedServices(prev => [...prev, s.id]);
+                                if (isSelected) setSelectedServices((prev: any[]) => prev.filter((x: any) => x !== s.id));
+                                else setSelectedServices((prev: any[]) => [...prev, s.id]);
                               }} 
                               style={{
                                 padding: "20px", 
@@ -818,7 +818,7 @@ export const QuoteDesktopView = (props: any) => {
                     style={{ width: "100%", padding: "15px" }}
                   >
                     <option value="">NENHUM (DEIXAR PARA CURADORIA)</option>
-                    {pros.map(p => (
+                    {pros.map((p: any) => (
                       <option key={p.id} value={p.id}>
                         {p.nome?.toUpperCase() || "PROFISSIONAL"} - {p.address?.toUpperCase() || "GLOBAL"}
                       </option>
