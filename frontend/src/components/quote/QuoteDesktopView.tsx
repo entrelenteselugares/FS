@@ -27,18 +27,6 @@ interface DayConfig {
 
 type WorkingHours = Record<string, DayConfig>;
 
-interface Partner {
-  id: string;
-  name: string;
-  city: string;
-  prices?: Record<string, number>;
-  fixedDuration?: number;
-  fixedTime?: boolean;
-  hideDuration?: boolean;
-  workingHours?: WorkingHours;
-  disabledServices?: string[];
-  eventTypes?: string[];
-}
 
 function DateTimePicker({ value, onChange, workingHours }: { value: string; onChange: (v: string) => void; workingHours?: WorkingHours | null }) {
   const [open, setOpen] = useState(false);
@@ -248,8 +236,8 @@ function DateTimePicker({ value, onChange, workingHours }: { value: string; onCh
   );
 }
 
-export const QuoteDesktopView = (props: Record<string, unknown>) => {
-  const { step, setStep, nextStep, prevStep, loading, partners, pros, preferredProfessionalId, setPreferredProfessionalId, flowType, selectedServices, setSelectedServices, availableServices, attendees, setAttendees, locationType, setLocationType, usageType, setUsageType, workflowPref, setWorkflowPref, selectedPartnerId, setSelectedPartnerId, category, setCategory, currentPartner, customCep, handleCepChange, isCepLoading, addressData, addressNumber, setAddressNumber, eventDate, setEventDate, eventHours, setEventHours, eventDays, setEventDays, description, setDescription, availableBudget, setAvailableBudget, name, setName, email, setEmail, whatsapp, setWhatsapp, showPrices, getServicePrice, totalPrice, submitting, createdQuoteId, submitError, handleSubmit } = props as any;
+export const QuoteDesktopView = (props: any) => {
+  const { step, setStep, nextStep, loading, partners, pros, preferredProfessionalId, setPreferredProfessionalId, flowType, selectedServices, setSelectedServices, availableServices, attendees, setAttendees, locationType, usageType, setUsageType, workflowPref, setWorkflowPref, selectedPartnerId, setSelectedPartnerId, category, setCategory, currentPartner, customCep, handleCepChange, isCepLoading, addressData, addressNumber, setAddressNumber, eventDate, setEventDate, eventHours, setEventHours, eventDays, setEventDays, description, setDescription, availableBudget, setAvailableBudget, name, setName, email, setEmail, whatsapp, setWhatsapp, showPrices, getServicePrice, totalPrice, submitting, createdQuoteId, submitError, handleSubmit } = props as any;
 
   const navigate = useNavigate();
 

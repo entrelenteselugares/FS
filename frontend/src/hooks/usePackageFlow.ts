@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { API } from "../lib/api";
 
 export const MOCK_PACKAGES = [

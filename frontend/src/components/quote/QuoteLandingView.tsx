@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { ArrowRight, Star, Camera, Video, Crown, Sparkles, Check, ArrowLeft } from "lucide-react";
+import { ArrowRight, Star, Crown, Sparkles, Check, ArrowLeft } from "lucide-react";
 import { API } from "../../lib/api";
 
 interface QuoteLandingViewProps {
