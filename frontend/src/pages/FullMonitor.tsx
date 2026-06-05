@@ -27,6 +27,7 @@ export default function FullMonitor() {
   const [showLogo, setShowLogo] = useState<boolean>(true);
   const [showTimestamp, setShowTimestamp] = useState<boolean>(true);
   const [clientLogoUrl, setClientLogoUrl] = useState<string>('');
+  const [showCropMarks, setShowCropMarks] = useState<boolean>(true);
 
   const toggleSelect = (id: string) => {
     setSelected(prev =>
@@ -408,6 +409,7 @@ export default function FullMonitor() {
         showLogo={showLogo}
         showTimestamp={showTimestamp}
         clientLogoUrl={clientLogoUrl}
+        showCropMarks={showCropMarks}
       />
     </div>
   );

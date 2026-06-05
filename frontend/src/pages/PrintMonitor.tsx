@@ -99,6 +99,7 @@ export default function PrintMonitor() {
   const [showLogo, setShowLogo] = useState<boolean>(true);
   const [showTimestamp, setShowTimestamp] = useState<boolean>(true);
   const [clientLogoUrl, setClientLogoUrl] = useState<string>('');
+  const [showCropMarks, setShowCropMarks] = useState<boolean>(true);
 
   const toggleSelect = (id: string) => {
     setSelected(prev =>
@@ -347,6 +348,11 @@ export default function PrintMonitor() {
           <span className="text-[10px] font-black uppercase tracking-widest text-theme-text">Data/Hora</span>
         </label>
 
+        <label className="flex-shrink-0 flex items-center gap-2 cursor-pointer border border-theme-border bg-theme-bg px-3 py-1.5 rounded-full hover:bg-zinc-800/50 transition-colors">
+          <input type="checkbox" checked={showCropMarks} onChange={e => setShowCropMarks(e.target.checked)} className="accent-brand-tactical" />
+          <span className="text-[10px] font-black uppercase tracking-widest text-theme-text">Marcas de Corte</span>
+        </label>
+
         <label className="flex-shrink-0 flex items-center gap-2 cursor-pointer border border-brand-tactical bg-brand-tactical/10 px-3 py-1.5 rounded-full hover:bg-brand-tactical/20 transition-colors">
           <span className="text-[10px] font-black uppercase tracking-widest text-brand-tactical">{clientLogoUrl ? 'Logo Adicionado ✓' : '+ Add Logo Cliente'}</span>
           <input 
@@ -556,6 +562,7 @@ export default function PrintMonitor() {
           showLogo={showLogo}
           showTimestamp={showTimestamp}
           clientLogoUrl={clientLogoUrl}
+          showCropMarks={showCropMarks}
         />
       )}
     </div>

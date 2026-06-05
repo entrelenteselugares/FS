@@ -1,53 +1,101 @@
-# UI REVIEW: 6-Pillar Visual Audit
-
-**Phase:** 06 - Financial Security & Checkout Refinement
-**Date:** 2026-05-03
-**Status:** 🟢 PASS (Premium Quality)
-
-## 📊 Assessment Summary
-
-| Pillar | Grade | Notes |
-|--------|-------|-------|
-| **1. Brand & Identity** | 4/4 | Perfect synchronization with Midnight Luxury tokens. |
-| **2. Layout & Spacing** | 3.5/4 | Consistent grid usage; minor padding density issues on small mobile. |
-| **3. Interaction & Feedback** | 4/4 | Premium micro-animations and functional notification system. |
-| **4. Information Hierarchy** | 4/4 | Clear data visualization; badges (PRO) have high visibility. |
-| **5. Accessibility & Responsive** | 3/4 | WCAG contrast is tight in some areas; fixed password overlap. |
-| **6. Aesthetics & Polish** | 4/4 | High-end feel with glassmorphism and backdrop blurs. |
-
-## 🔍 Detailed Findings
-
-### 1. Brand & Identity
-
-- **Consistency:** The use of `--brand-tactical` (#85B9AC) and `--theme-bg` (#0a0a0a) is consistent across `AdminFinance`, `AdminUsers`, and `CheckoutPage`.
-- **Typography:** `Barlow Condensed` for headings and `Inter` for body text are strictly followed using utility classes.
-
-### 2. Layout & Spacing
-
-- **Grid System:** The 12-column grid in admin tables provides a professional, structured layout.
-- **Responsiveness:** Modals use `zoom-in-95` animations and responsive width (`max-w-xl`).
-- **Opportunity:** The financial dashboard cards in `AdminFinance` could use slightly more padding on the 320px breakpoint.
-
-### 3. Interaction & Feedback
-
-- **Feedback Loops:** The notification toasts with the "Protocolo" label and auto-closing progress bar add a premium sense of security.
-- **Button States:** `hover:brightness-110` and `active:scale-95` provide clear tactile feedback.
-
-### 5. Accessibility & Responsive
-
-- **Fix Verified:** The password icon overlap in `CheckoutPage` has been resolved with proper right-padding.
-- **Mobile Targets:** All action buttons meet the 44x44px minimum touch target requirement.
+# UI REVIEW — Central de Impressão Phygital
+**Data:** 2026-06-05  
+**Escopo:** NativePrintLayout · PrintMonitor · FullMonitor  
+**Commit base:** f885f64
 
 ---
 
-## 🛠 Action Items
+## Pontuação Geral: 20/24
 
-- [ ] **Accessibility:** Audit contrast ratio of `text-theme-muted` on `bg-theme-bg-muted` for low-vision users.
-- [ ] **Mobile:** Refine the "Repasses" table to use a card-based layout on screens < 400px to avoid horizontal overflow.
+| Pilar | Nota | Avaliação |
+|-------|------|-----------|
+| Copywriting | 4/4 | ✓ |
+| Visuais | 3/4 | ⚠ |
+| Cor | 4/4 | ✓ |
+| Tipografia | 4/4 | ✓ |
+| Espaçamento | 3/4 | ⚠ |
+| Experience Design | 2/4 | ⚠ |
 
 ---
 
-## Final Verdict
+## Pilar 1 — Copywriting: 4/4 ✓
 
-**Grade:** 3.75/4 — **PREMIUM**
-The UI perfectly reflects the high-end marketplace positioning. All recently added financial controls follow the existing design system without divergence.
+- Labels das opções são claros e em PT-BR: "Preencher", "Encaixar", "Retrato", "Paisagem"
+- Status do logo do cliente: "Logo Adicionado ✓" / "+ Add Logo Cliente" — feedback visual imediato
+- Timestamp no rodapé: `#CODE • 05/06/2026 13:17` — formato local correto
+- Nome em ALL CAPS com tracking-wider garante legibilidade impressa
+
+---
+
+## Pilar 2 — Visuais: 3/4 ⚠
+
+**✓ Pontos fortes:**
+- Cards com bordas arredondadas (2mm) e sombra sutil — estética polaroid
+- `object-fit: cover` por padrão elimina o problema das fotos com bordas brancas
+- Logo no rodapé com fallback via `ui-avatars.com`
+
+**⚠ Melhoria sugerida:**
+- A `border: none` no `.fs-print-card` entra em conflito com `border border-gray-100` do Tailwind — nas impressões a borda não aparece pois a classe CSS scoped tem `border: none !important`. Corrigir aplicando a borda diretamente no CSS de impressão.
+
+---
+
+## Pilar 3 — Cor: 4/4 ✓
+
+- Barra de configurações: `bg-zinc-950/50` com `border-theme-border` — coerente com o sistema de design
+- Botões ativos: `bg-brand-tactical text-zinc-950` — contraste adequado
+- Botão "+ Add Logo Cliente": `bg-brand-tactical/10 border-brand-tactical` — destaque sem gritar
+- Background de impressão: `#ffffff !important` forçado em todos os elementos — zero surpresas na impressão
+
+---
+
+## Pilar 4 — Tipografia: 4/4 ✓
+
+- Fonte de impressão: `'Inter', sans-serif` para nome, `'Courier New'` para código de referência
+- Hierarquia clara: `8pt bold uppercase` (nome) > `6pt monospace` (código + timestamp)
+- Labels da UI: `text-[10px] font-black uppercase tracking-widest` — padrão consistente com o sistema
+- `letter-spacing: 0.12em` no código — melhora escaneabilidade em impressão física
+
+---
+
+## Pilar 5 — Espaçamento: 3/4 ⚠
+
+**✓ Pontos fortes:**
+- Gap de `4mm` entre cards na grade — correto para impressão A4
+- Padding de `4mm` na página — margem mínima adequada
+- Footer com `padding: 1.5mm 3mm` — compacto mas legível
+
+**⚠ Melhoria sugerida:**
+- Com 25 fotos por folha (Mini 5x5), o espaçamento de `4mm` de gap cria overflow. Recomendar reduzir para `2mm` dinamicamente quando `photosPerPage >= 12`.
+
+---
+
+## Pilar 6 — Experience Design: 2/4 ⚠
+
+**✓ Pontos fortes:**
+- Barra de configurações sempre visível com `print:hidden` — não interfere na impressão
+- Feedback imediato ao trocar logo: `URL.createObjectURL` — sem necessidade de upload
+- Botão "Full Screen" agora está corretamente posicionado na barra de configurações
+
+**⚠ Melhorias sugeridas:**
+1. **Não há preview antes de imprimir** — o usuário não sabe como vai sair a impressão sem abrir o diálogo do browser. Um preview inline (simulação visual da folha A4) antes do `window.print()` melhoraria muito a confiança.
+2. **Estado dos toggles não persiste** — ao recarregar a página, logo/timestamp/fit voltam ao padrão. Usar `localStorage` para persistir as preferências do operador.
+3. **Logo do cliente se perde ao navegar** — `clientLogoUrl` é `createObjectURL` efêmero. Ideal fazer upload para storage ou ao menos salvar no `sessionStorage`.
+
+---
+
+## Fixes Prioritários
+
+1. **[ALTA]** Persistir preferências de impressão em `localStorage` (`photosPerPage`, `orientation`, `printFit`, `showLogo`, `showTimestamp`)
+2. **[MÉDIA]** Gap dinâmico para 25 fotos: `gap: photosPerPage >= 12 ? '2mm' : '4mm'`
+3. **[MÉDIA]** Preview inline da folha antes de imprimir
+4. **[BAIXA]** Corrigir conflito `border: none` no `.fs-print-card` vs Tailwind
+
+---
+
+## Commits desta sessão
+
+| Hash | Descrição |
+|------|-----------|
+| `a926fa4` | feat(print): layout premium com logo, timestamp, fit e grade |
+| `da1c67c` | fix(print): botão full-screen posicionado corretamente |
+| `f885f64` | fix(print): import React para CSSProperties |
