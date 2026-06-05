@@ -98,9 +98,9 @@ function useCountdown(targetUtc: string) {
 }
 
 // ─── Match Card ───────────────────────────────────────────────────────────────
-function MatchCard({ f, highlight = false }: { f: typeof FIXTURES[0]; highlight?: boolean }) {
+function MatchCard({ f, highlight = false, now }: { f: typeof FIXTURES[0]; highlight?: boolean; now: number }) {
   const { day, time } = formatBSB(f.utc);
-  const isPast = new Date(f.utc).getTime() < Date.now();
+  const isPast = new Date(f.utc).getTime() < now;
   const isBrasil = f.hCode === "br" || f.aCode === "br";
 
   return (
@@ -169,6 +169,7 @@ export const AlbumTorcidaPage = () => {
   const [tab, setTab] = useState<Tab>("jogos");
   const [matches, setMatches] = useState<{ id: string; group: string; teamA: string; teamB: string; matchDate: string }[]>([]);
   const countdown = useCountdown(BRASIL_GAME.utc);
+  const [now] = useState(() => Date.now());
 
   useEffect(() => {
     api.get("/worldcup/matches")
@@ -178,7 +179,7 @@ export const AlbumTorcidaPage = () => {
 
   const brazilFixtures = FIXTURES.filter((f) => f.hCode === "br" || f.aCode === "br");
   const upcomingAll = FIXTURES
-    .filter((f) => new Date(f.utc).getTime() > Date.now())
+    .filter((f) => new Date(f.utc).getTime() > now)
     .sort((a, b) => new Date(a.utc).getTime() - new Date(b.utc).getTime())
     .slice(0, 12);
 
@@ -336,7 +337,7 @@ export const AlbumTorcidaPage = () => {
                 </span>
               </div>
               <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-                {brazilFixtures.map((f) => <MatchCard key={f.id} f={f} highlight />)}
+                {brazilFixtures.map((f) => <MatchCard key={f.id} f={f} highlight now={now} />)}
               </div>
             </div>
 
@@ -349,7 +350,7 @@ export const AlbumTorcidaPage = () => {
                 </span>
               </div>
               <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-                {upcomingAll.map((f) => <MatchCard key={f.id} f={f} />)}
+                {upcomingAll.map((f) => <MatchCard key={f.id} f={f} now={now} />)}
               </div>
             </div>
           </div>
@@ -416,8 +417,10 @@ export const AlbumTorcidaPage = () => {
                     >
                       <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
                         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                          <span style={{ fontSize: 24 }}>🇧🇷</span>
-                          <div>
+                          {flag("br", 24)}
+                          <span style={{ color: "#4b5563", fontSize: 12 }}>×</span>
+                          {flag(oppCode, 24)}
+                          <div style={{ marginLeft: 8 }}>
                             <div style={{ fontSize: 13, fontWeight: 900, color: "white", fontStyle: "italic" }}>
                               Brasil × {opponent}
                             </div>

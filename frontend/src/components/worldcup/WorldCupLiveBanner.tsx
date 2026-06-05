@@ -100,10 +100,15 @@ function getDisplayMatches(): DisplayMatch[] {
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
-export const WorldCupLiveBanner = () => {
-  const isCopaTime = Date.now() >= new Date("2026-06-11T00:00:00-03:00").getTime();
-  if (!isCopaTime) return null;
+interface BackendLiveMatch {
+  id: string;
+  homeTeam: { name: string; flagUrl: string; score: number };
+  awayTeam: { name: string; flagUrl: string; score: number };
+  minute: string;
+  status: DisplayMatch["status"];
+}
 
+export const WorldCupLiveBanner = () => {
   const [matches, setMatches] = useState<DisplayMatch[]>(() => getDisplayMatches());
   const [active, setActive] = useState(0);
   const prevScoresRef = useRef<Record<string, { home: number; away: number }>>({});
@@ -113,7 +118,7 @@ export const WorldCupLiveBanner = () => {
     try {
       const { data } = await api.get("/worldcup/live");
       if (!data?.live?.length) return;
-      const enriched = (data.live as any[]).map((m: any) => ({
+      const enriched = (data.live as BackendLiveMatch[]).map((m) => ({
         id: m.id,
         home: m.homeTeam.name, homeFlagUrl: m.homeTeam.flagUrl, homeScore: m.homeTeam.score,
         away: m.awayTeam.name, awayFlagUrl: m.awayTeam.flagUrl, awayScore: m.awayTeam.score,
@@ -153,6 +158,9 @@ export const WorldCupLiveBanner = () => {
     const t = setInterval(() => setActive((a) => (a + 1) % matches.length), 5000);
     return () => clearInterval(t);
   }, [matches.length]);
+
+  const isCopaTime = Date.now() >= new Date("2026-06-11T00:00:00-03:00").getTime();
+  if (!isCopaTime) return null;
 
   const match = matches[active] ?? matches[0];
   if (!match) return null;
