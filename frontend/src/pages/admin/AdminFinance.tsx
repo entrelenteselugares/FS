@@ -221,6 +221,7 @@ export const AdminFinance: React.FC = () => {
                           </div>
                        </div>
                        <div className="flex items-center justify-center">
+                          {payoutTab === 'pending' ? (
                             <button onClick={() => setConfirmModal(order.id)} className="border border-brand-tactical bg-brand-tactical/10 text-brand-tactical px-6 py-3 rounded-lg text-[10px] font-bold uppercase tracking-widest hover:bg-brand-tactical hover:text-zinc-950 transition-all flex items-center gap-2"><Zap size={14} strokeWidth={1.5} /> LIQUIDAR REPASSE</button>
                           ) : (
                             <div className="text-right border-l border-theme-border pl-8"><span className="text-[10px] font-black text-theme-muted uppercase tracking-widest block mb-2">Pago em</span><span className="text-[12px] font-black text-brand-tactical uppercase tracking-tighter">{fmtDate(order.payoutPaidAt)}</span></div>
