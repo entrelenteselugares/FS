@@ -6,6 +6,8 @@ import { ArrowRight, MapPin, Building2, CheckCircle2, Utensils, GraduationCap, Z
 export const QuoteMobileView = (props: any) => {
   const { 
     step, setStep, nextStep, prevStep,
+    locationType, setLocationType,
+    category, setCategory,
     eventDate, setEventDate,
     selectedPartnerId, setSelectedPartnerId,
     partners,
@@ -25,18 +27,6 @@ export const QuoteMobileView = (props: any) => {
     accent: "#10b981", // emerald-500
     text: "#fafafa",
     textMuted: "#a1a1aa"
-  };
-
-  const _getIcon = (n: string) => {
-    const name = n.toLowerCase();
-    if (name.includes("phygital") || name.includes("impressa")) return <Printer size={16} />;
-    if (name.includes("video") || name.includes("cinema")) return <Video size={16} />;
-    if (name.includes("reels") || name.includes("smartphone")) return <Smartphone size={16} />;
-    if (name.includes("corporativo") || name.includes("linkedin")) return <Building2 size={16} />;
-    if (name.includes("gastron") || name.includes("buffet")) return <Utensils size={16} />;
-    if (name.includes("escolar") || name.includes("escola")) return <GraduationCap size={16} />;
-    if (name.includes("casamento")) return <Zap size={16} />;
-    return <Camera size={16} />;
   };
 
   const currentPartner = partners.find((p: any) => p.id === selectedPartnerId);
