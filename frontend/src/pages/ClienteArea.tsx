@@ -68,6 +68,7 @@ interface Pedido {
  showAlbum: boolean;
  showVideo: boolean;
  manualType?: string | null;
+ internalNotes?: string | null;
  items?: Array<{
  id: string;
  mediaId: string;
@@ -85,11 +86,13 @@ function formatCurrency(v: number) {
 
 function getEventUrl(pedido: Pedido) {
  const event = pedido.event;
+ // Vault: slug with 'vault-' prefix
  if (event?.slug && event.slug.startsWith('vault-')) {
- return `/meus-albuns/${event.slug.replace('vault-', '')}`;
+  return `/meus-albuns/${event.slug.replace('vault-', '')}`;
  }
- if (pedido.manualType === 'COFRE') {
- return `/meus-albuns/${event.id}`;
+ // Vault: explicit type or manualType
+ if (pedido.manualType === 'COFRE' || event?.type === 'VAULT') {
+  return `/meus-albuns/${event.id}`;
  }
  return `/e/${event?.id}`;
 }
@@ -814,13 +817,13 @@ export default function ClienteArea() {
  <SideDrawer
  isOpen={!!selected}
  onClose={() => setSelected(null)}
- width="max-w-2xl"
+ width="max-w-5xl"
  title={selected?.event?.title || "Detalhes do Álbum"}
  >
  <PedidoDetalhe
  pedido={selected}
  loading={loadingDetalhe}
- onGoToEvent={() => navigate(getEventUrl(selected))}
+ onGoToEvent={() => { setSelected(null); navigate(getEventUrl(selected)); }}
  onChangePrivacy={() => setIsPrivacyModalOpen(true)}
  onRefresh={fetchPedidos}
  />
@@ -908,6 +911,7 @@ group: EventGroup;
 
   const purchaseDate = new Date(pedidos[0].createdAt).toLocaleDateString("pt-BR", { day: 'numeric', month: 'long' });
   const eventDateFmt = formatDate(event.dataEvento);
+  const timeFmt = new Date(event.dataEvento).toLocaleTimeString("pt-BR", { hour: '2-digit', minute: '2-digit' });
   const isCofre = event?.slug?.startsWith('vault-') || pedidos[0]?.manualType === 'COFRE';
   const displayTitle = isCofre ? `Ordem de Cofre: ${event.title}` : event.title;
 
@@ -928,7 +932,7 @@ group: EventGroup;
               {hasAprovado ? 'Acesso Liberado' : 'Pagamento Pendente'}
             </span>
             <p className="text-[10px] text-theme-text-muted font-medium mt-1">
-              Data do evento: <strong className="text-theme-text">{eventDateFmt}</strong>
+              Data do evento: <strong className="text-theme-text">{eventDateFmt} às {timeFmt}</strong>
             </p>
           </div>
         </div>
@@ -1302,66 +1306,73 @@ function PedidoDetalhe({ pedido, loading, onGoToEvent, onChangePrivacy, onRefres
  <p className="text-[9px] font-black text-brand-tactical uppercase tracking-widest animate-pulse">Sincronizando...</p>
  </div>
  ) : pedido.hasPaid ? (
- <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+ <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
  {pedido.event.temFoto && (
  <MediaActionCard
- icon={<Camera size={18} />}
+ icon={<Camera size={20} />}
  title="Fotografia Digital"
  subtitle="Galeria de Fotos"
  url={pedido.event.lightroomUrl}
  disabled={!pedido.event.lightroomUrl}
+ bgImage="https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&q=80&w=800"
  />
  )}
  {pedido.event.temFotoEditada && (
  <MediaActionCard
- icon={<Sparkles size={18} />}
+ icon={<Sparkles size={20} />}
  title="Fotos Editadas"
  subtitle="Galeria Premium Editada"
  url={pedido.event.lightroomUrl}
  disabled={!pedido.event.lightroomUrl}
+ bgImage="https://images.unsplash.com/photo-1542038784456-1ea8e935640e?auto=format&fit=crop&q=80&w=800"
  />
  )}
  {pedido.event.temVideo && (
  <MediaActionCard
- icon={<Play size={18} />}
+ icon={<Play size={20} />}
  title="Vídeo de Cinema"
  subtitle="Filme Completo do Evento"
  url={pedido.event.driveUrl}
  disabled={!pedido.event.driveUrl}
+ bgImage="https://images.unsplash.com/photo-1601506521937-0121a7fc2a6b?auto=format&fit=crop&q=80&w=800"
  />
  )}
  {pedido.event.temVideoEditado && (
  <MediaActionCard
- icon={<Zap size={18} />}
- title="Vídeo Editado Premium"
+ icon={<Zap size={20} />}
+ title="Vídeo Editado"
  subtitle="Corte Especial e Edição Premium"
  url={pedido.event.driveUrl}
  disabled={!pedido.event.driveUrl}
+ bgImage="https://images.unsplash.com/photo-1585072044896-2248dc1055eb?auto=format&fit=crop&q=80&w=800"
  />
  )}
  {pedido.event.temReels && (
  <MediaActionCard
- icon={<Play size={18} />}
+ icon={<Play size={20} />}
  title="Reels / Social"
  subtitle="Teasers verticais para redes"
  url={pedido.event.driveUrl}
  disabled={!pedido.event.driveUrl}
+ bgImage="https://images.unsplash.com/photo-1611162617474-5b21e879e113?auto=format&fit=crop&q=80&w=800"
  />
  )}
  {pedido.event.temFotoImpressa && (
  <MediaActionCard
- icon={<Printer size={18} />}
+ icon={<Printer size={20} />}
  title="Fotos Impressas"
  subtitle="Fotos Reveladas Premium"
  disabled={true}
+ bgImage="https://images.unsplash.com/photo-1533227260815-32bd72385311?auto=format&fit=crop&q=80&w=800"
  />
  )}
  {pedido.event.temAlbumImpresso && (
  <MediaActionCard
- icon={<Printer size={18} />}
- title="Álbum Físico Impresso"
- subtitle="Encadernação Premium de Luxo"
+ icon={<Printer size={20} />}
+ title="Álbum Físico"
+ subtitle="Encadernação Premium"
  disabled={true}
+ bgImage="https://images.unsplash.com/photo-1544473244-f6895e69da8e?auto=format&fit=crop&q=80&w=800"
  />
  )}
  </div>
@@ -1382,20 +1393,32 @@ function PedidoDetalhe({ pedido, loading, onGoToEvent, onChangePrivacy, onRefres
  </div>
 
  {/* Bottom Actions Compactos */}
- <div className="pt-6 border-t border-theme-border flex gap-3">
- <button 
- onClick={onGoToEvent} 
- className="flex-1 py-3 border border-theme-border text-[9px] font-black uppercase tracking-[0.2em] text-theme-text hover:border-brand-tactical hover:text-brand-tactical transition-colors"
- >
- Acessar Mural
- </button>
- <button 
- onClick={onChangePrivacy} 
- disabled={!pedido.hasPaid} 
- className="flex-1 py-3 border border-theme-border text-[9px] font-black uppercase tracking-[0.2em] text-theme-text hover:border-amber-500 hover:text-amber-500 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
- >
- Privacidade
- </button>
+ <div className="pt-6 border-t border-theme-border flex flex-col gap-3">
+   {/* Botão principal de acesso — sempre visível se pago */}
+   {pedido.hasPaid && (
+     <button
+       onClick={onGoToEvent}
+       className="w-full py-3.5 bg-brand-tactical text-black text-[10px] font-black uppercase tracking-[0.2em] hover:bg-brand-tactical/90 transition-all active:scale-95 flex items-center justify-center gap-2"
+     >
+       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+       Ver Álbum com Fotos Compradas
+     </button>
+   )}
+   <div className="flex gap-3">
+     <button
+       onClick={onGoToEvent}
+       className="flex-1 py-3 border border-theme-border text-[9px] font-black uppercase tracking-[0.2em] text-theme-text hover:border-brand-tactical hover:text-brand-tactical transition-colors"
+     >
+       Acessar Mural
+     </button>
+     <button
+       onClick={onChangePrivacy}
+       disabled={!pedido.hasPaid}
+       className="flex-1 py-3 border border-theme-border text-[9px] font-black uppercase tracking-[0.2em] text-theme-text hover:border-amber-500 hover:text-amber-500 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+     >
+       Privacidade
+     </button>
+   </div>
  </div>
  </div>
  </div>
@@ -1403,44 +1426,60 @@ function PedidoDetalhe({ pedido, loading, onGoToEvent, onChangePrivacy, onRefres
 }
 
 
-function MediaActionCard({ icon, title, subtitle, url, disabled }: { 
- icon: React.ReactNode; 
- title: string; 
- subtitle: string; 
- url?: string | null; 
- disabled?: boolean;
-}) {
- if (disabled) {
- return (
- <div className="p-6 bg-theme-bg-muted border border-theme-border text-theme-muted flex items-center gap-5 cursor-not-allowed">
- <div className="p-3 bg-theme-bg-muted border border-theme-border opacity-40">{icon}</div>
- <div>
- <p className="text-[11px] font-black uppercase tracking-widest mb-1 ">{title}</p>
- <p className="text-[10px] font-bold opacity-60">Aguardando Publicação</p>
- </div>
- </div>
- );
+function MediaActionCard({ icon, title, subtitle, url, disabled, bgImage }: { 
+  icon: React.ReactNode; 
+  title: string; 
+  subtitle: string; 
+  url?: string | null; 
+  disabled?: boolean;
+  bgImage?: string;
+ }) {
+  if (disabled) {
+  return (
+  <div className="relative group h-36 rounded-xl overflow-hidden bg-theme-bg-muted border border-theme-border flex items-end p-4 cursor-not-allowed">
+   {bgImage && (
+    <img src={bgImage} alt="" className="absolute inset-0 w-full h-full object-cover opacity-10 filter grayscale" />
+   )}
+   <div className="absolute inset-0 bg-gradient-to-t from-theme-bg/90 via-theme-bg/50 to-theme-bg/10" />
+   <div className="relative z-10 w-full">
+    <div className="flex items-center gap-3 mb-2">
+     <div className="p-2 bg-theme-bg-muted border border-theme-border opacity-40 rounded-lg text-theme-muted">{icon}</div>
+     <div>
+      <p className="text-[12px] font-black uppercase tracking-widest text-theme-muted">{title}</p>
+      <p className="text-[9px] font-bold opacity-60 text-theme-muted uppercase">Aguardando Publicação</p>
+     </div>
+    </div>
+   </div>
+  </div>
+  );
+  }
+ 
+  return (
+  <a 
+  href={url || '#'} 
+  target="_blank" 
+  rel="noreferrer" 
+  className="relative group h-36 rounded-xl overflow-hidden bg-theme-bg border-2 border-theme-border hover:border-brand-tactical transition-all duration-500 flex items-end p-4 shadow-lg hover:shadow-[0_0_20px_rgba(133,185,172,0.2)]"
+  >
+  {bgImage && (
+   <img src={bgImage} alt="" className="absolute inset-0 w-full h-full object-cover opacity-40 group-hover:opacity-60 transition-all duration-700 group-hover:scale-110" />
+  )}
+  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent pointer-events-none" />
+  
+  <div className="relative z-10 w-full flex items-center justify-between">
+   <div className="flex flex-col gap-2">
+    <div className="w-10 h-10 bg-brand-tactical/20 backdrop-blur-sm rounded-lg flex items-center justify-center text-brand-tactical group-hover:bg-brand-tactical group-hover:text-black transition-all duration-500 shadow-xl shadow-brand-tactical/10">
+    {icon}
+    </div>
+    <div>
+    <p className="text-[14px] font-black text-white uppercase tracking-widest drop-shadow-lg">{title}</p>
+    <p className="text-[10px] text-zinc-300 uppercase font-bold tracking-[0.2em]">{subtitle}</p>
+    </div>
+   </div>
+   <div className="w-8 h-8 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center group-hover:bg-brand-tactical group-hover:text-black text-white transition-all duration-500">
+    <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
+   </div>
+  </div>
+  </a>
+  );
  }
-
- return (
- <a 
- href={url || '#'} 
- target="_blank" 
- rel="noreferrer" 
- className="group relative flex items-center justify-between p-6 bg-theme-bg border-2 border-theme-border hover:border-brand-tactical hover:bg-brand-tactical/10 transition-all duration-500 overflow-hidden"
- >
- <div className="absolute inset-0 bg-gradient-to-r from-brand-tactical/0 to-brand-tactical/5 translate-x-[-100%] group-hover:translate-x-0 transition-transform duration-700" />
- <div className="relative z-10 flex items-center gap-5">
- <div className="p-3 bg-brand-tactical/10 text-brand-tactical group-hover:bg-brand-tactical group-hover:text-black transition-all duration-500">
- {icon}
- </div>
- <div>
- <p className="text-[12px] font-black text-theme-text uppercase tracking-widest group-hover:text-brand-tactical transition-colors">{title}</p>
- <p className="text-[9px] text-theme-muted uppercase font-bold tracking-[0.2em]">{subtitle}</p>
- </div>
- </div>
- <ArrowRight size={18} className="relative z-10 text-theme-muted group-hover:text-brand-tactical group-hover:translate-x-2 transition-all duration-500" />
- </a>
- );
-}
-

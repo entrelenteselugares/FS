@@ -5,6 +5,8 @@ import { NotificationService } from "../services/notification.service";
 import bcrypt from "bcryptjs";
 import { APP_URL } from "../lib/config";
 import { AcceptanceStatus } from "@prisma/client";
+import axios from "axios";
+import { ZipArchive } from "archiver";
 
 export class EventController {
   /**
@@ -1106,6 +1108,111 @@ export class EventController {
     } catch (error) {
       console.error("updateFotoPoint:", error);
       return res.status(500).json({ error: "Erro ao atualizar Foto Point." });
+    }
+  }
+
+  /**
+   * GET /api/public/events/:eventId/media/:mediaId/download
+   * Proxy unitário
+   */
+  static async downloadSingle(req: AuthRequest, res: Response) {
+    try {
+      const eventId = String(req.params.eventId);
+      const mediaId = String(req.params.mediaId);
+      const orderId = req.query.orderId ? String(req.query.orderId) : undefined;
+      const guestToken = req.query.guestToken ? String(req.query.guestToken) : undefined;
+      const authUser = req.user;
+
+      const event = await prisma.event.findUnique({ where: { id: eventId } });
+      if (!event) return res.status(404).json({ error: "Evento não encontrado" });
+
+      const media = await prisma.eventMedia.findUnique({ where: { id: mediaId } });
+      if (!media || media.eventId !== eventId) return res.status(404).json({ error: "Mídia não encontrada" });
+
+      const isOwner = authUser?.userId === event.ownerId;
+      let hasAccess = false;
+      if (isOwner) {
+        hasAccess = true;
+      } else {
+        const order = await prisma.order.findFirst({
+          where: { OR: [{ id: String(orderId) }, { paymentId: String(orderId) }], eventId, status: "APROVADO" }
+        });
+        const isPaid = !!order && !order.isContribution;
+        const anyPaidOrder = await prisma.order.findFirst({
+          where: { eventId: event.id, status: "APROVADO", isContribution: false }
+        });
+        const isGloballyPaid = !!anyPaidOrder;
+        hasAccess = isPaid || isGloballyPaid || (!!order && (!!guestToken || !!orderId));
+      }
+
+      if (event.isPrivate && !hasAccess && !(authUser && event.clientEmail && authUser.email === event.clientEmail)) {
+         return res.status(403).json({ error: "Acesso negado" });
+      }
+
+      const response = await axios({ url: media.url, method: 'GET', responseType: 'stream' });
+      res.setHeader('Content-Disposition', `attachment; filename="${media.id}.${media.type === 'VIDEO' ? 'mp4' : 'jpg'}"`);
+      res.setHeader('Content-Type', response.headers['content-type'] || 'application/octet-stream');
+      response.data.pipe(res);
+    } catch (e) {
+      console.error("[downloadSingle]", e);
+      res.status(500).json({ error: "Erro no download" });
+    }
+  }
+
+  /**
+   * GET /api/public/events/:eventId/download-all
+   * Lote em zip
+   */
+  static async downloadAll(req: AuthRequest, res: Response) {
+    try {
+      const eventId = String(req.params.eventId);
+      const orderId = req.query.orderId ? String(req.query.orderId) : undefined;
+      const guestToken = req.query.guestToken ? String(req.query.guestToken) : undefined;
+      const authUser = req.user;
+
+      const event = await prisma.event.findUnique({ where: { id: eventId }, include: { media: true } });
+      if (!event) return res.status(404).json({ error: "Evento não encontrado" });
+
+      const isOwner = authUser?.userId === event.ownerId;
+      let hasAccess = false;
+      if (isOwner) {
+        hasAccess = true;
+      } else {
+        const order = await prisma.order.findFirst({
+          where: { OR: [{ id: String(orderId) }, { paymentId: String(orderId) }], eventId, status: "APROVADO" }
+        });
+        const isPaid = !!order && !order.isContribution;
+        const anyPaidOrder = await prisma.order.findFirst({
+          where: { eventId: event.id, status: "APROVADO", isContribution: false }
+        });
+        const isGloballyPaid = !!anyPaidOrder;
+        hasAccess = isPaid || isGloballyPaid || (!!order && (!!guestToken || !!orderId));
+      }
+
+      if (event.isPrivate && !hasAccess && !(authUser && event.clientEmail && authUser.email === event.clientEmail)) {
+         return res.status(403).json({ error: "Acesso negado" });
+      }
+
+      if (event.media.length === 0) {
+         return res.status(400).json({ error: "Evento não possui fotos." });
+      }
+
+      const archive = new ZipArchive({ zlib: { level: 9 } });
+      res.attachment(`${(event.slug || event.id).replace(/[^a-z0-9]/gi, '_').toLowerCase()}-fotos.zip`);
+      archive.pipe(res);
+
+      for (const m of event.media) {
+        try {
+          const mRes = await axios.get(m.url, { responseType: 'stream' });
+          archive.append(mRes.data, { name: `${m.id}.${m.type === 'VIDEO' ? 'mp4' : 'jpg'}` });
+        } catch (err) {
+          console.error(`Erro baixar ${m.id}`, err);
+        }
+      }
+      await archive.finalize();
+    } catch (e) {
+      console.error("[downloadAll]", e);
+      if (!res.headersSent) res.status(500).json({ error: "Erro no download" });
     }
   }
 }

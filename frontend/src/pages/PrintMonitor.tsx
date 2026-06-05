@@ -1,4 +1,3 @@
-//
 import { useState, useEffect, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { API } from "../lib/api";
@@ -95,6 +94,11 @@ export default function PrintMonitor() {
   const [printTargets, setPrintTargets] = useState<PrintItem[] | null>(null);
   const [selected, setSelected] = useState<string[]>([]);
   const [orientation, setOrientation] = useState<'portrait' | 'landscape'>('landscape');
+  const [photosPerPage, setPhotosPerPage] = useState<number>(4);
+  const [printFit, setPrintFit] = useState<'cover' | 'contain'>('cover');
+  const [showLogo, setShowLogo] = useState<boolean>(true);
+  const [showTimestamp, setShowTimestamp] = useState<boolean>(true);
+  const [clientLogoUrl, setClientLogoUrl] = useState<string>('');
 
   const toggleSelect = (id: string) => {
     setSelected(prev =>
@@ -281,8 +285,29 @@ export default function PrintMonitor() {
           >
             <Play size={12} /> Auto-Print {autoPrint ? 'ON' : 'OFF'}
           </button>
+        </div>
+      </div>
+      
+      {/* Barra de Configurações de Impressão */}
+      <div className="print:hidden border-b border-theme-border bg-zinc-950/50 py-2 px-4 md:px-6 flex flex-wrap items-center gap-3 overflow-x-auto text-[9px] font-black uppercase tracking-widest">
+        <span className="text-zinc-500 mr-2 flex-shrink-0">Configurações de Impressão:</span>
+        
+        <div className="flex-shrink-0 flex items-center gap-2 bg-theme-bg border border-theme-border p-1 rounded-full">
+            <select 
+              value={photosPerPage}
+              onChange={(e) => setPhotosPerPage(Number(e.target.value))}
+              className="bg-transparent text-[10px] font-black uppercase tracking-widest text-theme-text px-2 py-1 outline-none cursor-pointer"
+            >
+              <option value={1} className="bg-theme-bg">1 / folha (A4)</option>
+              <option value={2} className="bg-theme-bg">2 / folha (A5)</option>
+              <option value={4} className="bg-theme-bg">4 / folha (10x15)</option>
+              <option value={6} className="bg-theme-bg">6 / folha (9x13)</option>
+              <option value={12} className="bg-theme-bg">12 / folha (Polaroid)</option>
+              <option value={25} className="bg-theme-bg">25 / folha (Mini)</option>
+            </select>
+        </div>
 
-          <div className="hidden md:flex items-center gap-1 bg-theme-bg border border-theme-border p-1 rounded-full mr-2">
+        <div className="flex-shrink-0 flex items-center gap-1 bg-theme-bg border border-theme-border p-1 rounded-full">
             <button
               onClick={() => setOrientation('portrait')}
               className={`px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-all ${orientation === 'portrait' ? 'bg-brand-tactical text-zinc-950 shadow' : 'text-theme-muted hover:text-theme-text'}`}
@@ -295,7 +320,48 @@ export default function PrintMonitor() {
             >
               Paisagem
             </button>
-          </div>
+        </div>
+
+        <div className="flex-shrink-0 flex items-center gap-1 bg-theme-bg border border-theme-border p-1 rounded-full">
+          <button
+            onClick={() => setPrintFit('cover')}
+            className={`px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-all ${printFit === 'cover' ? 'bg-brand-tactical text-zinc-950 shadow' : 'text-theme-muted hover:text-theme-text'}`}
+          >
+            Preencher
+          </button>
+          <button
+            onClick={() => setPrintFit('contain')}
+            className={`px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-all ${printFit === 'contain' ? 'bg-brand-tactical text-zinc-950 shadow' : 'text-theme-muted hover:text-theme-text'}`}
+          >
+            Encaixar
+          </button>
+        </div>
+
+        <label className="flex-shrink-0 flex items-center gap-2 cursor-pointer border border-theme-border bg-theme-bg px-3 py-1.5 rounded-full hover:bg-zinc-800/50 transition-colors">
+          <input type="checkbox" checked={showLogo} onChange={e => setShowLogo(e.target.checked)} className="accent-brand-tactical" />
+          <span className="text-[10px] font-black uppercase tracking-widest text-theme-text">Logo</span>
+        </label>
+        
+        <label className="flex-shrink-0 flex items-center gap-2 cursor-pointer border border-theme-border bg-theme-bg px-3 py-1.5 rounded-full hover:bg-zinc-800/50 transition-colors">
+          <input type="checkbox" checked={showTimestamp} onChange={e => setShowTimestamp(e.target.checked)} className="accent-brand-tactical" />
+          <span className="text-[10px] font-black uppercase tracking-widest text-theme-text">Data/Hora</span>
+        </label>
+
+        <label className="flex-shrink-0 flex items-center gap-2 cursor-pointer border border-brand-tactical bg-brand-tactical/10 px-3 py-1.5 rounded-full hover:bg-brand-tactical/20 transition-colors">
+          <span className="text-[10px] font-black uppercase tracking-widest text-brand-tactical">{clientLogoUrl ? 'Logo Adicionado ✓' : '+ Add Logo Cliente'}</span>
+          <input 
+            type="file" 
+            accept="image/*" 
+            className="hidden" 
+            onChange={(e) => {
+              if (e.target.files && e.target.files[0]) {
+                const url = URL.createObjectURL(e.target.files[0]);
+                setClientLogoUrl(url);
+              }
+            }}
+          />
+        </label>
+      </div>
 
           <button onClick={() => navigate(`/profissional/monitor/${eventId}/full`)} className="flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-[9px] font-black uppercase tracking-widest bg-brand-tactical text-zinc-950 hover:brightness-110 transition-all shadow-sm">
             <Expand size={12} /> Full Screen
@@ -484,7 +550,15 @@ export default function PrintMonitor() {
 
       {/* Print Native Layout */}
       {printTargets && printTargets.length > 0 && (
-        <NativePrintLayout prints={printTargets} orientation={orientation} />
+        <NativePrintLayout 
+          prints={printTargets} 
+          orientation={orientation} 
+          photosPerPage={photosPerPage}
+          printFit={printFit}
+          showLogo={showLogo}
+          showTimestamp={showTimestamp}
+          clientLogoUrl={clientLogoUrl}
+        />
       )}
     </div>
   );

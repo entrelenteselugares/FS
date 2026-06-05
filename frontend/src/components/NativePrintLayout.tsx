@@ -41,8 +41,7 @@ export const getPrintStyles = (orientation: 'portrait' | 'landscape') => `
     break-after: page;
     box-sizing: border-box;
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: 1fr 1fr;
+    /* GRID INJECTED INLINE */
     gap: 4mm;
     background: #ffffff !important;
   }
@@ -75,8 +74,9 @@ export const getPrintStyles = (orientation: 'portrait' | 'landscape') => `
   .fs-print-img {
     width: 100%;
     height: 100%;
-    object-fit: contain;
+    object-fit: var(--print-fit, cover);
     display: block;
+    border-radius: 2mm;
   }
 
   .fs-print-footer {
@@ -131,27 +131,66 @@ function chunkArray<T>(arr: T[], size: number): T[][] {
 interface NativePrintLayoutProps {
   prints: any[];
   orientation: 'portrait' | 'landscape';
+  photosPerPage?: number;
+  printFit?: 'cover' | 'contain';
+  showLogo?: boolean;
+  showTimestamp?: boolean;
+  clientLogoUrl?: string;
 }
 
-export function NativePrintLayout({ prints, orientation }: NativePrintLayoutProps) {
-  const printPages = chunkArray(prints, 4);
+const getGridTemplate = (photosPerPage: number, orientation: 'portrait' | 'landscape') => {
+  switch (photosPerPage) {
+    case 1: return { cols: 1, rows: 1 };
+    case 2: return orientation === 'portrait' ? { cols: 1, rows: 2 } : { cols: 2, rows: 1 };
+    case 4: return { cols: 2, rows: 2 };
+    case 6: return orientation === 'portrait' ? { cols: 2, rows: 3 } : { cols: 3, rows: 2 };
+    case 12: return orientation === 'portrait' ? { cols: 3, rows: 4 } : { cols: 4, rows: 3 };
+    case 25: return { cols: 5, rows: 5 };
+    default: return { cols: 2, rows: 2 };
+  }
+};
+
+export function NativePrintLayout({ 
+  prints, 
+  orientation, 
+  photosPerPage = 4,
+  printFit = 'cover',
+  showLogo = true,
+  showTimestamp = true,
+  clientLogoUrl
+}: NativePrintLayoutProps) {
+  if (!prints || prints.length === 0) return null;
+
+  const printPages = chunkArray(prints, photosPerPage);
+  const { cols, rows } = getGridTemplate(photosPerPage, orientation);
+
+  const defaultLogo = "https://ui-avatars.com/api/?name=F+S&background=18181b&color=fff&rounded=true&bold=true";
 
   return (
     <>
       <style dangerouslySetInnerHTML={{ __html: getPrintStyles(orientation) }} />
-      <div id="fs-printable-area" className="hidden print:block">
-        {prints.length === 0 ? (
-          <div className="fs-print-page" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <p style={{ fontFamily: 'Inter, sans-serif', fontSize: '14pt', color: '#71717a' }}>
-              Nenhuma foto selecionada.
-            </p>
-          </div>
-        ) : (
-          printPages.map((pageItems, pageIdx) => (
-            <div key={pageIdx} className="fs-print-page">
-              {pageItems.map(p => (
-                <div key={p.id} className="fs-print-card">
-                  <div className="fs-print-img-wrap">
+      <div 
+        id="fs-printable-area" 
+        className="hidden print:block"
+        style={{ '--print-fit': printFit } as React.CSSProperties}
+      >
+        {printPages.map((pageItems, pageIdx) => (
+          <div 
+            key={pageIdx} 
+            className="fs-print-page"
+            style={{ 
+              gridTemplateColumns: `repeat(${cols}, 1fr)`,
+              gridTemplateRows: `repeat(${rows}, 1fr)`
+            }}
+          >
+            {pageItems.map(p => {
+              const printDate = new Date(p.createdAt || Date.now());
+              const timeString = printDate.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+              const dateString = printDate.toLocaleDateString('pt-BR');
+
+              return (
+                <div key={p.id} className="fs-print-card flex flex-col p-[2mm] bg-white border border-gray-100 rounded-lg shadow-sm">
+                  <div className="fs-print-img-wrap rounded bg-gray-50 flex-1 relative overflow-hidden">
                     <img
                       src={p.imageUrl}
                       alt={p.referenceCode}
@@ -159,21 +198,34 @@ export function NativePrintLayout({ prints, orientation }: NativePrintLayoutProp
                       crossOrigin="anonymous"
                     />
                   </div>
-                  <div className="fs-print-footer">
-                    <div className="fs-print-footer-text">
-                      <p className="fs-print-name">
+                  
+                  <div className="fs-print-footer mt-[2mm] flex items-center justify-between">
+                    <div className="flex flex-col gap-[1px]">
+                      <p className="fs-print-name text-[8pt] font-black uppercase text-zinc-900 tracking-wider">
                         {p.customerName || "Convidado"}
                       </p>
-                      <p className="fs-print-code">
+                      <p className="fs-print-code text-[6pt] text-zinc-500 font-mono">
                         #{p.referenceCode}
+                        {showTimestamp && ` • ${dateString} ${timeString}`}
                       </p>
                     </div>
+
+                    {showLogo && (
+                      <div className="flex items-center gap-[2mm]">
+                        <img 
+                          src={clientLogoUrl || defaultLogo} 
+                          alt="Logo" 
+                          className="h-[6mm] object-contain"
+                          crossOrigin="anonymous"
+                        />
+                      </div>
+                    )}
                   </div>
                 </div>
-              ))}
-            </div>
-          ))
-        )}
+              );
+            })}
+          </div>
+        ))}
       </div>
     </>
   );

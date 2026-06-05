@@ -1,4 +1,5 @@
-// @ts-nocheck
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+// 
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowRight, MapPin, Building2, CheckCircle2, Utensils, GraduationCap, Zap, Camera, Video, Smartphone, Printer, ChevronLeft, Map } from "lucide-react";
 

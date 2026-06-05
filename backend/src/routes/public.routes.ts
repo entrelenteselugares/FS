@@ -21,6 +21,8 @@ router.get("/events", EventController.listPublic);
 router.get("/events/cities", EventController.getPublicCities);
 router.get("/events/:slug", optionalAuth, EventController.getById);
 router.get("/events/:slug/access", EventController.getAccess);
+router.get("/events/:eventId/media/:mediaId/download", optionalAuth, EventController.downloadSingle);
+router.get("/events/:eventId/download-all", optionalAuth, EventController.downloadAll);
 router.get("/partners", EventController.listPartners);
 router.get("/unidades-fixas", EventController.listPartners);
 router.post("/quotes", EventController.createQuote);

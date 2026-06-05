@@ -7,6 +7,7 @@ import { MercadoPagoService } from "../services/mercadopago.service";
 import { SubscriptionService } from "../services/subscription.service";
 import sharp from "sharp";
 import exifr from "exifr";
+import axios from "axios";
 
 import { WhatsAppService } from "../services/whatsapp.service";
 
@@ -630,9 +631,7 @@ export class VaultController {
     <meta name="twitter:image" content="${imageUrl}">
     
     <!-- Redirecionamento instantâneo do cliente -->
-    <script>
-        window.location.href = "${frontendUrl}/invitation/${code}";
-    </script>
+    <meta http-equiv="refresh" content="0; url=${frontendUrl}/invitation/${code}">
 </head>
 <body style="background-color: #000; color: #fff; font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0;">
     <h2 style="opacity: 0.5;">Carregando convite...</h2>
@@ -882,6 +881,9 @@ export class VaultController {
           res.setHeader('Content-Type', contentType);
           res.setHeader('Cache-Control', 'public, max-age=86400');
           return fs.createReadStream(filePath).pipe(res);
+        } else if (media && media.webViewLink) {
+          // If mock file isn't local, just redirect to the webViewLink (e.g. picsum)
+          return res.redirect(media.webViewLink);
         }
       }
 
@@ -949,12 +951,18 @@ export class VaultController {
         return res.status(402).json({ error: 'SUBSCRIPTION_REQUIRED', message: 'O período gratuito deste cofre expirou.' });
       }
 
+      let mediaIds: string[] = [];
+      if (req.query.mediaIds && typeof req.query.mediaIds === 'string') {
+        mediaIds = req.query.mediaIds.split(',').filter(id => id.trim().length > 0);
+      }
+
       const mediaList = await prisma.sharedAlbumMedia.findMany({
         where: {
           albumId,
           ...(membership.role !== 'OWNER' ? {
             OR: [{ status: 'APPROVED' }, { uploadedById: userId }]
-          } : {})
+          } : {}),
+          ...(mediaIds.length > 0 ? { id: { in: mediaIds } } : {})
         },
         select: { fileId: true, webViewLink: true, type: true }
       });
@@ -963,13 +971,55 @@ export class VaultController {
         return res.status(404).json({ error: 'Nenhuma foto encontrada para download.' });
       }
 
-      // Se Worker não configurado, resposta informativa em vez de travar a Lambda
+      // Se Worker não configurado, usa o archiver local
       const workerUrl = process.env.WORKER_URL;
       if (!workerUrl) {
-        return res.status(503).json({
-          error: 'WORKER_NOT_CONFIGURED',
-          message: 'O serviço de download em lote ainda não está ativo. Configure WORKER_URL nas variáveis de ambiente.',
-        });
+        console.warn("[VAULT] WORKER_URL não configurado, usando archiver local para zip");
+        const { ZipArchive } = require('archiver');
+        const archive = new ZipArchive({ zlib: { level: 5 } });
+        res.setHeader('Content-Type', 'application/zip');
+        res.setHeader('Content-Disposition', `attachment; filename="${membership.album.nome.replace(/[^a-z0-9]/gi, '_').toLowerCase()}-fotos.zip"`);
+        archive.pipe(res);
+
+        let addedCount = 0;
+        for (const media of mediaList) {
+          try {
+            const ext = media.type === 'VIDEO' ? 'mp4' : 'jpg';
+            const fileName = `${media.fileId.replace(/[^a-zA-Z0-9._-]/g, '_')}.${ext}`;
+
+            if (media.webViewLink && (media.webViewLink.startsWith('http://') || media.webViewLink.startsWith('https://'))) {
+              // R2 ou qualquer URL pública — busca via HTTP
+              const httpRes = await axios.get(media.webViewLink, { responseType: 'stream', timeout: 30000 });
+              archive.append(httpRes.data, { name: fileName });
+              addedCount++;
+            } else if (media.fileId.startsWith('mock-file-')) {
+              // Arquivo local mock
+              const fs = require('fs');
+              const path = require('path');
+              const localName = media.webViewLink
+                ? media.webViewLink.substring(media.webViewLink.lastIndexOf('/') + 1)
+                : media.fileId;
+              const filePath = path.join(process.cwd(), 'uploads', 'vaults', localName);
+              if (fs.existsSync(filePath)) {
+                archive.append(fs.createReadStream(filePath), { name: fileName });
+                addedCount++;
+              } else {
+                console.warn(`[VAULT] Arquivo local não encontrado: ${filePath}`);
+              }
+            } else {
+              // Fallback: Google Drive
+              const driveRes = await driveService.getMediaStream(media.fileId);
+              archive.append(driveRes.data, { name: fileName });
+              addedCount++;
+            }
+          } catch (e) {
+            console.error(`[VAULT] Erro ao adicionar ${media.fileId} ao zip:`, e);
+          }
+        }
+
+        console.log(`[VAULT] ZIP finalizado com ${addedCount}/${mediaList.length} arquivos.`);
+        await archive.finalize();
+        return;
       }
 
       // Dispara o job no Worker (sem await — retorna jobId imediatamente)

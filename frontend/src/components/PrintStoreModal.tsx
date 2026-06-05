@@ -306,7 +306,7 @@ export function PrintStoreModal({ eventId, eventTitle, medias = [], unlockedMedi
              <div className="p-4 lg:p-8 border-b border-theme-border flex items-center justify-between lg:items-start lg:flex-col lg:justify-start">
                 <div>
                   <p className="text-[10px] font-black text-brand-tactical uppercase tracking-[0.5em] italic lg:mb-3">Eternize no Papel</p>
-                  <h2 className="text-xl lg:text-3xl font-heading font-black text-theme-text uppercase tracking-tighter leading-none italic">Print Store</h2>
+                  <h2 className="text-xl lg:text-3xl font-heading font-black text-theme-text uppercase tracking-tighter leading-none italic" style={{ paddingRight: '0.12em' }}>Print Store</h2>
                 </div>
                 <button onClick={onClose} className="lg:hidden p-2 text-theme-text-muted hover:text-white transition-colors">
                   <X size={24} />
@@ -403,7 +403,7 @@ export function PrintStoreModal({ eventId, eventTitle, medias = [], unlockedMedi
 
                              <div className="p-3 md:p-8 relative z-10 flex-1 flex flex-col">
                                <p className="text-[8px] md:text-[10px] font-black text-brand-tactical uppercase tracking-[0.2em] md:tracking-[0.3em] mb-2 md:mb-4 italic line-clamp-1">{CATEGORY_LABELS[product.category] || product.category}</p>
-                               <h3 className="text-sm md:text-2xl font-black text-theme-text uppercase tracking-tight italic mb-2 md:mb-4 group-hover:text-brand-tactical transition-colors line-clamp-2 leading-tight">{product.name}</h3>
+                               <h3 className="text-sm md:text-2xl font-black text-theme-text uppercase tracking-tight italic mb-2 md:mb-4 group-hover:text-brand-tactical transition-colors line-clamp-2 leading-tight" style={{ paddingRight: '0.1em' }}>{product.name}</h3>
                                <p className="text-[9px] md:text-xs text-theme-text-muted leading-relaxed mb-4 md:mb-8 flex-1 italic line-clamp-2 md:line-clamp-none">{product.description || "Acabamento premium com durabilidade vitalícia."}</p>
                                <div className="flex items-end justify-between mt-auto">
                                   <div className="flex items-baseline gap-[2px] md:gap-1">

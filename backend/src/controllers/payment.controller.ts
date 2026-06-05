@@ -188,8 +188,25 @@ export class PaymentController {
 
       // 3. Preparar itens do pedido (Marketplace)
       let orderItemsData: Prisma.OrderItemCreateManyOrderInput[] = [];
-      if (cartItems.length > 0) {
-        for (const shortId of cartItems) {
+      let activeCartItems = [...cartItems];
+
+      if (activeCartItems.length > 0 && resolvedClienteId) {
+        const hasFullAlbum = await prisma.order.findFirst({
+          where: {
+            clienteId: resolvedClienteId,
+            eventId,
+            status: { in: ["PAGO", "APROVADO", "PROCESSANDO", "CONCLUIDO"] },
+            manualType: { in: ["ALBUM_FULL", "VAULT_CYCLE", "VAULT_ONDEMAND"] }
+          }
+        });
+        if (hasFullAlbum) {
+          console.warn(`[Checkout] Usuário já possui acesso completo ao evento ${eventId}. Esvaziando carrinho digital.`);
+          activeCartItems = [];
+        }
+      }
+
+      if (activeCartItems.length > 0) {
+        for (const shortId of activeCartItems) {
           // 1. Tenta achar em EventMedia
           let media = await prisma.eventMedia.findFirst({
             where: { eventId, shortId }
@@ -215,6 +232,22 @@ export class PaymentController {
           }
 
           if (media) {
+            if (resolvedClienteId) {
+              const alreadyBought = await prisma.orderItem.findFirst({
+                where: {
+                  mediaId: media.id,
+                  order: {
+                    clienteId: resolvedClienteId,
+                    status: { in: ["PAGO", "APROVADO", "PROCESSANDO", "CONCLUIDO"] }
+                  }
+                }
+              });
+              if (alreadyBought) {
+                console.warn(`[Checkout] Tentativa de compra duplicada ignorada para media ${media.id}`);
+                continue;
+              }
+            }
+
             orderItemsData.push({
               mediaId: media.id,
               price: media.price || event.pricePerPhoto || 15,

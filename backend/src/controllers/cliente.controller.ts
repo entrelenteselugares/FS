@@ -62,6 +62,7 @@ export async function getMeusPedidos(req: AuthRequest, res: Response): Promise<v
         accessType: p.accessType,
         accessExpiresAt: p.accessExpiresAt,
         manualType: p.manualType,
+        internalNotes: p.internalNotes,
         items: p.items,
         vaultId: vault?.id || null
       };
@@ -150,6 +151,7 @@ export async function getMeuPedidoDetalhe(req: AuthRequest, res: Response): Prom
       accessType: pedido.accessType,
       accessExpiresAt: pedido.accessExpiresAt,
       manualType: pedido.manualType,
+      internalNotes: pedido.internalNotes,
       event: {
         ...pedido.event,
         // Só expõe os links se aprovado INTEGRALMENTE e NÃO expirado/excluído

@@ -10,6 +10,7 @@ import {
   Printer, Zap, Star, Settings, Video, PlayCircle, Download,
   RotateCcw, RotateCw, Layers
 } from "lucide-react";
+import { toast } from "sonner";
 import { Helmet } from "react-helmet-async";
 import { T } from "../lib/theme";
 import { VaultSettingsModal } from "../components/VaultSettingsModal";
@@ -171,37 +172,75 @@ export default function VaultDetailPage() {
     if (!vault) return;
     try {
       const { data } = await api.post(`/vaults/${vaultId}/invite`);
-      const text = `Venha compartilhar memórias comigo no álbum "${vault.nome}"!\n\nLink de acesso:\n${data.url}`;
+      const text = `Venha compartilhar memórias comigo no álbum "${vault.nome}"!`;
       
       if (navigator.share) {
-        await navigator.share({ title: vault.nome, text, url: data.url });
+        await navigator.share({
+          title: vault.nome,
+          text: text,
+          url: data.url
+        });
       } else {
-        await navigator.clipboard.writeText(text);
-        alert("Link de convite copiado para a área de transferência!");
+        await navigator.clipboard.writeText(`${text}\n\nLink de acesso:\n${data.url}`);
+        toast.success("Link copiado para a área de transferência!");
       }
     } catch {
       alert("Apenas o proprietário pode gerar convites.");
     }
   };
 
-  const handleDownloadAll = async () => {
+  const selectedForDownload = media.filter(m => m.votedByMe);
+
+  const handleDownloadAllOrSelected = async () => {
     if (!vault) return;
     setDownloadingAll(true);
     try {
-      const res = await api.get(`/vaults/${vaultId}/download-all`);
-      const { downloadUrl, message } = res.data;
-
-      // Abre o link do ZIP pre-assinado numa nova aba (download direto do R2/Worker)
-      window.open(downloadUrl, '_blank');
+      const query = selectedForDownload.length > 0 
+        ? `?mediaIds=${selectedForDownload.map(m => m.id).join(',')}`
+        : '';
+        
+      const res = await api.get(`/vaults/${vaultId}/download-all${query}`, { responseType: 'blob' });
       
-      // Feedback ao usuário
-      alert(message || 'Download iniciado!');
-    } catch (err: any) {
-      const code = err.response?.data?.error;
-      if (code === 'SUBSCRIPTION_REQUIRED') {
-        alert('Assine o cofre para baixar todas as fotos.');
-      } else if (code === 'WORKER_NOT_CONFIGURED') {
-        alert('O download em lote ainda não está disponível. Entre em contato com o suporte.');
+      // Checa se o backend retornou JSON (ex: WORKER_NOT_CONFIGURED ou link direto)
+      if (res.data && res.data.type === 'application/json') {
+        const text = await res.data.text();
+        const json = JSON.parse(text);
+        if (json.downloadUrl) {
+          window.open(json.downloadUrl, '_blank');
+          alert(json.message || 'Download iniciado!');
+          return;
+        } else if (json.error === 'WORKER_NOT_CONFIGURED') {
+          alert('O download em lote ainda não está disponível. Entre em contato com o suporte.');
+          return;
+        }
+      }
+
+      // Senão, é o zip binário
+      const url = window.URL.createObjectURL(new Blob([res.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `${vault.nome.replace(/[^a-z0-9]/gi, '_').toLowerCase()}-fotos.zip`);
+      document.body.appendChild(link);
+      link.click();
+      link.parentNode?.removeChild(link);
+      
+    } catch (err: unknown) {
+      const axErr = err as { response?: { data?: unknown } };
+      if (axErr.response?.data instanceof Blob) {
+        (axErr.response.data as Blob).text().then((text: string) => {
+          try {
+            const json = JSON.parse(text);
+            if (json.error === 'SUBSCRIPTION_REQUIRED') {
+              alert('Assine o cofre para baixar todas as fotos.');
+            } else if (json.error === 'WORKER_NOT_CONFIGURED') {
+              alert('O download em lote ainda não está disponível. Entre em contato com o suporte.');
+            } else {
+              alert('Erro ao gerar o download. Tente novamente.');
+            }
+          } catch {
+            alert('Erro ao gerar o download. Tente novamente.');
+          }
+        });
       } else {
         alert('Erro ao gerar o download. Tente novamente.');
       }
@@ -357,89 +396,93 @@ export default function VaultDetailPage() {
         }
       }
 
-      // 2. Size Guard
-      const isVideo = file.type.startsWith("video/");
-      const maxSize = isVideo ? 100 * 1024 * 1024 : 4.5 * 1024 * 1024;
-      if (file.size > maxSize) {
-        console.warn("[Upload] Arquivo muito grande:", file.name);
-        alert(`O arquivo ${file.name} excede o limite de ${isVideo ? '100MB' : '4.5MB'}.`);
-        failCount++;
-        continue;
-      }
 
-      // 3. Sequential Direct Upload Architecture
+      // 2. Sequential Direct Upload Architecture
       try {
         const isVideo = file.type.startsWith("video/");
         const originalName = file.name || "arquivo";
         
-        // Passo 3.1: Pede a URL de upload direto para o Backend
-        const initRes = await api.post(`/vaults/${vaultId}/upload/init`, {
-          fileName: originalName,
-          mimeType: file.type,
-          fileSize: file.size,
-          type: isVideo ? "VIDEO" : "PHOTO"
-        });
+        let directUploadFailed = false;
+        let finalFileName = "";
+        let publicUrl = "";
+        let uploadUrl = "";
+        let storageType = "";
+        let driveFileId = "";
 
-        const { uploadUrl, finalFileName, publicUrl, storageType } = initRes.data;
+        try {
+          const initRes = await api.post(`/vaults/${vaultId}/upload/init`, {
+            fileName: originalName,
+            mimeType: file.type,
+            fileSize: file.size,
+            type: isVideo ? "VIDEO" : "PHOTO"
+          });
+          
+          uploadUrl = initRes.data.uploadUrl;
+          finalFileName = initRes.data.finalFileName;
+          publicUrl = initRes.data.publicUrl;
+          storageType = initRes.data.storageType;
 
-        if (!uploadUrl || (uploadUrl.includes('/api/mock/') && storageType !== 'r2')) {
-          // Fallback para ambiente local sem Google Drive configurado
+          if (!uploadUrl || (uploadUrl.includes('/api/mock/') && storageType !== 'r2')) {
+            directUploadFailed = true;
+          } else {
+            // Passo 3.2: Faz o upload DIRETO para o Storage (Bypassa Vercel)
+            driveFileId = await new Promise<string>((resolve, reject) => {
+              const xhr = new XMLHttpRequest();
+              xhr.open("PUT", uploadUrl, true);
+              xhr.setRequestHeader("Content-Type", file.type);
+              
+              xhr.upload.onprogress = (pe) => {
+                if (pe.lengthComputable) {
+                  const subProgress = Math.round((pe.loaded * progressStep) / pe.total);
+                  setUploadProgress(Math.round(progressBase + subProgress));
+                }
+              };
+
+              xhr.onload = () => {
+                if (xhr.status >= 200 && xhr.status < 300) {
+                  if (storageType === 'r2') {
+                    resolve(finalFileName);
+                  } else {
+                    try {
+                      const response = JSON.parse(xhr.responseText);
+                      resolve(response.id || finalFileName);
+                    } catch {
+                      resolve(finalFileName);
+                    }
+                  }
+                } else {
+                  reject(new Error(`Falha no Storage HTTP ${xhr.status}: ${xhr.responseText}`));
+                }
+              };
+
+              xhr.onerror = () => reject(new Error("Erro de rede ao conectar no Storage."));
+              xhr.send(file);
+            });
+
+            // Passo 3.3: Confirma com o nosso backend
+            await api.post(`/vaults/${vaultId}/upload/complete`, {
+              key: finalFileName,
+              publicUrl,
+              fileId: driveFileId,
+              fileSize: file.size,
+              type: isVideo ? "VIDEO" : "PHOTO"
+            });
+          }
+        } catch (directErr) {
+          console.warn("[Upload] Upload direto falhou, usando fallback local:", directErr);
+          directUploadFailed = true;
+        }
+
+        if (directUploadFailed) {
           const formData = new FormData();
-          formData.append("file", file, finalFileName);
+          formData.append("file", file, finalFileName || originalName);
           await api.post(`/vaults/${vaultId}/upload`, formData, {
             onUploadProgress: (pe) => {
               const subProgress = Math.round((pe.loaded * progressStep) / (pe.total || 1));
               setUploadProgress(Math.round(progressBase + subProgress));
             }
           });
-          successCount++;
-          continue;
         }
-
-        // Passo 3.2: Faz o upload DIRETO para o Storage (Bypassa Vercel)
-        // Usamos XMLHttpRequest nativo para ter barra de progresso sem os interceptors do Axios da nossa API
-        const driveFileId = await new Promise<string>((resolve, reject) => {
-          const xhr = new XMLHttpRequest();
-          xhr.open("PUT", uploadUrl, true);
-          xhr.setRequestHeader("Content-Type", file.type);
-          
-          xhr.upload.onprogress = (pe) => {
-            if (pe.lengthComputable) {
-              const subProgress = Math.round((pe.loaded * progressStep) / pe.total);
-              setUploadProgress(Math.round(progressBase + subProgress));
-            }
-          };
-
-          xhr.onload = () => {
-            if (xhr.status >= 200 && xhr.status < 300) {
-              if (storageType === 'r2') {
-                resolve(finalFileName);
-              } else {
-                // Google Drive retorna os metadados do arquivo em JSON
-                try {
-                  const response = JSON.parse(xhr.responseText);
-                  resolve(response.id);
-                } catch {
-                  resolve(finalFileName);
-                }
-              }
-            } else {
-              reject(new Error(`Falha no Storage HTTP ${xhr.status}: ${xhr.responseText}`));
-            }
-          };
-
-          xhr.onerror = () => reject(new Error("Erro de rede ao conectar no Storage."));
-          xhr.send(file);
-        });
-
-        // Passo 3.3: Confirma com o nosso backend
-        await api.post(`/vaults/${vaultId}/upload/complete`, {
-          key: finalFileName,
-          publicUrl,
-          fileId: driveFileId, // fallback caso precise
-          fileSize: file.size,
-          type: isVideo ? "VIDEO" : "PHOTO"
-        });
 
         successCount++;
       } catch (err: unknown) {
@@ -571,12 +614,12 @@ export default function VaultDetailPage() {
             </button>
 
             <button 
-              onClick={handleDownloadAll}
+              onClick={handleDownloadAllOrSelected}
               disabled={downloadingAll}
               className="flex-1 md:flex-none flex items-center justify-center gap-2 bg-theme-bg-muted border-2 border-theme-border hover:border-brand-tactical text-theme-text hover:text-brand-tactical text-[10px] font-black uppercase tracking-widest px-4 py-2.5 rounded-lg transition-all"
             >
               {downloadingAll ? <Loader2 size={14} className="animate-spin" /> : <Download size={14} />}
-              Baixar Tudo
+              {selectedForDownload.length > 0 ? `Baixar Selecionadas (${selectedForDownload.length})` : "Baixar Tudo"}
             </button>
 
             <button 

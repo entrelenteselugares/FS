@@ -31,7 +31,7 @@ export async function applyWatermark(imageBuffer: Buffer): Promise<Buffer> {
       
       const svg = `
         <svg width="${meta.width}" height="${meta.height}" xmlns="http://www.w3.org/2000/svg">
-          <image href="data:image/png;base64,${resized.toString('base64')}" x="0" y="0" width="${meta.width}" height="${meta.height}" opacity="0.4" />
+          <image href="data:image/png;base64,${resized.toString('base64')}" x="0" y="0" width="${meta.width}" height="${meta.height}" opacity="0.8" />
         </svg>
       `;
       

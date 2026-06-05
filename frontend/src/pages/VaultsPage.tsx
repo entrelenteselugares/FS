@@ -28,7 +28,7 @@ function VaultCard({ vault, onClick }: { vault: Vault; onClick: () => void }) {
       animate={{ opacity: 1, y: 0 }}
       whileHover={{ scale: 1.02 }}
       onClick={onClick}
-      className="group relative flex flex-col items-start bg-theme-bg border border-theme-border rounded-xl md:rounded-2xl p-3 md:p-6 cursor-pointer transition-all duration-300 overflow-hidden gap-3 md:gap-5 shadow-sm hover:shadow-md hover:border-brand-tactical/60"
+      className="group relative flex flex-col items-start bg-theme-bg border border-theme-border rounded-xl md:rounded-2xl p-3 md:p-6 cursor-pointer transition-all duration-300 overflow-hidden gap-3 md:gap-5 shadow-sm hover:shadow-md hover:border-brand-tactical/60 h-full"
     >
       <div className="flex w-full justify-between items-start gap-1">
         <div className="w-8 h-8 md:w-12 md:h-12 shrink-0 bg-brand-tactical/10 border border-brand-tactical/20 rounded-lg md:rounded-xl flex items-center justify-center">
@@ -335,9 +335,9 @@ export default function VaultsPage() {
             </button>
           </motion.div>
         ) : (
-          <div className="grid grid-cols-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-6">
+          <div className="grid grid-cols-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-6 items-stretch">
             {vaults.map((vault, i) => (
-              <motion.div key={vault.id} transition={{ delay: i * 0.05 }}>
+              <motion.div key={vault.id} transition={{ delay: i * 0.05 }} className="flex flex-col">
                 <VaultCard vault={vault} onClick={() => navigate(`/meus-albuns/${vault.id}`)} />
               </motion.div>
             ))}

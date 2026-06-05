@@ -67,14 +67,28 @@ const renderIcon = (iconName: string | null) => {
   }
 };
 
+interface Slide {
+  id: string;
+  title: string;
+  subtitle: string;
+  desc: string;
+  primaryBtn: string;
+  primaryAction: string;
+  icon: string;
+  bgImage: string;
+}
+
 export function HeroCarousel() {
   const navigate = useNavigate();
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [slides, setSlides] = useState<any[]>(FALLBACK_SLIDES);
+  const [slides, setSlides] = useState<Slide[]>(FALLBACK_SLIDES);
 
   useEffect(() => {
     fetch("https://foto-segundo.vercel.app/api/public/banners")
-      .then(res => res.json())
+      .then(res => {
+        if (!res.ok) throw new Error('Network response was not ok');
+        return res.json();
+      })
       .then(data => {
         if (data.banners && data.banners.length > 0) {
           setSlides(data.banners);
@@ -83,13 +97,16 @@ export function HeroCarousel() {
       .catch(() => {
         // fetch relative path locally
         fetch("/api/public/banners")
-          .then(res => res.json())
+          .then(res => {
+            if (!res.ok) throw new Error('Network response was not ok');
+            return res.json();
+          })
           .then(data => {
              if (data.banners && data.banners.length > 0) {
                setSlides(data.banners);
              }
           })
-          .catch(e => console.error("Error fetching banners", e));
+          .catch(e => console.error("[HeroCarousel] Fallback to default slides.", e.message));
       });
   }, []);
 
@@ -126,7 +143,7 @@ export function HeroCarousel() {
           <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-transparent to-transparent opacity-80" />
           
           {/* Content Layer */}
-          <div className="absolute inset-0 flex flex-col justify-center px-8 md:px-16 w-full md:w-2/3">
+          <div className="absolute inset-0 flex flex-col justify-center px-8 md:px-16 w-full md:w-2/3 pr-6 md:pr-16">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -136,7 +153,10 @@ export function HeroCarousel() {
                 
                 <h1 className="text-4xl md:text-6xl lg:text-7xl font-black text-white leading-none tracking-tight mb-2">
                   {currentSlide.title} <br className="md:hidden" />
-                  <span className="text-emerald-400 italic bg-clip-text text-transparent bg-gradient-to-r from-emerald-400 to-teal-300">
+                  <span
+                    className="text-emerald-400 italic bg-clip-text text-transparent bg-gradient-to-r from-emerald-400 to-teal-300"
+                    style={{ paddingRight: '0.15em', display: 'inline-block' }}
+                  >
                     {currentSlide.subtitle}
                   </span>
                 </h1>

@@ -43,7 +43,7 @@ export class BannerController {
       const { id } = req.params;
       const data = req.body;
       const banner = await prisma.heroSlide.update({
-        where: { id },
+        where: { id: id as string },
         data: {
           title: data.title,
           subtitle: data.subtitle,
@@ -66,7 +66,7 @@ export class BannerController {
   static async delete(req: AuthRequest, res: Response) {
     try {
       const { id } = req.params;
-      await prisma.heroSlide.delete({ where: { id } });
+      await prisma.heroSlide.delete({ where: { id: id as string } });
       return res.json({ ok: true });
     } catch (error) {
       console.error("[BannerController.delete]", error);

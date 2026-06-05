@@ -1,5 +1,6 @@
-import React from "react";
-import { Download, Share2, ImageIcon, PlayCircle } from "lucide-react";
+import React, { useState } from "react";
+import { Download, Share2, ImageIcon, PlayCircle, Loader2 } from "lucide-react";
+import { useSearchParams } from "react-router-dom";
 import type { EventData } from "../api";
 
 interface GalleryViewProps {
@@ -7,6 +8,65 @@ interface GalleryViewProps {
 }
 
 export const GalleryView: React.FC<GalleryViewProps> = ({ event }) => {
+  const [searchParams] = useSearchParams();
+  const [downloadingSingle, setDownloadingSingle] = useState<string | null>(null);
+  const [downloadingAll, setDownloadingAll] = useState(false);
+
+  const buildDownloadUrl = (path: string) => {
+    const baseUrl = import.meta.env.VITE_API_URL ? import.meta.env.VITE_API_URL.replace(/\/$/, '') : '/api';
+    const url = new URL(`${baseUrl}${path}`, window.location.origin);
+    const orderId = searchParams.get("orderId");
+    const guestToken = searchParams.get("guestToken");
+    if (orderId) url.searchParams.append("orderId", orderId);
+    if (guestToken) url.searchParams.append("guestToken", guestToken);
+    return url.toString();
+  };
+
+  const handleDownloadSingle = async (midia: { id: string; type?: string; tipo?: string }) => {
+    if (downloadingSingle) return;
+    setDownloadingSingle(midia.id);
+    try {
+      const proxyUrl = buildDownloadUrl(`/public/events/${event.id}/media/${midia.id}/download`);
+      const res = await fetch(proxyUrl);
+      if (!res.ok) throw new Error("Erro ao baixar");
+      const blob = await res.blob();
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", `${midia.id}.${(midia.tipo || midia.type) === 'VIDEO' ? 'mp4' : 'jpg'}`);
+      document.body.appendChild(link);
+      link.click();
+      link.parentNode?.removeChild(link);
+    } catch (e) {
+      alert("Erro ao realizar o download.");
+      console.error(e);
+    } finally {
+      setDownloadingSingle(null);
+    }
+  };
+
+  const handleDownloadAll = async () => {
+    if (downloadingAll) return;
+    setDownloadingAll(true);
+    try {
+      const proxyUrl = buildDownloadUrl(`/public/events/${event.id}/download-all`);
+      const res = await fetch(proxyUrl);
+      if (!res.ok) throw new Error("Erro ao gerar arquivo zip");
+      const blob = await res.blob();
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", `${event.title.replace(/[^a-z0-9]/gi, '_').toLowerCase()}-fotos.zip`);
+      document.body.appendChild(link);
+      link.click();
+      link.parentNode?.removeChild(link);
+    } catch (e) {
+      alert("Erro ao realizar o download em lote.");
+      console.error(e);
+    } finally {
+      setDownloadingAll(false);
+    }
+  };
 
   return (
     <div className="min-h-screen pt-24 pb-40" style={{ background: "var(--theme-bg)" }}>
@@ -40,8 +100,12 @@ export const GalleryView: React.FC<GalleryViewProps> = ({ event }) => {
             
             {/* Overlay com Ações */}
             <div className="absolute inset-0 transition-all duration-500 opacity-0 bg-black/40 group-hover:opacity-100 backdrop-blur-sm flex items-center justify-center gap-4">
-              <button className="flex items-center justify-center w-12 h-12 transition-all bg-white rounded-2xl text-midnight hover:bg-brand-indigo hover:text-white active:scale-90">
-                <Download size={20} />
+              <button 
+                onClick={() => handleDownloadSingle(midia)}
+                disabled={downloadingSingle === midia.id}
+                className="flex items-center justify-center w-12 h-12 transition-all bg-white rounded-2xl text-midnight hover:bg-brand-indigo hover:text-white active:scale-90 disabled:opacity-50"
+              >
+                {downloadingSingle === midia.id ? <Loader2 size={20} className="animate-spin" /> : <Download size={20} />}
               </button>
 
               <button className="flex items-center justify-center w-12 h-12 transition-all border rounded-2xl border-white/20 bg-white/10 text-white hover:bg-white hover:text-midnight active:scale-90">
@@ -62,7 +126,12 @@ export const GalleryView: React.FC<GalleryViewProps> = ({ event }) => {
       {/* Floating Toolbar Minimalista */}
       <div className="fixed bottom-10 left-1/2 -translate-x-1/2 z-50">
          <div className="flex items-center gap-2 p-2 rounded-[2rem] shadow-2xl backdrop-blur-2xl" style={{ background: "var(--theme-bg-muted)", border: "1px solid var(--theme-border)" }}>
-            <button className="px-8 py-4 text-[10px] font-black uppercase tracking-widest bg-brand-indigo text-white rounded-full hover:bg-white hover:text-midnight transition-all">
+            <button 
+              onClick={handleDownloadAll}
+              disabled={downloadingAll}
+              className="px-8 py-4 text-[10px] font-black flex items-center gap-2 uppercase tracking-widest bg-brand-indigo text-white rounded-full hover:bg-white hover:text-midnight transition-all disabled:opacity-50"
+            >
+               {downloadingAll ? <Loader2 size={16} className="animate-spin" /> : <Download size={16} />}
                Baixar Tudo (.zip)
             </button>
          </div>

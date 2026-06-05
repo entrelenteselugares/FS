@@ -3,7 +3,7 @@ import { requireAuth } from "../lib/auth";
 import { VaultController } from "../controllers/vault.controller";
 import multer from "multer";
 
-const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 4 * 1024 * 1024 } });
+const upload = multer({ storage: multer.memoryStorage() }); // sem limite — R2 gerencia o tamanho
 const router = Router();
 
 // ── VAULTS (Cofres de Memórias - Fase 11)
