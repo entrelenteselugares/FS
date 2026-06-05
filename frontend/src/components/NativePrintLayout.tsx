@@ -1,4 +1,4 @@
-
+import React from "react";
 
 export const getPrintStyles = (orientation: 'portrait' | 'landscape') => `
 @media print {
