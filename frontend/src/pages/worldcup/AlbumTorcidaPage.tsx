@@ -522,6 +522,7 @@ export const AlbumTorcidaPage = () => {
                   </Link>
                 ))}
               </div>
+            )}
           </div>
         )}
 
