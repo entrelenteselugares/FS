@@ -80,15 +80,17 @@ export const LoginPage: React.FC = () => {
           <div className="absolute inset-0 bg-brand-tactical/10 mix-blend-overlay" />
         </div>
 
-        {/* Brand watermark on photo side */}
-        <div className="absolute top-8 left-8 z-20 hidden lg:block">
-          <Link to="/">
-            <img
-              src="/logo.png"
-              alt="Foto Segundo"
-              style={{ height: 28, objectFit: "contain", filter: isDark ? "brightness(0.5)" : "brightness(0.6)" }}
-            />
-          </Link>
+        {/* Brand watermark / centered logo on photo side */}
+        <div className="absolute inset-0 flex items-center justify-center z-30 pointer-events-none">
+          <div className="bg-theme-bg/60 backdrop-blur-md px-8 py-6 rounded-3xl shadow-2xl border border-theme-border/30 pointer-events-auto transition-transform hover:scale-105">
+            <Link to="/">
+              <img
+                src="/logo.png"
+                alt="Foto Segundo"
+                style={{ height: 46, objectFit: "contain", filter: "var(--logo-filter)" }}
+              />
+            </Link>
+          </div>
         </div>
 
         {/* Tagline bottom-left */}
@@ -115,33 +117,17 @@ export const LoginPage: React.FC = () => {
           {isDark ? <Sun size={16} /> : <Moon size={16} />}
         </button>
 
-        {/* Top: Logo */}
-        <div className="pt-12 px-6 md:px-10 xl:px-14 pb-4">
-          <div className="space-y-3">
-            <Link to="/" className="inline-block">
-              <img
-                src="/logo.png"
-                alt="Foto Segundo"
-                style={{ height: 34, objectFit: "contain", filter: "var(--logo-filter)" }}
-              />
-            </Link>
-            <div className="text-[9px] font-black text-brand-tactical uppercase tracking-[0.5em] italic">
+        {/* Center: Form & Header */}
+        <div className="flex-1 flex flex-col justify-center px-6 md:px-10 xl:px-14 py-12 space-y-10">
+          {/* Header Group */}
+          <div className="space-y-2">
+            <div className="text-[9px] font-black text-brand-tactical uppercase tracking-[0.5em] mb-4 italic">
               Portal de Acesso
             </div>
-          </div>
-        </div>
-
-        {/* Center: Form */}
-        <div className="flex-1 flex flex-col justify-center px-6 md:px-10 xl:px-14 py-8 space-y-10">
-          {/* Heading */}
-          <div>
-            <h1 className="text-4xl xl:text-5xl font-black uppercase italic leading-none tracking-tighter text-theme-text">
-              Efetuar
+            <h1 className="text-3xl font-black uppercase tracking-tight text-theme-text">
+              Acessar Conta
             </h1>
-            <h1 className="text-4xl xl:text-5xl font-black uppercase italic leading-none tracking-tighter text-brand-tactical">
-              Login
-            </h1>
-            <p className="mt-3 text-[10px] font-medium uppercase tracking-widest text-theme-muted">
+            <p className="text-[10px] md:text-xs font-medium uppercase tracking-widest text-theme-muted">
               Bem-vindo de volta ao sistema
             </p>
           </div>

@@ -7,7 +7,7 @@ import { T } from "../lib/theme";
 import { DICT } from "../lib/dictionary";
 import { Navbar } from "../components/Navbar";
 import { PhotoMosaic } from "../components/PhotoMosaic";
-import { MapPin, Calendar, Search } from "lucide-react";
+import { MapPin, Calendar, Search, SlidersHorizontal } from "lucide-react";
 
 interface Event {
   id: string;
@@ -169,6 +169,7 @@ export const HomePage = () => {
   const [selectedCity, setSelectedCity] = useState(() => sessionStorage.getItem('hp_city') || "");
   const [sortBy, setSortBy]             = useState(() => sessionStorage.getItem('hp_sort') || "");
   const [availableCities, setAvailableCities] = useState<string[]>([]);
+  const [showMobileFilters, setShowMobileFilters] = useState(false);
 
   useEffect(() => {
     API.get("/public/events/cities")
@@ -259,7 +260,7 @@ export const HomePage = () => {
              background: linear-gradient(to bottom, var(--bg-card), var(--bg)) !important;
            }
            .hp-hero-title { font-size: 38px !important; line-height: 0.85 !important; margin-bottom: 12px !important; text-align: center !important; letter-spacing: -0.04em !important; font-weight: 900 !important; }
-           .hp-hero-desc { font-size: 11px !important; line-height: 1.4 !important; margin-bottom: 20px !important; text-align: center !important; opacity: 0.7; max-width: 95% !important; margin-left: auto !important; margin-right: auto !important; }
+           .hp-hero-desc { font-size: clamp(8.5px, 2.8vw, 11px) !important; line-height: 1.4 !important; margin-bottom: 20px !important; text-align: center !important; opacity: 0.7; max-width: 100% !important; white-space: nowrap !important; margin-left: auto !important; margin-right: auto !important; }
            .hp-stats { display: none !important; }
            .hp-hero-tagline { display: none !important; }
            .hp-hero-search-desktop { flex-direction: column !important; width: 100% !important; gap: 8px !important; }
@@ -345,54 +346,73 @@ export const HomePage = () => {
       <section id="vitrine" className="hp-event-section" style={{ padding: "0 0 80px", background: "var(--bg)" }}>
         <div style={{ maxWidth: 1600, margin: "0 auto", padding: "0" }}>
           
-          {/* Mobile compact vitrine Filters (Sleek dropdown layout — kept exclusively) */}
-          <div className="hp-mobile-vitrine-header flex flex-col gap-2 p-3 pb-2">
-            <div className="flex gap-2 overflow-x-auto scrollbar-hide py-1">
-              <div className="relative shrink-0">
-                <select id="select-cidade-mobile" 
-                  value={selectedCity}
-                  onChange={e => { setSelectedCity(e.target.value); setPage(1); }}
-                  className="bg-theme-bg-muted border border-theme-border text-theme-text pl-3 pr-5 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest outline-none appearance-none shadow-sm cursor-pointer hover:border-brand-tactical/50 transition-colors"
-                >
-                  <option value="" className="bg-theme-bg text-theme-text">🗺️ Cidades</option>
-                  {availableCities.map(c => (
-                    <option key={c} value={c} className="bg-theme-bg text-theme-text">{c}</option>
-                  ))}
-                </select>
-                <div className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-[6px] text-theme-text-muted">▼</div>
-              </div>
-
-              <div className="relative shrink-0">
-                <select id="select-categoria-mobile" 
-                  value={selectedType}
-                  onChange={e => { setSelectedType(e.target.value); setPage(1); }}
-                  className="bg-theme-bg-muted border border-theme-border text-theme-text pl-3 pr-5 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest outline-none appearance-none shadow-sm cursor-pointer hover:border-brand-tactical/50 transition-colors"
-                >
-                  <option value="" className="bg-theme-bg text-theme-text">🏷️ Categorias</option>
-                  <option value="ALBUM_FULL" className="bg-theme-bg text-theme-text">Álbuns</option>
-                  <option value="PHOTO_MARKETPLACE" className="bg-theme-bg text-theme-text">Live Print</option>
-                  <option value="FOTO_POINT" className="bg-theme-bg text-theme-text">Foto Point</option>
-                  <option value="FLASH_EVENT" className="bg-theme-bg text-theme-text">Flash</option>
-                </select>
-                <div className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-[6px] text-theme-text-muted">▼</div>
-              </div>
-
-              <div className="relative shrink-0">
-                <select id="select-ordenacao-mobile" 
-                  value={sortBy}
-                  onChange={e => { setSortBy(e.target.value); setPage(1); }}
-                  className="bg-theme-bg-muted border border-theme-border text-theme-text pl-3 pr-5 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest outline-none appearance-none shadow-sm cursor-pointer hover:border-brand-tactical/50 transition-colors"
-                >
-                  <option value="" className="bg-theme-bg text-theme-text">⏱️ Recentes</option>
-                  <option value="OLD" className="bg-theme-bg text-theme-text">Antigos</option>
-                  <option value="AZ" className="bg-theme-bg text-theme-text">A-Z</option>
-                  <option value="ZA" className="bg-theme-bg text-theme-text">Z-A</option>
-                  <option value="PRICE_ASC" className="bg-theme-bg text-theme-text">Menor R$</option>
-                  <option value="PRICE_DESC" className="bg-theme-bg text-theme-text">Maior R$</option>
-                </select>
-                <div className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-[6px] text-theme-text-muted">▼</div>
-              </div>
+          {/* Mobile Vitrine Search & Filters Container */}
+          <div className="hp-mobile-search flex-col gap-3 p-4 pb-2 w-full">
+            <div className="flex items-center gap-2 w-full">
+              <form onSubmit={e => { e.preventDefault(); fetchEvents(query, 1); }} className="relative flex-1 group w-full">
+                <Search size={14} className="absolute left-4 top-1/2 -translate-y-1/2 text-theme-text-muted transition-colors" />
+                <input
+                  value={query}
+                  onChange={e => setQuery(e.target.value)}
+                  onKeyDown={e => e.key === "Enter" && fetchEvents(query, 1)}
+                  placeholder="Buscar evento..."
+                  className="w-full bg-theme-bg-muted border border-theme-border pl-11 pr-4 py-3.5 text-[10px] font-black uppercase tracking-widest text-theme-text placeholder:text-theme-text placeholder:opacity-40 focus:border-brand-tactical/50 transition-all outline-none italic rounded-full shadow-sm"
+                />
+              </form>
+              <button 
+                onClick={() => setShowMobileFilters(!showMobileFilters)}
+                className={`shrink-0 p-3.5 rounded-full border transition-all shadow-sm ${showMobileFilters ? 'bg-brand-tactical border-brand-tactical text-black' : 'bg-theme-bg-muted border-theme-border text-theme-text hover:border-brand-tactical/50'}`}
+              >
+                <SlidersHorizontal size={16} />
+              </button>
             </div>
+            
+            {showMobileFilters && (
+              <div className="flex flex-col gap-2 pt-1 animate-reveal">
+                <div className="grid grid-cols-2 gap-2">
+                  <div className="relative">
+                    <select id="select-cidade-mobile" 
+                      value={selectedCity}
+                      onChange={e => { setSelectedCity(e.target.value); setPage(1); setShowMobileFilters(false); }}
+                      className="w-full bg-theme-bg-muted border border-theme-border text-theme-text pl-3 pr-5 py-2.5 rounded-xl text-[9px] font-black uppercase tracking-widest outline-none appearance-none shadow-sm cursor-pointer"
+                    >
+                      <option value="" className="bg-theme-bg">🗺️ Cidades</option>
+                      {availableCities.map(c => <option key={c} value={c} className="bg-theme-bg">{c}</option>)}
+                    </select>
+                    <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-[6px]">▼</div>
+                  </div>
+                  <div className="relative">
+                    <select id="select-categoria-mobile" 
+                      value={selectedType}
+                      onChange={e => { setSelectedType(e.target.value); setPage(1); setShowMobileFilters(false); }}
+                      className="w-full bg-theme-bg-muted border border-theme-border text-theme-text pl-3 pr-5 py-2.5 rounded-xl text-[9px] font-black uppercase tracking-widest outline-none appearance-none shadow-sm cursor-pointer"
+                    >
+                      <option value="" className="bg-theme-bg">🏷️ Categorias</option>
+                      <option value="ALBUM_FULL" className="bg-theme-bg">Álbuns</option>
+                      <option value="PHOTO_MARKETPLACE" className="bg-theme-bg">Live Print</option>
+                      <option value="FOTO_POINT" className="bg-theme-bg">Foto Point</option>
+                      <option value="FLASH_EVENT" className="bg-theme-bg">Flash</option>
+                    </select>
+                    <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-[6px]">▼</div>
+                  </div>
+                  <div className="relative col-span-2">
+                    <select id="select-ordenacao-mobile" 
+                      value={sortBy}
+                      onChange={e => { setSortBy(e.target.value); setPage(1); setShowMobileFilters(false); }}
+                      className="w-full bg-theme-bg-muted border border-theme-border text-theme-text pl-3 pr-5 py-2.5 rounded-xl text-[9px] font-black uppercase tracking-widest outline-none appearance-none shadow-sm cursor-pointer"
+                    >
+                      <option value="" className="bg-theme-bg">⏱️ Recentes</option>
+                      <option value="OLD" className="bg-theme-bg">Antigos</option>
+                      <option value="AZ" className="bg-theme-bg">A-Z</option>
+                      <option value="ZA" className="bg-theme-bg">Z-A</option>
+                      <option value="PRICE_ASC" className="bg-theme-bg">Menor R$</option>
+                      <option value="PRICE_DESC" className="bg-theme-bg">Maior R$</option>
+                    </select>
+                    <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-[6px]">▼</div>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Header with Search & Filters (Desktop — hidden on mobile) */}
@@ -475,19 +495,7 @@ export const HomePage = () => {
               <div className="space-y-4 hp-event-grid-container px-0 md:px-8">
 
 
-                {/* Mobile Specific Search */}
-                <div className="hp-mobile-search px-4 pb-4">
-                  <form onSubmit={e => { e.preventDefault(); fetchEvents(query, 1); }} className="relative flex-1 group w-full">
-                    <Search size={14} className="absolute left-4 top-1/2 -translate-y-1/2 text-theme-text-muted transition-colors" />
-                    <input
-                      value={query}
-                      onChange={e => setQuery(e.target.value)}
-                      onKeyDown={e => e.key === "Enter" && fetchEvents(query, 1)}
-                      placeholder="Buscar evento..."
-                      className="w-full bg-theme-bg-muted border border-theme-border pl-11 pr-4 py-3.5 text-[10px] font-black uppercase tracking-widest text-theme-text placeholder:text-theme-text placeholder:opacity-40 focus:border-brand-tactical/50 transition-all outline-none italic rounded-full shadow-sm"
-                    />
-                  </form>
-                </div>
+
 
                 {/* Eventos Grid (Full Width on Mobile) */}
                 <div className="grid hp-event-grid grid-cols-3 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">

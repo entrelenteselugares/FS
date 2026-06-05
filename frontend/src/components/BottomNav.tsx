@@ -223,13 +223,13 @@ export const BottomNav: React.FC = () => {
                 <button
                   key={item.label}
                   onClick={item.onClick}
-                  className={`w-full flex items-center gap-3 px-5 py-3 text-xs font-medium tracking-wide transition-all border-none text-left bg-transparent ${
+                  className={`w-full flex items-center gap-3 px-5 py-3 text-xs font-medium tracking-wide transition-all border-none text-left mx-2 w-[calc(100%-16px)] rounded-xl ${
                     item.isActive 
-                      ? "bg-zinc-900/60 text-white font-black" 
-                      : "text-zinc-400 hover:text-white"
+                      ? "bg-theme-bg-muted text-theme-text font-black shadow-sm" 
+                      : "bg-transparent text-theme-text-muted hover:text-theme-text hover:bg-theme-bg-muted/50"
                   }`}
                 >
-                  <span className={item.isActive ? "text-emerald-500" : "text-zinc-500"}>{item.icon}</span>
+                  <span className={item.isActive ? "text-brand-tactical" : "text-theme-text-muted opacity-70"}>{item.icon}</span>
                   {item.label}
                 </button>
               );
@@ -238,9 +238,9 @@ export const BottomNav: React.FC = () => {
             <div className="space-y-1">
               <button
                 onClick={() => { navigate("/"); setDrawerOpen(false); }}
-                className="w-full flex items-center gap-3 px-5 py-3 text-xs text-zinc-400 hover:text-white transition-colors border-none bg-transparent text-left"
+                className="w-full flex items-center gap-3 px-5 py-3 text-xs text-theme-text-muted hover:text-theme-text hover:bg-theme-bg-muted/50 transition-colors border-none bg-transparent text-left mx-2 w-[calc(100%-16px)] rounded-xl"
               >
-                <Home size={18} className="text-zinc-500" />
+                <Home size={18} className="text-theme-text-muted opacity-70" />
                 Vitrine de Eventos
               </button>
             </div>

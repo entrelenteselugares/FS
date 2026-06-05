@@ -57,10 +57,11 @@ Seção com cards dos eventos mais recentes publicados na plataforma.
 | Elemento                    | Tipo            | Função                                                                                                     |
 | --------------------------- | --------------- | ---------------------------------------------------------------------------------------------------------- |
 | **"ÚLTIMOS REGISTROS (N)"** | Título H2       | Cabeçalho da seção com contador de eventos                                                                 |
-| Campo de busca              | Input           | Pesquisa por nome do evento ou titular                                                                     |
-| `TODAS AS CIDADES`          | Filtro          | Filtra eventos por cidade                                                                                  |
-| `TODAS AS CATEGORIAS`       | Filtro          | Filtra eventos por categoria                                                                               |
-| `DATA (RECENTES)`           | Filtro de ordem | Ordena por data mais recente                                                                               |
+| Campo de busca              | Input           | Pesquisa por nome do evento ou titular. Fixado no topo no mobile, mesmo sem resultados                     |
+| Botão de Filtro (Mobile)    | Botão (Ícone)   | Ícone de "Ajustes" (`SlidersHorizontal`) ao lado da busca. Abre/fecha menu expansível de filtros no mobile |
+| `TODAS AS CIDADES`          | Filtro Dropdown | Filtra eventos por cidade (oculto no botão de ajustes em dispositivos móveis)                              |
+| `TODAS AS CATEGORIAS`       | Filtro Dropdown | Filtra eventos por categoria (oculto no botão de ajustes em dispositivos móveis)                           |
+| `DATA (RECENTES)`           | Filtro Dropdown | Ordena por data mais recente (oculto no botão de ajustes em dispositivos móveis)                           |
 | Card de Evento              | Card clicável   | Cada card exibe: foto cover, nome do evento, fotógrafo, endereço e data. Ao clicar, abre o álbum do evento |
 | Badge `NOVO`                | Tag             | Indica eventos publicados recentemente                                                                     |
 | Avatar do fotógrafo         | Ícone           | Inicial do fotógrafo responsável                                                                           |
