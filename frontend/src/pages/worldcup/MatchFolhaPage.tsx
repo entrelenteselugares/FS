@@ -9,11 +9,13 @@ import { motion, AnimatePresence } from "framer-motion";
 
 export const MatchFolhaPage = () => {
   const { matchId } = useParams();
-  const [folha, setFolha] = useState<{ id: string; slots: { id: string; slotIndex: number; missionType: string; imageUrl?: string }[]; completed: boolean } | null>(null);
+  const [folha, setFolha] = useState<{ id: string; slots: { id: string; slotIndex: number; missionType: string; imageUrl?: string; metadata?: any }[]; completed: boolean } | null>(null);
   const [loading, setLoading] = useState(true);
   const [showCollage, setShowCollage] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [activeSlot, setActiveSlot] = useState<number | null>(null);
+  const [selectedPreviewSlot, setSelectedPreviewSlot] = useState<any | null>(null);
+  const [commentText, setCommentText] = useState("");
 
   useEffect(() => {
     async function load() {
@@ -117,11 +119,16 @@ export const MatchFolhaPage = () => {
               <div 
                 key={i}
                 onClick={() => {
-                  if (slot.missionType === "ESCALACAO") {
-                    // Tratar a lógica de arrastar e soltar (Tactical Pitch) aqui, por simplicidade estamos abrindo câmera tbm
+                  if (slot.imageUrl) {
+                    setSelectedPreviewSlot(slot);
+                    setCommentText(slot.metadata?.comment || "");
+                  } else {
+                    if (slot.missionType === "ESCALACAO") {
+                      // Tratar a lógica de arrastar e soltar (Tactical Pitch) aqui, por simplicidade estamos abrindo câmera tbm
+                    }
+                    setActiveSlot(i);
+                    fileInputRef.current?.click();
                   }
-                  setActiveSlot(i);
-                  fileInputRef.current?.click();
                 }}
                 className={`aspect-square rounded-xl overflow-hidden relative cursor-pointer transition-transform hover:scale-[1.02] active:scale-95 ${
                   slot.imageUrl 
@@ -171,6 +178,85 @@ export const MatchFolhaPage = () => {
             slots={folha.slots} 
             onClose={() => setShowCollage(false)} 
           />
+        )}
+        {selectedPreviewSlot && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/95 backdrop-blur-md">
+            <div className="bg-theme-bg border border-theme-border w-full max-w-lg rounded-2xl overflow-hidden relative p-6 flex flex-col gap-4">
+              <button 
+                onClick={() => { setSelectedPreviewSlot(null); setCommentText(""); }}
+                className="absolute top-4 right-4 p-2 text-gray-400 hover:text-white rounded-full hover:bg-theme-surface"
+              >
+                <X size={20} />
+              </button>
+
+              <div className="text-center">
+                <h3 className="font-bold text-lg text-white">Visualizar Foto</h3>
+                <span className="text-xs text-emerald-400 font-bold uppercase tracking-wider">
+                  Missão: {selectedPreviewSlot.missionType}
+                </span>
+              </div>
+
+              <div className="aspect-square w-full rounded-xl overflow-hidden border border-theme-border bg-theme-surface">
+                <img 
+                  src={selectedPreviewSlot.imageUrl} 
+                  alt="Preview" 
+                  className="w-full h-full object-cover" 
+                />
+              </div>
+
+              {/* Comment / Caption */}
+              <div className="flex flex-col gap-2">
+                <label className="text-xs font-bold text-gray-400 uppercase tracking-wide">
+                  Legenda / Comentário da Foto:
+                </label>
+                <textarea
+                  value={commentText}
+                  onChange={(e) => setCommentText(e.target.value)}
+                  placeholder="Escreva algo sobre este momento marcante..."
+                  className="w-full bg-theme-surface border border-theme-border rounded-xl p-3 text-sm text-white focus:border-emerald-500 outline-none resize-none h-20"
+                />
+              </div>
+
+              <div className="flex gap-3 mt-2">
+                <button
+                  onClick={async () => {
+                    const toastId = toast.loading("Salvando legenda...");
+                    try {
+                      const { data } = await api.post(`/worldcup/album/${matchId}/slot`, {
+                        slotIndex: selectedPreviewSlot.slotIndex,
+                        imageUrl: selectedPreviewSlot.imageUrl,
+                        metadata: { comment: commentText }
+                      });
+                      const newSlots = folha.slots.map((s: any) => 
+                        s.slotIndex === selectedPreviewSlot.slotIndex ? data.slot : s
+                      );
+                      setFolha({ ...folha, slots: newSlots });
+                      toast.success("Legenda salva com sucesso!", { id: toastId });
+                      setSelectedPreviewSlot(null);
+                      setCommentText("");
+                    } catch {
+                      toast.error("Erro ao salvar legenda.", { id: toastId });
+                    }
+                  }}
+                  className="flex-1 py-3 bg-emerald-500 text-black font-bold rounded-xl text-sm hover:bg-emerald-400 transition-colors uppercase tracking-wider"
+                >
+                  Salvar Legenda
+                </button>
+                <button
+                  onClick={() => {
+                    const idx = selectedPreviewSlot.slotIndex;
+                    setSelectedPreviewSlot(null);
+                    setCommentText("");
+                    setActiveSlot(idx);
+                    setTimeout(() => fileInputRef.current?.click(), 100);
+                  }}
+                  className="px-4 py-3 bg-theme-surface text-white font-bold rounded-xl text-sm border border-theme-border hover:bg-theme-surface/80 transition-colors uppercase tracking-wider"
+                >
+                  Substituir Foto
+                </button>
+              </div>
+            </div>
+          </div>
         )}
       </AnimatePresence>
     </div>
