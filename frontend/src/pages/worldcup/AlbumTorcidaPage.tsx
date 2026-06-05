@@ -163,6 +163,25 @@ function MatchCard({ f, highlight = false, now }: { f: typeof FIXTURES[0]; highl
 }
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
+// ─── Countdown Box Component ──────────────────────────────────────────────────
+const CountdownBox = ({ val, label }: { val: number; label: string }) => (
+  <div style={{ textAlign: "center", minWidth: 56 }}>
+    <div
+      style={{
+        fontSize: 28, fontWeight: 900, color: "white", fontFamily: T.fontD, fontStyle: "italic",
+        lineHeight: 1, background: "rgba(0,0,0,0.4)", border: "1px solid rgba(16,185,129,0.3)",
+        padding: "8px 12px", marginBottom: 4,
+      }}
+    >
+      {String(val).padStart(2, "0")}
+    </div>
+    <div style={{ fontSize: 8, color: "#6b7280", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase" }}>
+      {label}
+    </div>
+  </div>
+);
+
+// ─── Page ─────────────────────────────────────────────────────────────────────
 type Tab = "jogos" | "grupos" | "album" | "nostalgia";
 
 export const AlbumTorcidaPage = () => {
@@ -226,23 +245,6 @@ export const AlbumTorcidaPage = () => {
     .filter((f) => new Date(f.utc).getTime() > now)
     .sort((a, b) => new Date(a.utc).getTime() - new Date(b.utc).getTime())
     .slice(0, 12);
-
-  const CountdownBox = ({ val, label }: { val: number; label: string }) => (
-    <div style={{ textAlign: "center", minWidth: 56 }}>
-      <div
-        style={{
-          fontSize: 28, fontWeight: 900, color: "white", fontFamily: T.fontD, fontStyle: "italic",
-          lineHeight: 1, background: "rgba(0,0,0,0.4)", border: "1px solid rgba(16,185,129,0.3)",
-          padding: "8px 12px", marginBottom: 4,
-        }}
-      >
-        {String(val).padStart(2, "0")}
-      </div>
-      <div style={{ fontSize: 8, color: "#6b7280", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase" }}>
-        {label}
-      </div>
-    </div>
-  );
 
   return (
     <div style={{ minHeight: "100vh", background: "#050e08", paddingBottom: 96 }}>
