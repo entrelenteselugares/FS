@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 // 
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowRight, MapPin, Building2, CheckCircle2, Utensils, GraduationCap, Zap, Camera, Video, Smartphone, Printer, ChevronLeft } from "lucide-react";
+import { ChevronLeft, CheckCircle2, MapPin, Building2, ArrowRight } from "lucide-react";
 
 export const QuoteMobileView = (props: any) => {
   const { 
     step, setStep, nextStep, prevStep,
-    locationType, setLocationType,
+    locationType,
     category, setCategory,
     eventDate, setEventDate,
     selectedPartnerId, setSelectedPartnerId,
