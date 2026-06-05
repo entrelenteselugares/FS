@@ -13,7 +13,7 @@ const FALLBACK_SLIDES = [
     primaryBtn: "ACESSAR ÁLBUM",
     primaryAction: "/album-torcida",
     icon: "trophy",
-    bgImage: "https://images.unsplash.com/photo-1508098682722-e99c43a406b2?auto=format&fit=crop&q=80&w=1600",
+    bgImage: "/copa_stadium_banner.png",
   },
   {
     id: "institucional",
@@ -155,15 +155,16 @@ export function HeroCarousel() {
           <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-transparent to-transparent opacity-80" />
           
           {/* Content Layer */}
-          <div className="absolute inset-0 flex flex-col justify-center px-8 md:px-16 w-full md:w-2/3 pr-6 md:pr-16">
+          <div className="absolute inset-0 flex flex-col justify-center items-center md:items-start text-center md:text-left px-8 md:px-16 w-full md:w-2/3 pr-6 md:pr-16">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3, duration: 0.8 }}
+              className="flex flex-col items-center md:items-start"
             >
                 {renderIcon(currentSlide.icon)}
                 
-                <h1 className="text-4xl md:text-6xl lg:text-7xl font-black text-white leading-none tracking-tight mb-2">
+                <h1 className="text-4xl md:text-6xl lg:text-7xl font-black text-white leading-none tracking-tight mb-2 text-center md:text-left">
                   {currentSlide.title} <br className="md:hidden" />
                   <span
                     className="text-emerald-400 italic bg-clip-text text-transparent bg-gradient-to-r from-emerald-400 to-teal-300"
@@ -173,11 +174,11 @@ export function HeroCarousel() {
                   </span>
                 </h1>
                 
-                <p className="text-zinc-300 text-lg md:text-xl font-medium max-w-xl mx-auto md:mx-0 mt-6" style={{ fontFamily: T.fontD }}>
+                <p className="text-zinc-300 text-lg md:text-xl font-medium max-w-xl mx-auto md:mx-0 mt-6 text-center md:text-left" style={{ fontFamily: T.fontD }}>
                   {currentSlide.description || currentSlide.desc}
                 </p>
 
-              <div className="flex flex-wrap gap-4 mt-8">
+              <div className="flex flex-wrap justify-center md:justify-start gap-4 mt-8">
                 <button 
                   onClick={() => navigate(currentSlide.primaryAction)}
                   className="px-8 py-4 bg-emerald-500 text-black text-[11px] font-black uppercase tracking-[0.2em] hover:bg-emerald-400 transition-colors rounded-full shadow-[0_0_20px_rgba(16,185,129,0.3)]"
