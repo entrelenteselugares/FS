@@ -22,6 +22,8 @@ export const usePackageFlow = () => {
   const [email, setEmail] = useState("");
   const [whatsapp, setWhatsapp] = useState("");
   const [description, setDescription] = useState("");
+  const [ticketUrl, setTicketUrl] = useState("");
+  const [fotoSegundoPromoCode, setFotoSegundoPromoCode] = useState("");
   
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState("");
@@ -109,7 +111,9 @@ export const usePackageFlow = () => {
       selectedServices: selectedPackage.services, 
       totalPrice: selectedPackage.price, 
       flowType: "PACKAGE", // Critical for backend to know it requires checkout
-      status: "PENDING"
+      status: "PENDING",
+      ticketUrl,
+      fotoSegundoPromoCode
     };
 
     try {
@@ -134,6 +138,7 @@ export const usePackageFlow = () => {
     customCep, handleCepChange, isCepLoading, addressData, addressNumber, setAddressNumber,
     eventDate, setEventDate,
     name, setName, email, setEmail, whatsapp, setWhatsapp, description, setDescription,
+    ticketUrl, setTicketUrl, fotoSegundoPromoCode, setFotoSegundoPromoCode,
     submitting, submitError, createdQuoteId, handleSubmit,
     flowType: "PACKAGE", locationType: "OTHER", partners: [], pros: [], totalPrice: selectedPackage.price,
     showPrices: false, getServicePrice: () => 0, selectedServices: selectedPackage.services,

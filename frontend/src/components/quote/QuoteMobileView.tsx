@@ -31,6 +31,42 @@ export const QuoteMobileView = (props: any) => {
 
   const currentPartner = partners.find((p: any) => p.id === selectedPartnerId);
 
+  // Success state
+  if (props.createdQuoteId) {
+    return (
+      <div className="min-h-[100dvh] flex flex-col items-center justify-center px-6 text-center bg-zinc-950">
+        <div className="w-16 h-16 bg-emerald-500/10 rounded-full flex items-center justify-center mb-6 border border-emerald-500/20">
+          <CheckCircle2 size={32} className="text-emerald-500" />
+        </div>
+        <h2 className="text-2xl font-black uppercase italic text-white tracking-tight mb-2">Orçamento Enviado!</h2>
+        
+        <div className="bg-zinc-900 border border-white/10 px-6 py-4 rounded-xl mb-6">
+          <span className="text-[9px] font-black text-emerald-500 uppercase tracking-widest block mb-1">Protocolo</span>
+          <span className="text-xl font-bold text-white tracking-widest">ORC-{props.createdQuoteId.slice(-6).toUpperCase()}</span>
+        </div>
+
+        <p className="text-sm text-zinc-400 leading-relaxed max-w-xs">
+          Recebemos sua solicitação. Nossa equipe entrará em contato via WhatsApp para finalizar o orçamento.
+        </p>
+        
+        <div className="flex flex-col gap-3 w-full max-w-xs mt-8">
+          <button
+            onClick={() => window.open('https://wa.me/5519981150440', '_blank')}
+            className="w-full py-3.5 bg-emerald-500 text-black text-[11px] font-black uppercase tracking-widest rounded-full"
+          >
+            Falar no WhatsApp
+          </button>
+          <button
+            onClick={() => window.location.href = "/"}
+            className="w-full py-3.5 border border-white/10 text-zinc-400 hover:text-white text-[11px] font-black uppercase tracking-widest rounded-full"
+          >
+            Voltar ao Início
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-[100dvh] flex flex-col font-b selection:bg-emerald-500 selection:text-black pb-24" style={{ backgroundColor: THEME.bg, color: THEME.text }}>
       {/* Header Compacto */}

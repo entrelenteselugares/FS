@@ -229,7 +229,7 @@ export const AlbumTorcidaPage = () => {
   };
 
   const copyInviteLink = () => {
-    navigator.clipboard.writeText(`http://localhost:3001/album-torcida/nostalgia?user=Renata&copa=${nostalgiaYear}`);
+    navigator.clipboard.writeText(`${window.location.origin}/album-torcida/nostalgia?user=Renata&copa=${nostalgiaYear}`);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
@@ -753,7 +753,7 @@ export const AlbumTorcidaPage = () => {
                   <div style={{ display: "flex", gap: 8, marginBottom: 20 }}>
                     <input
                       readOnly
-                      value={`http://localhost:3001/album-torcida/nostalgia?user=Renata&copa=${nostalgiaYear}`}
+                      value={`${window.location.origin}/album-torcida/nostalgia?user=Renata&copa=${nostalgiaYear}`}
                       style={{
                         flex: 1, background: "rgba(0,0,0,0.3)", border: "1px solid rgba(16,185,129,0.2)",
                         padding: "10px 12px", fontSize: 10, color: "#10b981", outline: "none"
@@ -771,7 +771,7 @@ export const AlbumTorcidaPage = () => {
                   </div>
                   <div style={{ display: "flex", justifyContent: "flex-end", gap: 12 }}>
                     <button
-                      onClick={() => window.open(`https://api.whatsapp.com/send?text=Confira meu álbum nostálgico das Copas passadas e adicione suas fotos também! http://localhost:3001/album-torcida/nostalgia?user=Renata%26copa=${nostalgiaYear}`, "_blank")}
+                      onClick={() => window.open(`https://api.whatsapp.com/send?text=Confira meu álbum nostálgico das Copas passadas e adicione suas fotos também! ${encodeURIComponent(`${window.location.origin}/album-torcida/nostalgia?user=Renata&copa=${nostalgiaYear}`)}`, "_blank")}
                       style={{
                         background: "rgba(16,185,129,0.15)", color: "#10b981", border: "1px solid rgba(16,185,129,0.3)",
                         padding: "10px 16px", fontSize: 10, fontWeight: 900, cursor: "pointer", textTransform: "uppercase"

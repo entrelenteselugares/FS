@@ -172,16 +172,25 @@ export default function VaultDetailPage() {
     if (!vault) return;
     try {
       const { data } = await api.post(`/vaults/${vaultId}/invite`);
-      const text = `Venha compartilhar memórias comigo no álbum "${vault.nome}"!`;
-      
+      const shareUrl = data.url as string;
+      const shareText = `Venha compartilhar memórias comigo no álbum "${vault.nome}"!\n\nLink de acesso:\n${shareUrl}`;
+
       if (navigator.share) {
-        await navigator.share({
-          title: vault.nome,
-          text: text,
-          url: data.url
-        });
+        try {
+          await navigator.share({
+            title: vault.nome,
+            text: shareText,
+            // Não passa url separado para evitar duplicação em alguns browsers
+          });
+        } catch (shareErr: any) {
+          // AbortError = usuário cancelou, não é erro real
+          if (shareErr?.name === "AbortError") return;
+          // Fallback para clipboard se share falhar
+          await navigator.clipboard.writeText(shareText);
+          toast.success("Link copiado para a área de transferência!");
+        }
       } else {
-        await navigator.clipboard.writeText(`${text}\n\nLink de acesso:\n${data.url}`);
+        await navigator.clipboard.writeText(shareText);
         toast.success("Link copiado para a área de transferência!");
       }
     } catch {

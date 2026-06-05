@@ -51,6 +51,8 @@ interface Pedido {
  slug?: string | null;
  title: string;
  dataEvento: string;
+ eventHours?: number | null;
+ description?: string | null;
  location: string;
  city: string | null;
  coverPhotoUrl: string | null;
@@ -933,7 +935,21 @@ group: EventGroup;
             </span>
             <p className="text-[10px] text-theme-text-muted font-medium mt-1">
               Data do evento: <strong className="text-theme-text">{eventDateFmt} às {timeFmt}</strong>
+              {event.eventHours ? <span className="ml-2 text-theme-muted">• {event.eventHours}h de cobertura</span> : null}
             </p>
+            {(() => {
+              // Extrai observações do cliente do campo description
+              const desc = event.description || '';
+              const marker = 'Descrição do Cliente:';
+              const idx = desc.indexOf(marker);
+              const clientNotes = idx >= 0 ? desc.slice(idx + marker.length).trim() : '';
+              if (!clientNotes || clientNotes === 'undefined') return null;
+              return (
+                <p className="text-[10px] text-theme-text-muted mt-1 italic">
+                  <span className="font-black text-theme-text not-italic">Obs:</span> {clientNotes}
+                </p>
+              );
+            })()}
           </div>
         </div>
 
