@@ -106,7 +106,7 @@ export const LoginPage: React.FC = () => {
 
       {/* ── RIGHT: Login Panel ── */}
       <div
-        className="w-full lg:w-[480px] xl:w-[520px] flex-1 flex flex-col justify-between relative bg-theme-bg lg:border-l border-t lg:border-t-0 border-theme-border shadow-2xl lg:h-screen overflow-y-auto"
+        className="w-full lg:w-[400px] xl:w-[460px] flex-1 lg:flex-none flex flex-col justify-between relative bg-theme-bg lg:border-l border-t lg:border-t-0 border-theme-border shadow-2xl lg:h-screen overflow-y-auto"
       >
         {/* Theme toggle */}
         <button
