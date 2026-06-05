@@ -2,7 +2,7 @@ import { useEffect, useState, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { API as api } from "../../lib/api";
 import { T } from "../../lib/theme";
-import { Trophy, Camera, Clock, ChevronRight, Star, Zap, Calendar, Share2, Users, Upload, Heart } from "lucide-react";
+import { Trophy, Camera, Clock, ChevronRight, ChevronLeft, Star, Zap, Calendar, Share2, Users, Upload, Heart } from "lucide-react";
 
 // ─── Copa 2026 Data ───────────────────────────────────────────────────────────
 const GROUPS: Array<{
@@ -263,6 +263,29 @@ export const AlbumTorcidaPage = () => {
         <div style={{ position: "absolute", bottom: 0, left: -40, width: 200, height: 200, borderRadius: "50%", background: "radial-gradient(circle, rgba(251,191,36,0.05), transparent)", pointerEvents: "none" }} />
 
         <div style={{ maxWidth: 800, margin: "0 auto" }}>
+          {/* Back button */}
+          <Link
+            to="/"
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 4,
+              color: "rgba(255,255,255,0.6)",
+              textDecoration: "none",
+              fontSize: 11,
+              fontWeight: 900,
+              textTransform: "uppercase",
+              letterSpacing: "0.1em",
+              marginBottom: 24,
+              fontStyle: "italic",
+              transition: "color 0.2s",
+            }}
+            onMouseEnter={(e) => (e.currentTarget.style.color = "#10b981")}
+            onMouseLeave={(e) => (e.currentTarget.style.color = "rgba(255,255,255,0.6)")}
+          >
+            <ChevronLeft size={14} /> Voltar para a Home
+          </Link>
+
           {/* Eyebrow */}
           <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 16 }}>
             <Trophy size={18} color="#fbbf24" />
