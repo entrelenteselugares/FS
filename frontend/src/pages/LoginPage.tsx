@@ -61,13 +61,13 @@ export const LoginPage: React.FC = () => {
   };
 
   return (
-    <div className="h-screen flex overflow-hidden bg-theme-bg">
+    <div className="h-screen flex flex-col lg:flex-row overflow-hidden bg-theme-bg">
       <Helmet>
         <title>Acesso — Foto Segundo</title>
       </Helmet>
 
       {/* ── LEFT: Animated Photo Mosaic ── */}
-      <div className="hidden lg:flex flex-1 relative overflow-hidden">
+      <div className="flex flex-none h-[30vh] lg:h-auto lg:flex-1 relative overflow-hidden">
         {/* Gradient overlays */}
         <div className="absolute inset-0 z-10 pointer-events-none">
           {/* Top fade */}
@@ -81,7 +81,7 @@ export const LoginPage: React.FC = () => {
         </div>
 
         {/* Brand watermark on photo side */}
-        <div className="absolute top-8 left-8 z-20">
+        <div className="absolute top-8 left-8 z-20 hidden lg:block">
           <Link to="/">
             <img
               src="/logo.png"
@@ -92,7 +92,7 @@ export const LoginPage: React.FC = () => {
         </div>
 
         {/* Tagline bottom-left */}
-        <div className="absolute bottom-8 left-8 z-20">
+        <div className="absolute bottom-8 left-8 z-20 hidden lg:block">
           <p className="text-[9px] font-black uppercase tracking-[0.4em] text-white/30 italic">
             Cada segundo conta.
           </p>
@@ -104,7 +104,7 @@ export const LoginPage: React.FC = () => {
 
       {/* ── RIGHT: Login Panel ── */}
       <div
-        className="w-full lg:w-[480px] xl:w-[520px] flex flex-col justify-between relative bg-theme-bg border-l border-theme-border shadow-2xl h-screen overflow-y-auto"
+        className="w-full lg:w-[480px] xl:w-[520px] flex-1 flex flex-col justify-between relative bg-theme-bg lg:border-l border-t lg:border-t-0 border-theme-border shadow-2xl lg:h-screen overflow-y-auto"
       >
         {/* Theme toggle */}
         <button

@@ -101,8 +101,8 @@ const AnimatedRoutes = () => {
         className="w-full h-full pb-20 md:pb-0"
       >
         <Routes location={location}>
-        {/* Rotas Públicas */}
-        <Route path="/" element={<HomePage />} />
+        {/* Rota Raiz Protegida */}
+        <Route path="/" element={<ProtectedRoute><DashboardRedirect /></ProtectedRoute>} />
         <Route path="/sobre" element={<AboutPage />} />
         <Route path="/parcerias" element={<PartnershipsPage />} />
         <Route path="/termos" element={<TermsPage />} />
