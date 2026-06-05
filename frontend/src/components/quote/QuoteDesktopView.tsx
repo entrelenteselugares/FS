@@ -60,6 +60,7 @@ function DateTimePicker({ value, onChange, workingHours }: { value: string; onCh
     const m = String(viewDate.getMonth() + 1).padStart(2, "0");
     const d = String(day).padStart(2, "0");
     onChange(`${y}-${m}-${d}T${hour}:${minute}`);
+    setOpen(false); // Fecha automaticamente ao selecionar o dia
   };
 
   const updateTime = (h: string, min: string) => {
@@ -226,8 +227,8 @@ function DateTimePicker({ value, onChange, workingHours }: { value: string; onCh
             {/* Confirm Button */}
             {selectedDate && (
               <button onClick={() => setOpen(false)}
-                style={{ width: "100%", marginTop: 16, background: THEME.accent, color: "var(--theme-text-on-brand)", border: "none", padding: "12px", fontSize: 10, fontWeight: 900, textTransform: "uppercase", letterSpacing: 3, cursor: "pointer" }}>
-                CONFIRMAR DATA E HORÁRIO
+                style={{ width: "100%", marginTop: 16, background: THEME.accent, color: "var(--theme-text-on-brand)", border: "none", padding: "12px", fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: 1, cursor: "pointer", borderRadius: 4 }}>
+                OK
               </button>
             )}
           </div>
@@ -376,8 +377,8 @@ export const QuoteDesktopView = (props: any) => {
               <label style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", color: THEME.accent, letterSpacing: 2 }}>Passo 1: Onde e Quando</label>
               
               {/* 01. Local do Registro */}
-              <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-                <label style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", color: THEME.text }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+                <label style={{ fontSize: 12, fontWeight: 700, textTransform: "uppercase", color: THEME.text }}>
                   {locationType === "PARTNER" ? "01. Selecione a Unidade Fixa" : "01. Endereço do Evento"}
                 </label>
 
@@ -452,8 +453,8 @@ export const QuoteDesktopView = (props: any) => {
               </div>
 
               {/* 02. Data e Horário */}
-              <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-                <label style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", color: THEME.text }}>02. Data e Horário do Evento</label>
+              <div style={{ display: "flex", flexDirection: "column", gap: 16, marginTop: 16 }}>
+                <label style={{ fontSize: 12, fontWeight: 700, textTransform: "uppercase", color: THEME.text }}>02. Data e Horário do Evento</label>
                 <DateTimePicker 
                   value={eventDate} 
                   onChange={setEventDate} 
@@ -462,11 +463,12 @@ export const QuoteDesktopView = (props: any) => {
               </div>
 
               {/* Botões Passo 1 */}
-              <div style={{ borderTop: `1px solid ${THEME.border}`, paddingTop: 20, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <div style={{ borderTop: `1px solid ${THEME.border}`, paddingTop: 30, marginTop: 20, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                 <button 
                   type="button"
                   onClick={() => navigate(-1)}
-                  style={{ border: `1px solid ${THEME.border}`, color: THEME.text, padding: "15px 30px", fontWeight: 800, fontSize: 11, textTransform: "uppercase", background: "none", cursor: "pointer" }}
+                  className="fs-btn hover-lift"
+                  style={{ background: "transparent", color: THEME.text, border: `1px solid ${THEME.border}` }}
                 >
                   VOLTAR
                 </button>
@@ -484,7 +486,8 @@ export const QuoteDesktopView = (props: any) => {
                       }
                     }
                   }}
-                  style={{ background: THEME.accent, color: "black", padding: "15px 30px", fontWeight: 900, fontSize: 12, textTransform: "uppercase", letterSpacing: 2, display: "flex", alignItems: "center", gap: 10, border: "none", cursor: "pointer" }}
+                  className="fs-btn hover-lift"
+                  style={{ background: THEME.accent, color: "black", padding: "15px 30px", border: "none" }}
                 >
                   {flowType === "PACKAGE" ? "PRÓXIMO: SEUS DADOS" : "PRÓXIMO: CONFIGURAÇÃO"} <ArrowRight size={16} />
                 </button>
@@ -641,7 +644,7 @@ export const QuoteDesktopView = (props: any) => {
                     <label style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", marginBottom: 10, display: "block", color: THEME.text }}>Tipo de Finalidade</label>
                     <div style={{ display: "flex", gap: 10 }}>
                       <button type="button" onClick={() => setUsageType("PESSOAL")} style={{ flex: 1, minHeight: 52, padding: "0 12px", fontSize: 10, fontWeight: 800, border: usageType === "PESSOAL" ? `2px solid ${THEME.accent}` : `1px solid ${THEME.border}`, background: usageType === "PESSOAL" ? `${THEME.accent}15` : "var(--theme-bg-muted)", boxShadow: usageType === "PESSOAL" ? "0 0 15px rgba(133,185,172,0.2)" : "none", color: usageType === "PESSOAL" ? THEME.accent : THEME.text2, cursor: "pointer", transition: "all 0.3s ease" }}>PESSOAL</button>
-                      <button type="button" onClick={() => setUsageType("EMPRESARIAL")} style={{ flex: 1, minHeight: 52, padding: "0 12px", fontSize: 10, fontWeight: 800, border: usageType === "EMPRESARIAL" ? `2px solid ${THEME.accent}` : `1px solid ${THEME.border}`, background: usageType === "EMPRESARIAL" ? `${THEME.accent}15` : "var(--theme-bg-muted)", boxShadow: usageType === "EMPRESARIAL" ? "0 0 15px rgba(133,185,172,0.2)" : "none", color: usageType === "EMPRESARIAL" ? THEME.accent : THEME.text2, cursor: "pointer", transition: "all 0.3s ease" }}>BUSINESS</button>
+                      <button type="button" onClick={() => setUsageType("EMPRESARIAL")} style={{ flex: 1, minHeight: 52, padding: "0 12px", fontSize: 10, fontWeight: 800, border: usageType === "EMPRESARIAL" ? `2px solid ${THEME.accent}` : `1px solid ${THEME.border}`, background: usageType === "EMPRESARIAL" ? `${THEME.accent}15` : "var(--theme-bg-muted)", boxShadow: usageType === "EMPRESARIAL" ? "0 0 15px rgba(133,185,172,0.2)" : "none", color: usageType === "EMPRESARIAL" ? THEME.accent : THEME.text2, cursor: "pointer", transition: "all 0.3s ease" }}>CORPORATIVO</button>
                     </div>
                   </div>
                 )}

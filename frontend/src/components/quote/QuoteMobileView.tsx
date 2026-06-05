@@ -125,7 +125,7 @@ export const QuoteMobileView = (props: any) => {
                       placeholder="00000-000"
                       value={customCep}
                       onChange={(e) => handleCepChange(e.target.value)}
-                      className="w-full bg-zinc-900/50 border border-white/5 rounded-lg p-3 text-sm text-white focus:outline-none focus:border-emerald-500/50"
+                      className="w-full bg-zinc-900/80 border border-white/20 rounded-lg p-3 text-sm text-white focus:outline-none focus:border-emerald-500/50"
                     />
                     {addressData.logradouro && (
                       <div className="text-[10px] text-zinc-500 px-1">{addressData.logradouro}, {addressData.cidade}-{addressData.uf}</div>
@@ -139,7 +139,7 @@ export const QuoteMobileView = (props: any) => {
                     type="date"
                     value={eventDate}
                     onChange={(e) => setEventDate(e.target.value)}
-                    className="w-full bg-zinc-900/50 border border-white/5 rounded-lg p-3 text-sm text-white focus:outline-none focus:border-emerald-500/50"
+                    className="w-full bg-zinc-900/80 border border-white/20 rounded-lg p-3 text-sm text-white focus:outline-none focus:border-emerald-500/50"
                   />
                 </div>
               </div>
@@ -252,7 +252,7 @@ export const QuoteMobileView = (props: any) => {
                     type="text"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    className="w-full bg-zinc-900/50 border border-white/5 rounded-lg p-3 text-sm text-white focus:outline-none focus:border-emerald-500/50"
+                    className="w-full bg-zinc-900/80 border border-white/20 rounded-lg p-3 text-sm text-white focus:outline-none focus:border-emerald-500/50"
                   />
                 </div>
                 <div className="space-y-1.5">
@@ -261,7 +261,7 @@ export const QuoteMobileView = (props: any) => {
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full bg-zinc-900/50 border border-white/5 rounded-lg p-3 text-sm text-white focus:outline-none focus:border-emerald-500/50"
+                    className="w-full bg-zinc-900/80 border border-white/20 rounded-lg p-3 text-sm text-white focus:outline-none focus:border-emerald-500/50"
                   />
                 </div>
                 <div className="space-y-1.5">
@@ -270,7 +270,7 @@ export const QuoteMobileView = (props: any) => {
                     type="tel"
                     value={whatsapp}
                     onChange={(e) => setWhatsapp(e.target.value)}
-                    className="w-full bg-zinc-900/50 border border-white/5 rounded-lg p-3 text-sm text-white focus:outline-none focus:border-emerald-500/50"
+                    className="w-full bg-zinc-900/80 border border-white/20 rounded-lg p-3 text-sm text-white focus:outline-none focus:border-emerald-500/50"
                   />
                 </div>
               </div>

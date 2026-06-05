@@ -56,7 +56,8 @@ export const AdminOverview: React.FC<OverviewProps> = ({ stats, recentOrders = [
         
         <div className="flex flex-col xl:flex-row justify-between items-start xl:items-end gap-6 relative z-10">
           <div>
-                        <p className="text-theme-muted mt-2 text-sm">Métricas e performance da plataforma</p>
+            <h1 className="text-3xl md:text-4xl font-heading font-black uppercase italic tracking-tighter text-theme-text">VISÃO GERAL</h1>
+            <p className="text-theme-muted mt-2 text-sm">Métricas e performance da plataforma</p>
           </div>
         </div>
       </div>
@@ -73,7 +74,7 @@ export const AdminOverview: React.FC<OverviewProps> = ({ stats, recentOrders = [
         ].map((kpi, i) => (
           <div key={i} className="bg-theme-bg p-6 space-y-2 rounded-2xl">
             <p className="text-[10px] uppercase tracking-widest text-theme-muted">{kpi.label}</p>
-            <p className={`text-2xl font-black ${kpi.color}`}>{kpi.value}</p>
+            <p className={`text-2xl md:text-3xl font-heading font-black italic ${kpi.color}`}>{kpi.value}</p>
           </div>
         ))}
       </div>
@@ -102,7 +103,7 @@ export const AdminOverview: React.FC<OverviewProps> = ({ stats, recentOrders = [
               <span className="text-sm font-medium">{event.title}</span>
               <button 
                 onClick={() => onEditEvent(event.id)}
-                className="px-4 py-2 text-xs font-bold bg-brand-tactical text-white rounded-xl hover:bg-brand-tactical/90 transition-colors"
+                className="px-4 py-2 text-xs font-bold border border-theme-border text-theme-text hover:bg-theme-bg-muted transition-colors rounded-xl uppercase tracking-widest"
               >
                 EDITAR
               </button>

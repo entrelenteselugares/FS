@@ -498,7 +498,11 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
     <div className="space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
       {/* Actions */}
       <div className="relative border-b border-theme-border pb-4 space-y-4 md:space-y-6">
-        <div className="flex flex-col xl:flex-row justify-end items-start xl:items-end gap-6 relative z-10">
+        <div className="flex flex-col xl:flex-row justify-between items-start xl:items-end gap-6 relative z-10">
+          <div>
+            <h1 className="text-3xl md:text-4xl font-heading font-black uppercase italic tracking-tighter text-theme-text">EVENTOS</h1>
+            <p className="text-theme-muted mt-2 text-sm">Gestão de captação e catálogos</p>
+          </div>
           <div className="flex flex-wrap items-center gap-3 w-full xl:w-auto">
             <button 
               onClick={() => {
@@ -534,13 +538,14 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
       </div>
 
       <style>{`
-        .events-table { width: 100%; border-collapse: collapse; text-align: left; }
+        .events-table { width: 100%; border-collapse: separate; border-spacing: 0 4px; text-align: left; }
         .events-table thead { border-bottom: 1px solid ${T.border}; }
         .events-table th { padding: 10px 16px; fontSize: 9px; fontFamily: ${T.fontB}; fontWeight: 900; textTransform: uppercase; letterSpacing: 1.5px; color: ${T.text3}; }
+        .events-table td { padding: 16px; }
         .event-card-mobile { display: none; }
         @media (max-width: 1024px) {
           .events-table { display: none; }
-          .event-card-mobile { display: flex; flex-direction: column; gap: 8px; padding: 10px; background: ${T.bgCard}; border: 1px solid ${T.border}; margin-bottom: 6px; }
+          .event-card-mobile { display: flex; flex-direction: column; gap: 8px; padding: 16px; background: ${T.bgCard}; border: 1px solid ${T.border}; margin-bottom: 8px; border-radius: 12px; }
         }
       `}</style>
 
@@ -565,7 +570,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
                 <td className="p-2 md:p-3">
                   <div className="flex items-center gap-2 mb-1">
                     <EventStatusDot eventDate={event.date} active={event.active} size="w-1.5 h-1.5" />
-                  <div className="text-[11px] md:text-[12px] font-black text-theme-text uppercase tracking-tight">{event.title}</div>
+                  <div className="text-[12px] font-bold text-theme-text uppercase tracking-tight">{event.title}</div>
                 </div>
                 <div className="text-[9px] text-theme-muted font-bold uppercase">{event.city || (event.location?.startsWith("CEP:") ? null : event.location) || "—"}</div>
               </td>
@@ -585,10 +590,10 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
                    <div className="text-[7px] md:text-[8px] uppercase text-theme-muted">{event.edicao?.nome || "—"}</div>
                 </td>
                 <td className="p-2 md:p-3 flex gap-1.5 md:gap-2">
-                  <button onClick={() => { setQrModalEvent(event); setCopied(false); }} className="p-2 border border-theme-border text-theme-muted hover:text-white" title="QR Codes"><QrCode size={12} /></button>
-                  <button onClick={() => setPhygitalQueueEvent(event)} className="p-2 border border-theme-border text-brand-tactical hover:bg-brand-tactical/10" title="Radar Phygital"><Radar size={12} /></button>
-                  <button onClick={() => handleEditOpen(event)} className="px-3 py-1.5 border border-theme-border text-[8px] font-black uppercase tracking-widest text-theme-text hover:bg-theme-border transition-all">Editar</button>
-                  <button onClick={() => setConfirmDelete(event)} className="p-2 border border-theme-border text-red-500/40 hover:text-red-500 transition-all"><Trash2 size={12} /></button>
+                  <button onClick={() => { setQrModalEvent(event); setCopied(false); }} className="p-2 border border-theme-border text-theme-muted hover:text-theme-text hover:bg-theme-bg-muted rounded-md transition-all" title="QR Codes"><QrCode size={12} /></button>
+                  <button onClick={() => setPhygitalQueueEvent(event)} className="p-2 border border-theme-border text-brand-tactical hover:bg-brand-tactical/10 rounded-md transition-all" title="Radar Phygital"><Radar size={12} /></button>
+                  <button onClick={() => handleEditOpen(event)} className="px-4 py-2 border border-theme-border text-[9px] font-bold uppercase tracking-widest text-theme-text hover:bg-theme-bg-muted rounded-md transition-all">Editar</button>
+                  <button onClick={() => setConfirmDelete(event)} className="p-2 border border-theme-border text-red-500/40 hover:text-red-500 hover:bg-red-500/10 rounded-md transition-all"><Trash2 size={12} /></button>
                 </td>
               </tr>
             ))}
@@ -608,7 +613,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
                   <div className="flex items-center gap-2 mb-1">
                     <EventStatusDot eventDate={event.date} active={event.active} size="w-2 h-2" showLabel />
                   </div>
-                  <div className="text-[12px] font-black text-theme-text uppercase tracking-tight">{event.title}</div>
+                  <div className="text-[13px] font-bold text-theme-text uppercase tracking-tight">{event.title}</div>
                   <div className="text-[9px] text-theme-muted font-bold uppercase">{event.city || (event.location?.startsWith("CEP:") ? null : event.location) || "—"}</div>
                 </div>
                 <div className="text-[10px] font-bold text-theme-text/80">{new Date(event.date).toLocaleDateString("pt-BR")}</div>
