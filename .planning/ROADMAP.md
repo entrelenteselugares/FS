@@ -78,3 +78,13 @@
 ## Backlog (Post-Launch)
 
 - (Backlog is currently empty)
+
+### Phase 58: Álbum da Torcida (Promoção Copa do Mundo)
+
+**Goal:** Criar uma experiência gamificada para os usuários montarem um álbum de fotos de 12 slots durante os jogos da Copa do Mundo, com badges, escalação de amigos e integração com social sharing.
+**Requirements**: TBD
+**Depends on:** Phase 57
+**Plans:** 0 plans
+
+Plans:
+- [ ] TBD (run /gsd-plan-phase 58 to break down)
