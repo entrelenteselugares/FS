@@ -87,4 +87,14 @@
 **Plans:** 0 plans
 
 Plans:
-- [ ] TBD (run /gsd-plan-phase 58 to break down)
+- [x] TBD (run /gsd-plan-phase 58 to break down)
+
+### Phase 59: Banner, Chaveamento e Placar Ao Vivo da Copa
+
+**Goal:** Adicionar um banner promocional, buscar dados em tempo real da FIFA (ou API de esportes) para um placar ao vivo, e renderizar o chaveamento (bracket) do torneio em uma área especial.
+**Requirements**: TBD
+**Depends on:** Phase 58
+**Plans:** 0 plans
+
+Plans:
+- [ ] TBD
