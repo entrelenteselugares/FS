@@ -2,9 +2,19 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { T } from "../lib/theme";
 import { motion, AnimatePresence } from "framer-motion";
-import { Camera, QrCode, Ticket, Star, ChevronRight, ChevronLeft } from "lucide-react";
+import { Camera, QrCode, Ticket, Star, ChevronRight, ChevronLeft, Trophy } from "lucide-react";
 
 const FALLBACK_SLIDES = [
+  {
+    id: "copa2026",
+    title: "COPA 2026",
+    subtitle: "Álbum da Torcida",
+    desc: "Colecione figurinhas exclusivas das suas fotos nos jogos do mundial e acompanhe o chaveamento em tempo real!",
+    primaryBtn: "ACESSAR ÁLBUM",
+    primaryAction: "/album-torcida",
+    icon: "trophy",
+    bgImage: "https://images.unsplash.com/photo-1508098682722-e99c43a406b2?auto=format&fit=crop&q=80&w=1600",
+  },
   {
     id: "institucional",
     title: "MOMENTOS",
@@ -59,6 +69,7 @@ const FALLBACK_SLIDES = [
 
 const renderIcon = (iconName: string | null) => {
   switch (iconName) {
+    case "trophy": return <Trophy size={40} className="text-emerald-500 mb-4" />;
     case "qrcode": return <QrCode size={40} className="text-emerald-500 mb-4" />;
     case "ticket": return <Ticket size={40} className="text-emerald-500 mb-4" />;
     case "star": return <Star size={40} className="text-emerald-500 mb-4" />;

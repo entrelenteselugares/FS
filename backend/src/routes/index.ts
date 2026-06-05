@@ -40,6 +40,7 @@ import publicRoutes from "./public.routes";
 import franchiseRoutes from "./franchise.routes";
 import { professionalRoutes, requireProOrFranchise } from "./professional.routes";
 import { PhygitalController } from "../controllers/phygital.controller";
+import worldcupRoutes from "./worldcup.routes";
 
 const router = Router();
 
@@ -56,6 +57,7 @@ router.use("/profissional", professionalRoutes);
 
 router.use("/auth", driveAuthRoutes); // Re-mounted to /auth to match original behavior where auth routes and drive routes merged.
 router.use("/portfolio", portfolioRoutes);
+router.use("/worldcup", worldcupRoutes);
 
 // ── Public: Referências Técnicas de Eventos (leitura pública)
 import { EventReferenceController } from "../controllers/EventReferenceController";

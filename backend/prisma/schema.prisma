@@ -69,15 +69,19 @@ model User {
   supplyOrders        SupplyOrder[]           @relation("FranchiseeSupplyOrders")
   notifications       Notification[]
   pushSubscriptions   PushSubscription[]
-  ambassadorOrders     Order[]                 @relation("AmbassadorOrders")
-  affiliatePayoutType  String                  @default("CREDIT")
+  ambassadorOrders    Order[]                 @relation("AmbassadorOrders")
+  affiliatePayoutType String                  @default("CREDIT")
 
   // Affiliate Network (Multi-Tier Referral System)
-  referredById         String?                 // Self-ref: quem indicou este usuário
-  affiliateTier        String                  @default("STANDARD") // "STANDARD" | "VIP"
-  referredBy           User?                   @relation("UserReferrals", fields: [referredById], references: [id], onDelete: SetNull)
-  referrals            User[]                  @relation("UserReferrals")
+  referredById         String? // Self-ref: quem indicou este usuário
+  affiliateTier        String                @default("STANDARD") // "STANDARD" | "VIP"
+  referredBy           User?                 @relation("UserReferrals", fields: [referredById], references: [id], onDelete: SetNull)
+  referrals            User[]                @relation("UserReferrals")
   affiliateCommissions AffiliateCommission[]
+
+  // World Cup Gamification
+  worldCupBadges WorldCupBadge[]
+  worldCupFolhas WorldCupFolha[]
 
   @@map("users")
 }
@@ -121,7 +125,7 @@ model ProfessionalNetwork {
 }
 
 model Event {
-  id             String   @id @default(cuid())
+  id             String        @id @default(cuid())
   title          String
   category       EventCategory @default(CASAMENTO)
   dataEvento     DateTime
@@ -129,19 +133,19 @@ model Event {
   coverPhotoUrl  String?
   lightroomUrl   String?
   driveUrl       String?
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
   cartorioUserId String?
-  priceBase      Decimal  @default(190) @db.Decimal(10, 2)
-  priceEarly     Decimal  @default(190) @db.Decimal(10, 2)
-  priceHistory   Json?    @default("[]")
+  priceBase      Decimal       @default(190) @db.Decimal(10, 2)
+  priceEarly     Decimal       @default(190) @db.Decimal(10, 2)
+  priceHistory   Json?         @default("[]")
   captacaoId     String?
   edicaoId       String?
-  active         Boolean  @default(false)
+  active         Boolean       @default(false)
   city           String?
   description    String?
   location       String?
-  slug           String?  @unique
+  slug           String?       @unique
 
   // Custom Branding Override (B2B)
   customLogoUrl    String?
@@ -150,7 +154,7 @@ model Event {
   // Affiliate & Ticketing Features
   ticketUrl            String?
   fotoSegundoPromoCode String?
-  commissionRate       Decimal?            @db.Decimal(5, 2)
+  commissionRate       Decimal? @db.Decimal(5, 2)
 
   temFoto            Boolean             @default(true)
   temFotoImpressa    Boolean             @default(false)
@@ -232,17 +236,17 @@ model EventReference {
 }
 
 model Coupon {
-  id          String    @id @default(cuid())
-  code        String    @unique
-  discountPct Decimal?  @db.Decimal(5, 2)
-  discountAbs Decimal?  @db.Decimal(10, 2)
-  isFreeShipping Boolean @default(false)
-  maxUses     Int?
-  usedCount   Int       @default(0)
-  active      Boolean   @default(true)
-  expiresAt   DateTime?
-  eventId     String?
-  createdAt   DateTime  @default(now())
+  id             String    @id @default(cuid())
+  code           String    @unique
+  discountPct    Decimal?  @db.Decimal(5, 2)
+  discountAbs    Decimal?  @db.Decimal(10, 2)
+  isFreeShipping Boolean   @default(false)
+  maxUses        Int?
+  usedCount      Int       @default(0)
+  active         Boolean   @default(true)
+  expiresAt      DateTime?
+  eventId        String?
+  createdAt      DateTime  @default(now())
 
   orders Order[]
   event  Event?  @relation(fields: [eventId], references: [id])
@@ -353,75 +357,75 @@ model CartorioProfissional {
 }
 
 model Order {
-  id                   String              @id @default(cuid())
-  valor                Decimal             @db.Decimal(10, 2)
-  status               String              @default("PENDENTE")
-  paymentId            String?             @unique
-  createdAt            DateTime            @default(now())
-  updatedAt            DateTime            @updatedAt
+  id                   String                @id @default(cuid())
+  valor                Decimal               @db.Decimal(10, 2)
+  status               String                @default("PENDENTE")
+  paymentId            String?               @unique
+  createdAt            DateTime              @default(now())
+  updatedAt            DateTime              @updatedAt
   clienteId            String?
   eventId              String
   buyerEmail           String?
-  splitCaptacao        Decimal?            @db.Decimal(10, 2)
-  splitCartorio        Decimal?            @db.Decimal(10, 2)
-  splitEdicao          Decimal?            @db.Decimal(10, 2)
-  splitMatriz          Decimal?            @db.Decimal(10, 2)
+  splitCaptacao        Decimal?              @db.Decimal(10, 2)
+  splitCartorio        Decimal?              @db.Decimal(10, 2)
+  splitEdicao          Decimal?              @db.Decimal(10, 2)
+  splitMatriz          Decimal?              @db.Decimal(10, 2)
   accessChosenAt       DateTime?
   accessExpiresAt      DateTime?
   accessType           String?
   deletedAt            DateTime?
-  warningsSent         Int                 @default(0)
+  warningsSent         Int                   @default(0)
   contributorName      String?
-  isContribution       Boolean             @default(false)
-  hasPaid              Boolean             @default(false)
+  isContribution       Boolean               @default(false)
+  hasPaid              Boolean               @default(false)
   tempPassword         String?
-  showAlbum            Boolean             @default(true)
-  showVideo            Boolean             @default(true)
-  isManual             Boolean             @default(false)
+  showAlbum            Boolean               @default(true)
+  showVideo            Boolean               @default(true)
+  isManual             Boolean               @default(false)
   manualType           String?
   buyerWhatsapp        String?
   internalNotes        String?
-  referenceFiles       Json?               // [{ url, name, size }]
+  referenceFiles       Json? // [{ url, name, size }]
   soundtrackSuggestion String?
   editorId             String?
-  deliveryType         DeliveryType        @default(DIGITAL_ONLY)
+  deliveryType         DeliveryType          @default(DIGITAL_ONLY)
   guestEmail           String?
   guestPhone           String?
-  guestToken           String?             @unique
-  isGuestOrder         Boolean             @default(false)
+  guestToken           String?               @unique
+  isGuestOrder         Boolean               @default(false)
   paymentMethod        OrderPaymentMethod?
-  paymentModel         PaymentModel        @default(PRE_PAID)
+  paymentModel         PaymentModel          @default(PRE_PAID)
   shippingAddress      Json?
-  shippingFee          Decimal?            @db.Decimal(10, 2)
+  shippingFee          Decimal?              @db.Decimal(10, 2)
   payoutPaidAt         DateTime?
   payoutReadyAt        DateTime?
-  payoutStatus         PayoutStatus        @default(PENDING)
-  fulfillmentStatus    FulfillmentStatus   @default(PENDING)
+  payoutStatus         PayoutStatus          @default(PENDING)
+  fulfillmentStatus    FulfillmentStatus     @default(PENDING)
   trackingCode         String?
   passiveFranchiseeId  String?
-  splitFranchisee      Decimal?            @db.Decimal(10, 2)
-  rewardsUsed          Decimal?            @db.Decimal(10, 2)
+  splitFranchisee      Decimal?              @db.Decimal(10, 2)
+  rewardsUsed          Decimal?              @db.Decimal(10, 2)
   couponId             String?
   ambassadorId         String?
   // Affiliate Network Splits
-  affiliateL1Id        String?             // userId do indicador direto do comprador
-  affiliateL2Id        String?             // userId do padrinho do L1 (somente VIP)
-  splitAffiliateL1     Decimal?            @db.Decimal(10, 2) // 5% do líquido para L1
-  splitAffiliateL2     Decimal?            @db.Decimal(10, 2) // 2% do líquido para L2 (VIP)
+  affiliateL1Id        String? // userId do indicador direto do comprador
+  affiliateL2Id        String? // userId do padrinho do L1 (somente VIP)
+  splitAffiliateL1     Decimal?              @db.Decimal(10, 2) // 5% do líquido para L1
+  splitAffiliateL2     Decimal?              @db.Decimal(10, 2) // 2% do líquido para L2 (VIP)
   items                OrderItem[]
-  cliente              User?               @relation("ClienteOrders", fields: [clienteId], references: [id])
-  editor               User?               @relation("EditorOrders", fields: [editorId], references: [id])
-  event                Event               @relation(fields: [eventId], references: [id])
-  passiveFranchisee    User?               @relation("FranchiseePassiveCommissions", fields: [passiveFranchiseeId], references: [id])
-  ambassador           User?               @relation("AmbassadorOrders", fields: [ambassadorId], references: [id])
-  coupon               Coupon?             @relation(fields: [couponId], references: [id])
+  cliente              User?                 @relation("ClienteOrders", fields: [clienteId], references: [id])
+  editor               User?                 @relation("EditorOrders", fields: [editorId], references: [id])
+  event                Event                 @relation(fields: [eventId], references: [id])
+  passiveFranchisee    User?                 @relation("FranchiseePassiveCommissions", fields: [passiveFranchiseeId], references: [id])
+  ambassador           User?                 @relation("AmbassadorOrders", fields: [ambassadorId], references: [id])
+  coupon               Coupon?               @relation(fields: [couponId], references: [id])
   abandonedEmailSentAt DateTime?
   affiliateCommissions AffiliateCommission[]
-  
+
   // Customizations for hired services
-  referenceUrl         String?
-  soundtrack           String?
-  instructions         String?
+  referenceUrl String?
+  soundtrack   String?
+  instructions String?
 
   @@map("orders")
 }
@@ -441,66 +445,66 @@ model PhotoLike {
 }
 
 model ServiceCatalog {
-  id                String                @id @default(cuid())
+  id                String   @id @default(cuid())
   name              String
   description       String?
-  basePrice         Decimal               @db.Decimal(10, 2)
-  priceProfessional Decimal               @default(0) @db.Decimal(10, 2)
-  priceMobile       Decimal               @default(0) @db.Decimal(10, 2)
-  allowProfessional Boolean               @default(true)
-  allowMobile       Boolean               @default(false)
-  estimatedMinutes  Int                   @default(60)
-  active            Boolean               @default(true)
-  createdAt         DateTime              @default(now())
-  updatedAt         DateTime              @updatedAt
-  category          String                @default("FOTOGRAFIA")
-  eventTypes        String[]              @default([])
+  basePrice         Decimal  @db.Decimal(10, 2)
+  priceProfessional Decimal  @default(0) @db.Decimal(10, 2)
+  priceMobile       Decimal  @default(0) @db.Decimal(10, 2)
+  allowProfessional Boolean  @default(true)
+  allowMobile       Boolean  @default(false)
+  estimatedMinutes  Int      @default(60)
+  active            Boolean  @default(true)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  category          String   @default("FOTOGRAFIA")
+  eventTypes        String[] @default([])
 
   // MVP Phase 54 fields
-  pricingType       String                @default("FIXED") // FIXED, HOURLY, PER_UNIT
+  pricingType       String  @default("FIXED") // FIXED, HOURLY, PER_UNIT
   requiredEquipment String?
-  isRemote          Boolean               @default(false)
+  isRemote          Boolean @default(false)
   deliveryDays      Int?
   minQuantity       Int?
-  availableInVault  Boolean               @default(false) // Exibir como upsell no Cofre de Memórias
-  
+  availableInVault  Boolean @default(false) // Exibir como upsell no Cofre de Memórias
+
   // Package features
-  isPackage         Boolean               @default(false)
-  packageItems      String[]              @default([]) // Array of ServiceCatalog IDs
-  proServices       ProfessionalService[]
+  isPackage    Boolean               @default(false)
+  packageItems String[]              @default([]) // Array of ServiceCatalog IDs
+  proServices  ProfessionalService[]
 
   @@map("service_catalog")
 }
 
 model ProfessionalService {
-  id                   String          @id @default(cuid())
-  profissionalId       String
-  name                 String
-  description          String?
-  price                Decimal         @db.Decimal(10, 2)
-  active               Boolean         @default(true)
-  catalogId            String?
-  createdAt            DateTime        @default(now())
-  updatedAt            DateTime        @updatedAt
-  category             String?
-  orderItems           OrderItem[]
-  catalog              ServiceCatalog? @relation(fields: [catalogId], references: [id])
-  profissional         Profissional    @relation(fields: [profissionalId], references: [id], onDelete: Cascade)
+  id             String          @id @default(cuid())
+  profissionalId String
+  name           String
+  description    String?
+  price          Decimal         @db.Decimal(10, 2)
+  active         Boolean         @default(true)
+  catalogId      String?
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  category       String?
+  orderItems     OrderItem[]
+  catalog        ServiceCatalog? @relation(fields: [catalogId], references: [id])
+  profissional   Profissional    @relation(fields: [profissionalId], references: [id], onDelete: Cascade)
 
   // Custom service fields
   submittedAt          DateTime?
-  reviewStatus         String          @default("APPROVED") // PENDING, APPROVED, REJECTED, NEEDS_ADJUSTMENT
+  reviewStatus         String    @default("APPROVED") // PENDING, APPROVED, REJECTED, NEEDS_ADJUSTMENT
   reviewNote           String?
   networkJustification String?
   submittedByUserId    String?
   estimatedMinutes     Int?
 
   // MVP Phase 54 fields
-  pricingType          String          @default("FIXED") // FIXED, HOURLY, PER_UNIT
-  requiredEquipment    String?
-  isRemote             Boolean         @default(false)
-  deliveryDays         Int?
-  minQuantity          Int?
+  pricingType       String  @default("FIXED") // FIXED, HOURLY, PER_UNIT
+  requiredEquipment String?
+  isRemote          Boolean @default(false)
+  deliveryDays      Int?
+  minQuantity       Int?
 
   @@map("professional_services")
 }
@@ -1018,7 +1022,7 @@ model SharedAlbum {
   cycleEndDay        Int?      @default(30)
   trialEndsAt        DateTime?
   subscriptionStatus String    @default("TRIAL") // TRIAL, ACTIVE, BLOCKED, EXPIRED
-  externalVideoLink  String?   // Link do Drive/Dropbox para edição de vídeos brutos
+  externalVideoLink  String? // Link do Drive/Dropbox para edição de vídeos brutos
   ownerId            String
   createdAt          DateTime  @default(now())
   updatedAt          DateTime  @updatedAt
@@ -1055,19 +1059,19 @@ model SharedAlbumMedia {
   uploadedById  String
 
   // EXIF & Metadata
-  fileSize      Int?
-  width         Int?
-  height        Int?
-  originalDate  DateTime?
-  rotation      Int      @default(0) // 0, 90, 180, 270
+  fileSize     Int?
+  width        Int?
+  height       Int?
+  originalDate DateTime?
+  rotation     Int       @default(0) // 0, 90, 180, 270
 
   // AI Curation
   aiScore          Float?
   aiTags           String[] @default([])
   aiAnalysisStatus String   @default("PENDING") // PENDING, ANALYZED, FAILED, APPROVED, REJECTED
 
-  status           String   @default("PENDING") // PENDING, APPROVED, REJECTED
-  type             String   @default("PHOTO") // PHOTO, VIDEO
+  status String @default("PENDING") // PENDING, APPROVED, REJECTED
+  type   String @default("PHOTO") // PHOTO, VIDEO
 
   createdAt DateTime @default(now())
 
@@ -1253,9 +1257,9 @@ model PortfolioImage {
 // ─────────────────────────────────────────────────────────
 model AffiliateCommission {
   id        String   @id @default(cuid())
-  userId    String   // Quem recebe a comissão
-  orderId   String   // Pedido gerador da comissão
-  level     Int      // 1 = Indicação Direta (5%) | 2 = Passiva VIP (2%)
+  userId    String // Quem recebe a comissão
+  orderId   String // Pedido gerador da comissão
+  level     Int // 1 = Indicação Direta (5%) | 2 = Passiva VIP (2%)
   amount    Decimal  @db.Decimal(10, 2)
   status    String   @default("PENDING") // PENDING | PAID
   createdAt DateTime @default(now())
@@ -1275,7 +1279,7 @@ model Lead {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  event     Event?   @relation(fields: [eventId], references: [id])
+  event Event? @relation(fields: [eventId], references: [id])
 
   @@map("leads")
 }
@@ -1298,4 +1302,67 @@ model HeroSlide {
   updatedAt     DateTime @updatedAt
 
   @@map("hero_slides")
+}
+
+// ─────────────────────────────────────────────────────────
+// World Cup Promotion (Álbum da Torcida)
+// ─────────────────────────────────────────────────────────
+model WorldCupMatch {
+  id        String   @id @default(cuid())
+  teamA     String
+  teamB     String
+  matchDate DateTime
+  group     String
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  folhas WorldCupFolha[]
+
+  @@map("world_cup_matches")
+}
+
+model WorldCupFolha {
+  id        String   @id @default(cuid())
+  userId    String
+  matchId   String
+  completed Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user  User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  match WorldCupMatch  @relation(fields: [matchId], references: [id], onDelete: Cascade)
+  slots WorldCupSlot[]
+
+  @@unique([userId, matchId])
+  @@map("world_cup_folhas")
+}
+
+model WorldCupSlot {
+  id          String   @id @default(cuid())
+  folhaId     String
+  slotIndex   Int // 0 to 11
+  imageUrl    String?
+  missionType String   @default("LIVRE") // LIVRE, SELFIE, COMIDA, ESCALACAO
+  metadata    Json     @default("{}")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  folha WorldCupFolha @relation(fields: [folhaId], references: [id], onDelete: Cascade)
+
+  @@unique([folhaId, slotIndex])
+  @@map("world_cup_slots")
+}
+
+model WorldCupBadge {
+  id        String   @id @default(cuid())
+  userId    String
+  type      String // TORCEDOR_FIEL, CHEF_DA_ARENA, CAPITAO, FIGURINHA_DOURADA, ZEBRA
+  matchId   String?
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, type])
+  @@map("world_cup_badges")
 }

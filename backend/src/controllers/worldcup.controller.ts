@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { prisma } from "../lib/prisma";
 import { WorldCupGamificationService } from "../services/worldcup_gamification.service";
 import { sportsApiService } from "../services/sports_api.service";
+import { supabaseAdmin as supabase } from "../lib/supabase";
 
 const gamificationService = new WorldCupGamificationService(prisma);
 
