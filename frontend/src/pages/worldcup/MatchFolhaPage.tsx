@@ -33,7 +33,7 @@ export const MatchFolhaPage = () => {
   }, [matchId]);
 
   const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!e.target.files?.length || activeSlot === null) return;
+    if (!e.target.files?.length || activeSlot === null || !folha) return;
     const file = e.target.files[0];
     
     // Fake upload for MVP (in reality, upload to S3/Supabase Storage)
@@ -49,7 +49,11 @@ export const MatchFolhaPage = () => {
       const newSlots = folha.slots.map((s: { slotIndex: number }) => 
         s.slotIndex === activeSlot ? data.slot : s
       );
-      setFolha({ ...folha, slots: newSlots });
+      setFolha({
+        id: folha.id,
+        completed: folha.completed,
+        slots: newSlots
+      });
       toast.success("Foto adicionada!", { id: toastId });
 
       if (data.badgesAwarded?.length) {
@@ -71,13 +75,26 @@ export const MatchFolhaPage = () => {
     }
   };
 
-  const filledCount = folha?.slots?.filter((s: { imageUrl?: string }) => !!s.imageUrl).length || 0;
-
   if (loading) {
     return <div className="min-h-screen bg-theme-bg flex items-center justify-center">
       <div className="w-8 h-8 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin" />
     </div>;
   }
+
+  if (!folha) {
+    return (
+      <div className="min-h-screen bg-theme-bg flex items-center justify-center text-white p-4">
+        <div className="text-center">
+          <p className="text-lg font-bold text-red-500">Erro ao carregar folha do jogo.</p>
+          <Link to="/album-torcida" className="mt-4 inline-block px-4 py-2 bg-emerald-500 text-black font-bold rounded-xl text-sm">
+            Voltar para o Álbum
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  const filledCount = folha.slots.filter((s: { imageUrl?: string }) => !!s.imageUrl).length;
 
   return (
     <div className="min-h-screen bg-theme-bg text-white pb-24">
@@ -227,10 +244,15 @@ export const MatchFolhaPage = () => {
                         imageUrl: selectedPreviewSlot.imageUrl,
                         metadata: { comment: commentText }
                       });
+                      if (!folha) return;
                       const newSlots = folha.slots.map((s: any) => 
                         s.slotIndex === selectedPreviewSlot.slotIndex ? data.slot : s
                       );
-                      setFolha({ ...folha, slots: newSlots });
+                      setFolha({
+                        id: folha.id,
+                        completed: folha.completed,
+                        slots: newSlots
+                      });
                       toast.success("Legenda salva com sucesso!", { id: toastId });
                       setSelectedPreviewSlot(null);
                       setCommentText("");
