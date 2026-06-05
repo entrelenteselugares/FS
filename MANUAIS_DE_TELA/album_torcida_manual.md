@@ -15,20 +15,24 @@ O **Álbum da Torcida** é a central de engajamento e gamificação para a Copa 
 O painel é estruturado em 4 abas de navegação principais:
 
 ### 1. Aba: Jogos
+
 * **Contador de Estreia**: Exibe um relógio em tempo real com a contagem regressiva para a estreia da Seleção Brasileira (Brasil × Marrocos).
 * **Jogos do Brasil**: Exibe os confrontos da fase de grupos da seleção com data, hora (horário de Brasília), bandeiras e status do jogo.
 * **Próximos Jogos**: Lista os próximos 12 confrontos do torneio de forma cronológica.
 
 ### 2. Aba: Grupos
+
 * **Tabela de Grupos**: Apresenta a composição dos 12 grupos (A até L) com bandeiras e identificação das equipes (incluindo destaque dourado com estrela para o Brasil no Grupo C).
 
 ### 3. Aba: Meu Álbum
+
 * **Folhas por Partida**: Ao abrir o álbum de uma partida em andamento ou encerrada, o torcedor pode preencher uma folha com **12 fotos** correspondentes a "missões" do jogo (ex: *Churrasco*, *Meu Look*, *Rua Pintada*, *Grito de Gol*).
 * **Visualizar Foto e Comentários (Nova Funcionalidade)**: Ao clicar em um slot que já possui foto, abre-se um modal de preview onde o usuário pode ler/escrever uma **legenda ou comentário** personalizado da foto.
 * **Substituir Foto**: Dentro do mesmo modal de visualização, o torcedor pode optar por substituir a foto atual por uma nova.
 * **Silos de Conquistas (Badges)**: À medida que preenche a folha de um jogo, o usuário desbloqueia conquistas especiais no sistema de gamificação (ex: *Torcedor Fiel*, *Chef da Arena*, *Capitão*).
 
 ### 4. Aba: Nostalgia
+
 * **Edições Passadas**: Seleção interativa de Copas anteriores (Catar 2022, Rússia 2018, Brasil 2014, África 2010).
 * **Slots Personalizados**: Envio de fotos antigas com persistência local (`localStorage`) para registrar lembranças da torcida.
 * **Convidar Amigos**: Permite gerar um link de compartilhamento e enviar diretamente por **WhatsApp** para chamar amigos para colaborar no álbum ou reagir às fotos.
