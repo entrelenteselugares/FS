@@ -6,13 +6,9 @@ export const usePartnerFlow = () => {
 
   // Force PARTNER flow on mount
   useEffect(() => {
-    // 
-    if (quoteState.setFlowType) quoteState.setFlowType("PARTNER");
-    // 
-    if (quoteState.step === 0 && quoteState.setStep) quoteState.setStep(1);
-    // 
-    if (quoteState.setLocationType) quoteState.setLocationType("PARTNER");
-  }, [quoteState]);
+    quoteState.selectFlow("PARTNER");
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return {
     ...quoteState,

@@ -6,13 +6,9 @@ export const useCustomFlow = () => {
 
   // Force CUSTOM flow on mount
   useEffect(() => {
-    // 
-    if (quoteState.setFlowType) quoteState.setFlowType("CUSTOM");
-    // 
-    if (quoteState.step === 0 && quoteState.setStep) quoteState.setStep(1);
-    // 
-    if (quoteState.setLocationType) quoteState.setLocationType("OTHER");
-  }, [quoteState]);
+    quoteState.selectFlow("CUSTOM");
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return {
     ...quoteState,

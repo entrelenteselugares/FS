@@ -223,6 +223,11 @@ export default function FullMonitor() {
                 <span className="text-[10px] font-black uppercase tracking-widest text-theme-text ml-1">Data/Hora</span>
               </label>
 
+              <label className="flex items-center gap-1 cursor-pointer bg-theme-bg-muted border border-theme-border px-3 py-1.5 rounded-full hover:bg-zinc-800/50 transition-colors">
+                <input type="checkbox" checked={showCropMarks} onChange={e => setShowCropMarks(e.target.checked)} className="accent-brand-tactical" />
+                <span className="text-[10px] font-black uppercase tracking-widest text-theme-text ml-1">Marcas Corte</span>
+              </label>
+
               <label className="flex items-center gap-1 cursor-pointer border border-brand-tactical bg-brand-tactical/10 px-3 py-1.5 rounded-full hover:bg-brand-tactical/20 transition-colors">
                 <span className="text-[10px] font-black uppercase tracking-widest text-brand-tactical">{clientLogoUrl ? 'Logo ✓' : '+ Cliente'}</span>
                 <input 

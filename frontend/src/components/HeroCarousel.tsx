@@ -72,6 +72,7 @@ interface Slide {
   title: string;
   subtitle: string;
   desc: string;
+  description?: string;
   primaryBtn: string;
   primaryAction: string;
   icon: string;

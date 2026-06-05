@@ -1,6 +1,6 @@
 import React from "react";
 
-export const getPrintStyles = (orientation: 'portrait' | 'landscape') => `
+const getPrintStyles = (orientation: 'portrait' | 'landscape') => `
 @media print {
   @page {
     size: A4 ${orientation};

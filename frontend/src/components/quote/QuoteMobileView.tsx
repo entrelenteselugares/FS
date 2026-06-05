@@ -1,17 +1,15 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 // 
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowRight, MapPin, Building2, CheckCircle2, Utensils, GraduationCap, Zap, Camera, Video, Smartphone, Printer, ChevronLeft, Map } from "lucide-react";
+import { ArrowRight, MapPin, Building2, CheckCircle2, Utensils, GraduationCap, Zap, Camera, Video, Smartphone, Printer, ChevronLeft } from "lucide-react";
 
 export const QuoteMobileView = (props: any) => {
   const { 
     step, setStep, nextStep, prevStep,
-    locationType, setLocationType,
-    category, setCategory,
     eventDate, setEventDate,
     selectedPartnerId, setSelectedPartnerId,
     partners,
-    customCep, setCustomCep, addressData, handleCepChange,
+    customCep, addressData, handleCepChange,
     availableServices, selectedServices, setSelectedServices,
     name, setName, email, setEmail, whatsapp, setWhatsapp, attendees, setAttendees,
     submitting, handleSubmit,
@@ -29,7 +27,7 @@ export const QuoteMobileView = (props: any) => {
     textMuted: "#a1a1aa"
   };
 
-  const getIcon = (n: string) => {
+  const _getIcon = (n: string) => {
     const name = n.toLowerCase();
     if (name.includes("phygital") || name.includes("impressa")) return <Printer size={16} />;
     if (name.includes("video") || name.includes("cinema")) return <Video size={16} />;
