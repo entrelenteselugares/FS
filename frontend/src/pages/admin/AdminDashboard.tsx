@@ -40,8 +40,8 @@ import { motion, AnimatePresence } from "framer-motion";
 
 const NAV_ITEMS = (activeTab: string, setActiveTab: (t: string) => void, stats: AdminStats | null, role: string): NavItem[] => {
   const allItems: NavItem[] = [
-    { label: "Visão Geral",    onClick: () => setActiveTab("overview"),      isActive: activeTab === "overview",      icon: <LayoutDashboard size={16} />, hide: role === 'FRANCHISEE' },
-    { label: "Eventos",        onClick: () => setActiveTab("events"),        isActive: activeTab === "events",        icon: <Camera size={16} />,         badge: stats?.missingLinksCount },
+    { label: "Visão Geral",    onClick: () => setActiveTab("overview"),      isActive: activeTab === "overview",      icon: <LayoutDashboard size={16} />, hide: role === 'FRANCHISEE', isPrimaryMobile: true },
+    { label: "Eventos",        onClick: () => setActiveTab("events"),        isActive: activeTab === "events",        icon: <Camera size={16} />,         badge: stats?.missingLinksCount, isPrimaryMobile: true },
     { 
       label: "Comercial", icon: <Briefcase size={16} />, hide: role === 'FRANCHISEE',
       subItems: [
@@ -79,7 +79,7 @@ const NAV_ITEMS = (activeTab: string, setActiveTab: (t: string) => void, stats: 
     {
       label: "Sistema", icon: <Settings size={16} />, hide: role === 'FRANCHISEE',
       subItems: [
-        { label: "Financeiro",     onClick: () => setActiveTab("finance"),       isActive: activeTab === "finance" },
+        { label: "Financeiro",     onClick: () => setActiveTab("finance"),       isActive: activeTab === "finance", icon: <Settings size={16} />, isPrimaryMobile: true },
         { label: "Configurações",  onClick: () => setActiveTab("settings"),      isActive: activeTab === "settings" },
       ]
     }

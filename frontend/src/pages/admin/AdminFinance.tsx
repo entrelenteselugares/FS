@@ -157,11 +157,11 @@ export const AdminFinance: React.FC = () => {
             <p className="text-theme-muted mt-2 text-sm">Controle financeiro, repasses e DRE</p>
           </div>
           
-          <div className="flex flex-wrap bg-theme-bg-muted p-1.5 border border-theme-border rounded-lg w-full xl:w-auto">
-            <button onClick={() => setView("payouts")} className={`flex-1 md:flex-none px-6 py-3 text-[11px] font-bold uppercase tracking-widest transition-all whitespace-nowrap rounded-md ${view === "payouts" ? 'bg-theme-bg text-theme-text shadow-sm border border-theme-border/50' : 'text-theme-muted hover:text-theme-text'}`}>Pedidos</button>
-            <button onClick={() => setView("balances")} className={`flex-1 md:flex-none px-6 py-3 text-[11px] font-bold uppercase tracking-widest transition-all whitespace-nowrap rounded-md ${view === "balances" ? 'bg-theme-bg text-theme-text shadow-sm border border-theme-border/50' : 'text-theme-muted hover:text-theme-text'}`}>Saldos Pros</button>
-            <button onClick={() => setView("expenses")} className={`flex-1 md:flex-none px-6 py-3 text-[11px] font-bold uppercase tracking-widest transition-all whitespace-nowrap rounded-md ${view === "expenses" ? 'bg-theme-bg text-theme-text shadow-sm border border-theme-border/50' : 'text-theme-muted hover:text-theme-text'}`}>Lançamentos</button>
-            <button onClick={() => setView("dre")} className={`flex-1 md:flex-none px-6 py-3 text-[11px] font-bold uppercase tracking-widest transition-all whitespace-nowrap rounded-md ${view === "dre" ? 'bg-theme-bg text-theme-text shadow-sm border border-theme-border/50' : 'text-theme-muted hover:text-theme-text'}`}>DRE / Dashboard</button>
+          <div className="flex overflow-x-auto w-full xl:w-auto bg-theme-bg-muted p-1 border border-theme-border rounded-xl snap-x snap-mandatory hide-scrollbar" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+            <button onClick={() => setView("payouts")} className={`snap-start flex-none px-6 py-3 text-[11px] font-bold uppercase tracking-widest transition-all whitespace-nowrap rounded-lg ${view === "payouts" ? 'bg-theme-bg text-theme-text shadow-sm border border-theme-border/50' : 'text-theme-muted hover:text-theme-text'}`}>Pedidos</button>
+            <button onClick={() => setView("balances")} className={`snap-start flex-none px-6 py-3 text-[11px] font-bold uppercase tracking-widest transition-all whitespace-nowrap rounded-lg ${view === "balances" ? 'bg-theme-bg text-theme-text shadow-sm border border-theme-border/50' : 'text-theme-muted hover:text-theme-text'}`}>Saldos Pros</button>
+            <button onClick={() => setView("expenses")} className={`snap-start flex-none px-6 py-3 text-[11px] font-bold uppercase tracking-widest transition-all whitespace-nowrap rounded-lg ${view === "expenses" ? 'bg-theme-bg text-theme-text shadow-sm border border-theme-border/50' : 'text-theme-muted hover:text-theme-text'}`}>Lançamentos</button>
+            <button onClick={() => setView("dre")} className={`snap-start flex-none px-6 py-3 text-[11px] font-bold uppercase tracking-widest transition-all whitespace-nowrap rounded-lg ${view === "dre" ? 'bg-theme-bg text-theme-text shadow-sm border border-theme-border/50' : 'text-theme-muted hover:text-theme-text'}`}>DRE / Dashboard</button>
           </div>
         </div>
       </div>
@@ -266,7 +266,8 @@ export const AdminFinance: React.FC = () => {
       {/* VIEW: SALDOS PROS */}
       {view === "balances" && (
         <div className="space-y-6 animate-in fade-in duration-500">
-          <div className="bg-theme-bg-muted border border-theme-border overflow-x-auto w-full rounded-2xl">
+          {/* DESKTOP TABLE */}
+          <div className="hidden md:block bg-theme-bg-muted border border-theme-border overflow-x-auto w-full rounded-2xl">
              <table className="w-full text-left border-collapse">
                 <thead>
                    <tr className="border-b border-theme-border bg-black/10">
@@ -311,6 +312,47 @@ export const AdminFinance: React.FC = () => {
                 </tbody>
              </table>
           </div>
+
+           {/* MOBILE CARDS */}
+           <div className="md:hidden space-y-4">
+              {balances.length === 0 ? (
+                <div className="py-24 text-center text-[11px] text-theme-muted uppercase tracking-[0.4em] italic font-black">Nenhum saldo pendente na rede.</div>
+              ) : balances.map(b => (
+                <div key={b.userId} className="bg-theme-bg border border-theme-border p-4 rounded-xl space-y-3 shadow-sm">
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <div className="text-sm font-black text-theme-text uppercase italic">{b.nome}</div>
+                      <div className="text-[10px] font-bold text-theme-muted uppercase tracking-tight">{b.email}</div>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-[10px] font-black text-theme-muted uppercase tracking-widest">Pedidos</div>
+                      <div className="text-xs font-black text-theme-text italic">{b.orderCount} vds</div>
+                    </div>
+                  </div>
+                  <div className="flex justify-between items-center bg-theme-bg-muted p-3 rounded-lg border border-theme-border/50">
+                    <div>
+                      <div className="text-[9px] font-black text-theme-muted uppercase tracking-widest">Pendente</div>
+                      <div className="text-sm font-black text-theme-muted italic">{formatCurrency(b.pendingBalance)}</div>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-[9px] font-black text-brand-tactical uppercase tracking-widest">Disponível</div>
+                      <div className="text-sm font-black text-brand-tactical italic">{formatCurrency(b.availableBalance)}</div>
+                    </div>
+                  </div>
+                  {b.availableBalance > 0 ? (
+                    <button 
+                      onClick={() => handleSettle(b.userId)}
+                      disabled={settleLoading === b.userId}
+                      className={`w-full py-3 text-[10px] font-black uppercase tracking-widest border border-brand-tactical text-brand-tactical rounded-lg hover:bg-brand-tactical hover:text-zinc-950 transition-all flex items-center justify-center gap-2 italic ${settleLoading === b.userId ? 'opacity-50 animate-pulse' : ''}`}
+                    >
+                      {settleLoading === b.userId ? "LIQUIDANDO..." : "GERAR REPASSE"}
+                    </button>
+                  ) : (
+                    <div className="w-full py-3 text-center text-[10px] font-black text-theme-muted uppercase italic opacity-40 border border-dashed border-theme-border rounded-lg">AGUARDANDO ESCROW</div>
+                  )}
+                </div>
+              ))}
+           </div>
         </div>
       )}
 
@@ -368,7 +410,8 @@ export const AdminFinance: React.FC = () => {
 
            {/* Ledger de Custos */}
            <div className="lg:col-span-8 space-y-4">
-              <div className="bg-theme-bg-muted border border-theme-border overflow-x-auto w-full rounded-2xl">
+              {/* DESKTOP TABLE */}
+              <div className="hidden md:block bg-theme-bg-muted border border-theme-border overflow-x-auto w-full rounded-2xl">
                  <table className="w-full text-left border-collapse">
                     <thead>
                        <tr className="border-b border-theme-border bg-black/10">
@@ -400,7 +443,26 @@ export const AdminFinance: React.FC = () => {
                     </tbody>
                  </table>
               </div>
-           </div>
+
+               {/* MOBILE CARDS */}
+               <div className="md:hidden space-y-4">
+                  {expenses.length === 0 ? (
+                    <div className="py-16 text-center text-[11px] text-theme-muted uppercase tracking-[0.4em] italic font-black">Nenhuma despesa operacional lançada.</div>
+                  ) : expenses.map(exp => (
+                    <div key={exp.id} className="bg-theme-bg border border-theme-border p-4 rounded-xl flex items-center justify-between gap-4 shadow-sm">
+                      <div className="flex-1 min-w-0">
+                        <div className="flex justify-between items-center mb-1">
+                          <span className="text-[9px] font-black text-theme-muted uppercase tracking-widest">{fmtDate(exp.date)}</span>
+                          <span className="text-[8px] font-black px-2 py-0.5 border border-theme-border rounded-md text-theme-muted uppercase">{exp.category}</span>
+                        </div>
+                        <div className="text-sm font-black text-theme-text uppercase tracking-tight truncate">{exp.description}</div>
+                        <div className="text-sm font-black text-red-500 italic mt-1">{formatCurrency(exp.amount)}</div>
+                      </div>
+                      <button onClick={() => deleteExpense(exp.id)} className="p-3 text-zinc-600 hover:text-red-500 hover:bg-red-500/10 rounded-xl transition-all"><Trash2 size={16} /></button>
+                    </div>
+                  ))}
+               </div>
+            </div>
         </div>
       )}
 

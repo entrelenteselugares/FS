@@ -1,0 +1,36 @@
+{
+  "title": "Foto Segundo | Status do Sistema | Foto Segundo",
+  "headings": [
+    "STATUS DA\nPLATAFORMA",
+    "TODOS OS SISTEMAS OPERANDO NORMALMENTE",
+    "COMPONENTES MONITORADOS",
+    "HISTÓRICO DE INCIDENTES",
+    "O QUE FAZER EM CASO DE INSTABILIDADE",
+    "ASSINAR ATUALIZAÇÕES"
+  ],
+  "buttons": [
+    "LOGIN",
+    "AGENDAR",
+    "Home",
+    "Buscar",
+    "Compras",
+    "Meus Álbuns",
+    "Opções",
+    "Entrar",
+    "Vitrine de Eventos"
+  ],
+  "links": [
+    {
+      "text": "VOLTAR PARA O INÍCIO",
+      "href": "/"
+    },
+    {
+      "text": "ACESSAR CONTATO",
+      "href": "/contato"
+    },
+    {
+      "text": "SOLICITAR INCLUSÃO",
+      "href": "/contato"
+    }
+  ]
+}

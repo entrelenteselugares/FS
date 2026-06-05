@@ -1,0 +1,38 @@
+{
+  "title": "Foto Segundo | Suas memórias, entregues agora.",
+  "headings": [
+    "SOBRE A FOTO SEGUNDO",
+    "O QUE É A FOTO SEGUNDO",
+    "O PROBLEMA QUE RESOLVEMOS",
+    "COMO FUNCIONA",
+    "PARA QUEM QUER CONTRATAR UM PROFISSIONAL",
+    "PARA QUEM QUER UM ÁLBUM COLABORATIVO",
+    "PARA PROFISSIONAIS DE AUDIOVISUAL",
+    "NOSSA MISSÃO",
+    "A TECNOLOGIA POR TRÁS",
+    "TEM DÚVIDAS OU QUER SER PARCEIRO?"
+  ],
+  "buttons": [
+    "Home",
+    "Buscar",
+    "Compras",
+    "Meus Álbuns",
+    "Opções",
+    "Entrar",
+    "Vitrine de Eventos"
+  ],
+  "links": [
+    {
+      "text": "VOLTAR",
+      "href": "/"
+    },
+    {
+      "text": "CENTRAL DE AJUDA",
+      "href": "/suporte"
+    },
+    {
+      "text": "SEJA UM PARCEIRO",
+      "href": "/parcerias"
+    }
+  ]
+}

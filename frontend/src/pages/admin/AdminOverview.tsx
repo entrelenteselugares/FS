@@ -3,6 +3,8 @@ import {
   AreaChart, Area, XAxis, CartesianGrid, Tooltip,
   ResponsiveContainer,
 } from "recharts";
+import { useNavigate } from "react-router-dom";
+import { Camera, FileText, CheckCircle, Users } from "lucide-react";
 
 
 interface OverviewStats {
@@ -41,6 +43,8 @@ interface OverviewProps {
 }
 
 export const AdminOverview: React.FC<OverviewProps> = ({ stats, recentOrders = [], pendingEvents = [], onEditEvent }) => {
+  const navigate = useNavigate();
+
   // Prepara dados para os gráficos
   const chartData = (recentOrders || []).map(o => ({
     name: o.createdAt ? new Date(o.createdAt).toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" }) : "---",
@@ -62,8 +66,25 @@ export const AdminOverview: React.FC<OverviewProps> = ({ stats, recentOrders = [
         </div>
       </div>
 
+      {/* Mobile Quick Actions (Super App) */}
+      <div className="grid grid-cols-2 gap-3 md:hidden">
+        {[
+          { label: "Novo Evento", icon: <Camera size={24} />, route: "/admin/events" },
+          { label: "Orçamentos", icon: <FileText size={24} />, route: "/admin/quotes" },
+          { label: "Aprovações", icon: <CheckCircle size={24} />, route: "/admin/approvals" },
+          { label: "Membros", icon: <Users size={24} />, route: "/admin/users" },
+        ].map((action, i) => (
+          <button key={i} onClick={() => navigate(action.route)}
+            className="flex flex-col items-center justify-center p-6 bg-theme-bg border border-theme-border rounded-2xl gap-3 text-zinc-400 hover:text-emerald-500 hover:border-emerald-500/50 transition-all active:scale-95"
+          >
+            {action.icon}
+            <span className="text-[10px] font-black uppercase tracking-widest">{action.label}</span>
+          </button>
+        ))}
+      </div>
+
       {/* KPI Section */}
-      <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-px bg-theme-bg-muted border border-theme-border shadow-2xl rounded-2xl overflow-hidden">
+      <div className="flex md:grid overflow-x-auto snap-x snap-mandatory md:grid-cols-4 gap-3 md:gap-px md:bg-theme-bg-muted md:border md:border-theme-border md:shadow-2xl md:rounded-2xl md:overflow-hidden pb-4 md:pb-0 -mx-4 px-4 md:mx-0 md:px-0" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
         
         {/* KPI Card Template */}
         {[
@@ -72,7 +93,7 @@ export const AdminOverview: React.FC<OverviewProps> = ({ stats, recentOrders = [
           { label: "Assinaturas Ativas", value: stats?.totalActiveSubscriptions || 0, color: "text-emerald-500" },
           { label: "Eventos Ativos", value: stats?.activeEvents || 0, color: "text-brand-tactical" }
         ].map((kpi, i) => (
-          <div key={i} className="bg-theme-bg p-6 space-y-2 rounded-2xl">
+          <div key={i} className="min-w-[75vw] md:min-w-0 snap-center bg-theme-bg p-6 space-y-2 rounded-2xl border border-theme-border md:border-none md:rounded-none flex-shrink-0">
             <p className="text-[10px] uppercase tracking-widest text-theme-muted">{kpi.label}</p>
             <p className={`text-2xl md:text-3xl font-heading font-black italic ${kpi.color}`}>{kpi.value}</p>
           </div>

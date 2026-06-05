@@ -415,7 +415,7 @@ export const HomePage = () => {
                   onChange={e => setQuery(e.target.value)}
                   onKeyDown={e => e.key === "Enter" && fetchEvents(query, 1)}
                   placeholder="Nome do evento ou titular..."
-                  className="w-full bg-theme-bg-muted border border-theme-border pl-12 pr-4 py-4 text-[11px] font-display font-black uppercase tracking-widest text-theme-text focus:bg-theme-bg-muted transition-all outline-none italic"
+                  className="w-full bg-theme-bg-muted border border-theme-border pl-12 pr-4 py-4 text-[11px] font-display font-black uppercase tracking-widest text-theme-text placeholder:text-theme-text placeholder:opacity-40 focus:bg-theme-bg-muted transition-all outline-none italic"
                 />
               </form>
 
@@ -424,7 +424,7 @@ export const HomePage = () => {
                 <select id="select-cidade-desktop" 
                   value={selectedCity}
                   onChange={e => { setSelectedCity(e.target.value); setPage(1); }}
-                  className="bg-theme-bg-muted border border-theme-border px-4 py-4 text-[9px] font-black uppercase tracking-widest text-theme-text/40 focus:text-theme-text outline-none cursor-pointer hover:bg-theme-bg-muted transition-colors italic appearance-none"
+                  className="bg-theme-bg-muted border border-theme-border px-4 py-4 text-[9px] font-black uppercase tracking-widest text-theme-text opacity-40 focus:opacity-100 outline-none cursor-pointer hover:bg-theme-bg-muted transition-colors italic appearance-none"
                 >
                   <option value="" className="bg-theme-bg text-theme-text">Todas as Cidades</option>
                   {availableCities.map(c => (
@@ -435,7 +435,7 @@ export const HomePage = () => {
                 <select id="select-categoria-desktop" 
                   value={selectedType}
                   onChange={e => { setSelectedType(e.target.value); setPage(1); }}
-                  className="bg-theme-bg-muted border border-theme-border px-4 py-4 text-[9px] font-black uppercase tracking-widest text-theme-text/40 focus:text-theme-text outline-none cursor-pointer hover:bg-theme-bg-muted transition-colors italic appearance-none"
+                  className="bg-theme-bg-muted border border-theme-border px-4 py-4 text-[9px] font-black uppercase tracking-widest text-theme-text opacity-40 focus:opacity-100 outline-none cursor-pointer hover:bg-theme-bg-muted transition-colors italic appearance-none"
                 >
                   <option value="" className="bg-theme-bg text-theme-text">Todas as Categorias</option>
                   <option value="ALBUM_FULL" className="bg-theme-bg text-theme-text">Álbum Completo</option>
@@ -447,7 +447,7 @@ export const HomePage = () => {
                 <select id="select-ordenacao-desktop" 
                   value={sortBy}
                   onChange={e => { setSortBy(e.target.value); setPage(1); }}
-                  className="bg-theme-bg-muted border border-theme-border px-4 py-4 text-[9px] font-black uppercase tracking-widest text-theme-text/40 focus:text-theme-text outline-none cursor-pointer hover:bg-theme-bg-muted transition-colors italic appearance-none"
+                  className="bg-theme-bg-muted border border-theme-border px-4 py-4 text-[9px] font-black uppercase tracking-widest text-theme-text opacity-40 focus:opacity-100 outline-none cursor-pointer hover:bg-theme-bg-muted transition-colors italic appearance-none"
                 >
                   <option value="">Data (Recentes)</option>
                   <option value="OLD" className="bg-theme-bg text-theme-text">Data (Antigos)</option>
@@ -484,7 +484,7 @@ export const HomePage = () => {
                       onChange={e => setQuery(e.target.value)}
                       onKeyDown={e => e.key === "Enter" && fetchEvents(query, 1)}
                       placeholder="Buscar evento..."
-                      className="w-full bg-theme-bg-muted border border-theme-border pl-11 pr-4 py-3.5 text-[10px] font-black uppercase tracking-widest text-theme-text focus:border-brand-tactical/50 transition-all outline-none italic rounded-full shadow-sm"
+                      className="w-full bg-theme-bg-muted border border-theme-border pl-11 pr-4 py-3.5 text-[10px] font-black uppercase tracking-widest text-theme-text placeholder:text-theme-text placeholder:opacity-40 focus:border-brand-tactical/50 transition-all outline-none italic rounded-full shadow-sm"
                     />
                   </form>
                 </div>

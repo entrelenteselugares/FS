@@ -91,7 +91,7 @@ export const BottomNav: React.FC = () => {
       <div className="md:hidden fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md bg-[var(--bg)]/80 backdrop-blur-xl border-t border-theme-border/10 z-[100] px-3 py-3 flex items-center justify-around pb-safe">
         <button 
           onClick={() => navigate("/", { replace: true })}
-          className={`flex flex-col items-center gap-1 transition-colors ${isActive("/") ? "text-emerald-500" : "text-[var(--text)]/40"}`}
+          className={`flex flex-col items-center gap-1 transition-all ${isActive("/") ? "text-emerald-500" : "text-theme-text opacity-40"}`}
         >
           <Home size={20} strokeWidth={1.5} />
           <span className="text-[7.5px] font-bold uppercase tracking-tight">Home</span>
@@ -110,7 +110,7 @@ export const BottomNav: React.FC = () => {
               document.getElementById("mobile-search-input")?.focus();
             }
           }}
-          className="flex flex-col items-center gap-1 text-[var(--text)]/40"
+          className="flex flex-col items-center gap-1 text-theme-text opacity-40 transition-all hover:opacity-100"
         >
           <Search size={20} strokeWidth={1.5} />
           <span className="text-[7.5px] font-bold uppercase tracking-tight">Buscar</span>
@@ -118,7 +118,7 @@ export const BottomNav: React.FC = () => {
 
         <button 
           onClick={() => navigate("/minha-conta?s=files", { replace: true })}
-          className={`flex flex-col items-center gap-1 transition-colors ${location.pathname === "/minha-conta" && (s === "files" || s === "fotos" || s === "wallet" || s === "pedidos") ? "text-emerald-500" : "text-[var(--text)]/40"}`}
+          className={`flex flex-col items-center gap-1 transition-all ${location.pathname === "/minha-conta" && (s === "files" || s === "fotos" || s === "wallet" || s === "pedidos") ? "text-emerald-500" : "text-theme-text opacity-40"}`}
         >
           <ShoppingBag size={20} strokeWidth={1.5} />
           <span className="text-[7.5px] font-bold uppercase tracking-tight">Compras</span>
@@ -126,7 +126,7 @@ export const BottomNav: React.FC = () => {
 
         <button 
           onClick={() => navigate("/meus-albuns", { replace: true })}
-          className={`flex flex-col items-center gap-1 transition-colors ${location.pathname.startsWith("/meus-albuns") ? "text-emerald-500" : "text-[var(--text)]/40"}`}
+          className={`flex flex-col items-center gap-1 transition-all ${location.pathname.startsWith("/meus-albuns") ? "text-emerald-500" : "text-theme-text opacity-40"}`}
         >
           <Image size={20} strokeWidth={1.5} />
           <span className="text-[7.5px] font-bold uppercase tracking-tight">Meus Álbuns</span>
@@ -134,14 +134,14 @@ export const BottomNav: React.FC = () => {
 
         <button 
           onClick={() => setDrawerOpen(true)}
-          className={`flex flex-col items-center gap-1 transition-colors ${
+          className={`flex flex-col items-center gap-1 transition-all ${
             drawerOpen ||
             location.pathname.startsWith("/profissional") || 
             location.pathname.startsWith("/unidade-fixa") || 
             location.pathname.startsWith("/admin") || 
             (location.pathname === "/minha-conta" && s !== "wallet" && s !== "pedidos")
               ? "text-emerald-500" 
-              : "text-[var(--text)]/40"
+              : "text-theme-text opacity-40"
           }`}
         >
           <Menu size={20} strokeWidth={1.5} />

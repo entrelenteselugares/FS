@@ -1,0 +1,41 @@
+{
+  "title": "Foto Segundo | Portal LGPD | Foto Segundo",
+  "headings": [
+    "PORTAL LGPD",
+    "1.\nNOSSOS PRINCÍPIOS (ART. 6º)",
+    "FINALIDADE",
+    "NECESSIDADE",
+    "LIVRE ACESSO",
+    "SEGURANÇA",
+    "2.\nEXERÇA SEUS DIREITOS (ART. 18)",
+    "3.\nENCARREGADO DE DADOS (DPO)",
+    "4.\nDOCUMENTOS COMPLEMENTARES"
+  ],
+  "buttons": [
+    "Home",
+    "Buscar",
+    "Compras",
+    "Meus Álbuns",
+    "Opções",
+    "Entrar",
+    "Vitrine de Eventos"
+  ],
+  "links": [
+    {
+      "text": "VOLTAR PARA O INÍCIO",
+      "href": "/"
+    },
+    {
+      "text": "FALAR COM O DPO",
+      "href": "mailto:dpo@fotosegundo.com.br"
+    },
+    {
+      "text": "Política de Privacidade Completa\n\nDetalhes sobre cookies e retenção de dados.",
+      "href": "/privacidade"
+    },
+    {
+      "text": "Termos de Uso\n\nRegras de uso da plataforma Foto Segundo.",
+      "href": "/termos"
+    }
+  ]
+}

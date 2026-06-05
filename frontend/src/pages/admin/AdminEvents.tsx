@@ -607,36 +607,36 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
           ) : events.length === 0 ? (
             <div className="py-20 text-center text-[10px] text-theme-muted uppercase tracking-[0.3em]">Nenhum registro encontrado.</div>
           ) : events.map((event) => (
-            <div key={event.id} className="event-card-mobile">
-              <div className="flex justify-between items-start border-b border-theme-border pb-3">
-                <div>
-                  <div className="flex items-center gap-2 mb-1">
-                    <EventStatusDot eventDate={event.date} active={event.active} size="w-2 h-2" showLabel />
-                  </div>
-                  <div className="text-[13px] font-bold text-theme-text uppercase tracking-tight">{event.title}</div>
-                  <div className="text-[9px] text-theme-muted font-bold uppercase">{event.city || (event.location?.startsWith("CEP:") ? null : event.location) || "—"}</div>
+            <div key={event.id} className="flex flex-col bg-theme-bg border border-theme-border rounded-2xl overflow-hidden mb-4 shadow-sm active:scale-[0.98] transition-transform cursor-pointer" onClick={() => handleEditOpen(event)}>
+              <div className="relative h-32 bg-theme-bg-muted flex items-center justify-center border-b border-theme-border">
+                {event.coverPhotoUrl ? (
+                  <img src={event.coverPhotoUrl} alt={event.title} className="w-full h-full object-cover" />
+                ) : (
+                  <Image size={32} className="text-theme-muted opacity-20" />
+                )}
+                <div className="absolute top-3 right-3 bg-black/60 backdrop-blur-md px-2 py-1 rounded-full border border-white/10 flex items-center gap-1.5">
+                  <EventStatusDot eventDate={event.date} active={event.active} size="w-1.5 h-1.5" showLabel />
                 </div>
-                <div className="text-[10px] font-bold text-theme-text/80">{new Date(event.date).toLocaleDateString("pt-BR")}</div>
               </div>
-              <div className="flex justify-between items-center pt-2">
-                <div className="flex gap-8">
+              <div className="p-4 flex flex-col gap-3">
+                <div>
+                  <h3 className="text-sm font-black text-theme-text uppercase tracking-tight">{event.title}</h3>
+                  <p className="text-[10px] text-theme-muted font-bold uppercase mt-0.5">{event.city || (event.location?.startsWith("CEP:") ? null : event.location) || "—"}</p>
+                </div>
+                <div className="flex justify-between items-center bg-theme-bg-muted/50 p-3 rounded-xl border border-theme-border/50">
                   <div>
-                    <span className="text-[8px] font-black text-theme-muted uppercase block mb-1">Vendas</span>
+                    <span className="text-[8px] font-black text-theme-muted uppercase block mb-0.5">Vendas</span>
                     <span className="text-sm font-black text-brand-tactical">{event._count?.pedidos || 0}</span>
                   </div>
-                  <div>
-                    <span className="text-[8px] font-black text-theme-muted uppercase block mb-1">Produção</span>
-                    <div className="flex gap-2">
-                      <div className={`w-2 h-2 rounded-full ${event.coverPhotoUrl ? 'bg-brand-tactical' : 'bg-theme-border'}`} />
-                      <div className={`w-2 h-2 rounded-full ${(event.lightroomUrl || event.driveUrl) ? 'bg-brand-tactical' : 'bg-theme-border'}`} />
-                    </div>
+                  <div className="text-right">
+                    <span className="text-[8px] font-black text-theme-muted uppercase block mb-0.5">Data</span>
+                    <span className="text-[11px] font-bold text-theme-text/80">{new Date(event.date).toLocaleDateString("pt-BR")}</span>
                   </div>
                 </div>
-                <div className="flex gap-2">
-                  <button onClick={() => { setQrModalEvent(event); setCopied(false); }} className="p-3 border border-theme-border text-theme-muted"><QrCode size={16} /></button>
-                  <button onClick={() => setPhygitalQueueEvent(event)} className="p-3 border border-theme-border text-brand-tactical"><Radar size={16} /></button>
-                  <button onClick={() => handleEditOpen(event)} className="px-5 py-3 border border-theme-border text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest text-theme-text">Editar</button>
-                  <button onClick={() => setConfirmDelete(event)} className="p-3 border border-theme-border text-red-500/40"><Trash2 size={16} /></button>
+                <div className="flex gap-2 pt-2 border-t border-theme-border/50" onClick={(e) => e.stopPropagation()}>
+                  <button onClick={() => { setQrModalEvent(event); setCopied(false); }} className="flex-1 flex items-center justify-center p-3 border border-theme-border text-theme-muted rounded-xl hover:bg-theme-bg-muted"><QrCode size={16} /></button>
+                  <button onClick={() => setPhygitalQueueEvent(event)} className="flex-1 flex items-center justify-center p-3 border border-theme-border text-brand-tactical rounded-xl hover:bg-brand-tactical/10"><Radar size={16} /></button>
+                  <button onClick={() => setConfirmDelete(event)} className="flex-1 flex items-center justify-center p-3 border border-theme-border text-red-500/60 rounded-xl hover:bg-red-500/10"><Trash2 size={16} /></button>
                 </div>
               </div>
             </div>

@@ -1,0 +1,37 @@
+{
+  "title": "Foto Segundo | Política de Privacidade | Foto Segundo",
+  "headings": [
+    "POLÍTICA DE PRIVACIDADE",
+    "1.\nCONTROLADOR DOS DADOS",
+    "2.\nDADOS QUE COLETAMOS",
+    "FORNECIDOS POR VOCÊ",
+    "COLETADOS AUTOMATICAMENTE",
+    "3.\nCOMO USAMOS SEUS DADOS",
+    "4.\nARMAZENAMENTO E RETENÇÃO",
+    "5.\nCOMPARTILHAMENTO DE DADOS",
+    "6.\nSEUS DIREITOS (LGPD)",
+    "7.\nCOOKIES",
+    "8.\nSEGURANÇA",
+    "9.\nMENORES DE IDADE",
+    "10.\nALTERAÇÕES"
+  ],
+  "buttons": [
+    "Home",
+    "Buscar",
+    "Compras",
+    "Meus Álbuns",
+    "Opções",
+    "Entrar",
+    "Vitrine de Eventos"
+  ],
+  "links": [
+    {
+      "text": "VOLTAR PARA O INÍCIO",
+      "href": "/"
+    },
+    {
+      "text": "privacidade@fotosegundo.com.br",
+      "href": "mailto:privacidade@fotosegundo.com.br"
+    }
+  ]
+}
