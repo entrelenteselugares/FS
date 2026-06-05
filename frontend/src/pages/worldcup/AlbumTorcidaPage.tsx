@@ -590,7 +590,7 @@ export const AlbumTorcidaPage = () => {
               ].map((slot) => {
                 const photoKey = `${nostalgiaYear}_${slot.id}`;
                 const photo = nostalgiaPhotos[photoKey];
-                const fileInputRef = useRef<HTMLInputElement>(null);
+                const inputId = `file-input-${slot.id}`;
 
                 return (
                   <div
@@ -604,8 +604,8 @@ export const AlbumTorcidaPage = () => {
                     }}
                   >
                     <input
+                      id={inputId}
                       type="file"
-                      ref={fileInputRef}
                       onChange={(e) => {
                         const file = e.target.files?.[0];
                         if (file) handlePhotoUpload(slot.id, file);
@@ -622,7 +622,7 @@ export const AlbumTorcidaPage = () => {
                           style={{ width: "100%", height: 130, objectFit: "cover", borderRadius: 2 }}
                         />
                         <button
-                          onClick={() => fileInputRef.current?.click()}
+                          onClick={() => document.getElementById(inputId)?.click()}
                           style={{
                             background: "rgba(16,185,129,0.1)", color: "#10b981", border: "1px solid rgba(16,185,129,0.3)",
                             padding: "4px 8px", fontSize: 9, fontWeight: 900, cursor: "pointer"
@@ -637,7 +637,7 @@ export const AlbumTorcidaPage = () => {
                         <h4 style={{ fontSize: 12, fontWeight: 900, color: "white", margin: "0 0 4px" }}>{slot.label}</h4>
                         <p style={{ fontSize: 9, color: "#6b7280", margin: "0 0 16px", maxWidth: 130 }}>{slot.desc}</p>
                         <button
-                          onClick={() => fileInputRef.current?.click()}
+                          onClick={() => document.getElementById(inputId)?.click()}
                           style={{
                             background: "rgba(16,185,129,0.15)", color: "#10b981", border: "1px solid rgba(16,185,129,0.3)",
                             padding: "6px 12px", fontSize: 9, fontWeight: 900, textTransform: "uppercase",
