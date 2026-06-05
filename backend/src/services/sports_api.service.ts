@@ -23,7 +23,7 @@ interface BracketMatch {
   home: string;
   away: string;
   score: string;
-  status: "FINISHED" | "LIVE" | "SCHEDULED";
+  status: "FINISHED" | "LIVE" | "HALF_TIME" | "SCHEDULED";
 }
 
 interface BracketData {

@@ -4,9 +4,9 @@ import prisma from "../lib/prisma";
 import { NotificationService } from "../services/notification.service";
 import bcrypt from "bcryptjs";
 import { APP_URL } from "../lib/config";
-import { AcceptanceStatus } from "@prisma/client";
 import axios from "axios";
-import { ZipArchive } from "archiver";
+import { AcceptanceStatus } from "@prisma/client";
+import archiver from "archiver";
 
 export class EventController {
   /**
@@ -1208,7 +1208,7 @@ export class EventController {
          return res.status(400).json({ error: "Evento não possui fotos." });
       }
 
-      const archive = new ZipArchive({ zlib: { level: 9 } });
+      const archive = archiver("zip", { zlib: { level: 9 } });
       res.attachment(`${(event.slug || event.id).replace(/[^a-z0-9]/gi, '_').toLowerCase()}-fotos.zip`);
       archive.pipe(res);
 

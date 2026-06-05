@@ -30,18 +30,18 @@ export async function getMatchFolha(req: Request, res: Response) {
     const user = (req as any).user;
     if (!user) return res.status(401).json({ error: "Unauthorized" });
     
-    const matchId = req.params.matchId;
+    const matchId = req.params.matchId as string;
 
     let folha = await prisma.worldCupFolha.findUnique({
-      where: { userId_matchId: { userId: user.id, matchId } },
+      where: { userId_matchId: { userId: user.userId, matchId } },
       include: { slots: true }
-    });
+    }) as any;
 
     if (!folha) {
       // Create new folha with empty slots
       folha = await prisma.worldCupFolha.create({
         data: {
-          userId: user.id,
+          userId: user.userId,
           matchId,
           slots: {
             create: Array.from({ length: 12 }).map((_, i) => ({
@@ -69,17 +69,17 @@ export async function fillSlot(req: Request, res: Response) {
     const user = (req as any).user;
     if (!user) return res.status(401).json({ error: "Unauthorized" });
 
-    const matchId = req.params.matchId;
+    const matchId = req.params.matchId as string;
     const { slotIndex, imageUrl, metadata } = req.body;
 
     const folha = await prisma.worldCupFolha.findUnique({
-      where: { userId_matchId: { userId: user.id, matchId } },
+      where: { userId_matchId: { userId: user.userId, matchId } },
       include: { slots: true }
-    });
+    }) as any;
 
     if (!folha) return res.status(404).json({ error: "Folha not found" });
 
-    const slot = folha.slots.find(s => s.slotIndex === slotIndex);
+    const slot = folha.slots.find((s: any) => s.slotIndex === slotIndex);
     if (!slot) return res.status(404).json({ error: "Slot not found" });
 
     // Update the slot
@@ -92,7 +92,7 @@ export async function fillSlot(req: Request, res: Response) {
     });
 
     // Run Gamification Engine
-    const badgesAwarded = await gamificationService.processBadges(user.id, matchId);
+    const badgesAwarded = await gamificationService.processBadges(user.userId, matchId);
 
     return res.json({ slot: updatedSlot, badgesAwarded });
   } catch (error) {
@@ -110,7 +110,7 @@ export async function getBadges(req: Request, res: Response) {
     if (!user) return res.status(401).json({ error: "Unauthorized" });
 
     const badges = await prisma.worldCupBadge.findMany({
-      where: { userId: user.id },
+      where: { userId: user.userId },
       orderBy: { createdAt: "desc" }
     });
 
