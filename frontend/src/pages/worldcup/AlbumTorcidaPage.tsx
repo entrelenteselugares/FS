@@ -1,8 +1,8 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { Link } from "react-router-dom";
 import { API as api } from "../../lib/api";
 import { T } from "../../lib/theme";
-import { Trophy, Camera, Clock, ChevronRight, Star, Zap, Calendar } from "lucide-react";
+import { Trophy, Camera, Clock, ChevronRight, Star, Zap, Calendar, Share2, Users, Upload, Heart } from "lucide-react";
 
 // ─── Copa 2026 Data ───────────────────────────────────────────────────────────
 const GROUPS: Array<{
@@ -163,13 +163,57 @@ function MatchCard({ f, highlight = false, now }: { f: typeof FIXTURES[0]; highl
 }
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
-type Tab = "jogos" | "grupos" | "album";
+type Tab = "jogos" | "grupos" | "album" | "nostalgia";
 
 export const AlbumTorcidaPage = () => {
   const [tab, setTab] = useState<Tab>("jogos");
   const [matches, setMatches] = useState<{ id: string; group: string; teamA: string; teamB: string; matchDate: string }[]>([]);
   const countdown = useCountdown(BRASIL_GAME.utc);
   const [now] = useState(() => Date.now());
+
+  // Nostalgia state
+  const [nostalgiaYear, setNostalgiaYear] = useState<number>(2022);
+  const [nostalgiaPhotos, setNostalgiaPhotos] = useState<Record<string, string>>(() => {
+    try {
+      const saved = localStorage.getItem("worldcup_nostalgia");
+      return saved ? JSON.parse(saved) : {};
+    } catch {
+      return {};
+    }
+  });
+  const [communityLikes, setCommunityLikes] = useState<Record<string, number>>({
+    Lucas: 24,
+    Mateus: 18,
+    Ana: 35,
+    Thiago: 12,
+  });
+  const [showInviteModal, setShowInviteModal] = useState(false);
+  const [copied, setCopied] = useState(false);
+
+  const handlePhotoUpload = (slotId: string, file: File) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const base64 = reader.result as string;
+      const key = `${nostalgiaYear}_${slotId}`;
+      const updated = { ...nostalgiaPhotos, [key]: base64 };
+      setNostalgiaPhotos(updated);
+      localStorage.setItem("worldcup_nostalgia", JSON.stringify(updated));
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleLike = (user: string) => {
+    setCommunityLikes(prev => ({
+      ...prev,
+      [user]: prev[user] + 1
+    }));
+  };
+
+  const copyInviteLink = () => {
+    navigator.clipboard.writeText(`http://localhost:3001/album-torcida/nostalgia?user=Renata&copa=${nostalgiaYear}`);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
 
   useEffect(() => {
     api.get("/worldcup/matches")
@@ -304,6 +348,7 @@ export const AlbumTorcidaPage = () => {
             { id: "jogos" as Tab, icon: <Clock size={12} />, label: "Jogos" },
             { id: "grupos" as Tab, icon: <Star size={12} />, label: "Grupos" },
             { id: "album" as Tab, icon: <Camera size={12} />, label: "Meu Álbum" },
+            { id: "nostalgia" as Tab, icon: <Trophy size={12} />, label: "Nostalgia" },
           ].map((t) => (
             <button
               key={t.id}
@@ -476,6 +521,249 @@ export const AlbumTorcidaPage = () => {
                     </div>
                   </Link>
                 ))}
+              </div>
+          </div>
+        )}
+
+        {/* ── TAB: NOSTALGIA ────────────────────────────────────────────────── */}
+        {tab === "nostalgia" && (
+          <div>
+            {/* Promo / Invite Banner */}
+            <div
+              style={{
+                background: "linear-gradient(135deg, rgba(6,79,58,0.4), rgba(5,46,32,0.6))",
+                border: "1px solid rgba(16,185,129,0.3)",
+                padding: "24px", borderRadius: 4, marginBottom: 32,
+                display: "flex", flexDirection: "column", gap: 16
+              }}
+            >
+              <div>
+                <h3 style={{ fontSize: 18, fontWeight: 900, color: "white", fontStyle: "italic", textTransform: "uppercase", display: "flex", alignItems: "center", gap: 8 }}>
+                  <Trophy size={18} color="#fbbf24" /> Álbum de Memórias Nostálgicas
+                </h3>
+                <p style={{ fontSize: 13, color: "#9ca3af", marginTop: 6, lineHeight: 1.6 }}>
+                  Reviva a emoção das Copas passadas! Escolha o ano do mundial, monte sua folha com fotos dos seus momentos favoritos (churrasco, rua pintada, família reunida) e convide seus amigos para completar ou reagir.
+                </p>
+              </div>
+              <div>
+                <button
+                  id="btn-convidar-amigos"
+                  onClick={() => setShowInviteModal(true)}
+                  style={{
+                    background: "#10b981", color: "black", border: "none", padding: "12px 20px",
+                    fontSize: 11, fontWeight: 900, textTransform: "uppercase", letterSpacing: "0.1em",
+                    cursor: "pointer", display: "flex", alignItems: "center", gap: 8, fontStyle: "italic"
+                  }}
+                >
+                  <Share2 size={13} /> Convidar Amigos para o Álbum
+                </button>
+              </div>
+            </div>
+
+            {/* Year selector pills */}
+            <div style={{ display: "flex", gap: 8, marginBottom: 24, overflowX: "auto", paddingBottom: 8 }}>
+              {[2022, 2018, 2014, 2010].map((yr) => (
+                <button
+                  key={yr}
+                  onClick={() => setNostalgiaYear(yr)}
+                  style={{
+                    background: nostalgiaYear === yr ? "#10b981" : "rgba(255,255,255,0.03)",
+                    color: nostalgiaYear === yr ? "black" : "#9ca3af",
+                    border: nostalgiaYear === yr ? "1px solid #10b981" : "1px solid rgba(255,255,255,0.08)",
+                    padding: "8px 16px", borderRadius: 20, fontSize: 11, fontWeight: 900,
+                    cursor: "pointer", transition: "all 0.2s"
+                  }}
+                >
+                  Copa {yr === 2022 ? "Catar 2022" : yr === 2018 ? "Rússia 2018" : yr === 2014 ? "Brasil 2014" : "África 2010"}
+                </button>
+              ))}
+            </div>
+
+            {/* Nostalgia slots board */}
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(170px, 1fr))", gap: 16, marginBottom: 40 }}>
+              {[
+                { id: "churrasco", label: "Churrasco da Galera", desc: "Reunião de família/amigos" },
+                { id: "look", label: "Meu Look / Camisa", desc: "Manto sagrado no dia do jogo" },
+                { id: "rua", label: "Rua Pintada", desc: "Decoração da vizinhança" },
+                { id: "gol", label: "Grito de Gol", desc: "A festa na hora do gol" },
+              ].map((slot) => {
+                const photoKey = `${nostalgiaYear}_${slot.id}`;
+                const photo = nostalgiaPhotos[photoKey];
+                const fileInputRef = useRef<HTMLInputElement>(null);
+
+                return (
+                  <div
+                    key={slot.id}
+                    style={{
+                      background: "rgba(255,255,255,0.02)",
+                      border: "2px dashed rgba(16,185,129,0.2)",
+                      padding: "16px", textAlign: "center", borderRadius: 4,
+                      position: "relative", minHeight: 200, display: "flex", flexDirection: "column",
+                      justifyContent: "center", alignItems: "center"
+                    }}
+                  >
+                    <input
+                      type="file"
+                      ref={fileInputRef}
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) handlePhotoUpload(slot.id, file);
+                      }}
+                      accept="image/*"
+                      style={{ display: "none" }}
+                    />
+
+                    {photo ? (
+                      <div style={{ width: "100%", height: "100%", display: "flex", flexDirection: "column", gap: 10 }}>
+                        <img
+                          src={photo}
+                          alt={slot.label}
+                          style={{ width: "100%", height: 130, objectFit: "cover", borderRadius: 2 }}
+                        />
+                        <button
+                          onClick={() => fileInputRef.current?.click()}
+                          style={{
+                            background: "rgba(16,185,129,0.1)", color: "#10b981", border: "1px solid rgba(16,185,129,0.3)",
+                            padding: "4px 8px", fontSize: 9, fontWeight: 900, cursor: "pointer"
+                          }}
+                        >
+                          Alterar Foto
+                        </button>
+                      </div>
+                    ) : (
+                      <>
+                        <Upload size={24} color="#10b981" style={{ opacity: 0.5, marginBottom: 12 }} />
+                        <h4 style={{ fontSize: 12, fontWeight: 900, color: "white", margin: "0 0 4px" }}>{slot.label}</h4>
+                        <p style={{ fontSize: 9, color: "#6b7280", margin: "0 0 16px", maxWidth: 130 }}>{slot.desc}</p>
+                        <button
+                          onClick={() => fileInputRef.current?.click()}
+                          style={{
+                            background: "rgba(16,185,129,0.15)", color: "#10b981", border: "1px solid rgba(16,185,129,0.3)",
+                            padding: "6px 12px", fontSize: 9, fontWeight: 900, textTransform: "uppercase",
+                            cursor: "pointer"
+                          }}
+                        >
+                          Colar Foto
+                        </button>
+                      </>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Community Feed / Mural */}
+            <div style={{ marginTop: 48, borderTop: "1px solid rgba(255,255,255,0.06)", paddingTop: 32 }}>
+              <h3 style={{ fontSize: 14, fontWeight: 900, color: "white", fontStyle: "italic", textTransform: "uppercase", marginBottom: 20, display: "flex", alignItems: "center", gap: 8 }}>
+                <Users size={16} color="#10b981" /> Mural Nostálgico da Galera
+              </h3>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))", gap: 16 }}>
+                {[
+                  { name: "Lucas", year: 2014, tag: "Rua Pintada", img: "https://images.unsplash.com/photo-1508098682722-e99c43a406b2?auto=format&fit=crop&q=80&w=600", desc: "Nossa rua pintada lá em 2014, inesquecível! 🇧🇷✨" },
+                  { name: "Mateus", year: 2018, tag: "Look de Jogo", img: "https://images.unsplash.com/photo-1579952362864-3b56c4749221?auto=format&fit=crop&q=80&w=600", desc: "No bar torcendo com a camisa reserva oficial! Que dia!" },
+                  { name: "Ana", year: 2022, tag: "Churrasco", img: "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&q=80&w=600", desc: "A galera reunida no primeiro jogo contra a Sérvia ⚽" },
+                  { name: "Thiago", year: 2014, tag: "Grito de Gol", img: "https://images.unsplash.com/photo-1540039155732-d6749b9325f0?auto=format&fit=crop&q=80&w=600", desc: "O grito de gol na Copa do Brasil! Energia máxima!" },
+                ].map((post) => (
+                  <div
+                    key={post.name}
+                    style={{
+                      background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.05)",
+                      padding: "16px", borderRadius: 4, display: "flex", flexDirection: "column", gap: 12
+                    }}
+                  >
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                      <div>
+                        <strong style={{ fontSize: 12, color: "white" }}>{post.name}</strong>
+                        <span style={{ fontSize: 9, color: "#6b7280", marginLeft: 6 }}>Copa {post.year}</span>
+                      </div>
+                      <span style={{ fontSize: 8, background: "rgba(16,185,129,0.1)", color: "#10b981", padding: "2px 6px", fontWeight: 900, textTransform: "uppercase" }}>
+                        {post.tag}
+                      </span>
+                    </div>
+                    <img
+                      src={post.img}
+                      alt={post.desc}
+                      style={{ width: "100%", height: 140, objectFit: "cover", borderRadius: 2 }}
+                    />
+                    <p style={{ fontSize: 11, color: "#9ca3af", margin: 0, lineHeight: 1.5 }}>{post.desc}</p>
+                    <div style={{ display: "flex", alignItems: "center", marginTop: 4 }}>
+                      <button
+                        onClick={() => handleLike(post.name)}
+                        style={{
+                          background: "none", border: "none", cursor: "pointer", display: "flex",
+                          alignItems: "center", gap: 6, color: "#ef4444", padding: 0
+                        }}
+                      >
+                        <Heart size={14} fill="#ef4444" />
+                        <span style={{ fontSize: 11, fontWeight: 700, color: "#9ca3af" }}>{communityLikes[post.name]}</span>
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Invite Modal */}
+            {showInviteModal && (
+              <div
+                style={{
+                  position: "fixed", inset: 0, zIndex: 100, display: "flex",
+                  alignItems: "center", justifyContent: "center", background: "rgba(0,0,0,0.8)",
+                  padding: 16
+                }}
+              >
+                <div
+                  style={{
+                    background: "#050e08", border: "1px solid rgba(16,185,129,0.3)",
+                    padding: "32px", maxWidth: 450, width: "100%", position: "relative"
+                  }}
+                >
+                  <h3 style={{ fontSize: 16, fontWeight: 900, color: "white", fontStyle: "italic", textTransform: "uppercase", marginBottom: 12 }}>
+                    📢 Compartilhar Meu Álbum Nostalgia
+                  </h3>
+                  <p style={{ fontSize: 12, color: "#9ca3af", lineHeight: 1.6, marginBottom: 20 }}>
+                    Envie o link para amigos verem suas figurinhas nostálgicas e colarem as fotos deles também!
+                  </p>
+                  <div style={{ display: "flex", gap: 8, marginBottom: 20 }}>
+                    <input
+                      readOnly
+                      value={`http://localhost:3001/album-torcida/nostalgia?user=Renata&copa=${nostalgiaYear}`}
+                      style={{
+                        flex: 1, background: "rgba(0,0,0,0.3)", border: "1px solid rgba(16,185,129,0.2)",
+                        padding: "10px 12px", fontSize: 10, color: "#10b981", outline: "none"
+                      }}
+                    />
+                    <button
+                      onClick={copyInviteLink}
+                      style={{
+                        background: "#10b981", color: "black", border: "none", padding: "10px 16px",
+                        fontSize: 10, fontWeight: 900, cursor: "pointer"
+                      }}
+                    >
+                      {copied ? "Copiado!" : "Copiar"}
+                    </button>
+                  </div>
+                  <div style={{ display: "flex", justifyContent: "flex-end", gap: 12 }}>
+                    <button
+                      onClick={() => window.open(`https://api.whatsapp.com/send?text=Confira meu álbum nostálgico das Copas passadas e adicione suas fotos também! http://localhost:3001/album-torcida/nostalgia?user=Renata%26copa=${nostalgiaYear}`, "_blank")}
+                      style={{
+                        background: "rgba(16,185,129,0.15)", color: "#10b981", border: "1px solid rgba(16,185,129,0.3)",
+                        padding: "10px 16px", fontSize: 10, fontWeight: 900, cursor: "pointer", textTransform: "uppercase"
+                      }}
+                    >
+                      Enviar WhatsApp
+                    </button>
+                    <button
+                      onClick={() => setShowInviteModal(false)}
+                      style={{
+                        background: "transparent", color: "#6b7280", border: "none",
+                        padding: "10px 16px", fontSize: 10, fontWeight: 900, cursor: "pointer"
+                      }}
+                    >
+                      Fechar
+                    </button>
+                  </div>
+                </div>
               </div>
             )}
           </div>
