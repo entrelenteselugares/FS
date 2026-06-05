@@ -299,10 +299,10 @@ export function PrintStoreModal({ eventId, eventTitle, medias = [], unlockedMedi
 
         <motion.div 
           initial={{ y: 50, scale: 0.95 }} animate={{ y: 0, scale: 1 }} exit={{ y: 50, scale: 0.95 }}
-          className="relative w-full h-[100dvh] lg:max-w-5xl lg:h-[90vh] bg-theme-bg lg:border border-theme-border flex flex-col lg:flex-row overflow-hidden lg:shadow-[0_50px_100px_-20px_rgba(0,0,0,0.8)]"
+          className="relative w-full h-[100dvh] lg:max-w-6xl lg:h-[92vh] bg-theme-bg lg:border border-theme-border flex flex-col lg:flex-row overflow-hidden lg:shadow-[0_50px_100px_-20px_rgba(0,0,0,0.9)] lg:rounded-sm"
         >
-          {/* Lado Esquerdo: Navegação/Status (Apenas Mobile/Tablet fixo ou Desktop lateral) */}
-          <div className="w-full lg:w-[320px] bg-theme-bg-muted lg:border-r border-theme-border flex flex-col shrink-0">
+          {/* Lado Esquerdo: Navegação/Status */}
+          <div className="w-full lg:w-[280px] xl:w-[320px] bg-theme-bg-muted lg:border-r border-theme-border flex flex-col shrink-0">
              <div className="p-4 lg:p-8 border-b border-theme-border flex items-center justify-between lg:items-start lg:flex-col lg:justify-start">
                 <div>
                   <p className="text-[10px] font-black text-brand-tactical uppercase tracking-[0.5em] italic lg:mb-3">Eternize no Papel</p>
@@ -355,7 +355,7 @@ export function PrintStoreModal({ eventId, eventTitle, medias = [], unlockedMedi
 
           {/* Lado Direito: Conteúdo Dinâmico */}
           <div className="flex-1 flex flex-col bg-theme-bg overflow-hidden relative">
-             <div className="flex-1 overflow-y-auto p-4 lg:p-14 scrollbar-hide">
+             <div className="flex-1 overflow-y-auto p-4 md:p-8 lg:p-10 xl:p-14 scrollbar-hide">
                 {error && (
                   <div className="mb-6 lg:mb-10 p-6 bg-red-500/10 border border-red-500 text-red-500 text-[10px] font-black uppercase tracking-widest italic flex items-center justify-between">
                     <span>{error}</span>
@@ -382,7 +382,7 @@ export function PrintStoreModal({ eventId, eventTitle, medias = [], unlockedMedi
                          <p className="text-[10px] font-black uppercase tracking-widest italic">Sincronizando Catálogo...</p>
                       </div>
                     ) : (
-                      <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-8">
+                      <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 xl:gap-8">
                         {filteredProducts.map(product => (
                           <div 
                             key={product.id}
@@ -401,17 +401,17 @@ export function PrintStoreModal({ eventId, eventTitle, medias = [], unlockedMedi
                                 </div>
                              )}
 
-                             <div className="p-3 md:p-8 relative z-10 flex-1 flex flex-col">
-                               <p className="text-[8px] md:text-[10px] font-black text-brand-tactical uppercase tracking-[0.2em] md:tracking-[0.3em] mb-2 md:mb-4 italic line-clamp-1">{CATEGORY_LABELS[product.category] || product.category}</p>
-                               <h3 className="text-sm md:text-2xl font-black text-theme-text uppercase tracking-tight italic mb-2 md:mb-4 group-hover:text-brand-tactical transition-colors line-clamp-2 leading-tight" style={{ paddingRight: '0.1em' }}>{product.name}</h3>
-                               <p className="text-[9px] md:text-xs text-theme-text-muted leading-relaxed mb-4 md:mb-8 flex-1 italic line-clamp-2 md:line-clamp-none">{product.description || "Acabamento premium com durabilidade vitalícia."}</p>
-                               <div className="flex items-end justify-between mt-auto">
+                             <div className="p-4 md:p-6 lg:p-8 relative z-10 flex-1 flex flex-col gap-2">
+                               <p className="text-[9px] md:text-[10px] font-black text-brand-tactical uppercase tracking-[0.2em] md:tracking-[0.3em] italic line-clamp-1">{CATEGORY_LABELS[product.category] || product.category}</p>
+                               <h3 className="text-sm md:text-xl lg:text-2xl font-black text-theme-text uppercase tracking-tight italic group-hover:text-brand-tactical transition-colors line-clamp-2 leading-tight" style={{ paddingRight: '0.1em' }}>{product.name}</h3>
+                               <p className="text-[9px] md:text-xs text-theme-text-muted leading-relaxed flex-1 italic line-clamp-3">{product.description || "Acabamento premium com durabilidade vitalícia."}</p>
+                               <div className="flex items-end justify-between pt-2">
                                   <div className="flex items-baseline gap-[2px] md:gap-1">
-                                     <span className="text-[8px] md:text-xs text-theme-text-muted font-black italic uppercase">R$</span>
-                                     <span className="text-lg md:text-3xl font-black text-theme-text italic tracking-tighter">{product.finalPrice.toFixed(0)}</span>
-                                     <span className="text-[8px] md:text-xs text-theme-text-muted font-black italic uppercase">,00</span>
+                                     <span className="text-[9px] md:text-xs text-theme-text-muted font-black italic uppercase">R$</span>
+                                     <span className="text-xl md:text-3xl font-black text-theme-text italic tracking-tighter">{product.finalPrice.toFixed(0)}</span>
+                                     <span className="text-[9px] md:text-xs text-theme-text-muted font-black italic uppercase">,00</span>
                                   </div>
-                                  <button className="p-2 md:p-4 bg-brand-tactical/10 border border-brand-tactical/30 text-brand-tactical group-hover:bg-brand-tactical group-hover:text-black transition-all">
+                                  <button className="p-2.5 md:p-4 bg-brand-tactical/10 border border-brand-tactical/30 text-brand-tactical group-hover:bg-brand-tactical group-hover:text-black transition-all">
                                      <Plus size={16} className="md:w-5 md:h-5" />
                                   </button>
                                </div>
