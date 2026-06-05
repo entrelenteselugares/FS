@@ -229,12 +229,14 @@ export function PrintStoreModal({ eventId, eventTitle, medias = [], unlockedMedi
   const categories = [...new Set(products.map(p => p.category))];
   const filteredProducts = products.filter(p => !activeCategory || p.category === activeCategory);
 
+  const maxAllowedPhotos = selectedProduct?.maxPhotos ? selectedProduct.maxPhotos * quantity : null;
+
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
-    if (selectedProduct?.maxPhotos) {
+    if (maxAllowedPhotos) {
       const currentTotal = selectedFiles.length + selectedAlbumPhotos.length;
-      if (currentTotal + files.length > selectedProduct.maxPhotos) {
-        setError(`Limite de fotos atingido. Este produto permite no máximo ${selectedProduct.maxPhotos} fotos.`);
+      if (currentTotal + files.length > maxAllowedPhotos) {
+        setError(`Limite de fotos atingido. Você pode enviar até ${maxAllowedPhotos} fotos para esta quantidade.`);
         return;
       }
     }
@@ -254,10 +256,10 @@ export function PrintStoreModal({ eventId, eventTitle, medias = [], unlockedMedi
 
   const toggleAlbumPhoto = (url: string) => {
     const isSelected = selectedAlbumPhotos.includes(url);
-    if (!isSelected && selectedProduct?.maxPhotos) {
+    if (!isSelected && maxAllowedPhotos) {
       const currentTotal = selectedFiles.length + selectedAlbumPhotos.length;
-      if (currentTotal >= selectedProduct.maxPhotos) {
-        setError(`Limite de fotos atingido (${selectedProduct.maxPhotos}). Remova uma foto para adicionar outra.`);
+      if (currentTotal >= maxAllowedPhotos) {
+        setError(`Limite de fotos atingido (${maxAllowedPhotos}). Remova uma foto para adicionar outra.`);
         return;
       }
     }
@@ -522,7 +524,7 @@ export function PrintStoreModal({ eventId, eventTitle, medias = [], unlockedMedi
                                  toggleAlbumPhoto={toggleAlbumPhoto}
                                />
                                <div className="absolute bottom-0 left-0 right-0 p-4 bg-theme-bg-muted/90 backdrop-blur-md text-[9px] font-black text-brand-tactical uppercase tracking-widest text-center italic border-t border-theme-border">
-                                  {selectedAlbumPhotos.length} / {selectedProduct.maxPhotos || "∞"} selecionadas
+                                  {selectedAlbumPhotos.length} / {maxAllowedPhotos || "∞"} selecionadas
                                </div>
                             </div>
                           ) : (
@@ -536,6 +538,17 @@ export function PrintStoreModal({ eventId, eventTitle, medias = [], unlockedMedi
                                </button>
                                <input ref={fileInputRef} type="file" multiple accept="image/*" onChange={handleFileSelect} className="hidden" />
                                
+                               <div className="p-3 bg-theme-bg-muted border border-theme-border text-center">
+                                  <p className="text-[10px] font-black text-brand-tactical uppercase tracking-widest italic">
+                                     {selectedFiles.length} / {maxAllowedPhotos || "∞"} fotos selecionadas
+                                  </p>
+                                  {maxAllowedPhotos && (
+                                     <p className="text-[9px] text-theme-text-muted mt-1 italic">
+                                        Total calculado com base na quantidade do item.
+                                     </p>
+                                  )}
+                               </div>
+
                                <div className="grid grid-cols-4 gap-2">
                                   {filePreviews.map((src, idx) => (
                                     <div key={idx} className="relative aspect-square border border-theme-border overflow-hidden">
