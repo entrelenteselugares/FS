@@ -50,6 +50,9 @@ import { BusinessLanding } from "./pages/BusinessLanding";
 import FlashUnlockPage from "./pages/FlashUnlockPage";
 import { ClubLandingPage } from "./pages/ClubLandingPage";
 import HelpPage from "./pages/HelpPage";
+import { AlbumTorcidaPage } from "./pages/worldcup/AlbumTorcidaPage";
+import { MatchFolhaPage } from "./pages/worldcup/MatchFolhaPage";
+import { WorldCupLiveBanner } from "./components/worldcup/WorldCupLiveBanner";
 import { useState, useEffect } from "react";
 import { API as api } from "./lib/api";
 import { T } from "./lib/theme";
@@ -135,6 +138,10 @@ const AnimatedRoutes = () => {
         <Route path="/flash/:shortId" element={<FlashUnlockPage />} />
         <Route path="/suporte" element={<HelpPage />} />
         <Route path="/embaixador/:slug" element={<AmbassadorPage />} />
+        
+        {/* World Cup Gamification */}
+        <Route path="/album-torcida" element={<AlbumTorcidaPage />} />
+        <Route path="/album-torcida/match/:matchId" element={<MatchFolhaPage />} />
 
         {/* Redireciona para o painel correto */}
         <Route path="/dashboard" element={
@@ -250,6 +257,7 @@ function App() {
           <CartProvider>
             <HelmetProvider>
               <Router>
+                <WorldCupLiveBanner />
                 <AnimatedRoutes />
                 <BottomNav />
                 <PushNotificationManager />
