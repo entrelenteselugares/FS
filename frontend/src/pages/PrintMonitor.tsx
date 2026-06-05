@@ -361,12 +361,10 @@ export default function PrintMonitor() {
             }}
           />
         </label>
-      </div>
 
-          <button onClick={() => navigate(`/profissional/monitor/${eventId}/full`)} className="flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-[9px] font-black uppercase tracking-widest bg-brand-tactical text-zinc-950 hover:brightness-110 transition-all shadow-sm">
-            <Expand size={12} /> Full Screen
-          </button>
-        </div>
+        <button onClick={() => navigate(`/profissional/monitor/${eventId}/full`)} className="flex-shrink-0 flex items-center justify-center gap-2 px-4 py-2 rounded-full text-[9px] font-black uppercase tracking-widest bg-brand-tactical text-zinc-950 hover:brightness-110 transition-all shadow-sm ml-auto">
+          <Expand size={12} /> Full Screen
+        </button>
       </div>
 
       <div className="max-w-6xl mx-auto p-3 md:p-6 space-y-6">
