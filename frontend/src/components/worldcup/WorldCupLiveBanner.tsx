@@ -109,6 +109,7 @@ interface BackendLiveMatch {
 }
 
 export const WorldCupLiveBanner = () => {
+  const [now] = useState(() => Date.now());
   const [matches, setMatches] = useState<DisplayMatch[]>(() => getDisplayMatches());
   const [active, setActive] = useState(0);
   const prevScoresRef = useRef<Record<string, { home: number; away: number }>>({});
@@ -159,7 +160,7 @@ export const WorldCupLiveBanner = () => {
     return () => clearInterval(t);
   }, [matches.length]);
 
-  const isCopaTime = Date.now() >= new Date("2026-06-11T00:00:00-03:00").getTime();
+  const isCopaTime = now >= new Date("2026-06-11T00:00:00-03:00").getTime();
   if (!isCopaTime) return null;
 
   const match = matches[active] ?? matches[0];
