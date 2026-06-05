@@ -49,6 +49,15 @@ const CATEGORY_ICONS: Record<string, React.ReactNode> = {
   ACESSORIOS:  <Plus size={24} />,
 };
 
+/** Fallback cover image per category — shown when product has no imageUrl */
+const CATEGORY_IMAGES: Record<string, string> = {
+  ALBUM:       "/print-store-album.jpg",
+  ALBUM_30X40: "/print-store-album30x40.jpg",
+  QUADROS:     "/print-store-quadro.jpg",
+  REVELACAO:   "/print-store-revelacao.jpg",
+  ACESSORIOS:  "/print-store-acessorios.jpg",
+};
+
 interface EventMedia {
   id: string;
   url: string;
@@ -389,17 +398,20 @@ export function PrintStoreModal({ eventId, eventTitle, medias = [], unlockedMedi
                             onClick={() => { setSelectedProduct(product); setStep("details"); }}
                             className="group relative bg-theme-bg-muted border border-theme-border flex flex-col cursor-pointer hover:border-brand-tactical transition-all duration-500 overflow-hidden"
                           >
-                             {product.imageUrl ? (
-                                <div className="aspect-video w-full overflow-hidden bg-theme-bg-muted relative">
-                                  <img src={product.imageUrl} alt={product.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
-                                  <div className="absolute inset-0 bg-gradient-to-t from-theme-bg to-transparent opacity-90" />
-                                </div>
-                             ) : (
-                                <div className="aspect-video w-full flex items-center justify-center bg-theme-bg-muted relative border-b border-theme-border">
-                                   <div className="opacity-10 group-hover:opacity-30 transition-opacity scale-[2] md:scale-[3] text-theme-text-muted">{CATEGORY_ICONS[product.category]}</div>
-                                   <div className="absolute inset-0 bg-gradient-to-t from-theme-bg to-transparent opacity-90" />
-                                </div>
-                             )}
+                             {(() => {
+                               const coverImg = product.imageUrl || CATEGORY_IMAGES[product.category];
+                               return coverImg ? (
+                                 <div className="aspect-video w-full overflow-hidden bg-theme-bg-muted relative">
+                                   <img src={coverImg} alt={product.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+                                   <div className="absolute inset-0 bg-gradient-to-t from-theme-bg via-theme-bg/20 to-transparent" />
+                                 </div>
+                               ) : (
+                                 <div className="aspect-video w-full flex items-center justify-center bg-theme-bg-muted relative border-b border-theme-border">
+                                    <div className="opacity-10 group-hover:opacity-30 transition-opacity scale-[2] md:scale-[3] text-theme-text-muted">{CATEGORY_ICONS[product.category]}</div>
+                                    <div className="absolute inset-0 bg-gradient-to-t from-theme-bg to-transparent opacity-90" />
+                                 </div>
+                               );
+                             })()}
 
                              <div className="p-4 md:p-6 lg:p-8 relative z-10 flex-1 flex flex-col gap-2">
                                <p className="text-[9px] md:text-[10px] font-black text-brand-tactical uppercase tracking-[0.2em] md:tracking-[0.3em] italic line-clamp-1">{CATEGORY_LABELS[product.category] || product.category}</p>
