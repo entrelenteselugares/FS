@@ -15,7 +15,9 @@ export const QuoteMobileView = (props: any) => {
     name, setName, email, setEmail, whatsapp, setWhatsapp, attendees, setAttendees,
     submitting, handleSubmit,
     totalPrice, getServicePrice,
-    flowType
+    flowType,
+    ticketUrl, setTicketUrl,
+    fotoSegundoPromoCode, setFotoSegundoPromoCode
   } = props;
 
   const THEME = {
@@ -270,6 +272,26 @@ export const QuoteMobileView = (props: any) => {
                     type="tel"
                     value={whatsapp}
                     onChange={(e) => setWhatsapp(e.target.value)}
+                    className="w-full bg-zinc-900/80 border border-white/20 rounded-lg p-3 text-sm text-white focus:outline-none focus:border-emerald-500/50"
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-xs font-semibold text-zinc-400 uppercase tracking-wider ml-1">Link de Venda de Ingressos (Opcional)</label>
+                  <input
+                    type="url"
+                    placeholder="https://sympla.com/..."
+                    value={ticketUrl || ''}
+                    onChange={(e) => setTicketUrl(e.target.value)}
+                    className="w-full bg-zinc-900/80 border border-white/20 rounded-lg p-3 text-sm text-white focus:outline-none focus:border-emerald-500/50"
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-xs font-semibold text-zinc-400 uppercase tracking-wider ml-1">Seu Cupom Promocional (Opcional)</label>
+                  <input
+                    type="text"
+                    placeholder="EX: FOTOSEGUNDO10"
+                    value={fotoSegundoPromoCode || ''}
+                    onChange={(e) => setFotoSegundoPromoCode(e.target.value.toUpperCase())}
                     className="w-full bg-zinc-900/80 border border-white/20 rounded-lg p-3 text-sm text-white focus:outline-none focus:border-emerald-500/50"
                   />
                 </div>

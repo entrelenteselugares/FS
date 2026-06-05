@@ -24,6 +24,7 @@ const AdminLeads = React.lazy(() => import("./AdminLeadsPage").then(m => ({ defa
 const AdminGrowth = React.lazy(() => import("./AdminGrowth").then(m => ({ default: m.AdminGrowth })));
 const AdminApprovalHub = React.lazy(() => import("./AdminApprovalHub").then(m => ({ default: m.AdminApprovalHub })));
 const AdminAnalytics = React.lazy(() => import("./AdminAnalytics").then(m => ({ default: m.AdminAnalytics })));
+const AdminBanners = React.lazy(() => import("./AdminBanners").then(m => ({ default: m.AdminBanners })));
 import { 
   LayoutDashboard, 
   Camera, 
@@ -72,6 +73,7 @@ const NAV_ITEMS = (activeTab: string, setActiveTab: (t: string) => void, stats: 
       label: "Marketing", icon: <TrendingUp size={16} />, hide: role === 'FRANCHISEE',
       subItems: [
         { label: "Growth",         onClick: () => setActiveTab("growth"),        isActive: activeTab === "growth" },
+        { label: "Banners (Vitrine)",onClick: () => setActiveTab("banners"),      isActive: activeTab === "banners" },
         { label: "Concursos",      onClick: () => setActiveTab("contests"),      isActive: activeTab === "contests" },
         { label: "Analytics",      onClick: () => setActiveTab("analytics"),     isActive: activeTab === "analytics" },
       ]
@@ -252,6 +254,7 @@ export const AdminDashboard: React.FC = () => {
                     {activeTab === "growth"   && <AdminGrowth />}
                     {activeTab === "approvals" && <AdminApprovalHub />}
                     {activeTab === "inventory" && <AdminInventory />}
+                    {activeTab === "banners"   && <AdminBanners />}
                     {activeTab === "analytics" && <AdminAnalytics />}
                   </RouteErrorBoundary>
                 </React.Suspense>

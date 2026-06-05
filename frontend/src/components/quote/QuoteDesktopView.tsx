@@ -238,7 +238,7 @@ function DateTimePicker({ value, onChange, workingHours }: { value: string; onCh
 }
 
 export const QuoteDesktopView = (props: any) => {
-  const { step, setStep, nextStep, loading, partners, pros, preferredProfessionalId, setPreferredProfessionalId, flowType, selectedServices, setSelectedServices, availableServices, attendees, setAttendees, locationType, usageType, setUsageType, workflowPref, setWorkflowPref, selectedPartnerId, setSelectedPartnerId, category, setCategory, currentPartner, customCep, handleCepChange, isCepLoading, addressData, addressNumber, setAddressNumber, eventDate, setEventDate, eventHours, setEventHours, eventDays, setEventDays, description, setDescription, availableBudget, setAvailableBudget, name, setName, email, setEmail, whatsapp, setWhatsapp, showPrices, getServicePrice, totalPrice, submitting, createdQuoteId, submitError, handleSubmit } = props as any;
+  const { step, setStep, nextStep, loading, partners, pros, preferredProfessionalId, setPreferredProfessionalId, flowType, selectedServices, setSelectedServices, availableServices, attendees, setAttendees, locationType, usageType, setUsageType, workflowPref, setWorkflowPref, selectedPartnerId, setSelectedPartnerId, category, setCategory, currentPartner, customCep, handleCepChange, isCepLoading, addressData, addressNumber, setAddressNumber, eventDate, setEventDate, eventHours, setEventHours, eventDays, setEventDays, description, setDescription, availableBudget, setAvailableBudget, name, setName, email, setEmail, whatsapp, setWhatsapp, ticketUrl, setTicketUrl, fotoSegundoPromoCode, setFotoSegundoPromoCode, showPrices, getServicePrice, totalPrice, submitting, createdQuoteId, submitError, handleSubmit } = props as any;
 
   const navigate = useNavigate();
 
@@ -833,6 +833,19 @@ export const QuoteDesktopView = (props: any) => {
                 <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
                   <label style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", color: THEME.text2 }}>Observações do Evento</label>
                   <textarea value={description} onChange={e => setDescription(e.target.value)} rows={4} placeholder="CONTE-NOS MAIS DETALHES..." className="fs-input" />
+                </div>
+
+                <div className="mobile-grid-1" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
+                  <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                    <label style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", color: THEME.text2 }}>Link de Venda de Ingressos (Opcional)</label>
+                    <input value={ticketUrl || ''} onChange={e => setTicketUrl(e.target.value)} placeholder="HTTPS://SYMPLA.COM/..." className="fs-input" style={{ width: "100%", padding: "15px" }} />
+                    <p className="text-[9px] text-white/40 italic">Ganhe mais visibilidade divulgando seus ingressos na nossa vitrine.</p>
+                  </div>
+                  <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                    <label style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", color: THEME.text2 }}>Seu Cupom Promocional (Opcional)</label>
+                    <input value={fotoSegundoPromoCode || ''} onChange={e => setFotoSegundoPromoCode(e.target.value.toUpperCase())} placeholder="EX: FOTOSEGUNDO10" className="fs-input" style={{ width: "100%", padding: "15px" }} />
+                    <p className="text-[9px] text-white/40 italic">Ofereça um desconto exclusivo para clientes Foto Segundo e gere comissionamento.</p>
+                  </div>
                 </div>
 
                 <button 

@@ -568,7 +568,9 @@ export class EventController {
         selectedServices = [],
         totalPrice,
         preferredProfessionalId,
-        category
+        category,
+        ticketUrl,
+        fotoSegundoPromoCode
       } = req.body;
 
       // Fallback: use title if name is not provided
@@ -740,7 +742,9 @@ export class EventController {
           captacaoId: captacaoId,
           captacaoStatus: "PENDING",
           retentionDays: 15,
-          isPrivate: true
+          isPrivate: true,
+          ticketUrl: ticketUrl ? String(ticketUrl) : null,
+          fotoSegundoPromoCode: fotoSegundoPromoCode ? String(fotoSegundoPromoCode) : null
         }
       });
 

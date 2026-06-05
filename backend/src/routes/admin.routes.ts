@@ -50,6 +50,7 @@ import { IoTController } from "../controllers/iot.controller";
 import { validate } from "../middleware/validate.middleware";
 import { updateConfigsSchema, serviceCatalogSchema } from "../schemas/admin.schemas";
 import { CRMController } from "../controllers/crm.controller";
+import { BannerController } from "../controllers/banner.controller";
 import { EventReferenceController } from "../controllers/EventReferenceController";
 import multer from "multer";
 
@@ -140,6 +141,12 @@ router.post("/coupons", requireAuth, requireRole("ADMIN"), GrowthController.crea
 router.patch("/coupons/:id", requireAuth, requireRole("ADMIN"), GrowthController.toggleCoupon);
 router.delete("/coupons/:id", requireAuth, requireRole("ADMIN"), GrowthController.deleteCoupon);
 router.get("/ambassadors", requireAuth, requireRole("ADMIN"), GrowthController.listAmbassadors);
+
+// ── Admin: Banners
+router.get("/banners", requireAuth, requireRole("ADMIN"), BannerController.list);
+router.post("/banners", requireAuth, requireRole("ADMIN"), BannerController.create);
+router.put("/banners/:id", requireAuth, requireRole("ADMIN"), BannerController.update);
+router.delete("/banners/:id", requireAuth, requireRole("ADMIN"), BannerController.delete);
 
 // ── Admin: Phygital
 router.get("/phygital/all", requireAuth, requireRole("ADMIN"), PhygitalController.listAllByEvent);

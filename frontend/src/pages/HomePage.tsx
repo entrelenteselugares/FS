@@ -6,8 +6,8 @@ import { Helmet } from "react-helmet-async";
 import { T } from "../lib/theme";
 import { DICT } from "../lib/dictionary";
 import { Navbar } from "../components/Navbar";
-import { PhotoMosaic } from "../components/PhotoMosaic";
-import { MapPin, Calendar, Search, SlidersHorizontal } from "lucide-react";
+import { HeroCarousel } from "../components/HeroCarousel";
+import { Search, Calendar, MapPin, SlidersHorizontal } from "lucide-react";
 
 interface Event {
   id: string;
@@ -285,61 +285,9 @@ export const HomePage = () => {
 
       {/* ── HERO ─────────────────────────────────────────────────────────── */}
       <section className="hp-hero-section relative overflow-hidden flex flex-col items-center text-center justify-center min-h-[60vh] md:min-h-[75vh]" style={{ 
-        padding: "clamp(24px, 5vw, 40px) 24px 32px", 
+        padding: "0", 
       }}>
-        {/* Animated Mosaic Background */}
-        <div className="absolute inset-0 z-0">
-          <PhotoMosaic opacity={0.8} />
-          {/* Intense Dark Overlay for legibility */}
-          <div className="absolute inset-0 bg-black/70 md:bg-black/80 pointer-events-none" />
-          <div className="absolute inset-0 bg-gradient-to-t from-var(--bg) to-transparent pointer-events-none" />
-        </div>
-
-        <div style={{ maxWidth: 1200, position: "relative", zIndex: 10 }}>
-          <p className="hp-hero-tagline animate-reveal" style={{ fontSize: 10, fontFamily: T.fontB, fontWeight: 400, letterSpacing: "0.5em", textTransform: "uppercase", color: T.brand, marginBottom: 16, opacity: 0.8 }}>
-            {DICT.HERO_TAGLINE}
-          </p>
-
-          <h1 className="hp-hero-title animate-reveal text-white drop-shadow-2xl" style={{
-            fontFamily: T.fontD, fontWeight: 900,
-            fontSize: "clamp(28px, 6vw, 64px)",
-            lineHeight: 0.85,
-            textTransform: "uppercase", letterSpacing: "-0.04em",
-            margin: "0 0 24px",
-          }}>
-            <span style={{ display: "block", whiteSpace: "nowrap" }}>{DICT.HERO_TITLE_PART1}</span>
-            <em style={{ fontStyle: "italic", color: T.brand, display: "block", whiteSpace: "nowrap" }}>{DICT.HERO_TITLE_PART2_ITALIC}</em>
-          </h1>
-
-          <p className="hp-hero-desc animate-reveal text-white/80 drop-shadow-md" style={{ fontSize: 13, fontWeight: 300, maxWidth: 650, lineHeight: 1.5, margin: "0 auto 32px", fontFamily: T.fontB }}>
-            {DICT.HERO_DESCRIPTION}
-          </p>
-
-          <div className="hp-hero-search-desktop animate-reveal" style={{ display: "flex", gap: 16, justifyContent: "center" }}>
-            <button id="btn-explorar-vitrine"
-              onClick={() => navigate("/vitrine")}
-              className="lux-button-tactical px-10 py-5 text-[11px] font-display font-black uppercase tracking-[0.4em] italic shadow-2xl shadow-brand-tactical/20"
-            >
-              Explorar Vitrine
-            </button>
-            <button id="btn-agendar-cobertura"
-              onClick={() => navigate("/cotacao")}
-              className="px-8 py-5 text-[11px] font-display font-black uppercase tracking-[0.2em] italic bg-white/10 backdrop-blur-md border border-white/20 text-white hover:bg-white/20 hover:scale-[1.02] transition-all cursor-pointer rounded-full"
-            >
-              Agendar Cobertura
-            </button>
-          </div>
-          
-          {/* Stats */}
-          <div className="hp-stats animate-reveal" style={{ display: "flex", gap: "clamp(16px, 4vw, 48px)", justifyContent: "center", marginTop: 24, opacity: 0.8 }}>
-            {[["500+", DICT.STATS_EVENTS], ["24h", DICT.STATS_DELIVERY], ["4.9★", DICT.STATS_RATING]].map(([val, label]) => (
-              <div key={label} className="hp-stats-item text-center">
-                <div className="hp-stats-val" style={{ fontFamily: T.fontD, fontWeight: 900, fontSize: 24, color: "var(--text)", lineHeight: 1 }}>{val}</div>
-                <div style={{ fontSize: 8, fontFamily: T.fontD, fontWeight: 900, color: "var(--text-muted)", letterSpacing: "0.2em", textTransform: "uppercase", marginTop: 4, fontStyle: 'italic' }}>{label}</div>
-              </div>
-            ))}
-          </div>
-        </div>
+        <HeroCarousel />
       </section>
 
       {/* ── EVENT GRID ───────────────────────────────────────────────────── */}

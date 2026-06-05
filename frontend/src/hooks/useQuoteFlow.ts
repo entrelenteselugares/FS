@@ -128,6 +128,8 @@ export function useQuoteFlow() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [whatsapp, setWhatsapp] = useState("");
+  const [ticketUrl, setTicketUrl] = useState("");
+  const [fotoSegundoPromoCode, setFotoSegundoPromoCode] = useState("");
   
   const { user } = useAuth();
   const authUser = user as any;
@@ -268,6 +270,8 @@ export function useQuoteFlow() {
       preferredProfessionalId,
       workflowPref,
       flowType,
+      ticketUrl,
+      fotoSegundoPromoCode,
       status: "PENDING"
     };
 
@@ -377,6 +381,8 @@ export function useQuoteFlow() {
     name, setName,
     email, setEmail,
     whatsapp, setWhatsapp,
+    ticketUrl, setTicketUrl,
+    fotoSegundoPromoCode, setFotoSegundoPromoCode,
     team, showPrices, getServicePrice, servicesPrice, freight, totalPrice,
     submitting, createdQuoteId, submitError, handleSubmit
   };

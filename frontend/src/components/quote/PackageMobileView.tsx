@@ -22,6 +22,8 @@ export const PackageMobileView = (props: any) => {
     eventDate, setEventDate,
     name, setName, email, setEmail, whatsapp, setWhatsapp,
     description, setDescription,
+    ticketUrl, setTicketUrl,
+    fotoSegundoPromoCode, setFotoSegundoPromoCode,
     submitting, submitError, createdQuoteId, handleSubmit,
     selectedPackageId, setSelectedPackageId, availablePackages,
   } = props;
@@ -238,6 +240,26 @@ export const PackageMobileView = (props: any) => {
                       placeholder="Tipo de evento, estilo, detalhes especiais..."
                       rows={3}
                       className="w-full bg-zinc-900/60 border border-zinc-800 focus:border-emerald-500/50 rounded-xl p-3.5 text-sm text-white placeholder-zinc-600 outline-none transition-colors resize-none"
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <label className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">Link de Venda de Ingressos (Opcional)</label>
+                    <input
+                      type="url"
+                      placeholder="https://sympla.com/..."
+                      value={ticketUrl || ''}
+                      onChange={(e) => setTicketUrl(e.target.value)}
+                      className="w-full bg-zinc-900/60 border border-zinc-800 focus:border-emerald-500/50 rounded-xl p-3.5 text-sm text-white placeholder-zinc-600 outline-none transition-colors"
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <label className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">Seu Cupom Promocional (Opcional)</label>
+                    <input
+                      type="text"
+                      placeholder="EX: FOTOSEGUNDO10"
+                      value={fotoSegundoPromoCode || ''}
+                      onChange={(e) => setFotoSegundoPromoCode(e.target.value.toUpperCase())}
+                      className="w-full bg-zinc-900/60 border border-zinc-800 focus:border-emerald-500/50 rounded-xl p-3.5 text-sm text-white placeholder-zinc-600 outline-none transition-colors"
                     />
                   </div>
                 </div>

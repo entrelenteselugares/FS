@@ -67,6 +67,21 @@ app.get('/events/cities', async (c) => {
   }
 });
 
+// GET /api/public/banners
+// Lista os banners dinâmicos da home
+app.get('/banners', async (c) => {
+  try {
+    const banners = await prisma.heroSlide.findMany({
+      where: { active: true },
+      orderBy: { order: 'asc' }
+    });
+    return c.json({ banners });
+  } catch (error) {
+    console.error("[getPublicBanners] Erro:", error);
+    return c.json({ error: "Erro ao listar banners" }, 500);
+  }
+});
+
 // GET /api/public/events
 // Lista eventos para a vitrine pública com suporte a busca robusta e paginação real.
 app.get('/events', async (c) => {
