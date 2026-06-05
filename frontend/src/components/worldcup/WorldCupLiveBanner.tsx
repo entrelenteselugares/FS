@@ -26,6 +26,14 @@ const STATUS_COLOR: Record<LiveMatch["status"], string> = {
   SCHEDULED: "#60a5fa",
 };
 
+/** Formats UTC date string to "13/06 19h" in São Paulo timezone */
+function formatMatchTime(utcStr: string): string {
+  const d = new Date(utcStr);
+  const day = d.toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit", timeZone: "America/Sao_Paulo" });
+  const time = d.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit", timeZone: "America/Sao_Paulo" });
+  return `${day} · ${time}`;
+}
+
 export const WorldCupLiveBanner = () => {
   const [matches, setMatches] = useState<LiveMatch[]>([]);
   const [active, setActive] = useState(0);

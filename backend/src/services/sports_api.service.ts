@@ -72,59 +72,125 @@ const ROUND_MAP: Record<string, keyof BracketData> = {
   "Final": "final",
 };
 
-// ─── Mock Data (used when API key is not configured) ─────────────────────────
+// ─── Real 2026 World Cup Schedule (1st Round) ────────────────────────────────
+// All dates/times in UTC. Brasília = UTC-3.
+const COPA_2026_FIXTURES: Array<{
+  id: string; group: string; home: string; homeFlag: string;
+  away: string; awayFlag: string; utcDate: string; venue: string;
+}> = [
+  // 11 Jun
+  { id: "c26-1",  group:"A", home:"México",       homeFlag:"mx", away:"África do Sul", awayFlag:"za", utcDate:"2026-06-11T19:00:00Z", venue:"Azteca, México" },
+  { id: "c26-2",  group:"A", home:"Coreia do Sul", homeFlag:"kr", away:"Tchéquia",     awayFlag:"cz", utcDate:"2026-06-12T02:00:00Z", venue:"SoFi Stadium" },
+  // 12 Jun
+  { id: "c26-3",  group:"B", home:"Canadá",        homeFlag:"ca", away:"Bósnia-Herz.", awayFlag:"ba", utcDate:"2026-06-12T19:00:00Z", venue:"BMO Field, Toronto" },
+  { id: "c26-4",  group:"D", home:"EUA",            homeFlag:"us", away:"Paraguai",    awayFlag:"py", utcDate:"2026-06-13T01:00:00Z", venue:"MetLife Stadium" },
+  // 13 Jun
+  { id: "c26-5",  group:"D", home:"Austrália",      homeFlag:"au", away:"Turquia",     awayFlag:"tr", utcDate:"2026-06-13T04:00:00Z", venue:"AT&T Stadium" },
+  { id: "c26-6",  group:"B", home:"Catar",          homeFlag:"qa", away:"Suíça",       awayFlag:"ch", utcDate:"2026-06-13T19:00:00Z", venue:"Arrowhead Stadium" },
+  { id: "c26-7",  group:"C", home:"Brasil",         homeFlag:"br", away:"Marrocos",    awayFlag:"ma", utcDate:"2026-06-13T22:00:00Z", venue:"MetLife Stadium" },
+  { id: "c26-8",  group:"C", home:"Haiti",          homeFlag:"ht", away:"Escócia",     awayFlag:"gb-sct", utcDate:"2026-06-14T01:00:00Z", venue:"Gillette Stadium" },
+  // 14 Jun
+  { id: "c26-9",  group:"E", home:"Alemanha",       homeFlag:"de", away:"Curaçao",     awayFlag:"cw", utcDate:"2026-06-14T17:00:00Z", venue:"Cowboys Stadium" },
+  { id: "c26-10", group:"E", home:"Costa do Marfim",homeFlag:"ci", away:"Equador",     awayFlag:"ec", utcDate:"2026-06-14T23:00:00Z", venue:"Rose Bowl" },
+  { id: "c26-11", group:"F", home:"Holanda",        homeFlag:"nl", away:"Japão",       awayFlag:"jp", utcDate:"2026-06-14T20:00:00Z", venue:"Lincoln Fin. Field" },
+  { id: "c26-12", group:"F", home:"Suécia",         homeFlag:"se", away:"Tunísia",     awayFlag:"tn", utcDate:"2026-06-15T02:00:00Z", venue:"Levi's Stadium" },
+  // 15 Jun
+  { id: "c26-13", group:"H", home:"Espanha",        homeFlag:"es", away:"Cabo Verde",  awayFlag:"cv", utcDate:"2026-06-15T16:00:00Z", venue:"Hard Rock Stadium" },
+  { id: "c26-14", group:"G", home:"Bélgica",        homeFlag:"be", away:"Egito",       awayFlag:"eg", utcDate:"2026-06-15T19:00:00Z", venue:"Arrowhead Stadium" },
+  { id: "c26-15", group:"H", home:"Arábia Saudita", homeFlag:"sa", away:"Uruguai",     awayFlag:"uy", utcDate:"2026-06-15T22:00:00Z", venue:"MetLife Stadium" },
+  { id: "c26-16", group:"G", home:"Irã",            homeFlag:"ir", away:"Nova Zelândia",awayFlag:"nz", utcDate:"2026-06-16T01:00:00Z", venue:"SoFi Stadium" },
+  // 16 Jun
+  { id: "c26-17", group:"I", home:"França",         homeFlag:"fr", away:"Senegal",     awayFlag:"sn", utcDate:"2026-06-16T19:00:00Z", venue:"MetLife Stadium" },
+  { id: "c26-18", group:"I", home:"Iraque",         homeFlag:"iq", away:"Noruega",     awayFlag:"no", utcDate:"2026-06-16T22:00:00Z", venue:"SoFi Stadium" },
+  { id: "c26-19", group:"J", home:"Argentina",      homeFlag:"ar", away:"Argélia",     awayFlag:"dz", utcDate:"2026-06-17T01:00:00Z", venue:"AT&T Stadium" },
+];
 
-function getMockLiveMatches(): LiveMatch[] {
-  const minutes = (new Date().getMinutes() + 15) % 90;
-  return [
-    {
-      id: "mock-live-1",
-      homeTeam: { name: "Brasil", flagUrl: "https://flagcdn.com/w40/br.png", score: 2 },
-      awayTeam: { name: "Sérvia", flagUrl: "https://flagcdn.com/w40/rs.png", score: 0 },
-      minute: `${minutes}'`,
-      status: "LIVE",
-    },
-    {
-      id: "mock-live-2",
-      homeTeam: { name: "França", flagUrl: "https://flagcdn.com/w40/fr.png", score: 1 },
-      awayTeam: { name: "Dinamarca", flagUrl: "https://flagcdn.com/w40/dk.png", score: 1 },
-      minute: "Intervalo",
-      status: "HALF_TIME",
-    },
-    {
-      id: "mock-live-3",
-      homeTeam: { name: "Argentina", flagUrl: "https://flagcdn.com/w40/ar.png", score: 0 },
-      awayTeam: { name: "México", flagUrl: "https://flagcdn.com/w40/mx.png", score: 0 },
-      minute: "16:00",
-      status: "SCHEDULED",
-    },
-  ];
+function flagUrl(code: string): string {
+  return `https://flagcdn.com/w40/${code}.png`;
 }
 
+/**
+ * Picks the best matches to show on the banner:
+ * - If any match is happening right now (within ±10 min window of utcDate): show as LIVE (mock)
+ * - Otherwise: show the next 3 upcoming matches
+ */
+function getMockLiveMatches(): LiveMatch[] {
+  const now = Date.now();
+  const WINDOW_MS = 120 * 60 * 1000; // 2h window = simulates match duration
+
+  // Find matches happening "now"
+  const live = COPA_2026_FIXTURES.filter((f) => {
+    const start = new Date(f.utcDate).getTime();
+    return now >= start && now <= start + WINDOW_MS;
+  });
+
+  if (live.length > 0) {
+    return live.map((f) => {
+      const elapsed = Math.floor((now - new Date(f.utcDate).getTime()) / 60000);
+      const isHalf = elapsed >= 45 && elapsed < 50;
+      return {
+        id: f.id,
+        homeTeam: { name: f.home, flagUrl: flagUrl(f.homeFlag), score: 0 },
+        awayTeam: { name: f.away, flagUrl: flagUrl(f.awayFlag), score: 0 },
+        minute: isHalf ? "Intervalo" : `${Math.min(elapsed, 90)}'`,
+        status: isHalf ? "HALF_TIME" : "LIVE",
+      };
+    });
+  }
+
+  // No live match — show next 3 upcoming fixtures
+  const upcoming = COPA_2026_FIXTURES
+    .filter((f) => new Date(f.utcDate).getTime() > now)
+    .sort((a, b) => new Date(a.utcDate).getTime() - new Date(b.utcDate).getTime())
+    .slice(0, 3);
+
+  // If Copa hasn't started at all, show first 3 fixtures
+  const toShow = upcoming.length > 0 ? upcoming : COPA_2026_FIXTURES.slice(0, 3);
+
+  return toShow.map((f) => ({
+    id: f.id,
+    homeTeam: { name: f.home, flagUrl: flagUrl(f.homeFlag), score: 0 },
+    awayTeam: { name: f.away, flagUrl: flagUrl(f.awayFlag), score: 0 },
+    minute: new Date(f.utcDate).toLocaleDateString("pt-BR", {
+      day: "2-digit", month: "2-digit", timeZone: "America/Sao_Paulo",
+    }) + " " + new Date(f.utcDate).toLocaleTimeString("pt-BR", {
+      hour: "2-digit", minute: "2-digit", timeZone: "America/Sao_Paulo",
+    }),
+    status: "SCHEDULED" as const,
+  }));
+}
+
+
 function getMockBracket(): BracketData {
+  // Copa 2026 has not reached knockout stage yet.
+  // Bracket shows the 12 groups' slots as TBD.
+  // This will be auto-replaced with real API data once knockout matches are scheduled.
+  const tbd = (id: string, home: string, away: string) => ({
+    id, home, away, score: "-", status: "SCHEDULED" as const,
+  });
   return {
     roundOf16: [
-      { id: "r16-1", home: "Holanda", away: "EUA", score: "3-1", status: "FINISHED" },
-      { id: "r16-2", home: "Argentina", away: "Austrália", score: "2-1", status: "FINISHED" },
-      { id: "r16-3", home: "Japão", away: "Croácia", score: "1(1)-(3)1", status: "FINISHED" },
-      { id: "r16-4", home: "Brasil", away: "Coreia do Sul", score: "4-1", status: "FINISHED" },
-      { id: "r16-5", home: "Inglaterra", away: "Senegal", score: "3-0", status: "FINISHED" },
-      { id: "r16-6", home: "França", away: "Polônia", score: "3-1", status: "FINISHED" },
-      { id: "r16-7", home: "Marrocos", away: "Espanha", score: "0(3)-(0)0", status: "FINISHED" },
-      { id: "r16-8", home: "Portugal", away: "Suíça", score: "6-1", status: "FINISHED" },
+      tbd("r32-1",  "1ºA",  "2ºB"),
+      tbd("r32-2",  "1ºC",  "2ºD"),
+      tbd("r32-3",  "1ºE",  "2ºF"),
+      tbd("r32-4",  "1ºG",  "2ºH"),
+      tbd("r32-5",  "1ºI",  "2ºJ"),
+      tbd("r32-6",  "1ºK",  "2ºL"),
+      tbd("r32-7",  "3ºA/B/C", "3ºD/E/F"),
+      tbd("r32-8",  "3ºG/H/I", "3ºJ/K/L"),
     ],
     quarterFinals: [
-      { id: "qf-1", home: "Holanda", away: "Argentina", score: "2(3)-(4)2", status: "FINISHED" },
-      { id: "qf-2", home: "Croácia", away: "Brasil", score: "1(4)-(2)1", status: "FINISHED" },
-      { id: "qf-3", home: "Inglaterra", away: "França", score: "1-2", status: "FINISHED" },
-      { id: "qf-4", home: "Marrocos", away: "Portugal", score: "1-0", status: "FINISHED" },
+      tbd("qf-1", "W R32-1", "W R32-2"),
+      tbd("qf-2", "W R32-3", "W R32-4"),
+      tbd("qf-3", "W R32-5", "W R32-6"),
+      tbd("qf-4", "W R32-7", "W R32-8"),
     ],
     semiFinals: [
-      { id: "sf-1", home: "Argentina", away: "Croácia", score: "3-0", status: "FINISHED" },
-      { id: "sf-2", home: "França", away: "Marrocos", score: "2-0", status: "FINISHED" },
+      tbd("sf-1", "W QF-1", "W QF-2"),
+      tbd("sf-2", "W QF-3", "W QF-4"),
     ],
     final: [
-      { id: "f-1", home: "Argentina", away: "França", score: "3(4)-(2)3", status: "FINISHED" },
+      tbd("final", "W SF-1", "W SF-2"),
     ],
   };
 }
