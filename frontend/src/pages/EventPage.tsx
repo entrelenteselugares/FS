@@ -605,9 +605,12 @@ export default function EventPage() {
   const paid = step === "success";
   const isMarketplace = event.type === 'PHOTO_MARKETPLACE' || event.type === 'FOTO_POINT' || event.type === 'FLASH_EVENT';
 
-
   const isEventOver = eventStatus.phase === 'ended' || eventStatus.phase === 'archived';
   const qrOpen = eventStatus.qrOpen;
+
+  const youtubeRef = event.eventReferences?.find(
+    r => r.type === 'YOUTUBE' || r.url.includes("youtube.com") || r.url.includes("youtu.be")
+  );
 
 return (
     <div className="min-h-screen bg-theme-bg text-theme-text font-sans selection:bg-brand-tactical/30 overflow-x-hidden selection:text-theme-text" onContextMenu={(e) => e.preventDefault()}>
@@ -639,7 +642,14 @@ return (
                 transition={{ duration: 1.5 }}
                 className="absolute inset-0"
               >
-                {event.coverPhotoUrl ? (
+                {youtubeRef ? (
+                  <iframe 
+                    src={youtubeRef.url}
+                    className="absolute inset-0 w-full h-full pointer-events-none border-0 opacity-80 scale-125"
+                    allow="autoplay; encrypted-media"
+                    title="Capa Evento Video"
+                  />
+                ) : event.coverPhotoUrl ? (
                   <img 
                     src={getProxyUrl(event.coverPhotoUrl)} 
                     alt="" 
@@ -817,12 +827,13 @@ return (
                     const dbRefs = event.eventReferences ?? [];
                     const legacyRefs: RefItem[] = (event.references ?? []).map(url => ({ type: 'IMAGE', url }));
                     const allRefs: RefItem[] = dbRefs.length > 0 ? dbRefs : legacyRefs;
-                    if (allRefs.length === 0) return null;
+                    const filteredRefs = allRefs.filter(r => r.type !== 'YOUTUBE' && !r.url.includes("youtube.com") && !r.url.includes("youtu.be"));
+                    if (filteredRefs.length === 0) return null;
                     return (
                       <div className="space-y-4">
                         <p className="text-[10px] font-black text-theme-text-muted uppercase tracking-[0.4em]">Referências Técnicas</p>
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                          {allRefs.map((r, i) => (
+                          {filteredRefs.map((r, i) => (
                             <ReferenceCard key={r.id ?? i} item={r} />
                           ))}
                         </div>

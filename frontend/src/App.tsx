@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation, Outlet } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { CartProvider } from "./contexts/CartContext";
@@ -104,121 +104,121 @@ const AnimatedRoutes = () => {
         className="w-full h-full pb-20 md:pb-0"
       >
         <Routes location={location}>
-        {/* Rota Raiz Pública */}
-        <Route path="/" element={<HomePage />} />
-        <Route path="/sobre" element={<AboutPage />} />
-        <Route path="/parcerias" element={<PartnershipsPage />} />
-        <Route path="/termos" element={<TermsPage />} />
-        <Route path="/privacidade" element={<PrivacyPage />} />
-        <Route path="/lgpd" element={<LgpdPage />} />
-        <Route path="/contato" element={<ContactPage />} />
-        <Route path="/status" element={<StatusPage />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/registro" element={<RegisterPage />} />
-        <Route path="/register" element={<RegisterPage />} />
-        <Route path="/e/:slug" element={<EventPage />} />
-        <Route path="/auth" element={<AuthSelectionPage />} />
-        <Route path="/reset-password" element={<ResetPasswordPage />} />
-        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-        <Route path="/cotacao" element={<QuotePage />} />
-        <Route path="/cotacao/pacotes" element={<PackageFlowPage />} />
-        <Route path="/cotacao/unidades" element={<PartnerFlowPage />} />
-        <Route path="/cotacao/customizado" element={<CustomFlowPage />} />
-        <Route path="/p/:slug" element={<PartnerLP />} />
-        <Route path="/checkout" element={<CheckoutPage />} />
-        <Route path="/checkout/:orderId" element={<CheckoutPage />} />
-        <Route path="/delivery/:id" element={<LuxuryExperiencePage />} />
-        <Route path="/captura" element={<PhygitalCapture />} />
-        <Route path="/phygital-capture" element={<PhygitalCapture />} />
-        <Route path="/vitrine" element={<ProfissionaisPage />} />
-        <Route path="/profissionais" element={<ProfissionaisPage />} />
-        <Route path="/pro/:id" element={<ProfissionalProfilePage />} />
-        <Route path="/negocios" element={<BusinessLanding />} />
-        <Route path="/clube" element={<ClubLandingPage />} />
-        <Route path="/flash/:shortId" element={<FlashUnlockPage />} />
-        <Route path="/suporte" element={<HelpPage />} />
-        <Route path="/embaixador/:slug" element={<AmbassadorPage />} />
-        
-        {/* World Cup Gamification */}
-        <Route path="/album-torcida" element={<AlbumTorcidaPage />} />
-        <Route path="/album-torcida/match/:matchId" element={<MatchFolhaPage />} />
+          {/* Public Routes */}
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/reset-password" element={<ResetPasswordPage />} />
+          <Route path="/forgot-password" element={<ForgotPasswordPage />} />
 
-        {/* Redireciona para o painel correto */}
-        <Route path="/dashboard" element={
-          <ProtectedRoute><DashboardRedirect /></ProtectedRoute>
-        } />
+          {/* Protected Routes (Require general user login) */}
+          <Route element={<ProtectedRoute><Outlet /></ProtectedRoute>}>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/sobre" element={<AboutPage />} />
+            <Route path="/parcerias" element={<PartnershipsPage />} />
+            <Route path="/termos" element={<TermsPage />} />
+            <Route path="/privacidade" element={<PrivacyPage />} />
+            <Route path="/lgpd" element={<LgpdPage />} />
+            <Route path="/contato" element={<ContactPage />} />
+            <Route path="/status" element={<StatusPage />} />
+            <Route path="/registro" element={<RegisterPage />} />
+            <Route path="/register" element={<RegisterPage />} />
+            <Route path="/e/:slug" element={<EventPage />} />
+            <Route path="/auth" element={<AuthSelectionPage />} />
+            <Route path="/cotacao" element={<QuotePage />} />
+            <Route path="/cotacao/pacotes" element={<PackageFlowPage />} />
+            <Route path="/cotacao/unidades" element={<PartnerFlowPage />} />
+            <Route path="/cotacao/customizado" element={<CustomFlowPage />} />
+            <Route path="/p/:slug" element={<PartnerLP />} />
+            <Route path="/checkout" element={<CheckoutPage />} />
+            <Route path="/checkout/:orderId" element={<CheckoutPage />} />
+            <Route path="/delivery/:id" element={<LuxuryExperiencePage />} />
+            <Route path="/captura" element={<PhygitalCapture />} />
+            <Route path="/phygital-capture" element={<PhygitalCapture />} />
+            <Route path="/vitrine" element={<ProfissionaisPage />} />
+            <Route path="/profissionais" element={<ProfissionaisPage />} />
+            <Route path="/pro/:id" element={<ProfissionalProfilePage />} />
+            <Route path="/negocios" element={<BusinessLanding />} />
+            <Route path="/clube" element={<ClubLandingPage />} />
+            <Route path="/flash/:shortId" element={<FlashUnlockPage />} />
+            <Route path="/suporte" element={<HelpPage />} />
+            <Route path="/embaixador/:slug" element={<AmbassadorPage />} />
+            
+            {/* World Cup Gamification */}
+            <Route path="/album-torcida" element={<AlbumTorcidaPage />} />
+            <Route path="/album-torcida/match/:matchId" element={<MatchFolhaPage />} />
 
-        {/* Painel do Admin */}
-        <Route path="/admin/*" element={
-          <ProtectedRoute roles={["ADMIN"]}>
-            <AdminDashboard />
-          </ProtectedRoute>
-        } />
+            {/* Redireciona para o painel correto */}
+            <Route path="/dashboard" element={<DashboardRedirect />} />
 
-        {/* Painel do Profissional (PROFISSIONAIS) */}
-        <Route path="/profissional" element={
-          <ProtectedRoute roles={["ADMIN", "PROFISSIONAL", "FRANCHISEE"]}>
-            <ProfissionalDashboard />
-          </ProtectedRoute>
-        } />
-        <Route path="/profissional/novo-servico" element={
-          <ProtectedRoute roles={["ADMIN", "PROFISSIONAL", "FRANCHISEE"]}>
-            <CustomServiceForm />
-          </ProtectedRoute>
-        } />
-        <Route path="/profissional/portfolio" element={
-          <ProtectedRoute roles={["ADMIN", "PROFISSIONAL", "FRANCHISEE"]}>
-            <PortfolioManage />
-          </ProtectedRoute>
-        } />
-        <Route path="/profissional/monitor/:eventId" element={
-          <ProtectedRoute roles={["ADMIN", "PROFISSIONAL", "FRANCHISEE", "CARTORIO"]}>
-            <PrintMonitor />
-          </ProtectedRoute>
-        } />
-        <Route path="/profissional/monitor/:eventId/full" element={<ProtectedRoute roles={["ADMIN", "PROFISSIONAL", "FRANCHISEE", "CARTORIO"]}><FullMonitor /></ProtectedRoute>} />
-        <Route path="/profissional/monitor/:eventId/fullscreen" element={<ProtectedRoute roles={["ADMIN", "PROFISSIONAL", "FRANCHISEE", "CARTORIO"]}><FullMonitor /></ProtectedRoute>} />
+            {/* Painel do Admin */}
+            <Route path="/admin/*" element={
+              <ProtectedRoute roles={["ADMIN"]}>
+                <AdminDashboard />
+              </ProtectedRoute>
+            } />
 
-        {/* Painel Unidades Fixas */}
-        <Route path="/unidade-fixa" element={
-          <ProtectedRoute roles={["ADMIN", "CARTORIO", "UNIDADE"]}>
-            <UnidadeFixaDashboard />
-          </ProtectedRoute>
-        } />
+            {/* Painel do Profissional (PROFISSIONAIS) */}
+            <Route path="/profissional" element={
+              <ProtectedRoute roles={["ADMIN", "PROFISSIONAL", "FRANCHISEE"]}>
+                <ProfissionalDashboard />
+              </ProtectedRoute>
+            } />
+            <Route path="/profissional/novo-servico" element={
+              <ProtectedRoute roles={["ADMIN", "PROFISSIONAL", "FRANCHISEE"]}>
+                <CustomServiceForm />
+              </ProtectedRoute>
+            } />
+            <Route path="/profissional/portfolio" element={
+              <ProtectedRoute roles={["ADMIN", "PROFISSIONAL", "FRANCHISEE"]}>
+                <PortfolioManage />
+              </ProtectedRoute>
+            } />
+            <Route path="/profissional/monitor/:eventId" element={
+              <ProtectedRoute roles={["ADMIN", "PROFISSIONAL", "FRANCHISEE", "CARTORIO"]}>
+                <PrintMonitor />
+              </ProtectedRoute>
+            } />
+            <Route path="/profissional/monitor/:eventId/full" element={<ProtectedRoute roles={["ADMIN", "PROFISSIONAL", "FRANCHISEE", "CARTORIO"]}><FullMonitor /></ProtectedRoute>} />
+            <Route path="/profissional/monitor/:eventId/fullscreen" element={<ProtectedRoute roles={["ADMIN", "PROFISSIONAL", "FRANCHISEE", "CARTORIO"]}><FullMonitor /></ProtectedRoute>} />
 
-        {/* Painel da Franquia (B2B Hub) */}
-        <Route path="/franquia" element={
-          <ProtectedRoute roles={["ADMIN", "FRANCHISEE"]}>
-            <FranchiseDashboard />
-          </ProtectedRoute>
-        } />
+            {/* Painel Unidades Fixas */}
+            <Route path="/unidade-fixa" element={
+              <ProtectedRoute roles={["ADMIN", "CARTORIO", "UNIDADE"]}>
+                <UnidadeFixaDashboard />
+              </ProtectedRoute>
+            } />
 
-        {/* Área do Cliente / Minha Conta */}
-        <Route path="/minha-conta" element={
-          <ProtectedRoute roles={["ADMIN", "CLIENTE", "PROFISSIONAL", "CARTORIO", "UNIDADE", "FRANCHISEE"]}>
-            <ClienteArea />
-          </ProtectedRoute>
-        }
-        />
+            {/* Painel da Franquia (B2B Hub) */}
+            <Route path="/franquia" element={
+              <ProtectedRoute roles={["ADMIN", "FRANCHISEE"]}>
+                <FranchiseDashboard />
+              </ProtectedRoute>
+            } />
 
-        {/* Meus Álbuns (Fase 11) */}
-        <Route path="/meus-albuns" element={
-          <ProtectedRoute>
-            <VaultsPage />
-          </ProtectedRoute>
-        } />
-        <Route path="/meus-albuns/:vaultId" element={
-          <ProtectedRoute>
-            <VaultDetailPage />
-          </ProtectedRoute>
-        } />
-        <Route path="/invitation/:code" element={<InvitationPage />} />
+            {/* Área do Cliente / Minha Conta */}
+            <Route path="/minha-conta" element={
+              <ProtectedRoute roles={["ADMIN", "CLIENTE", "PROFISSIONAL", "CARTORIO", "UNIDADE", "FRANCHISEE"]}>
+                <ClienteArea />
+              </ProtectedRoute>
+            } />
 
-        {/* Home e 404 */}
-        <Route path="/404" element={<NotFoundPage />} />
-        <Route path="*" element={<Navigate to="/404" replace />} />
+            {/* Meus Álbuns (Fase 11) */}
+            <Route path="/meus-albuns" element={
+              <ProtectedRoute>
+                <VaultsPage />
+              </ProtectedRoute>
+            } />
+            <Route path="/meus-albuns/:vaultId" element={
+              <ProtectedRoute>
+                <VaultDetailPage />
+              </ProtectedRoute>
+            } />
+            <Route path="/invitation/:code" element={<InvitationPage />} />
 
-      </Routes>
+            {/* Home e 404 */}
+            <Route path="/404" element={<NotFoundPage />} />
+            <Route path="*" element={<Navigate to="/404" replace />} />
+          </Route>
+        </Routes>
     </motion.div>
     </AnimatePresence>
   );
