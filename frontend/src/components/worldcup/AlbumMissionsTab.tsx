@@ -135,11 +135,20 @@ export function AlbumMissionsTab() {
           Responda aos Quizzes para liberar as missões. Após o envio, a comunidade irá validar a sua foto. Cada foto aprovada rende pontos!
         </p>
 
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: 16 }}>
-          {missions.map((mission, idx) => {
-            const slot = progress.find(s => s.slotIndex === idx);
-            const status = slot?.status || "LOCKED";
-            const quizPassed = slot?.quizPassed || false;
+        {progress.length === 0 ? (
+          <div style={{ textAlign: "center", padding: "40px 20px", background: "rgba(255,255,255,0.03)", borderRadius: 8, border: "1px dashed rgba(255,255,255,0.1)" }}>
+            <Target size={32} color="#4b5563" style={{ margin: "0 auto 16px" }} />
+            <h4 style={{ fontSize: 16, color: "white", marginBottom: 8, fontStyle: "italic", fontWeight: 900 }}>Nenhum Jogo Ativo</h4>
+            <p style={{ fontSize: 13, color: "#9ca3af" }}>
+              As missões são ativadas durante os jogos do Brasil. Volte quando o próximo jogo começar para desbloquear os quizzes e enviar suas fotos!
+            </p>
+          </div>
+        ) : (
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: 16 }}>
+            {missions.map((mission, idx) => {
+              const slot = progress.find(s => s.slotIndex === idx);
+              const status = slot?.status || "LOCKED";
+              const quizPassed = slot?.quizPassed || false;
 
             return (
               <div key={idx} style={{ 
@@ -247,6 +256,7 @@ export function AlbumMissionsTab() {
             );
           })}
         </div>
+        )}
       </div>
     </div>
   );
