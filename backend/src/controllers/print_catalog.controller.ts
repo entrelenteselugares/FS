@@ -3,6 +3,7 @@ import { AuthRequest } from "../lib/auth";
 import prisma from "../lib/prisma";
 import { Prisma } from "@prisma/client";
 import { audit } from "../lib/audit";
+import { supabaseAdmin as supabase } from "../lib/supabase";
 
 // ── Catálogo de referência CK (seed) ──────────────────────────────────────────
 const CK_CATALOG_SEED: Omit<
@@ -441,5 +442,34 @@ export async function getEventPrintProducts(req: Request, res: Response): Promis
   } catch (err) {
     console.error("getEventPrintProducts:", err);
     res.status(500).json({ error: "Erro ao carregar catálogo do evento." });
+  }
+}
+
+export async function uploadProductImage(req: AuthRequest, res: Response): Promise<void> {
+  const { imageBase64, mimeType } = req.body;
+
+  if (!imageBase64 || !mimeType) {
+    res.status(400).json({ error: "Imagem e MimeType são obrigatórios." });
+    return;
+  }
+
+  try {
+    const base64Data = String(imageBase64).replace(/^data:image\/\w+;base64,/, "");
+    const buffer = Buffer.from(base64Data, "base64");
+    const ext = String(mimeType).split("/")[1] || "jpg";
+    const fileName = `products/product-${Date.now()}.${ext}`;
+
+    const { error: uploadError } = await supabase.storage
+      .from("eventos")
+      .upload(fileName, buffer, { contentType: String(mimeType), upsert: true });
+
+    if (uploadError) throw uploadError;
+
+    const { data: { publicUrl } } = supabase.storage.from("eventos").getPublicUrl(fileName);
+
+    res.json({ imageUrl: publicUrl });
+  } catch (err) {
+    console.error("uploadProductImage:", err);
+    res.status(500).json({ error: "Erro ao salvar imagem do produto." });
   }
 }

@@ -161,6 +161,7 @@ router.delete("/contests/:id", requireAuth, requireRole("ADMIN"), adminDeleteCon
 // ── Admin: Catálogo de Impressão (CK)
 router.get("/print-catalog", requireAuth, requireRole("ADMIN"), AdminPrintCatalog.listPrintProducts);
 router.post("/print-catalog", requireAuth, requireRole("ADMIN"), AdminPrintCatalog.createPrintProduct);
+router.post("/print-catalog/upload-image", requireAuth, requireRole("ADMIN"), AdminPrintCatalog.uploadProductImage);
 router.post("/print-catalog/import", requireAuth, requireRole("ADMIN"), AdminPrintCatalog.importPrintProducts);
 router.patch("/print-catalog/bulk-margin", requireAuth, requireRole("ADMIN"), AdminPrintCatalog.bulkUpdateMargin);
 router.patch("/print-catalog/:id", requireAuth, requireRole("ADMIN"), AdminPrintCatalog.updatePrintProduct);

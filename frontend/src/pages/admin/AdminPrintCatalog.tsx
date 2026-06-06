@@ -16,7 +16,8 @@ import {
   Layers,
   X,
   Target,
-  ArrowRight
+  ArrowRight,
+  Upload
 } from "lucide-react";
 
 // --- Types ---
@@ -422,6 +423,42 @@ function NewProductModal({ onClose, onSave, suppliers, onRefreshSuppliers }: {
     imageUrl: ""
   });
   const [loading, setLoading] = useState(false);
+  const [uploading, setUploading] = useState(false);
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploading(true);
+    try {
+      const reader = new FileReader();
+      reader.onloadend = async () => {
+        try {
+          const base64String = reader.result as string;
+          const response = await API.post("/admin/print-catalog/upload-image", {
+            imageBase64: base64String,
+            mimeType: file.type
+          });
+          if (response.data?.imageUrl) {
+            setForm(prev => ({ ...prev, imageUrl: response.data.imageUrl }));
+            toast.success("Imagem enviada com sucesso!");
+          } else {
+            toast.error("Erro ao processar URL de retorno da imagem.");
+          }
+        } catch (err) {
+          console.error(err);
+          toast.error("Erro no upload do arquivo.");
+        } finally {
+          setUploading(false);
+        }
+      };
+      reader.readAsDataURL(file);
+    } catch (err) {
+      console.error(err);
+      toast.error("Falha ao ler arquivo.");
+      setUploading(false);
+    }
+  };
 
   const inputClass = "w-full bg-theme-bg-muted border border-theme-border p-4 text-[10px] text-theme-text font-black outline-none focus:border-brand-tactical transition-all uppercase placeholder:text-theme-muted/30 rounded-xl";
   const labelClass = "text-[8px] font-black text-theme-muted uppercase tracking-widest block mb-2 opacity-60 italic";
@@ -497,8 +534,26 @@ function NewProductModal({ onClose, onSave, suppliers, onRefreshSuppliers }: {
                 <input required className={inputClass} value={form.name} onChange={e => setForm({...form, name: e.target.value})} placeholder="Ex: Álbum 15x21 - Capa Linho" />
               </div>
               <div className="space-y-2">
-                <label className={labelClass}>URL da Imagem (Opcional)</label>
-                <input className={inputClass} value={form.imageUrl} onChange={e => setForm({...form, imageUrl: e.target.value})} placeholder="https://..." />
+                <label className={labelClass}>Imagem do Produto (URL ou Upload)</label>
+                <div className="flex items-stretch gap-2">
+                  <input className={inputClass} value={form.imageUrl} onChange={e => setForm({...form, imageUrl: e.target.value})} placeholder="https://... ou faça upload" />
+                  <label 
+                    className={`px-4 bg-theme-bg-muted border border-theme-border text-brand-tactical hover:bg-brand-tactical/10 transition-all rounded-xl flex items-center justify-center cursor-pointer ${uploading ? 'opacity-50 cursor-wait' : ''}`}
+                  >
+                    {uploading ? (
+                      <span className="w-5 h-5 border-2 border-brand-tactical border-t-transparent rounded-full animate-spin" />
+                    ) : (
+                      <Upload size={18} />
+                    )}
+                    <input 
+                      type="file" 
+                      accept="image/*" 
+                      className="hidden" 
+                      disabled={uploading} 
+                      onChange={handleFileChange}
+                    />
+                  </label>
+                </div>
               </div>
             </div>
 
