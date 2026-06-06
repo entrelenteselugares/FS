@@ -160,7 +160,7 @@ export function HeroCarousel() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3, duration: 0.8 }}
-              className="flex flex-col items-center md:items-start"
+              className="flex flex-col items-center md:items-start w-full"
             >
               <div className="text-emerald-500 mb-2 md:mb-4">
                 {currentSlide.icon === "trophy" && <Trophy className="w-8 h-8 md:w-10 md:h-10" />}
@@ -170,12 +170,9 @@ export function HeroCarousel() {
                 {currentSlide.icon !== "trophy" && currentSlide.icon !== "qrcode" && currentSlide.icon !== "ticket" && currentSlide.icon !== "star" && <Camera className="w-8 h-8 md:w-10 md:h-10" />}
               </div>
               
-              <h1 className="text-2xl md:text-5xl lg:text-6xl font-black text-white leading-none tracking-tight mb-1 md:mb-2 text-center md:text-left">
-                {currentSlide.title} <br className="md:hidden" />
-                <span
-                  className="text-emerald-400 italic bg-clip-text text-transparent bg-gradient-to-r from-emerald-400 to-teal-300"
-                  style={{ paddingRight: '0.15em', display: 'inline-block' }}
-                >
+              <h1 className="text-2xl md:text-5xl lg:text-6xl font-black text-white leading-none tracking-tight mb-1 md:mb-2 text-center md:text-left w-full">
+                <span className="block">{currentSlide.title}</span>
+                <span className="text-emerald-400 italic bg-clip-text text-transparent bg-gradient-to-r from-emerald-400 to-teal-300 block mt-1">
                   {currentSlide.subtitle}
                 </span>
               </h1>
@@ -184,7 +181,7 @@ export function HeroCarousel() {
                 {currentSlide.description || currentSlide.desc}
               </p>
 
-              <div className="flex flex-wrap justify-center md:justify-start gap-4 mt-4 md:mt-8">
+              <div className="flex flex-wrap justify-center md:justify-start gap-4 mt-4 md:mt-8 w-full">
                 <button 
                   onClick={() => navigate(currentSlide.primaryAction)}
                   className="px-6 py-2.5 md:px-8 md:py-4 bg-emerald-500 text-black text-[10px] md:text-[11px] font-black uppercase tracking-[0.2em] hover:bg-emerald-400 transition-colors rounded-full shadow-[0_0_20px_rgba(16,185,129,0.3)]"
