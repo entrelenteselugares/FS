@@ -184,6 +184,31 @@ const CountdownBox = ({ val, label }: { val: number; label: string }) => (
 // ─── Page ─────────────────────────────────────────────────────────────────────
 type Tab = "jogos" | "grupos" | "album" | "nostalgia";
 
+const ALL_PAST_COPAS = [
+  { year: 2022, name: "Catar 2022" },
+  { year: 2018, name: "Rússia 2018" },
+  { year: 2014, name: "Brasil 2014" },
+  { year: 2010, name: "África 2010" },
+  { year: 2006, name: "Alemanha 2006" },
+  { year: 2002, name: "Japão/Coreia 2002" },
+  { year: 1998, name: "França 1998" },
+  { year: 1994, name: "EUA 1994" },
+  { year: 1990, name: "Itália 1990" },
+  { year: 1986, name: "México 1986" },
+  { year: 1982, name: "Espanha 1982" },
+  { year: 1978, name: "Argentina 1978" },
+  { year: 1974, name: "Alemanha O. 1974" },
+  { year: 1970, name: "México 1970" },
+  { year: 1966, name: "Inglaterra 1966" },
+  { year: 1962, name: "Chile 1962" },
+  { year: 1958, name: "Suécia 1958" },
+  { year: 1954, name: "Suíça 1954" },
+  { year: 1950, name: "Brasil 1950" },
+  { year: 1938, name: "França 1938" },
+  { year: 1934, name: "Itália 1934" },
+  { year: 1930, name: "Uruguai 1930" }
+];
+
 export const AlbumTorcidaPage = () => {
   const [tab, setTab] = useState<Tab>("jogos");
   const [matches, setMatches] = useState<{ id: string; group: string; teamA: string; teamB: string; matchDate: string }[]>([]);
@@ -588,19 +613,19 @@ export const AlbumTorcidaPage = () => {
 
             {/* Year selector pills */}
             <div style={{ display: "flex", gap: 8, marginBottom: 24, overflowX: "auto", paddingBottom: 8 }}>
-              {[2022, 2018, 2014, 2010].map((yr) => (
+              {ALL_PAST_COPAS.map((c) => (
                 <button
-                  key={yr}
-                  onClick={() => setNostalgiaYear(yr)}
+                  key={c.year}
+                  onClick={() => setNostalgiaYear(c.year)}
                   style={{
-                    background: nostalgiaYear === yr ? "#10b981" : "rgba(255,255,255,0.03)",
-                    color: nostalgiaYear === yr ? "black" : "#9ca3af",
-                    border: nostalgiaYear === yr ? "1px solid #10b981" : "1px solid rgba(255,255,255,0.08)",
+                    background: nostalgiaYear === c.year ? "#10b981" : "rgba(255,255,255,0.03)",
+                    color: nostalgiaYear === c.year ? "black" : "#9ca3af",
+                    border: nostalgiaYear === c.year ? "1px solid #10b981" : "1px solid rgba(255,255,255,0.08)",
                     padding: "8px 16px", borderRadius: 20, fontSize: 11, fontWeight: 900,
-                    cursor: "pointer", transition: "all 0.2s"
+                    cursor: "pointer", transition: "all 0.2s", whiteSpace: "nowrap"
                   }}
                 >
-                  Copa {yr === 2022 ? "Catar 2022" : yr === 2018 ? "Rússia 2018" : yr === 2014 ? "Brasil 2014" : "África 2010"}
+                  Copa {c.name}
                 </button>
               ))}
             </div>
