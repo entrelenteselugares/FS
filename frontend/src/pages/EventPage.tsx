@@ -1,10 +1,12 @@
 import { useState, useEffect, useCallback } from "react";
 import { createPortal } from "react-dom";
 import { useEventStatus } from "../hooks/useEventStatus";
-import { Check, Printer, QrCode, ShoppingCart, Share2, ChevronRight, ChevronLeft, Image as ImageIcon, Camera, MapPin, Clock, ShieldCheck, CheckCircle2, Lock, UserCircle, Search, X, ExternalLink } from "lucide-react";
+import { Check, Printer, QrCode, ShoppingCart, Share2, ChevronRight, ChevronLeft, Image as ImageIcon, Camera, MapPin, Clock, ShieldCheck, CheckCircle2, Lock, UserCircle, Search, X, ExternalLink, Download, Archive } from "lucide-react";
 import { QRCodeCanvas } from "qrcode.react";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { API as api } from "../lib/api";
+import JSZip from "jszip";
+import { saveAs } from "file-saver";
 
 import AccessTypeModal from "../components/AccessTypeModal";
 import { AuthModal } from "../components/AuthModal";
@@ -191,6 +193,7 @@ interface EventData {
   retentionDays?: number;
   tenantBrandColor?: string | null;
   tenantLogoUrl?: string | null;
+  edicaoId?: string | null;
 }
 
 interface EventMedia {
@@ -341,6 +344,8 @@ export default function EventPage() {
     return true;
   });
   const [isEditingEvent, setIsEditingEvent] = useState(false);
+  const [isDownloading, setIsDownloading] = useState(false);
+  const [downloadProgress, setDownloadProgress] = useState(0);
 
   const eventStatus = useEventStatus(event?.dataEvento, null, 2, event?.isExpired, event?.active);
 
@@ -372,6 +377,39 @@ export default function EventPage() {
     } catch (err) {
       console.error("Erro ao compartilhar:", err);
     }
+  };
+
+  const handleDownload = async (mediaUrls: string[], zipName: string) => {
+    if (!mediaUrls.length) { alert("Nenhuma mídia para baixar."); return; }
+    setIsDownloading(true);
+    setDownloadProgress(0);
+    const zip = new JSZip();
+    let count = 0;
+    for (const url of mediaUrls) {
+      try {
+        const res = await fetch(url);
+        const blob = await res.blob();
+        const ext = url.split('?')[0].split('.').pop() || 'jpg';
+        const filename = `foto_${String(count + 1).padStart(4,'0')}.${ext}`;
+        zip.file(filename, blob);
+        count++;
+        setDownloadProgress(Math.round((count / mediaUrls.length) * 100));
+      } catch { /* skip failed */ }
+    }
+    const content = await zip.generateAsync({ type: "blob" });
+    saveAs(content, `${zipName}.zip`);
+    setIsDownloading(false);
+  };
+
+  const handleDownloadAll = () => {
+    const urls = filteredMedias.map(m => m.url).filter(Boolean);
+    handleDownload(urls, `${event?.title || 'album'}-COMPLETO`);
+  };
+
+  const handleDownloadSelected = () => {
+    const selected = filteredMedias.filter(m => eventCart.includes(m.shortId));
+    const urls = selected.map(m => m.url).filter(Boolean);
+    handleDownload(urls, `${event?.title || 'album'}-SELECIONADAS`);
   };
 
   useEffect(() => {
@@ -994,6 +1032,33 @@ return (
                               </div>
                             )}
 
+                            {/* Download Toolbar — visible only to owner/admin/editor */}
+                            {(event.isOwner || event.edicaoId === event.photographer?.id || user?.role === 'ADMIN') && (
+                              <div className="flex flex-wrap items-center justify-between gap-3 pb-4 mb-4 border-b border-theme-border">
+                                <div className="flex items-center gap-2">
+                                  <Archive size={14} className="text-brand-tactical" />
+                                  <span className="text-[9px] font-black uppercase tracking-widest text-theme-muted italic">Download de Material</span>
+                                </div>
+                                <div className="flex gap-2">
+                                  {eventCart.length > 0 && (
+                                    <button
+                                      onClick={handleDownloadSelected}
+                                      disabled={isDownloading}
+                                      className="px-4 py-2.5 border border-brand-tactical/40 text-brand-tactical text-[9px] font-black uppercase tracking-widest hover:bg-brand-tactical/10 transition-all flex items-center gap-2 rounded-xl disabled:opacity-40"
+                                    >
+                                      <Download size={13} /> {eventCart.length} SELECIONADAS
+                                    </button>
+                                  )}
+                                  <button
+                                    onClick={handleDownloadAll}
+                                    disabled={isDownloading}
+                                    className="px-4 py-2.5 bg-brand-tactical text-black text-[9px] font-black uppercase tracking-widest hover:brightness-110 transition-all flex items-center gap-2 rounded-xl disabled:opacity-40"
+                                  >
+                                    <Archive size={13} /> ÁLBUM COMPLETO ({filteredMedias.length})
+                                  </button>
+                                </div>
+                              </div>
+                            )}
                             <TouchSelectionGallery
                               medias={filteredMedias}
                               selectedIds={eventCart}
@@ -1364,6 +1429,34 @@ return (
           onClose={() => setIsEditingEvent(false)}
           onNotify={(msg) => alert(msg)}
         />
+      )}
+      {/* Download Progress Overlay */}
+      {isDownloading && createPortal(
+        <div className="fixed inset-0 z-[99999] flex flex-col items-center justify-center bg-black/90 backdrop-blur-xl">
+          <div className="space-y-6 text-center max-w-sm w-full px-6">
+            <div className="relative mx-auto w-20 h-20">
+              <div className="absolute inset-0 rounded-full border-4 border-brand-tactical/20" />
+              <div 
+                className="absolute inset-0 rounded-full border-4 border-brand-tactical border-t-transparent animate-spin"
+              />
+              <div className="absolute inset-0 flex items-center justify-center">
+                <Archive size={28} className="text-brand-tactical" />
+              </div>
+            </div>
+            <div className="space-y-2">
+              <p className="text-[10px] font-black uppercase tracking-[0.3em] text-brand-tactical italic">Preparando Download</p>
+              <p className="text-2xl font-black text-white">{downloadProgress}%</p>
+              <p className="text-[9px] text-zinc-500 uppercase tracking-widest">Compactando arquivos...</p>
+            </div>
+            <div className="w-full bg-zinc-800 rounded-full h-1.5 overflow-hidden">
+              <div 
+                className="h-full bg-brand-tactical transition-all duration-300 rounded-full"
+                style={{ width: `${downloadProgress}%` }}
+              />
+            </div>
+          </div>
+        </div>,
+        document.body
       )}
     </div>
   );

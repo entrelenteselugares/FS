@@ -82,7 +82,7 @@ export async function getMeusEventos(req: AuthRequest, res: Response): Promise<v
 // PATCH /api/profissional/events/:id/links — atualiza lightroomUrl e driveUrl
 export async function updateEventLinks(req: AuthRequest, res: Response): Promise<void> {
   const { id } = req.params;
-  const { lightroomUrl, driveUrl, dataEvento, coverPosition } = req.body;
+  const { lightroomUrl, driveUrl, dataEvento, coverPosition, edicaoId } = req.body;
   const userId = req.user?.userId;
   if (!userId) { res.status(401).json({ error: "Não autenticado." }); return; }
 
@@ -116,6 +116,7 @@ export async function updateEventLinks(req: AuthRequest, res: Response): Promise
         ...(finalDriveUrl !== undefined && { driveUrl: finalDriveUrl || null }),
         ...(dataEvento !== undefined && { dataEvento: dataEvento ? new Date(dataEvento) : { set: new Date() } }),
         ...(coverPosition !== undefined && { coverPosition: String(coverPosition) || "center" }),
+        ...(edicaoId !== undefined && { edicaoId: edicaoId === "null" || edicaoId === null ? null : String(edicaoId) }),
       },
     });
 
