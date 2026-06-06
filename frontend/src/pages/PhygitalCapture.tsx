@@ -79,7 +79,8 @@ export default function PhygitalCapture() {
   const [checkingEmail, setCheckingEmail] = useState(false);
   const [loading, setLoading] = useState(false);
   
-  const [uploadProgress, setUploadProgress] = useState<{ [name: string]: 'pending' | 'uploading' | 'done' | 'failed' }>({});
+  type UploadStatus = 'pending' | 'uploading' | 'done' | 'failed';
+  const [uploadProgress, setUploadProgress] = useState<Record<string, UploadStatus>>({});
   const [currentUploadIndex, setCurrentUploadIndex] = useState<number | null>(null);
   const [referenceCodes, setReferenceCodes] = useState<string[]>([]);
   const [error, setError] = useState('');
@@ -193,7 +194,7 @@ export default function PhygitalCapture() {
     setLoading(true);
     setError('');
     const codes: string[] = [];
-    const initialProgress: typeof uploadProgress = {};
+    const initialProgress: Record<string, UploadStatus> = {};
     filesToUpload.forEach(f => {
       initialProgress[f.name] = 'pending';
     });
@@ -229,9 +230,9 @@ export default function PhygitalCapture() {
       }
       setReferenceCodes(codes);
       toast.success("Envio concluído com sucesso!");
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error(err);
-      setError(err.message || 'Erro ao processar envio dos arquivos.');
+      setError(err instanceof Error ? err.message : 'Erro ao processar envio dos arquivos.');
     } finally {
       setLoading(false);
       setCurrentUploadIndex(null);
