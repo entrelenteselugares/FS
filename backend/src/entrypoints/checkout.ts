@@ -4,7 +4,10 @@ import helmet from "helmet";
 import cookieParser from "cookie-parser";
 import checkoutRoutes from "../routes/checkout.routes";
 import webhookRoutes from "../routes/webhook.routes";
-import paymentRoutes from "../routes/checkout.routes"; // Check if checkout handles payments or there's paymentRoutes
+import paymentRoutes from "../routes/checkout.routes";
+import { initSentry } from "../lib/sentry";
+
+initSentry();
 
 const app = express();
 app.set("trust proxy", 1);

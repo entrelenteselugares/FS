@@ -84,11 +84,13 @@ app.use(helmet({
   crossOriginResourcePolicy: { policy: "cross-origin" }
 }));
 
-// DEBUG: Log all incoming requests
-app.use((req, _res, next) => {
-  console.log(`[DEBUG] ${req.method} ${req.url}`);
-  next();
-});
+// DEBUG: Log all incoming requests (dev only)
+if (process.env.NODE_ENV !== "production") {
+  app.use((req, _res, next) => {
+    console.log(`[DEBUG] ${req.method} ${req.url}`);
+    next();
+  });
+}
 
 // ── RATE LIMITING NATIVO (SERVERLESS) ──────────────────────────────────────────
 // IMPORTANTE: Na Vercel (Serverless), a memória RAM não é persistida entre requests concorrentes.

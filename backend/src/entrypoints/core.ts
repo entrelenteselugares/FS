@@ -3,6 +3,9 @@ import cors from "cors";
 import helmet from "helmet";
 import cookieParser from "cookie-parser";
 import routes from "../routes/index";
+import { initSentry } from "../lib/sentry";
+
+initSentry();
 
 const app = express();
 app.set("trust proxy", 1);

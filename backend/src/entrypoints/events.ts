@@ -6,6 +6,9 @@ import publicRoutes from "../routes/public.routes";
 import { professionalRoutes } from "../routes/professional.routes";
 import vaultRoutes from "../routes/vault.routes";
 import flashRoutes from "../routes/flash.routes";
+import { initSentry } from "../lib/sentry";
+
+initSentry();
 
 const app = express();
 app.set("trust proxy", 1);

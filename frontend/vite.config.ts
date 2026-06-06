@@ -64,10 +64,10 @@ export default defineConfig({
   },
   server: {
     host: '0.0.0.0',
-    port: 3001,
-    strictPort: true,
+    port: 3003,
+    strictPort: false,
     hmr: {
-      clientPort: 3001,
+      clientPort: 3003,
     },
     proxy: {
       '/api': {
