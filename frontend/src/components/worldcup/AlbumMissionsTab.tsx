@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { API as api } from "../../lib/api";
-import { CheckCircle2, Lock, Upload, Image as ImageIcon, Target, ThumbsUp, ThumbsDown, Camera } from "lucide-react";
+import { CheckCircle2, Lock, Target, ThumbsUp, ThumbsDown, Camera } from "lucide-react";
 
 export function AlbumMissionsTab() {
   const [loading, setLoading] = useState(true);

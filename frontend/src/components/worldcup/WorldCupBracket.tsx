@@ -7,6 +7,8 @@ interface BracketMatch {
   away: string;
   score: string;
   status: "FINISHED" | "LIVE" | "HALF_TIME" | "SCHEDULED";
+  homeFlag?: string;
+  awayFlag?: string;
 }
 
 interface BracketData {
@@ -61,7 +63,10 @@ export function WorldCupBracket() {
         )}
         
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-          <span style={{ fontSize: 11, color: "white", fontWeight: 700 }}>{m.home}</span>
+          <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+            {m.homeFlag && <img src={m.homeFlag} alt={m.home} style={{ width: 14, height: 10, borderRadius: 2 }} />}
+            <span style={{ fontSize: 11, color: "white", fontWeight: 700 }}>{m.home}</span>
+          </div>
           <span style={{ fontSize: 12, color: statusColor, fontWeight: 900, fontFamily: "monospace" }}>
             {m.score.split("-")[0] || "-"}
           </span>
@@ -70,7 +75,10 @@ export function WorldCupBracket() {
         <div style={{ height: 1, background: "rgba(255,255,255,0.05)", margin: "2px 0" }} />
         
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-          <span style={{ fontSize: 11, color: "white", fontWeight: 700 }}>{m.away}</span>
+          <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+            {m.awayFlag && <img src={m.awayFlag} alt={m.away} style={{ width: 14, height: 10, borderRadius: 2 }} />}
+            <span style={{ fontSize: 11, color: "white", fontWeight: 700 }}>{m.away}</span>
+          </div>
           <span style={{ fontSize: 12, color: statusColor, fontWeight: 900, fontFamily: "monospace" }}>
             {m.score.split("-")[1] || "-"}
           </span>

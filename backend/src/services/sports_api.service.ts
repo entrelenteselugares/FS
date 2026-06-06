@@ -24,6 +24,8 @@ interface BracketMatch {
   away: string;
   score: string;
   status: "FINISHED" | "LIVE" | "HALF_TIME" | "SCHEDULED";
+  homeFlag?: string;
+  awayFlag?: string;
 }
 
 interface BracketData {
@@ -162,35 +164,34 @@ function getMockLiveMatches(): LiveMatch[] {
 
 
 function getMockBracket(): BracketData {
-  // Copa 2026 has not reached knockout stage yet.
-  // Bracket shows the 12 groups' slots as TBD.
-  // This will be auto-replaced with real API data once knockout matches are scheduled.
-  const tbd = (id: string, home: string, away: string) => ({
+  // Mock bracket for demonstration purposes
+  const tbd = (id: string, home: string, away: string, homeFlag: string, awayFlag: string) => ({
     id, home, away, score: "-", status: "SCHEDULED" as const,
+    homeFlag: flagUrl(homeFlag), awayFlag: flagUrl(awayFlag)
   });
   return {
     roundOf16: [
-      tbd("r32-1",  "1ºA",  "2ºB"),
-      tbd("r32-2",  "1ºC",  "2ºD"),
-      tbd("r32-3",  "1ºE",  "2ºF"),
-      tbd("r32-4",  "1ºG",  "2ºH"),
-      tbd("r32-5",  "1ºI",  "2ºJ"),
-      tbd("r32-6",  "1ºK",  "2ºL"),
-      tbd("r32-7",  "3ºA/B/C", "3ºD/E/F"),
-      tbd("r32-8",  "3ºG/H/I", "3ºJ/K/L"),
+      tbd("r32-1",  "Brasil", "Uruguai", "br", "uy"),
+      tbd("r32-2",  "Espanha", "Alemanha", "es", "de"),
+      tbd("r32-3",  "França", "Inglaterra", "fr", "gb-eng"),
+      tbd("r32-4",  "Holanda", "Bélgica", "nl", "be"),
+      tbd("r32-5",  "Argentina", "Chile", "ar", "cl"),
+      tbd("r32-6",  "Itália", "Portugal", "it", "pt"),
+      tbd("r32-7",  "EUA", "México", "us", "mx"),
+      tbd("r32-8",  "Japão", "Croácia", "jp", "hr"),
     ],
     quarterFinals: [
-      tbd("qf-1", "W R32-1", "W R32-2"),
-      tbd("qf-2", "W R32-3", "W R32-4"),
-      tbd("qf-3", "W R32-5", "W R32-6"),
-      tbd("qf-4", "W R32-7", "W R32-8"),
+      tbd("qf-1", "Brasil", "Espanha", "br", "es"),
+      tbd("qf-2", "França", "Holanda", "fr", "nl"),
+      tbd("qf-3", "Argentina", "Itália", "ar", "it"),
+      tbd("qf-4", "EUA", "Japão", "us", "jp"),
     ],
     semiFinals: [
-      tbd("sf-1", "W QF-1", "W QF-2"),
-      tbd("sf-2", "W QF-3", "W QF-4"),
+      tbd("sf-1", "Brasil", "França", "br", "fr"),
+      tbd("sf-2", "Argentina", "Japão", "ar", "jp"),
     ],
     final: [
-      tbd("final", "W SF-1", "W SF-2"),
+      tbd("final", "Brasil", "Argentina", "br", "ar"),
     ],
   };
 }
@@ -356,7 +357,9 @@ export class SportsApiService {
         bracket[key].push({
           id: String(f.fixture.id),
           home: f.teams.home.name,
+          homeFlag: f.teams.home.logo,
           away: f.teams.away.name,
+          awayFlag: f.teams.away.logo,
           score,
           status,
         });
