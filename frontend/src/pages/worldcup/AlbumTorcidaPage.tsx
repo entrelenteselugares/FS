@@ -225,14 +225,30 @@ export const AlbumTorcidaPage = () => {
       return {};
     }
   });
-  const [communityLikes, setCommunityLikes] = useState<Record<string, number>>({
-    Lucas: 24,
-    Mateus: 18,
-    Ana: 35,
-    Thiago: 12,
-  });
+  const [communityLikes, setCommunityLikes] = useState<Record<string, number>>({});
   const [showInviteModal, setShowInviteModal] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [muralPosts, setMuralPosts] = useState<any[]>([]);
+
+  const fetchMuralPosts = useCallback(() => {
+    api.get(`/worldcup/nostalgia?year=${nostalgiaYear}`)
+      .then(({ data }) => {
+        setMuralPosts(data.posts || []);
+        // Map likes
+        const likesMap: Record<string, number> = {};
+        (data.posts || []).forEach((p: any) => {
+          likesMap[p.id] = p.likes;
+        });
+        setCommunityLikes(likesMap);
+      })
+      .catch(() => {
+        setMuralPosts([]);
+      });
+  }, [nostalgiaYear]);
+
+  useEffect(() => {
+    fetchMuralPosts();
+  }, [fetchMuralPosts]);
 
   const handlePhotoUpload = (slotId: string, file: File) => {
     const reader = new FileReader();
@@ -246,11 +262,21 @@ export const AlbumTorcidaPage = () => {
     reader.readAsDataURL(file);
   };
 
-  const handleLike = (user: string) => {
-    setCommunityLikes(prev => ({
-      ...prev,
-      [user]: prev[user] + 1
-    }));
+  const handleLike = (postId: string) => {
+    api.post(`/worldcup/nostalgia/${postId}/like`)
+      .then(() => {
+        setCommunityLikes(prev => ({
+          ...prev,
+          [postId]: (prev[postId] || 0) + 1
+        }));
+      })
+      .catch(() => {
+        // Fallback local increment if API is down
+        setCommunityLikes(prev => ({
+          ...prev,
+          [postId]: (prev[postId] || 0) + 1
+        }));
+      });
   };
 
   const copyInviteLink = () => {
@@ -709,48 +735,57 @@ export const AlbumTorcidaPage = () => {
                 <Users size={16} color="#10b981" /> Mural Nostálgico da Galera
               </h3>
               <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))", gap: 16 }}>
-                {[
-                  { name: "Lucas", year: 2014, tag: "Rua Pintada", img: "https://images.unsplash.com/photo-1508098682722-e99c43a406b2?auto=format&fit=crop&q=80&w=600", desc: "Nossa rua pintada lá em 2014, inesquecível! 🇧🇷✨" },
-                  { name: "Mateus", year: 2018, tag: "Look de Jogo", img: "https://images.unsplash.com/photo-1579952362864-3b56c4749221?auto=format&fit=crop&q=80&w=600", desc: "No bar torcendo com a camisa reserva oficial! Que dia!" },
-                  { name: "Ana", year: 2022, tag: "Churrasco", img: "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&q=80&w=600", desc: "A galera reunida no primeiro jogo contra a Sérvia ⚽" },
-                  { name: "Thiago", year: 2014, tag: "Grito de Gol", img: "https://images.unsplash.com/photo-1540039155732-d6749b9325f0?auto=format&fit=crop&q=80&w=600", desc: "O grito de gol na Copa do Brasil! Energia máxima!" },
-                ].map((post) => (
-                  <div
-                    key={post.name}
-                    style={{
-                      background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.05)",
-                      padding: "16px", borderRadius: 4, display: "flex", flexDirection: "column", gap: 12
-                    }}
-                  >
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                      <div>
-                        <strong style={{ fontSize: 12, color: "white" }}>{post.name}</strong>
-                        <span style={{ fontSize: 9, color: "#6b7280", marginLeft: 6 }}>Copa {post.year}</span>
-                      </div>
-                      <span style={{ fontSize: 8, background: "rgba(16,185,129,0.1)", color: "#10b981", padding: "2px 6px", fontWeight: 900, textTransform: "uppercase" }}>
-                        {post.tag}
-                      </span>
-                    </div>
-                    <img
-                      src={post.img}
-                      alt={post.desc}
-                      style={{ width: "100%", height: 140, objectFit: "cover", borderRadius: 2 }}
-                    />
-                    <p style={{ fontSize: 11, color: "#9ca3af", margin: 0, lineHeight: 1.5 }}>{post.desc}</p>
-                    <div style={{ display: "flex", alignItems: "center", marginTop: 4 }}>
-                      <button
-                        onClick={() => handleLike(post.name)}
-                        style={{
-                          background: "none", border: "none", cursor: "pointer", display: "flex",
-                          alignItems: "center", gap: 6, color: "#ef4444", padding: 0
-                        }}
-                      >
-                        <Heart size={14} fill="#ef4444" />
-                        <span style={{ fontSize: 11, fontWeight: 700, color: "#9ca3af" }}>{communityLikes[post.name]}</span>
-                      </button>
-                    </div>
+                {muralPosts.length === 0 ? (
+                  <div style={{ gridColumn: "1 / -1", textAlign: "center", padding: "40px 20px", background: "rgba(255,255,255,0.01)", border: "1px dashed rgba(16,185,129,0.15)" }}>
+                    <Users size={32} color="#10b981" style={{ margin: "0 auto 12px", opacity: 0.3 }} />
+                    <p style={{ fontSize: 12, color: "#9ca3af", margin: 0, fontWeight: 900, textTransform: "uppercase", letterSpacing: "0.05em" }}>
+                      Nenhum momento compartilhado no mural ainda para esta Copa.
+                    </p>
+                    <p style={{ fontSize: 10, color: "#6b7280", marginTop: 4 }}>
+                      Preencha suas fotos de nostalgia acima e publique-as aqui!
+                    </p>
                   </div>
-                ))}
+                ) : (
+                  muralPosts.map((post) => (
+                    <div
+                      key={post.id}
+                      style={{
+                        background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.05)",
+                        padding: "16px", borderRadius: 4, display: "flex", flexDirection: "column", gap: 12
+                      }}
+                    >
+                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                        <div>
+                          <strong style={{ fontSize: 12, color: "white" }}>{post.userName}</strong>
+                          <span style={{ fontSize: 9, color: "#6b7280", marginLeft: 6 }}>Copa {post.year}</span>
+                        </div>
+                        <span style={{ fontSize: 8, background: "rgba(16,185,129,0.1)", color: "#10b981", padding: "2px 6px", fontWeight: 900, textTransform: "uppercase" }}>
+                          {post.tag}
+                        </span>
+                      </div>
+                      <img
+                        src={post.imageUrl}
+                        alt={post.description || ""}
+                        style={{ width: "100%", height: 140, objectFit: "cover", borderRadius: 2 }}
+                      />
+                      {post.description && (
+                        <p style={{ fontSize: 11, color: "#9ca3af", margin: 0, lineHeight: 1.5 }}>{post.description}</p>
+                      )}
+                      <div style={{ display: "flex", alignItems: "center", marginTop: 4 }}>
+                        <button
+                          onClick={() => handleLike(post.id)}
+                          style={{
+                            background: "none", border: "none", cursor: "pointer", display: "flex",
+                            alignItems: "center", gap: 6, color: "#ef4444", padding: 0
+                          }}
+                        >
+                          <Heart size={14} fill={(communityLikes[post.id] || 0) > 0 ? "#ef4444" : "none"} />
+                          <span style={{ fontSize: 11, fontWeight: 700, color: "#9ca3af" }}>{communityLikes[post.id] || 0}</span>
+                        </button>
+                      </div>
+                    </div>
+                  ))
+                )}
               </div>
             </div>
 
