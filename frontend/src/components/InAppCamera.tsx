@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
-import { X, RefreshCw, Image as ImageIcon, ZapOff } from 'lucide-react';
+import { X, RefreshCw, Image as ImageIcon, ZapOff, Aperture } from 'lucide-react';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 type CaptureMode = 'photo' | 'video';
@@ -60,9 +60,11 @@ export function InAppCamera({ onCapture, onClose, onGalleryOpen, maxFiles = 12, 
   const [error, setError] = useState<string | null>(null);
   const [cameraReady, setCameraReady] = useState(false);
   const [isFlipping, setIsFlipping] = useState(false);
+  const [videoDevices, setVideoDevices] = useState<MediaDeviceInfo[]>([]);
+  const [activeDeviceId, setActiveDeviceId] = useState<string | null>(null);
 
   // ── Start camera stream ──────────────────────────────────────────────────
-  const startStream = useCallback(async (facingMode: FacingMode) => {
+  const startStream = useCallback(async (facingMode: FacingMode, deviceId?: string) => {
     setCameraReady(false);
     setError(null);
 
@@ -73,16 +75,25 @@ export function InAppCamera({ onCapture, onClose, onGalleryOpen, maxFiles = 12, 
     }
 
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode, width: { ideal: 1280 }, height: { ideal: 720 } },
+      const constraints: MediaStreamConstraints = {
+        video: deviceId 
+          ? { deviceId: { exact: deviceId }, width: { ideal: 1280 }, height: { ideal: 720 } }
+          : { facingMode, width: { ideal: 1280 }, height: { ideal: 720 } },
         audio: true
-      });
+      };
+
+      const stream = await navigator.mediaDevices.getUserMedia(constraints);
       streamRef.current = stream;
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
         videoRef.current.play();
       }
       setCameraReady(true);
+
+      // Fetch available cameras after permission is granted
+      const devices = await navigator.mediaDevices.enumerateDevices();
+      const videoInputs = devices.filter(d => d.kind === 'videoinput');
+      setVideoDevices(videoInputs);
     } catch {
       setError('Não foi possível acessar a câmera. Verifique as permissões do navegador.');
     }
@@ -99,7 +110,24 @@ export function InAppCamera({ onCapture, onClose, onGalleryOpen, maxFiles = 12, 
     setIsFlipping(true);
     const next: FacingMode = facing === 'environment' ? 'user' : 'environment';
     setFacing(next);
+    setActiveDeviceId(null); // Clear specific lens selection when flipping
     await startStream(next);
+    setTimeout(() => setIsFlipping(false), 300);
+  };
+
+  const backDevices = videoDevices.filter(d => !d.label.toLowerCase().includes('front') && !d.label.toLowerCase().includes('user'));
+
+  const switchLens = async () => {
+    if (backDevices.length <= 1) return;
+    setIsFlipping(true);
+    const currentIdx = activeDeviceId ? backDevices.findIndex(d => d.deviceId === activeDeviceId) : 0;
+    const nextIdx = (currentIdx + 1) % backDevices.length;
+    const nextDevice = backDevices[nextIdx];
+    
+    if (nextDevice) {
+      setActiveDeviceId(nextDevice.deviceId);
+      await startStream('environment', nextDevice.deviceId);
+    }
     setTimeout(() => setIsFlipping(false), 300);
   };
 
@@ -403,22 +431,42 @@ export function InAppCamera({ onCapture, onClose, onGalleryOpen, maxFiles = 12, 
             </button>
           </div>
 
-          {/* Flip camera */}
-          <button
-            onClick={flipCamera}
-            disabled={isRecording}
-            style={{
-              width: 52, height: 52, borderRadius: '50%',
-              background: 'rgba(255,255,255,0.15)', border: '1px solid rgba(255,255,255,0.2)',
-              display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-              gap: 2, cursor: isRecording ? 'not-allowed' : 'pointer',
-              opacity: isRecording ? 0.4 : 1,
-              backdropFilter: 'blur(8px)'
-            }}
-          >
-            <RefreshCw size={20} color="white" />
-            <span style={{ fontSize: 8, color: 'white', fontWeight: 900, opacity: 0.7 }}>GIRAR</span>
-          </button>
+          {/* Right Controls: Lens & Flip */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+            {facing === 'environment' && backDevices.length > 1 && (
+              <button
+                onClick={switchLens}
+                disabled={isRecording}
+                style={{
+                  width: 52, height: 52, borderRadius: '50%',
+                  background: 'rgba(255,255,255,0.15)', border: '1px solid rgba(255,255,255,0.2)',
+                  display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+                  gap: 2, cursor: isRecording ? 'not-allowed' : 'pointer',
+                  opacity: isRecording ? 0.4 : 1,
+                  backdropFilter: 'blur(8px)'
+                }}
+              >
+                <Aperture size={20} color="white" />
+                <span style={{ fontSize: 8, color: 'white', fontWeight: 900, opacity: 0.7 }}>LENTE</span>
+              </button>
+            )}
+
+            <button
+              onClick={flipCamera}
+              disabled={isRecording}
+              style={{
+                width: 52, height: 52, borderRadius: '50%',
+                background: 'rgba(255,255,255,0.15)', border: '1px solid rgba(255,255,255,0.2)',
+                display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+                gap: 2, cursor: isRecording ? 'not-allowed' : 'pointer',
+                opacity: isRecording ? 0.4 : 1,
+                backdropFilter: 'blur(8px)'
+              }}
+            >
+              <RefreshCw size={20} color="white" />
+              <span style={{ fontSize: 8, color: 'white', fontWeight: 900, opacity: 0.7 }}>GIRAR</span>
+            </button>
+          </div>
         </div>
       </div>
 
