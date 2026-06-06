@@ -34,6 +34,14 @@
       "destination": "/api/public-hono.js"
     },
     {
+      "source": "/api/public/banners",
+      "destination": "/api/public-hono.js"
+    },
+    {
+      "source": "/api/worldcup/(.*)",
+      "destination": "/api/core.js"
+    },
+    {
       "source": "/api/public/(.*)",
       "destination": "/api/events.js"
     },
