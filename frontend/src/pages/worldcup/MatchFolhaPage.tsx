@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import { useParams, Link } from "react-router-dom";
 import { API as api } from "../../lib/api";
-import { ChevronLeft, Camera, Utensils, Users, CheckCircle, Share2, X, Heart, MessageSquare } from "lucide-react";
+import { ChevronLeft, Camera, Utensils, Users, Share2, X, Heart, MessageSquare } from "lucide-react";
 import { toast } from "sonner";
 import { ShareCollage } from "../../components/worldcup/ShareCollage";
 import { TacticalPitch } from "../../components/worldcup/TacticalPitch";
