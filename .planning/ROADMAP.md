@@ -84,31 +84,20 @@
 **Goal:** Criar uma experiência gamificada para os usuários montarem um álbum de fotos de 12 slots durante os jogos da Copa do Mundo, com badges, escalação de amigos e integração com social sharing.
 **Requirements**: TBD
 **Depends on:** Phase 57
-**Plans:** 1 plans
-
-Plans:
-
-- [x] Implementado Álbum, Slots, e Mecânica de Upload (Concluído em etapas anteriores e na Fase 61)
+**Status:** Completed
 
 ### Phase 59: Banner, Chaveamento e Placar Ao Vivo da Copa
 
 **Goal:** Adicionar um banner promocional, buscar dados em tempo real da FIFA (ou API de esportes) para um placar ao vivo, e renderizar o chaveamento (bracket) do torneio em uma área especial.
 **Requirements**: TBD
 **Depends on:** Phase 58
-**Plans:** 0 plans
-
-Plans:
-
-- [ ] TBD
+**Status:** Completed
 
 ### Phase 61: Missões e Quiz do Álbum da Torcida
 
 **Goal:** Implementar a aba de "Missões" no Álbum da Torcida, onde os 12 slots são desbloqueados através de Quizzes e submissões de fotos validadas pela comunidade, gerando acúmulo de pontos/selos para premiações.
 **Requirements**: TBD
 **Depends on:** Phase 58
-**Plans:** 1 plans
+**Status:** Completed
 
-Plans:
-
-- [x] Implementação concluída: backend endpoints, 12 quizzes temáticos, validação comunitária e nova aba Missões no frontend.
 
