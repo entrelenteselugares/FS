@@ -104,13 +104,10 @@ function ReferenceCard({ item }: { item: RefItem }) {
 
   if (!imgError) {
     return (
-      <div 
-        className="aspect-square bg-theme-bg-muted border border-theme-border overflow-hidden rounded-xl relative cursor-pointer group hover:border-brand-tactical/50 transition-colors"
-        onClick={() => window.open(item.url, "_blank")}
-      >
+      <div className="aspect-square bg-theme-bg-muted border border-theme-border overflow-hidden rounded-xl relative">
         <img
           src={displayUrl}
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+          className="w-full h-full object-cover"
           alt="Referência"
           onError={() => setImgError(true)}
         />
