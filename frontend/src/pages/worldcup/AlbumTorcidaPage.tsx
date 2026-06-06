@@ -6,6 +6,7 @@ import { Trophy, Camera, Clock, ChevronRight, ChevronLeft, Star, Zap, Calendar, 
 import { AlbumMissionsTab } from "../../components/worldcup/AlbumMissionsTab";
 import { WorldCupLiveBanner } from "../../components/worldcup/WorldCupLiveBanner";
 import { WorldCupBracket } from "../../components/worldcup/WorldCupBracket";
+// import { RouletteModal } from "../../components/worldcup/RouletteModal";
 
 // ─── Copa 2026 Data ───────────────────────────────────────────────────────────
 const GROUPS: Array<{
@@ -185,7 +186,7 @@ const CountdownBox = ({ val, label }: { val: number; label: string }) => (
 );
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
-type Tab = "jogos" | "grupos" | "album" | "missoes" | "ranking" | "chaveamento" | "nostalgia";
+type Tab = "jogos" | "grupos" | "album" | "missoes" | "ranking" | "chaveamento" | "nostalgia" | "bolao";
 
 const ALL_PAST_COPAS = [
   { year: 2022, name: "Catar 2022" },
@@ -215,11 +216,76 @@ const ALL_PAST_COPAS = [
 export const AlbumTorcidaPage = () => {
   const [tab, setTab] = useState<Tab>("jogos");
   const [matches, setMatches] = useState<{ id: string; group: string; teamA: string; teamB: string; matchDate: string }[]>([]);
+  // const [showRoulette, setShowRoulette] = useState(false);
   const countdown = useCountdown(BRASIL_GAME.utc);
   const [now] = useState(() => Date.now());
 
+  // Bets state
+  const [bets, setBets] = useState<Record<string, { homeScore: number; awayScore: number; settled: boolean; pointsAwarded: number; creditsAwarded: number }>>({});
+  const [isSubmittingBet, setIsSubmittingBet] = useState(false);
+  const [betSummary, setBetSummary] = useState<{
+    availableCredits: number;
+    totalBets: number;
+    exactCount: number;
+    correctCount: number;
+    totalPoints: number;
+    totalCredits: number;
+    settledBets: number;
+  } | null>(null);
+
+  useEffect(() => {
+    const init = async () => {
+      try {
+        const [betsRes, betSummaryRes] = await Promise.all([
+          api.get("/worldcup/bets").catch(() => ({ data: { bets: [] } })),
+          api.get("/worldcup/bets/summary").catch(() => null),
+          // api.get("/worldcup/roulette/status").catch(() => null)
+        ]);
+
+        if (betsRes.data?.bets) {
+          const betsMap: Record<string, { homeScore: number; awayScore: number; settled: boolean; pointsAwarded: number; creditsAwarded: number }> = {};
+          betsRes.data.bets.forEach((b: { fixtureId: string; homeScore: number; awayScore: number; settled: boolean; pointsAwarded: number; creditsAwarded: number }) => {
+            betsMap[b.fixtureId] = { homeScore: b.homeScore, awayScore: b.awayScore, settled: b.settled, pointsAwarded: b.pointsAwarded, creditsAwarded: b.creditsAwarded };
+          });
+          setBets(betsMap);
+        }
+        
+        if (betSummaryRes?.data) {
+          setBetSummary(betSummaryRes.data);
+        }
+
+        // Feature Temporariamente Desativada a pedido do usuário
+        // if (rouletteRes?.data && !rouletteRes.data.hasSpun) {
+        //   setShowRoulette(true);
+        // }
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    init();
+  }, []);
+
+  useEffect(() => {
+    if (tab === 'bolao') {
+      api.get("/worldcup/bets/summary").then(({ data }) => setBetSummary(data)).catch(() => {});
+    }
+  }, [tab]);
+
+  const handlePlaceBet = async (fixtureId: string, homeScore: number, awayScore: number) => {
+    if (homeScore < 0 || awayScore < 0) return;
+    setIsSubmittingBet(true);
+    try {
+      await api.post("/worldcup/bets", { fixtureId, homeScore, awayScore });
+      setBets(prev => ({ ...prev, [fixtureId]: { homeScore, awayScore, settled: false, pointsAwarded: 0, creditsAwarded: 0 } }));
+    } catch {
+      alert("Erro ao salvar palpite. Tente novamente.");
+    } finally {
+      setIsSubmittingBet(false);
+    }
+  };
+
   // Leaderboard states
-  const [leaderboard, setLeaderboard] = useState<any[]>([]);
+  const [leaderboard, setLeaderboard] = useState<{ userId: string; nome: string; profileImageUrl: string; score: number; filledSlotsCount: number; badgesCount: number; totalLikesReceived: number; totalCommentsReceived: number }[]>([]);
   const [loadingRanking, setLoadingRanking] = useState(false);
 
   useEffect(() => {
@@ -247,15 +313,14 @@ export const AlbumTorcidaPage = () => {
   const [communityLikes, setCommunityLikes] = useState<Record<string, number>>({});
   const [showInviteModal, setShowInviteModal] = useState(false);
   const [copied, setCopied] = useState(false);
-  const [muralPosts, setMuralPosts] = useState<any[]>([]);
+  const [muralPosts, setMuralPosts] = useState<{ id: string; imageUrl: string; caption: string; description?: string; tag?: string; userId: string; userName: string; userAvatar: string; likes: number; year: number }[]>([]);
 
   const fetchMuralPosts = useCallback(() => {
     api.get(`/worldcup/nostalgia?year=${nostalgiaYear}`)
       .then(({ data }) => {
         setMuralPosts(data.posts || []);
-        // Map likes
         const likesMap: Record<string, number> = {};
-        (data.posts || []).forEach((p: any) => {
+        (data.posts || []).forEach((p: { id: string; likes: number }) => {
           likesMap[p.id] = p.likes;
         });
         setCommunityLikes(likesMap);
@@ -290,7 +355,6 @@ export const AlbumTorcidaPage = () => {
         }));
       })
       .catch(() => {
-        // Fallback local increment if API is down
         setCommunityLikes(prev => ({
           ...prev,
           [postId]: (prev[postId] || 0) + 1
@@ -318,6 +382,7 @@ export const AlbumTorcidaPage = () => {
 
   return (
     <div style={{ background: "#050e08", minHeight: "100vh", color: "white", fontFamily: "sans-serif", paddingBottom: 60 }}>
+      {/* {showRoulette && <RouletteModal onClose={() => setShowRoulette(false)} onSpinComplete={() => {}} />} */}
       {/* ── BANNER AO VIVO ─────────────────────────────────────────────────── */}
       <WorldCupLiveBanner />
 
@@ -443,6 +508,7 @@ export const AlbumTorcidaPage = () => {
         <div style={{ maxWidth: 800, margin: "0 auto", display: "flex", overflowX: "auto", scrollbarWidth: "none", msOverflowStyle: "none", WebkitOverflowScrolling: "touch" }}>
           {[
             { id: "jogos" as Tab, icon: <Clock size={12} />, label: "Jogos" },
+            { id: "bolao" as Tab, icon: <Trophy size={12} />, label: "Bolão" },
             { id: "grupos" as Tab, icon: <Star size={12} />, label: "Grupos" },
             { id: "album" as Tab, icon: <Camera size={12} />, label: "Meu Álbum" },
             { id: "missoes" as Tab, icon: <Target size={12} />, label: "Missões" },
@@ -502,6 +568,137 @@ export const AlbumTorcidaPage = () => {
           </div>
         )}
 
+        {/* ── TAB: BOLÃO ───────────────────────────────────────────────────── */}
+        {tab === "bolao" && (() => {
+          // Group fixtures by round
+          const byRound = FIXTURES.reduce<Record<number, typeof FIXTURES>>((acc, f) => {
+            if (!acc[f.round]) acc[f.round] = [];
+            acc[f.round].push(f);
+            return acc;
+          }, {});
+
+          return (
+            <div>
+              {/* Credits summary banner */}
+              <div style={{
+                background: "linear-gradient(135deg, rgba(251,191,36,0.1), rgba(245,158,11,0.05))",
+                border: "1px solid rgba(251,191,36,0.3)", borderRadius: 8, padding: "16px 20px",
+                display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 24
+              }}>
+                <div>
+                  <div style={{ fontSize: 9, color: "#fbbf24", fontWeight: 900, letterSpacing: "0.15em", textTransform: "uppercase" }}>
+                    Seus Créditos do Bolão
+                  </div>
+                  <div style={{ fontSize: 28, fontWeight: 900, color: "white", fontStyle: "italic", lineHeight: 1.2 }}>
+                    {betSummary?.availableCredits ?? "—"} <span style={{ fontSize: 12, color: "#fbbf24" }}>créditos</span>
+                  </div>
+                  <div style={{ fontSize: 10, color: "#6b7280", marginTop: 4 }}>
+                    {betSummary?.totalBets ?? 0} palpites · {betSummary?.exactCount ?? 0} placares exatos · {betSummary?.correctCount ?? 0} resultados certos
+                  </div>
+                </div>
+                <div style={{ textAlign: "right" }}>
+                  <div style={{ fontSize: 9, color: "#6b7280", fontWeight: 700, letterSpacing: "0.1em", marginBottom: 8 }}>PONTUAÇÃO</div>
+                  <div style={{ fontSize: 10, color: "#10b981" }}>🎯 Placar exato: <strong>10pts + 20💎</strong></div>
+                  <div style={{ fontSize: 10, color: "#60a5fa", marginTop: 2 }}>✓ Resultado certo: <strong>3pts + 6💎</strong></div>
+                  <div style={{ fontSize: 10, color: "#6b7280", marginTop: 2 }}>Participou: 1pt + 2💎</div>
+                </div>
+              </div>
+
+              {/* Fixtures by round */}
+              {Object.entries(byRound).map(([round, fixtures]) => (
+                <div key={round} style={{ marginBottom: 32 }}>
+                  <div style={{ fontSize: 9, color: "#6b7280", fontWeight: 900, letterSpacing: "0.2em", textTransform: "uppercase", marginBottom: 12 }}>
+                    Rodada {round}
+                  </div>
+                  <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                    {fixtures.map((f) => {
+                      const { day, time } = formatBSB(f.utc);
+                      const isPast = new Date(f.utc).getTime() < Date.now();
+                      const myBet = bets[f.id];
+                      const isBrasil = f.hCode === "br" || f.aCode === "br";
+
+                      return (
+                        <div key={f.id} style={{
+                          border: `1px solid ${isBrasil ? "rgba(16,185,129,0.4)" : "rgba(255,255,255,0.08)"}`,
+                          borderRadius: 4, overflow: "hidden",
+                          opacity: isPast && !myBet ? 0.5 : 1
+                        }}>
+                          {/* Match header */}
+                          <div style={{
+                            background: isBrasil ? "linear-gradient(135deg,rgba(6,79,58,0.5),rgba(5,46,32,0.7))" : "rgba(255,255,255,0.02)",
+                            padding: "12px 16px", display: "flex", alignItems: "center", justifyContent: "space-between"
+                          }}>
+                            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                              {flag(f.hCode, 20)}
+                              <span style={{ fontSize: 12, fontWeight: 700, color: "white" }}>{f.home}</span>
+                              <span style={{ fontSize: 10, color: "#4b5563" }}>×</span>
+                              <span style={{ fontSize: 12, fontWeight: 700, color: "white" }}>{f.away}</span>
+                              {flag(f.aCode, 20)}
+                            </div>
+                            <div style={{ textAlign: "right" }}>
+                              <div style={{ fontSize: 9, color: "#6b7280" }}>{day} · {time}</div>
+                              <div style={{ fontSize: 8, color: "#374151", letterSpacing: "0.05em" }}>Gr. {f.group}</div>
+                            </div>
+                          </div>
+                          {/* Bet row */}
+                          <div style={{
+                            background: "rgba(0,0,0,0.2)", borderTop: "1px solid rgba(255,255,255,0.04)",
+                            padding: "10px 16px", display: "flex", alignItems: "center", justifyContent: "space-between"
+                          }}>
+                            {isPast && !myBet ? (
+                              <span style={{ fontSize: 10, color: "#374151", fontStyle: "italic" }}>Jogo já iniciado — palpite encerrado</span>
+                            ) : myBet?.settled ? (
+                              <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                                <span style={{ fontSize: 11, color: "#9ca3af" }}>Seu palpite: <strong style={{ color: "white" }}>{myBet.homeScore} × {myBet.awayScore}</strong></span>
+                                {myBet.pointsAwarded > 0
+                                  ? <span style={{ fontSize: 10, color: "#10b981", fontWeight: 900 }}>+{myBet.pointsAwarded}pts · +{myBet.creditsAwarded}💎</span>
+                                  : <span style={{ fontSize: 10, color: "#ef4444" }}>Errou 😅</span>
+                                }
+                              </div>
+                            ) : (
+                              <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
+                                <span style={{ fontSize: 10, color: "#6b7280", fontWeight: 700 }}>PALPITE:</span>
+                                <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                                  <span style={{ fontSize: 10, color: "white" }}>{f.home.length > 8 ? f.home.substring(0, 7) + "." : f.home}</span>
+                                  <input
+                                    type="number" min="0" max="20"
+                                    value={bets[f.id]?.homeScore ?? ""}
+                                    onChange={(e) => { const v = parseInt(e.target.value); setBets(prev => ({ ...prev, [f.id]: { homeScore: isNaN(v) ? 0 : v, awayScore: prev[f.id]?.awayScore || 0, settled: false, pointsAwarded: 0, creditsAwarded: 0 } })); }}
+                                    style={{ width: 36, height: 28, background: "rgba(255,255,255,0.1)", border: "1px solid rgba(255,255,255,0.2)", borderRadius: 4, color: "white", textAlign: "center", fontSize: 13, fontWeight: "bold" }}
+                                  />
+                                  <span style={{ color: "#4b5563" }}>×</span>
+                                  <input
+                                    type="number" min="0" max="20"
+                                    value={bets[f.id]?.awayScore ?? ""}
+                                    onChange={(e) => { const v = parseInt(e.target.value); setBets(prev => ({ ...prev, [f.id]: { homeScore: prev[f.id]?.homeScore || 0, awayScore: isNaN(v) ? 0 : v, settled: false, pointsAwarded: 0, creditsAwarded: 0 } })); }}
+                                    style={{ width: 36, height: 28, background: "rgba(255,255,255,0.1)", border: "1px solid rgba(255,255,255,0.2)", borderRadius: 4, color: "white", textAlign: "center", fontSize: 13, fontWeight: "bold" }}
+                                  />
+                                  <span style={{ fontSize: 10, color: "white" }}>{f.away.length > 8 ? f.away.substring(0, 7) + "." : f.away}</span>
+                                </div>
+                                <button
+                                  onClick={() => handlePlaceBet(f.id, bets[f.id]?.homeScore ?? 0, bets[f.id]?.awayScore ?? 0)}
+                                  disabled={isSubmittingBet || bets[f.id] === undefined}
+                                  style={{
+                                    padding: "5px 12px", background: myBet ? "#065f46" : "#10b981", color: myBet ? "#34d399" : "black",
+                                    fontSize: 10, fontWeight: 900, borderRadius: 4, border: myBet ? "1px solid #34d399" : "none",
+                                    textTransform: "uppercase", cursor: "pointer", opacity: isSubmittingBet ? 0.5 : 1
+                                  }}
+                                >
+                                  {myBet !== undefined ? "✓ Atualizar" : "Apostar"}
+                                </button>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              ))}
+            </div>
+          );
+        })()}
+
         {/* ── TAB: GRUPOS ──────────────────────────────────────────────────── */}
         {tab === "grupos" && (
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", gap: 12 }}>
@@ -553,34 +750,84 @@ export const AlbumTorcidaPage = () => {
                   const opponent = isBrasilHome ? f.away : f.home;
                   const oppCode = isBrasilHome ? f.aCode : f.hCode;
                   return (
-                    <div
-                      key={f.id}
-                      style={{
-                        background: "linear-gradient(135deg, rgba(6,79,58,0.5), rgba(5,46,32,0.7))",
-                        border: "1px solid rgba(16,185,129,0.3)", padding: "20px 24px",
-                        display: "flex", alignItems: "center", justifyContent: "space-between",
-                      }}
-                    >
-                      <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-                        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                          {flag("br", 24)}
-                          <span style={{ color: "#4b5563", fontSize: 12 }}>×</span>
-                          {flag(oppCode, 24)}
-                          <div style={{ marginLeft: 8 }}>
-                            <div style={{ fontSize: 13, fontWeight: 900, color: "white", fontStyle: "italic" }}>
-                              Brasil × {opponent}
-                            </div>
-                            <div style={{ fontSize: 11, color: "#6b7280", marginTop: 2 }}>
-                              {day} · {time} (Brasília) · Grupo {f.group}
+                    <div key={f.id} style={{ border: "1px solid rgba(16,185,129,0.3)" }}>
+                      {/* Header do jogo */}
+                      <div
+                        style={{
+                          background: "linear-gradient(135deg, rgba(6,79,58,0.5), rgba(5,46,32,0.7))",
+                          padding: "20px 24px",
+                          display: "flex", alignItems: "center", justifyContent: "space-between",
+                        }}
+                      >
+                        <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+                          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                            {flag("br", 24)}
+                            <span style={{ color: "#4b5563", fontSize: 12 }}>×</span>
+                            {flag(oppCode, 24)}
+                            <div style={{ marginLeft: 8 }}>
+                              <div style={{ fontSize: 13, fontWeight: 900, color: "white", fontStyle: "italic" }}>
+                                Brasil × {opponent}
+                              </div>
+                              <div style={{ fontSize: 11, color: "#6b7280", marginTop: 2 }}>
+                                {day} · {time} (Brasília) · Grupo {f.group}
+                              </div>
                             </div>
                           </div>
                         </div>
+                        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 4 }}>
+                          <Camera size={20} color="#10b981" />
+                          <span style={{ fontSize: 8, color: "#10b981", fontWeight: 900, letterSpacing: "0.1em", textTransform: "uppercase" }}>
+                            12 fotos
+                          </span>
+                        </div>
                       </div>
-                      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 4 }}>
-                        <Camera size={20} color="#10b981" />
-                        <span style={{ fontSize: 8, color: "#10b981", fontWeight: 900, letterSpacing: "0.1em", textTransform: "uppercase" }}>
-                          12 fotos
-                        </span>
+
+                      {/* Palpite / Bolão */}
+                      <div style={{
+                        background: "rgba(0,0,0,0.3)", borderTop: "1px solid rgba(16,185,129,0.1)",
+                        padding: "12px 24px", display: "flex", alignItems: "center", justifyContent: "space-between"
+                      }}>
+                        <div style={{ fontSize: 11, color: "#9ca3af", fontWeight: 600 }}>SEU PALPITE:</div>
+                        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                            <span style={{ fontSize: 12, fontWeight: 700, color: isBrasilHome ? "#10b981" : "white" }}>Brasil</span>
+                            <input
+                              type="number"
+                              min="0" max="20"
+                              value={bets[f.id]?.homeScore ?? ""}
+                              onChange={(e) => {
+                                const v = parseInt(e.target.value);
+                                setBets(prev => ({ ...prev, [f.id]: { homeScore: isNaN(v) ? 0 : v, awayScore: prev[f.id]?.awayScore || 0, settled: prev[f.id]?.settled ?? false, pointsAwarded: prev[f.id]?.pointsAwarded ?? 0, creditsAwarded: prev[f.id]?.creditsAwarded ?? 0 } }));
+                              }}
+                              style={{ width: 40, height: 32, background: "rgba(255,255,255,0.1)", border: "1px solid rgba(255,255,255,0.2)", borderRadius: 4, color: "white", textAlign: "center", fontWeight: "bold" }}
+                            />
+                          </div>
+                          <span style={{ color: "#6b7280", fontSize: 12 }}>×</span>
+                          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                            <input
+                              type="number"
+                              min="0" max="20"
+                              value={bets[f.id]?.awayScore ?? ""}
+                              onChange={(e) => {
+                                const v = parseInt(e.target.value);
+                                setBets(prev => ({ ...prev, [f.id]: { homeScore: prev[f.id]?.homeScore || 0, awayScore: isNaN(v) ? 0 : v, settled: prev[f.id]?.settled ?? false, pointsAwarded: prev[f.id]?.pointsAwarded ?? 0, creditsAwarded: prev[f.id]?.creditsAwarded ?? 0 } }));
+                              }}
+                              style={{ width: 40, height: 32, background: "rgba(255,255,255,0.1)", border: "1px solid rgba(255,255,255,0.2)", borderRadius: 4, color: "white", textAlign: "center", fontWeight: "bold" }}
+                            />
+                            <span style={{ fontSize: 12, fontWeight: 700, color: !isBrasilHome ? "#10b981" : "white" }}>{opponent}</span>
+                          </div>
+                          <button
+                            onClick={() => handlePlaceBet(f.id, bets[f.id]?.homeScore ?? 0, bets[f.id]?.awayScore ?? 0)}
+                            disabled={isSubmittingBet}
+                            style={{
+                              marginLeft: 16, padding: "6px 12px", background: "#10b981", color: "black", fontSize: 11, fontWeight: 900,
+                              borderRadius: 4, textTransform: "uppercase", cursor: "pointer", opacity: isSubmittingBet ? 0.5 : 1,
+                              border: "none"
+                            }}
+                          >
+                            {bets[f.id] !== undefined ? "✓ Salvo" : "Apostar"}
+                          </button>
+                        </div>
                       </div>
                     </div>
                   );

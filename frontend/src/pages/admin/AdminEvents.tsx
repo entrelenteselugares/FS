@@ -1016,7 +1016,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
 
                         {/* YouTube link */}
                         <div className="space-y-3">
-                          <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest block opacity-60 italic">Link do YouTube (mudo, em loop)</label>
+                          <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest block opacity-60 italic">Link do YouTube (vídeo de capa — loop automático)</label>
                           <div className="flex gap-2">
                             <input
                               type="text"
@@ -1034,6 +1034,24 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
                             >
                               Adicionar
                             </button>
+                          </div>
+                          {/* Orientação de formato */}
+                          <div className="p-4 bg-brand-tactical/5 border border-brand-tactical/20 rounded-xl space-y-2">
+                            <p className="text-[8px] font-black text-brand-tactical uppercase tracking-widest">📐 Especificação do Vídeo de Capa</p>
+                            <ul className="space-y-1">
+                              {[
+                                ['Orientação', 'Horizontal (paisagem) — obrigatório'],
+                                ['Proporção', '16:9 (widescreen)'],
+                                ['Resolução mínima', '1920 × 1080 (Full HD)'],
+                                ['Duração ideal', 'Até 60 segundos'],
+                                ['Enquadramento', 'Elementos principais ao centro — bordas são cortadas'],
+                              ].map(([label, value]) => (
+                                <li key={label} className="flex items-start gap-2">
+                                  <span className="text-[8px] font-black text-theme-muted uppercase tracking-widest opacity-60 shrink-0 w-28">{label}:</span>
+                                  <span className="text-[8px] font-bold text-theme-text/80">{value}</span>
+                                </li>
+                              ))}
+                            </ul>
                           </div>
                         </div>
                       </div>

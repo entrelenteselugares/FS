@@ -163,7 +163,11 @@ export async function getLeaderboard(req: Request, res: Response) {
             slots: true
           }
         },
-        worldCupBadges: true
+        worldCupBadges: true,
+        worldCupBets: {
+          where: { settled: true },
+          select: { pointsAwarded: true }
+        }
       }
     });
 
@@ -194,6 +198,9 @@ export async function getLeaderboard(req: Request, res: Response) {
 
       const badgesCount = u.worldCupBadges.length;
       score += badgesCount * 100; // +100 por badge
+
+      const betPoints = u.worldCupBets.reduce((acc, bet) => acc + bet.pointsAwarded, 0);
+      score += betPoints; // Pontos do bolão
 
       return {
         userId: u.id,
@@ -565,3 +572,161 @@ export async function validateMissionPhoto(req: Request, res: Response) {
     return res.status(500).json({ error: "Internal Server Error" });
   }
 }
+
+export async function getBets(req: Request, res: Response) {
+  try {
+    const user = (req as any).user;
+    if (!user) return res.status(401).json({ error: "Unauthorized" });
+
+    const bets = await prisma.worldCupBet.findMany({
+      where: { userId: user.userId }
+    });
+
+    return res.json({ bets });
+  } catch (error) {
+    console.error("Error fetching bets:", error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+}
+
+export async function placeBet(req: Request, res: Response) {
+  try {
+    const user = (req as any).user;
+    if (!user) return res.status(401).json({ error: "Unauthorized" });
+
+    const { fixtureId, homeScore, awayScore } = req.body;
+
+    if (!fixtureId || typeof homeScore !== 'number' || typeof awayScore !== 'number') {
+      return res.status(400).json({ error: "Invalid bet data" });
+    }
+
+    // Award 1 participation point + 2 credits on first bet
+    const existing = await prisma.worldCupBet.findUnique({
+      where: { userId_fixtureId: { userId: user.userId, fixtureId } }
+    });
+
+    const bet = await prisma.worldCupBet.upsert({
+      where: { userId_fixtureId: { userId: user.userId, fixtureId } },
+      update: { homeScore, awayScore },
+      create: { userId: user.userId, fixtureId, homeScore, awayScore }
+    });
+
+    // Award participation credits only on first bet
+    if (!existing) {
+      await prisma.gamificationLedger.create({
+        data: {
+          userId: user.userId,
+          type: "BET_PARTICIPATION",
+          points: 1,
+          description: `Palpite enviado para o jogo ${fixtureId}`
+        }
+      });
+    }
+
+    return res.json({ success: true, bet });
+  } catch (error) {
+    console.error("Error placing bet:", error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+}
+
+/**
+ * POST /worldcup/bets/settle — Admin only
+ * Apura as apostas de um jogo com o placar real e distribui pontos e créditos.
+ */
+export async function settleBets(req: Request, res: Response) {
+  try {
+    const { fixtureId, realHomeScore, realAwayScore } = req.body;
+
+    if (!fixtureId || typeof realHomeScore !== 'number' || typeof realAwayScore !== 'number') {
+      return res.status(400).json({ error: "Invalid settlement data" });
+    }
+
+    const bets = await prisma.worldCupBet.findMany({
+      where: { fixtureId, settled: false }
+    });
+
+    const realResult = realHomeScore > realAwayScore ? 'H' : realHomeScore < realAwayScore ? 'A' : 'D';
+
+    let settledCount = 0;
+    for (const bet of bets) {
+      const betResult = bet.homeScore > bet.awayScore ? 'H' : bet.homeScore < bet.awayScore ? 'A' : 'D';
+      const isExact = bet.homeScore === realHomeScore && bet.awayScore === realAwayScore;
+      const isResultCorrect = betResult === realResult;
+
+      let points = 0;
+      let credits = 0;
+
+      if (isExact) {
+        points = 10; credits = 20;
+      } else if (isResultCorrect) {
+        points = 3; credits = 6;
+      }
+
+      await prisma.worldCupBet.update({
+        where: { id: bet.id },
+        data: { settled: true, pointsAwarded: points, creditsAwarded: credits }
+      });
+
+      if (points > 0) {
+        await prisma.gamificationLedger.create({
+          data: {
+            userId: bet.userId,
+            type: isExact ? "BET_EXACT_SCORE" : "BET_CORRECT_RESULT",
+            points,
+            description: isExact
+              ? `Placar exato em ${fixtureId}! (+${points} pts, +${credits} créditos)`
+              : `Resultado correto em ${fixtureId} (+${points} pts, +${credits} créditos)`
+          }
+        });
+
+        // Update UserPoints balance
+        await prisma.userPoints.upsert({
+          where: { userId: bet.userId },
+          update: { total: { increment: credits } },
+          create: { userId: bet.userId, total: credits, redeemed: 0 }
+        });
+      }
+
+      settledCount++;
+    }
+
+    return res.json({ success: true, settled: settledCount, fixtureId, realHomeScore, realAwayScore });
+  } catch (error) {
+    console.error("Error settling bets:", error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+}
+
+/**
+ * GET /worldcup/bets/summary — Returns the user's bet stats
+ */
+export async function getUserBetSummary(req: Request, res: Response) {
+  try {
+    const user = (req as any).user;
+    if (!user) return res.status(401).json({ error: "Unauthorized" });
+
+    const bets = await prisma.worldCupBet.findMany({ where: { userId: user.userId } });
+    const settled = bets.filter(b => b.settled);
+    const totalPoints = settled.reduce((sum: number, b) => sum + b.pointsAwarded, 0);
+    const totalCredits = settled.reduce((sum: number, b) => sum + b.creditsAwarded, 0);
+    const exactCount = settled.filter(b => b.pointsAwarded === 10).length;
+    const correctCount = settled.filter(b => b.pointsAwarded === 3).length;
+
+    const userPoints = await prisma.userPoints.findUnique({ where: { userId: user.userId } });
+
+    return res.json({
+      totalBets: bets.length,
+      settledBets: settled.length,
+      totalPoints,
+      totalCredits,
+      exactCount,
+      correctCount,
+      availableCredits: Number(userPoints?.total ?? 0) - Number(userPoints?.redeemed ?? 0)
+    });
+  } catch (error) {
+    console.error("Error fetching bet summary:", error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+}
+

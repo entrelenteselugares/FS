@@ -605,6 +605,52 @@ export class MarketplaceController {
   }
 
   /**
+   * DELETE /api/marketplace/media/:mediaId
+   * Allows event owners to delete a specific media from their event.
+   */
+  static async deleteMedia(req: AuthRequest, res: Response) {
+    const mediaId = String(req.params.mediaId);
+    const userId = req.user?.userId;
+
+    try {
+      // Find the media and include the event to check ownership
+      const media = await prisma.eventMedia.findUnique({
+        where: { id: mediaId },
+        include: { event: true }
+      });
+
+      if (!media || !media.event) {
+        return res.status(404).json({ error: "Mídia não encontrada." });
+      }
+
+      const event = media.event;
+      const isOwner = req.user?.role === "ADMIN" || 
+                      event.captacaoId === userId || 
+                      event.edicaoId === userId || 
+                      event.cartorioUserId === userId || 
+                      event.franchiseeId === userId;
+
+      if (!isOwner) {
+        return res.status(403).json({ error: "Acesso negado. Apenas o responsável do evento pode excluir fotos." });
+      }
+
+      await prisma.eventMedia.delete({
+        where: { id: mediaId }
+      });
+
+      await audit(req, "MEDIA_DELETED", "EventMedia", mediaId, null, {
+        eventId: event.id,
+        shortId: media.shortId
+      });
+
+      return res.json({ success: true, message: "Foto excluída com sucesso." });
+    } catch (error: any) {
+      console.error("[MarketplaceController.deleteMedia Error]:", error);
+      return res.status(500).json({ error: "Falha ao excluir mídia." });
+    }
+  }
+
+  /**
    * GET /api/marketplace/profissionais
    * Public directory of subscribed professionals.
    * Only returns users with an ACTIVE PRO subscription.

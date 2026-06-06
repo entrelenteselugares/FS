@@ -514,6 +514,7 @@ export default function EventPage() {
 
     api.get('/public/service-catalog').then(res => setServiceCatalog(res.data || [])).catch(err => console.error(err));
 
+    // Cycle banner index every 5s (only affects photo banners — YouTube iframe is rendered outside AnimatePresence so it never remounts)
     const interval = setInterval(() => setCurrentBannerIndex(prev => (prev + 1) % 3), 5000);
     return () => clearInterval(interval);
   }, [slug, navigate, user, searchParams]);
@@ -568,6 +569,16 @@ export default function EventPage() {
       return () => clearTimeout(timer);
     }
   }, [searchParams, step]);
+
+  const handleDeleteMedia = async (mediaId: string) => {
+    try {
+      await api.delete(`/marketplace/media/${mediaId}`);
+      setMedias(prev => prev.filter(m => m.id !== mediaId));
+    } catch (err) {
+      console.error("Erro ao excluir foto:", err);
+      alert("Erro ao excluir foto. Verifique as permissões ou tente novamente.");
+    }
+  };
 
   const handleUnlockClick = async () => { 
     if (!event) return;
@@ -659,6 +670,24 @@ export default function EventPage() {
     r => r.type === 'YOUTUBE' || r.url.includes("youtube.com") || r.url.includes("youtu.be")
   );
 
+  // Build a proper YouTube embed URL with autoplay + loop + mute
+  const youtubeEmbedUrl = (() => {
+    if (!youtubeRef) return null;
+    const rawUrl = youtubeRef.url;
+    let videoId = '';
+    try {
+      const u = new URL(rawUrl);
+      if (u.hostname.includes('youtu.be')) {
+        videoId = u.pathname.slice(1).split('?')[0];
+      } else {
+        videoId = u.searchParams.get('v') || u.pathname.split('/embed/').pop()?.split('?')[0] || '';
+      }
+    } catch { videoId = ''; }
+    return videoId
+      ? `https://www.youtube.com/embed/${videoId}?autoplay=1&loop=1&playlist=${videoId}&controls=0&mute=1&modestbranding=1&rel=0`
+      : rawUrl;
+  })();
+
 return (
     <div className="min-h-screen bg-theme-bg text-theme-text font-sans selection:bg-brand-tactical/30 overflow-x-hidden selection:text-theme-text" onContextMenu={(e) => e.preventDefault()}>
       <SEO 
@@ -680,6 +709,17 @@ return (
           </button>
           {/* Header Visual Cinematográfico (Compacto) */}
           <div className="relative min-h-[35vh] lg:min-h-[45vh] shrink-0 overflow-hidden flex flex-col justify-end">
+            {/* YouTube video — rendered OUTSIDE AnimatePresence so it never remounts/restarts */}
+            {youtubeEmbedUrl && (
+              <iframe
+                src={youtubeEmbedUrl}
+                className="absolute inset-0 w-full h-full pointer-events-none border-0 opacity-80 scale-125"
+                allow="autoplay; encrypted-media"
+                title="Capa Evento Video"
+              />
+            )}
+            {/* Photo banner — only shown when there's no video */}
+            {!youtubeEmbedUrl && (
             <AnimatePresence mode="wait">
               <motion.div 
                 key={currentBannerIndex}
@@ -689,14 +729,7 @@ return (
                 transition={{ duration: 1.5 }}
                 className="absolute inset-0"
               >
-                {youtubeRef ? (
-                  <iframe 
-                    src={youtubeRef.url}
-                    className="absolute inset-0 w-full h-full pointer-events-none border-0 opacity-80 scale-125"
-                    allow="autoplay; encrypted-media"
-                    title="Capa Evento Video"
-                  />
-                ) : event.coverPhotoUrl ? (
+                {event.coverPhotoUrl ? (
                   <img 
                     src={getProxyUrl(event.coverPhotoUrl)} 
                     alt="" 
@@ -714,6 +747,7 @@ return (
                 )}
               </motion.div>
             </AnimatePresence>
+            )}
             <div className="absolute inset-0 bg-gradient-to-t from-theme-bg via-theme-bg/80 to-transparent" />
             
             <div className="relative z-10 w-full px-6 pt-20 pb-6 lg:px-10 lg:pt-32 lg:pb-8 space-y-4">
@@ -1064,6 +1098,8 @@ return (
                               selectedIds={eventCart}
                               unlockedIds={event.unlockedMediaIds || []}
                               onToggleCart={toggleCart}
+                              isOwner={event.isOwner || user?.role === 'ADMIN'}
+                              onDeleteMedia={handleDeleteMedia}
                             />
                           </div>
                         )}

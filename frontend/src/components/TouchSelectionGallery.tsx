@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Check, X, ChevronLeft, ChevronRight } from "lucide-react";
+import { Check, X, ChevronLeft, ChevronRight, Trash2 } from "lucide-react";
 import { getProxyUrl } from "../lib/utils/media";
 
 interface Media {
@@ -18,6 +18,8 @@ interface TouchSelectionGalleryProps {
   selectedIds: string[];
   unlockedIds: string[];
   onToggleCart: (shortId: string, url: string) => void;
+  isOwner?: boolean;
+  onDeleteMedia?: (mediaId: string) => void;
 }
 
 export const TouchSelectionGallery: React.FC<TouchSelectionGalleryProps> = ({
@@ -25,6 +27,8 @@ export const TouchSelectionGallery: React.FC<TouchSelectionGalleryProps> = ({
   selectedIds,
   unlockedIds,
   onToggleCart,
+  isOwner,
+  onDeleteMedia,
 }) => {
   const [fullscreenIndex, setFullscreenIndex] = useState<number | null>(null);
   const [isSelectMode, setIsSelectMode] = useState(false);
@@ -179,6 +183,22 @@ export const TouchSelectionGallery: React.FC<TouchSelectionGalleryProps> = ({
                   }`}
                 >
                   <Check size={14} strokeWidth={isSelected ? 4 : 2} className={isSelected ? "opacity-100" : "opacity-100"} />
+                </button>
+              )}
+
+              {/* Botão de Excluir Foto (Apenas Owner) */}
+              {isOwner && onDeleteMedia && (
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (window.confirm(`Tem certeza que deseja excluir a foto #${m.shortId}?`)) {
+                      onDeleteMedia(m.id);
+                    }
+                  }}
+                  className="absolute top-3 left-3 w-7 h-7 rounded-full flex items-center justify-center border border-red-500/50 bg-black/60 text-red-400 hover:bg-red-500 hover:text-white hover:border-red-500 backdrop-blur-md transition-all active:scale-90 z-20"
+                  title="Excluir foto"
+                >
+                  <Trash2 size={12} />
                 </button>
               )}
 

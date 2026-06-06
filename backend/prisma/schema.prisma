@@ -85,6 +85,8 @@ model User {
   worldCupBadges        WorldCupBadge[]
   worldCupFolhas        WorldCupFolha[]
   worldCupValidations   WorldCupSlotValidation[]
+  worldCupBets          WorldCupBet[]
+  worldCupRouletteSpins WorldCupRouletteSpin[]
 
   @@map("users")
 }
@@ -1426,4 +1428,52 @@ model EditorContract {
   service ProfessionalService @relation(fields: [serviceId], references: [id])
 
   @@map("editor_contracts")
+}
+
+model WorldCupBet {
+  id             String   @id @default(cuid())
+  userId         String
+  fixtureId      String
+  homeScore      Int
+  awayScore      Int
+  settled        Boolean  @default(false)
+  pointsAwarded  Int      @default(0)
+  creditsAwarded Int      @default(0)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, fixtureId])
+  @@map("worldcup_bets")
+}
+
+model WorldCupPrize {
+  id                String   @id @default(cuid())
+  name              String
+  type              String   // e.g., "PHYSICAL", "DIGITAL_CREDITS", "SURPRISE_TICKET"
+  imageUrl          String?
+  totalQuantity     Int
+  remainingQuantity Int
+  weight            Int      // For probability logic (e.g. 10 = 10% if sum is 100)
+  rewardAmount      Int?     // For digital credits
+
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  
+  spins             WorldCupRouletteSpin[]
+
+  @@map("worldcup_prizes")
+}
+
+model WorldCupRouletteSpin {
+  id        String   @id @default(cuid())
+  userId    String
+  prizeId   String
+  spunAt    DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  prize     WorldCupPrize @relation(fields: [prizeId], references: [id])
+
+  @@unique([userId]) // Garantir 1 giro por usuário na Copa
+  @@map("worldcup_roulette_spins")
 }

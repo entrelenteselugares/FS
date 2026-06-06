@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 import { API } from "../../lib/api";
 import { T } from "../../lib/theme";
-import { Check, X, Camera, Laptop, HelpCircle } from "lucide-react";
+import { Check, X, Camera, Laptop, HelpCircle, ChevronLeft } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 
 export default function CustomServiceForm() {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: "",
     description: "",
@@ -61,6 +63,13 @@ export default function CustomServiceForm() {
   return (
     <div className="min-h-screen pb-20" style={{ background: T.bg }}>
       <header className="pt-20 pb-10 border-b border-white/5 relative overflow-hidden">
+        <button 
+          onClick={() => navigate(-1)} 
+          className="absolute top-6 left-6 z-50 flex items-center gap-2 px-5 py-2.5 bg-theme-bg/60 backdrop-blur-md border border-theme-border rounded-full text-theme-text hover:bg-brand-tactical hover:text-black transition-all shadow-xl"
+        >
+          <ChevronLeft size={16} />
+          <span className="text-[10px] font-black uppercase tracking-widest">Voltar</span>
+        </button>
         <div className="absolute inset-0 bg-brand-tactical/10 blur-3xl rounded-full -m-64 opacity-30" />
         <div className="max-w-[1000px] mx-auto px-4 md:px-6 relative z-10">
           <div className="w-12 h-1 bg-brand-tactical mb-6" />

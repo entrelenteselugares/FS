@@ -13,9 +13,15 @@ import {
   submitQuizAnswer,
   uploadMissionPhoto,
   getPendingCommunityValidations,
-  validateMissionPhoto
+  validateMissionPhoto,
+  getBets,
+  placeBet,
+  settleBets,
+  getUserBetSummary
 } from "../controllers/worldcup.controller";
+import { getRouletteStatus, spinRoulette } from "../controllers/roulette.controller";
 import { requireAuth } from "../lib/auth";
+import { requireRole } from "../lib/auth";
 
 const router = Router();
 
@@ -41,5 +47,14 @@ router.post("/missions/upload", uploadMissionPhoto);
 router.get("/community/pending", getPendingCommunityValidations);
 router.post("/community/validate/:slotId", validateMissionPhoto);
 
-export default router;
+// Gamification: Betting
+router.get("/bets/summary", getUserBetSummary);
+router.get("/bets", getBets);
+router.post("/bets", placeBet);
+router.post("/bets/settle", requireRole("ADMIN"), settleBets);
 
+// Gamification: Roulette Activation
+router.get("/roulette/status", getRouletteStatus);
+router.post("/roulette/spin", spinRoulette);
+
+export default router;

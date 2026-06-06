@@ -80,6 +80,7 @@ router.post("/marketplace/express-sale",      requireAuth, requireProOrFranchise
 router.post("/marketplace/events/:id/media",  requireAuth, requireProOrFranchise, MarketplaceController.addMedia);
 router.post("/marketplace/events/:id/sync-drive", requireAuth, requireProOrFranchise, MarketplaceController.syncEventMedia);
 router.patch("/marketplace/media/:mediaId/metadata", requireAuth, requireRole("ADMIN"), MarketplaceController.patchMediaMetadata);
+router.delete("/marketplace/media/:mediaId", requireAuth, requireProOrFranchise, MarketplaceController.deleteMedia);
 router.get("/marketplace/events/:id/media",   optionalAuth, MarketplaceController.listMedia);
 router.get("/marketplace/profissionais",                    MarketplaceController.listProfissionais);
 router.get("/marketplace/profissionais/:id",                MarketplaceController.getProfissionalProfile);
