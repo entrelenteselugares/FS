@@ -2,9 +2,10 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { API } from '../lib/api';
 import { T } from '../lib/theme';
-import { Camera, CheckCircle2, AlertCircle, Loader2, Image as ImageIcon, User as UserIcon, LogOut, ArrowLeft, Trash2, Video } from 'lucide-react';
+import { Camera, AlertCircle, Loader2, Image as ImageIcon, User as UserIcon, LogOut, ArrowLeft, Trash2 } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { toast } from 'sonner';
+import { InAppCamera } from '../components/InAppCamera';
 
 // Utilitário para comprimir a imagem antes do envio (evita erro 413 Payload Too Large no Vercel - Limite 4.5MB)
 const compressImage = async (file: File): Promise<Blob | File> => {
@@ -60,10 +61,8 @@ export default function PhygitalCapture() {
   const eventId = searchParams.get('eventId') || searchParams.get('e') || 'EVENT_TESTE';
   const autoCamera = searchParams.get('auto') === '1';
 
-  const cameraInputRef = useRef<HTMLInputElement>(null);
-  const videoInputRef = useRef<HTMLInputElement>(null);
   const galleryInputRef = useRef<HTMLInputElement>(null);
-  const [showCaptureMenu, setShowCaptureMenu] = useState(false);
+  const [showInAppCamera, setShowInAppCamera] = useState(false);
 
   const { user, logout } = useAuth();
 
@@ -97,11 +96,11 @@ export default function PhygitalCapture() {
     }
   }, [user]);
 
-  // Auto-abre câmera se vier do botão flutuante (?auto=1)
+  // Auto-abre câmera integrada se vier do botão flutuante (?auto=1)
   useEffect(() => {
     if (!autoCamera) return;
     const timer = setTimeout(() => {
-      cameraInputRef.current?.click();
+      setShowInAppCamera(true);
     }, 300);
     return () => clearTimeout(timer);
   }, [autoCamera]);
@@ -452,10 +451,10 @@ export default function PhygitalCapture() {
               </div>
             ) : (
               <div className="grid grid-cols-1 gap-4">
-                {/* Camera button opens sub-menu on mobile */}
+                {/* Opens in-app camera directly — fullscreen, no intermediate menu */}
                 <button
                   type="button"
-                  onClick={() => setShowCaptureMenu(true)}
+                  onClick={() => setShowInAppCamera(true)}
                   className="flex flex-col items-center justify-center gap-4 p-8 bg-brand-tactical rounded-2xl text-zinc-950 hover:brightness-110 transition-all shadow-xl shadow-brand-tactical/20 active:scale-[0.98]"
                 >
                   <Camera size={32} strokeWidth={2.5} />
@@ -474,25 +473,7 @@ export default function PhygitalCapture() {
               </div>
             )}
 
-            {/* Hidden Inputs — separate per type for reliable camera activation */}
-            {/* Photo capture: accept=image/* + capture=environment opens rear camera directly */}
-            <input 
-              ref={cameraInputRef}
-              type="file" 
-              accept="image/*"
-              capture="environment"
-              onChange={handleFileChange} 
-              className="hidden" 
-            />
-            {/* Video capture: separate input required so capture attribute works for video too */}
-            <input 
-              ref={videoInputRef}
-              type="file" 
-              accept="video/*"
-              capture="environment"
-              onChange={handleFileChange} 
-              className="hidden" 
-            />
+            {/* Gallery input — used by the main button AND the gallery shortcut inside InAppCamera */}
             <input 
               ref={galleryInputRef}
               type="file" 
@@ -607,64 +588,30 @@ export default function PhygitalCapture() {
         </form>
       </div>
 
-      {/* ── Capture Sub-menu Modal ──────────────────────────────────────────── */}
-      {showCaptureMenu && (
-        <div
-          className="fixed inset-0 z-50 flex items-end justify-center bg-black/70 backdrop-blur-sm"
-          onClick={() => setShowCaptureMenu(false)}
-        >
-          <div
-            className="w-full max-w-md mb-0 animate-reveal"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div
-              style={{ background: '#0a1a10', border: '1px solid rgba(16,185,129,0.25)', borderBottom: 'none', borderRadius: '24px 24px 0 0' }}
-              className="p-6 flex flex-col gap-3"
-            >
-              <p className="text-[10px] font-black uppercase tracking-[0.3em] opacity-40 text-center mb-2">
-                Escolha o tipo de captura
-              </p>
-
-              {/* Tirar Foto */}
-              <button
-                type="button"
-                onClick={() => {
-                  setShowCaptureMenu(false);
-                  // Small delay so modal closes before browser prompts
-                  setTimeout(() => cameraInputRef.current?.click(), 80);
-                }}
-                className="flex items-center gap-4 w-full p-5 bg-brand-tactical rounded-2xl text-zinc-950 hover:brightness-110 transition-all active:scale-[0.97] font-black text-sm uppercase tracking-[0.15em]"
-              >
-                <Camera size={24} strokeWidth={2.5} />
-                Tirar Foto
-              </button>
-
-              {/* Gravar Vídeo */}
-              <button
-                type="button"
-                onClick={() => {
-                  setShowCaptureMenu(false);
-                  setTimeout(() => videoInputRef.current?.click(), 80);
-                }}
-                className="flex items-center gap-4 w-full p-5 bg-white/[0.05] border border-white/10 rounded-2xl hover:bg-white/[0.1] transition-all active:scale-[0.97] font-black text-sm uppercase tracking-[0.15em]"
-                style={{ color: 'white' }}
-              >
-                <Video size={24} strokeWidth={2} />
-                Gravar Vídeo (até 15 seg)
-              </button>
-
-              {/* Cancel */}
-              <button
-                type="button"
-                onClick={() => setShowCaptureMenu(false)}
-                className="text-[10px] font-black uppercase tracking-widest opacity-40 hover:opacity-80 transition-opacity py-3 text-center"
-                style={{ color: 'white' }}
-              >
-                Cancelar
-              </button>
-            </div>
-          </div>
-        </div>
+      {/* ── In-App Camera (fullscreen, Instagram/TikTok style) ────────────── */}
+      {showInAppCamera && (
+        <InAppCamera
+          maxFiles={12}
+          currentCount={files.length}
+          onClose={() => setShowInAppCamera(false)}
+          onGalleryOpen={() => {
+            setShowInAppCamera(false);
+            setTimeout(() => galleryInputRef.current?.click(), 80);
+          }}
+          onCapture={async (capturedFiles) => {
+            // Close camera and feed captured files through normal upload flow
+            setShowInAppCamera(false);
+            // Synthesise a fake change event via handleFileChange logic directly
+            const dt = new DataTransfer();
+            capturedFiles.forEach(f => dt.items.add(f));
+            // Re-use existing handleFileChange by creating a synthetic event
+            const fakeInput = document.createElement('input');
+            fakeInput.type = 'file';
+            Object.defineProperty(fakeInput, 'files', { value: dt.files });
+            const fakeEvent = { target: fakeInput } as unknown as React.ChangeEvent<HTMLInputElement>;
+            handleFileChange(fakeEvent);
+          }}
+        />
       )}
     </div>
   );
