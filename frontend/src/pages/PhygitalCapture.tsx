@@ -80,7 +80,7 @@ export default function PhygitalCapture() {
   const [loading, setLoading] = useState(false);
   
   type UploadStatus = 'pending' | 'uploading' | 'done' | 'failed';
-  const [uploadProgress, setUploadProgress] = useState<Record<string, UploadStatus>>({});
+  const [_uploadProgress, setUploadProgress] = useState<Record<string, UploadStatus>>({});
   const [currentUploadIndex, setCurrentUploadIndex] = useState<number | null>(null);
   const [referenceCodes, setReferenceCodes] = useState<string[]>([]);
   const [error, setError] = useState('');
