@@ -67,6 +67,12 @@ export class PhygitalService {
 
         const videoUrl = supabase.storage.from('eventos').getPublicUrl(videoFileName).data.publicUrl;
 
+        const isProfessionalUpload = metadata.userId && foundEvent && (
+          metadata.userId === foundEvent.captacaoId || 
+          metadata.userId === foundEvent.edicaoId || 
+          metadata.userId === (foundEvent as any).ownerId
+        );
+
         if (foundEvent) {
           const count = await prisma.eventMedia.count({ where: { eventId: foundEvent.id } });
           const shortId = `V${(count + 1).toString().padStart(3, '0')}`;
@@ -78,7 +84,7 @@ export class PhygitalService {
               type: 'VIDEO',
               price: metadata.price || foundEvent.pricePerPhoto || foundEvent.priceBase || 15,
               metadata: { rawUrl: videoUrl, printUrl: videoUrl },
-              isGuest: true
+              isGuest: !isProfessionalUpload
             } as any
           });
         }
@@ -321,7 +327,11 @@ export class PhygitalService {
           printUrl: printPublicUrl
         };
 
-        const isProfessionalUpload = metadata.userId && (metadata.userId === foundEvent.captacaoId || metadata.userId === foundEvent.edicaoId);
+        const isProfessionalUpload = metadata.userId && foundEvent && (
+          metadata.userId === foundEvent.captacaoId || 
+          metadata.userId === foundEvent.edicaoId || 
+          metadata.userId === (foundEvent as any).ownerId
+        );
 
         await prisma.eventMedia.create({
           data: {

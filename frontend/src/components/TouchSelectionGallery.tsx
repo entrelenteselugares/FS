@@ -9,6 +9,7 @@ interface Media {
   url: string;
   shortId: string;
   isGuest?: boolean;
+  type?: string;
   metadata?: { rawUrl?: string; printUrl?: string; [key: string]: unknown };
 }
 
@@ -124,14 +125,28 @@ export const TouchSelectionGallery: React.FC<TouchSelectionGalleryProps> = ({
               onTouchMove={handleTouchEnd}
               onClick={() => handlePhotoClick(idx, m)}
             >
-              <img
-                src={getProxyUrl(displayUrl)}
-                alt={m.shortId}
-                className={`w-full h-full object-cover transition-all duration-700 ${
-                  isSelected ? "opacity-40" : "opacity-100"
-                } ${!isUnlocked && "blur-[0.5px]"}`}
-                loading="lazy"
-              />
+              {m.shortId.startsWith('V') || m.type === 'VIDEO' ? (
+                <video
+                  src={getProxyUrl(displayUrl)}
+                  className={`w-full h-full object-cover transition-all duration-700 ${
+                    isSelected ? "opacity-40" : "opacity-100"
+                  } ${!isUnlocked && "blur-[0.5px]"}`}
+                  preload="metadata"
+                  muted
+                  playsInline
+                  autoPlay
+                  loop
+                />
+              ) : (
+                <img
+                  src={getProxyUrl(displayUrl)}
+                  alt={m.shortId}
+                  className={`w-full h-full object-cover transition-all duration-700 ${
+                    isSelected ? "opacity-40" : "opacity-100"
+                  } ${!isUnlocked && "blur-[0.5px]"}`}
+                  loading="lazy"
+                />
+              )}
 
               {/* Watermark Overlay for locked images */}
               {!isUnlocked && (
@@ -211,21 +226,42 @@ export const TouchSelectionGallery: React.FC<TouchSelectionGalleryProps> = ({
                 const fmDisplayUrl = (fmIsUnlocked && fmCleanUrl) ? fmCleanUrl : (fm?.url || '');
                 return (
                   <>
-                  <motion.img
-                    key={fm?.id}
-                    src={getProxyUrl(fmDisplayUrl)}
-                    initial={{ x: 300, opacity: 0 }}
-                    animate={{ x: 0, opacity: 1 }}
-                    exit={{ x: -300, opacity: 0 }}
-                    drag
-                    dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
-                    onDragEnd={(_, info) => {
-                      if (info.offset.x < -100) nextPhoto();
-                      if (info.offset.x > 100) prevPhoto();
-                      if (info.offset.y > 100) setFullscreenIndex(null); // Swipe down to close
-                    }}
-                    className="max-w-full max-h-full object-contain touch-none"
-                  />
+                  {fm?.shortId.startsWith('V') || fm?.type === 'VIDEO' ? (
+                    <motion.video
+                      key={fm?.id}
+                      src={getProxyUrl(fmDisplayUrl)}
+                      initial={{ x: 300, opacity: 0 }}
+                      animate={{ x: 0, opacity: 1 }}
+                      exit={{ x: -300, opacity: 0 }}
+                      drag
+                      dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
+                      onDragEnd={(_, info) => {
+                        if (info.offset.x < -100) nextPhoto();
+                        if (info.offset.x > 100) prevPhoto();
+                        if (info.offset.y > 100) setFullscreenIndex(null);
+                      }}
+                      className="max-w-full max-h-full object-contain touch-none"
+                      controls
+                      autoPlay
+                      playsInline
+                    />
+                  ) : (
+                    <motion.img
+                      key={fm?.id}
+                      src={getProxyUrl(fmDisplayUrl)}
+                      initial={{ x: 300, opacity: 0 }}
+                      animate={{ x: 0, opacity: 1 }}
+                      exit={{ x: -300, opacity: 0 }}
+                      drag
+                      dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
+                      onDragEnd={(_, info) => {
+                        if (info.offset.x < -100) nextPhoto();
+                        if (info.offset.x > 100) prevPhoto();
+                        if (info.offset.y > 100) setFullscreenIndex(null); // Swipe down to close
+                      }}
+                      className="max-w-full max-h-full object-contain touch-none"
+                    />
+                  )}
                   {!fmIsUnlocked && (
                     <div className="absolute inset-0 pointer-events-none flex items-center justify-center overflow-hidden mix-blend-overlay z-10">
                        <div className="rotate-[-30deg] opacity-50 text-4xl md:text-7xl font-black whitespace-nowrap select-none text-white drop-shadow-2xl">

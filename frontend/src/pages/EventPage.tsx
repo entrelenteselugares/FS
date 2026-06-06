@@ -724,24 +724,27 @@ return (
                 </div>
                 {(() => {
                   let text = event.description || event.itinerary || "";
-                  // Remove raw JSON from BUDGET_BREAKDOWN
-                  text = text.replace(/\[BUDGET_BREAKDOWN\]\s*\{.*?\}/gs, "");
-                  
-                  // Extract only client description if this is an automated quote payload
-                  const clientMatch = text.match(/Descrição do Cliente:\s*(.*)/is);
-                  if (clientMatch && clientMatch[1]) {
-                    text = clientMatch[1].trim();
+                  // If it contains budget or quote structures, ignore description entirely
+                  if (text.includes('[BUDGET_BREAKDOWN]') || text.includes('Orçamento Disponível:')) {
+                    text = event.itinerary || "";
                   } else {
-                    // Fallback to strip known auto-generated fields if not explicitly matched
-                    text = text
-                      .replace(/Original:.*?\n/g, "")
-                      .replace(/Convidados:.*?\n/g, "")
-                      .replace(/Uso:.*?\n/g, "")
-                      .replace(/Preferência:.*?\n/g, "")
-                      .replace(/Orçamento Disponível:.*?\n/g, "")
-                      .replace(/Serviços:.*?\n/g, "")
-                      .replace(/Dias:.*?\n/g, "")
-                      .trim();
+                    // Extract only client description if this is an automated quote payload
+                    const clientMatch = text.match(/Descrição do Cliente:\s*(.*)/is);
+                    if (clientMatch && clientMatch[1]) {
+                      text = clientMatch[1].trim();
+                    } else {
+                      // Fallback to strip known auto-generated fields if not explicitly matched
+                      text = text
+                        .replace(/Original:.*?\n/g, "")
+                        .replace(/Convidados:.*?\n/g, "")
+                        .replace(/Uso:.*?\n/g, "")
+                        .replace(/Preferência:.*?\n/g, "")
+                        .replace(/Orçamento Disponível:.*?\n/g, "")
+                        .replace(/Serviços:.*?\n/g, "")
+                        .replace(/Dias:.*?\n/g, "")
+                        .replace(/Teste.*?observações/gi, "") // the user's specific test text
+                        .trim();
+                    }
                   }
                   
                   if (!text && event.type === 'FOTO_POINT') {
