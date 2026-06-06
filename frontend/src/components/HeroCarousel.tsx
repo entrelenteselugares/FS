@@ -168,7 +168,7 @@ export function HeroCarousel() {
                 </span>
               </h1>
               
-              <p className="text-zinc-300 text-xs md:text-base font-medium max-w-xl mx-auto md:mx-0 mt-3 md:mt-6 text-center md:text-left" style={{ fontFamily: T.fontD }}>
+              <p className="text-zinc-300 text-xs md:text-base font-medium max-w-md md:max-w-lg mx-auto md:mx-0 mt-3 md:mt-6 text-center md:text-left" style={{ fontFamily: T.fontD, textWrap: "balance" }}>
                 {currentSlide.description || currentSlide.desc}
               </p>
 
