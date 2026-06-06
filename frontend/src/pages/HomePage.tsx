@@ -114,15 +114,14 @@ function EventCard({ event, onClick }: { event: Event; onClick: () => void }) {
         <h3 className="text-[10px] md:text-lg font-heading font-black text-white uppercase italic tracking-tight leading-tight drop-shadow-lg line-clamp-2 mb-0.5 md:mb-1.5">
           {event.title}
         </h3>
-        
-        {/* Metadata for Desktop Only */}
-        <div className="hidden md:flex flex-col gap-1 text-white/70 text-[9px] font-black uppercase tracking-widest italic">
-          <div className="flex items-center gap-1.5">
-            <MapPin size={10} className="text-emerald-500" />
+        {/* Metadata */}
+        <div className="flex flex-col gap-0.5 md:gap-1 text-white/70 text-[7px] md:text-[9px] font-black uppercase tracking-widest italic mt-0.5 md:mt-1.5">
+          <div className="flex items-center gap-1">
+            <MapPin className="w-2 h-2 md:w-2.5 md:h-2.5 text-emerald-500 shrink-0" />
             <span className="truncate">{event.city || (event.location?.startsWith("CEP:") ? null : event.location) || "PONTO DESIGNADO"}</span>
           </div>
-          <div className="flex items-center gap-1.5">
-            <Calendar size={10} className="text-emerald-500" />
+          <div className="flex items-center gap-1">
+            <Calendar className="w-2 h-2 md:w-2.5 md:h-2.5 text-emerald-500 shrink-0" />
             <span>{formatDate(event.dataEvento)}</span>
           </div>
         </div>
@@ -253,7 +252,7 @@ export const HomePage = () => {
            /* Compressed Hero on Mobile */
            .hp-hero-section { 
              display: flex !important; 
-             padding: 32px 16px 16px !important;
+             padding: 0 !important;
              text-align: center !important;
              align-items: center !important;
              min-height: auto !important;
