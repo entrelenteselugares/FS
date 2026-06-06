@@ -150,18 +150,18 @@ export const TouchSelectionGallery: React.FC<TouchSelectionGalleryProps> = ({
 
               {/* Watermark Overlay for locked images */}
               {!isUnlocked && (
-                <div className="absolute inset-0 pointer-events-none flex items-center justify-center overflow-hidden z-10">
-                   <div 
-                      className="absolute inset-[-50%] opacity-60 select-none pointer-events-none" 
-                      style={{ 
-                        backgroundImage: "url('/logo.png')",
-                        backgroundRepeat: "repeat",
-                        backgroundSize: "120px",
-                        backgroundPosition: "center",
-                        transform: "rotate(-30deg)",
-                        filter: "var(--logo-filter) drop-shadow(0px 4px 6px rgba(0,0,0,0.5))"
-                      }} 
-                   />
+                <div className="absolute inset-[-50%] pointer-events-none flex items-center justify-center overflow-hidden z-10" style={{ transform: "rotate(-30deg)" }}>
+                   <div className="flex flex-wrap justify-center items-center gap-12 md:gap-16 w-full h-full opacity-50">
+                     {Array.from({ length: 60 }).map((_, i) => (
+                       <img 
+                         key={i}
+                         src="/logo.png" 
+                         alt="Watermark" 
+                         className="w-[100px] select-none pointer-events-none shrink-0" 
+                         style={{ filter: "var(--logo-filter) drop-shadow(0px 4px 6px rgba(0,0,0,0.5))" }} 
+                       />
+                     ))}
+                   </div>
                 </div>
               )}
 
@@ -271,18 +271,18 @@ export const TouchSelectionGallery: React.FC<TouchSelectionGalleryProps> = ({
                     />
                   )}
                   {!fmIsUnlocked && (
-                    <div className="absolute inset-0 pointer-events-none flex items-center justify-center overflow-hidden z-10">
-                       <div 
-                          className="absolute inset-[-50%] opacity-60 select-none pointer-events-none" 
-                          style={{ 
-                            backgroundImage: "url('/logo.png')",
-                            backgroundRepeat: "repeat",
-                            backgroundSize: "250px",
-                            backgroundPosition: "center",
-                            transform: "rotate(-30deg)",
-                            filter: "var(--logo-filter) drop-shadow(0px 10px 15px rgba(0,0,0,0.5))"
-                          }} 
-                       />
+                    <div className="absolute inset-[-50%] pointer-events-none flex items-center justify-center overflow-hidden z-10" style={{ transform: "rotate(-30deg)" }}>
+                       <div className="flex flex-wrap justify-center items-center gap-16 md:gap-24 w-full h-full opacity-50">
+                         {Array.from({ length: 150 }).map((_, i) => (
+                           <img 
+                             key={i}
+                             src="/logo.png" 
+                             alt="Watermark" 
+                             className="w-[150px] md:w-[200px] select-none pointer-events-none shrink-0" 
+                             style={{ filter: "var(--logo-filter) drop-shadow(0px 10px 15px rgba(0,0,0,0.5))" }} 
+                           />
+                         ))}
+                       </div>
                     </div>
                   )}
                 </>
