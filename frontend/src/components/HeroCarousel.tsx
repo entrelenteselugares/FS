@@ -135,7 +135,7 @@ export function HeroCarousel() {
   const currentSlide = slides[currentIndex] || slides[0];
 
   return (
-    <div className="relative w-full h-full bg-zinc-950 group" style={{ minHeight: "clamp(400px, 60vh, 600px)" }}>
+    <div className="relative w-full bg-zinc-950 group min-h-[260px] md:min-h-[400px] lg:min-h-[450px] h-[260px] md:h-[400px] lg:h-[450px]">
       <AnimatePresence mode="wait">
         <motion.div
           key={currentIndex}
@@ -155,33 +155,39 @@ export function HeroCarousel() {
           <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-transparent to-transparent opacity-80" />
           
           {/* Content Layer */}
-          <div className="absolute inset-0 flex flex-col justify-center items-center md:items-start text-center md:text-left px-8 md:px-16 w-full md:w-2/3 pr-6 md:pr-16">
+          <div className="absolute inset-0 flex flex-col justify-center items-center md:items-start text-center md:text-left px-6 md:px-16 w-full md:w-2/3 pr-6 md:pr-16 py-4 md:py-8">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3, duration: 0.8 }}
               className="flex flex-col items-center md:items-start"
             >
-                {renderIcon(currentSlide.icon)}
-                
-                <h1 className="text-4xl md:text-6xl lg:text-7xl font-black text-white leading-none tracking-tight mb-2 text-center md:text-left">
-                  {currentSlide.title} <br className="md:hidden" />
-                  <span
-                    className="text-emerald-400 italic bg-clip-text text-transparent bg-gradient-to-r from-emerald-400 to-teal-300"
-                    style={{ paddingRight: '0.15em', display: 'inline-block' }}
-                  >
-                    {currentSlide.subtitle}
-                  </span>
-                </h1>
-                
-                <p className="text-zinc-300 text-lg md:text-xl font-medium max-w-xl mx-auto md:mx-0 mt-6 text-center md:text-left" style={{ fontFamily: T.fontD }}>
-                  {currentSlide.description || currentSlide.desc}
-                </p>
+              <div className="text-emerald-500 mb-2 md:mb-4">
+                {currentSlide.icon === "trophy" && <Trophy className="w-8 h-8 md:w-10 md:h-10" />}
+                {currentSlide.icon === "qrcode" && <QrCode className="w-8 h-8 md:w-10 md:h-10" />}
+                {currentSlide.icon === "ticket" && <Ticket className="w-8 h-8 md:w-10 md:h-10" />}
+                {currentSlide.icon === "star" && <Star className="w-8 h-8 md:w-10 md:h-10" />}
+                {currentSlide.icon !== "trophy" && currentSlide.icon !== "qrcode" && currentSlide.icon !== "ticket" && currentSlide.icon !== "star" && <Camera className="w-8 h-8 md:w-10 md:h-10" />}
+              </div>
+              
+              <h1 className="text-2xl md:text-5xl lg:text-6xl font-black text-white leading-none tracking-tight mb-1 md:mb-2 text-center md:text-left">
+                {currentSlide.title} <br className="md:hidden" />
+                <span
+                  className="text-emerald-400 italic bg-clip-text text-transparent bg-gradient-to-r from-emerald-400 to-teal-300"
+                  style={{ paddingRight: '0.15em', display: 'inline-block' }}
+                >
+                  {currentSlide.subtitle}
+                </span>
+              </h1>
+              
+              <p className="text-zinc-300 text-xs md:text-base font-medium max-w-xl mx-auto md:mx-0 mt-3 md:mt-6 text-center md:text-left" style={{ fontFamily: T.fontD }}>
+                {currentSlide.description || currentSlide.desc}
+              </p>
 
-              <div className="flex flex-wrap justify-center md:justify-start gap-4 mt-8">
+              <div className="flex flex-wrap justify-center md:justify-start gap-4 mt-4 md:mt-8">
                 <button 
                   onClick={() => navigate(currentSlide.primaryAction)}
-                  className="px-8 py-4 bg-emerald-500 text-black text-[11px] font-black uppercase tracking-[0.2em] hover:bg-emerald-400 transition-colors rounded-full shadow-[0_0_20px_rgba(16,185,129,0.3)]"
+                  className="px-6 py-2.5 md:px-8 md:py-4 bg-emerald-500 text-black text-[10px] md:text-[11px] font-black uppercase tracking-[0.2em] hover:bg-emerald-400 transition-colors rounded-full shadow-[0_0_20px_rgba(16,185,129,0.3)]"
                 >
                   {currentSlide.primaryBtn}
                 </button>
@@ -206,7 +212,7 @@ export function HeroCarousel() {
       </button>
 
       {/* Indicators */}
-      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-3 z-20">
+      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-3 z-20">
         {slides.map((_, i) => (
           <button 
             key={i} 

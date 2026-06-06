@@ -283,7 +283,7 @@ export const HomePage = () => {
       <Navbar />
 
       {/* ── HERO ─────────────────────────────────────────────────────────── */}
-      <section className="hp-hero-section relative overflow-hidden flex flex-col items-center text-center justify-center min-h-[60vh] md:min-h-[75vh]" style={{ 
+      <section className="hp-hero-section relative overflow-hidden flex flex-col items-center text-center justify-center min-h-[260px] md:min-h-[400px] lg:min-h-[450px]" style={{ 
         padding: "0", 
       }}>
         <HeroCarousel />
