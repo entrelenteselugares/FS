@@ -67,16 +67,7 @@ const FALLBACK_SLIDES = [
   }
 ];
 
-const renderIcon = (iconName: string | null) => {
-  switch (iconName) {
-    case "trophy": return <Trophy size={40} className="text-emerald-500 mb-4" />;
-    case "qrcode": return <QrCode size={40} className="text-emerald-500 mb-4" />;
-    case "ticket": return <Ticket size={40} className="text-emerald-500 mb-4" />;
-    case "star": return <Star size={40} className="text-emerald-500 mb-4" />;
-    case "camera":
-    default: return <Camera size={40} className="text-emerald-500 mb-4" />;
-  }
-};
+
 
 interface Slide {
   id: string;
