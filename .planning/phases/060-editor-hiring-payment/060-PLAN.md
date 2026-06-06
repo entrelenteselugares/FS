@@ -1,8 +1,10 @@
 # Phase 060: Editor Hiring & Payment Flow — Plan
 
 ## 1. Database Schema Update
+
 - **Goal:** Support the `EditorContract` lifecycle.
 - **Action:** Add `EditorContract` to `backend/prisma/schema.prisma`.
+
   ```prisma
   enum EditorContractStatus {
     PENDING_ACCEPTANCE
@@ -43,10 +45,12 @@
     @@map("editor_contracts")
   }
   ```
+
 - **Action:** Update `User` and `Event` and `ProfessionalService` models with the reverse relations.
 - **Action:** Run `[BLOCKING]` schema push: `npx prisma db push`.
 
 ## 2. Backend Logic (Controllers & Routes)
+
 - **Goal:** Expose endpoints for creating and managing contracts.
 - **Action:** Create `editor-contract.controller.ts` (and corresponding routes).
   - `POST /api/editor-contracts`: Create contract. Deduct credits or generate MP preference.
@@ -58,6 +62,7 @@
   - `POST /api/editor-contracts/cron/auto-release`: For escrow release and auto-cancellations (called by external cron/trigger).
 
 ## 3. Backend Notification Integrations
+
 - **Goal:** Notify users on contract state changes.
 - **Action:** Update `NotificationService` to add methods for:
   - `notifyContractProposed` (to editor)
@@ -66,6 +71,7 @@
   - `notifyFundsReleased` (to editor)
 
 ## 4. Frontend Integration
+
 - **Goal:** Build the hiring flow in `EventEditPanel.tsx` (Equipe tab).
 - **Action:** Fetch the selected editor's services (`GET /api/professional/:id/services`).
 - **Action:** Add a "Contratar" button to each service.
@@ -73,6 +79,7 @@
 - **Action:** Call API to create contract.
 
 ## 5. Verification
+
 - **Goal:** Verify end-to-end functionality.
 - **Action:** Ensure contract is created correctly.
 - **Action:** Ensure credits are deducted.

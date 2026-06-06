@@ -1,6 +1,6 @@
 # Manual de Uso — Página do Evento
 
-**URL:** https://foto-segundo.vercel.app/e/:slug  
+**URL:** <https://foto-segundo.vercel.app/e/:slug>  
 **Gerado em:** 2026-06-04  
 **Acesso:** Público (mas com proteção de fotos e restrições de alta resolução)
 
@@ -59,3 +59,5 @@ Esta é a galeria pública de um evento finalizado. Ela serve para compartilhar 
 
 - As imagens carregadas inicialmente são miniaturas (thumbnails) ou possuem proteção para evitar download não autorizado. A alta resolução ("Arquivos originais otimizados") só é liberada após a compra.
 - A página se adapta conforme as permissões: se o usuário logado for o proprietário que já pagou, a página não mostrará cobrança, mas sim a opção de download.
+- A seção de **Referências Técnicas** utiliza a API do microlink.io (Open Graph proxy) para carregar imagens de sites externos que bloqueiam hotlinking (como pexels.com), prevenindo erros de carregamento e fallback cinza.
+- Se o evento possuir QR Code ativo (modo captação), um botão verde "ABRIR CÂMERA" será exibido para Profissionais e Admins, levando diretamente para a interface `/phygital-capture?e={id}&auto=1`.

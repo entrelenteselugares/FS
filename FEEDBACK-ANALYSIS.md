@@ -14,7 +14,7 @@ O problema é um bug técnico no tratamento de fusos horários (Timezone Mismatc
 
 1. O formulário do frontend usa um input `<input type="datetime-local">` que salva a data no formato `"YYYY-MM-DDTHH:mm"` (sem informação de fuso horário).
 2. O frontend envia essa string exata (ex: `"2026-06-02T15:00"`) para o backend.
-3. O backend (`admin.controller.ts`), rodando em um servidor configurado em UTC (ex: Vercel, AWS), converte essa string com `new Date("2026-06-02T15:00")`. Por faltar o offset, o Node.js assume que a hora enviada *já está em UTC*, salvando `15:00 UTC` no banco de dados.
+3. O backend (`admin.controller.ts`), rodando em um servidor configurado em UTC (ex: Vercel, AWS), converte essa string com `new Date("2026-06-02T15:00")`. Por faltar o offset, o Node.js assume que a hora enviada _já está em UTC_, salvando `15:00 UTC` no banco de dados.
 4. Quando o frontend busca essa data, recebe `"2026-06-02T15:00:00.000Z"`. Ao converter de volta para o fuso local do navegador (ex: GMT-3), o horário é ajustado para `12:00` (menos 3 horas).
 
 ## Action Plan

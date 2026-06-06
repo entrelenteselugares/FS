@@ -29,6 +29,12 @@ function urlLabel(url: string) {
   } catch { return url; }
 }
 
+interface ServiceOption {
+  id: string;
+  name: string;
+  price: number | string;
+}
+
 export function EventEditPanel({ event, onUpdated, onClose, onNotify }: EventEditPanelProps) {
   const [activeTab, setActiveTab] = useState<"SETUP" | "TEAM">("SETUP");
 
@@ -44,10 +50,18 @@ export function EventEditPanel({ event, onUpdated, onClose, onNotify }: EventEdi
 
   // Team state
   const [edicaoId, setEdicaoId] = useState<string | null>(event.edicaoId ?? null);
-  const [editorName, setEditorName] = useState<string>("");
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [editorName, setEditorName] = useState<string>((event as any).edicao?.nome || "Editor");
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<Partner[]>([]);
   const [isSearching, setIsSearching] = useState(false);
+
+  // Hiring State
+  const [editorServices, setEditorServices] = useState<ServiceOption[]>([]);
+  const [loadingServices, setLoadingServices] = useState(false);
+  const [paymentModalService, setPaymentModalService] = useState<ServiceOption | null>(null);
+  const [paymentMethod, setPaymentMethod] = useState<"CREDITS" | "MP">("CREDITS");
+  const [hiring, setHiring] = useState(false);
 
   const [saving, setSaving] = useState(false);
   const [copiedField, setCopiedField] = useState<string | null>(null);
@@ -60,15 +74,19 @@ export function EventEditPanel({ event, onUpdated, onClose, onNotify }: EventEdi
     setTimeout(() => setCopiedField(null), 2000);
   };
 
-  // Resolve editor name on mount
+  // Load services when edicaoId changes
   useEffect(() => {
-    if (!edicaoId) return;
-    API.get(`/profissional/network/search?query=`)
-      .then(({ data }) => {
-        const found = data.find((p: Partner) => p.id === edicaoId);
-        setEditorName(found ? found.nome : "Editor");
-      })
-      .catch(() => setEditorName("Editor"));
+    if (!edicaoId) {
+      setEditorServices([]);
+      return;
+    }
+      
+    // Load services
+    setLoadingServices(true);
+    API.get(`/profissional/network/${edicaoId}/services`)
+      .then(({ data }) => setEditorServices(data))
+      .catch(console.error)
+      .finally(() => setLoadingServices(false));
   }, [edicaoId]);
 
   // Live search for professionals
@@ -101,6 +119,30 @@ export function EventEditPanel({ event, onUpdated, onClose, onNotify }: EventEdi
       onNotify?.("Erro ao salvar.", "error");
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleHireService = async () => {
+    if (!paymentModalService || !edicaoId) return;
+    setHiring(true);
+    try {
+      const { data } = await API.post("/editor-contracts", {
+        eventId: event.id,
+        editorId: edicaoId,
+        serviceId: paymentModalService.id,
+        paymentMethod
+      });
+      if (data.preferenceUrl) {
+        window.location.href = data.preferenceUrl;
+      } else {
+        onNotify?.("Serviço contratado com sucesso usando créditos!", "success");
+        setPaymentModalService(null);
+      }
+    } catch (err: unknown) {
+      const error = err as { response?: { data?: { error?: string } } };
+      onNotify?.(error.response?.data?.error || "Erro ao contratar serviço.", "error");
+    } finally {
+      setHiring(false);
     }
   };
 
@@ -322,21 +364,52 @@ export function EventEditPanel({ event, onUpdated, onClose, onNotify }: EventEdi
                 <p className="text-[9px] font-black uppercase tracking-widest opacity-40 pl-1">Editor de Vídeo / Pós-Produção</p>
 
                 {edicaoId ? (
-                  <div className="p-4 bg-brand-tactical/8 border border-brand-tactical/25 rounded-2xl flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-brand-tactical flex items-center justify-center shrink-0">
-                      <Check size={16} className="text-black" />
+                  <div className="space-y-3 animate-in fade-in slide-in-from-top-2">
+                    <div className="p-4 bg-brand-tactical/8 border border-brand-tactical/25 rounded-2xl flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-xl bg-brand-tactical flex items-center justify-center shrink-0">
+                        <Check size={16} className="text-black" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xs font-black text-theme-text uppercase">{editorName || "Editor"}</p>
+                        <p className="text-[10px] text-theme-muted">Editor atribuído · acesso ao material</p>
+                      </div>
+                      <button
+                        onClick={() => { setEdicaoId(null); setEditorName(""); }}
+                        className="p-2 text-theme-muted hover:text-red-400 hover:bg-red-500/10 transition-all rounded-xl"
+                        title="Remover editor"
+                      >
+                        <UserMinus size={16} />
+                      </button>
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-xs font-black text-theme-text uppercase">{editorName || "Editor"}</p>
-                      <p className="text-[10px] text-theme-muted">Editor atribuído · acesso ao material</p>
+
+                    {/* Editor Services */}
+                    <div className="pt-2">
+                      <p className="text-[9px] font-black uppercase tracking-widest opacity-40 pl-1 mb-2">Serviços Oferecidos</p>
+                      {loadingServices ? (
+                        <p className="text-[10px] text-theme-muted italic pl-1">Carregando serviços...</p>
+                      ) : editorServices.length === 0 ? (
+                        <p className="text-[10px] text-theme-muted italic pl-1">Este editor não cadastrou serviços com preço fixo.</p>
+                      ) : (
+                        <div className="space-y-2">
+                          {editorServices.map((svc) => (
+                            <div key={svc.id} className="p-3 bg-theme-bg-muted border border-theme-border rounded-xl flex items-center justify-between">
+                              <div>
+                                <p className="text-[11px] font-black text-theme-text uppercase">{svc.name}</p>
+                                <p className="text-[10px] font-bold text-brand-tactical mt-0.5">
+                                  R$ {Number(svc.price).toFixed(2)}
+                                </p>
+                              </div>
+                              <button
+                                onClick={() => setPaymentModalService(svc)}
+                                className="px-3 py-1.5 bg-brand-tactical text-black text-[9px] font-black uppercase tracking-wider rounded-lg hover:brightness-110 transition-all"
+                              >
+                                Contratar
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      )}
                     </div>
-                    <button
-                      onClick={() => { setEdicaoId(null); setEditorName(""); }}
-                      className="p-2 text-theme-muted hover:text-red-400 hover:bg-red-500/10 transition-all rounded-xl"
-                      title="Remover editor"
-                    >
-                      <UserMinus size={16} />
-                    </button>
                   </div>
                 ) : (
                   <div className="space-y-2">
@@ -408,6 +481,62 @@ export function EventEditPanel({ event, onUpdated, onClose, onNotify }: EventEdi
           </button>
         </div>
       </div>
+
+      {/* ─── Payment Modal ─── */}
+      {paymentModalService && (
+        <div className="fixed inset-0 z-[10001] flex items-center justify-center p-4">
+          <div className="fixed inset-0 bg-black/80 backdrop-blur-sm" onClick={() => setPaymentModalService(null)} />
+          <div className="relative w-full max-w-sm bg-theme-card border border-theme-border rounded-[24px] p-6 shadow-2xl animate-in fade-in zoom-in-95 duration-200">
+            <h3 className="text-sm font-black uppercase italic tracking-tight text-theme-text mb-1">
+              Contratar Serviço
+            </h3>
+            <p className="text-[11px] text-theme-muted mb-4 line-clamp-2">
+              {paymentModalService.name} — R$ {Number(paymentModalService.price).toFixed(2)}
+            </p>
+
+            <div className="space-y-3 mb-6">
+              <label className={`flex items-center gap-3 p-3 border rounded-xl cursor-pointer transition-all ${paymentMethod === "CREDITS" ? "border-brand-tactical bg-brand-tactical/5" : "border-theme-border hover:border-theme-muted"}`}>
+                <input type="radio" name="payment" value="CREDITS" checked={paymentMethod === "CREDITS"} onChange={() => setPaymentMethod("CREDITS")} className="hidden" />
+                <div className={`w-4 h-4 rounded-full border flex items-center justify-center ${paymentMethod === "CREDITS" ? "border-brand-tactical" : "border-theme-muted"}`}>
+                  {paymentMethod === "CREDITS" && <div className="w-2 h-2 rounded-full bg-brand-tactical" />}
+                </div>
+                <div>
+                  <p className="text-[11px] font-black uppercase text-theme-text">Usar Créditos</p>
+                  <p className="text-[9px] text-theme-muted">Pague com saldo da carteira</p>
+                </div>
+              </label>
+
+              <label className={`flex items-center gap-3 p-3 border rounded-xl cursor-pointer transition-all ${paymentMethod === "MP" ? "border-brand-tactical bg-brand-tactical/5" : "border-theme-border hover:border-theme-muted"}`}>
+                <input type="radio" name="payment" value="MP" checked={paymentMethod === "MP"} onChange={() => setPaymentMethod("MP")} className="hidden" />
+                <div className={`w-4 h-4 rounded-full border flex items-center justify-center ${paymentMethod === "MP" ? "border-brand-tactical" : "border-theme-muted"}`}>
+                  {paymentMethod === "MP" && <div className="w-2 h-2 rounded-full bg-brand-tactical" />}
+                </div>
+                <div>
+                  <p className="text-[11px] font-black uppercase text-theme-text">Mercado Pago</p>
+                  <p className="text-[9px] text-theme-muted">Pix ou Cartão de Crédito</p>
+                </div>
+              </label>
+            </div>
+
+            <div className="flex gap-2">
+              <button
+                onClick={() => setPaymentModalService(null)}
+                className="flex-1 py-3 text-[10px] font-black uppercase tracking-widest text-theme-muted hover:text-theme-text bg-theme-bg-muted hover:bg-black/20 rounded-xl transition-all"
+                disabled={hiring}
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={handleHireService}
+                disabled={hiring}
+                className="flex-1 py-3 bg-brand-tactical text-black text-[10px] font-black uppercase tracking-widest rounded-xl hover:brightness-110 transition-all disabled:opacity-50"
+              >
+                {hiring ? "Processando..." : "Confirmar"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>,
     document.body
   );

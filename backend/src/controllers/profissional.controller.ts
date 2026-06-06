@@ -898,6 +898,21 @@ export async function deleteProService(req: AuthRequest, res: Response): Promise
   }
 }
 
+export async function getNetworkUserServices(req: AuthRequest, res: Response): Promise<void> {
+  const { id } = req.params;
+  try {
+    const services = await prisma.professionalService.findMany({
+      where: { profissionalId: String(id), active: true },
+      include: { catalog: true },
+      orderBy: { createdAt: "desc" }
+    });
+    res.json(services);
+  } catch (err) {
+    console.error("getNetworkUserServices:", err);
+    res.status(500).json({ error: "Erro ao buscar serviços do profissional." });
+  }
+}
+
 export async function listProServices(req: AuthRequest, res: Response): Promise<void> {
   const userId = req.user?.userId;
   if (!userId) { res.status(401).json({ error: "Não autenticado." }); return; }

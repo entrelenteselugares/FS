@@ -1,4 +1,5 @@
 <!-- generated-by: gsd-doc-writer -->
+
 # Contributing to Foto Segundo
 
 Thank you for your interest in contributing to Foto Segundo! We follow a disciplined development process to maintain the "Midnight Luxury" standard of our platform.

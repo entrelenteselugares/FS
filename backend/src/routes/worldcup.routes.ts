@@ -8,7 +8,12 @@ import {
   getTournamentBracket,
   getLeaderboard,
   toggleLikeSlot,
-  addCommentToSlot
+  addCommentToSlot,
+  getMissionsData,
+  submitQuizAnswer,
+  uploadMissionPhoto,
+  getPendingCommunityValidations,
+  validateMissionPhoto
 } from "../controllers/worldcup.controller";
 import { requireAuth } from "../lib/auth";
 
@@ -28,6 +33,13 @@ router.post("/album/:matchId/slot", fillSlot);
 router.post("/album/:matchId/slot/:slotIndex/like", toggleLikeSlot);
 router.post("/album/:matchId/slot/:slotIndex/comment", addCommentToSlot);
 router.get("/badges", getBadges);
+
+// Gamification: Missions and Quizzes
+router.get("/missions", getMissionsData);
+router.post("/missions/quiz", submitQuizAnswer);
+router.post("/missions/upload", uploadMissionPhoto);
+router.get("/community/pending", getPendingCommunityValidations);
+router.post("/community/validate/:slotId", validateMissionPhoto);
 
 export default router;
 

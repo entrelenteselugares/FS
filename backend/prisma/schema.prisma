@@ -73,15 +73,18 @@ model User {
   affiliatePayoutType String                  @default("CREDIT")
 
   // Affiliate Network (Multi-Tier Referral System)
-  referredById         String? // Self-ref: quem indicou este usuário
-  affiliateTier        String                @default("STANDARD") // "STANDARD" | "VIP"
-  referredBy           User?                 @relation("UserReferrals", fields: [referredById], references: [id], onDelete: SetNull)
-  referrals            User[]                @relation("UserReferrals")
-  affiliateCommissions AffiliateCommission[]
+  referredById            String? // Self-ref: quem indicou este usuário
+  affiliateTier           String                @default("STANDARD") // "STANDARD" | "VIP"
+  referredBy              User?                 @relation("UserReferrals", fields: [referredById], references: [id], onDelete: SetNull)
+  referrals               User[]                @relation("UserReferrals")
+  affiliateCommissions    AffiliateCommission[]
+  editorContractsAsEditor EditorContract[]      @relation("EditorContracts")
+  editorContractsAsOwner  EditorContract[]      @relation("OwnerContracts")
 
   // World Cup Gamification
-  worldCupBadges WorldCupBadge[]
-  worldCupFolhas WorldCupFolha[]
+  worldCupBadges        WorldCupBadge[]
+  worldCupFolhas        WorldCupFolha[]
+  worldCupValidations   WorldCupSlotValidation[]
 
   @@map("users")
 }
@@ -218,6 +221,7 @@ model Event {
   coverPosition      String?             @default("center")
   views              Int                 @default(0)
   eventReferences    EventReference[]
+  editorContracts    EditorContract[]
 
   @@map("events")
 }
@@ -477,19 +481,20 @@ model ServiceCatalog {
 }
 
 model ProfessionalService {
-  id             String          @id @default(cuid())
-  profissionalId String
-  name           String
-  description    String?
-  price          Decimal         @db.Decimal(10, 2)
-  active         Boolean         @default(true)
-  catalogId      String?
-  createdAt      DateTime        @default(now())
-  updatedAt      DateTime        @updatedAt
-  category       String?
-  orderItems     OrderItem[]
-  catalog        ServiceCatalog? @relation(fields: [catalogId], references: [id])
-  profissional   Profissional    @relation(fields: [profissionalId], references: [id], onDelete: Cascade)
+  id              String           @id @default(cuid())
+  profissionalId  String
+  name            String
+  description     String?
+  price           Decimal          @db.Decimal(10, 2)
+  active          Boolean          @default(true)
+  catalogId       String?
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  category        String?
+  orderItems      OrderItem[]
+  catalog         ServiceCatalog?  @relation(fields: [catalogId], references: [id])
+  editorContracts EditorContract[]
+  profissional    Profissional     @relation(fields: [profissionalId], references: [id], onDelete: Cascade)
 
   // Custom service fields
   submittedAt          DateTime?
@@ -1344,14 +1349,31 @@ model WorldCupSlot {
   slotIndex   Int // 0 to 11
   imageUrl    String?
   missionType String   @default("LIVRE") // LIVRE, SELFIE, COMIDA, ESCALACAO
+  status      String   @default("LOCKED") // LOCKED, AWAITING_VALIDATION, APPROVED, REJECTED
+  quizPassed  Boolean  @default(false)
   metadata    Json     @default("{}")
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  folha WorldCupFolha @relation(fields: [folhaId], references: [id], onDelete: Cascade)
+  folha       WorldCupFolha            @relation(fields: [folhaId], references: [id], onDelete: Cascade)
+  validations WorldCupSlotValidation[]
 
   @@unique([folhaId, slotIndex])
   @@map("world_cup_slots")
+}
+
+model WorldCupSlotValidation {
+  id         String   @id @default(cuid())
+  slotId     String
+  userId     String
+  isApproved Boolean
+  createdAt  DateTime @default(now())
+
+  slot WorldCupSlot @relation(fields: [slotId], references: [id], onDelete: Cascade)
+  user User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([slotId, userId])
+  @@map("world_cup_slot_validations")
 }
 
 model WorldCupBadge {
@@ -1365,4 +1387,43 @@ model WorldCupBadge {
 
   @@index([userId, type])
   @@map("world_cup_badges")
+}
+
+enum EditorContractStatus {
+  PENDING_ACCEPTANCE
+  ACCEPTED
+  PAID
+  IN_PROGRESS
+  DELIVERED
+  REVISION
+  COMPLETED
+  CANCELLED
+}
+
+model EditorContract {
+  id            String               @id @default(cuid())
+  eventId       String
+  editorId      String
+  ownerId       String
+  serviceId     String
+  grossAmount   Decimal              @db.Decimal(10, 2)
+  platformFee   Decimal              @db.Decimal(10, 2)
+  netAmount     Decimal              @db.Decimal(10, 2)
+  status        EditorContractStatus @default(PENDING_ACCEPTANCE)
+  acceptedAt    DateTime?
+  deliveredAt   DateTime?
+  releasedAt    DateTime?
+  revisionNote  String?
+  revisionAt    DateTime?
+  paymentMethod String
+  mpOrderId     String?
+  createdAt     DateTime             @default(now())
+  updatedAt     DateTime             @updatedAt
+
+  event   Event               @relation(fields: [eventId], references: [id])
+  editor  User                @relation("EditorContracts", fields: [editorId], references: [id])
+  owner   User                @relation("OwnerContracts", fields: [ownerId], references: [id])
+  service ProfessionalService @relation(fields: [serviceId], references: [id])
+
+  @@map("editor_contracts")
 }

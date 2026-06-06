@@ -7,31 +7,31 @@
 
 ## 📸 Screenshots Capturados (23 total)
 
-| # | Arquivo | Área | Status |
-|---|---------|------|--------|
-| 01 | `01_home.png` | Home Pública | ✅ OK |
-| 02 | `02_registro_initial.png` | Registro (Inicial) | ✅ OK |
-| 03 | `03_registro_pro.png` | Registro (Tab Pro) | ⚠️ Não capturado |
-| 04 | `04_login.png` | Login | ✅ OK |
-| 05 | `05_galeria_lista.png` | Lista de Eventos | ✅ OK |
-| 06 | `06_checkout_empty.png` | Checkout (Protocolo Inválido) | ✅ OK |
-| 07 | `07_dashboard_pro_main.png` | Dashboard Pro (Principal) | ✅ OK |
-| 08 | `08_dashboard_pro_finance.png` | Financeiro (Pro) — 1ª visão | ✅ OK |
-| 09 | `09_dashboard_admin_main.png` | Admin — Visão Geral | ✅ OK |
-| 10 | `10_dashboard_admin_payouts.png` | Admin — Payouts (redirect) | ⚠️ Redirect |
-| 11 | `11_pro_dashboard_initial.png` | Dashboard Pro — Login fresco | ✅ OK |
-| 12 | `12_pro_tab_financeiro.png` | Aba Financeiro (FLUXO DE CAIXA) | ✅ OK |
-| 13 | `13_pro_tab_agenda.png` | Aba Agenda (MEU COCKPIT) | ✅ OK |
-| 14 | — | Aba Eventos | ⚠️ Não encontrada (label diferente) |
-| 15 | `15_pro_tab_rede.png` | Aba Minha Rede | ✅ OK |
-| 16 | — | Aba Cofres | ⚠️ Não encontrada (pode ser "Álbuns") |
-| 17 | — | Aba Loja | ⚠️ Não encontrada (pode ser "Franquia") |
-| 18 | `18_admin_dashboard.png` | Admin — Visão Geral (com KPIs) | ✅ OK |
-| 19 | `19_admin_payouts.png` | Admin /payouts (redirect para Visão Geral) | ⚠️ Routing |
-| 20 | `20_admin_configs.png` | Admin /configs (redirect para Visão Geral) | ⚠️ Routing |
-| 21 | `21_admin_users.png` | Admin /users (redirect para Visão Geral) | ⚠️ Routing |
-| 22 | `22_admin_events.png` | Admin /events (redirect para Visão Geral) | ✅ Ver nota |
-| 23 | `23_admin_leads.png` | Admin /leads | ✅ Ver nota |
+| #   | Arquivo                          | Área                                       | Status                                  |
+| --- | -------------------------------- | ------------------------------------------ | --------------------------------------- |
+| 01  | `01_home.png`                    | Home Pública                               | ✅ OK                                   |
+| 02  | `02_registro_initial.png`        | Registro (Inicial)                         | ✅ OK                                   |
+| 03  | `03_registro_pro.png`            | Registro (Tab Pro)                         | ⚠️ Não capturado                        |
+| 04  | `04_login.png`                   | Login                                      | ✅ OK                                   |
+| 05  | `05_galeria_lista.png`           | Lista de Eventos                           | ✅ OK                                   |
+| 06  | `06_checkout_empty.png`          | Checkout (Protocolo Inválido)              | ✅ OK                                   |
+| 07  | `07_dashboard_pro_main.png`      | Dashboard Pro (Principal)                  | ✅ OK                                   |
+| 08  | `08_dashboard_pro_finance.png`   | Financeiro (Pro) — 1ª visão                | ✅ OK                                   |
+| 09  | `09_dashboard_admin_main.png`    | Admin — Visão Geral                        | ✅ OK                                   |
+| 10  | `10_dashboard_admin_payouts.png` | Admin — Payouts (redirect)                 | ⚠️ Redirect                             |
+| 11  | `11_pro_dashboard_initial.png`   | Dashboard Pro — Login fresco               | ✅ OK                                   |
+| 12  | `12_pro_tab_financeiro.png`      | Aba Financeiro (FLUXO DE CAIXA)            | ✅ OK                                   |
+| 13  | `13_pro_tab_agenda.png`          | Aba Agenda (MEU COCKPIT)                   | ✅ OK                                   |
+| 14  | —                                | Aba Eventos                                | ⚠️ Não encontrada (label diferente)     |
+| 15  | `15_pro_tab_rede.png`            | Aba Minha Rede                             | ✅ OK                                   |
+| 16  | —                                | Aba Cofres                                 | ⚠️ Não encontrada (pode ser "Álbuns")   |
+| 17  | —                                | Aba Loja                                   | ⚠️ Não encontrada (pode ser "Franquia") |
+| 18  | `18_admin_dashboard.png`         | Admin — Visão Geral (com KPIs)             | ✅ OK                                   |
+| 19  | `19_admin_payouts.png`           | Admin /payouts (redirect para Visão Geral) | ⚠️ Routing                              |
+| 20  | `20_admin_configs.png`           | Admin /configs (redirect para Visão Geral) | ⚠️ Routing                              |
+| 21  | `21_admin_users.png`             | Admin /users (redirect para Visão Geral)   | ⚠️ Routing                              |
+| 22  | `22_admin_events.png`            | Admin /events (redirect para Visão Geral)  | ✅ Ver nota                             |
+| 23  | `23_admin_leads.png`             | Admin /leads                               | ✅ Ver nota                             |
 
 ---
 
@@ -74,7 +74,7 @@ Essas labels podem ter sido renomeadas na sidebar. Visualmente confirmadas como:
 
 - "Serviços" (que pode ser Loja)
 - "Franquia Print" (que pode ser Cofres/Loja)
-Verificar as labels exatas no `DashboardHeader.tsx`.
+  Verificar as labels exatas no `DashboardHeader.tsx`.
 
 ### O-02 · Admin: 2 "Vendas sem Entrega" no painel
 
@@ -91,35 +91,35 @@ corretamente antes do go-live.
 
 ## ✅ VERIFICADO OK
 
-| Módulo | Verificação |
-|--------|-------------|
-| **Home Page** | Layout Midnight Luxury intacto, 3 eventos na vitrine, filtros de busca visíveis |
-| **Login** | Formulário limpo, placeholder correto (`seu@email.com`), botão "ENTRAR NO SISTEMA" |
-| **Registro** | Fluxo inicial renderizando; tab de Profissional acessível |
-| **Galeria de Eventos** | Lista renderizando corretamente com thumbs dos eventos |
-| **Checkout (erro)** | Estado "Protocolo não localizado" funcional com tratamento elegante |
-| **Dashboard Pro** | Cockpit carrega com KPIs: 2 Eventos, R$ 0,5 Acumulado, 0 Pontos |
-| **Aba Agenda (Cockpit)** | Venda Rápida, Foto Point, Live Print — 3 operações táticas visíveis |
-| **Aba Financeira** | "RELATÓRIO TRIBUTÁRIO" e "CICLO DE REPASSE ATIVO" visíveis |
-| **Aba Minha Rede** | Busca de profissional e seção "Meus Parceiros Favoritos" operacionais |
-| **Admin — Visão Geral** | R$ 4 Receita Bruta, 4 Pedidos, 5 Eventos Ativos, Timeline de Conversão |
+| Módulo                        | Verificação                                                                                                                                                                      |
+| ----------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Home Page**                 | Layout Midnight Luxury intacto, 3 eventos na vitrine, filtros de busca visíveis                                                                                                  |
+| **Login**                     | Formulário limpo, placeholder correto (`seu@email.com`), botão "ENTRAR NO SISTEMA"                                                                                               |
+| **Registro**                  | Fluxo inicial renderizando; tab de Profissional acessível                                                                                                                        |
+| **Galeria de Eventos**        | Lista renderizando corretamente com thumbs dos eventos                                                                                                                           |
+| **Checkout (erro)**           | Estado "Protocolo não localizado" funcional com tratamento elegante                                                                                                              |
+| **Dashboard Pro**             | Cockpit carrega com KPIs: 2 Eventos, R$ 0,5 Acumulado, 0 Pontos                                                                                                                  |
+| **Aba Agenda (Cockpit)**      | Venda Rápida, Foto Point, Live Print — 3 operações táticas visíveis                                                                                                              |
+| **Aba Financeira**            | "RELATÓRIO TRIBUTÁRIO" e "CICLO DE REPASSE ATIVO" visíveis                                                                                                                       |
+| **Aba Minha Rede**            | Busca de profissional e seção "Meus Parceiros Favoritos" operacionais                                                                                                            |
+| **Admin — Visão Geral**       | R$ 4 Receita Bruta, 4 Pedidos, 5 Eventos Ativos, Timeline de Conversão                                                                                                           |
 | **Admin — Navegação Lateral** | 14 seções disponíveis: Eventos, Membros, Orçamentos, CRM & Leads, Pedidos, Financeiro, Impressão, Franquias, Estoque, Catálogo, Serviços, Concursos, Configurações, Embaixadores |
-| **Supabase Schema** | 47 modelos em sync perfeito, 0 drift detectado |
-| **Testes Unitários** | 6/6 passando (ReportService — CSV, PDF, Receipt) |
+| **Supabase Schema**           | 47 modelos em sync perfeito, 0 drift detectado                                                                                                                                   |
+| **Testes Unitários**          | 6/6 passando (ReportService — CSV, PDF, Receipt)                                                                                                                                 |
 
 ---
 
 ## 📊 Resumo Executivo
 
-| Categoria | Count |
-|:----------|------:|
-| Screenshots capturados | 23 |
-| Módulos verificados | 15+ |
-| Issues críticos (Action Required) | 3 |
-| Observações | 3 |
-| Módulos OK | 11 |
+| Categoria                         |                   Count |
+| :-------------------------------- | ----------------------: |
+| Screenshots capturados            |                      23 |
+| Módulos verificados               |                     15+ |
+| Issues críticos (Action Required) |                       3 |
+| Observações                       |                       3 |
+| Módulos OK                        |                      11 |
 | Bugs corrigidos durante auditoria | 1 (CheckoutPage syntax) |
-| Code Review fixes aplicados | 7 (Phase 30) |
+| Code Review fixes aplicados       |            7 (Phase 30) |
 
 ---
 
@@ -131,4 +131,5 @@ corretamente antes do go-live.
 4. Realizar auditoria do fluxo completo de compra (Add ao Carrinho → Checkout → PIX) com dados reais
 
 ---
-*Gerado em: 2026-05-14 | Ferramenta: Antigravity Audit System v1 | Phase 31*
+
+_Gerado em: 2026-05-14 | Ferramenta: Antigravity Audit System v1 | Phase 31_

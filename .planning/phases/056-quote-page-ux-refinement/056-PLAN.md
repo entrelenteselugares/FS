@@ -33,10 +33,10 @@ Implement UX refinements in the quote/booking flow:
   - **Passo 1: Onde e Quando** (Local e Data)
   - **Passo 2: Dimensionamento** (Tipo de Evento, Duração, Dias, Convidados, Equipamento, Finalidade, Budget)
   - **Passo 3: A Jornada (Serviços)**
-    - Categorizar os serviços em blocos visuais de linha do tempo: 
-      - *Pré evento:* Ensaios, Save the Date
-      - *Dia do evento:* Fotografia, Vídeo Bruto, Reels, Phygital
-      - *Pós evento:* Álbum Impresso, Edição Premium
+    - Categorizar os serviços em blocos visuais de linha do tempo:
+      - _Pré evento:_ Ensaios, Save the Date
+      - _Dia do evento:_ Fotografia, Vídeo Bruto, Reels, Phygital
+      - _Pós evento:_ Álbum Impresso, Edição Premium
   - **Passo 4: Seus Dados** (Contato, Profissional preferencial, Obs)
   - **Passo 5: Confirmação** (Protocolo e CTAs)
 - **Single-Select:** Garantir que "Equipamento" e "Finalidade" funcionem como radio buttons exclusivos.

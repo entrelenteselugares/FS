@@ -2,7 +2,10 @@ import { useEffect, useState, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { API as api } from "../../lib/api";
 import { T } from "../../lib/theme";
-import { Trophy, Camera, Clock, ChevronRight, ChevronLeft, Star, Zap, Calendar, Share2, Users, Upload, Heart, Award } from "lucide-react";
+import { Trophy, Camera, Clock, ChevronRight, ChevronLeft, Star, Zap, Calendar, Share2, Users, Upload, Heart, Award, Target, Network } from "lucide-react";
+import { AlbumMissionsTab } from "../../components/worldcup/AlbumMissionsTab";
+import { WorldCupLiveBanner } from "../../components/worldcup/WorldCupLiveBanner";
+import { WorldCupBracket } from "../../components/worldcup/WorldCupBracket";
 
 // ─── Copa 2026 Data ───────────────────────────────────────────────────────────
 const GROUPS: Array<{
@@ -182,7 +185,7 @@ const CountdownBox = ({ val, label }: { val: number; label: string }) => (
 );
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
-type Tab = "jogos" | "grupos" | "album" | "ranking" | "nostalgia";
+type Tab = "jogos" | "grupos" | "album" | "missoes" | "ranking" | "chaveamento" | "nostalgia";
 
 const ALL_PAST_COPAS = [
   { year: 2022, name: "Catar 2022" },
@@ -314,9 +317,11 @@ export const AlbumTorcidaPage = () => {
     .slice(0, 12);
 
   return (
-    <div style={{ minHeight: "100vh", background: "#050e08", paddingBottom: 96 }}>
+    <div style={{ background: "#050e08", minHeight: "100vh", color: "white", fontFamily: "sans-serif", paddingBottom: 60 }}>
+      {/* ── BANNER AO VIVO ─────────────────────────────────────────────────── */}
+      <WorldCupLiveBanner />
 
-      {/* ── HERO ─────────────────────────────────────────────────────────────── */}
+      {/* ── HERO / HEADER ──────────────────────────────────────────────────── */}
       <div
         style={{
           background: "linear-gradient(180deg, #022c22 0%, #064e3b 40%, #050e08 100%)",
@@ -440,6 +445,8 @@ export const AlbumTorcidaPage = () => {
             { id: "jogos" as Tab, icon: <Clock size={12} />, label: "Jogos" },
             { id: "grupos" as Tab, icon: <Star size={12} />, label: "Grupos" },
             { id: "album" as Tab, icon: <Camera size={12} />, label: "Meu Álbum" },
+            { id: "missoes" as Tab, icon: <Target size={12} />, label: "Missões" },
+            { id: "chaveamento" as Tab, icon: <Network size={12} />, label: "Chaveamento" },
             { id: "ranking" as Tab, icon: <Award size={12} />, label: "Classificação" },
             { id: "nostalgia" as Tab, icon: <Trophy size={12} />, label: "Nostalgia" },
           ].map((t) => (
@@ -618,6 +625,16 @@ export const AlbumTorcidaPage = () => {
               </div>
             )}
           </div>
+        )}
+
+        {/* ── TAB: MISSÕES ─────────────────────────────────────────────────── */}
+        {tab === "missoes" && (
+          <AlbumMissionsTab />
+        )}
+
+        {/* ── TAB: CHAVEAMENTO ─────────────────────────────────────────────── */}
+        {tab === "chaveamento" && (
+          <WorldCupBracket />
         )}
 
         {/* ── TAB: RANKING ─────────────────────────────────────────────────── */}

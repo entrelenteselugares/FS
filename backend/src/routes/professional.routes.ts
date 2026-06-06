@@ -13,6 +13,7 @@ import {
   getNetwork,
   searchProfessionals,
   toggleFavorite,
+  getNetworkUserServices,
   listProServices,
   addProService,
   updateProService,
@@ -60,6 +61,7 @@ router.get("/unidades/convites", requireAuth, requireProOrFranchise, getConvites
 router.patch("/unidades/convites/:id/respond", requireAuth, requireProOrFranchise, respondConviteUnidade);
 router.get("/network", requireAuth, requireProOrFranchise, getNetwork);
 router.get("/network/search", requireAuth, requireProOrFranchise, searchProfessionals);
+router.get("/network/:id/services", requireAuth, requireProOrFranchise, getNetworkUserServices);
 router.post("/network/favorite/:partnerId", requireAuth, requireProOrFranchise, toggleFavorite);
 
 // ── Relatórios & Inteligência Financeira

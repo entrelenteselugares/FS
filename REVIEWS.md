@@ -43,12 +43,12 @@
 
 ## 3. Recommended Fix Plan (Wave 1)
 
-| Priority | Area | Task |
-|----------|------|------|
-| HIGH | Backend | Batch event updates in `finalizeApprovedOrder`. |
-| MEDIUM | Shared | Centralize formatting utils. |
-| MEDIUM | Backend | Extract `SystemConfig` for financial thresholds. |
-| LOW | Frontend | Implement list virtualization for payouts. |
+| Priority | Area     | Task                                             |
+| -------- | -------- | ------------------------------------------------ |
+| HIGH     | Backend  | Batch event updates in `finalizeApprovedOrder`.  |
+| MEDIUM   | Shared   | Centralize formatting utils.                     |
+| MEDIUM   | Backend  | Extract `SystemConfig` for financial thresholds. |
+| LOW      | Frontend | Implement list virtualization for payouts.       |
 
 ---
 

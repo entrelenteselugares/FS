@@ -322,3 +322,246 @@ export async function addCommentToSlot(req: Request, res: Response) {
     return res.status(500).json({ error: "Internal Server Error" });
   }
 }
+
+export const MISSIONS = [
+  { quiz: "Em que ano o Brasil ganhou o Penta?", options: ["1994", "1998", "2002", "2006"], answerIndex: 2, missionTitle: "A foto clássica", missionDesc: "Selfie com a camisa da seleção" },
+  { quiz: "Quem é o maior artilheiro das Copas?", options: ["Pelé", "Ronaldo", "Miroslav Klose", "Messi"], answerIndex: 2, missionTitle: "A Torcida", missionDesc: "Foto com pelo menos 3 amigos" },
+  { quiz: "Qual país sediou a Copa de 2010?", options: ["Alemanha", "Brasil", "África do Sul", "Catar"], answerIndex: 2, missionTitle: "O Estádio Caseiro", missionDesc: "Foto da TV/Telão mostrando o jogo" },
+  { quiz: "Quem fez o gol do título do Brasil em 1994?", options: ["Romário", "Bebeto", "Branco", "Baggio perdeu o pênalti"], answerIndex: 3, missionTitle: "A Resenha", missionDesc: "Foto dos petiscos/comida do jogo" },
+  { quiz: "Qual o Mascote da Copa de 2014?", options: ["Fuleco", "Zakumi", "Zabivaka", "La'eeb"], answerIndex: 0, missionTitle: "O Amuleto", missionDesc: "Foto com um objeto da sorte ou bandeira" },
+  { quiz: "Qual seleção tem 4 títulos mundiais?", options: ["Brasil", "Alemanha", "França", "Uruguai"], answerIndex: 1, missionTitle: "Momento de Tensão", missionDesc: "Foto roendo a unha ou de mãos dadas" },
+  { quiz: "Quem venceu a primeira Copa em 1930?", options: ["Argentina", "Uruguai", "Brasil", "Itália"], answerIndex: 1, missionTitle: "O Grito de Gol", missionDesc: "Foto comemorando (ou imitando comemoração)" },
+  { quiz: "Qual jogador era conhecido como Fenômeno?", options: ["Romário", "Ronaldinho Gaúcho", "Ronaldo", "Kaká"], answerIndex: 2, missionTitle: "O Rei do Camarote", missionDesc: "Foto com uma bebida na mão" },
+  { quiz: "Qual país mais vezes foi vice-campeão?", options: ["Holanda", "Argentina", "Alemanha", "Itália"], answerIndex: 2, missionTitle: "Vestido a rigor", missionDesc: "Foto mostrando os pés (chinelo, chuteira)" },
+  { quiz: "Quem é o atual campeão do mundo (2022)?", options: ["França", "Croácia", "Argentina", "Brasil"], answerIndex: 2, missionTitle: "Invasão de Campo", missionDesc: "Foto do pet (cachorro/gato) assistindo o jogo" },
+  { quiz: "Quem fez a narração do 'Haja coração'?", options: ["Galvão Bueno", "Cleber Machado", "Luis Roberto", "Silvio Luiz"], answerIndex: 0, missionTitle: "Festa no Sofá", missionDesc: "Foto de todos sentados no sofá" },
+  { quiz: "Quantas copas o Pelé ganhou?", options: ["1", "2", "3", "4"], answerIndex: 2, missionTitle: "O Fim de Jogo", missionDesc: "Foto do placar final ou expressando a emoção" }
+];
+
+export async function getMissionsData(req: Request, res: Response) {
+  try {
+    const user = (req as any).user;
+    if (!user) return res.status(401).json({ error: "Unauthorized" });
+    
+    const activeMatch = await prisma.worldCupMatch.findFirst({
+      where: { active: true },
+      orderBy: { matchDate: "asc" }
+    });
+    
+    if (!activeMatch) {
+      return res.json({ missions: MISSIONS, progress: [] });
+    }
+
+    let folha: any = await prisma.worldCupFolha.findUnique({
+      where: { userId_matchId: { userId: user.userId, matchId: activeMatch.id } },
+      include: { slots: true }
+    });
+
+    if (!folha) {
+       folha = await prisma.worldCupFolha.create({
+        data: {
+          userId: user.userId,
+          matchId: activeMatch.id,
+          slots: {
+            create: Array.from({ length: 12 }).map((_, i) => ({
+              slotIndex: i,
+              missionType: "MISSAO"
+            }))
+          }
+        },
+        include: { slots: true }
+      });
+    }
+
+    // Ensure all 12 slots exist if somehow they were deleted
+    if (folha.slots.length < 12) {
+      const existingIndexes = folha.slots.map((s: any) => s.slotIndex);
+      const missing = Array.from({ length: 12 }).map((_, i) => i).filter(i => !existingIndexes.includes(i));
+      if (missing.length > 0) {
+        await prisma.worldCupSlot.createMany({
+          data: missing.map(i => ({
+            folhaId: folha.id,
+            slotIndex: i,
+            missionType: "MISSAO"
+          }))
+        });
+        folha = await prisma.worldCupFolha.findUnique({
+          where: { userId_matchId: { userId: user.userId, matchId: activeMatch.id } },
+          include: { slots: true }
+        }) as any;
+      }
+    }
+
+    return res.json({ missions: MISSIONS, folhaId: folha.id, progress: folha.slots });
+  } catch (error) {
+    console.error("Error fetching missions data:", error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+}
+
+export async function submitQuizAnswer(req: Request, res: Response) {
+  try {
+    const user = (req as any).user;
+    if (!user) return res.status(401).json({ error: "Unauthorized" });
+
+    const { slotId, answerIndex } = req.body;
+    
+    const slot = await prisma.worldCupSlot.findUnique({
+      where: { id: slotId }
+    });
+    if (!slot) return res.status(404).json({ error: "Slot not found" });
+
+    const mission = MISSIONS[slot.slotIndex];
+    if (!mission) return res.status(400).json({ error: "Mission not found" });
+
+    if (mission.answerIndex === answerIndex) {
+      const updated = await prisma.worldCupSlot.update({
+        where: { id: slotId },
+        data: { quizPassed: true }
+      });
+      return res.json({ success: true, slot: updated });
+    } else {
+      return res.status(400).json({ error: "Incorrect answer" });
+    }
+  } catch (error) {
+    console.error("Error submitting quiz:", error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+}
+
+export async function uploadMissionPhoto(req: Request, res: Response) {
+  try {
+    const user = (req as any).user;
+    if (!user) return res.status(401).json({ error: "Unauthorized" });
+
+    const { slotId, imageUrl } = req.body;
+
+    const slot = await prisma.worldCupSlot.findUnique({ where: { id: slotId } });
+    if (!slot) return res.status(404).json({ error: "Slot not found" });
+    if (!slot.quizPassed) return res.status(400).json({ error: "Quiz not passed yet" });
+
+    const updated = await prisma.worldCupSlot.update({
+      where: { id: slotId },
+      data: {
+        imageUrl,
+        status: "AWAITING_VALIDATION"
+      }
+    });
+
+    return res.json({ success: true, slot: updated });
+  } catch (error) {
+    console.error("Error uploading mission photo:", error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+}
+
+export async function getPendingCommunityValidations(req: Request, res: Response) {
+  try {
+    const user = (req as any).user;
+    if (!user) return res.status(401).json({ error: "Unauthorized" });
+
+    const pendingSlots = await prisma.worldCupSlot.findMany({
+      where: {
+        status: "AWAITING_VALIDATION",
+        folha: {
+          userId: { not: user.userId }
+        },
+        validations: {
+          none: {
+            userId: user.userId
+          }
+        }
+      },
+      include: {
+        folha: {
+          include: {
+            user: {
+              select: { nome: true, profileImageUrl: true }
+            }
+          }
+        }
+      },
+      take: 10
+    });
+
+    const mapped = pendingSlots.map(s => ({
+      id: s.id,
+      imageUrl: s.imageUrl,
+      slotIndex: s.slotIndex,
+      missionTitle: MISSIONS[s.slotIndex]?.missionTitle,
+      missionDesc: MISSIONS[s.slotIndex]?.missionDesc,
+      userName: s.folha.user.nome,
+      userAvatar: s.folha.user.profileImageUrl
+    }));
+
+    return res.json({ pending: mapped });
+  } catch (error) {
+    console.error("Error fetching pending validations:", error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+}
+
+export async function validateMissionPhoto(req: Request, res: Response) {
+  try {
+    const user = (req as any).user;
+    if (!user) return res.status(401).json({ error: "Unauthorized" });
+
+    const slotId = req.params.slotId as string;
+    const { isApproved } = req.body;
+
+    const slot: any = await prisma.worldCupSlot.findUnique({
+      where: { id: slotId },
+      include: { folha: true }
+    });
+
+    if (!slot || slot.status !== "AWAITING_VALIDATION") {
+      return res.status(400).json({ error: "Slot not awaiting validation" });
+    }
+
+    await prisma.worldCupSlotValidation.create({
+      data: {
+        slotId,
+        userId: user.userId,
+        isApproved
+      }
+    });
+
+    const validations = await prisma.worldCupSlotValidation.findMany({
+      where: { slotId }
+    });
+
+    const upvotes = validations.filter(v => v.isApproved).length;
+    const downvotes = validations.filter(v => !v.isApproved).length;
+
+    let newStatus = slot.status;
+    let badgesAwarded: any = null;
+
+    if (upvotes - downvotes >= 2) {
+      newStatus = "APPROVED";
+      badgesAwarded = await gamificationService.processBadges(slot.folha.userId, slot.folha.matchId);
+      
+      await prisma.gamificationLedger.create({
+        data: {
+          userId: user.userId,
+          type: "COMMUNITY_VALIDATION_REWARD",
+          points: 10,
+          description: "Ajudou a comunidade validando uma foto"
+        }
+      });
+    } else if (downvotes - upvotes >= 2) {
+      newStatus = "REJECTED";
+    }
+
+    if (newStatus !== slot.status) {
+      await prisma.worldCupSlot.update({
+        where: { id: slotId },
+        data: { status: newStatus }
+      });
+    }
+
+    return res.json({ success: true, newStatus, badgesAwarded });
+  } catch (error) {
+    console.error("Error validating mission photo:", error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+}

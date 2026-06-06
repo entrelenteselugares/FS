@@ -1,20 +1,25 @@
 # Phase 060: Editor Hiring & Payment Flow — Research
 
 ## Context
+
 The goal is to allow event owners to hire a post-production editor directly within the Delivery Panel (Team tab), select their services, and pay using MercadoPago or existing Wallet Credits (`rewardCredits`). This initiates a structured contract (escrow, revision, payout).
 
 ## Architecture & Existing Systems
 
 ### 1. Payment Methods
+
 **MercadoPago**: We already have `MercadoPagoService` which uses `createPreference` for checkout flows and `processPayment` for direct token-based flows. Webhooks exist in `payment.controller.ts`.
 **Wallet Credits**: We have a `rewardCredits` field on the `User` model, currently used for gamification and affiliate payouts. We can increment/decrement this value.
 
 ### 2. Data Models
+
 We need a new model `EditorContract` as specified in the context:
+
 - References `Event`, `Editor` (User), `Owner` (User), `ProfessionalService`.
 - Tracks `status`, `amounts` (gross, platform fee, net), and dates.
 
 ### 3. Sub-Systems
+
 - **Notifications**: `notification.service.ts` supports WhatsApp (`notifyNewSale`, `sendLoyaltyMessage`), email (`getTransporter`), and in-app (`createInApp`). We'll need new notifications for:
   - Contract proposed
   - Contract accepted/rejected
@@ -47,6 +52,7 @@ We need a new model `EditorContract` as specified in the context:
    - Release: Increment editor's `rewardCredits` (or trigger MercadoPago split/transfer) by `netAmount`. Change status to `COMPLETED`.
 
 ## Technical Gaps & Considerations
+
 - **CRON Jobs**: If we don't have a reliable CRON runner, we might need a lazy-evaluation mechanism on API calls (e.g. `checkExpiredContracts()` middleware or within list endpoints), OR a Vercel Cron function.
 - **Refunds**: Refunding MercadoPago can be tricky if we use checkout pro. We might need to call MP API to cancel/refund payment. With credits, it's just incrementing the balance back.
 - **Schema Push**: Adding `EditorContract` will require a Prisma DB push (`npx prisma db push`).
