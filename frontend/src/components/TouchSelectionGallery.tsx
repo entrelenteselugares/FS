@@ -150,10 +150,13 @@ export const TouchSelectionGallery: React.FC<TouchSelectionGalleryProps> = ({
 
               {/* Watermark Overlay for locked images */}
               {!isUnlocked && (
-                <div className="absolute inset-0 pointer-events-none flex items-center justify-center overflow-hidden mix-blend-overlay z-10">
-                   <div className="rotate-[-30deg] opacity-40 text-2xl md:text-3xl font-black whitespace-nowrap select-none text-white drop-shadow-md">
-                      FOTO SEGUNDO
-                   </div>
+                <div className="absolute inset-0 pointer-events-none flex items-center justify-center overflow-hidden z-10">
+                   <img 
+                      src="/logo.png" 
+                      alt="Watermark" 
+                      className="w-[70%] opacity-80 select-none pointer-events-none drop-shadow-xl" 
+                      style={{ filter: "var(--logo-filter)" }} 
+                   />
                 </div>
               )}
 
@@ -263,10 +266,13 @@ export const TouchSelectionGallery: React.FC<TouchSelectionGalleryProps> = ({
                     />
                   )}
                   {!fmIsUnlocked && (
-                    <div className="absolute inset-0 pointer-events-none flex items-center justify-center overflow-hidden mix-blend-overlay z-10">
-                       <div className="rotate-[-30deg] opacity-50 text-4xl md:text-7xl font-black whitespace-nowrap select-none text-white drop-shadow-2xl">
-                          FOTO SEGUNDO
-                       </div>
+                    <div className="absolute inset-0 pointer-events-none flex items-center justify-center overflow-hidden z-10">
+                       <img 
+                          src="/logo.png" 
+                          alt="Watermark" 
+                          className="w-[50%] max-w-[400px] opacity-80 select-none pointer-events-none drop-shadow-2xl" 
+                          style={{ filter: "var(--logo-filter)" }} 
+                       />
                     </div>
                   )}
                 </>
