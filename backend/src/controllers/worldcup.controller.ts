@@ -146,3 +146,179 @@ export async function getTournamentBracket(req: Request, res: Response) {
     return res.status(500).json({ error: "Internal Server Error" });
   }
 }
+
+/**
+ * Retorna o ranking / leaderboard dos torcedores
+ */
+export async function getLeaderboard(req: Request, res: Response) {
+  try {
+    const users = await prisma.user.findMany({
+      select: {
+        id: true,
+        nome: true,
+        email: true,
+        profileImageUrl: true,
+        worldCupFolhas: {
+          include: {
+            slots: true
+          }
+        },
+        worldCupBadges: true
+      }
+    });
+
+    const leaderboard = users.map(u => {
+      let score = 0;
+      let filledSlotsCount = 0;
+      let totalLikesReceived = 0;
+      let totalCommentsReceived = 0;
+
+      u.worldCupFolhas.forEach(folha => {
+        folha.slots.forEach(slot => {
+          if (slot.imageUrl) {
+            filledSlotsCount++;
+            score += 50; // +50 por upload
+
+            const meta = (slot.metadata && typeof slot.metadata === 'object') ? (slot.metadata as any) : {};
+            const likes = Array.isArray(meta.likes) ? meta.likes : [];
+            const comments = Array.isArray(meta.comments) ? meta.comments : [];
+
+            totalLikesReceived += likes.length;
+            score += likes.length * 10; // +10 por curtida
+
+            totalCommentsReceived += comments.length;
+            score += Math.min(comments.length, 5) * 20; // +20 por comentário (capado em 5)
+          }
+        });
+      });
+
+      const badgesCount = u.worldCupBadges.length;
+      score += badgesCount * 100; // +100 por badge
+
+      return {
+        userId: u.id,
+        nome: u.nome,
+        profileImageUrl: u.profileImageUrl || `https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(u.nome)}`,
+        score,
+        filledSlotsCount,
+        badgesCount,
+        totalLikesReceived,
+        totalCommentsReceived
+      };
+    });
+
+    // Ordena por score decrescente
+    leaderboard.sort((a, b) => b.score - a.score);
+
+    return res.json({ leaderboard });
+  } catch (error) {
+    console.error("Error fetching leaderboard:", error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+}
+
+/**
+ * Dá like/unlike em um slot
+ */
+export async function toggleLikeSlot(req: Request, res: Response) {
+  try {
+    const user = (req as any).user;
+    if (!user) return res.status(401).json({ error: "Unauthorized" });
+
+    const matchId = req.params.matchId as string;
+    const slotIndex = req.params.slotIndex as string;
+    const index = parseInt(slotIndex, 10);
+
+    const folha = await (prisma.worldCupFolha as any).findFirst({
+      where: { matchId, slots: { some: { slotIndex: index } } },
+      include: { slots: true }
+    });
+
+    if (!folha) return res.status(404).json({ error: "Folha not found" });
+
+    const slot = folha.slots.find((s: any) => s.slotIndex === index);
+    if (!slot) return res.status(404).json({ error: "Slot not found" });
+
+    const meta = (slot.metadata && typeof slot.metadata === 'object') ? (slot.metadata as any) : {};
+    let likes: string[] = Array.isArray(meta.likes) ? meta.likes : [];
+
+    const userLikedIndex = likes.indexOf(user.userId);
+    if (userLikedIndex > -1) {
+      likes.splice(userLikedIndex, 1);
+    } else {
+      likes.push(user.userId);
+    }
+
+    const updatedSlot = await prisma.worldCupSlot.update({
+      where: { id: slot.id },
+      data: {
+        metadata: {
+          ...meta,
+          likes
+        }
+      }
+    });
+
+    return res.json({ success: true, slot: updatedSlot });
+  } catch (error) {
+    console.error("Error toggling like on slot:", error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+}
+
+/**
+ * Adiciona um comentário em um slot
+ */
+export async function addCommentToSlot(req: Request, res: Response) {
+  try {
+    const user = (req as any).user;
+    if (!user) return res.status(401).json({ error: "Unauthorized" });
+
+    const matchId = req.params.matchId as string;
+    const slotIndex = req.params.slotIndex as string;
+    const { commentText } = req.body;
+    if (!commentText || !commentText.trim()) {
+      return res.status(400).json({ error: "Comment text is required" });
+    }
+
+    const index = parseInt(slotIndex, 10);
+
+    const folha = await (prisma.worldCupFolha as any).findFirst({
+      where: { matchId, slots: { some: { slotIndex: index } } },
+      include: { slots: true }
+    });
+
+    if (!folha) return res.status(404).json({ error: "Folha not found" });
+
+    const slot = folha.slots.find((s: any) => s.slotIndex === index);
+    if (!slot) return res.status(404).json({ error: "Slot not found" });
+
+    const meta = (slot.metadata && typeof slot.metadata === 'object') ? (slot.metadata as any) : {};
+    const comments = Array.isArray(meta.comments) ? meta.comments : [];
+
+    const newComment = {
+      id: Math.random().toString(36).substring(2, 9),
+      userId: user.userId,
+      userName: user.nome || "Torcedor",
+      commentText: commentText.trim(),
+      createdAt: new Date().toISOString()
+    };
+
+    comments.push(newComment);
+
+    const updatedSlot = await prisma.worldCupSlot.update({
+      where: { id: slot.id },
+      data: {
+        metadata: {
+          ...meta,
+          comments
+        }
+      }
+    });
+
+    return res.json({ success: true, slot: updatedSlot, newComment });
+  } catch (error) {
+    console.error("Error adding comment to slot:", error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+}

@@ -2,7 +2,7 @@ import { useEffect, useState, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { API as api } from "../../lib/api";
 import { T } from "../../lib/theme";
-import { Trophy, Camera, Clock, ChevronRight, ChevronLeft, Star, Zap, Calendar, Share2, Users, Upload, Heart } from "lucide-react";
+import { Trophy, Camera, Clock, ChevronRight, ChevronLeft, Star, Zap, Calendar, Share2, Users, Upload, Heart, Award } from "lucide-react";
 
 // ─── Copa 2026 Data ───────────────────────────────────────────────────────────
 const GROUPS: Array<{
@@ -182,7 +182,7 @@ const CountdownBox = ({ val, label }: { val: number; label: string }) => (
 );
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
-type Tab = "jogos" | "grupos" | "album" | "nostalgia";
+type Tab = "jogos" | "grupos" | "album" | "ranking" | "nostalgia";
 
 const ALL_PAST_COPAS = [
   { year: 2022, name: "Catar 2022" },
@@ -214,6 +214,22 @@ export const AlbumTorcidaPage = () => {
   const [matches, setMatches] = useState<{ id: string; group: string; teamA: string; teamB: string; matchDate: string }[]>([]);
   const countdown = useCountdown(BRASIL_GAME.utc);
   const [now] = useState(() => Date.now());
+
+  // Leaderboard states
+  const [leaderboard, setLeaderboard] = useState<any[]>([]);
+  const [loadingRanking, setLoadingRanking] = useState(false);
+
+  useEffect(() => {
+    if (tab === "ranking") {
+      setLoadingRanking(true);
+      api.get("/worldcup/leaderboard")
+        .then(({ data }) => {
+          setLeaderboard(data.leaderboard || []);
+        })
+        .catch(() => {})
+        .finally(() => setLoadingRanking(false));
+    }
+  }, [tab]);
 
   // Nostalgia state
   const [nostalgiaYear, setNostalgiaYear] = useState<number>(2022);
@@ -424,6 +440,7 @@ export const AlbumTorcidaPage = () => {
             { id: "jogos" as Tab, icon: <Clock size={12} />, label: "Jogos" },
             { id: "grupos" as Tab, icon: <Star size={12} />, label: "Grupos" },
             { id: "album" as Tab, icon: <Camera size={12} />, label: "Meu Álbum" },
+            { id: "ranking" as Tab, icon: <Award size={12} />, label: "Classificação" },
             { id: "nostalgia" as Tab, icon: <Trophy size={12} />, label: "Nostalgia" },
           ].map((t) => (
             <button
@@ -598,6 +615,183 @@ export const AlbumTorcidaPage = () => {
                     </div>
                   </Link>
                 ))}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* ── TAB: RANKING ─────────────────────────────────────────────────── */}
+        {tab === "ranking" && (
+          <div>
+            {/* Promo printed album campaign card */}
+            <div
+              style={{
+                background: "linear-gradient(135deg, rgba(245,158,11,0.1) 0%, rgba(5,46,32,0.6) 100%)",
+                border: "1px solid rgba(245,158,11,0.3)",
+                padding: "24px",
+                borderRadius: 8,
+                marginBottom: 32,
+                display: "flex",
+                alignItems: "center",
+                gap: 16
+              }}
+            >
+              <div style={{ background: "rgba(245,158,11,0.15)", borderRadius: "50%", padding: 12 }}>
+                <Trophy size={32} color="#fbbf24" className="animate-bounce" />
+              </div>
+              <div>
+                <h3 style={{ fontSize: 16, fontWeight: 900, color: "white", fontStyle: "italic", textTransform: "uppercase", margin: 0 }}>
+                  Grande Final: Ganhe seu Álbum Impresso!
+                </h3>
+                <p style={{ fontSize: 12, color: "#9ca3af", marginTop: 4, lineHeight: 1.6 }}>
+                  Preencha as figurinhas dos jogos, consiga curtidas/comentários e suba no ranking. No dia da final da Copa do Mundo, 
+                  os <strong style={{ color: "#fbbf24" }}>3 primeiros colocados</strong> receberão o álbum oficial impresso de luxo com suas próprias fotos e memórias!
+                </p>
+              </div>
+            </div>
+
+            {loadingRanking ? (
+              <div style={{ display: "flex", justifyContent: "center", padding: "40px 0" }}>
+                <div style={{ width: 32, height: 32, border: "4px solid #10b981", borderTopColor: "transparent", borderRadius: "50%" }} className="animate-spin" />
+              </div>
+            ) : leaderboard.length === 0 ? (
+              <div style={{ textAlign: "center", padding: "40px 20px", background: "rgba(255,255,255,0.01)", border: "1px dashed rgba(16,185,129,0.15)" }}>
+                <Trophy size={32} color="#10b981" style={{ margin: "0 auto 12px", opacity: 0.3 }} />
+                <p style={{ fontSize: 12, color: "#9ca3af", margin: 0, fontWeight: 900, textTransform: "uppercase" }}>
+                  A classificação começará assim que as fotos forem enviadas.
+                </p>
+              </div>
+            ) : (
+              <div>
+                {/* PODIUM SECTION */}
+                <div 
+                  style={{ 
+                    display: "flex", 
+                    justifyContent: "center", 
+                    alignItems: "flex-end", 
+                    gap: 12, 
+                    marginBottom: 40,
+                    paddingTop: 20
+                  }}
+                >
+                  {/* 2nd Place */}
+                  {leaderboard[1] && (
+                    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", flex: 1, maxWidth: 150 }}>
+                      <div style={{ position: "relative", marginBottom: 8 }}>
+                        <img 
+                          src={leaderboard[1].profileImageUrl} 
+                          alt={leaderboard[1].nome} 
+                          style={{ width: 64, height: 64, borderRadius: "50%", border: "3px solid #94a3b8", objectFit: "cover" }} 
+                        />
+                        <div style={{ position: "absolute", bottom: -4, right: -4, background: "#94a3b8", color: "black", borderRadius: "50%", width: 20, height: 20, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 10, fontWeight: 900 }}>
+                          2
+                        </div>
+                      </div>
+                      <div style={{ fontSize: 11, fontWeight: 900, color: "white", textAlign: "center", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", width: "100%" }}>
+                        {leaderboard[1].nome}
+                      </div>
+                      <div style={{ fontSize: 10, color: "#94a3b8", fontWeight: 700 }}>
+                        {leaderboard[1].score} PTS
+                      </div>
+                      <div style={{ height: 60, width: "100%", background: "linear-gradient(180deg, #475569, #1e293b)", borderTop: "2px solid #94a3b8", marginTop: 8 }} />
+                    </div>
+                  )}
+
+                  {/* 1st Place */}
+                  {leaderboard[0] && (
+                    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", flex: 1, maxWidth: 170 }}>
+                      <div style={{ position: "relative", marginBottom: 8 }}>
+                        <div style={{ position: "absolute", top: -14, left: "50%", transform: "translateX(-50%) rotation(15deg)", fontSize: 16 }}>👑</div>
+                        <img 
+                          src={leaderboard[0].profileImageUrl} 
+                          alt={leaderboard[0].nome} 
+                          style={{ width: 80, height: 80, borderRadius: "50%", border: "4px solid #fbbf24", objectFit: "cover", boxShadow: "0 0 15px rgba(251,191,36,0.4)" }} 
+                        />
+                        <div style={{ position: "absolute", bottom: -4, right: -4, background: "#fbbf24", color: "black", borderRadius: "50%", width: 24, height: 24, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 12, fontWeight: 900 }}>
+                          1
+                        </div>
+                      </div>
+                      <div style={{ fontSize: 13, fontWeight: 900, color: "white", textAlign: "center", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", width: "100%" }}>
+                        {leaderboard[0].nome}
+                      </div>
+                      <div style={{ fontSize: 11, color: "#fbbf24", fontWeight: 900 }}>
+                        {leaderboard[0].score} PTS
+                      </div>
+                      <div style={{ height: 90, width: "100%", background: "linear-gradient(180deg, #d97706, #1e293b)", borderTop: "2px solid #fbbf24", marginTop: 8 }} />
+                    </div>
+                  )}
+
+                  {/* 3rd Place */}
+                  {leaderboard[2] && (
+                    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", flex: 1, maxWidth: 150 }}>
+                      <div style={{ position: "relative", marginBottom: 8 }}>
+                        <img 
+                          src={leaderboard[2].profileImageUrl} 
+                          alt={leaderboard[2].nome} 
+                          style={{ width: 56, height: 56, borderRadius: "50%", border: "3px solid #b45309", objectFit: "cover" }} 
+                        />
+                        <div style={{ position: "absolute", bottom: -4, right: -4, background: "#b45309", color: "white", borderRadius: "50%", width: 20, height: 20, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 10, fontWeight: 900 }}>
+                          3
+                        </div>
+                      </div>
+                      <div style={{ fontSize: 11, fontWeight: 900, color: "white", textAlign: "center", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", width: "100%" }}>
+                        {leaderboard[2].nome}
+                      </div>
+                      <div style={{ fontSize: 10, color: "#b45309", fontWeight: 700 }}>
+                        {leaderboard[2].score} PTS
+                      </div>
+                      <div style={{ height: 45, width: "100%", background: "linear-gradient(180deg, #78350f, #1e293b)", borderTop: "2px solid #b45309", marginTop: 8 }} />
+                    </div>
+                  )}
+                </div>
+
+                {/* COMPETITORS LIST */}
+                <div style={{ background: "rgba(255,255,255,0.01)", border: "1px solid rgba(255,255,255,0.05)", borderRadius: 4 }}>
+                  <div style={{ display: "grid", gridTemplateColumns: "50px 1fr 80px 80px 80px", gap: 12, padding: "12px 16px", borderBottom: "1px solid rgba(255,255,255,0.08)", fontSize: 10, fontWeight: 900, color: "#6b7280", textTransform: "uppercase" }}>
+                    <span>Pos</span>
+                    <span>Torcedor</span>
+                    <span style={{ textAlign: "center" }}>Figurinhas</span>
+                    <span style={{ textAlign: "center" }}>Selos</span>
+                    <span style={{ textAlign: "right" }}>Pontos</span>
+                  </div>
+
+                  {leaderboard.map((item, idx) => (
+                    <div 
+                      key={item.userId} 
+                      style={{ 
+                        display: "grid", 
+                        gridTemplateColumns: "50px 1fr 80px 80px 80px", 
+                        gap: 12, 
+                        padding: "14px 16px", 
+                        borderBottom: idx === leaderboard.length - 1 ? "none" : "1px solid rgba(255,255,255,0.04)",
+                        alignItems: "center"
+                      }}
+                    >
+                      <span style={{ fontSize: 11, fontWeight: 900, color: idx < 3 ? "#fbbf24" : "#4b5563" }}>
+                        #{idx + 1}
+                      </span>
+                      <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                        <img 
+                          src={item.profileImageUrl} 
+                          alt={item.nome} 
+                          style={{ width: 28, height: 28, borderRadius: "50%", objectFit: "cover", border: "1px solid rgba(255,255,255,0.1)" }} 
+                        />
+                        <span style={{ fontSize: 12, fontWeight: 700, color: "white" }}>
+                          {item.nome}
+                        </span>
+                      </div>
+                      <span style={{ fontSize: 11, color: "#10b981", fontWeight: 700, textAlign: "center" }}>
+                        {item.filledSlotsCount} / 12
+                      </span>
+                      <span style={{ fontSize: 11, color: "#fbbf24", fontWeight: 700, textAlign: "center" }}>
+                        {item.badgesCount}
+                      </span>
+                      <span style={{ fontSize: 12, fontWeight: 900, color: "white", textAlign: "right" }}>
+                        {item.score}
+                      </span>
+                    </div>
+                  ))}
+                </div>
               </div>
             )}
           </div>
