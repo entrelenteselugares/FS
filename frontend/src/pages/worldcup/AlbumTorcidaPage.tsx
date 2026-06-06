@@ -384,7 +384,7 @@ export const AlbumTorcidaPage = () => {
           )}
 
           {/* Brasil's 3 games strip */}
-          <div style={{ display: "flex", gap: 2, marginBottom: 0, overflow: "hidden" }}>
+          <div style={{ display: "flex", gap: 6, marginBottom: 0, overflowX: "auto", scrollbarWidth: "none", msOverflowStyle: "none", paddingBottom: 8 }}>
             {brazilFixtures.map((f) => {
               const isBrasilHome = f.hCode === "br";
               const opponent = isBrasilHome ? f.away : f.home;
@@ -394,7 +394,7 @@ export const AlbumTorcidaPage = () => {
                 <div
                   key={f.id}
                   style={{
-                    flex: 1, background: "rgba(0,0,0,0.4)", borderTop: "2px solid #10b981",
+                    flex: "1 0 200px", minWidth: "200px", background: "rgba(0,0,0,0.4)", borderTop: "2px solid #10b981",
                     padding: "12px 14px", borderRight: "1px solid rgba(16,185,129,0.1)",
                   }}
                 >
@@ -419,7 +419,7 @@ export const AlbumTorcidaPage = () => {
 
       {/* ── TABS ─────────────────────────────────────────────────────────────── */}
       <div style={{ position: "sticky", top: 0, zIndex: 50, background: "#050e08", borderBottom: "1px solid rgba(16,185,129,0.2)" }}>
-        <div style={{ maxWidth: 800, margin: "0 auto", display: "flex" }}>
+        <div style={{ maxWidth: 800, margin: "0 auto", display: "flex", overflowX: "auto", scrollbarWidth: "none", msOverflowStyle: "none", WebkitOverflowScrolling: "touch" }}>
           {[
             { id: "jogos" as Tab, icon: <Clock size={12} />, label: "Jogos" },
             { id: "grupos" as Tab, icon: <Star size={12} />, label: "Grupos" },
@@ -436,6 +436,7 @@ export const AlbumTorcidaPage = () => {
                 color: tab === t.id ? "#10b981" : "#4b5563",
                 fontSize: 10, fontWeight: 900, letterSpacing: "0.1em", textTransform: "uppercase",
                 cursor: "pointer", fontStyle: "italic", transition: "all 0.2s",
+                flexShrink: 0,
               }}
             >
               {t.icon} {t.label}
