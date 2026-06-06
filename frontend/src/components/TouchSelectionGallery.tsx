@@ -151,11 +151,16 @@ export const TouchSelectionGallery: React.FC<TouchSelectionGalleryProps> = ({
               {/* Watermark Overlay for locked images */}
               {!isUnlocked && (
                 <div className="absolute inset-0 pointer-events-none flex items-center justify-center overflow-hidden z-10">
-                   <img 
-                      src="/logo.png" 
-                      alt="Watermark" 
-                      className="w-[70%] opacity-80 select-none pointer-events-none drop-shadow-xl" 
-                      style={{ filter: "var(--logo-filter)" }} 
+                   <div 
+                      className="absolute inset-[-50%] opacity-60 select-none pointer-events-none" 
+                      style={{ 
+                        backgroundImage: "url('/logo.png')",
+                        backgroundRepeat: "repeat",
+                        backgroundSize: "120px",
+                        backgroundPosition: "center",
+                        transform: "rotate(-30deg)",
+                        filter: "var(--logo-filter) drop-shadow(0px 4px 6px rgba(0,0,0,0.5))"
+                      }} 
                    />
                 </div>
               )}
@@ -267,11 +272,16 @@ export const TouchSelectionGallery: React.FC<TouchSelectionGalleryProps> = ({
                   )}
                   {!fmIsUnlocked && (
                     <div className="absolute inset-0 pointer-events-none flex items-center justify-center overflow-hidden z-10">
-                       <img 
-                          src="/logo.png" 
-                          alt="Watermark" 
-                          className="w-[50%] max-w-[400px] opacity-80 select-none pointer-events-none drop-shadow-2xl" 
-                          style={{ filter: "var(--logo-filter)" }} 
+                       <div 
+                          className="absolute inset-[-50%] opacity-60 select-none pointer-events-none" 
+                          style={{ 
+                            backgroundImage: "url('/logo.png')",
+                            backgroundRepeat: "repeat",
+                            backgroundSize: "250px",
+                            backgroundPosition: "center",
+                            transform: "rotate(-30deg)",
+                            filter: "var(--logo-filter) drop-shadow(0px 10px 15px rgba(0,0,0,0.5))"
+                          }} 
                        />
                     </div>
                   )}
