@@ -84,7 +84,21 @@ function ReferenceCard({ item }: { item: RefItem }) {
   const displayUrl = (() => {
     if (/^data:image\//i.test(item.url)) return item.url;
     if (driveMatch) return `https://drive.google.com/thumbnail?id=${driveMatch[1]}&sz=w600`;
+    // Use thumbnailUrl if explicitly provided (e.g. stored separately)
     if (thumb && thumb !== item.url) return thumb;
+    // For external URLs (pexels, instagram, etc.) that block hotlinking,
+    // proxy via microlink.io to extract the Open Graph image (free, fast)
+    try {
+      const u = new URL(item.url);
+      const isExternal = !u.hostname.includes('supabase') 
+        && !u.hostname.includes('googleusercontent') 
+        && !u.hostname.includes('cloudinary')
+        && !u.hostname.includes('googleapis');
+      if (isExternal) {
+        // embed=image.url → microlink extracts OG image and redirects to it directly
+        return `https://api.microlink.io/?url=${encodeURIComponent(item.url)}&embed=image.url`;
+      }
+    } catch { /* ignore invalid URL */ }
     return item.url;
   })();
 
