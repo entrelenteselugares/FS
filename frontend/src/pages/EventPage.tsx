@@ -1061,9 +1061,11 @@ return (
                     <span className="text-[10px] font-black text-theme-text uppercase tracking-widest italic">Galeria Live</span>
                  </div>
                  <p className="text-[9px] text-theme-text-muted leading-relaxed uppercase tracking-wider italic">
-                   {!qrOpen 
-                     ? "O período de envio de fotos em tempo real para este evento foi encerrado." 
-                     : "Envie suas fotos agora para o painel do evento e apareça na transmissão oficial!"}
+                    {qrOpen 
+                      ? "Envie suas fotos agora para o painel do evento e apareça na transmissão oficial!"
+                      : (eventStatus.phase === "scheduled" || eventStatus.phase === "approaching")
+                        ? "O período de envio de fotos em tempo real iniciará quando o evento começar."
+                        : "O período de envio de fotos em tempo real para este evento foi encerrado."}
                  </p>
                  {qrOpen && (
                    <button 

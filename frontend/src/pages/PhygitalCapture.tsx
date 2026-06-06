@@ -2,8 +2,9 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { API } from '../lib/api';
 import { T } from '../lib/theme';
-import { Camera, CheckCircle2, AlertCircle, Loader2, Image as ImageIcon, User as UserIcon, LogOut, ArrowLeft } from 'lucide-react';
+import { Camera, CheckCircle2, AlertCircle, Loader2, Image as ImageIcon, User as UserIcon, LogOut, ArrowLeft, Trash2, Video } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
+import { toast } from 'sonner';
 
 // Utilitário para comprimir a imagem antes do envio (evita erro 413 Payload Too Large no Vercel - Limite 4.5MB)
 const compressImage = async (file: File): Promise<Blob | File> => {
@@ -53,6 +54,7 @@ const compressImage = async (file: File): Promise<Blob | File> => {
     };
   });
 };
+
 export default function PhygitalCapture() {
   const [searchParams] = useSearchParams();
   const eventId = searchParams.get('eventId') || searchParams.get('e') || 'EVENT_TESTE';
@@ -63,8 +65,8 @@ export default function PhygitalCapture() {
 
   const { user, logout } = useAuth();
 
-  const [file, setFile] = useState<File | null>(null);
-  const [preview, setPreview] = useState<string | null>(null);
+  const [files, setFiles] = useState<File[]>([]);
+  const [previews, setPreviews] = useState<{ url: string; type: string; name: string }[]>([]);
   const [formData, setFormData] = useState({
     customerName: '',
     customerPhone: '',
@@ -74,7 +76,10 @@ export default function PhygitalCapture() {
   const [isNewUser, setIsNewUser] = useState(false);
   const [checkingEmail, setCheckingEmail] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [result, setResult] = useState<{ referenceCode: string } | null>(null);
+  
+  const [uploadProgress, setUploadProgress] = useState<{ [name: string]: 'pending' | 'uploading' | 'done' | 'failed' }>({});
+  const [currentUploadIndex, setCurrentUploadIndex] = useState<number | null>(null);
+  const [referenceCodes, setReferenceCodes] = useState<string[]>([]);
   const [error, setError] = useState('');
 
   // Sincroniza dados se estiver logado
@@ -97,13 +102,6 @@ export default function PhygitalCapture() {
     }, 300);
     return () => clearTimeout(timer);
   }, [autoCamera]);
-
-  // Auto-abre câmera ao fazer login se o parâmetro auto estiver presente
-  useEffect(() => {
-    if (user && autoCamera) {
-      cameraInputRef.current?.click();
-    }
-  }, [user, autoCamera]);
 
   const { registerExpress, login: authLogin } = useAuth();
 
@@ -129,12 +127,122 @@ export default function PhygitalCapture() {
     return () => clearTimeout(timeout);
   }, [formData.customerEmail, user]);
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      const selectedFile = e.target.files[0];
-      setFile(selectedFile);
-      setPreview(URL.createObjectURL(selectedFile));
+  const checkVideoDuration = (file: File): Promise<boolean> => {
+    return new Promise((resolve) => {
+      if (!file.type.startsWith('video/')) return resolve(true);
+      const video = document.createElement('video');
+      video.preload = 'metadata';
+      video.onloadedmetadata = () => {
+        window.URL.revokeObjectURL(video.src);
+        resolve(video.duration <= 15.5); // 15 seconds limit
+      };
+      video.onerror = () => {
+        resolve(false);
+      };
+      video.src = URL.createObjectURL(file);
+    });
+  };
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFiles = Array.from(e.target.files || []);
+    if (selectedFiles.length === 0) return;
+
+    if (files.length + selectedFiles.length > 12) {
+      setError("Você pode enviar no máximo 12 fotos/vídeos por vez.");
+      toast.error("Limite de 12 arquivos excedido.");
+      return;
     }
+
+    setLoading(true);
+    setError('');
+
+    // Valida duração de vídeos
+    const validations = await Promise.all(selectedFiles.map(checkVideoDuration));
+    if (validations.includes(false)) {
+      setError("Gravações de vídeo devem ter no máximo 15 segundos.");
+      toast.error("Um ou mais vídeos excedem o limite de 15 segundos.");
+      setLoading(false);
+      return;
+    }
+
+    const newFiles = [...files, ...selectedFiles];
+    setFiles(newFiles);
+
+    const newPreviews = selectedFiles.map(f => ({
+      url: URL.createObjectURL(f),
+      type: f.type,
+      name: f.name
+    }));
+    setPreviews(prev => [...prev, ...newPreviews]);
+    setLoading(false);
+
+    // Se já estiver logado, inicia o upload imediato dos novos arquivos
+    if (user) {
+      const activeFormData = {
+        customerName: user.nome || '',
+        customerPhone: user.whatsapp || '',
+        customerEmail: user.email || ''
+      };
+      await startUploadFlow(newFiles, activeFormData);
+    }
+  };
+
+  const startUploadFlow = async (filesToUpload: File[], activeFormData: typeof formData) => {
+    setLoading(true);
+    setError('');
+    const codes: string[] = [];
+    const initialProgress: typeof uploadProgress = {};
+    filesToUpload.forEach(f => {
+      initialProgress[f.name] = 'pending';
+    });
+    setUploadProgress(initialProgress);
+
+    try {
+      for (let i = 0; i < filesToUpload.length; i++) {
+        const file = filesToUpload[i];
+        setCurrentUploadIndex(i);
+        setUploadProgress(prev => ({ ...prev, [file.name]: 'uploading' }));
+
+        const data = new FormData();
+        if (file.type.startsWith('image/')) {
+          const compressedBlob = await compressImage(file);
+          data.append('photo', compressedBlob, file.name);
+        } else {
+          // Upload direto para vídeos (sem compressão cliente)
+          data.append('photo', file, file.name);
+        }
+        data.append('customerName', activeFormData.customerName);
+        data.append('customerPhone', activeFormData.customerPhone);
+        data.append('customerEmail', activeFormData.customerEmail);
+        data.append('eventId', eventId);
+
+        const res = await API.post('/public/phygital/upload', data);
+        if (res.data && res.data.success) {
+          codes.push(res.data.referenceCode);
+          setUploadProgress(prev => ({ ...prev, [file.name]: 'done' }));
+        } else {
+          setUploadProgress(prev => ({ ...prev, [file.name]: 'failed' }));
+          throw new Error(res.data?.error || `Falha no processamento de ${file.name}`);
+        }
+      }
+      setReferenceCodes(codes);
+      toast.success("Envio concluído com sucesso!");
+    } catch (err: any) {
+      console.error(err);
+      setError(err.message || 'Erro ao processar envio dos arquivos.');
+    } finally {
+      setLoading(false);
+      setCurrentUploadIndex(null);
+    }
+  };
+
+  const removeFile = (index: number) => {
+    const fileToRemove = files[index];
+    if (fileToRemove) {
+      URL.revokeObjectURL(previews[index].url);
+    }
+    setFiles(prev => prev.filter((_, i) => i !== index));
+    setPreviews(prev => prev.filter((_, i) => i !== index));
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -144,12 +252,13 @@ export default function PhygitalCapture() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!file) {
-      setError('Por favor, capture ou selecione uma foto.');
+    if (files.length === 0) {
+      setError('Por favor, capture ou selecione pelo menos uma foto ou vídeo.');
       return;
     }
 
-    // Se não estiver logado, realiza cadastro ou login inline
+    let activeFormData = { ...formData };
+
     if (!user) {
       if (!password) {
         setError('Por favor, defina uma senha para proteger sua galeria.');
@@ -158,16 +267,24 @@ export default function PhygitalCapture() {
       
       setLoading(true);
       try {
+        let loggedInUser;
         if (isNewUser) {
-          await registerExpress(formData.customerEmail, password, formData.customerName, formData.customerPhone);
+          loggedInUser = await registerExpress(formData.customerEmail, password, formData.customerName, formData.customerPhone);
         } else {
           try {
-            await authLogin(formData.customerEmail, password);
+            loggedInUser = await authLogin(formData.customerEmail, password);
           } catch {
             setError('Senha incorreta para este e-mail. Tente novamente.');
             setLoading(false);
             return;
           }
+        }
+        if (loggedInUser) {
+          activeFormData = {
+            customerName: loggedInUser.nome || formData.customerName,
+            customerPhone: loggedInUser.whatsapp || formData.customerPhone,
+            customerEmail: loggedInUser.email || formData.customerEmail
+          };
         }
       } catch (err: unknown) {
         const axiosErr = err as { response?: { data?: { error?: string } } };
@@ -177,46 +294,12 @@ export default function PhygitalCapture() {
       }
     }
 
-    setLoading(true);
-    setError('');
-
-    try {
-      const compressedBlob = await compressImage(file);
-      const data = new FormData();
-      data.append('photo', compressedBlob, file.name);
-      data.append('customerName', formData.customerName);
-      data.append('customerPhone', formData.customerPhone);
-      data.append('customerEmail', formData.customerEmail);
-      data.append('eventId', eventId);
-
-      const res = await API.post('/public/phygital/upload', data);
-
-      if (res.data && res.data.success) {
-        setResult(res.data);
-      } else {
-        setError(res.data?.error || 'Falha no processamento.');
-      }
-    } catch (err: unknown) {
-      if (err && typeof err === 'object' && 'response' in err) {
-        const axiosErr = err as { response?: { data?: { error?: string, details?: string } } };
-        const data = axiosErr.response?.data;
-        if (data?.details) {
-          setError(`Erro no Servidor: ${data.details}`);
-        } else {
-          setError(data?.error || 'Erro ao processar imagem.');
-        }
-      } else {
-        setError(err instanceof Error ? err.message : 'Erro de conexão. Tente novamente.');
-      }
-    } finally {
-      setLoading(false);
-    }
+    await startUploadFlow(files, activeFormData);
   };
 
-  if (result) {
+  if (referenceCodes.length > 0) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center p-6 text-center animate-reveal" style={{ background: T.bg }}>
-        {/* Botão Voltar */}
         <button
           onClick={() => window.close()}
           className="fixed top-6 left-6 flex items-center gap-2 text-[10px] font-black uppercase tracking-widest opacity-40 hover:opacity-100 transition-opacity"
@@ -228,13 +311,20 @@ export default function PhygitalCapture() {
         <div className="w-20 h-20 bg-brand-tactical/20 rounded-full flex items-center justify-center mb-8 border border-brand-tactical/30">
           <CheckCircle2 size={40} className="text-brand-tactical" />
         </div>
-        <h1 className="text-3xl font-black uppercase tracking-[0.2em] mb-2" style={{ color: T.text }}>Foto Recebida</h1>
+        <h1 className="text-3xl font-black uppercase tracking-[0.2em] mb-2" style={{ color: T.text }}>Arquivos Recebidos</h1>
         <p className="text-[11px] uppercase tracking-widest opacity-50 mb-10">Sua lembrança já está na fila de impressão</p>
         
         <div className="w-full max-w-sm p-8 rounded-2xl border border-theme-border bg-white/[0.02] backdrop-blur-xl relative overflow-hidden">
           <div className="absolute top-0 left-0 w-full h-1 bg-brand-tactical" />
-          <p className="text-[10px] font-bold uppercase tracking-[0.3em] opacity-40 mb-4">Código de Referência</p>
-          <p className="text-5xl font-black tracking-tighter text-brand-tactical font-mono">{result.referenceCode}</p>
+          <p className="text-[10px] font-bold uppercase tracking-[0.3em] opacity-40 mb-4">Códigos de Referência</p>
+          <div className="space-y-3 max-h-48 overflow-y-auto custom-scrollbar">
+            {referenceCodes.map((code, idx) => (
+              <div key={idx} className="flex justify-between border-b border-white/5 pb-2 text-left">
+                <span className="text-[9px] text-theme-text-muted font-bold truncate max-w-[180px]">{files[idx]?.name || `Item ${idx + 1}`}</span>
+                <span className="text-xl font-black text-brand-tactical font-mono tracking-tight">{code}</span>
+              </div>
+            ))}
+          </div>
         </div>
 
         <button 
@@ -242,7 +332,7 @@ export default function PhygitalCapture() {
           className="mt-12 text-[10px] font-black uppercase tracking-[0.3em] py-4 px-8 border border-theme-border hover:bg-theme-bg-muted transition-all"
           style={{ color: T.text }}
         >
-          Enviar Outra Foto
+          Enviar Mais Arquivos
         </button>
       </div>
     );
@@ -289,19 +379,73 @@ export default function PhygitalCapture() {
           <p className="text-[11px] uppercase tracking-[0.3em] font-bold opacity-40">Experiência Phygital</p>
         </div>
 
+        {/* Progress bar de upload */}
+        {currentUploadIndex !== null && (
+          <div className="space-y-4 text-center py-6 bg-white/[0.02] border border-theme-border rounded-2xl p-6 mb-8 animate-reveal">
+            <Loader2 className="animate-spin text-brand-tactical mx-auto" size={32} />
+            <h3 className="text-[11px] font-black uppercase tracking-widest text-white">Transmitindo capturas...</h3>
+            <p className="text-[9px] text-theme-text-muted uppercase tracking-wider">
+              Enviando {currentUploadIndex + 1} de {files.length} ({files[currentUploadIndex].name})
+            </p>
+            <div className="w-full bg-zinc-800 h-1.5 rounded-full overflow-hidden">
+              <div 
+                className="bg-brand-tactical h-full transition-all duration-300"
+                style={{ width: `${((currentUploadIndex) / files.length) * 100}%` }}
+              />
+            </div>
+          </div>
+        )}
+
         <form onSubmit={handleSubmit} className="space-y-8">
           {/* Choice Area */}
           <div className="space-y-4">
-            {preview ? (
-              <div className="relative aspect-[4/3] rounded-2xl border border-brand-tactical/30 overflow-hidden shadow-2xl bg-black">
-                <img src={preview} alt="Preview" className="w-full h-full object-contain" />
-                <button 
-                  type="button"
-                  onClick={() => { setFile(null); setPreview(null); }}
-                  className="absolute top-4 right-4 bg-black/60 backdrop-blur-md text-theme-text p-2 rounded-full border border-theme-border-2"
-                >
-                  Trocar Foto
-                </button>
+            {previews.length > 0 ? (
+              <div className="space-y-4">
+                <label className="text-[10px] font-bold uppercase tracking-[0.3em] opacity-40 ml-1 block">Arquivos Selecionados ({files.length}/12)</label>
+                <div className="grid grid-cols-3 gap-3 p-4 bg-white/[0.02] border border-theme-border rounded-2xl">
+                  {previews.map((prev, idx) => (
+                    <div key={idx} className="relative aspect-square rounded-xl overflow-hidden border border-white/10 bg-black flex items-center justify-center group">
+                      {prev.type.startsWith('video/') ? (
+                        <div className="flex flex-col items-center gap-1 text-[9px] text-theme-text-muted font-bold">
+                          <Video size={20} className="text-brand-tactical" />
+                          <span className="truncate max-w-[60px] text-[8px]">{prev.name}</span>
+                        </div>
+                      ) : (
+                        <img src={prev.url} alt="Preview" className="w-full h-full object-cover" />
+                      )}
+                      
+                      {/* Only allow removing if not currently uploading */}
+                      {currentUploadIndex === null && (
+                        <button 
+                          type="button"
+                          onClick={() => removeFile(idx)}
+                          className="absolute inset-0 bg-red-600/80 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white"
+                        >
+                          <Trash2 size={16} />
+                        </button>
+                      )}
+                    </div>
+                  ))}
+                  {files.length < 12 && currentUploadIndex === null && (
+                    <button
+                      type="button"
+                      onClick={() => galleryInputRef.current?.click()}
+                      className="aspect-square rounded-xl border border-dashed border-white/20 hover:border-brand-tactical/50 transition-colors flex flex-col items-center justify-center gap-1 text-[8px] text-theme-text-muted font-black uppercase tracking-wider"
+                    >
+                      <ImageIcon size={18} className="opacity-40" />
+                      Adicionar
+                    </button>
+                  )}
+                </div>
+                {currentUploadIndex === null && (
+                  <button 
+                    type="button"
+                    onClick={() => { setFiles([]); setPreviews([]); }}
+                    className="text-[9px] font-black uppercase tracking-widest text-red-500 hover:text-red-400 block ml-1"
+                  >
+                    Remover Todos
+                  </button>
+                )}
               </div>
             ) : (
               <div className="grid grid-cols-1 gap-4">
@@ -311,7 +455,7 @@ export default function PhygitalCapture() {
                   className="flex flex-col items-center justify-center gap-4 p-8 bg-brand-tactical rounded-2xl text-zinc-950 hover:brightness-110 transition-all shadow-xl shadow-brand-tactical/20"
                 >
                   <Camera size={32} strokeWidth={2.5} />
-                  <span className="text-xs font-black uppercase tracking-[0.2em]">Tirar Foto Agora</span>
+                  <span className="text-xs font-black uppercase tracking-[0.2em]">Tirar Foto / Gravar Vídeo</span>
                 </button>
 
                 <button
@@ -321,7 +465,7 @@ export default function PhygitalCapture() {
                   style={{ color: T.text }}
                 >
                   <ImageIcon size={32} className="opacity-40" />
-                  <span className="text-xs font-black uppercase tracking-[0.2em] opacity-60">Escolher da Galeria</span>
+                  <span className="text-xs font-black uppercase tracking-[0.2em] opacity-60">Escolher da Galeria (Até 12)</span>
                 </button>
               </div>
             )}
@@ -330,7 +474,7 @@ export default function PhygitalCapture() {
             <input 
               ref={cameraInputRef}
               type="file" 
-              accept="image/*" 
+              accept="image/*,video/*" 
               capture="environment"
               onChange={handleFileChange} 
               className="hidden" 
@@ -338,89 +482,87 @@ export default function PhygitalCapture() {
             <input 
               ref={galleryInputRef}
               type="file" 
-              accept="image/*" 
+              accept="image/*,video/*" 
+              multiple
               onChange={handleFileChange} 
               className="hidden" 
             />
           </div>
 
-          {/* Form Fields */}
-          <div className="space-y-4">
-              {!user && (
-                <div>
-                  <label className="text-[10px] font-bold uppercase tracking-[0.3em] opacity-40 ml-1 mb-2 block">Nome Completo</label>
+          {/* Form Fields: Hidden completely if logged in to avoid checks */}
+          {!user && (
+            <div className="space-y-4">
+              <div>
+                <label className="text-[10px] font-bold uppercase tracking-[0.3em] opacity-40 ml-1 mb-2 block">Nome Completo</label>
+                <input 
+                  required 
+                  type="text" 
+                  name="customerName" 
+                  value={formData.customerName} 
+                  onChange={handleInputChange} 
+                  className="w-full bg-white/[0.03] border border-theme-border p-4 rounded-xl text-sm focus:border-brand-tactical/50 transition-all outline-none"
+                  placeholder="Ex: João Silva"
+                  style={{ color: T.text }}
+                />
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="relative">
+                  <label className="text-[10px] font-bold uppercase tracking-[0.3em] opacity-40 ml-1 mb-2 block">E-mail Cadastrado</label>
                   <input 
                     required 
-                    type="text" 
-                    name="customerName" 
-                    value={formData.customerName} 
+                    type="email" 
+                    name="customerEmail" 
+                    value={formData.customerEmail} 
                     onChange={handleInputChange} 
                     className="w-full bg-white/[0.03] border border-theme-border p-4 rounded-xl text-sm focus:border-brand-tactical/50 transition-all outline-none"
-                    placeholder="Ex: João Silva"
+                    placeholder="seu@email.com"
+                    style={{ color: T.text }}
+                  />
+                  {checkingEmail && (
+                    <div className="absolute right-4 top-[38px]">
+                      <Loader2 size={14} className="animate-spin opacity-40" />
+                    </div>
+                  )}
+                </div>
+                <div>
+                  <label className="text-[10px] font-bold uppercase tracking-[0.3em] opacity-40 ml-1 mb-2 block">WhatsApp</label>
+                  <input 
+                    required 
+                    type="tel" 
+                    name="customerPhone" 
+                    value={formData.customerPhone} 
+                    onChange={handleInputChange} 
+                    className="w-full bg-white/[0.03] border border-theme-border p-4 rounded-xl text-sm focus:border-brand-tactical/50 transition-all outline-none"
+                    placeholder="(00) 00000-0000"
                     style={{ color: T.text }}
                   />
                 </div>
-              )}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="relative">
-                <label className="text-[10px] font-bold uppercase tracking-[0.3em] opacity-40 ml-1 mb-2 block">E-mail Cadastrado</label>
-                <input 
-                  required 
-                  type="email" 
-                  name="customerEmail" 
-                  value={formData.customerEmail} 
-                  onChange={handleInputChange} 
-                  disabled={!!user}
-                  className="w-full bg-white/[0.03] border border-theme-border p-4 rounded-xl text-sm focus:border-brand-tactical/50 transition-all outline-none disabled:opacity-50"
-                  placeholder="seu@email.com"
-                  style={{ color: T.text }}
-                />
-                {checkingEmail && (
-                  <div className="absolute right-4 top-[38px]">
-                    <Loader2 size={14} className="animate-spin opacity-40" />
-                  </div>
-                )}
               </div>
-                {!user && (
-                  <div>
-                    <label className="text-[10px] font-bold uppercase tracking-[0.3em] opacity-40 ml-1 mb-2 block">WhatsApp</label>
-                    <input 
-                      required 
-                      type="tel" 
-                      name="customerPhone" 
-                      value={formData.customerPhone} 
-                      onChange={handleInputChange} 
-                      className="w-full bg-white/[0.03] border border-theme-border p-4 rounded-xl text-sm focus:border-brand-tactical/50 transition-all outline-none"
-                      placeholder="(00) 00000-0000"
-                      style={{ color: T.text }}
-                    />
-                  </div>
-                )}
-            </div>
 
-            {/* Inline Password Field for Guest/New User */}
-            {!user && (formData.customerEmail.includes('@') && formData.customerEmail.length > 5) && (
-              <div className="animate-reveal">
-                <label className="text-[10px] font-bold uppercase tracking-[0.3em] opacity-40 ml-1 mb-2 block">
-                  {isNewUser ? "Defina sua Senha (Novo Cadastro)" : "Senha de Acesso"}
-                </label>
-                <input 
-                  required 
-                  type="password" 
-                  value={password} 
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="w-full bg-brand-tactical/10 border border-brand-tactical/20 p-4 rounded-xl text-sm focus:border-brand-tactical transition-all outline-none"
-                  placeholder="********"
-                  style={{ color: T.text }}
-                />
-                {isNewUser && (
-                  <p className="text-[9px] text-brand-tactical font-black uppercase tracking-widest mt-2 ml-1">
-                    ✨ Identificamos que você é novo! Sua conta será criada automaticamente.
-                  </p>
-                )}
-              </div>
-            )}
-          </div>
+              {/* Inline Password Field for Guest/New User */}
+              {(formData.customerEmail.includes('@') && formData.customerEmail.length > 5) && (
+                <div className="animate-reveal">
+                  <label className="text-[10px] font-bold uppercase tracking-[0.3em] opacity-40 ml-1 mb-2 block">
+                    {isNewUser ? "Defina sua Senha (Novo Cadastro)" : "Senha de Acesso"}
+                  </label>
+                  <input 
+                    required 
+                    type="password" 
+                    value={password} 
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="w-full bg-brand-tactical/10 border border-brand-tactical/20 p-4 rounded-xl text-sm focus:border-brand-tactical transition-all outline-none"
+                    placeholder="********"
+                    style={{ color: T.text }}
+                  />
+                  {isNewUser && (
+                    <p className="text-[9px] text-brand-tactical font-black uppercase tracking-widest mt-2 ml-1">
+                      ✨ Identificamos que você é novo! Sua conta será criada automaticamente.
+                    </p>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
 
           {error && (
             <div className="p-4 bg-red-500/10 border border-red-500/20 rounded-xl flex items-center gap-3 text-red-500 text-[11px] font-bold uppercase tracking-widest text-left">
@@ -429,20 +571,23 @@ export default function PhygitalCapture() {
             </div>
           )}
 
-          <button 
-            type="submit" 
-            disabled={loading}
-            className={`w-full py-5 rounded-2xl font-black uppercase tracking-[0.4em] text-[11px] transition-all flex items-center justify-center gap-3 ${loading ? 'bg-white/10 opacity-50 cursor-not-allowed' : 'bg-brand-tactical text-brand-text hover:scale-[1.02] active:scale-[0.98]'}`}
-          >
-            {loading ? (
-              <>
-                <Loader2 className="animate-spin" size={18} />
-                Processando...
-              </>
-            ) : (
-              'Enviar para Impressão'
-            )}
-          </button>
+          {/* Submit button shown only if not logged in (since logged in users auto-upload immediately on select) */}
+          {!user && (
+            <button 
+              type="submit" 
+              disabled={loading}
+              className={`w-full py-5 rounded-2xl font-black uppercase tracking-[0.4em] text-[11px] transition-all flex items-center justify-center gap-3 ${loading ? 'bg-white/10 opacity-50 cursor-not-allowed' : 'bg-brand-tactical text-brand-text hover:scale-[1.02] active:scale-[0.98]'}`}
+            >
+              {loading ? (
+                <>
+                  <Loader2 className="animate-spin" size={18} />
+                  Processando...
+                </>
+              ) : (
+                'Enviar para Impressão'
+              )}
+            </button>
+          )}
           
           <p className="text-center text-[9px] uppercase tracking-[0.4em] opacity-20 font-bold">Powered by Foto Segundo Phygital</p>
         </form>
