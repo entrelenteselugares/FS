@@ -27,7 +27,9 @@ export class PhygitalController {
         customerPhone: customerPhone || "",
         customerEmail: customerEmail || "",
         customerCep: customerCep || "",
-        userId: userId
+        userId: userId,
+        // mimetype: prefer explicit field from frontend, fallback to multer detection
+        mimetype: req.body.mimetype || req.file.mimetype || undefined
       });
 
       res.status(201).json(result);

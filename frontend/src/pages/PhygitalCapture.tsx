@@ -145,8 +145,8 @@ export default function PhygitalCapture() {
     });
   };
 
-  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const selectedFiles = Array.from(e.target.files || []);
+  // ─── Core file processor — used by both handleFileChange AND InAppCamera onCapture ───
+  const processFiles = async (selectedFiles: File[]) => {
     if (selectedFiles.length === 0) return;
 
     if (files.length + selectedFiles.length > 12) {
@@ -172,7 +172,9 @@ export default function PhygitalCapture() {
 
     const newPreviews = selectedFiles.map(f => ({
       url: URL.createObjectURL(f),
-      type: f.type,
+      // Fallback: se o browser não preservar o MIME type (Android DataTransfer bug),
+      // inferimos pelo nome do arquivo
+      type: f.type || (f.name.match(/\.(mp4|webm|mov)$/i) ? 'video/mp4' : 'image/jpeg'),
       name: f.name
     }));
     setPreviews(prev => [...prev, ...newPreviews]);
@@ -187,6 +189,10 @@ export default function PhygitalCapture() {
       };
       await startUploadFlow(newFiles, activeFormData);
     }
+  };
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    await processFiles(Array.from(e.target.files || []));
   };
 
   const startUploadFlow = async (filesToUpload: File[], activeFormData: typeof formData) => {
@@ -206,13 +212,19 @@ export default function PhygitalCapture() {
         setUploadProgress(prev => ({ ...prev, [file.name]: 'uploading' }));
 
         const data = new FormData();
-        if (file.type.startsWith('image/')) {
+        // Detectar tipo real pelo mime ou extensão (fallback para Android onde DataTransfer perde o MIME)
+        const resolvedType = file.type || (file.name.match(/\.(mp4|webm|mov)$/i) ? 'video/mp4' : 'image/jpeg');
+        const isVideo = resolvedType.startsWith('video/');
+
+        if (!isVideo) {
           const compressedBlob = await compressImage(file);
           data.append('photo', compressedBlob, file.name);
         } else {
-          // Upload direto para vídeos (sem compressão cliente)
+          // Vídeos: upload direto sem compressão sharp
           data.append('photo', file, file.name);
         }
+        // Passa o tipo explícito para o backend poder rotear corretamente
+        data.append('mimetype', resolvedType);
         data.append('customerName', activeFormData.customerName);
         data.append('customerPhone', activeFormData.customerPhone);
         data.append('customerEmail', activeFormData.customerEmail);
@@ -599,17 +611,10 @@ export default function PhygitalCapture() {
             setTimeout(() => galleryInputRef.current?.click(), 80);
           }}
           onCapture={async (capturedFiles) => {
-            // Close camera and feed captured files through normal upload flow
+            // Fecha câmera e processa diretamente — sem DataTransfer hack
+            // (DataTransfer perde o MIME type em alguns browsers Android)
             setShowInAppCamera(false);
-            // Synthesise a fake change event via handleFileChange logic directly
-            const dt = new DataTransfer();
-            capturedFiles.forEach(f => dt.items.add(f));
-            // Re-use existing handleFileChange by creating a synthetic event
-            const fakeInput = document.createElement('input');
-            fakeInput.type = 'file';
-            Object.defineProperty(fakeInput, 'files', { value: dt.files });
-            const fakeEvent = { target: fakeInput } as unknown as React.ChangeEvent<HTMLInputElement>;
-            handleFileChange(fakeEvent);
+            await processFiles(capturedFiles);
           }}
         />
       )}

@@ -16,6 +16,7 @@ export interface PhygitalMetadata {
   applyWatermark?: boolean;
   globalTag?: string;
   price?: number;
+  mimetype?: string; // Passed by frontend to distinguish image vs video
 }
 
 export class PhygitalService {
@@ -49,6 +50,41 @@ export class PhygitalService {
       // 2. Gera a Referência Única do Cliente
       const shortEventId = metadata.eventId.substring(0, 5).toUpperCase();
       const referenceCode = `${shortEventId}-${Math.floor(1000 + Math.random() * 9000)}`;
+
+      // ── Video bypass: skip all sharp processing ──────────────────────────
+      const isVideo = (metadata.mimetype || '').startsWith('video/');
+
+      if (isVideo) {
+        console.log(`[PHYGITAL] Vídeo detectado — ignorando sharp, upload direto.`);
+        const ext = metadata.mimetype?.includes('mp4') ? 'mp4' : 'webm';
+        const videoFileName = `phygital/${metadata.eventId}/${referenceCode}_video.${ext}`;
+        const contentType = metadata.mimetype || 'video/mp4';
+
+        const { error: vidError } = await supabase.storage
+          .from('eventos')
+          .upload(videoFileName, fileBuffer, { contentType, upsert: true });
+        if (vidError) throw vidError;
+
+        const videoUrl = supabase.storage.from('eventos').getPublicUrl(videoFileName).data.publicUrl;
+
+        if (foundEvent) {
+          const count = await prisma.eventMedia.count({ where: { eventId: foundEvent.id } });
+          const shortId = `V${(count + 1).toString().padStart(3, '0')}`;
+          await prisma.eventMedia.create({
+            data: {
+              eventId: foundEvent.id,
+              url: videoUrl,
+              shortId,
+              type: 'VIDEO',
+              price: metadata.price || foundEvent.pricePerPhoto || foundEvent.priceBase || 15,
+              metadata: { rawUrl: videoUrl, printUrl: videoUrl },
+              isGuest: true
+            } as any
+          });
+        }
+
+        return { success: true, referenceCode, imageUrl: videoUrl, id: referenceCode };
+      }
 
       // 3. Processamento de Imagem com Sharp (Luxo e Branding)
       console.log(`[PHYGITAL] Iniciando processamento de imagem para: ${referenceCode}`);
