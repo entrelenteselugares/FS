@@ -78,27 +78,25 @@ function ReferenceCard({ item }: { item: RefItem }) {
     );
   }
 
-  // IMAGE (upload direto ou URL legada)
-  const isBase64 = /^data:image\//i.test(item.url);
-  const isDirectImage = /\.(jpeg|jpg|gif|png|webp|svg)(\?.*)?$/i.test(item.url);
+  // IMAGE / LINK
   const driveMatch = item.url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
-  const isDriveExport = item.url.includes('drive.google.com/uc') || item.url.includes('drive.google.com/thumbnail');
 
   const displayUrl = (() => {
-    if (isBase64) return item.url;
+    if (/^data:image\//i.test(item.url)) return item.url;
     if (driveMatch) return `https://drive.google.com/thumbnail?id=${driveMatch[1]}&sz=w600`;
     if (thumb && thumb !== item.url) return thumb;
     return item.url;
   })();
 
-  const isRenderable = isBase64 || isDirectImage || !!driveMatch || isDriveExport || !!item.thumbnailUrl;
-
-  if (isRenderable && !imgError) {
+  if (!imgError) {
     return (
-      <div className="aspect-square bg-theme-bg-muted border border-theme-border overflow-hidden rounded-xl relative">
+      <div 
+        className="aspect-square bg-theme-bg-muted border border-theme-border overflow-hidden rounded-xl relative cursor-pointer group hover:border-brand-tactical/50 transition-colors"
+        onClick={() => window.open(item.url, "_blank")}
+      >
         <img
           src={displayUrl}
-          className="w-full h-full object-cover"
+          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
           alt="Referência"
           onError={() => setImgError(true)}
         />
