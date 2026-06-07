@@ -243,7 +243,7 @@ export function ServicesTab({ profile, catalogServices, onAddService, onRemoveSe
       </div>
 
       {/* Global Catalog */}
-      <div className="bg-theme-bg border border-theme-border rounded-2xl p-4 sm:p-6 md:p-12 space-y-8 md:space-y-12">
+      <div className="bg-theme-bg border border-theme-border rounded-xl p-4 sm:p-6 space-y-8">
         <div className="space-y-2">
           <h3 className="text-xl sm:text-2xl font-heading font-black text-theme-text uppercase tracking-widest italic leading-none">
             Catálogo Geral da <span className="text-brand-tactical">Rede</span>
@@ -252,56 +252,76 @@ export function ServicesTab({ profile, catalogServices, onAddService, onRemoveSe
             Benchmark de serviços e precificação sugerida por IA
           </p>
         </div>
-        <div className="grid grid-cols-1 gap-6">
-          {catalogServices.map((cat) => {
-            const alreadyAdded = profile?.proServices?.some((s) => s.catalogId === cat.id);
-            const suggested = Math.max(
-              cat.basePrice,
-              ((profile?.hourlyRate || minHourlyRate) * (cat.estimatedMinutes / 60)) * (profile?.equipmentMultiplier || 1.0)
-            );
-            return (
-              <div
-                key={cat.id}
-                className="flex flex-col md:flex-row justify-between md:items-center rounded-2xl p-4 sm:p-6 bg-theme-bg border-2 border-theme-border shadow-sm group hover:border-brand-tactical/50 hover:shadow-md transition-all gap-4 sm:gap-8 relative overflow-hidden"
-              >
-                <div className="space-y-2 md:space-y-3">
-                  <div className="text-base font-black text-theme-text uppercase tracking-tight italic">{cat.name}</div>
-                  <div className="flex flex-wrap items-center gap-2 sm:gap-4">
-                    <div className="flex items-center gap-1.5 text-[9px] font-bold text-theme-muted uppercase tracking-widest italic">
-                      <Clock size={12} className="text-brand-tactical" /> {cat.estimatedMinutes} MINUTOS
-                    </div>
-                    <div className="hidden sm:block w-1 h-1 rounded-full bg-theme-border" />
-                    <div className="text-[9px] font-bold text-theme-muted uppercase tracking-widest italic">
-                      Mínimo: R$ {(minHourlyRate * cat.estimatedMinutes / 60).toFixed(2)}
-                    </div>
-                  </div>
-                </div>
-                <div className="flex items-center justify-between md:justify-end gap-4 sm:gap-12 w-full md:w-auto border-t border-theme-border pt-4 md:pt-0 md:border-t-0">
-                  <div className="text-left md:text-right space-y-0.5">
-                    <div className="flex items-center md:justify-end gap-1.5 text-[8px] font-black text-brand-tactical uppercase tracking-widest italic">
-                      <TrendingUp size={10} /> Valor Sugerido p/ Você
-                    </div>
-                    <div className="text-2xl sm:text-3xl font-heading font-black text-brand-tactical italic leading-none">
-                      <span className="text-xs mr-0.5 font-sans not-italic">R$</span>
-                      {suggested.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
-                    </div>
-                  </div>
-                  {alreadyAdded ? (
-                    <div className="px-4 sm:px-6 py-2 sm:py-3 bg-brand-tactical/10 border border-brand-tactical/30 rounded-xl text-brand-tactical text-[9px] sm:text-[10px] font-black uppercase tracking-widest italic flex items-center gap-2">
-                      <Check size={16} /> EM VITRINE
-                    </div>
-                  ) : (
-                    <button
-                      onClick={() => onAddService(cat)}
-                      className="px-6 sm:px-10 py-3 sm:py-4 bg-brand-tactical text-brand-text text-[10px] sm:text-[11px] font-black uppercase tracking-[0.2em] rounded-xl hover:bg-brand-tactical/90 hover:scale-[1.02] hover:shadow-xl hover:shadow-brand-tactical/30 transition-all shadow-lg shadow-brand-tactical/10 italic cursor-pointer"
+        <div className="space-y-8">
+          {Object.entries(
+            catalogServices.reduce((acc, cat) => {
+              const group = cat.category || "Outros";
+              if (!acc[group]) acc[group] = [];
+              acc[group].push(cat);
+              return acc;
+            }, {} as Record<string, ServiceCatalog[]>)
+          ).map(([categoryName, services]) => (
+            <div key={categoryName} className="space-y-4">
+              <h4 className="text-[11px] font-black text-theme-muted uppercase tracking-[0.3em] italic border-b border-theme-border/50 pb-2">
+                {categoryName}
+              </h4>
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-5">
+                {services.map((cat) => {
+                  const alreadyAdded = profile?.proServices?.some((s) => s.catalogId === cat.id);
+                  const suggested = Math.max(
+                    cat.basePrice,
+                    (profile?.hourlyRate || minHourlyRate) *
+                      (cat.estimatedMinutes / 60) *
+                      (profile?.equipmentMultiplier || 1.0)
+                  );
+                  return (
+                    <div
+                      key={cat.id}
+                      className="flex flex-col justify-between rounded-xl p-4 sm:p-5 bg-theme-bg-muted border border-theme-border shadow-sm group hover:border-brand-tactical/50 hover:shadow-md transition-all gap-4 relative overflow-hidden"
                     >
-                      IMPORTAR
-                    </button>
-                  )}
-                </div>
+                      <div className="space-y-2">
+                        <div className="text-sm font-black text-theme-text uppercase tracking-tight italic line-clamp-2">
+                          {cat.name}
+                        </div>
+                        <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+                          <div className="flex items-center gap-1 text-[8px] font-bold text-theme-muted uppercase tracking-widest italic">
+                            <Clock size={10} className="text-brand-tactical" /> {cat.estimatedMinutes} MIN
+                          </div>
+                          <div className="w-1 h-1 rounded-full bg-theme-border" />
+                          <div className="text-[8px] font-bold text-theme-muted uppercase tracking-widest italic">
+                            Mín: R$ {((minHourlyRate * cat.estimatedMinutes) / 60).toFixed(2)}
+                          </div>
+                        </div>
+                      </div>
+                      <div className="flex items-end justify-between border-t border-theme-border/50 pt-3">
+                        <div className="space-y-0.5">
+                          <div className="flex items-center gap-1 text-[8px] font-black text-brand-tactical uppercase tracking-widest italic">
+                            <TrendingUp size={10} /> Sugerido
+                          </div>
+                          <div className="text-xl font-heading font-black text-brand-tactical italic leading-none">
+                            <span className="text-[10px] mr-0.5 font-sans not-italic">R$</span>
+                            {suggested.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
+                          </div>
+                        </div>
+                        {alreadyAdded ? (
+                          <div className="px-3 py-1.5 bg-brand-tactical/10 border border-brand-tactical/30 rounded-lg text-brand-tactical text-[8px] font-black uppercase tracking-widest italic flex items-center gap-1">
+                            <Check size={12} /> EM VITRINE
+                          </div>
+                        ) : (
+                          <button
+                            onClick={() => onAddService(cat)}
+                            className="px-4 py-2 bg-brand-tactical text-brand-text text-[9px] font-black uppercase tracking-[0.2em] rounded-lg hover:bg-brand-tactical/90 hover:scale-[1.02] hover:shadow-lg hover:shadow-brand-tactical/30 transition-all italic cursor-pointer"
+                          >
+                            IMPORTAR
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
-            );
-          })}
+            </div>
+          ))}
         </div>
       </div>
     </div>
