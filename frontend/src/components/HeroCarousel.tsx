@@ -87,6 +87,16 @@ export function HeroCarousel() {
   const [slides, setSlides] = useState<Slide[]>(FALLBACK_SLIDES);
 
   useEffect(() => {
+    const mergeCopaBanner = (dbBanners: Slide[]) => {
+      const copaBanner = FALLBACK_SLIDES.find(s => s.id === "copa2026");
+      if (!copaBanner) return dbBanners;
+      // If db banners already include a copa banner, don't duplicate
+      if (dbBanners.some(b => b.id === "copa2026" || b.title?.toUpperCase().includes("COPA"))) {
+        return dbBanners;
+      }
+      return [copaBanner, ...dbBanners];
+    };
+
     fetch("https://foto-segundo.vercel.app/api/public/banners")
       .then(res => {
         if (!res.ok) throw new Error('Network response was not ok');
@@ -94,7 +104,7 @@ export function HeroCarousel() {
       })
       .then(data => {
         if (data.banners && data.banners.length > 0) {
-          setSlides(data.banners);
+          setSlides(mergeCopaBanner(data.banners));
         }
       })
       .catch(() => {
@@ -106,7 +116,7 @@ export function HeroCarousel() {
           })
           .then(data => {
              if (data.banners && data.banners.length > 0) {
-               setSlides(data.banners);
+               setSlides(mergeCopaBanner(data.banners));
              }
           })
           .catch(e => console.error("[HeroCarousel] Fallback to default slides.", e.message));
