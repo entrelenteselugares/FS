@@ -60,39 +60,39 @@ export const ProfessionalBadgesShowcase: React.FC<ProfessionalBadgesShowcaseProp
   const unlockedCount = badges.filter(b => b.status === "UNLOCKED").length;
 
   return (
-    <div className="space-y-6 relative overflow-hidden bg-slate-950 p-6 sm:p-8 rounded-2xl border border-slate-900 shadow-2xl">
+    <div className="space-y-6 relative overflow-hidden bg-theme-bg-muted/30 p-6 sm:p-8 rounded-2xl border border-theme-border shadow-lg">
       {/* Header section */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800 pb-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-theme-border pb-6">
         <div className="space-y-1">
           <div className="flex items-center gap-2.5">
-            <h3 className="text-2xl font-heading font-black text-white uppercase italic tracking-tight">
+            <h3 className="text-2xl font-heading font-black text-theme-text uppercase italic tracking-tight">
               Galeria de Conquistas
             </h3>
-            <span className="px-2 py-0.5 text-[9px] font-black uppercase bg-slate-800 text-slate-300 border border-slate-700 tracking-widest rounded">
+            <span className="px-2 py-0.5 text-[9px] font-black uppercase bg-theme-bg border border-theme-border text-theme-muted tracking-widest rounded">
               FASE 2
             </span>
           </div>
-          <p className="text-[10px] text-slate-400 uppercase tracking-[0.25em] italic font-black">
+          <p className="text-[10px] text-theme-muted uppercase tracking-[0.25em] italic font-black">
             Seu portfólio de alta fidelidade e sinais de confiança na vitrine
           </p>
         </div>
 
         {/* Progress Display */}
-        <div className="flex items-center gap-4 bg-slate-900 border border-slate-800 px-5 py-3 rounded-xl shadow-inner">
+        <div className="flex items-center gap-4 bg-theme-bg-muted border border-theme-border px-5 py-3 rounded-xl shadow-inner">
           <div className="space-y-0.5 text-right">
-            <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest">
+            <p className="text-[9px] font-black text-theme-muted uppercase tracking-widest">
               Medalhas Ativas
             </p>
-            <p className="text-base font-heading font-black text-white italic">
+            <p className="text-base font-heading font-black text-theme-text italic">
               {unlockedCount} de {badges.length} Desbloqueadas
             </p>
           </div>
-          <div className="w-10 h-10 relative flex items-center justify-center bg-slate-950 border-2 border-slate-800 rounded-full overflow-hidden shadow-[inset_0_0_10px_rgba(0,0,0,0.5)]">
+          <div className="w-10 h-10 relative flex items-center justify-center bg-theme-bg border border-theme-border rounded-full overflow-hidden shadow-inner">
             <div 
-              className="absolute inset-0 bg-gradient-to-t from-cyan-500/40 to-transparent transition-all duration-700" 
+              className="absolute inset-0 bg-brand-tactical/20 transition-all duration-700" 
               style={{ height: `${(unlockedCount / badges.length) * 100}%`, bottom: 0, top: 'auto' }}
             />
-            <span className="relative z-10 text-xs font-heading font-black text-cyan-400 drop-shadow-md">
+            <span className="relative z-10 text-xs font-heading font-black text-brand-tactical drop-shadow-md">
               {Math.round((unlockedCount / badges.length) * 100)}%
             </span>
           </div>
@@ -100,7 +100,7 @@ export const ProfessionalBadgesShowcase: React.FC<ProfessionalBadgesShowcaseProp
       </div>
 
       {/* Badges Display Case Grid */}
-      <div className="grid grid-cols-3 gap-2 sm:gap-6 bg-slate-950/50 p-3 sm:p-6 rounded-xl border border-slate-900/50 shadow-[inset_0_0_50px_rgba(0,0,0,0.8)]">
+      <div className="grid grid-cols-3 gap-2 sm:gap-6 bg-theme-bg p-3 sm:p-6 rounded-xl border border-theme-border shadow-inner">
         {badges.map((badge, idx) => {
           const isUnlocked = badge.status === "UNLOCKED";
           const styles = tierStyles[badge.tier] || tierStyles.BRONZE;
@@ -113,7 +113,7 @@ export const ProfessionalBadgesShowcase: React.FC<ProfessionalBadgesShowcaseProp
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.5, delay: idx * 0.1 }}
               whileHover={{ scale: 1.02 }}
-              className={`group relative flex flex-col items-center justify-between rounded-xl bg-[#090C15] border border-[#1E2538] p-2 sm:p-6 transition-all duration-500 ${styles.borderGlow} h-full min-h-[140px] sm:min-h-[220px] overflow-hidden shadow-lg`}
+              className={`group relative flex flex-col items-center justify-between rounded-xl bg-theme-bg-muted border border-theme-border p-2 sm:p-6 transition-all duration-500 ${styles.borderGlow} h-full min-h-[140px] sm:min-h-[220px] overflow-hidden shadow-sm`}
             >
               {/* Background ambient light */}
               {isUnlocked && (
@@ -128,17 +128,17 @@ export const ProfessionalBadgesShowcase: React.FC<ProfessionalBadgesShowcaseProp
               {/* Status Ribbon overlay */}
               {!isUnlocked && (
                 <div className="absolute top-1.5 right-1.5 sm:top-4 sm:right-4 opacity-40">
-                  <Lock size={12} className="text-slate-500 w-3 h-3 sm:w-3.5 sm:h-3.5" />
+                  <Lock size={12} className="text-theme-muted w-3 h-3 sm:w-3.5 sm:h-3.5" />
                 </div>
               )}
 
               {/* Header Title & Progress */}
               <div className="text-center z-10 space-y-0.5 mt-1 sm:mt-2">
-                <h4 className={`text-[8px] sm:text-sm font-heading font-black tracking-widest uppercase leading-tight ${isUnlocked ? 'text-white' : 'text-slate-500'}`}>
+                <h4 className={`text-[8px] sm:text-sm font-heading font-black tracking-widest uppercase leading-tight ${isUnlocked ? 'text-theme-text' : 'text-theme-muted'}`}>
                   {badge.name}
                 </h4>
                 {badge.progress && (
-                  <p className={`text-[7px] sm:text-[10px] font-bold tracking-widest ${isUnlocked ? 'text-slate-400' : 'text-slate-600'}`}>
+                  <p className={`text-[7px] sm:text-[10px] font-bold tracking-widest ${isUnlocked ? 'text-theme-text-muted' : 'text-theme-muted/50'}`}>
                     {badge.tier === "SILVER" && badge.id === "tech_master" 
                         ? `R$ ${(badge.progress.current/1000).toFixed(0)}K / ${(badge.progress.target/1000).toFixed(0)}K`
                         : `${badge.progress.current} / ${badge.progress.target}`}
@@ -147,7 +147,7 @@ export const ProfessionalBadgesShowcase: React.FC<ProfessionalBadgesShowcaseProp
               </div>
 
               {/* Central 3D Image */}
-              <div className={`relative flex-1 flex items-center justify-center w-full my-1 sm:my-2 transition-all duration-700 ${isUnlocked ? 'scale-110 drop-shadow-[0_0_25px_rgba(255,255,255,0.1)]' : 'opacity-40 grayscale contrast-125 brightness-75 scale-95'}`}>
+              <div className={`relative flex-1 flex items-center justify-center w-full my-1 sm:my-2 transition-all duration-700 ${isUnlocked ? 'scale-110 drop-shadow-[0_0_25px_rgba(255,255,255,0.05)]' : 'opacity-40 grayscale contrast-125 brightness-75 scale-95'}`}>
                 {imageUrl ? (
                   <img 
                     src={imageUrl} 
@@ -155,15 +155,15 @@ export const ProfessionalBadgesShowcase: React.FC<ProfessionalBadgesShowcaseProp
                     className="w-16 h-16 sm:w-32 sm:h-32 object-contain drop-shadow-2xl mix-blend-screen"
                   />
                 ) : (
-                  <div className="w-16 h-16 sm:w-32 sm:h-32 rounded-full border-2 border-dashed border-slate-700 flex items-center justify-center">
-                    <span className="text-slate-600 text-[8px] sm:text-xs uppercase font-bold text-center">Sem<br/>Imagem</span>
+                  <div className="w-16 h-16 sm:w-32 sm:h-32 rounded-full border-2 border-dashed border-theme-border flex items-center justify-center">
+                    <span className="text-theme-muted text-[8px] sm:text-xs uppercase font-bold text-center">Sem<br/>Imagem</span>
                   </div>
                 )}
               </div>
               
               {/* Footer Description */}
               <div className="z-10 text-center w-full mt-auto pb-1">
-                <p className={`text-[6px] sm:text-[8px] uppercase tracking-widest font-black leading-tight ${isUnlocked ? 'text-slate-400' : 'text-slate-600'}`}>
+                <p className={`text-[6px] sm:text-[8px] uppercase tracking-widest font-black leading-tight ${isUnlocked ? 'text-theme-text-muted' : 'text-theme-muted/50'}`}>
                   {badge.description.split(':')[0]}
                 </p>
               </div>
