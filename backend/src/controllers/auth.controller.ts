@@ -602,9 +602,20 @@ export class AuthController {
 
     try {
       if (role === "PROFISSIONAL") {
+        const minHourlyConfig = await prisma.platformConfig.findUnique({ where: { key: "min_hourly_rate" } });
+        const defaultHourlyRate = minHourlyConfig?.value ? Number(minHourlyConfig.value) : 83.58;
+
         await prisma.profissional.upsert({
           where: { userId },
-          create: { userId, equipment, services: [], cameras: [], lenses: [], lighting: [] },
+          create: { 
+            userId, 
+            equipment, 
+            services: [], 
+            cameras: [], 
+            lenses: [], 
+            lighting: [],
+            hourlyRate: defaultHourlyRate
+          },
           update: { equipment }
         });
       } else if (role === "CARTORIO") {
