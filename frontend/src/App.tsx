@@ -109,9 +109,8 @@ const AnimatedRoutes = () => {
           <Route path="/reset-password" element={<ResetPasswordPage />} />
           <Route path="/forgot-password" element={<ForgotPasswordPage />} />
 
-          {/* Protected Routes (Require general user login) */}
-          <Route element={<ProtectedRoute><Outlet /></ProtectedRoute>}>
-            <Route path="/" element={<HomePage />} />
+          {/* Public Routes */}
+          <Route path="/" element={<HomePage />} />
             <Route path="/sobre" element={<AboutPage />} />
             <Route path="/parcerias" element={<PartnershipsPage />} />
             <Route path="/termos" element={<TermsPage />} />
@@ -217,7 +216,6 @@ const AnimatedRoutes = () => {
             {/* Home e 404 */}
             <Route path="/404" element={<NotFoundPage />} />
             <Route path="*" element={<Navigate to="/404" replace />} />
-          </Route>
         </Routes>
     </motion.div>
     </AnimatePresence>
