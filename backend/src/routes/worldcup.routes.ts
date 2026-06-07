@@ -19,7 +19,6 @@ import {
   settleBets,
   getUserBetSummary
 } from "../controllers/worldcup.controller";
-import { getRouletteStatus, spinRoulette } from "../controllers/roulette.controller";
 import { requireAuth } from "../lib/auth";
 import { requireRole } from "../lib/auth";
 
@@ -53,8 +52,5 @@ router.get("/bets", getBets);
 router.post("/bets", placeBet);
 router.post("/bets/settle", requireRole("ADMIN"), settleBets);
 
-// Gamification: Roulette Activation
-router.get("/roulette/status", getRouletteStatus);
-router.post("/roulette/spin", spinRoulette);
 
 export default router;

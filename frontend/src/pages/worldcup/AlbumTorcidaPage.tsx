@@ -6,7 +6,6 @@ import { Trophy, Camera, Clock, ChevronRight, ChevronLeft, Star, Zap, Calendar, 
 import { AlbumMissionsTab } from "../../components/worldcup/AlbumMissionsTab";
 import { WorldCupLiveBanner } from "../../components/worldcup/WorldCupLiveBanner";
 import { WorldCupBracket } from "../../components/worldcup/WorldCupBracket";
-// import { RouletteModal } from "../../components/worldcup/RouletteModal";
 
 // ─── Copa 2026 Data ───────────────────────────────────────────────────────────
 const GROUPS: Array<{
@@ -216,7 +215,6 @@ const ALL_PAST_COPAS = [
 export const AlbumTorcidaPage = () => {
   const [tab, setTab] = useState<Tab>("jogos");
   const [matches, setMatches] = useState<{ id: string; group: string; teamA: string; teamB: string; matchDate: string }[]>([]);
-  // const [showRoulette, setShowRoulette] = useState(false);
   const countdown = useCountdown(BRASIL_GAME.utc);
   const [now] = useState(() => Date.now());
 
@@ -239,7 +237,6 @@ export const AlbumTorcidaPage = () => {
         const [betsRes, betSummaryRes] = await Promise.all([
           api.get("/worldcup/bets").catch(() => ({ data: { bets: [] } })),
           api.get("/worldcup/bets/summary").catch(() => null),
-          // api.get("/worldcup/roulette/status").catch(() => null)
         ]);
 
         if (betsRes.data?.bets) {
@@ -253,11 +250,6 @@ export const AlbumTorcidaPage = () => {
         if (betSummaryRes?.data) {
           setBetSummary(betSummaryRes.data);
         }
-
-        // Feature Temporariamente Desativada a pedido do usuário
-        // if (rouletteRes?.data && !rouletteRes.data.hasSpun) {
-        //   setShowRoulette(true);
-        // }
       } catch (err) {
         console.error(err);
       }
@@ -382,7 +374,6 @@ export const AlbumTorcidaPage = () => {
 
   return (
     <div style={{ background: "#050e08", minHeight: "100vh", color: "white", fontFamily: "sans-serif", paddingBottom: 60 }}>
-      {/* {showRoulette && <RouletteModal onClose={() => setShowRoulette(false)} onSpinComplete={() => {}} />} */}
       {/* ── BANNER AO VIVO ─────────────────────────────────────────────────── */}
       <WorldCupLiveBanner alwaysShow />
 

@@ -35,7 +35,6 @@ async function main() {
     console.log("Deleting associated records to prevent foreign key constraint errors...");
     
     // Delete Gamification / World Cup
-    await prisma.worldCupRouletteSpin.deleteMany({ where: { userId: { in: idsToDelete } } });
     await prisma.worldCupBet.deleteMany({ where: { userId: { in: idsToDelete } } });
     await prisma.worldCupBadge.deleteMany({ where: { userId: { in: idsToDelete } } });
     await prisma.worldCupFolha.deleteMany({ where: { userId: { in: idsToDelete } } });
