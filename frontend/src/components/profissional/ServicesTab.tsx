@@ -73,7 +73,7 @@ export function ServicesTab({ profile, catalogServices, onAddService, onRemoveSe
     <div className="space-y-6">
 
       {/* Pricing Matrix */}
-      <div className="bg-theme-bg-muted border border-theme-border rounded-2xl p-4 sm:p-6 md:p-12 space-y-8 md:space-y-12 shadow-sm">
+      <div className="bg-theme-bg-muted border border-theme-border rounded-xl p-4 sm:p-6 space-y-5 shadow-sm">
         <div className="space-y-2">
           <h3 className="text-xl sm:text-2xl font-heading font-black text-theme-text uppercase tracking-widest italic leading-none">
             Matriz de <span className="text-brand-tactical">Precificação</span>
@@ -83,7 +83,7 @@ export function ServicesTab({ profile, catalogServices, onAddService, onRemoveSe
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           <div className="space-y-4">
             <div className="flex items-center gap-3">
               <div className="p-2 bg-theme-bg border border-theme-border rounded-xl text-brand-tactical shadow-sm"><Clock size={16} /></div>
@@ -118,7 +118,7 @@ export function ServicesTab({ profile, catalogServices, onAddService, onRemoveSe
       </div>
 
       {/* My Services Vitrine */}
-      <div className="bg-theme-bg border border-theme-border rounded-2xl p-4 sm:p-6 md:p-12 space-y-8 md:space-y-10">
+      <div className="bg-theme-bg border border-theme-border rounded-xl p-4 sm:p-6 space-y-5">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4">
           <div className="space-y-2">
             <h3 className="text-xl sm:text-2xl font-heading font-black text-theme-text uppercase tracking-widest italic leading-none">
@@ -143,11 +143,11 @@ export function ServicesTab({ profile, catalogServices, onAddService, onRemoveSe
         </div>
 
         {profile?.proServices?.length ? (
-          <div className="grid grid-cols-1 gap-6">
+          <div className="grid grid-cols-1 gap-3">
             {profile.proServices.map((svc) => (
               <div
                 key={svc.id}
-                className="group flex flex-col sm:flex-row justify-between items-start sm:items-center rounded-2xl p-4 sm:p-6 bg-theme-bg border-2 border-theme-border shadow-sm hover:shadow-md hover:border-brand-tactical/60 transition-all relative overflow-hidden gap-6"
+                className="group flex flex-col sm:flex-row justify-between items-start sm:items-center rounded-xl p-4 bg-theme-bg-muted border border-theme-border shadow-sm hover:shadow-md hover:border-brand-tactical/60 transition-all relative overflow-hidden gap-4"
               >
                 <div className="absolute left-0 top-0 h-full w-1.5 bg-brand-tactical opacity-50 group-hover:opacity-100 transition-all" />
                 <div className="space-y-2 flex-1">

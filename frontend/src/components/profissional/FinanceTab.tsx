@@ -70,9 +70,9 @@ export function FinanceTab({
 
   return (
     <div className="space-y-8">
-      <div className="lux-card rounded-2xl p-8 md:p-16 relative overflow-hidden bg-theme-bg border border-theme-border">
+      <div className="lux-card rounded-2xl p-5 md:p-8 relative overflow-hidden bg-theme-bg border border-theme-border">
         <div className="absolute top-0 right-0 w-64 h-64 bg-brand-tactical/10 rounded-full blur-[100px] -mr-32 -mt-32 pointer-events-none" />
-        <div className="relative z-10 space-y-12">
+        <div className="relative z-10 space-y-8">
 
           {/* Header */}
           <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
@@ -113,7 +113,7 @@ export function FinanceTab({
 
           {/* REAL-TIME LIQUIDITY SUMMARY */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-             <div className="bg-theme-bg-muted border border-theme-border rounded-2xl p-6 flex items-center justify-between group hover:border-brand-tactical/40 transition-all">
+             <div className="bg-theme-bg-muted border border-theme-border rounded-2xl p-4 flex items-center justify-between group hover:border-brand-tactical/40 transition-all">
                 <div className="flex items-center gap-5">
                    <div className="w-14 h-14 bg-brand-tactical/10 border border-brand-tactical/20 rounded-xl flex items-center justify-center text-brand-tactical">
                       <Wallet size={24} strokeWidth={1.5} />
@@ -129,7 +129,7 @@ export function FinanceTab({
                 </div>
              </div>
              
-             <div className="bg-theme-bg-muted border border-theme-border rounded-2xl p-6 flex items-center justify-between group hover:border-amber-500/40 transition-all">
+             <div className="bg-theme-bg-muted border border-theme-border rounded-2xl p-4 flex items-center justify-between group hover:border-amber-500/40 transition-all">
                 <div className="flex items-center gap-5">
                    <div className="w-14 h-14 bg-amber-500/10 border border-amber-500/20 rounded-xl flex items-center justify-center text-amber-500">
                       <Clock size={24} strokeWidth={1.5} />
@@ -155,7 +155,7 @@ export function FinanceTab({
                 { label: "Ticket Médio", value: formatCurrency(conversionData.ticketMedio), sub: "por pedido pago" },
                 { label: "Vendas Confirmadas", value: String(conversionData.totalPaidOrders), sub: `de ${conversionData.totalOrders} pedidos` },
               ] as const).map((stat) => (
-                <div key={stat.label} className="bg-theme-bg-muted border border-theme-border rounded-2xl p-6 flex flex-col gap-2 hover:border-brand-tactical/40 transition-all">
+                <div key={stat.label} className="bg-theme-bg-muted border border-theme-border rounded-xl p-4 flex flex-col gap-2 hover:border-brand-tactical/40 transition-all">
                   <span className="text-[9px] font-black text-theme-muted uppercase tracking-widest">{stat.label}</span>
                   <p className="text-2xl font-heading font-black text-brand-tactical italic leading-none">{stat.value}</p>
                   <span className="text-[8px] text-theme-muted uppercase font-bold tracking-wider">{stat.sub}</span>
@@ -165,9 +165,9 @@ export function FinanceTab({
           )}
 
           {/* Projection & ROI Grid */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
             {/* Goal Progress */}
-            <div className="lg:col-span-8 p-8 bg-brand-tactical/[0.03] border border-brand-tactical/30 rounded-2xl relative overflow-hidden group shadow-inner">
+            <div className="lg:col-span-8 p-5 bg-brand-tactical/[0.03] border border-brand-tactical/30 rounded-xl relative overflow-hidden group shadow-inner">
               <div className="absolute right-0 top-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity"><TrendingUp size={80} /></div>
               <div className="relative z-10 space-y-6">
                 <div className="flex justify-between items-end">
@@ -197,7 +197,7 @@ export function FinanceTab({
             </div>
 
             {/* ROI Donut (static representation) */}
-            <div className="lg:col-span-4 lux-card rounded-2xl p-8 flex flex-col bg-theme-bg-muted border border-theme-border">
+            <div className="lg:col-span-4 lux-card rounded-xl p-5 flex flex-col bg-theme-bg-muted border border-theme-border">
               <div className="flex items-center justify-between mb-6">
                 <div className="space-y-1">
                   <p className="text-[10px] font-black text-brand-tactical uppercase tracking-widest italic">ROI por Ativo</p>
@@ -220,7 +220,7 @@ export function FinanceTab({
             </div>
 
             {/* Insight */}
-            <div className="lg:col-span-12 p-8 bg-theme-bg-muted border border-theme-border rounded-2xl flex flex-col md:flex-row items-center gap-8">
+            <div className="lg:col-span-12 p-5 bg-theme-bg-muted border border-theme-border rounded-xl flex flex-col md:flex-row items-center gap-5">
               <div className="flex items-center gap-3 text-brand-tactical shrink-0">
                 <Zap size={20} className="animate-pulse" />
                 <span className="text-[11px] font-black uppercase tracking-[0.3em] italic">Insights de Aceleração</span>
@@ -248,13 +248,13 @@ export function FinanceTab({
           </div>
 
           {/* CASHFLOW PROJECTION (Phase 30) */}
-          <div className="bg-theme-bg border border-theme-border rounded-2xl p-8 md:p-12 relative overflow-hidden">
+          <div className="bg-theme-bg border border-theme-border rounded-xl p-5 relative overflow-hidden">
              <div className="absolute top-0 right-0 p-4 opacity-5 pointer-events-none"><TrendingUp size={120} /></div>
              <CashflowChart />
           </div>
 
           {/* Demand Heatmap */}
-          <div className="bg-theme-bg border border-theme-border rounded-2xl p-8 md:p-12 space-y-8">
+          <div className="bg-theme-bg border border-theme-border rounded-xl p-5 space-y-6">
             <div className="flex justify-between items-end">
               <div className="space-y-2">
                 <h3 className="text-xl font-heading font-black text-theme-text uppercase tracking-widest italic">Inteligência de Demanda Regional</h3>
@@ -306,7 +306,7 @@ export function FinanceTab({
               <h4 className="text-base font-heading font-black text-theme-text uppercase italic tracking-tighter">Histórico de Movimentações</h4>
             </div>
             {profile?.payoutHistory?.map((p) => (
-              <div key={p.id} className="group flex flex-col md:flex-row justify-between md:items-center p-8 bg-theme-bg-muted border border-theme-border rounded-2xl hover:border-brand-tactical/40 transition-all gap-8">
+              <div key={p.id} className="group flex flex-col md:flex-row justify-between md:items-center p-5 bg-theme-bg-muted border border-theme-border rounded-xl hover:border-brand-tactical/40 transition-all gap-5">
                 <div className="flex items-center gap-6">
                   <div className={`p-4 border rounded-xl ${p.status === "PAID" ? "bg-brand-tactical/10 border-brand-tactical/30 text-brand-tactical" : "bg-amber-500/10 border-amber-500/30 text-amber-500"}`}>
                     {p.status === "PAID" ? <Check size={20} /> : <TrendingUp size={20} />}

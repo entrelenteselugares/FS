@@ -13,7 +13,7 @@ interface NetworkTabProps {
 export function NetworkTab({ network, networkSearch, searchResults, residentUnits, onSearch, onToggleFavorite }: NetworkTabProps) {
   return (
     <div className="space-y-12">
-      <div className="bg-theme-bg border border-theme-border rounded-2xl p-4 sm:p-8 md:p-16 space-y-8 md:space-y-12">
+      <div className="bg-theme-bg border border-theme-border rounded-xl p-5 space-y-6">
         <div className="space-y-4">
           <h3 className="text-2xl sm:text-3xl font-heading font-black text-theme-text uppercase tracking-tighter italic leading-none">
             Minha Rede e <span className="text-brand-tactical">Alianças</span>
@@ -33,7 +33,7 @@ export function NetworkTab({ network, networkSearch, searchResults, residentUnit
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {residentUnits.map((u) => (
-                <div key={u.id} className="bg-theme-bg-muted border border-cyan-400/20 rounded-2xl p-4 sm:p-8 relative group hover:border-cyan-400/50 transition-all">
+                <div key={u.id} className="bg-theme-bg-muted border border-cyan-400/20 rounded-xl p-5 relative group hover:border-cyan-400/50 transition-all">
                   <div className="absolute top-0 left-0 w-full h-[1px] bg-cyan-400/30" />
                   <div className="space-y-4">
                     <div className="flex justify-between items-start">
@@ -75,7 +75,7 @@ export function NetworkTab({ network, networkSearch, searchResults, residentUnit
           <input
             type="text"
             placeholder="BUSCAR PROFISSIONAL PELO NOME OU E-MAIL..."
-            className="w-full bg-theme-bg-muted border border-theme-border rounded-xl p-8 pl-16 text-[11px] font-black uppercase tracking-[0.2em] text-theme-text outline-none focus:border-brand-tactical transition-all"
+            className="w-full bg-theme-bg-muted border border-theme-border rounded-xl p-5 pl-14 text-[11px] font-black uppercase tracking-[0.2em] text-theme-text outline-none focus:border-brand-tactical transition-all"
             value={networkSearch}
             onChange={(e) => onSearch(e.target.value)}
           />
@@ -88,7 +88,7 @@ export function NetworkTab({ network, networkSearch, searchResults, residentUnit
               Resultados da Busca
             </p>
             {searchResults.map((p) => (
-              <div key={p.id} className="flex justify-between items-center rounded-2xl p-6 bg-brand-tactical/10 border border-brand-tactical/20">
+              <div key={p.id} className="flex justify-between items-center rounded-xl p-4 bg-brand-tactical/10 border border-brand-tactical/20">
                 <div className="space-y-1">
                   <p className="text-sm font-black text-theme-text uppercase tracking-tight italic">{p.nome}</p>
                   <p className="text-[9px] text-theme-muted uppercase font-bold">{p.email}</p>
@@ -105,7 +105,7 @@ export function NetworkTab({ network, networkSearch, searchResults, residentUnit
         )}
 
         {/* Favorites */}
-        <div className="space-y-8 pt-12 border-t border-theme-border">
+        <div className="space-y-6 pt-8 border-t border-theme-border">
           <div className="flex items-center gap-4">
             <div className="h-1 w-12 bg-brand-tactical" />
             <h4 className="text-lg sm:text-xl font-heading font-black text-theme-text uppercase italic tracking-tighter">
@@ -118,7 +118,7 @@ export function NetworkTab({ network, networkSearch, searchResults, residentUnit
               {network.map((p) => (
                 <div
                   key={p.id}
-                  className="group relative rounded-2xl p-4 sm:p-8 bg-theme-bg-muted border border-theme-border hover:border-brand-tactical/40 transition-all"
+                  className="group relative rounded-xl p-5 bg-theme-bg-muted border border-theme-border hover:border-brand-tactical/40 transition-all"
                 >
                   <div className="flex justify-between items-start">
                     <div className="space-y-2">
@@ -147,7 +147,7 @@ export function NetworkTab({ network, networkSearch, searchResults, residentUnit
               ))}
             </div>
           ) : (
-            <div className="py-24 text-center space-y-6 bg-theme-bg border  border-theme-border">
+            <div className="py-16 text-center space-y-6 bg-theme-bg border border-theme-border rounded-xl">
               <div className="flex justify-center text-theme-muted opacity-10">
                 <Users size={64} />
               </div>

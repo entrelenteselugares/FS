@@ -157,7 +157,7 @@ export function AgendaTab({
               {unitInvites.length > 0 && unitInvites.map((ui) => (
                 <div
                   key={ui.id}
-                  className="bg-theme-bg-muted border border-brand-tactical/60 rounded-2xl p-4 md:p-6 relative overflow-hidden mb-4"
+                  className="bg-theme-bg-muted border border-brand-tactical/60 rounded-xl p-4 relative overflow-hidden mb-3"
                 >
                   <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-8 relative z-10">
                     <div className="space-y-4">
@@ -171,10 +171,10 @@ export function AgendaTab({
                       </div>
                     </div>
                     <div className="flex gap-4">
-                      <button onClick={() => onRespondUnit(ui.id, "REJECTED")} className="px-8 py-4 border border-red-500/30 text-red-500 text-[10px] font-black uppercase tracking-widest rounded-xl hover:bg-red-500/10 italic flex items-center gap-2">
+                      <button onClick={() => onRespondUnit(ui.id, "REJECTED")} className="px-6 py-3 border border-red-500/30 text-red-500 text-[10px] font-black uppercase tracking-widest rounded-xl hover:bg-red-500/10 italic flex items-center gap-2">
                         <X size={16} /> Recusar
                       </button>
-                      <button onClick={() => onRespondUnit(ui.id, "ACCEPTED")} className="px-10 py-4 bg-brand-tactical text-zinc-950 text-[11px] font-black uppercase tracking-[0.2em] rounded-xl hover:bg-brand-tactical/90 hover:scale-[1.02] hover:shadow-xl hover:shadow-brand-tactical/30 transition-all italic flex items-center gap-2 shadow-lg shadow-brand-tactical/20">
+                      <button onClick={() => onRespondUnit(ui.id, "ACCEPTED")} className="px-8 py-3 bg-brand-tactical text-zinc-950 text-[11px] font-black uppercase tracking-[0.2em] rounded-xl hover:bg-brand-tactical/90 hover:scale-[1.02] hover:shadow-xl hover:shadow-brand-tactical/30 transition-all italic flex items-center gap-2 shadow-lg shadow-brand-tactical/20">
                         <Check size={18} /> FIRMAR PARCERIA
                       </button>
                     </div>
