@@ -100,7 +100,7 @@ export const ProfessionalBadgesShowcase: React.FC<ProfessionalBadgesShowcaseProp
       </div>
 
       {/* Badges Display Case Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 bg-slate-950/50 p-6 rounded-xl border border-slate-900/50 shadow-[inset_0_0_50px_rgba(0,0,0,0.8)]">
+      <div className="grid grid-cols-3 gap-2 sm:gap-6 bg-slate-950/50 p-3 sm:p-6 rounded-xl border border-slate-900/50 shadow-[inset_0_0_50px_rgba(0,0,0,0.8)]">
         {badges.map((badge, idx) => {
           const isUnlocked = badge.status === "UNLOCKED";
           const styles = tierStyles[badge.tier] || tierStyles.BRONZE;
@@ -113,7 +113,7 @@ export const ProfessionalBadgesShowcase: React.FC<ProfessionalBadgesShowcaseProp
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.5, delay: idx * 0.1 }}
               whileHover={{ scale: 1.02 }}
-              className={`group relative flex flex-col items-center justify-between rounded-xl bg-[#090C15] border border-[#1E2538] p-6 transition-all duration-500 ${styles.borderGlow} h-64 overflow-hidden shadow-lg`}
+              className={`group relative flex flex-col items-center justify-between rounded-xl bg-[#090C15] border border-[#1E2538] p-2 sm:p-6 transition-all duration-500 ${styles.borderGlow} h-full min-h-[140px] sm:min-h-[220px] overflow-hidden shadow-lg`}
             >
               {/* Background ambient light */}
               {isUnlocked && (
@@ -127,18 +127,18 @@ export const ProfessionalBadgesShowcase: React.FC<ProfessionalBadgesShowcaseProp
 
               {/* Status Ribbon overlay */}
               {!isUnlocked && (
-                <div className="absolute top-4 right-4 p-1.5 opacity-40">
-                  <Lock size={14} className="text-slate-500" />
+                <div className="absolute top-1.5 right-1.5 sm:top-4 sm:right-4 opacity-40">
+                  <Lock size={12} className="text-slate-500 w-3 h-3 sm:w-3.5 sm:h-3.5" />
                 </div>
               )}
 
               {/* Header Title & Progress */}
-              <div className="text-center z-10 space-y-1 mt-2">
-                <h4 className={`text-sm font-heading font-black tracking-widest uppercase ${isUnlocked ? 'text-white' : 'text-slate-500'}`}>
+              <div className="text-center z-10 space-y-0.5 mt-1 sm:mt-2">
+                <h4 className={`text-[8px] sm:text-sm font-heading font-black tracking-widest uppercase leading-tight ${isUnlocked ? 'text-white' : 'text-slate-500'}`}>
                   {badge.name}
                 </h4>
                 {badge.progress && (
-                  <p className={`text-[10px] font-bold tracking-widest ${isUnlocked ? 'text-slate-400' : 'text-slate-600'}`}>
+                  <p className={`text-[7px] sm:text-[10px] font-bold tracking-widest ${isUnlocked ? 'text-slate-400' : 'text-slate-600'}`}>
                     {badge.tier === "SILVER" && badge.id === "tech_master" 
                         ? `R$ ${(badge.progress.current/1000).toFixed(0)}K / ${(badge.progress.target/1000).toFixed(0)}K`
                         : `${badge.progress.current} / ${badge.progress.target}`}
@@ -147,23 +147,23 @@ export const ProfessionalBadgesShowcase: React.FC<ProfessionalBadgesShowcaseProp
               </div>
 
               {/* Central 3D Image */}
-              <div className={`relative flex-1 flex items-center justify-center w-full my-2 transition-all duration-700 ${isUnlocked ? 'scale-110 drop-shadow-[0_0_25px_rgba(255,255,255,0.1)]' : 'opacity-40 grayscale contrast-125 brightness-75 scale-95'}`}>
+              <div className={`relative flex-1 flex items-center justify-center w-full my-1 sm:my-2 transition-all duration-700 ${isUnlocked ? 'scale-110 drop-shadow-[0_0_25px_rgba(255,255,255,0.1)]' : 'opacity-40 grayscale contrast-125 brightness-75 scale-95'}`}>
                 {imageUrl ? (
                   <img 
                     src={imageUrl} 
                     alt={badge.name} 
-                    className="w-40 h-40 object-contain drop-shadow-2xl mix-blend-screen"
+                    className="w-16 h-16 sm:w-32 sm:h-32 object-contain drop-shadow-2xl mix-blend-screen"
                   />
                 ) : (
-                  <div className="w-32 h-32 rounded-full border-2 border-dashed border-slate-700 flex items-center justify-center">
-                    <span className="text-slate-600 text-xs uppercase font-bold">Sem Imagem</span>
+                  <div className="w-16 h-16 sm:w-32 sm:h-32 rounded-full border-2 border-dashed border-slate-700 flex items-center justify-center">
+                    <span className="text-slate-600 text-[8px] sm:text-xs uppercase font-bold text-center">Sem<br/>Imagem</span>
                   </div>
                 )}
               </div>
               
               {/* Footer Description */}
-              <div className="z-10 text-center w-full mt-auto">
-                <p className={`text-[8px] uppercase tracking-widest font-black ${isUnlocked ? 'text-slate-400' : 'text-slate-600'}`}>
+              <div className="z-10 text-center w-full mt-auto pb-1">
+                <p className={`text-[6px] sm:text-[8px] uppercase tracking-widest font-black leading-tight ${isUnlocked ? 'text-slate-400' : 'text-slate-600'}`}>
                   {badge.description.split(':')[0]}
                 </p>
               </div>
