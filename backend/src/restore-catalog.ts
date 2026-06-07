@@ -32,7 +32,8 @@ async function restore() {
       where: { sku: p.sku },
       update: {
         ...p,
-        active: true
+        active: true,
+        sellingPrice: null
       },
       create: {
         ...p,

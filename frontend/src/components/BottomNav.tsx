@@ -24,6 +24,9 @@ export const BottomNav: React.FC = () => {
     "/flash",
     "/invitation",
     "/cotacao",
+    "/login",
+    "/cadastro",
+    "/register",
     // "/meus-albuns",
     // "/minha-conta",
   ];
@@ -116,21 +119,25 @@ export const BottomNav: React.FC = () => {
           <span className="text-[7.5px] font-bold uppercase tracking-tight">Buscar</span>
         </button>
 
-        <button 
-          onClick={() => navigate("/minha-conta?s=files", { replace: true })}
-          className={`flex flex-col items-center gap-1 transition-all ${location.pathname === "/minha-conta" && (s === "files" || s === "fotos" || s === "wallet" || s === "pedidos") ? "text-emerald-500" : "text-theme-text opacity-40"}`}
-        >
-          <ShoppingBag size={20} strokeWidth={1.5} />
-          <span className="text-[7.5px] font-bold uppercase tracking-tight">Compras</span>
-        </button>
+        {user && (
+          <>
+            <button 
+              onClick={() => navigate("/minha-conta?s=files", { replace: true })}
+              className={`flex flex-col items-center gap-1 transition-all ${location.pathname === "/minha-conta" && (s === "files" || s === "fotos" || s === "wallet" || s === "pedidos") ? "text-emerald-500" : "text-theme-text opacity-40"}`}
+            >
+              <ShoppingBag size={20} strokeWidth={1.5} />
+              <span className="text-[7.5px] font-bold uppercase tracking-tight">Compras</span>
+            </button>
 
-        <button 
-          onClick={() => navigate("/meus-albuns", { replace: true })}
-          className={`flex flex-col items-center gap-1 transition-all ${location.pathname.startsWith("/meus-albuns") ? "text-emerald-500" : "text-theme-text opacity-40"}`}
-        >
-          <Image size={20} strokeWidth={1.5} />
-          <span className="text-[7.5px] font-bold uppercase tracking-tight">Meus Álbuns</span>
-        </button>
+            <button 
+              onClick={() => navigate("/meus-albuns", { replace: true })}
+              className={`flex flex-col items-center gap-1 transition-all ${location.pathname.startsWith("/meus-albuns") ? "text-emerald-500" : "text-theme-text opacity-40"}`}
+            >
+              <Image size={20} strokeWidth={1.5} />
+              <span className="text-[7.5px] font-bold uppercase tracking-tight">Meus Álbuns</span>
+            </button>
+          </>
+        )}
 
         <button 
           onClick={() => setDrawerOpen(true)}

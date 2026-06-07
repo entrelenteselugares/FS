@@ -100,9 +100,3 @@
 **Depends on:** Phase 58
 **Status:** Completed
 
-### Phase 62: Roleta da Sorte (Ativação)
-
-**Goal:** Implementar um pop-up de ativação para o primeiro dia de jogo da Copa com uma roleta da sorte para sortear prêmios (R$ 1000 em prêmios: figurinhas, fotos, álbuns) e engajar o usuário nas interações do app.
-**Requirements**: TBD
-**Depends on:** Phase 58
-**Status:** TBD
