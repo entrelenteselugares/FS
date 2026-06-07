@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
-import { Check, X, ShieldCheck, MapPin, Briefcase, Users, ChevronRight, Camera, Video, Smartphone, Clock } from "lucide-react";
+import { Check, X, ShieldCheck, MapPin, Briefcase, Users, ChevronRight, Camera, Video, Smartphone, Clock, Calendar, LogOut, RefreshCw, CheckCircle } from "lucide-react";
 import type { EventItem, UnitInvite } from "./types";
 import { CalendarView } from "./CalendarView";
 import { parseDateSafe } from "../../lib/utils/formatters";
@@ -56,6 +56,11 @@ interface AgendaTabProps {
   onRespondUnit: (inviteId: string, status: "ACCEPTED" | "REJECTED") => void;
   onDelegate: (eventId: string) => void;
   opportunities: EventItem[];
+  calendarStatus?: any;
+  isSyncing?: boolean;
+  onConnectCalendar?: () => void;
+  onDisconnectCalendar?: () => void;
+  onManualSync?: () => void;
 }
 
 export function AgendaTab({
@@ -71,6 +76,11 @@ export function AgendaTab({
   onRespondUnit,
   onDelegate,
   opportunities,
+  calendarStatus,
+  isSyncing,
+  onConnectCalendar,
+  onDisconnectCalendar,
+  onManualSync
 }: AgendaTabProps) {
       
   // Combine all relevant events for a unified view
@@ -98,10 +108,11 @@ export function AgendaTab({
               {/* Opportunities (Public Calls) */}
               {opportunities.length > 0 && opportunities.map((ev) => (
                 <div
-                  key={ev.id}
-                  className="bg-yellow-400/5 border border-yellow-400/30 rounded-xl p-3 md:p-4 flex flex-col md:flex-row gap-3 md:gap-6 items-start md:items-center relative overflow-hidden transition-all group mb-3"
+                  key={`opp-${ev.id}`}
+                  onClick={() => onSelectEvent(ev)}
+                  className="bg-theme-bg border border-theme-border p-4 md:p-6 rounded-2xl cursor-pointer hover:border-brand-tactical/50 transition-all flex flex-col md:flex-row gap-4 md:gap-6 group relative overflow-hidden shadow-sm hover:shadow-lg"
                 >
-                  <div className="absolute left-0 top-0 h-full w-1.5 bg-yellow-400" />
+                  <div className="absolute left-0 top-0 h-full w-1.5 bg-brand-tactical opacity-50 group-hover:opacity-100 transition-opacity" />
                   
                   {/* DATA COL */}
                   <div className="min-w-[60px] flex flex-row md:flex-col items-center md:items-start border-b md:border-b-0 md:border-r border-theme-border pb-2 md:pb-0 md:pr-4 gap-2 md:gap-0 w-full md:w-auto">
@@ -109,7 +120,7 @@ export function AgendaTab({
                     <div className="text-xl md:text-2xl font-heading font-black text-theme-text italic leading-none uppercase tracking-tighter">
                       {parseDateSafe(ev.dataEvento).toLocaleDateString("pt-BR", { day: "2-digit" })}
                     </div>
-                    <div className="text-[9px] md:text-[10px] font-bold text-yellow-400 uppercase tracking-widest mt-0 md:mt-1">
+                    <div className="text-[9px] md:text-[10px] font-bold text-brand-tactical uppercase tracking-widest mt-0 md:mt-1">
                       {parseDateSafe(ev.dataEvento).toLocaleDateString("pt-BR", { month: "short" }).replace(".", "")}
                     </div>
                   </div>
@@ -118,8 +129,8 @@ export function AgendaTab({
                   <div className="flex-grow space-y-3">
                     <div className="flex flex-wrap items-center gap-2 md:gap-4">
                       <h3 className="text-lg md:text-xl font-heading font-black text-theme-text uppercase italic tracking-tight leading-none">{ev.title}</h3>
-                      <div className="px-1.5 py-0.5 text-[8px] font-black border rounded-md bg-yellow-400/10 text-yellow-400 border-yellow-400/20">
-                        CHAMADA ABERTA
+                      <div className="px-1.5 py-0.5 text-[8px] font-black border rounded-md bg-brand-tactical/10 text-brand-tactical border-brand-tactical/20">
+                        OPORTUNIDADE
                       </div>
                     </div>
 
@@ -135,67 +146,92 @@ export function AgendaTab({
                     )}
                     
                     <div className="flex flex-wrap gap-5 items-center">
+                      <div className="flex gap-2.5">
+                        {ev.temFoto && <div className="p-1.5 bg-theme-bg-muted border border-theme-border text-theme-text opacity-70 rounded-xl" title="Foto"><Camera size={12} /></div>}
+                        {ev.temVideo && <div className="p-1.5 bg-theme-bg-muted border border-theme-border text-theme-text opacity-70 rounded-xl" title="Vídeo"><Video size={12} /></div>}
+                        {ev.temReels && <div className="p-1.5 bg-theme-bg-muted border border-theme-border text-theme-text opacity-70 rounded-xl" title="Reels/Mobile"><Smartphone size={12} /></div>}
+                      </div>
+                      
+                      <div className="h-4 w-[1px] bg-theme-border/20 hidden md:block" />
+                      
                       <div className="flex gap-4 text-[9px] text-theme-muted font-black uppercase tracking-widest">
-                        <span className="flex items-center gap-1.5"><MapPin size={11} className="text-yellow-400 opacity-50" /> {ev.location || "Campo"}</span>
-                        <span className="flex items-center gap-1.5 text-yellow-400"><Briefcase size={11} /> PEGAR TRABALHO</span>
+                        <span className="flex items-center gap-1.5"><MapPin size={11} className="text-brand-tactical opacity-50" /> {ev.location || "Campo"}</span>
+                        <span className="flex items-center gap-1.5"><Briefcase size={11} className="text-brand-tactical opacity-50" /> {ev.captacaoId === userId ? "CAPTAÇÃO" : "EDIÇÃO"}</span>
+                        {ev.eventHours && <span className="flex items-center gap-1.5"><Clock size={11} className="text-brand-tactical opacity-50" /> {ev.eventHours}H</span>}
                       </div>
                     </div>
                   </div>
 
-                  <div className="flex flex-col items-start md:items-end gap-2 min-w-[120px] w-full md:w-auto mt-2 md:mt-0">
-                    <button 
-                      onClick={() => onRespond(ev.id, "ACCEPTED")} 
-                      className="w-full md:w-auto px-4 py-2 bg-yellow-400 text-black text-[9px] font-black uppercase tracking-widest rounded-lg hover:bg-yellow-400/90 hover:scale-[1.02] hover:shadow-xl hover:shadow-yellow-400/20 transition-all flex items-center justify-center gap-2 italic shadow-lg shadow-yellow-400/10"
-                    >
-                      <Check size={14} /> PEGAR AGORA
-                    </button>
+                  {/* STATUS/SLA COL */}
+                  <div className="flex flex-col items-start md:items-end gap-2 min-w-[120px] w-full md:w-auto mt-2 md:mt-0 pt-2 md:pt-0 border-t md:border-t-0 border-theme-border">
+                    <div className="flex flex-row md:flex-col gap-1.5 items-center md:items-end w-full">
+                      <DeadlineTimer event={ev} type="FOTO" />
+                      {ev.temVideo && <DeadlineTimer event={ev} type="VIDEO" />}
+                    </div>
+                    
+                    <div className="flex gap-2 w-full md:w-auto mt-2">
+                      <button onClick={(e) => { e.stopPropagation(); onRespond(ev.id, "ACCEPTED"); }} className="px-3 py-2 bg-brand-tactical text-brand-text text-[8px] font-black uppercase tracking-widest rounded-lg hover:bg-brand-tactical/90 transition-all flex-1 md:flex-none flex items-center justify-center gap-1">
+                        <Check size={12} /> ACEITAR OPORTUNIDADE
+                      </button>
+                    </div>
                   </div>
                 </div>
               ))}
 
               {/* Unit Invites */}
-              {unitInvites.length > 0 && unitInvites.map((ui) => (
+              {unitInvites.length > 0 && unitInvites.map((invite) => (
                 <div
-                  key={ui.id}
-                  className="bg-theme-bg-muted border border-brand-tactical/60 rounded-xl p-4 relative overflow-hidden mb-3"
+                  key={`invite-${invite.id}`}
+                  className="bg-amber-500/5 border border-amber-500/20 p-4 md:p-6 rounded-2xl flex flex-col md:flex-row gap-4 md:gap-6 group relative overflow-hidden shadow-sm"
                 >
-                  <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-8 relative z-10">
-                    <div className="space-y-4">
-                      <div className="flex items-center gap-3">
-                        <div className="p-2 bg-brand-tactical text-zinc-950 rounded-xl"><ShieldCheck size={18} /></div>
-                        <span className="text-[10px] font-black text-brand-tactical uppercase tracking-[0.4em] italic">Oportunidade de Parceria Fixa</span>
-                      </div>
-                      <div className="space-y-1">
-                        <h3 className="text-2xl md:text-3xl font-heading font-black text-theme-text uppercase tracking-tighter italic leading-none">{ui.cartorio.razaoSocial}</h3>
-                        <p className="text-[11px] font-bold text-theme-muted uppercase tracking-widest italic">Base Operacional: {ui.cartorio.cidade} · Modalidade: {ui.tipo}</p>
+                  <div className="absolute left-0 top-0 h-full w-1.5 bg-amber-500" />
+                  
+                  <div className="min-w-[60px] flex flex-row md:flex-col items-center md:items-start border-b md:border-b-0 md:border-r border-theme-border pb-2 md:pb-0 md:pr-4 gap-2 md:gap-0 w-full md:w-auto">
+                    <div className="text-[9px] font-black text-amber-500 uppercase tracking-widest hidden md:block mb-1">DATA</div>
+                    <div className="text-xl md:text-2xl font-heading font-black text-amber-500 italic leading-none uppercase tracking-tighter">
+                      {parseDateSafe(invite.dataEvento).toLocaleDateString("pt-BR", { day: "2-digit" })}
+                    </div>
+                  </div>
+
+                  <div className="flex-grow space-y-3">
+                    <div className="flex flex-wrap items-center gap-2 md:gap-4">
+                      <h3 className="text-lg md:text-xl font-heading font-black text-theme-text uppercase italic tracking-tight leading-none">{invite.eventName}</h3>
+                      <div className="px-1.5 py-0.5 text-[8px] font-black border rounded-md bg-amber-500/10 text-amber-500 border-amber-500/20">
+                        CONVITE
                       </div>
                     </div>
-                    <div className="flex gap-4">
-                      <button onClick={() => onRespondUnit(ui.id, "REJECTED")} className="px-6 py-3 border border-red-500/30 text-red-500 text-[10px] font-black uppercase tracking-widest rounded-xl hover:bg-red-500/10 italic flex items-center gap-2">
-                        <X size={16} /> Recusar
+                    <p className="text-xs text-theme-text/80 leading-relaxed max-w-lg">
+                      A unidade <strong>{invite.unitName}</strong> te convidou para cobrir este evento.
+                    </p>
+                    <div className="flex gap-4 text-[9px] text-theme-muted font-black uppercase tracking-widest">
+                      <span className="flex items-center gap-1.5"><MapPin size={11} className="text-amber-500 opacity-50" /> {invite.unitName}</span>
+                    </div>
+                  </div>
+
+                  <div className="flex flex-col items-start md:items-end gap-2 min-w-[120px] w-full md:w-auto mt-2 md:mt-0 pt-2 md:pt-0 border-t md:border-t-0 border-theme-border justify-center">
+                    <div className="flex gap-2 w-full md:w-auto mt-2">
+                      <button onClick={() => onRespondUnit(invite.id, "REJECTED")} className="p-2 border border-red-500/30 text-red-500 rounded-lg hover:bg-red-500/10 transition-all flex-1 md:flex-none flex items-center justify-center" title="Recusar">
+                        <X size={14} />
                       </button>
-                      <button onClick={() => onRespondUnit(ui.id, "ACCEPTED")} className="px-8 py-3 bg-brand-tactical text-zinc-950 text-[11px] font-black uppercase tracking-[0.2em] rounded-xl hover:bg-brand-tactical/90 hover:scale-[1.02] hover:shadow-xl hover:shadow-brand-tactical/30 transition-all italic flex items-center gap-2 shadow-lg shadow-brand-tactical/20">
-                        <Check size={18} /> FIRMAR PARCERIA
+                      <button onClick={() => onRespondUnit(invite.id, "ACCEPTED")} className="px-3 py-2 bg-amber-500 text-amber-950 text-[8px] font-black uppercase tracking-widest rounded-lg hover:bg-amber-400 transition-all flex-1 md:flex-none flex items-center justify-center gap-1">
+                        <Check size={12} /> ACEITAR
                       </button>
                     </div>
                   </div>
                 </div>
               ))}
 
-              {/* Events */}
-              {displayEvents.map((ev) => {
-                const isAccepted = (ev.captacaoId === userId && ev.captacaoStatus === 'ACCEPTED') || 
-                                 (ev.edicaoId === userId && ev.edicaoStatus === 'ACCEPTED') ||
-                                 (ev.ownerId === userId);
-                const isOpportunity = ev.isPublicCall && !ev.captacaoId;
+              {/* Regular Events */}
+              {events.length > 0 && events.map((ev) => {
+                const isOpportunity = !!opportunities.find(o => o.id === ev.id);
+                const isAccepted = ev.captacaoStatus === "ACCEPTED";
+                if (isOpportunity) return null; // already rendered
 
                 return (
                   <div
                     key={ev.id}
-                    className={`bg-theme-bg border ${
-                      isAccepted ? "cursor-pointer hover:border-brand-tactical/50" : ""
-                    } border-theme-border rounded-xl p-3 md:p-4 flex flex-col md:flex-row gap-3 md:gap-6 items-start md:items-center relative overflow-hidden transition-all group mb-3`}
-                    onClick={() => isAccepted && onSelectEvent(ev)}
+                    onClick={() => onSelectEvent(ev)}
+                    className="bg-theme-bg border border-theme-border p-4 md:p-6 rounded-2xl cursor-pointer hover:border-brand-tactical/50 transition-all flex flex-col md:flex-row gap-4 md:gap-6 group relative overflow-hidden shadow-sm hover:shadow-lg"
                   >
                     <div className={`absolute left-0 top-0 h-full w-1.5 ${ev.captacaoStatus === "PENDING" ? "bg-amber-500" : "bg-brand-tactical"}`} />
                     
@@ -254,16 +290,10 @@ export function AgendaTab({
                         {ev.temVideo && <DeadlineTimer event={ev} type="VIDEO" />}
                       </div>
                       
-                      {!isAccepted && !isOpportunity ? (
-                        <div className="flex gap-2 w-full md:w-auto">
+                      {!isAccepted ? (
+                        <div className="flex gap-2 w-full md:w-auto mt-2">
                           <button onClick={(e) => { e.stopPropagation(); onRespond(ev.id, "REJECTED"); }} className="p-2 border border-red-500/30 text-red-500 rounded-lg hover:bg-red-500/10 transition-all flex-1 md:flex-none flex items-center justify-center" title="Recusar">
                             <X size={14} />
-                          </button>
-                          <button
-                            onClick={(e) => { e.stopPropagation(); onDelegate(ev.id); }}
-                            className="px-2 py-2 border border-brand-tactical/40 text-brand-tactical text-[8px] font-black uppercase tracking-widest rounded-lg hover:bg-brand-tactical/10 flex-1 md:flex-none flex items-center justify-center gap-1 transition-all"
-                          >
-                            <Users size={12} /> DELEGAR
                           </button>
                           <button onClick={(e) => { e.stopPropagation(); onRespond(ev.id, "ACCEPTED"); }} className="px-3 py-2 bg-brand-tactical text-brand-text text-[8px] font-black uppercase tracking-widest rounded-lg hover:bg-brand-tactical/90 transition-all flex-1 md:flex-none flex items-center justify-center gap-1">
                             <Check size={12} /> ACEITAR
@@ -280,6 +310,75 @@ export function AgendaTab({
                 );
               })}
             </>
+          )}
+
+          {/* ── Google Calendar Sync Widget (Rodapé da Agenda) ── */}
+          {onConnectCalendar && (
+            <div className="mt-12 space-y-6 pt-12 border-t border-theme-border">
+              <div className="flex items-center gap-4 mb-6">
+                <div className="h-px w-8 bg-brand-tactical" />
+                <p className="text-[10px] font-black text-theme-muted uppercase tracking-[0.5em]">Sincronização Externa</p>
+              </div>
+
+              {!calendarStatus?.connected ? (
+                <div className="bg-theme-bg border border-theme-border rounded-2xl p-6 text-center space-y-4 shadow-sm hover:shadow-md transition-all">
+                  <div className="w-12 h-12 bg-theme-card border border-theme-border rounded-xl flex items-center justify-center text-theme-muted mx-auto">
+                    <Calendar size={24} />
+                  </div>
+                  <div className="space-y-1">
+                    <h3 className="text-lg font-black text-theme-text uppercase">Conecte sua Agenda</h3>
+                    <p className="text-[10px] text-theme-muted uppercase tracking-widest max-w-sm mx-auto">
+                      Sincronize seu Google Calendar para que o sistema bloqueie automaticamente sua vitrine.
+                    </p>
+                  </div>
+                  <button 
+                    onClick={onConnectCalendar}
+                    className="px-6 py-3 mt-4 bg-brand-tactical text-zinc-950 text-[10px] font-black uppercase tracking-[0.2em] rounded-xl hover:bg-brand-tactical/90 hover:scale-[1.02] transition-all cursor-pointer"
+                  >
+                    CONECTAR GOOGLE CALENDAR
+                  </button>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  <div className="bg-theme-bg border border-brand-tactical/30 rounded-2xl p-4 flex flex-col md:flex-row items-center justify-between group shadow-sm gap-4">
+                    <div className="flex items-center gap-4">
+                      <div className="w-12 h-12 bg-brand-tactical/10 border border-brand-tactical/20 rounded-xl flex items-center justify-center text-brand-tactical shrink-0">
+                        <CheckCircle size={20} />
+                      </div>
+                      <div>
+                        <p className="text-[11px] font-black text-brand-tactical uppercase tracking-widest">Status: Conectado</p>
+                        <p className="text-[9px] text-theme-muted font-bold uppercase tracking-widest mt-1">
+                          ID da Agenda: <span className="opacity-70">{calendarStatus.credential?.calendarId || 'N/A'}</span>
+                        </p>
+                      </div>
+                    </div>
+                    
+                    <div className="flex items-center gap-2 w-full md:w-auto">
+                      <button 
+                        onClick={onManualSync}
+                        disabled={isSyncing}
+                        className="flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-2 bg-theme-bg-muted border border-theme-border rounded-xl text-[9px] font-black text-theme-text uppercase tracking-widest hover:bg-theme-border/50 transition-all disabled:opacity-50 cursor-pointer"
+                      >
+                        <RefreshCw size={12} className={isSyncing ? "animate-spin" : ""} />
+                        {isSyncing ? "Sinc..." : "Sincronizar"}
+                      </button>
+                      <button 
+                        onClick={onDisconnectCalendar}
+                        className="p-2 text-theme-muted hover:text-red-500 hover:bg-red-500/10 border border-theme-border hover:border-red-500/20 rounded-xl transition-all cursor-pointer shrink-0"
+                        title="Desconectar"
+                      >
+                        <LogOut size={14} />
+                      </button>
+                    </div>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-[8px] text-theme-muted font-black uppercase tracking-widest">
+                      Última sinc.: {calendarStatus.credential?.updatedAt ? new Date(calendarStatus.credential.updatedAt).toLocaleString('pt-BR') : "Nenhuma"}
+                    </p>
+                  </div>
+                </div>
+              )}
+            </div>
           )}
         </div>
       ) : (

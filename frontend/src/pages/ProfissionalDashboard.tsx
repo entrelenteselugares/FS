@@ -45,7 +45,7 @@ interface SupplyOrder {
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
-export type ActiveTab = "agenda" | "convites" | "financeiro" | "servicos" | "network" | "franquia" | "calendar" | "perfil" | "equipe" | "portfolio";
+export type ActiveTab = "agenda" | "convites" | "financeiro" | "servicos" | "network" | "franquia" | "perfil" | "equipe" | "portfolio";
 type ViewTab = "lista" | "calendario";
 
 // ─── Main Component ────────────────────────────────────────────────────────────
@@ -374,7 +374,6 @@ export default function ProfissionalDashboard({
  { label: "Financeiro", onClick: () => setActiveTab("financeiro"), isActive: activeTab === "financeiro", icon: <DollarSign size={16} /> },
  { label: "Serviços", onClick: () => setActiveTab("servicos"), isActive: activeTab === "servicos", icon: <Briefcase size={16} /> },
  { label: "Minha Rede", onClick: () => setActiveTab("network"), isActive: activeTab === "network", icon: <Users size={16} /> },
- { label: "Agenda Google", onClick: () => setActiveTab("calendar"), isActive: activeTab === "calendar", icon: <Calendar size={16} /> },
  { 
  label: "Franquia Print", 
  onClick: () => setActiveTab("franquia"), 
@@ -533,58 +532,6 @@ export default function ProfissionalDashboard({
  <TeamTab />
  )}
 
- {activeTab === "calendar" && (
- <div className="space-y-8 animate-in fade-in duration-500">
- <div className="max-w-3xl space-y-6">
- {!calendarStatus?.connected ? (
- <div className="bg-theme-bg border border-theme-border rounded-2xl p-10 text-center space-y-6 shadow-2xl">
- <div className="w-20 h-20 bg-theme-card border border-theme-border rounded-xl flex items-center justify-center text-theme-muted mx-auto">
- <Calendar size={32} />
- </div>
- <div className="space-y-2">
- <h3 className="text-xl font-black text-theme-text uppercase ">Conecte sua Agenda</h3>
- <p className="text-[10px] text-theme-muted uppercase font-bold tracking-widest max-w-sm mx-auto leading-relaxed">
- Sincronize seu Google Calendar para que o sistema bloqueie automaticamente sua vitrine quando você tiver compromissos pessoais.
- </p>
- </div>
- <button 
- onClick={handleConnectCalendar}
- className="px-10 py-4 bg-brand-tactical text-zinc-950 text-[11px] font-black uppercase tracking-[0.2em] rounded-xl hover:bg-brand-tactical/90 hover:scale-[1.02] hover:shadow-2xl hover:shadow-brand-tactical/30 transition-all shadow-xl shadow-brand-tactical/10 cursor-pointer"
- >
- CONECTAR GOOGLE CALENDAR
- </button>
- </div>
- ) : (
- <div className="space-y-6">
- <div className="bg-theme-bg border border-brand-tactical/30 rounded-2xl p-8 flex items-center justify-between group shadow-xl">
- <div className="flex items-center gap-6">
- <div className="w-16 h-16 bg-brand-tactical/10 border border-brand-tactical/20 rounded-xl flex items-center justify-center text-brand-tactical">
- <CheckCircle size={24} />
- </div>
- <div>
- <p className="text-xs font-black text-brand-tactical uppercase tracking-widest ">Status: Conectado</p>
- <p className="text-[10px] text-theme-muted font-bold uppercase tracking-widest mt-1">
- ID da Agenda: {calendarStatus.credential?.calendarId}
- </p>
- </div>
- </div>
- <button 
- onClick={handleDisconnectCalendar}
- className="p-3 text-theme-muted hover:text-red-500 hover:bg-red-500/10 rounded-xl transition-all hover:scale-[1.02] cursor-pointer"
- title="Desconectar"
- >
- <LogOut size={18} />
- </button>
- </div>
-
- <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
- <div className="bg-theme-bg border border-theme-border rounded-2xl p-8 space-y-4 shadow-lg">
- <label className="text-[9px] font-black text-theme-muted uppercase tracking-widest block">Última Sincronização</label>
- <p className="text-sm font-black text-theme-text uppercase tracking-tight">
- {calendarStatus.credential?.updatedAt 
- ? new Date(calendarStatus.credential.updatedAt).toLocaleString('pt-BR') 
- : "Nenhuma sincronização"}
- </p>
  <button 
  onClick={handleManualSync}
  disabled={isSyncing}
@@ -865,6 +812,11 @@ export default function ProfissionalDashboard({
  if (ev) setSelected(ev);
  }}
  opportunities={opportunities}
+ calendarStatus={calendarStatus}
+ isSyncing={isSyncing}
+ onConnectCalendar={handleConnectCalendar}
+ onDisconnectCalendar={handleDisconnectCalendar}
+ onManualSync={handleManualSync}
  />
  )}
  </div>
