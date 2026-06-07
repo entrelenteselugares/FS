@@ -265,7 +265,7 @@ export function ServicesTab({ profile, catalogServices, onAddService, onRemoveSe
               <h4 className="text-[11px] font-black text-theme-muted uppercase tracking-[0.3em] italic border-b border-theme-border/50 pb-2">
                 {categoryName}
               </h4>
-              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-5">
+              <div className="grid grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-4">
                 {services.map((cat) => {
                   const alreadyAdded = profile?.proServices?.some((s) => s.catalogId === cat.id);
                   const suggested = Math.max(
@@ -277,40 +277,40 @@ export function ServicesTab({ profile, catalogServices, onAddService, onRemoveSe
                   return (
                     <div
                       key={cat.id}
-                      className="flex flex-col justify-between rounded-xl p-4 sm:p-5 bg-theme-bg-muted border border-theme-border shadow-sm group hover:border-brand-tactical/50 hover:shadow-md transition-all gap-4 relative overflow-hidden"
+                      className="flex flex-col justify-between rounded-xl p-3 sm:p-5 bg-theme-bg-muted border border-theme-border shadow-sm group hover:border-brand-tactical/50 hover:shadow-md transition-all gap-3 relative overflow-hidden"
                     >
-                      <div className="space-y-2">
-                        <div className="text-sm font-black text-theme-text uppercase tracking-tight italic line-clamp-2">
+                      <div className="space-y-1.5">
+                        <div className="text-[10px] sm:text-sm font-black text-theme-text uppercase tracking-tight italic line-clamp-2 leading-tight">
                           {cat.name}
                         </div>
-                        <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+                        <div className="flex flex-col xl:flex-row xl:items-center gap-1 sm:gap-3">
                           <div className="flex items-center gap-1 text-[8px] font-bold text-theme-muted uppercase tracking-widest italic">
-                            <Clock size={10} className="text-brand-tactical" /> {cat.estimatedMinutes} MIN
+                            <Clock size={8} className="text-brand-tactical" /> {cat.estimatedMinutes} MIN
                           </div>
-                          <div className="w-1 h-1 rounded-full bg-theme-border" />
+                          <div className="hidden xl:block w-1 h-1 rounded-full bg-theme-border" />
                           <div className="text-[8px] font-bold text-theme-muted uppercase tracking-widest italic">
                             Mín: R$ {((minHourlyRate * cat.estimatedMinutes) / 60).toFixed(2)}
                           </div>
                         </div>
                       </div>
-                      <div className="flex items-end justify-between border-t border-theme-border/50 pt-3">
+                      <div className="flex flex-col xl:flex-row xl:items-end justify-between border-t border-theme-border/50 pt-2 gap-2 sm:gap-3 mt-auto">
                         <div className="space-y-0.5">
-                          <div className="flex items-center gap-1 text-[8px] font-black text-brand-tactical uppercase tracking-widest italic">
-                            <TrendingUp size={10} /> Sugerido
+                          <div className="flex items-center gap-1 text-[7px] sm:text-[8px] font-black text-brand-tactical uppercase tracking-widest italic line-clamp-1">
+                            <TrendingUp size={8} /> Sugerido
                           </div>
-                          <div className="text-xl font-heading font-black text-brand-tactical italic leading-none">
-                            <span className="text-[10px] mr-0.5 font-sans not-italic">R$</span>
+                          <div className="text-sm sm:text-xl font-heading font-black text-brand-tactical italic leading-none">
+                            <span className="text-[8px] sm:text-[10px] mr-0.5 font-sans not-italic">R$</span>
                             {suggested.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
                           </div>
                         </div>
                         {alreadyAdded ? (
-                          <div className="px-3 py-1.5 bg-brand-tactical/10 border border-brand-tactical/30 rounded-lg text-brand-tactical text-[8px] font-black uppercase tracking-widest italic flex items-center gap-1">
-                            <Check size={12} /> EM VITRINE
+                          <div className="w-full xl:w-auto px-2 py-1.5 bg-brand-tactical/10 border border-brand-tactical/30 rounded-md text-brand-tactical text-[7px] font-black uppercase tracking-widest italic flex items-center justify-center gap-1">
+                            <Check size={10} /> EM VITRINE
                           </div>
                         ) : (
                           <button
                             onClick={() => onAddService(cat)}
-                            className="px-4 py-2 bg-brand-tactical text-brand-text text-[9px] font-black uppercase tracking-[0.2em] rounded-lg hover:bg-brand-tactical/90 hover:scale-[1.02] hover:shadow-lg hover:shadow-brand-tactical/30 transition-all italic cursor-pointer"
+                            className="w-full xl:w-auto px-2 sm:px-4 py-1.5 bg-brand-tactical text-brand-text text-[8px] sm:text-[9px] font-black uppercase tracking-[0.2em] rounded-md hover:bg-brand-tactical/90 hover:scale-[1.02] hover:shadow-lg hover:shadow-brand-tactical/30 transition-all italic cursor-pointer text-center"
                           >
                             IMPORTAR
                           </button>
