@@ -108,7 +108,7 @@ interface BackendLiveMatch {
   status: DisplayMatch["status"];
 }
 
-export const WorldCupLiveBanner = () => {
+export const WorldCupLiveBanner = ({ alwaysShow = false }: { alwaysShow?: boolean }) => {
   const [now] = useState(() => Date.now());
   const [matches, setMatches] = useState<DisplayMatch[]>(() => getDisplayMatches());
   const [active, setActive] = useState(0);
@@ -160,10 +160,12 @@ export const WorldCupLiveBanner = () => {
     return () => clearInterval(t);
   }, [matches.length]);
 
-  const isCopaTime = now >= new Date("2026-06-11T00:00:00-03:00").getTime();
+  const isCopaTime = alwaysShow || now >= new Date("2026-06-11T00:00:00-03:00").getTime();
   if (!isCopaTime) return null;
 
-  const match = matches[active] ?? matches[0];
+  // Safely clamp active index to prevent out of bounds when matches array length changes
+  const safeActive = Math.min(active, Math.max(0, matches.length - 1));
+  const match = matches[safeActive];
   if (!match) return null;
 
   const isLive = match.status === "LIVE" || match.status === "HALF_TIME";

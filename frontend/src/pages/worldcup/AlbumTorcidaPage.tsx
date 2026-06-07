@@ -384,7 +384,7 @@ export const AlbumTorcidaPage = () => {
     <div style={{ background: "#050e08", minHeight: "100vh", color: "white", fontFamily: "sans-serif", paddingBottom: 60 }}>
       {/* {showRoulette && <RouletteModal onClose={() => setShowRoulette(false)} onSpinComplete={() => {}} />} */}
       {/* ── BANNER AO VIVO ─────────────────────────────────────────────────── */}
-      <WorldCupLiveBanner />
+      <WorldCupLiveBanner alwaysShow />
 
       {/* ── HERO / HEADER ──────────────────────────────────────────────────── */}
       <div
