@@ -118,7 +118,10 @@ export const WorldCupLiveBanner = ({ alwaysShow = false }: { alwaysShow?: boolea
   const fetchLive = async () => {
     try {
       const { data } = await api.get("/worldcup/live");
-      if (!data?.live?.length) return;
+      if (!data?.live?.length) {
+        setMatches(getDisplayMatches());
+        return;
+      }
       const enriched = (data.live as BackendLiveMatch[]).map((m) => ({
         id: m.id,
         home: m.homeTeam.name, homeFlagUrl: m.homeTeam.flagUrl, homeScore: m.homeTeam.score,
@@ -146,7 +149,6 @@ export const WorldCupLiveBanner = ({ alwaysShow = false }: { alwaysShow?: boolea
   // Refresh local schedule every minute (for precise live detection)
   useEffect(() => {
     const interval = setInterval(() => {
-      setMatches(getDisplayMatches());
       fetchLive();
     }, 60_000);
     fetchLive();
