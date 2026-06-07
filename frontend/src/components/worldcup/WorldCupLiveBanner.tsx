@@ -191,7 +191,7 @@ export const WorldCupLiveBanner = ({ alwaysShow = false }: { alwaysShow?: boolea
         {/* LEFT — Brand */}
         <div className="flex items-center gap-2 shrink-0">
           <Trophy size={13} style={{ color: "#fbbf24" }} />
-          <span style={{ fontSize: 9, fontWeight: 900, color: "#fbbf24", letterSpacing: "0.15em", fontStyle: "italic", textTransform: "uppercase" }}>
+          <span className="hidden sm:inline" style={{ fontSize: 9, fontWeight: 900, color: "#fbbf24", letterSpacing: "0.15em", fontStyle: "italic", textTransform: "uppercase" }}>
             Copa 2026
           </span>
           {isLive && (
@@ -203,7 +203,7 @@ export const WorldCupLiveBanner = ({ alwaysShow = false }: { alwaysShow?: boolea
             </span>
           )}
           {!isLive && match.status === "SCHEDULED" && (
-            <span style={{ fontSize: 7.5, fontWeight: 900, color: "#93c5fd", letterSpacing: "0.08em" }}>
+            <span className="hidden sm:inline" style={{ fontSize: 7.5, fontWeight: 900, color: "#93c5fd", letterSpacing: "0.08em" }}>
               PRÓXIMOS
             </span>
           )}
@@ -212,9 +212,9 @@ export const WorldCupLiveBanner = ({ alwaysShow = false }: { alwaysShow?: boolea
         {/* CENTER — Matchup */}
         <div className="flex items-center gap-3 flex-1 justify-center min-w-0">
           {/* Home */}
-          <div className="flex items-center gap-1.5">
-            <img src={match.homeFlagUrl} alt={match.home} style={{ width: 16, height: 12, objectFit: "cover", borderRadius: 1 }} />
-            <span style={{ fontSize: 11, fontWeight: 900, color: "white", fontStyle: "italic", textTransform: "uppercase", letterSpacing: "0.04em" }}>
+          <div className="flex items-center gap-1.5 shrink-1 overflow-hidden">
+            <img src={match.homeFlagUrl} alt={match.home} className="shrink-0" style={{ width: 16, height: 12, objectFit: "cover", borderRadius: 1 }} />
+            <span className="truncate" style={{ fontSize: 11, fontWeight: 900, color: "white", fontStyle: "italic", textTransform: "uppercase", letterSpacing: "0.04em" }}>
               {match.home.length > 8 ? match.home.substring(0, 3).toUpperCase() : match.home}
             </span>
             {match.status !== "SCHEDULED" && (
@@ -240,14 +240,15 @@ export const WorldCupLiveBanner = ({ alwaysShow = false }: { alwaysShow?: boolea
           </div>
 
           {/* Away */}
-          <div className="flex items-center gap-1.5">
+          <div className="flex items-center gap-1.5 shrink-1 overflow-hidden">
             {match.status !== "SCHEDULED" && (
               <span style={{ fontSize: 13, fontWeight: 900, color: "#fbbf24" }}>{match.awayScore}</span>
             )}
-            <span style={{ fontSize: 11, fontWeight: 900, color: "white", fontStyle: "italic", textTransform: "uppercase", letterSpacing: "0.04em" }}>
+            <span className="truncate" style={{ fontSize: 11, fontWeight: 900, color: "white", fontStyle: "italic", textTransform: "uppercase", letterSpacing: "0.04em" }}>
               {match.away.length > 8 ? match.away.substring(0, 3).toUpperCase() : match.away}
             </span>
-            <img src={match.awayFlagUrl} alt={match.away} style={{ width: 16, height: 12, objectFit: "cover", borderRadius: 1 }} />
+            <img src={match.awayFlagUrl} alt={match.away} className="shrink-0" style={{ width: 16, height: 12, objectFit: "cover", borderRadius: 1 }} />
+          </div>
           </div>
         </div>
 

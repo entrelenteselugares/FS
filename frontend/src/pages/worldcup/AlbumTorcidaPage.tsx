@@ -169,12 +169,12 @@ function MatchCard({ f, highlight = false, now }: { f: typeof FIXTURES[0]; highl
 // ─── Page ─────────────────────────────────────────────────────────────────────
 // ─── Countdown Box Component ──────────────────────────────────────────────────
 const CountdownBox = ({ val, label }: { val: number; label: string }) => (
-  <div style={{ textAlign: "center", minWidth: 56 }}>
+  <div style={{ textAlign: "center", flex: "1 1 0", minWidth: 40, maxWidth: 56 }}>
     <div
       style={{
-        fontSize: 28, fontWeight: 900, color: "white", fontFamily: T.fontD, fontStyle: "italic",
+        fontSize: "clamp(20px, 6vw, 28px)", fontWeight: 900, color: "white", fontFamily: T.fontD, fontStyle: "italic",
         lineHeight: 1, background: "rgba(0,0,0,0.4)", border: "1px solid rgba(16,185,129,0.3)",
-        padding: "8px 12px", marginBottom: 4,
+        padding: "6px 4px", marginBottom: 4,
       }}
     >
       {String(val).padStart(2, "0")}
@@ -448,22 +448,23 @@ export const AlbumTorcidaPage = () => {
           {/* Countdown — Brasil x Marrocos */}
           {countdown && (
             <div
+              className="w-full sm:w-auto"
               style={{
                 background: "rgba(0,0,0,0.5)", border: "1px solid rgba(16,185,129,0.3)",
-                padding: "20px 24px", marginBottom: 32, display: "inline-block",
+                padding: "16px 16px", marginBottom: 32, display: "inline-block",
               }}
             >
-              <div style={{ fontSize: 9, color: "#10b981", fontWeight: 900, letterSpacing: "0.15em", textTransform: "uppercase", marginBottom: 12, display: "flex", alignItems: "center", gap: 6 }}>
-                <Zap size={10} />
-                🇧🇷 Brasil × Marrocos 🇲🇦 · 13/06 às 19h00 (Brasília)
+              <div style={{ fontSize: 9, color: "#10b981", fontWeight: 900, letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: 12, display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap" }}>
+                <Zap size={10} className="shrink-0" />
+                <span className="truncate">🇧🇷 Brasil × Marrocos 🇲🇦 · 13/06 (Brasília)</span>
               </div>
-              <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+              <div style={{ display: "flex", gap: "clamp(4px, 2vw, 8px)", alignItems: "center", justifyContent: "space-between" }}>
                 <CountdownBox val={countdown.d} label="dias" />
-                <span style={{ color: "#10b981", fontSize: 20, fontWeight: 900, marginBottom: 18 }}>:</span>
+                <span style={{ color: "#10b981", fontSize: "clamp(16px, 5vw, 20px)", fontWeight: 900, marginBottom: 18 }}>:</span>
                 <CountdownBox val={countdown.h} label="horas" />
-                <span style={{ color: "#10b981", fontSize: 20, fontWeight: 900, marginBottom: 18 }}>:</span>
+                <span style={{ color: "#10b981", fontSize: "clamp(16px, 5vw, 20px)", fontWeight: 900, marginBottom: 18 }}>:</span>
                 <CountdownBox val={countdown.m} label="min" />
-                <span style={{ color: "#10b981", fontSize: 20, fontWeight: 900, marginBottom: 18 }}>:</span>
+                <span style={{ color: "#10b981", fontSize: "clamp(16px, 5vw, 20px)", fontWeight: 900, marginBottom: 18 }}>:</span>
                 <CountdownBox val={countdown.s} label="seg" />
               </div>
             </div>
