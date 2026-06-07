@@ -178,6 +178,10 @@ export class AuthController {
 
       if (!sbUser) throw new Error("Supabase não retornou dados do usuário.");
 
+      // Fetch minimum hourly rate to assign to new professionals
+      const minHourlyConfig = await prisma.platformConfig.findUnique({ where: { key: "min_hourly_rate" } });
+      const defaultHourlyRate = minHourlyConfig?.value ? Number(minHourlyConfig.value) : 83.58;
+
       // 2. Criar no Prisma (Dados de Negócio) usando o mesmo ID do Supabase
       const result = await prisma.$transaction(async (tx) => {
         const existingPrismaUser = await tx.user.findUnique({ where: { email: cleanEmail } });
@@ -220,7 +224,7 @@ export class AuthController {
               equipment: equipamento || "",
               otherHabilities: outrasHabilidades || "",
               workflowType: workflowType || ["TRADICIONAL"],
-              hourlyRate: 150.00
+              hourlyRate: defaultHourlyRate
             },
             update: {}
           });

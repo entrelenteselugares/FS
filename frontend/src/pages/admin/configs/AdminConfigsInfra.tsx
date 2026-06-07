@@ -13,7 +13,7 @@ interface Props {
 export const AdminConfigsInfra: React.FC<Props> = ({ configs, saving, onChange, onSave }) => {
   const getConfig = (key: string) => configs.find(c => c.key === key);
   const hourlyRateConfig = getConfig("min_hourly_rate");
-  const hourlyRate = Number(hourlyRateConfig?.value) || 14;
+  const hourlyRate = Number(hourlyRateConfig?.value) || 83.58;
 
   return (
     <div className="space-y-12 animate-in fade-in duration-500">
@@ -106,9 +106,9 @@ export const AdminConfigsInfra: React.FC<Props> = ({ configs, saving, onChange, 
         {hourlyRateConfig && (
           <div className="space-y-6">
             <div className="space-y-3">
-              <label className="text-[9px] font-black text-theme-muted uppercase tracking-[0.4em] block">Valor Hora Mínimo (€/hora)</label>
+              <label className="text-[9px] font-black text-theme-muted uppercase tracking-[0.4em] block">Valor Hora Mínimo (R$/hora)</label>
               <div className="flex items-center gap-4">
-                <span className="text-2xl font-heading font-black text-brand-tactical italic">€</span>
+                <span className="text-2xl font-heading font-black text-brand-tactical italic">R$</span>
                 <input
                   type="number" min="1" step="0.5"
                   value={hourlyRateConfig.value}
@@ -118,14 +118,14 @@ export const AdminConfigsInfra: React.FC<Props> = ({ configs, saving, onChange, 
                 <span className="text-[9px] font-black text-theme-muted uppercase tracking-widest">/hora</span>
               </div>
               <p className="text-[9px] text-theme-muted uppercase italic font-bold">
-                Salário mínimo da Irlanda: <span className="text-brand-tactical">€14/hora</span> — atualizar conforme legislação local.
+                Valor Base Sugerido: <span className="text-brand-tactical">R$83,58/hora</span> — atualizar conforme sua estratégia comercial.
               </p>
             </div>
             <div className="grid grid-cols-3 gap-3">
               {[60, 120, 180, 240, 360, 480].map(minutes => (
                 <div key={minutes} className="p-4 bg-theme-bg-muted border border-theme-border rounded-xl text-center">
                   <p className="text-[8px] font-black text-theme-muted uppercase tracking-widest mb-1">{minutes}min</p>
-                  <p className="text-base font-heading font-black text-brand-tactical italic">€{(hourlyRate * minutes / 60).toFixed(2)}</p>
+                  <p className="text-base font-heading font-black text-brand-tactical italic">R${(hourlyRate * minutes / 60).toFixed(2)}</p>
                 </div>
               ))}
             </div>
