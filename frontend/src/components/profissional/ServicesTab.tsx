@@ -83,34 +83,34 @@ export function ServicesTab({ profile, catalogServices, onAddService, onRemoveSe
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-          <div className="space-y-4">
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-theme-bg border border-theme-border rounded-xl text-brand-tactical shadow-sm"><Clock size={16} /></div>
-              <label className="text-[11px] font-black text-theme-text uppercase tracking-widest italic">Valor Hora Automático (R$)</label>
+        <div className="grid grid-cols-2 gap-3 sm:gap-5">
+          <div className="space-y-2 sm:space-y-4 flex flex-col">
+            <div className="flex items-center gap-2 sm:gap-3">
+              <div className="p-1.5 sm:p-2 bg-theme-bg border border-theme-border rounded-xl text-brand-tactical shadow-sm"><Clock size={14} className="sm:w-4 sm:h-4" /></div>
+              <label className="text-[8px] sm:text-[11px] font-black text-theme-text uppercase tracking-widest italic leading-tight">Valor Hora Automático</label>
             </div>
-            <div className="w-full bg-theme-bg border-2 border-theme-border rounded-xl p-4 sm:p-5 text-lg sm:text-xl font-heading font-black text-theme-text/80 italic flex justify-between items-center shadow-md">
-              <span>{Number(profile?.hourlyRate || 0).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</span>
-              <ShieldCheck size={16} className="text-brand-tactical animate-pulse" />
+            <div className="w-full bg-theme-bg border-2 border-theme-border rounded-xl p-3 sm:p-5 text-base sm:text-xl font-heading font-black text-theme-text/80 italic flex justify-between items-center shadow-md flex-1">
+              <span>R$ {Number(profile?.hourlyRate || 0).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</span>
+              <ShieldCheck size={14} className="text-brand-tactical animate-pulse hidden sm:block" />
             </div>
-            <p className="text-[9px] text-theme-muted uppercase italic font-bold">
-              O seu valor hora é definido automaticamente pela sua meritocracia técnica.
+            <p className="text-[7px] sm:text-[9px] text-theme-muted uppercase italic font-bold">
+              Definido pela meritocracia.
             </p>
           </div>
 
-          <div className="space-y-4">
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-theme-bg border border-theme-border rounded-xl text-brand-tactical shadow-sm"><Zap size={16} /></div>
-              <label className="text-[11px] font-black text-theme-text uppercase tracking-widest italic">Multiplicador Técnico</label>
+          <div className="space-y-2 sm:space-y-4 flex flex-col">
+            <div className="flex items-center gap-2 sm:gap-3">
+              <div className="p-1.5 sm:p-2 bg-theme-bg border border-theme-border rounded-xl text-brand-tactical shadow-sm"><Zap size={14} className="sm:w-4 sm:h-4" /></div>
+              <label className="text-[8px] sm:text-[11px] font-black text-theme-text uppercase tracking-widest italic leading-tight">Multiplicador Técnico</label>
             </div>
-            <div className="w-full bg-theme-bg border-2 border-theme-border rounded-xl p-4 sm:p-5 text-lg sm:text-xl font-heading font-black text-brand-tactical italic flex justify-between items-center shadow-md">
+            <div className="w-full bg-theme-bg border-2 border-theme-border rounded-xl p-3 sm:p-5 text-base sm:text-xl font-heading font-black text-brand-tactical italic flex justify-between items-center shadow-md flex-1">
               <span>{profile?.equipmentMultiplier || "1.0"}</span>
-              <span className="text-[8px] font-black uppercase text-theme-muted tracking-tighter">Nível de Ativos</span>
+              <span className="text-[6px] sm:text-[8px] font-black uppercase text-theme-muted tracking-tighter">Ativos</span>
             </div>
-            <p className="text-[9px] text-theme-muted uppercase italic font-bold">
-              Gerencie seus ativos para aumentar seu potencial de ganho.{" "}
+            <p className="text-[7px] sm:text-[9px] text-theme-muted uppercase italic font-bold">
+              Gerencie seus ativos.{" "}
               <button onClick={onOpenProfile} className="text-brand-tactical hover:underline cursor-pointer">
-                GERENCIAR INVENTÁRIO
+                INVENTÁRIO
               </button>
             </p>
           </div>
