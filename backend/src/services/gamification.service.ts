@@ -256,13 +256,13 @@ export class GamificationService {
 
     const badges = [];
 
-    // Badge 1: Pioneiro
+    // Badge 1: Pioneiro -> Foco de Bronze
     const hasPioneiro = !!profile.isExperienceValidated;
     badges.push({
       id: "pioneiro",
-      name: "Pioneiro",
-      description: "Fotógrafo verificado na Foto Segundo",
-      icon: "ShieldCheck",
+      name: "Foco de Bronze",
+      description: "Foco ajustado: Fotógrafo verificado na plataforma",
+      icon: "Aperture",
       tier: "BRONZE",
       status: hasPioneiro ? "UNLOCKED" : "LOCKED",
       progress: {
@@ -272,12 +272,12 @@ export class GamificationService {
       }
     });
 
-    // Badge 2: Tech Master
+    // Badge 2: Tech Master -> Lente de Prata
     const hasTechMaster = equipmentValue >= 10000;
     badges.push({
       id: "tech_master",
-      name: "Tech Master",
-      description: "Inventário de equipamentos superior a R$ 10.000",
+      name: "Lente de Prata",
+      description: "Setup Profissional: Inventário de equipamentos superior a R$ 10.000",
       icon: "Camera",
       tier: "SILVER",
       status: hasTechMaster ? "UNLOCKED" : "LOCKED",
@@ -309,9 +309,9 @@ export class GamificationService {
 
     badges.push({
       id: "mestre_do_tempo",
-      name: "Mestre do Tempo",
-      description: "Média de entrega em menos de 24h com no mínimo 5 missões concluídas",
-      icon: "Clock",
+      name: "Obturador de Ouro",
+      description: "Alta velocidade: Média de entrega em menos de 24h (min. 5 missões)",
+      icon: "Timer",
       tier: "GOLD",
       status: isMestreDoTempo ? "UNLOCKED" : "LOCKED",
       progress: {
@@ -321,13 +321,13 @@ export class GamificationService {
       }
     });
 
-    // Badge 4: Veterano da Lente
+    // Badge 4: Veterano da Lente -> Claquete de Ouro
     const hasVeterano = profile.totalMissions >= 10;
     badges.push({
       id: "veterano",
-      name: "Veterano da Lente",
-      description: "Concluiu mais de 10 missões na plataforma",
-      icon: "Award",
+      name: "Claquete de Ouro",
+      description: "Mestre de Cena: Concluiu mais de 10 missões na plataforma",
+      icon: "Clapperboard",
       tier: "GOLD",
       status: hasVeterano ? "UNLOCKED" : "LOCKED",
       progress: {
@@ -337,13 +337,13 @@ export class GamificationService {
       }
     });
 
-    // Badge 5: Parceiro de Elite
+    // Badge 5: Parceiro de Elite -> Gimbal de Diamante
     const hasElite = profile.agilityPoints >= 300;
     badges.push({
       id: "parceiro_elite",
-      name: "Parceiro de Elite",
-      description: "Alcançou mais de 300 pontos de agilidade",
-      icon: "Gem",
+      name: "Gimbal de Diamante",
+      description: "Estabilização perfeita: Alcançou mais de 300 pontos de agilidade",
+      icon: "Video",
       tier: "DIAMOND",
       status: hasElite ? "UNLOCKED" : "LOCKED",
       progress: {
@@ -361,9 +361,9 @@ export class GamificationService {
     }
     badges.push({
       id: "estrela_vitrine",
-      name: "Estrela da Vitrine",
-      description: "Perfil 100% completo e assinatura Foto Segundo PRO ativa",
-      icon: "Crown",
+      name: "Câmera de Cinema",
+      description: "Padrão Hollywood: Perfil 100% completo e assinatura PRO ativa",
+      icon: "Projector",
       tier: "DIAMOND",
       status: isEstrela ? "UNLOCKED" : "LOCKED",
       progress: {

@@ -94,7 +94,7 @@ export const AdminApprovalHub: React.FC = () => {
       await API.patch(`/admin/experience-validations/${profId}/review`, { approve });
       setExpValidations(prev => prev.filter(v => v.id !== profId));
       toast.success(approve
-        ? "Experiência validada! Badge de Pioneiro desbloqueado 🏆"
+        ? "Experiência validada! Medalha Foco de Bronze desbloqueada 🏆"
         : "Experiência reprovada. Profissional será notificado."
       );
     } catch (err) {

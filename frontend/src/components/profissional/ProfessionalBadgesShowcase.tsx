@@ -8,7 +8,12 @@ import {
   Gem, 
   Crown, 
   Lock,
-  ChevronRight
+  ChevronRight,
+  Aperture,
+  Timer,
+  Clapperboard,
+  Video,
+  Projector
 } from "lucide-react";
 
 export interface BadgeProgress {
@@ -37,7 +42,12 @@ const iconMap: Record<string, React.ComponentType<{ className?: string; size?: n
   Clock,
   Award,
   Gem,
-  Crown
+  Crown,
+  Aperture,
+  Timer,
+  Clapperboard,
+  Video,
+  Projector
 };
 
 const tierStyles = {
@@ -148,11 +158,10 @@ export const ProfessionalBadgesShowcase: React.FC<ProfessionalBadgesShowcaseProp
               )}
 
               <div className="flex items-start gap-4">
-                {/* Icon Container with glowing effect */}
                 <div 
-                  className={`relative p-3 rounded-lg border transition-all duration-500 shrink-0 ${
+                  className={`relative p-4 rounded-full border-2 transition-all duration-500 shrink-0 flex items-center justify-center ${
                     isUnlocked 
-                      ? `${styles.bg} ${styles.border} ${styles.text} shadow-[0_0_15px_rgba(255,255,255,0.05)]` 
+                      ? `${styles.bg} ${styles.border} ${styles.text} shadow-[0_0_20px_currentColor] inset-shadow-[0_0_10px_currentColor]` 
                       : "bg-slate-900/40 border-slate-800/40 text-slate-600 grayscale"
                   }`}
                 >
@@ -160,7 +169,7 @@ export const ProfessionalBadgesShowcase: React.FC<ProfessionalBadgesShowcaseProp
                   
                   {/* Subtle inner animated ring for unlocked diamond/gold tiers */}
                   {isUnlocked && (badge.tier === "DIAMOND" || badge.tier === "GOLD") && (
-                    <span className="absolute inset-0 rounded-lg border border-current opacity-20 animate-ping" />
+                    <span className="absolute inset-0 rounded-full border-2 border-current opacity-30 animate-ping" />
                   )}
                 </div>
 

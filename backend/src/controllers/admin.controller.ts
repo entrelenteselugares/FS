@@ -1022,7 +1022,7 @@ export async function adminReviewExperience(req: AuthRequest, res: Response): Pr
           data: {
             userId: prof.userId,
             title: "Experiência Validada ✅",
-            body: `Seus ${prof.experienceYears} anos de experiência foram autenticados pela Foto Segundo. Badge de Pioneiro desbloqueado!`,
+            body: `Seus ${prof.experienceYears} anos de experiência foram autenticados pela Foto Segundo. Medalha Foco de Bronze desbloqueada!`,
             type: "SYSTEM",
           },
         });
