@@ -249,7 +249,6 @@ export const WorldCupLiveBanner = ({ alwaysShow = false }: { alwaysShow?: boolea
             </span>
             <img src={match.awayFlagUrl} alt={match.away} className="shrink-0" style={{ width: 16, height: 12, objectFit: "cover", borderRadius: 1 }} />
           </div>
-          </div>
         </div>
 
         {/* RIGHT — Pagination dots + CTA */}
