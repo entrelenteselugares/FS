@@ -114,40 +114,40 @@ export const WorldCupLiveBanner = ({ alwaysShow = false }: { alwaysShow?: boolea
   const [active, setActive] = useState(0);
   const prevScoresRef = useRef<Record<string, { home: number; away: number }>>({});
 
-  // Try to enrich with live scores from backend (optional)
-  const fetchLive = async () => {
-    try {
-      const { data } = await api.get("/worldcup/live");
-      if (!data?.live?.length) {
-        setMatches(getDisplayMatches());
-        return;
-      }
-      const enriched = (data.live as BackendLiveMatch[]).map((m) => ({
-        id: m.id,
-        home: m.homeTeam.name, homeFlagUrl: m.homeTeam.flagUrl, homeScore: m.homeTeam.score,
-        away: m.awayTeam.name, awayFlagUrl: m.awayTeam.flagUrl, awayScore: m.awayTeam.score,
-        label: m.minute,
-        status: m.status,
-      }));
-
-      // Detect goal events
-      enriched.forEach((m) => {
-        const prev = prevScoresRef.current[m.id];
-        if (prev) {
-          if (m.homeScore > prev.home) toast(`⚽ GOOOL! ${m.home} marca! (${m.homeScore}x${m.awayScore})`, { duration: 8000 });
-          if (m.awayScore > prev.away) toast(`⚽ GOOOL! ${m.away} marca! (${m.homeScore}x${m.awayScore})`, { duration: 8000 });
-        }
-        prevScoresRef.current[m.id] = { home: m.homeScore, away: m.awayScore };
-      });
-
-      setMatches(enriched);
-    } catch {
-      // Silently keep showing local schedule data
-    }
-  };
-
   // Refresh local schedule every minute (for precise live detection)
   useEffect(() => {
+    // Try to enrich with live scores from backend (optional)
+    const fetchLive = async () => {
+      try {
+        const { data } = await api.get("/worldcup/live");
+        if (!data?.live?.length) {
+          setMatches(getDisplayMatches());
+          return;
+        }
+        const enriched = (data.live as BackendLiveMatch[]).map((m) => ({
+          id: m.id,
+          home: m.homeTeam.name, homeFlagUrl: m.homeTeam.flagUrl, homeScore: m.homeTeam.score,
+          away: m.awayTeam.name, awayFlagUrl: m.awayTeam.flagUrl, awayScore: m.awayTeam.score,
+          label: m.minute,
+          status: m.status,
+        }));
+
+        // Detect goal events
+        enriched.forEach((m) => {
+          const prev = prevScoresRef.current[m.id];
+          if (prev) {
+            if (m.homeScore > prev.home) toast(`⚽ GOOOL! ${m.home} marca! (${m.homeScore}x${m.awayScore})`, { duration: 8000 });
+            if (m.awayScore > prev.away) toast(`⚽ GOOOL! ${m.away} marca! (${m.homeScore}x${m.awayScore})`, { duration: 8000 });
+          }
+          prevScoresRef.current[m.id] = { home: m.homeScore, away: m.awayScore };
+        });
+
+        setMatches(enriched);
+      } catch {
+        // Silently keep showing local schedule data
+      }
+    };
+
     const interval = setInterval(() => {
       fetchLive();
     }, 60_000);
