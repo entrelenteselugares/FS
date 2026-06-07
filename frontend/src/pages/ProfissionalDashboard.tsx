@@ -532,33 +532,6 @@ export default function ProfissionalDashboard({
  <TeamTab />
  )}
 
- <button 
- onClick={handleManualSync}
- disabled={isSyncing}
- className="flex items-center gap-2 text-[10px] font-black text-brand-tactical uppercase tracking-widest hover:opacity-70 transition-all disabled:opacity-50 cursor-pointer"
- >
- <RefreshCw size={12} className={isSyncing ? "animate-spin" : ""} />
- {isSyncing ? "Sincronizando..." : "Sincronizar Agora"}
- </button>
- </div>
- <div className="bg-theme-bg border border-theme-border rounded-2xl p-8 space-y-4 shadow-lg">
- <label className="text-[9px] font-black text-theme-muted uppercase tracking-widest block">Configurações</label>
- <p className="text-[10px] text-theme-muted font-bold uppercase leading-relaxed">
- O sistema lê apenas os horários ocupados para bloquear sua vitrine. Nenhum detalhe privado é exposto.
- </p>
- </div>
- </div>
-
- <div className="p-6 border border-theme-border bg-theme-bg-muted rounded-2xl">
- <p className="text-[9px] text-theme-muted uppercase font-black tracking-widest text-center ">
- DICA: Todas as reservas confirmadas no sistema são enviadas automaticamente para o seu Google Calendar.
- </p>
- </div>
- </div>
- )}
- </div>
- </div>
- )}
  {activeTab === "perfil" && profile && (
  <ProfileTab 
  profile={profile}
