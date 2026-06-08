@@ -552,28 +552,31 @@ export default function ClienteArea() {
  ))}
  </div>
  ) : pedidos.length === 0 ? (
- <div className="relative overflow-hidden border border-white/5 bg-theme-bg/40 backdrop-blur-xl p-24 text-center space-y-8 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.12)]">
- <div className="absolute inset-0 bg-gradient-to-br from-brand-tactical/5 to-transparent opacity-50" />
- <div className="relative inline-block">
- <ImageIcon size={48} className="mx-auto text-theme-border/30 drop-shadow-xl" />
- <div className="absolute -top-2 -right-2 w-4 h-4 bg-brand-tactical rounded-full" style={{ animation: "radarPulse 2s ease-out infinite" }} />
- <div className="absolute -top-2 -right-2 w-4 h-4 bg-brand-tactical rounded-full" />
- </div>
- <div className="relative space-y-3">
- <p className="text-xl font-heading font-black text-theme-text uppercase tracking-tight">Histórico Vazio</p>
- <p className="text-[10px] font-medium text-theme-muted uppercase tracking-widest max-w-md mx-auto leading-relaxed px-4">
- Você ainda não realizou nenhuma compra.<br className="hidden sm:inline" /> Explore a vitrine ou solicite uma cobertura exclusiva.
- </p>
- </div>
- <div className="relative flex items-center justify-center gap-4 flex-wrap">
- <button onClick={() => navigate("/vitrine")} className="fs-btn bg-brand-tactical text-brand-text flex items-center gap-3">
- Explorar Vitrine <ArrowRight size={14} />
- </button>
- <button onClick={() => navigate("/cotacao")} className="fs-btn border border-theme-border text-theme-text hover:border-brand-tactical hover:text-brand-tactical transition-colors flex items-center gap-3">
- Solicitar Cobertura <ArrowRight size={14} />
- </button>
- </div>
- </div>
+                    <div className="relative overflow-hidden border border-white/5 bg-theme-bg/40 backdrop-blur-xl p-10 md:p-14 text-center space-y-6 rounded-2xl shadow-xl">
+                      {/* Background decoration */}
+                      <div className="absolute inset-0 bg-gradient-to-br from-brand-tactical/5 to-transparent opacity-50" />
+                      
+                      <div className="relative inline-flex items-center justify-center w-16 h-16 rounded-full bg-theme-bg border border-white/5 shadow-inner">
+                        <ImageIcon size={24} className="text-theme-border/40" />
+                        <div className="absolute top-0 right-0 w-2.5 h-2.5 bg-brand-tactical rounded-full animate-pulse shadow-[0_0_10px_rgba(133,185,172,0.8)]" />
+                      </div>
+                      
+                      <div className="relative space-y-2">
+                        <h3 className="text-lg md:text-xl font-heading font-black text-theme-text uppercase tracking-tight">Histórico Vazio</h3>
+                        <p className="text-[10px] md:text-[11px] font-bold text-theme-muted uppercase tracking-widest max-w-sm mx-auto leading-relaxed px-4">
+                          Você ainda não realizou nenhuma compra. Explore a vitrine ou solicite uma cobertura.
+                        </p>
+                      </div>
+                      
+                      <div className="relative flex items-center justify-center gap-4 flex-wrap pt-2">
+                        <button onClick={() => navigate("/vitrine")} className="px-6 py-3 bg-brand-tactical text-brand-text font-black text-[10px] uppercase tracking-widest flex items-center gap-3 hover:brightness-110 transition-all shadow-lg shadow-brand-tactical/20">
+                          Explorar Vitrine <ArrowRight size={14} />
+                        </button>
+                        <button onClick={() => navigate("/cotacao")} className="px-6 py-3 border border-theme-border text-theme-text font-black text-[10px] uppercase tracking-widest hover:bg-theme-bg-muted transition-all flex items-center gap-3">
+                          Solicitar Cobertura <ArrowRight size={14} />
+                        </button>
+                      </div>
+                    </div>
  ) : (
  <div className="space-y-10">
  {groupedEvents.length > 0 && (
@@ -629,12 +632,12 @@ export default function ClienteArea() {
  ))}
  </div>
  ) : (
- <div className="p-16 text-center space-y-4">
- <ShoppingBag size={32} className="mx-auto text-theme-border/20 drop-shadow-md" />
- <p className="text-[10px] text-theme-muted uppercase font-medium tracking-widest opacity-60">
- Sua carteira está aguardando as primeiras recompensas.
- </p>
- </div>
+                  <div className="p-10 md:p-14 text-center space-y-4">
+                    <ShoppingBag size={24} className="mx-auto text-theme-border/30 drop-shadow-md mb-2" />
+                    <p className="text-[10px] text-theme-muted uppercase font-bold tracking-widest">
+                      Sua carteira está aguardando as primeiras recompensas.
+                    </p>
+                  </div>
  )}
  </div>
  </div>
