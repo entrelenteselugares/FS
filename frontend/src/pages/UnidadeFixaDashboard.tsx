@@ -659,12 +659,7 @@ export default function UnidadeFixaDashboard({
                   ))}
                 </div>
               )}
-            </div>
-          </div>
-        )}
-
-        
-            {/* --- GOOGLE CALENDAR SYNC --- */}
+              {/* --- GOOGLE CALENDAR SYNC --- */}
             <div className="pt-10 border-t border-theme-border">
               <div className="lux-card p-10 border-l-4 border-l-brand-tactical bg-theme-bg border-2 border-theme-border relative overflow-hidden">
                  <div className="absolute top-0 right-0 p-10 opacity-[0.03] pointer-events-none">
@@ -737,6 +732,10 @@ export default function UnidadeFixaDashboard({
               </div>
             </div>
           
+        
+          </div>
+        )}
+
         {/* ── FINANÇAS ── */}
         {tab === "financas" && (
           <div className="space-y-10">
@@ -854,9 +853,6 @@ export default function UnidadeFixaDashboard({
         {/* ── EQUIPE ── */}
         {tab === "equipe" && (
           <TeamTab />
-        )}
-</div>
-          </div>
         )}
 
         {/* Ã¢â€â‚¬Ã¢â€â‚¬ MONITOR DE FILA Ã¢â€â‚¬Ã¢â€â‚¬ */}
