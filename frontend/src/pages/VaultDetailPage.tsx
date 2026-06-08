@@ -760,12 +760,13 @@ export default function VaultDetailPage() {
 
         {media.length === 0 && !uploading ? (
           <div className="py-32 flex flex-col items-center justify-center text-center px-6">
-            <div className="w-20 h-20 bg-emerald-500/5 rounded-full flex items-center justify-center mb-6 border border-emerald-500/10">
-              <Camera size={32} className="text-brand-tactical/20" />
-            </div>
+            <label className="w-20 h-20 bg-emerald-500/5 hover:bg-emerald-500/10 rounded-full flex items-center justify-center mb-6 border border-emerald-500/10 hover:border-emerald-500/30 transition-all cursor-pointer shadow-[0_0_15px_rgba(16,185,129,0.1)] hover:shadow-[0_0_25px_rgba(16,185,129,0.2)]">
+              <Camera size={32} className="text-brand-tactical/50" />
+              <input type="file" className="hidden" onChange={handleFileUpload} accept={vault.subscriptionStatus === "ACTIVE" ? "image/*,video/mp4,video/quicktime,video/webm" : "image/*"} multiple />
+            </label>
             <h2 className="text-xl font-black uppercase italic text-gray-500">O álbum está vazio</h2>
             <p className="text-[11px] text-gray-600 uppercase tracking-widest mt-2 max-w-[280px]">
-              Seja o primeiro a eternizar um momento neste álbum.
+              Seja o primeiro a eternizar um momento neste álbum. Clique na câmera acima para enviar.
             </p>
           </div>
         ) : (
