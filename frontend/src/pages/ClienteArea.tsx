@@ -29,7 +29,7 @@ type ActiveTab =
  | "convites"
  | "financeiro" 
  | "servicos" 
- | "calendar" 
+
  | "franquia"
  | "equipe" 
  | "configuracoes" 
@@ -183,8 +183,7 @@ export default function ClienteArea() {
  { label: "Meu Portfólio", onClick: () => handleTabChange("portfolio"), isActive: activeTab === "portfolio", icon: <ImageIcon size={18} /> },
  { label: "Serviços & Preços", onClick: () => handleTabChange("servicos"), isActive: activeTab === "servicos", icon: <Briefcase size={18} /> },
  { label: "Ficha Técnica & Pix", onClick: () => handleTabChange("perfil"), isActive: activeTab === "perfil", icon: <Settings size={18} /> },
- { label: "Vendas & Ganhos", onClick: () => handleTabChange("financeiro"), isActive: activeTab === "financeiro", icon: <DollarSign size={18} /> },
- { label: "Agenda Google", onClick: () => handleTabChange("calendar"), isActive: activeTab === "calendar", icon: <Calendar size={18} /> }
+ { label: "Vendas & Ganhos", onClick: () => handleTabChange("financeiro"), isActive: activeTab === "financeiro", icon: <DollarSign size={18} /> }
  );
 
  if (user?.role === "FRANCHISEE" || user?.franchiseProfile) {
@@ -206,7 +205,7 @@ export default function ClienteArea() {
  { label: "Agenda Unidade", onClick: () => handleTabChange("agenda"), isActive: activeTab === "agenda", icon: <Play size={18} /> },
  { label: "Fluxo Financeiro", onClick: () => handleTabChange("financeiro"), isActive: activeTab === "financeiro", icon: <DollarSign size={18} /> },
  { label: "Rede Técnica", onClick: () => handleTabChange("equipe"), isActive: activeTab === "equipe", icon: <Users size={18} /> },
- { label: "Google Calendar", onClick: () => handleTabChange("calendar"), isActive: activeTab === "calendar", icon: <Calendar size={18} /> },
+
  { label: "Franquia Print", onClick: () => handleTabChange("franquia"), isActive: activeTab === "franquia", icon: <Printer size={18} /> },
  { label: "Configuração Pública", onClick: () => handleTabChange("configuracoes"), isActive: activeTab === "configuracoes", icon: <Settings size={18} /> }
  );

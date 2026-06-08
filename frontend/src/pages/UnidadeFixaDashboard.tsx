@@ -104,7 +104,7 @@ function formatDateTime(d: string | null | undefined) {
   }).format(date);
 }
 
-export type Tab = "agenda" | "financas" | "equipe" | "configuracoes" | "franquia" | "monitor" | "calendar";
+export type Tab = "agenda" | "financas" | "equipe" | "configuracoes" | "franquia" | "monitor";
 
 interface CalendarStatus {
   connected: boolean;
@@ -376,7 +376,6 @@ export default function UnidadeFixaDashboard({
     { label: "Agenda Tática", onClick: () => setTab("agenda"), isActive: tab === "agenda", icon: <Calendar size={18} /> },
     { label: "Fluxo Financeiro", onClick: () => setTab("financas"), isActive: tab === "financas", icon: <DollarSign size={18} />, badge: repasses.filter(r => r.status !== "PAID").length || undefined },
     { label: "Rede Técnica", onClick: () => { setTab("equipe"); if (!teamLoaded) loadTeam(); }, isActive: tab === "equipe", icon: <Users2 size={18} /> },
-    { label: "Agenda Google", onClick: () => setTab("calendar"), isActive: tab === "calendar", icon: <Calendar size={18} /> },
     { label: "Configuração", onClick: () => setTab("configuracoes"), isActive: tab === "configuracoes", icon: <Settings size={18} /> },
   ];
  
@@ -664,6 +663,80 @@ export default function UnidadeFixaDashboard({
           </div>
         )}
 
+        
+            {/* --- GOOGLE CALENDAR SYNC --- */}
+            <div className="pt-10 border-t border-theme-border">
+              <div className="lux-card p-10 border-l-4 border-l-brand-tactical bg-theme-bg border-2 border-theme-border relative overflow-hidden">
+                 <div className="absolute top-0 right-0 p-10 opacity-[0.03] pointer-events-none">
+                   <Calendar size={120} />
+                 </div>
+                 <div className="relative z-10 space-y-4">
+                   <h3 className="text-2xl font-heading font-black text-theme-text uppercase italic tracking-tight">Sincronização com Google Calendar</h3>
+                   <p className="text-[11px] font-bold text-theme-muted uppercase tracking-[0.2em] leading-relaxed max-w-3xl">
+                     Conecte sua conta do Google para bloquear automaticamente datas em sua agenda tática baseando-se em seus compromissos externos.
+                   </p>
+                 </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-theme-border/20 border border-theme-border shadow-2xl mt-8">
+                 <div className="bg-theme-bg-muted p-10 space-y-8">
+                    <div className="space-y-2">
+                      <p className="text-[10px] font-black text-brand-tactical uppercase tracking-widest">Status da Conexão</p>
+                      <div className="flex items-center gap-3">
+                         <div className={`w-3 h-3 rounded-full ${calendarStatus?.connected ? 'bg-emerald-500 animate-pulse' : 'bg-red-500'}`} />
+                         <p className="text-xl font-heading font-black text-theme-text uppercase italic">
+                           {calendarStatus?.connected ? 'CONECTADO' : 'NÃO VINCULADO'}
+                         </p>
+                      </div>
+                    </div>
+
+                    {calendarStatus?.connected ? (
+                      <div className="space-y-6">
+                         <div className="p-6 bg-theme-bg border border-theme-border space-y-4">
+                            <p className="text-[9px] font-black text-theme-muted uppercase tracking-widest">Agenda Vinculada</p>
+                            <p className="text-sm font-black text-theme-text truncate">{calendarStatus.credential?.calendarId}</p>
+                            <p className="text-[8px] text-theme-muted uppercase font-bold tracking-widest">Última Sincronização: {new Date(calendarStatus.credential?.updatedAt || "").toLocaleString()}</p>
+                         </div>
+                         
+                         <div className="flex gap-4">
+                            <button 
+                              onClick={handleManualSync}
+                              disabled={isSyncing}
+                              className="flex-1 py-4 bg-brand-tactical text-brand-text font-black text-[10px] uppercase tracking-widest hover:brightness-110 transition-all flex items-center justify-center gap-3"
+                            >
+                              <RefreshCw size={14} className={isSyncing ? "animate-spin" : ""} /> {isSyncing ? "SINCRONIZANDO..." : "SINCRONIZAR AGORA"}
+                            </button>
+                            <button 
+                              onClick={() => window.open("/api/calendar/connect", "_blank")}
+                              className="px-6 py-4 border border-theme-border text-theme-text font-black text-[10px] uppercase tracking-widest hover:bg-theme-bg-muted transition-all"
+                            >
+                              RECONECTAR
+                            </button>
+                         </div>
+                      </div>
+                    ) : (
+                      <button 
+                        onClick={() => window.open("/api/calendar/connect", "_blank")}
+                        className="w-full py-6 bg-white text-black font-black text-[11px] uppercase tracking-[0.3em] hover:bg-brand-tactical transition-all shadow-xl shadow-white/5"
+                      >
+                        CONECTAR CONTA DO GOOGLE
+                      </button>
+                    )}
+                 </div>
+                 <div className="bg-theme-bg p-10 space-y-6 flex flex-col justify-center">
+                    <div className="flex items-start gap-4">
+                       <ShieldCheck size={24} className="text-theme-muted shrink-0 mt-1" />
+                       <div className="space-y-2">
+                          <h4 className="text-[10px] font-black text-theme-text uppercase tracking-widest">Privacidade & Segurança</h4>
+                          <p className="text-[10px] font-bold text-theme-muted leading-relaxed uppercase tracking-wider">
+                            A integração do Foto Segundo Calendar apenas monitora os blocos de horário ocupados. Nenhum detalhe pessoal ou título de evento é lido ou armazenado em nossos servidores.
+                          </p>
+                       </div>
+                    </div>
+                 </div>
+              </div>
+            </div>
+          
         {/* ── FINANÇAS ── */}
         {tab === "financas" && (
           <div className="space-y-10">
@@ -782,97 +855,7 @@ export default function UnidadeFixaDashboard({
         {tab === "equipe" && (
           <TeamTab />
         )}
-
-        {/* ── AGENDA GOOGLE ── */}
-        {tab === "calendar" && (
-          <div className="space-y-8 animate-in fade-in duration-500">
-            <div className="lux-card p-10 border-l-4 border-l-brand-tactical bg-theme-bg border-2 border-theme-border shadow-[0_0_15px_rgba(133,185,172,0.1)] relative overflow-hidden">
-              <div className="absolute top-0 right-0 p-10 opacity-[0.03] pointer-events-none">
-                <Calendar size={120} />
-              </div>
-              <div className="relative z-10 space-y-4">
-                <h3 className="text-2xl font-heading font-black text-theme-text uppercase italic tracking-tight">Agenda Google</h3>
-                <p className="text-[11px] font-bold text-theme-muted uppercase tracking-[0.2em] leading-relaxed max-w-3xl">
-                  Sincronize seu Google Calendar para que o sistema bloqueie automaticamente sua vitrine quando você tiver compromissos pessoais.
-                </p>
-              </div>
-            </div>
-
-            <div className="max-w-3xl space-y-6">
-              {!calendarStatus?.connected ? (
-                <div className="bg-theme-bg border border-theme-border p-10 text-center space-y-6">
-                  <div className="w-20 h-20 bg-theme-bg-muted border border-theme-border flex items-center justify-center text-theme-muted mx-auto">
-                    <Calendar size={32} />
-                  </div>
-                  <div className="space-y-2">
-                    <h3 className="text-xl font-black text-theme-text uppercase italic">Conecte sua Agenda</h3>
-                    <p className="text-[10px] text-theme-muted uppercase font-bold tracking-widest max-w-sm mx-auto leading-relaxed">
-                      Todas as reservas confirmadas no sistema serão enviadas automaticamente para o seu Google Calendar.
-                    </p>
-                  </div>
-                  <button 
-                    onClick={handleConnectCalendar}
-                    className="px-10 py-4 bg-theme-text text-theme-bg text-[11px] font-black uppercase tracking-[0.2em] hover:bg-brand-tactical hover:text-brand-text transition-all shadow-xl"
-                  >
-                    CONECTAR GOOGLE CALENDAR
-                  </button>
-                </div>
-              ) : (
-                <div className="space-y-6">
-                  <div className="bg-theme-bg border border-brand-tactical/30 p-8 flex items-center justify-between group">
-                    <div className="flex items-center gap-6">
-                      <div className="w-16 h-16 bg-brand-tactical/10 border border-brand-tactical/20 flex items-center justify-center text-brand-tactical">
-                        <ShieldCheck size={24} />
-                      </div>
-                      <div>
-                        <p className="text-xs font-black text-brand-tactical uppercase tracking-widest italic">Status: Conectado</p>
-                        <p className="text-[10px] text-theme-muted font-bold uppercase tracking-widest mt-1">
-                          ID da Agenda: {calendarStatus.credential?.calendarId}
-                        </p>
-                      </div>
-                    </div>
-                    <button 
-                      onClick={handleDisconnectCalendar}
-                      className="p-3 text-theme-muted hover:text-red-500 transition-colors"
-                      title="Desconectar"
-                    >
-                      <X size={18} />
-                    </button>
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="bg-theme-bg border border-theme-border p-8 space-y-4">
-                      <label className="text-[9px] font-black text-theme-muted uppercase tracking-widest block">Última Sincronização</label>
-                      <p className="text-sm font-black text-theme-text uppercase italic tracking-tight">
-                        {calendarStatus.credential?.updatedAt 
-                          ? new Date(calendarStatus.credential.updatedAt).toLocaleString('pt-BR') 
-                          : "Nenhuma sincronização"}
-                      </p>
-                      <button 
-                        onClick={handleManualSync}
-                        disabled={isSyncing}
-                        className="flex items-center gap-2 text-[10px] font-black text-brand-tactical uppercase tracking-widest hover:underline disabled:opacity-50"
-                      >
-                        <Play size={12} className={isSyncing ? "animate-spin" : ""} />
-                        {isSyncing ? "Sincronizando..." : "Sincronizar Agora"}
-                      </button>
-                    </div>
-                    <div className="bg-theme-bg border border-theme-border p-8 space-y-4">
-                      <label className="text-[9px] font-black text-theme-muted uppercase tracking-widest block">Configurações</label>
-                      <p className="text-[10px] text-theme-muted font-bold uppercase leading-relaxed">
-                        O sistema lê apenas os horários ocupados para bloquear sua vitrine. Nenhum detalhe privado é exposto.
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="p-6 border border-theme-border bg-theme-bg-muted">
-                    <p className="text-[9px] text-theme-muted uppercase font-black tracking-widest text-center italic">
-                      DICA: Todas as reservas confirmadas no sistema serão enviadas automaticamente para o seu Google Calendar.
-                    </p>
-                  </div>
-                </div>
-              )}
-            </div>
+</div>
           </div>
         )}
 
@@ -1383,40 +1366,7 @@ export default function UnidadeFixaDashboard({
              </div>
           </div>
         )}
-
-        {/* ── AGENDA GOOGLE ── */}
-        {tab === "calendar" && (
-          <div className="space-y-10 animate-in fade-in duration-500">
-            <div className="lux-card p-10 border-l-4 border-l-brand-tactical bg-theme-bg border-2 border-theme-border relative overflow-hidden">
-               <div className="absolute top-0 right-0 p-10 opacity-[0.03] pointer-events-none">
-                 <Calendar size={120} />
-               </div>
-               <div className="relative z-10 space-y-4">
-                 <h3 className="text-2xl font-heading font-black text-theme-text uppercase italic tracking-tight">Sincronização com Google Calendar</h3>
-                 <p className="text-[11px] font-bold text-theme-muted uppercase tracking-[0.2em] leading-relaxed max-w-3xl">
-                   Conecte sua conta do Google para bloquear automaticamente datas em sua agenda tática baseando-se em seus compromissos externos.
-                 </p>
-               </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-theme-border/20 border border-theme-border shadow-2xl">
-               <div className="bg-theme-bg-muted p-10 space-y-8">
-                  <div className="space-y-2">
-                    <p className="text-[10px] font-black text-brand-tactical uppercase tracking-widest">Status da Conexão</p>
-                    <div className="flex items-center gap-3">
-                       <div className={`w-3 h-3 rounded-full ${calendarStatus?.connected ? 'bg-emerald-500 animate-pulse' : 'bg-red-500'}`} />
-                       <p className="text-xl font-heading font-black text-theme-text uppercase italic">
-                         {calendarStatus?.connected ? 'CONECTADO' : 'NÃO VINCULADO'}
-                       </p>
-                    </div>
-                  </div>
-
-                  {calendarStatus?.connected ? (
-                    <div className="space-y-6">
-                       <div className="p-6 bg-theme-bg border border-theme-border space-y-4">
-                          <p className="text-[9px] font-black text-theme-muted uppercase tracking-widest">Agenda Vinculada</p>
-                          <p className="text-sm font-black text-theme-text truncate">{calendarStatus.credential?.calendarId}</p>
-                          <p className="text-[8px] text-theme-muted uppercase font-bold tracking-widest">Última Sincronização: {new Date(calendarStatus.credential?.updatedAt || "").toLocaleString()}</p>
+</p>
                        </div>
                        
                        <div className="flex gap-4">

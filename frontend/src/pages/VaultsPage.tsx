@@ -237,8 +237,8 @@ export default function VaultsPage() {
         { label: "Meu Portfólio", onClick: () => navigate("/minha-conta?s=portfolio"), isActive: false, icon: <ImageIcon size={18} /> },
         { label: "Serviços & Preços", onClick: () => navigate("/minha-conta?s=servicos"), isActive: false, icon: <Briefcase size={18} /> },
         { label: "Ficha Técnica & Pix", onClick: () => navigate("/minha-conta?s=perfil"), isActive: false, icon: <Settings size={18} /> },
-        { label: "Vendas & Ganhos", onClick: () => navigate("/minha-conta?s=financeiro"), isActive: false, icon: <DollarSign size={18} /> },
-        { label: "Agenda Google", onClick: () => navigate("/minha-conta?s=calendar"), isActive: false, icon: <Calendar size={18} /> }
+        { label: "Vendas & Ganhos", onClick: () => navigate("/minha-conta?s=financeiro"), isActive: false, icon: <DollarSign size={18} /> }
+
       );
 
       if (user?.role === "FRANCHISEE" || user?.franchiseProfile) {

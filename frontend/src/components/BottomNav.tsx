@@ -48,8 +48,7 @@ export const BottomNav: React.FC = () => {
         { label: "Meu Portfólio", onClick: () => { setDrawerOpen(false); setTimeout(() => navigate("/minha-conta?s=portfolio", { replace: true }), 50); }, isActive: location.pathname === "/minha-conta" && s === "portfolio", icon: <ImageIcon size={18} /> },
         { label: "Serviços & Preços", onClick: () => { setDrawerOpen(false); setTimeout(() => navigate("/minha-conta?s=servicos", { replace: true }), 50); }, isActive: location.pathname === "/minha-conta" && s === "servicos", icon: <Briefcase size={18} /> },
         { label: "Ficha Técnica & Pix", onClick: () => { setDrawerOpen(false); setTimeout(() => navigate("/minha-conta?s=perfil", { replace: true }), 50); }, isActive: location.pathname === "/minha-conta" && s === "perfil", icon: <Settings size={18} /> },
-        { label: "Vendas & Ganhos", onClick: () => { setDrawerOpen(false); setTimeout(() => navigate("/minha-conta?s=financeiro", { replace: true }), 50); }, isActive: location.pathname === "/minha-conta" && s === "financeiro", icon: <DollarSign size={18} /> },
-        { label: "Agenda Google", onClick: () => { setDrawerOpen(false); setTimeout(() => navigate("/minha-conta?s=calendar", { replace: true }), 50); }, isActive: location.pathname === "/minha-conta" && s === "calendar", icon: <Calendar size={18} /> }
+        { label: "Vendas & Ganhos", onClick: () => { setDrawerOpen(false); setTimeout(() => navigate("/minha-conta?s=financeiro", { replace: true }), 50); }, isActive: location.pathname === "/minha-conta" && s === "financeiro", icon: <DollarSign size={18} /> }
       );
 
       if (user?.role === "FRANCHISEE" || user?.franchiseProfile) {
@@ -71,7 +70,6 @@ export const BottomNav: React.FC = () => {
         { label: "Agenda Unidade", onClick: () => { setDrawerOpen(false); setTimeout(() => navigate("/minha-conta?s=agenda", { replace: true }), 50); }, isActive: location.pathname === "/minha-conta" && s === "agenda", icon: <Play size={18} /> },
         { label: "Fluxo Financeiro", onClick: () => { setDrawerOpen(false); setTimeout(() => navigate("/minha-conta?s=financeiro", { replace: true }), 50); }, isActive: location.pathname === "/minha-conta" && s === "financeiro", icon: <DollarSign size={18} /> },
         { label: "Rede Técnica", onClick: () => { setDrawerOpen(false); setTimeout(() => navigate("/minha-conta?s=equipe", { replace: true }), 50); }, isActive: location.pathname === "/minha-conta" && s === "equipe", icon: <Users size={18} /> },
-        { label: "Google Calendar", onClick: () => { setDrawerOpen(false); setTimeout(() => navigate("/minha-conta?s=calendar", { replace: true }), 50); }, isActive: location.pathname === "/minha-conta" && s === "calendar", icon: <Calendar size={18} /> },
         { label: "Franquia Print", onClick: () => { setDrawerOpen(false); setTimeout(() => navigate("/minha-conta?s=franquia", { replace: true }), 50); }, isActive: location.pathname === "/minha-conta" && s === "franquia", icon: <Printer size={18} /> },
         { label: "Configuração Pública", onClick: () => { setDrawerOpen(false); setTimeout(() => navigate("/minha-conta?s=configuracoes", { replace: true }), 50); }, isActive: location.pathname === "/minha-conta" && s === "configuracoes", icon: <Settings size={18} /> }
       );

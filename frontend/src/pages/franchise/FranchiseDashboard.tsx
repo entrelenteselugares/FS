@@ -76,8 +76,7 @@ const FranchiseDashboard: React.FC = () => {
         { label: "ÁREA PROFISSIONAL", isHeader: true },
         { label: "Minha Agenda", onClick: () => navigate("/minha-conta?s=agenda"), isActive: false, icon: <Play size={18} /> },
         { label: "Portfólio & Serviços", onClick: () => navigate("/minha-conta?s=servicos"), isActive: false, icon: <Briefcase size={18} /> },
-        { label: "Vendas & Ganhos", onClick: () => navigate("/minha-conta?s=financeiro"), isActive: false, icon: <DollarSign size={18} /> },
-        { label: "Agenda Google", onClick: () => navigate("/minha-conta?s=calendar"), isActive: false, icon: <Calendar size={18} /> }
+        { label: "Vendas & Ganhos", onClick: () => navigate("/minha-conta?s=financeiro"), isActive: false, icon: <DollarSign size={18} /> }
       );
 
       if (user?.role === "FRANCHISEE" || user?.franchiseProfile) {
