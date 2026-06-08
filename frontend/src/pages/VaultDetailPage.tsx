@@ -578,11 +578,11 @@ export default function VaultDetailPage() {
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="hidden md:flex items-center gap-2">
             {vault.myRole === "OWNER" && (
               <button 
                 onClick={() => setIsSettingsOpen(true)}
-                className="hidden md:flex p-2 text-zinc-400 hover:text-white hover:bg-theme-bg-muted rounded-full transition-colors"
+                className="p-2 text-zinc-400 hover:text-white hover:bg-theme-bg-muted rounded-full transition-colors"
                 title="Configurações do Álbum"
               >
                 <Settings size={20} />
@@ -591,7 +591,7 @@ export default function VaultDetailPage() {
             {vault.myRole === "OWNER" && (
               <button 
                 onClick={() => setIsPrintStoreOpen(true)}
-                className={`flex items-center justify-center gap-2 text-[10px] font-black uppercase tracking-widest px-5 py-2.5 rounded-lg transition-all shadow-lg ${
+                className={`hidden md:flex items-center justify-center gap-2 text-[10px] font-black uppercase tracking-widest px-5 py-2.5 rounded-lg transition-all shadow-lg ${
                   media.length >= vault.goalPoses 
                     ? "bg-brand-tactical text-black shadow-[0_0_20px_rgba(133,185,172,0.4)] animate-pulse border-2 border-brand-tactical" 
                     : "bg-theme-bg-muted border-2 border-theme-border text-theme-muted hover:border-brand-tactical hover:text-brand-tactical"
@@ -616,7 +616,7 @@ export default function VaultDetailPage() {
             
             <button 
               onClick={() => setIsServiceStoreOpen(true)}
-              className="flex-1 md:flex-none flex items-center justify-center gap-2 bg-theme-bg-muted border-2 border-theme-border hover:border-brand-tactical text-theme-text hover:text-brand-tactical text-[10px] font-black uppercase tracking-widest px-4 py-2.5 rounded-lg transition-all"
+              className="hidden md:flex items-center justify-center gap-2 bg-theme-bg-muted border-2 border-theme-border hover:border-brand-tactical text-theme-text hover:text-brand-tactical text-[10px] font-black uppercase tracking-widest px-4 py-2.5 rounded-lg transition-all"
             >
               <Layers size={14} />
               Serviços
@@ -639,7 +639,7 @@ export default function VaultDetailPage() {
               Convidar
             </button>
             
-            <label className={`flex-1 md:flex-none flex items-center justify-center gap-2 text-[10px] font-black uppercase tracking-widest px-5 py-2.5 rounded-lg transition-all shadow-lg ${
+            <label className={`hidden md:flex items-center justify-center gap-2 text-[10px] font-black uppercase tracking-widest px-5 py-2.5 rounded-lg transition-all shadow-lg ${
               media.length >= vault.goalPoses * 2
                 ? "bg-zinc-800 text-gray-500 cursor-not-allowed opacity-50"
                 : "bg-brand-tactical hover:bg-white text-black shadow-[0_0_20px_rgba(133,185,172,0.4)] border-2 border-brand-tactical cursor-pointer"
