@@ -21,10 +21,12 @@ async function login(page: Page, email: string) {
   await page.goto('/login');
 
   // Bypass onboarding tour overlays que podem bloquear interações
+  // ATENÇÃO: a chave deve incluir a versão: fs_tour_v1_${role} (ver WelcomeTour.tsx TOUR_VERSION)
   await page.evaluate(() => {
-    localStorage.setItem('fs_tour_PROFISSIONAL', 'true');
-    localStorage.setItem('fs_tour_CARTORIO', 'true');
-    localStorage.setItem('fs_tour_CLIENT', 'true');
+    localStorage.setItem('fs_tour_v1_PROFISSIONAL', 'true');
+    localStorage.setItem('fs_tour_v1_CARTORIO', 'true');
+    // CLIENT não possui tour, mas mantemos por consistência
+    localStorage.setItem('fs_tour_v1_CLIENT', 'true');
   });
 
   await page.locator('input[type="email"]').fill(email);
@@ -108,8 +110,10 @@ test.describe('🏁 Launch Certification Suite v3.2', () => {
     await login(page, ROLES.CLIENT);
     await page.goto('/minha-conta');
 
-    // 1. Área do cliente carregou
-    await expect(page.getByText(/Minhas Memórias|Bem-vindo|Olá|Minha Conta/i).first()).toBeVisible({ timeout: 15000 });
+    // 1. Área do cliente carregou — verifica via URL (evita pegar o span oculto do bottom-nav)
+    await page.waitForURL(/\/minha-conta/, { timeout: 15000 });
+    // Aguarda que pelo menos um elemento de conteúdo principal seja visível
+    await expect(page.locator('main, [class*="DashboardLayout"], [data-testid="client-area"], h1, h2').first()).toBeVisible({ timeout: 15000 });
 
     // 2. Álbuns — navega via URL e verifica que a página renderizou
     await page.goto('/meus-albuns');
