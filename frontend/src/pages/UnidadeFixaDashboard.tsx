@@ -1446,8 +1446,6 @@ export default function UnidadeFixaDashboard({
           </div>
         </div>
       )}
-          </motion.div>
-        </AnimatePresence>
 
       {/* Modal de Foto Print Live (Express) */}
       {isFlashModalOpen && (
