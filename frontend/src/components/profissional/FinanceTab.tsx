@@ -148,21 +148,21 @@ export function FinanceTab({
                   <p className="text-sm font-heading font-black text-theme-text italic">{Math.round(progressPct)}%</p>
                 </div>
                 <div className="h-2 bg-theme-bg-muted border border-theme-border rounded-full overflow-hidden">
-                  <div className="h-full bg-brand-tactical transition-all duration-1000" style={{ width: \`\${progressPct}%\` }} />
+                  <div className="h-full bg-brand-tactical transition-all duration-1000" style={{ width: `\${progressPct}%` }} />
                 </div>
                 <div className="flex justify-between text-[8px] font-bold text-theme-muted uppercase">
                   <span>Alcançado: R$ {monthEarnings.toLocaleString("pt-BR")}</span>
                   <span>Target: R$ {monthlyGoal.toLocaleString("pt-BR")}</span>
                 </div>
              </div>
-             <div className={\`w-full md:w-auto shrink-0 border rounded-xl p-3 flex gap-3 items-center \${monthEarnings < monthlyGoal ? 'bg-amber-500/5 border-amber-500/20' : 'bg-brand-tactical/5 border-brand-tactical/20'}\`}>
-                <Zap size={20} className={\`\${monthEarnings < monthlyGoal ? 'text-amber-500 animate-pulse' : 'text-brand-tactical'}\`} />
+             <div className={`w-full md:w-auto shrink-0 border rounded-xl p-3 flex gap-3 items-center \${monthEarnings < monthlyGoal ? 'bg-amber-500/5 border-amber-500/20' : 'bg-brand-tactical/5 border-brand-tactical/20'}`}>
+                <Zap size={20} className={`\${monthEarnings < monthlyGoal ? 'text-amber-500 animate-pulse' : 'text-brand-tactical'}`} />
                 <div>
-                  <div className={\`text-[9px] font-black uppercase tracking-widest \${monthEarnings < monthlyGoal ? 'text-amber-500' : 'text-brand-tactical'}\`}>
+                  <div className={`text-[9px] font-black uppercase tracking-widest \${monthEarnings < monthlyGoal ? 'text-amber-500' : 'text-brand-tactical'}`}>
                     {monthEarnings < monthlyGoal ? 'Atenção Tática' : 'Meta Batida'}
                   </div>
                   <p className="text-[9px] text-theme-text font-medium leading-tight mt-0.5 max-w-[160px]">
-                    {monthEarnings < monthlyGoal ? \`Faltam ~\${suggestedSales} vendas expressas para bater a meta.\` : 'Target alcançado! Excelente trabalho.'}
+                    {monthEarnings < monthlyGoal ? `Faltam ~\${suggestedSales} vendas expressas para bater a meta.` : 'Target alcançado! Excelente trabalho.'}
                   </p>
                 </div>
              </div>
@@ -181,14 +181,14 @@ export function FinanceTab({
               <div key={p.id} className="flex flex-col p-3 bg-theme-bg-muted border border-theme-border rounded-lg hover:border-brand-tactical/30 transition-all group">
                 <div className="flex justify-between items-start mb-2">
                   <div className="flex items-center gap-2">
-                    <div className={\`p-1.5 rounded \${p.status === "PAID" ? "bg-brand-tactical/20 text-brand-tactical" : "bg-amber-500/20 text-amber-500"}\`}>
+                    <div className={`p-1.5 rounded \${p.status === "PAID" ? "bg-brand-tactical/20 text-brand-tactical" : "bg-amber-500/20 text-amber-500"}`}>
                       {p.status === "PAID" ? <Check size={10} /> : <Clock size={10} />}
                     </div>
                     <div>
                       <p className="text-[9px] font-black text-theme-text uppercase italic leading-none">
                         {p.payout?.weekStart ? formatDate(p.payout.weekStart) : "REPASSE"}
                       </p>
-                      <span className={\`text-[7px] font-black uppercase tracking-widest \${p.status === "PAID" ? "text-brand-tactical" : "text-amber-500"}\`}>
+                      <span className={`text-[7px] font-black uppercase tracking-widest \${p.status === "PAID" ? "text-brand-tactical" : "text-amber-500"}`}>
                         {p.status === "PAID" ? "LIQUIDADO" : "PENDENTE"}
                       </span>
                     </div>
@@ -199,7 +199,7 @@ export function FinanceTab({
                 </div>
                 {p.status === "PAID" && (
                   <button 
-                    onClick={() => window.open(\`\${API.defaults.baseURL}/profissional/finance/receipt/\${p.id}\`, '_blank')}
+                    onClick={() => window.open(`\${API.defaults.baseURL}/profissional/finance/receipt/\${p.id}`, '_blank')}
                     className="w-full py-1.5 border border-theme-border/50 bg-theme-bg text-[8px] font-black uppercase tracking-widest text-theme-muted hover:text-brand-tactical hover:border-brand-tactical/30 rounded flex items-center justify-center gap-1 transition-all"
                   >
                     <Download size={10} /> Recibo PDF
