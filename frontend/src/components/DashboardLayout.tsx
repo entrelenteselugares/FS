@@ -456,30 +456,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
     onNavigate: () => setDrawerOpen(false),
   };
 
-  // Coleta os items marcados como isPrimaryMobile (no máx 3)
-  const primaryMobileItems = React.useMemo(() => {
-    let items: NavItem[] = [];
-    const traverse = (list: NavItem[]) => {
-      list.forEach(i => {
-        if (i.hide || i.isHeader) return;
-        if (i.isPrimaryMobile) items.push(i);
-        if (i.subItems) traverse(i.subItems);
-      });
-    };
-    traverse(navItems);
-    
-    // Se não tiver nenhum, pega os 3 primeiros como fallback
-    if (items.length === 0) {
-      const flat: NavItem[] = [];
-      const getFlat = (l: NavItem[]) => l.forEach(i => {
-        if (!i.hide && !i.isHeader && !i.subItems) flat.push(i);
-        if (i.subItems) getFlat(i.subItems);
-      });
-      getFlat(navItems);
-      items = flat.slice(0, 3);
-    }
-    return items.slice(0, 3);
-  }, [navItems]);
+
 
   // Force close drawer on desktop
   React.useEffect(() => {
@@ -587,30 +564,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
           {children}
         </main>
 
-        {/* ── Mobile Bottom Navigation Bar (Super App) ── */}
-        <div className="lg:hidden fixed bottom-0 left-0 right-0 z-[60] backdrop-blur-xl border-t pb-safe" style={{ background: T.bgNav, borderColor: T.border }}>
-          <div className="flex items-center justify-around px-2 py-2">
-            {primaryMobileItems.map((item, idx) => {
-              const active = item.isActive;
-              return (
-                <button key={idx} onClick={() => { if(item.onClick) item.onClick(); setDrawerOpen(false); }}
-                  className={`flex flex-col items-center justify-center gap-1 w-16 transition-all ${active ? "text-emerald-500" : "text-theme-text opacity-50 hover:opacity-100"}`}
-                >
-                  {item.icon ? React.cloneElement(item.icon as React.ReactElement, { size: 20, strokeWidth: active ? 2.5 : 1.5 } as React.SVGProps<SVGSVGElement>) : <div className="w-5 h-5" />}
-                  <span className="text-[9px] font-black uppercase tracking-tighter truncate w-full text-center">{item.label}</span>
-                </button>
-              )
-            })}
-            
-            {/* Drawer Trigger */}
-            <button onClick={() => setDrawerOpen(!drawerOpen)}
-              className={`flex flex-col items-center justify-center gap-1 w-16 transition-all ${drawerOpen ? "text-emerald-500" : "text-theme-text opacity-50 hover:opacity-100"}`}
-            >
-              <Menu size={20} strokeWidth={drawerOpen ? 2.5 : 1.5} />
-              <span className="text-[9px] font-black uppercase tracking-tighter w-full text-center">Menu</span>
-            </button>
-          </div>
-        </div>
+
       </div>
 
       {/* ── Responsive CSS via <style> ── */}

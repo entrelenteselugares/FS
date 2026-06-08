@@ -18,7 +18,6 @@ export const BottomNav: React.FC = () => {
   const isActive = (path: string) => location.pathname === path;
 
   const hiddenPaths = [
-    "/admin",
     "/checkout",
     "/delivery",
     "/flash",
