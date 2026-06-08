@@ -1364,54 +1364,7 @@ export default function UnidadeFixaDashboard({
              </div>
           </div>
         )}
-</p>
-                       </div>
-                       
-                       <div className="flex gap-4">
-                          <button 
-                            onClick={handleManualSync}
-                            disabled={isSyncing}
-                            className="flex-1 py-4 bg-brand-tactical text-brand-text font-black text-[10px] uppercase tracking-widest hover:brightness-110 transition-all flex items-center justify-center gap-3"
-                          >
-                            <RefreshCw size={14} className={isSyncing ? "animate-spin" : ""} /> {isSyncing ? "SINCRONIZANDO..." : "SINCRONIZAR AGORA"}
-                          </button>
-                          <button 
-                            onClick={() => window.open("/api/calendar/connect", "_blank")}
-                            className="px-6 py-4 border border-theme-border text-theme-text font-black text-[10px] uppercase tracking-widest hover:bg-theme-bg-muted transition-all"
-                          >
-                            RECONECTAR
-                          </button>
-                       </div>
-                    </div>
-                  ) : (
-                    <button 
-                      onClick={() => window.open("/api/calendar/connect", "_blank")}
-                      className="w-full py-6 bg-white text-black font-black text-[11px] uppercase tracking-[0.3em] hover:bg-brand-tactical transition-all shadow-xl shadow-white/5"
-                    >
-                      CONECTAR AGENDA GOOGLE
-                    </button>
-                  )}
-               </div>
 
-               <div className="bg-theme-bg-muted p-10 space-y-6">
-                  <h4 className="text-[10px] font-black text-theme-text uppercase tracking-widest">Como Funciona?</h4>
-                  <ul className="space-y-4">
-                     {[
-                       "1. Ao conectar sua conta, nós lemos apenas seus eventos ocupados.",
-                       "2. Compromissos marcados como 'Ocupado' bloqueiam o horário na vitrine.",
-                       "3. Novos agendamentos no Foto Segundo são enviados para seu Google Calendar.",
-                       "4. Sincronização automática a cada 15 minutos."
-                     ].map((step, i) => (
-                       <li key={i} className="flex gap-4 items-start">
-                          <span className="text-brand-tactical font-black italic text-xs">0{i+1}</span>
-                          <p className="text-[10px] font-bold text-theme-muted uppercase leading-relaxed">{step}</p>
-                       </li>
-                     ))}
-                  </ul>
-               </div>
-            </div>
-          </div>
-        )}
           </motion.div>
         </AnimatePresence>
       </div>
