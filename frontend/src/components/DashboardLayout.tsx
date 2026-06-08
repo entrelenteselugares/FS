@@ -4,7 +4,7 @@ import { useAuth } from "../hooks/useAuth";
 import { T, BtnGhost } from "../lib/theme";
 import { ThemeToggle } from "./ThemeToggle";
 import { NotificationBell } from "./notifications/NotificationBell";
-import { Menu, ShieldCheck } from "lucide-react";
+import { ShieldCheck } from "lucide-react";
 import '../styles/mobile-fix.css';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
