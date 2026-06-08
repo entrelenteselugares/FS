@@ -855,9 +855,7 @@ export default function UnidadeFixaDashboard({
         {tab === "equipe" && (
           <TeamTab />
         )}
-</div>
-          </div>
-        )}
+
 
         {/* Ã¢â€â‚¬Ã¢â€â‚¬ MONITOR DE FILA Ã¢â€â‚¬Ã¢â€â‚¬ */}
         {tab === "monitor" && (
@@ -1495,6 +1493,8 @@ export default function UnidadeFixaDashboard({
           </div>
         </div>
       )}
+          </motion.div>
+        </AnimatePresence>
 
       {/* Modal de Foto Print Live (Express) */}
       {isFlashModalOpen && (
