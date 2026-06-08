@@ -17,7 +17,6 @@ import {
   LayoutDashboard,
   Play,
   Briefcase,
-  Calendar,
   Lock,
   User
 } from 'lucide-react';

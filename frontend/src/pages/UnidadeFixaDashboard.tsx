@@ -338,21 +338,7 @@ export default function UnidadeFixaDashboard({
       .catch(err => console.error("Erro ao buscar status do calendário:", err));
   }, []);
 
-  const handleConnectCalendar = () => {
-    window.location.href = `${API.defaults.baseURL}/calendar/connect`;
-  };
 
-  const handleDisconnectCalendar = async () => {
-    if (!confirm("Deseja realmente desconectar seu Google Calendar? Isso removerá os bloqueios automáticos da sua vitrine.")) return;
-    try {
-      await API.delete("calendar/disconnect");
-      setSuccess("Calendário desconectado.");
-      fetchCalendarStatus();
-    } catch (err) {
-      console.error("[Calendar] Erro ao desconectar:", err);
-      setError("Erro ao desconectar.");
-    }
-  };
 
   const handleManualSync = async () => {
     setIsSyncing(true);

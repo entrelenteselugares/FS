@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
-import { Check, X, ShieldCheck, MapPin, Briefcase, Users, ChevronRight, Camera, Video, Smartphone, Clock, Calendar, LogOut, RefreshCw, CheckCircle } from "lucide-react";
+import { Check, X, MapPin, Briefcase, ChevronRight, Camera, Video, Smartphone, Clock, Calendar, LogOut, RefreshCw, CheckCircle } from "lucide-react";
 import type { EventItem, UnitInvite } from "./types";
 import { CalendarView } from "./CalendarView";
 import { parseDateSafe } from "../../lib/utils/formatters";
@@ -54,7 +54,6 @@ interface AgendaTabProps {
   onSelectEvent: (ev: EventItem) => void;
   onRespond: (eventId: string, status: "ACCEPTED" | "REJECTED") => void;
   onRespondUnit: (inviteId: string, status: "ACCEPTED" | "REJECTED") => void;
-  onDelegate: (eventId: string) => void;
   opportunities: EventItem[];
   calendarStatus?: any;
   isSyncing?: boolean;
@@ -74,7 +73,6 @@ export function AgendaTab({
   onSelectEvent,
   onRespond,
   onRespondUnit,
-  onDelegate,
   opportunities,
   calendarStatus,
   isSyncing,
@@ -189,22 +187,22 @@ export function AgendaTab({
                   <div className="min-w-[60px] flex flex-row md:flex-col items-center md:items-start border-b md:border-b-0 md:border-r border-theme-border pb-2 md:pb-0 md:pr-4 gap-2 md:gap-0 w-full md:w-auto">
                     <div className="text-[9px] font-black text-amber-500 uppercase tracking-widest hidden md:block mb-1">DATA</div>
                     <div className="text-xl md:text-2xl font-heading font-black text-amber-500 italic leading-none uppercase tracking-tighter">
-                      {parseDateSafe(invite.dataEvento).toLocaleDateString("pt-BR", { day: "2-digit" })}
+                      {parseDateSafe((invite as any).createdAt || new Date().toISOString()).toLocaleDateString("pt-BR", { day: "2-digit" })}
                     </div>
                   </div>
 
                   <div className="flex-grow space-y-3">
                     <div className="flex flex-wrap items-center gap-2 md:gap-4">
-                      <h3 className="text-lg md:text-xl font-heading font-black text-theme-text uppercase italic tracking-tight leading-none">{invite.eventName}</h3>
+                      <h3 className="text-lg md:text-xl font-heading font-black text-theme-text uppercase italic tracking-tight leading-none">Convite para Residência</h3>
                       <div className="px-1.5 py-0.5 text-[8px] font-black border rounded-md bg-amber-500/10 text-amber-500 border-amber-500/20">
                         CONVITE
                       </div>
                     </div>
                     <p className="text-xs text-theme-text/80 leading-relaxed max-w-lg">
-                      A unidade <strong>{invite.unitName}</strong> te convidou para cobrir este evento.
+                      A unidade <strong>{invite.cartorio.razaoSocial}</strong> te convidou para fazer parte da equipe.
                     </p>
                     <div className="flex gap-4 text-[9px] text-theme-muted font-black uppercase tracking-widest">
-                      <span className="flex items-center gap-1.5"><MapPin size={11} className="text-amber-500 opacity-50" /> {invite.unitName}</span>
+                      <span className="flex items-center gap-1.5"><MapPin size={11} className="text-amber-500 opacity-50" /> {invite.cartorio.cidade || "N/A"}</span>
                     </div>
                   </div>
 

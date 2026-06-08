@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from "react";
 import { useNavigate, useLocation, useSearchParams, Link } from "react-router-dom";
-import { Home, Search, ShoppingBag, Image, Menu, X, Play, Briefcase, DollarSign, Calendar, Printer, Settings, Lock, Users, User, LayoutDashboard } from "lucide-react";
+import { Home, Search, ShoppingBag, Image, Menu, X, Play, Briefcase, DollarSign, Printer, Settings, Lock, Users, User, LayoutDashboard } from "lucide-react";
 import { useAuth } from "../hooks/useAuth";
 // ImageIcon alias for portfolio nav item
 const ImageIcon = Image;

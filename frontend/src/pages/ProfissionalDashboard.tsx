@@ -5,7 +5,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { toast } from "sonner";
 import {
  DollarSign,
- Settings, Briefcase, Users, LayoutDashboard, Play, Calendar, RefreshCw, LogOut, CheckCircle, Camera, Printer
+ Settings, Briefcase, Users, LayoutDashboard, Play, Camera, Printer
 } from "lucide-react";
 import { DashboardLayout, type NavItem } from "../components/DashboardLayout";
 import { T } from "../lib/theme";
@@ -780,10 +780,6 @@ export default function ProfissionalDashboard({
  onSelectEvent={(ev) => setSelected(ev)}
  onRespond={handleRespond}
  onRespondUnit={handleRespondUnit}
- onDelegate={(eventId) => {
- const ev = events.find(e => e.id === eventId);
- if (ev) setSelected(ev);
- }}
  opportunities={opportunities}
  calendarStatus={calendarStatus}
  isSyncing={isSyncing}
