@@ -646,7 +646,11 @@ export default function ClienteArea() {
   <div className="space-y-6 md:space-y-8">
   <div className="lux-card p-5 md:p-10 max-w-2xl border-l-4 border-l-brand-tactical bg-theme-bg">
   <div className="flex flex-col md:flex-row gap-4 md:gap-8 items-center md:items-start mb-6 pb-6 md:mb-8 md:pb-8 border-b border-theme-border">
- <ProfilePhotoUpload onProfileUpdated={() => window.location.reload()} />
+  <ProfilePhotoUpload 
+    currentProfileUrl={user?.profileImageUrl} 
+    currentNome={user?.nome} 
+    onProfileUpdated={() => window.location.reload()} 
+  />
  <div className="space-y-2 text-center md:text-left">
  <h2 className="text-xl font-heading font-black text-theme-text uppercase tracking-tight">Meus Dados</h2>
  <p className="text-[11px] font-black text-theme-muted uppercase tracking-[0.4em] ">Gerencie suas informações de contato e entrega</p>

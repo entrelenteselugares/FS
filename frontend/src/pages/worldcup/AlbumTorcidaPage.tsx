@@ -373,7 +373,7 @@ export const AlbumTorcidaPage = () => {
     .slice(0, 12);
 
   return (
-    <div style={{ background: "#050e08", minHeight: "100vh", color: "white", fontFamily: "sans-serif", paddingBottom: 60 }}>
+    <div style={{ background: "#050e08", minHeight: "100vh", color: "white", fontFamily: "sans-serif", paddingBottom: 120 }}>
       {/* ── BANNER AO VIVO ─────────────────────────────────────────────────── */}
       <WorldCupLiveBanner alwaysShow />
 
@@ -497,7 +497,7 @@ export const AlbumTorcidaPage = () => {
 
       {/* ── TABS ─────────────────────────────────────────────────────────────── */}
       <div style={{ position: "sticky", top: 0, zIndex: 50, background: "#050e08", borderBottom: "1px solid rgba(16,185,129,0.2)" }}>
-        <div style={{ maxWidth: 800, margin: "0 auto", display: "flex", overflowX: "auto", scrollbarWidth: "none", msOverflowStyle: "none", WebkitOverflowScrolling: "touch" }}>
+        <div style={{ maxWidth: 800, margin: "0 auto", display: "flex", overflowX: "auto", scrollbarWidth: "none", msOverflowStyle: "none", WebkitOverflowScrolling: "touch", overscrollBehaviorX: "contain" }}>
           {[
             { id: "jogos" as Tab, icon: <Clock size={12} />, label: "Jogos" },
             { id: "bolao" as Tab, icon: <Trophy size={12} />, label: "Bolão" },
@@ -519,6 +519,7 @@ export const AlbumTorcidaPage = () => {
                 fontSize: 10, fontWeight: 900, letterSpacing: "0.1em", textTransform: "uppercase",
                 cursor: "pointer", fontStyle: "italic", transition: "all 0.2s",
                 flexShrink: 0,
+                whiteSpace: "nowrap"
               }}
             >
               {t.icon} {t.label}

@@ -25,8 +25,8 @@ export const ProfilePhotoUpload: React.FC<ProfilePhotoUploadProps> = ({ currentP
     const file = e.target.files?.[0];
     if (!file) return;
 
-    if (file.size > 5 * 1024 * 1024) {
-      toast.error("A foto deve ter no máximo 5MB");
+    if (file.size > 20 * 1024 * 1024) {
+      toast.error("A foto deve ter no máximo 20MB");
       return;
     }
 

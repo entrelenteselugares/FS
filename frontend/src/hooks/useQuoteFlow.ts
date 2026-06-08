@@ -71,14 +71,7 @@ export function useQuoteFlow() {
         if (catalogRes.data?.services?.length > 0) {
           setCatalog(catalogRes.data.services);
         }
-        
-        // Filter out partners that have no event types or services registered
-        const activePartners = (partnersRes.data || []).filter((p: any) => {
-          const hasEvents = p.eventTypes && p.eventTypes.length > 0;
-          return hasEvents;
-        });
-        
-        setPartners(activePartners);
+        setPartners(partnersRes.data || []);
         setPros(prosRes.data?.profissionais || []);
 
         const profId = searchParams.get("profId");

@@ -100,8 +100,9 @@ export function InAppCamera({ onCapture, onClose, onGalleryOpen, maxFiles = 12, 
   }, []);
 
   useEffect(() => {
-    startStream(facing);
+    const timer = setTimeout(() => startStream(facing), 0);
     return () => {
+      clearTimeout(timer);
       streamRef.current?.getTracks().forEach(t => t.stop());
     };
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
@@ -224,7 +225,7 @@ export function InAppCamera({ onCapture, onClose, onGalleryOpen, maxFiles = 12, 
   if (error) {
     return (
       <div style={{
-        position: 'fixed', inset: 0, zIndex: 100, background: '#000',
+        position: 'fixed', inset: 0, zIndex: 999, background: '#000',
         display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
         gap: 20, padding: 32, textAlign: 'center'
       }}>
@@ -253,10 +254,10 @@ export function InAppCamera({ onCapture, onClose, onGalleryOpen, maxFiles = 12, 
   }
 
   // ── Post-capture preview ─────────────────────────────────────────────────
-  if (captured) {
-    return (
-      <div style={{ position: 'fixed', inset: 0, zIndex: 100, background: '#000' }}>
-        {captured.type === 'image' ? (
+    if (captured) {
+      return (
+        <div style={{ position: 'fixed', inset: 0, zIndex: 999, background: '#000' }}>
+          {captured.type === 'image' ? (
           <img src={captured.url} alt="preview" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
         ) : (
           <video src={captured.url} autoPlay loop muted playsInline style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
@@ -296,7 +297,7 @@ export function InAppCamera({ onCapture, onClose, onGalleryOpen, maxFiles = 12, 
 
   // ── Live viewfinder ──────────────────────────────────────────────────────
   return (
-    <div style={{ position: 'fixed', inset: 0, zIndex: 100, background: '#000', overflow: 'hidden' }}>
+    <div style={{ position: 'fixed', inset: 0, zIndex: 999, background: '#000', overflow: 'hidden' }}>
 
       {/* Canvas (offscreen photo capture) */}
       <canvas ref={canvasRef} style={{ display: 'none' }} />
