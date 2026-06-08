@@ -182,9 +182,9 @@ export default function VaultDetailPage() {
             text: shareText,
             // Não passa url separado para evitar duplicação em alguns browsers
           });
-        } catch (shareErr: any) {
+        } catch (shareErr: unknown) {
           // AbortError = usuário cancelou, não é erro real
-          if (shareErr?.name === "AbortError") return;
+          if ((shareErr as Error)?.name === "AbortError") return;
           // Fallback para clipboard se share falhar
           await navigator.clipboard.writeText(shareText);
           toast.success("Link copiado para a área de transferência!");
