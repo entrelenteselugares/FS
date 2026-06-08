@@ -12,7 +12,7 @@ import {
  Users, Play, CheckCircle2, ArrowRight, 
  ShoppingBag, ShieldCheck, Clock, Image as ImageIcon,
  Zap, Lock, User, AlertTriangle, Briefcase, Building2, Camera,
- DollarSign, Calendar, Printer, Settings, Sparkles, LayoutDashboard, MapPin
+ DollarSign, Printer, Settings, Sparkles, LayoutDashboard, MapPin
 } from "lucide-react";
 import { ProfilePhotoUpload } from "../components/ProfilePhotoUpload";
 import { toast } from "sonner";
