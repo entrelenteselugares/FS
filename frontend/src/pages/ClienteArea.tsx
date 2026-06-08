@@ -643,70 +643,70 @@ export default function ClienteArea() {
  </div>
  </div>
  ) : activeTab === "profile" ? (
- <div className="space-y-8">
- <div className="lux-card p-10 max-w-2xl border-l-4 border-l-brand-tactical bg-theme-bg">
- <div className="flex flex-col md:flex-row gap-8 items-center md:items-start mb-8 pb-8 border-b border-theme-border">
+  <div className="space-y-6 md:space-y-8">
+  <div className="lux-card p-5 md:p-10 max-w-2xl border-l-4 border-l-brand-tactical bg-theme-bg">
+  <div className="flex flex-col md:flex-row gap-4 md:gap-8 items-center md:items-start mb-6 pb-6 md:mb-8 md:pb-8 border-b border-theme-border">
  <ProfilePhotoUpload onProfileUpdated={() => window.location.reload()} />
  <div className="space-y-2 text-center md:text-left">
  <h2 className="text-xl font-heading font-black text-theme-text uppercase tracking-tight">Meus Dados</h2>
  <p className="text-[11px] font-black text-theme-muted uppercase tracking-[0.4em] ">Gerencie suas informações de contato e entrega</p>
  </div>
  </div>
- <form onSubmit={handleUpdateProfile} className="space-y-6">
- <div className="space-y-2">
- <label className="text-[9px] font-black uppercase tracking-widest text-theme-muted block ">E-mail (Não editável)</label>
+ <form onSubmit={handleUpdateProfile} className="space-y-4 md:space-y-6">
+ <div className="space-y-1.5 md:space-y-2">
+ <label className="text-[8px] md:text-[9px] font-black uppercase tracking-widest text-theme-muted block ">E-mail (Não editável)</label>
  <input type="text" disabled value={user?.email || ""} className="fs-input opacity-60" />
  </div>
- <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
- <div className="space-y-2">
- <label className="text-[9px] font-black uppercase tracking-widest text-theme-muted block ">Nome Completo</label>
+ <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-6">
+ <div className="space-y-1.5 md:space-y-2">
+ <label className="text-[8px] md:text-[9px] font-black uppercase tracking-widest text-theme-muted block ">Nome Completo</label>
  <input type="text" value={profileData.nome} onChange={e => setProfileData(p => ({ ...p, nome: e.target.value }))} className="fs-input" placeholder="Como quer ser chamado" />
  </div>
- <div className="space-y-2">
- <label className="text-[9px] font-black uppercase tracking-widest text-theme-muted block ">WhatsApp</label>
+ <div className="space-y-1.5 md:space-y-2">
+ <label className="text-[8px] md:text-[9px] font-black uppercase tracking-widest text-theme-muted block ">WhatsApp</label>
  <input type="text" value={profileData.whatsapp} onChange={e => setProfileData(p => ({ ...p, whatsapp: e.target.value }))} className="fs-input" placeholder="(00) 00000-0000" />
  </div>
  </div>
 
- <div className="pt-4 space-y-6">
+ <div className="pt-2 md:pt-4 space-y-4 md:space-y-6">
  <div className="flex items-center gap-3">
  <div className="h-px w-6 bg-brand-tactical" />
- <p className="text-[9px] font-black text-theme-muted uppercase tracking-[0.4em]">Endereço de Entrega</p>
+ <p className="text-[8px] md:text-[9px] font-black text-theme-muted uppercase tracking-[0.4em]">Endereço de Entrega</p>
  </div>
 
- <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
- <div className="space-y-2">
- <label className="text-[9px] font-black uppercase tracking-[0.3em] text-theme-muted block ">CEP</label>
+ <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-6">
+ <div className="space-y-1.5 md:space-y-2">
+ <label className="text-[8px] md:text-[9px] font-black uppercase tracking-[0.3em] text-theme-muted block ">CEP</label>
  <input type="text" value={profileData.cep} onChange={e => handleCepChange(e.target.value)} className="fs-input" placeholder="00000-000" />
  </div>
- <div className="md:col-span-2 space-y-2">
- <label className="text-[9px] font-black uppercase tracking-[0.3em] text-theme-muted block ">Endereço (Rua/Av)</label>
+ <div className="md:col-span-2 space-y-1.5 md:space-y-2">
+ <label className="text-[8px] md:text-[9px] font-black uppercase tracking-[0.3em] text-theme-muted block ">Endereço (Rua/Av)</label>
  <input type="text" value={profileData.endereco} onChange={e => setProfileData(p => ({ ...p, endereco: e.target.value }))} className="fs-input" placeholder="Nome da rua" />
  </div>
  </div>
 
- <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
- <div className="space-y-2">
- <label className="text-[9px] font-black uppercase tracking-[0.3em] text-theme-muted block ">Número</label>
+ <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-6">
+ <div className="space-y-1.5 md:space-y-2">
+ <label className="text-[8px] md:text-[9px] font-black uppercase tracking-[0.3em] text-theme-muted block ">Número</label>
  <input type="text" value={profileData.numero} onChange={e => setProfileData(p => ({ ...p, numero: e.target.value }))} className="fs-input" placeholder="123" />
  </div>
- <div className="space-y-2">
- <label className="text-[9px] font-black uppercase tracking-[0.3em] text-theme-muted block ">Complemento</label>
+ <div className="space-y-1.5 md:space-y-2">
+ <label className="text-[8px] md:text-[9px] font-black uppercase tracking-[0.3em] text-theme-muted block ">Complemento</label>
  <input type="text" value={profileData.complemento} onChange={e => setProfileData(p => ({ ...p, complemento: e.target.value }))} className="fs-input" placeholder="Apto, Bloco, etc" />
  </div>
  </div>
 
- <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
- <div className="space-y-2">
- <label className="text-[9px] font-black uppercase tracking-[0.3em] text-theme-muted block ">Bairro</label>
+ <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-6">
+ <div className="space-y-1.5 md:space-y-2">
+ <label className="text-[8px] md:text-[9px] font-black uppercase tracking-[0.3em] text-theme-muted block ">Bairro</label>
  <input type="text" value={profileData.bairro} onChange={e => setProfileData(p => ({ ...p, bairro: e.target.value }))} className="fs-input" placeholder="Nome do bairro" />
  </div>
- <div className="space-y-2">
- <label className="text-[9px] font-black uppercase tracking-[0.3em] text-theme-muted block ">Cidade</label>
+ <div className="space-y-1.5 md:space-y-2">
+ <label className="text-[8px] md:text-[9px] font-black uppercase tracking-[0.3em] text-theme-muted block ">Cidade</label>
  <input type="text" value={profileData.cidade} onChange={e => setProfileData(p => ({ ...p, cidade: e.target.value }))} className="fs-input" placeholder="Sua cidade" />
  </div>
- <div className="space-y-2">
- <label className="text-[9px] font-black uppercase tracking-[0.3em] text-theme-muted block ">Estado (UF)</label>
+ <div className="space-y-1.5 md:space-y-2">
+ <label className="text-[8px] md:text-[9px] font-black uppercase tracking-[0.3em] text-theme-muted block ">Estado (UF)</label>
  <input type="text" value={profileData.estado} onChange={e => setProfileData(p => ({ ...p, estado: e.target.value }))} className="fs-input" placeholder="SP" maxLength={2} />
  </div>
  </div>
@@ -718,9 +718,9 @@ export default function ClienteArea() {
  {saveSuccess && <span className="text-brand-tactical text-[10px] font-black uppercase tracking-widest">✓ Atualizado</span>}
  </div>
  </form>
- <div className="pt-6 border-t border-theme-border space-y-4">
- <h3 className="text-[9px] font-black text-red-400 uppercase tracking-[0.3em]">Zona de Suporte</h3>
- <p className="text-[11px] text-theme-muted">Para redefinir sua senha ou solicitar exclusão de dados, entre em contato com nosso suporte.</p>
+ <div className="pt-4 md:pt-6 border-t border-theme-border space-y-3 md:space-y-4">
+ <h3 className="text-[8px] md:text-[9px] font-black text-red-400 uppercase tracking-[0.3em]">Zona de Suporte</h3>
+ <p className="text-[10px] md:text-[11px] text-theme-muted">Para redefinir sua senha ou solicitar exclusão de dados, entre em contato com nosso suporte.</p>
  <a href="https://wa.me/5519981150440" target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 text-[10px] font-black text-theme-text uppercase tracking-widest hover:text-brand-tactical transition-colors">
  Falar com Suporte <ArrowRight size={12} />
  </a>
@@ -729,15 +729,15 @@ export default function ClienteArea() {
 
  {/* Role Application Section */}
  {(user?.role === "CLIENTE" || user?.verificationStatus === "PENDING") && (
- <div className="lux-card p-10 max-w-2xl border-l-4 border-l-emerald-500 bg-theme-bg">
- <div className="space-y-6">
+ <div className="lux-card p-5 md:p-10 max-w-2xl border-l-4 border-l-emerald-500 bg-theme-bg">
+ <div className="space-y-4 md:space-y-6">
  <div className="flex items-center gap-4">
  <div className="p-3 bg-emerald-500/10 text-emerald-500 border border-emerald-500/20">
  <Briefcase size={24} />
  </div>
  <div className="space-y-1">
- <h3 className="text-xl font-heading font-black text-theme-text uppercase tracking-tight">Seja um Parceiro</h3>
- <p className="text-[10px] font-black text-emerald-500 uppercase tracking-[0.4em] ">Transforme sua paixão em faturamento</p>
+ <h3 className="text-lg md:text-xl font-heading font-black text-theme-text uppercase tracking-tight">Seja um Parceiro</h3>
+ <p className="text-[9px] md:text-[10px] font-black text-emerald-500 uppercase tracking-[0.4em] ">Transforme sua paixão em faturamento</p>
  </div>
  </div>
 
