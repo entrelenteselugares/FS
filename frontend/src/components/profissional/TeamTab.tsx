@@ -106,53 +106,53 @@ export function TeamTab() {
           const vinculo = getVinculo(p);
           return (
             <div key={p.id} className={`lux-card p-0 rounded-2xl overflow-hidden group transition-all duration-700 hover:border-brand-tactical/30 shadow-sm ${vinculo === "FIXO" ? 'border-brand-tactical/40 ring-1 ring-brand-tactical/10' : ''}`}>
-              <div className="flex flex-col md:flex-row md:items-stretch">
-                  <div className={`md:w-24 flex items-center justify-center border-b md:border-b-0 md:border-r border-theme-border transition-colors ${vinculo === "FIXO" ? 'bg-brand-tactical/10' : 'bg-theme-bg'}`}>
-                    {p.profileImageUrl ? (
-                      <div className="w-12 h-12 rounded-full overflow-hidden border border-theme-border flex items-center justify-center relative">
-                         <img src={p.profileImageUrl} alt={p.nome} className="w-full h-full object-cover" />
-                         {vinculo === "FIXO" && <Star size={12} className="absolute bottom-0 right-0 text-brand-tactical fill-brand-tactical bg-theme-bg rounded-full p-0.5" />}
-                      </div>
-                    ) : vinculo === "FIXO" ? (
-                      <Star size={24} className="text-brand-tactical fill-brand-tactical animate-in zoom-in duration-500" />
-                    ) : vinculo === "ROTATIVO" ? (
-                      <Users2 size={24} className="text-blue-400 opacity-60" />
-                    ) : (
-                      <UserCircle size={24} className="text-theme-muted/40" />
-                    )}
+              <div className="flex flex-col h-full">
+                  <div className={`p-6 flex items-center gap-4 border-b border-theme-border transition-colors ${vinculo === "FIXO" ? 'bg-brand-tactical/10' : 'bg-theme-bg'}`}>
+                    <div className="shrink-0">
+                      {p.profileImageUrl ? (
+                        <div className="w-12 h-12 rounded-full overflow-hidden border border-theme-border flex items-center justify-center relative">
+                           <img src={p.profileImageUrl} alt={p.nome} className="w-full h-full object-cover" />
+                           {vinculo === "FIXO" && <Star size={12} className="absolute bottom-0 right-0 text-brand-tactical fill-brand-tactical bg-theme-bg rounded-full p-0.5" />}
+                        </div>
+                      ) : vinculo === "FIXO" ? (
+                        <Star size={24} className="text-brand-tactical fill-brand-tactical animate-in zoom-in duration-500" />
+                      ) : vinculo === "ROTATIVO" ? (
+                        <Users2 size={24} className="text-blue-400 opacity-60" />
+                      ) : (
+                        <UserCircle size={24} className="text-theme-muted/40" />
+                      )}
+                    </div>
+                    
+                    <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-3 mb-1">
+                            <h4 className="text-lg font-heading font-black text-theme-text uppercase italic tracking-tight truncate group-hover:text-brand-tactical transition-colors" title={p.nome}>{p.nome}</h4>
+                            {vinculo === "FIXO" && (
+                              <span className="px-2 py-0.5 bg-brand-tactical text-brand-text text-[8px] font-black uppercase tracking-widest italic rounded-full shrink-0">PRIORIDADE</span>
+                            )}
+                        </div>
+                        <p className="text-[10px] font-bold text-theme-muted uppercase tracking-[0.2em] truncate" title={p.email}>{p.email}</p>
+                    </div>
                   </div>
 
-                  <div className="flex-1 p-8 flex flex-col md:flex-row md:items-center justify-between gap-10">
-                    <div className="space-y-5">
-                        <div className="space-y-1">
-                          <div className="flex items-center gap-4">
-                              <h4 className="text-xl font-heading font-black text-theme-text uppercase italic tracking-tight group-hover:text-brand-tactical transition-colors">{p.nome}</h4>
-                              {vinculo === "FIXO" && (
-                                <span className="px-3 py-1 bg-brand-tactical text-brand-text text-[8px] font-black uppercase tracking-widest italic rounded-full">PRIORIDADE</span>
-                              )}
-                          </div>
-                          <p className="text-[10px] font-bold text-theme-muted uppercase tracking-[0.2em]">{p.email}</p>
-                        </div>
-
-                        <div className="flex flex-wrap gap-3">
-                          {p.services.length > 0 ? p.services.map(s => (
-                            <span key={s} className="px-4 py-1.5 bg-theme-bg border border-theme-border rounded-lg text-[9px] font-black text-theme-text uppercase tracking-widest group-hover:border-brand-tactical/30 transition-colors shadow-sm">
-                              {s}
-                            </span>
-                          )) : (
-                            <span className="text-[8px] font-bold text-theme-muted uppercase italic">Perfil em análise Técnica</span>
-                          )}
-                        </div>
+                  <div className="flex-1 p-6 flex flex-col justify-between gap-6">
+                    <div className="flex flex-wrap gap-2">
+                      {p.services.length > 0 ? p.services.map(s => (
+                        <span key={s} className="px-3 py-1 bg-theme-bg border border-theme-border rounded-lg text-[9px] font-black text-theme-text uppercase tracking-widest group-hover:border-brand-tactical/30 transition-colors shadow-sm truncate max-w-full">
+                          {s}
+                        </span>
+                      )) : (
+                        <span className="text-[8px] font-bold text-theme-muted uppercase italic">Perfil em análise Técnica</span>
+                      )}
                     </div>
 
-                    <div className="flex flex-col gap-3">
-                        <p className="text-[8px] font-black text-theme-muted uppercase tracking-[0.4em] text-center md:text-right mb-1 opacity-60">Status de vínculo</p>
-                        <div className="flex items-center gap-1 bg-theme-bg-muted p-1.5 border border-theme-border rounded-xl">
+                    <div className="space-y-3 mt-auto">
+                        <p className="text-[8px] font-black text-theme-muted uppercase tracking-[0.4em] opacity-60">Status de vínculo</p>
+                        <div className="grid grid-cols-3 gap-1 bg-theme-bg-muted p-1 border border-theme-border rounded-xl">
                           {([null, "ROTATIVO", "FIXO"] as const).map(tipo => (
                             <button
                               key={String(tipo)}
                               onClick={() => setTeamChanges(prev => ({ ...prev, [p.id]: tipo }))}
-                              className={`px-6 py-2.5 text-[9px] font-black uppercase tracking-widest rounded-lg transition-all duration-500 relative overflow-hidden cursor-pointer hover:scale-[1.02] ${
+                              className={`py-2 text-[8px] sm:text-[9px] font-black uppercase tracking-widest rounded-lg transition-all duration-300 relative overflow-hidden truncate px-1 ${
                                 vinculo === tipo 
                                   ? tipo === "FIXO" ? "bg-brand-tactical text-brand-text shadow-lg shadow-brand-tactical/20" : tipo === "ROTATIVO" ? "bg-blue-500 text-theme-text shadow-md shadow-blue-500/20" : "bg-theme-border text-theme-text shadow-sm"
                                   : "text-theme-muted hover:text-theme-text hover:bg-theme-border/20"
