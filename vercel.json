@@ -3,63 +3,63 @@
   "rewrites": [
     {
       "source": "/api/raw-debug",
-      "destination": "/api/debug.js"
+      "destination": "/api/debug"
     },
     {
       "source": "/api/edge/(.*)",
-      "destination": "/api/edge.js"
+      "destination": "/api/edge"
     },
     {
       "source": "/api/auth/(.*)",
-      "destination": "/api/auth.js"
+      "destination": "/api/auth"
     },
     {
       "source": "/api/profissional/me",
-      "destination": "/api/profissional-hono.js"
+      "destination": "/api/profissional-hono"
     },
     {
       "source": "/api/profissional/events",
-      "destination": "/api/profissional-hono.js"
+      "destination": "/api/profissional-hono"
     },
     {
       "source": "/api/checkout/(.*)",
-      "destination": "/api/checkout.js"
+      "destination": "/api/checkout"
     },
     {
       "source": "/api/public/events",
-      "destination": "/api/public-hono.js"
+      "destination": "/api/public-hono"
     },
     {
       "source": "/api/public/events/cities",
-      "destination": "/api/public-hono.js"
+      "destination": "/api/public-hono"
     },
     {
       "source": "/api/public/banners",
-      "destination": "/api/public-hono.js"
+      "destination": "/api/public-hono"
     },
     {
       "source": "/api/worldcup/(.*)",
-      "destination": "/api/core.js"
+      "destination": "/api/core"
     },
     {
       "source": "/api/public/(.*)",
-      "destination": "/api/events.js"
+      "destination": "/api/events"
     },
     {
       "source": "/api/flash/(.*)",
-      "destination": "/api/events.js"
+      "destination": "/api/events"
     },
     {
       "source": "/api/vaults/(.*)",
-      "destination": "/api/events.js"
+      "destination": "/api/events"
     },
     {
       "source": "/api/profissional/(.*)",
-      "destination": "/api/events.js"
+      "destination": "/api/events"
     },
     {
       "source": "/api/(.*)",
-      "destination": "/api/core.js"
+      "destination": "/api/core"
     },
     {
       "source": "/(.*)",

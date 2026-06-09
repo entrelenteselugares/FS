@@ -8,7 +8,8 @@ import { supabaseAdmin as supabase } from "../lib/supabase";
 import { NotificationService } from "../services/notification.service";
 import { audit } from "../lib/audit";
 import { FRONTEND_URL } from "../lib/config";
-
+import { ZodError } from "zod";
+import { updateEventSchema } from "../schemas/event.schema";
 async function notifyAssignedProfessional(eventId: string, userId: string, eventTitle: string, eventDate: Date | string, location: string) {
   try {
     const user = await prisma.user.findUnique({ where: { id: userId } });
@@ -461,6 +462,9 @@ export async function adminUpdateEvent(req: AuthRequest, res: Response): Promise
       return;
     }
 
+    // Zod validation
+    updateEventSchema.parse(req.body);
+
     // Mapeamento de campos do body para o schema v4.0
     if (req.body.title) data.title = req.body.title;
     if (req.body.date) data.dataEvento = new Date(req.body.date);
@@ -510,7 +514,8 @@ export async function adminUpdateEvent(req: AuthRequest, res: Response): Promise
       if (canChangePrivacy) {
         (data as Prisma.EventUpdateInput).isPrivate = req.body.isPrivate;
       } else {
-        console.warn(`[SECURITY] UsuÃ¡rio ${req.user?.email} tentou mudar privacidade do evento ${id} sem ser o dono.`);
+        res.status(403).json({ error: "PermissÃ£o negada. Apenas o dono pode alterar a privacidade do evento." });
+        return;
       }
     }
     if (req.body.isUnitSale !== undefined) (data as Prisma.EventUpdateInput).isUnitSale = req.body.isUnitSale;
@@ -576,6 +581,7 @@ export async function adminUpdateEvent(req: AuthRequest, res: Response): Promise
 
     // 3. Processa GamificaÃ§Ã£o de Agilidade (SLA)
     if (isAddingLinks) {
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
       const { GamificationService } = require("../services/gamification.service");
       GamificationService.processSLA(event.id).catch((e: any) => console.error("Erro ao processar SLA:", e));
     }
@@ -613,6 +619,10 @@ export async function adminUpdateEvent(req: AuthRequest, res: Response): Promise
       _count: { orders: event._count?.pedidos || 0 } 
     });
   } catch (err) {
+    if (err instanceof ZodError) {
+      res.status(400).json({ error: "Dados invÃ¡lidos.", details: (err as any).errors || err.message });
+      return;
+    }
     if (err instanceof Error && (err as NodeJS.ErrnoException & { code?: string }).code === "P2025") {
       res.status(404).json({ error: "Evento nÃ£o encontrado." });
       return;
@@ -1361,9 +1371,8 @@ export async function adminListQuotes(req: AuthRequest, res: Response): Promise<
 
 export async function adminCreateQuote(req: AuthRequest, res: Response): Promise<void> {
   const {
-    title, clientName, clientEmail, clientPhone,
-    dataEvento, location, description, priceBase,
-    urgency, temFoto, temVideo, temReels, usageType
+    title, clientName, clientEmail,
+    dataEvento, location, description, priceBase
   } = req.body;
 
   if (!title || !dataEvento) {
