@@ -666,9 +666,12 @@ export default function EventPage() {
   const isEventOver = eventStatus.phase === 'ended' || eventStatus.phase === 'archived';
   const qrOpen = eventStatus.qrOpen;
 
-  const youtubeRef = event.eventReferences?.find(
-    r => r.type === 'YOUTUBE' || r.url.includes("youtube.com") || r.url.includes("youtu.be")
-  );
+  // Safely obtain YouTube reference, handling cases where eventReferences may not be an array
+  const youtubeRef = Array.isArray(event.eventReferences)
+    ? event.eventReferences.find(
+        r => r.type === 'YOUTUBE' || r.url.includes('youtube.com') || r.url.includes('youtu.be')
+      )
+    : undefined;
 
   // Build a proper YouTube embed URL with autoplay + loop + mute
   const youtubeEmbedUrl = (() => {
