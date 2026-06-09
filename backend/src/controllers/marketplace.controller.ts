@@ -276,7 +276,7 @@ export class MarketplaceController {
         customerPhone: "Manual Upload",
         userId,
         isBulk: false,
-        applyWatermark: true,
+        applyWatermark: event.sellPhotos ?? true,
         price: price ? Number(price) : undefined
       });
 

@@ -12,7 +12,7 @@ export default defineConfig({
   workers: process.env.CI ? 1 : undefined,
   reporter: 'html',
   use: {
-    baseURL: process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:3001',
+    baseURL: process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:3003',
     trace: 'on-first-retry',
     screenshot: 'on',
     video: 'on-first-retry',
@@ -29,7 +29,7 @@ export default defineConfig({
   webServer: [
     {
       command: 'npm run dev:frontend',
-      url: 'http://localhost:3001',
+      url: 'http://localhost:3003',
       reuseExistingServer: true,
       stdout: 'pipe',
       stderr: 'pipe',

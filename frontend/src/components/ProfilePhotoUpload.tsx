@@ -155,9 +155,9 @@ export const ProfilePhotoUpload: React.FC<ProfilePhotoUploadProps> = ({ currentP
                   value={zoom}
                   min={1}
                   max={3}
-                  step={0.1}
+                  step={0.01}
                   aria-labelledby="Zoom"
-                  onChange={(e) => setZoom(Number(e.target.value))}
+                  onChange={(e) => setZoom(parseFloat(e.target.value))}
                   className="w-full accent-brand-tactical"
                 />
               </div>

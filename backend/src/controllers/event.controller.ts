@@ -572,7 +572,8 @@ export class EventController {
         preferredProfessionalId,
         category,
         ticketUrl,
-        fotoSegundoPromoCode
+        fotoSegundoPromoCode,
+        city
       } = req.body;
 
       // Fallback: use title if name is not provided
@@ -732,6 +733,7 @@ export class EventController {
           eventHours: eventHours ? Number(eventHours) : 2,
           eventDays: eventDays ? Number(eventDays) : 1,
           location: req.body.location || (locationType === "PARTNER" ? "Ponto Fixo" : `CEP: ${customCep}`),
+          city: city || null,
           description: `ORÇAMENTO AUTOMÁTICO\nConvidados: ${attendees}\nUso: ${usageType}\nPreferência: ${req.body.workflowPref || 'TRADICIONAL'}\nOrçamento Disponível: ${req.body.availableBudget || 'Não informado'}\nServiços: ${serviceLabels.join(", ")}\nDias: ${eventDays}\n\nDescrição do Cliente: ${description}`,
           usageType: usageType || "PESSOAL",
           category: category ? category : undefined,

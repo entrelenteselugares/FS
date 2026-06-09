@@ -225,7 +225,7 @@ export default function VaultDetailPage() {
       }
 
       // Senão, é o zip binário
-      const url = window.URL.createObjectURL(new Blob([res.data]));
+      const url = window.URL.createObjectURL(res.data);
       const link = document.createElement('a');
       link.href = url;
       link.setAttribute('download', `${vault.nome.replace(/[^a-z0-9]/gi, '_').toLowerCase()}-fotos.zip`);
@@ -697,10 +697,10 @@ export default function VaultDetailPage() {
           {/* Materialization Banner (Replaces immediate subscription upsell) */}
           {(!vault.subscription || vault.subscription.status !== 'ACTIVE') ? (
             vault.myRole === 'OWNER' && (
-              <div className="mb-8">
+              <div className="mb-8 hidden">
                 <div className="bg-gradient-to-r from-emerald-600/20 to-teal-600/20 border border-emerald-500/30 rounded-2xl p-8 md:p-10 flex flex-col md:flex-row items-center justify-between gap-8 backdrop-blur-md">
                   <div className="flex items-center gap-6">
-                    <div className="w-14 h-14 bg-brand-tactical rounded-full shadow-[0_0_10px_rgba(133,185,172,0.5)] flex items-center justify-center shadow-[0_0_20px_rgba(16,185,129,0.4)]">
+                    <div className="w-14 h-14 bg-brand-tactical rounded-full flex items-center justify-center shadow-[0_0_20px_rgba(16,185,129,0.4)]">
                       <Printer className="text-black" size={24} />
                     </div>
                     <div>

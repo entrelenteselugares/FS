@@ -16,6 +16,16 @@ const FALLBACK_SLIDES = [
     bgImage: "/copa_stadium_banner.png",
   },
   {
+    id: "revelacao",
+    title: "REVELAÇÃO",
+    subtitle: "Premium",
+    desc: "Transforme suas memórias digitais em fotos impressas de alta qualidade. Materialize seus álbuns e receba no conforto da sua casa.",
+    primaryBtn: "IMPRIMIR FOTOS",
+    primaryAction: "/meus-albuns",
+    icon: "camera",
+    bgImage: "https://images.unsplash.com/photo-1506012787146-f92b2d7d6d96?auto=format&fit=crop&q=80&w=1600",
+  },
+  {
     id: "institucional",
     title: "MOMENTOS",
     subtitle: "Inesquecíveis",

@@ -85,6 +85,7 @@ export const AdminUsers: React.FC = () => {
       case 'PROFISSIONAL': return { bg: 'bg-brand-tactical/10', border: 'border-brand-tactical/30', text: 'text-brand-tactical' };
       case 'CARTORIO': 
       case 'UNIDADE_FIXA': return { bg: 'bg-slate-500/10', border: 'border-slate-500/30', text: 'text-slate-400' };
+      case 'FRANCHISEE': return { bg: 'bg-amber-500/10', border: 'border-amber-500/30', text: 'text-amber-500' };
       default: return { bg: 'bg-zinc-500/10', border: 'border-zinc-500/30', text: 'text-zinc-500' };
     }
   };
@@ -191,18 +192,19 @@ export const AdminUsers: React.FC = () => {
                 style={{ paddingLeft: '3rem' }}
               />
            </div>
-           <div className="grid grid-cols-2 md:flex md:gap-2 pb-2 md:pb-0 w-full md:w-auto gap-2">
+           <div className="grid grid-cols-3 md:flex md:gap-2 pb-2 md:pb-0 w-full md:w-auto gap-2">
               {[
                 { value: 'ALL', label: 'Todos' },
                 { value: 'ADMIN', label: 'Admin' },
                 { value: 'PROFISSIONAL', label: 'Profissional' },
+                { value: 'CARTORIO', label: 'Unidade Fixa' },
+                { value: 'FRANCHISEE', label: 'Franqueado' },
                 { value: 'CLIENTE', label: 'Cliente' },
-                { value: 'CARTORIO', label: 'Unidades' },
               ].map(({ value, label }) => (
                 <button
                   key={value}
                   onClick={() => setFilterRole(value)}
-                  className={`fs-btn border transition-all whitespace-nowrap ${filterRole === value ? 'bg-theme-border border-zinc-700 text-theme-text shadow-lg' : 'bg-transparent border-theme-border text-theme-muted hover:border-zinc-700'}`}
+                  className={`fs-btn border transition-all whitespace-nowrap rounded-xl ${filterRole === value ? 'bg-theme-border border-zinc-700 text-theme-text shadow-lg' : 'bg-transparent border-theme-border text-theme-muted hover:border-zinc-700'}`}
                 >
                   {label}
                 </button>
@@ -251,7 +253,7 @@ export const AdminUsers: React.FC = () => {
                     </div>
                     <div className="col-span-3 flex flex-wrap gap-2">
                       <span className={`px-3 py-1.5 border ${styles.bg} ${styles.border} ${styles.text} text-[9px] font-black uppercase tracking-[0.2em] inline-flex items-center gap-2 rounded-xl italic`}>
-                        {u.role === 'ADMIN' && <Shield size={8} />} {u.role === 'CARTORIO' ? 'UNIDADE' : u.role}
+                        {u.role === 'ADMIN' && <Shield size={8} />} {u.role === 'CARTORIO' ? 'UNIDADE FIXA' : u.role === 'FRANCHISEE' ? 'FRANQUEADO' : u.role}
                       </span>
                       {u.isVerified && (
                         <span className="px-2 py-1 bg-brand-tactical/10 border border-brand-tactical/30 text-brand-tactical text-[7px] font-black uppercase tracking-widest flex items-center gap-1 rounded-lg">
@@ -349,8 +351,9 @@ export const AdminUsers: React.FC = () => {
                         <div className="relative">
                           <select className="fs-input font-black uppercase appearance-none cursor-pointer w-full" value={formData.role} onChange={e => setFormData({...formData, role: e.target.value})}>
                             <option value="ADMIN">ADMINISTRADOR</option>
-                            <option value="PROFISSIONAL">PROFISSIONAL / PARCEIRO</option>
-                            <option value="CARTORIO">UNIDADE FIXA / PARCEIRO</option>
+                            <option value="PROFISSIONAL">PROFISSIONAL</option>
+                            <option value="CARTORIO">UNIDADE FIXA</option>
+                            <option value="FRANCHISEE">FRANQUEADO</option>
                             <option value="CLIENTE">CLIENTE</option>
                           </select>
                           <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-theme-muted pointer-events-none" size={16} />

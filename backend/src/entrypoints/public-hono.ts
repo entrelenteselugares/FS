@@ -50,14 +50,16 @@ app.get('/events/cities', async (c) => {
     const citiesSet = new Set<string>();
     
     events.forEach((e: any) => {
-      const city = e.city || e.cartorioUser?.cartorio?.cidade;
+      let city = e.city || e.cartorioUser?.cartorio?.cidade;
       if (city) {
-        citiesSet.add(city.trim());
+        // Remove trailing state like "-SP", "/SP", " SP" and normalize to uppercase
+        city = city.replace(/[\/\-]?\s*[A-Z]{2}$/i, '').trim().toUpperCase();
+        citiesSet.add(city);
       }
     });
 
     if (citiesSet.size === 0) {
-      citiesSet.add("Campinas");
+      citiesSet.add("CAMPINAS");
     }
 
     return c.json({ cities: Array.from(citiesSet).sort() });

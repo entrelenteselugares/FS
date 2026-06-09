@@ -200,15 +200,20 @@ export default function ClienteArea() {
  }
 
  if ((user?.role === "CARTORIO" || user?.role === "UNIDADE") && user?.verificationStatus === "APPROVED") {
- items.push(
- { label: "ÁREA DA UNIDADE", isHeader: true },
- { label: "Agenda Unidade", onClick: () => handleTabChange("agenda"), isActive: activeTab === "agenda", icon: <Play size={18} /> },
- { label: "Fluxo Financeiro", onClick: () => handleTabChange("financeiro"), isActive: activeTab === "financeiro", icon: <DollarSign size={18} /> },
- { label: "Rede Técnica", onClick: () => handleTabChange("equipe"), isActive: activeTab === "equipe", icon: <Users size={18} /> },
-
- { label: "Franquia Print", onClick: () => handleTabChange("franquia"), isActive: activeTab === "franquia", icon: <Printer size={18} /> },
- { label: "Configuração Pública", onClick: () => handleTabChange("configuracoes"), isActive: activeTab === "configuracoes", icon: <Settings size={18} /> }
- );
+  items.push(
+  { label: "ÁREA DA UNIDADE", isHeader: true },
+  { label: "Agenda Unidade", onClick: () => handleTabChange("agenda"), isActive: activeTab === "agenda", icon: <Play size={18} /> },
+  { label: "Fluxo Financeiro", onClick: () => handleTabChange("financeiro"), isActive: activeTab === "financeiro", icon: <DollarSign size={18} /> },
+  { label: "Rede Técnica", onClick: () => handleTabChange("equipe"), isActive: activeTab === "equipe", icon: <Users size={18} /> },
+  { label: "Configuração Pública", onClick: () => handleTabChange("configuracoes"), isActive: activeTab === "configuracoes", icon: <Settings size={18} /> }
+  );
+  // Franquia Print e Monitor só aparecem se a unidade tiver um ponto de impressão ativo
+  if (user?.franchiseProfile) {
+    items.push(
+      { label: "Franquia Print", onClick: () => handleTabChange("franquia"), isActive: activeTab === "franquia", icon: <Printer size={18} /> },
+      { label: "Monitor de Fila", onClick: () => handleTabChange("monitor"), isActive: activeTab === "monitor", icon: <Settings size={18} /> }
+    );
+  }
  }
 
  return items;
@@ -678,40 +683,36 @@ export default function ClienteArea() {
  <p className="text-[8px] md:text-[9px] font-black text-theme-muted uppercase tracking-[0.4em]">Endereço de Entrega</p>
  </div>
 
- <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-6">
- <div className="space-y-1.5 md:space-y-2">
+ <div className="grid grid-cols-6 gap-2.5 md:gap-4">
+ <div className="col-span-2 sm:col-span-2 space-y-1 md:space-y-2">
  <label className="text-[8px] md:text-[9px] font-black uppercase tracking-[0.3em] text-theme-muted block ">CEP</label>
- <input type="text" value={profileData.cep} onChange={e => handleCepChange(e.target.value)} className="fs-input" placeholder="00000-000" />
+ <input type="text" value={profileData.cep} onChange={e => handleCepChange(e.target.value)} className="fs-input p-2.5 text-xs" placeholder="00000-000" />
  </div>
- <div className="md:col-span-2 space-y-1.5 md:space-y-2">
- <label className="text-[8px] md:text-[9px] font-black uppercase tracking-[0.3em] text-theme-muted block ">Endereço (Rua/Av)</label>
- <input type="text" value={profileData.endereco} onChange={e => setProfileData(p => ({ ...p, endereco: e.target.value }))} className="fs-input" placeholder="Nome da rua" />
- </div>
+ <div className="col-span-4 sm:col-span-4 space-y-1 md:space-y-2">
+ <label className="text-[8px] md:text-[9px] font-black uppercase tracking-[0.3em] text-theme-muted block ">Endereço</label>
+ <input type="text" value={profileData.endereco} onChange={e => setProfileData(p => ({ ...p, endereco: e.target.value }))} className="fs-input p-2.5 text-xs" placeholder="Nome da rua" />
  </div>
 
- <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-6">
- <div className="space-y-1.5 md:space-y-2">
- <label className="text-[8px] md:text-[9px] font-black uppercase tracking-[0.3em] text-theme-muted block ">Número</label>
- <input type="text" value={profileData.numero} onChange={e => setProfileData(p => ({ ...p, numero: e.target.value }))} className="fs-input" placeholder="123" />
+ <div className="col-span-2 sm:col-span-1 space-y-1 md:space-y-2">
+ <label className="text-[8px] md:text-[9px] font-black uppercase tracking-[0.3em] text-theme-muted block ">Nº</label>
+ <input type="text" value={profileData.numero} onChange={e => setProfileData(p => ({ ...p, numero: e.target.value }))} className="fs-input p-2.5 text-xs" placeholder="123" />
  </div>
- <div className="space-y-1.5 md:space-y-2">
+ <div className="col-span-4 sm:col-span-2 space-y-1 md:space-y-2">
  <label className="text-[8px] md:text-[9px] font-black uppercase tracking-[0.3em] text-theme-muted block ">Complemento</label>
- <input type="text" value={profileData.complemento} onChange={e => setProfileData(p => ({ ...p, complemento: e.target.value }))} className="fs-input" placeholder="Apto, Bloco, etc" />
- </div>
+ <input type="text" value={profileData.complemento} onChange={e => setProfileData(p => ({ ...p, complemento: e.target.value }))} className="fs-input p-2.5 text-xs" placeholder="Apto, Bloco, etc" />
  </div>
 
- <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-6">
- <div className="space-y-1.5 md:space-y-2">
+ <div className="col-span-6 sm:col-span-3 space-y-1 md:space-y-2">
  <label className="text-[8px] md:text-[9px] font-black uppercase tracking-[0.3em] text-theme-muted block ">Bairro</label>
- <input type="text" value={profileData.bairro} onChange={e => setProfileData(p => ({ ...p, bairro: e.target.value }))} className="fs-input" placeholder="Nome do bairro" />
+ <input type="text" value={profileData.bairro} onChange={e => setProfileData(p => ({ ...p, bairro: e.target.value }))} className="fs-input p-2.5 text-xs" placeholder="Nome do bairro" />
  </div>
- <div className="space-y-1.5 md:space-y-2">
+ <div className="col-span-4 sm:col-span-4 space-y-1 md:space-y-2">
  <label className="text-[8px] md:text-[9px] font-black uppercase tracking-[0.3em] text-theme-muted block ">Cidade</label>
- <input type="text" value={profileData.cidade} onChange={e => setProfileData(p => ({ ...p, cidade: e.target.value }))} className="fs-input" placeholder="Sua cidade" />
+ <input type="text" value={profileData.cidade} onChange={e => setProfileData(p => ({ ...p, cidade: e.target.value }))} className="fs-input p-2.5 text-xs" placeholder="Sua cidade" />
  </div>
- <div className="space-y-1.5 md:space-y-2">
- <label className="text-[8px] md:text-[9px] font-black uppercase tracking-[0.3em] text-theme-muted block ">Estado (UF)</label>
- <input type="text" value={profileData.estado} onChange={e => setProfileData(p => ({ ...p, estado: e.target.value }))} className="fs-input" placeholder="SP" maxLength={2} />
+ <div className="col-span-2 sm:col-span-2 space-y-1 md:space-y-2">
+ <label className="text-[8px] md:text-[9px] font-black uppercase tracking-[0.3em] text-theme-muted block ">UF</label>
+ <input type="text" value={profileData.estado} onChange={e => setProfileData(p => ({ ...p, estado: e.target.value }))} className="fs-input p-2.5 text-xs" placeholder="SP" maxLength={2} />
  </div>
  </div>
  </div>

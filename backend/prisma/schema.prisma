@@ -206,6 +206,7 @@ model Event {
   verticalConfigs    Json?               @default("{}") // Vertical specific settings (ex: {studentList: [...]})
   preSaleEnabled     Boolean             @default(false)
   postSaleEnabled    Boolean             @default(true)
+  sellPhotos         Boolean             @default(true)
   calendarSlots      CalendarSlot[]
   media              EventMedia[]
   captacao           User?               @relation("CaptacaoEvents", fields: [captacaoId], references: [id])

@@ -48,6 +48,8 @@ export function EventEditPanel({ event, onUpdated, onClose, onNotify }: EventEdi
   const [editingLr, setEditingLr] = useState(!event.lightroomUrl);
   const [editingDr, setEditingDr] = useState(!event.driveUrl);
 
+  const [sellPhotos, setSellPhotos] = useState(event.sellPhotos ?? true);
+
   // Team state
   const [edicaoId, setEdicaoId] = useState<string | null>(event.edicaoId ?? null);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -111,6 +113,7 @@ export function EventEditPanel({ event, onUpdated, onClose, onNotify }: EventEdi
         dataEvento: date,
         coverPosition: coverPos,
         edicaoId: edicaoId || null,
+        sellPhotos,
       });
       onUpdated(data);
       onNotify?.("Painel atualizado!", "success");
@@ -318,6 +321,27 @@ export function EventEditPanel({ event, onUpdated, onClose, onNotify }: EventEdi
                   onPositionChange={(pos) => setCoverPos(pos)}
                   onChange={() => {}}
                 />
+              </div>
+
+              {/* ── Venda de Fotos ── */}
+              <div className="p-4 bg-theme-bg-muted rounded-2xl border border-theme-border flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-colors ${sellPhotos ? "bg-green-500/10" : "bg-red-500/10"}`}>
+                    <Check size={18} className={sellPhotos ? "text-green-400" : "text-red-400 opacity-50"} />
+                  </div>
+                  <div>
+                    <p className="text-[9px] font-black uppercase tracking-widest opacity-50">Venda de Fotos</p>
+                    <p className="text-[10px] text-theme-muted italic">
+                      {sellPhotos ? "Fotos terão marca d'água e preço." : "Fotos gratuitas sem marca d'água."}
+                    </p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setSellPhotos(!sellPhotos)}
+                  className={`w-12 h-6 rounded-full relative transition-colors ${sellPhotos ? "bg-green-500/50" : "bg-theme-border"}`}
+                >
+                  <div className={`absolute top-1 w-4 h-4 rounded-full bg-white transition-all ${sellPhotos ? "left-7" : "left-1"}`} />
+                </button>
               </div>
 
               {/* ── Luxury Link ── */}

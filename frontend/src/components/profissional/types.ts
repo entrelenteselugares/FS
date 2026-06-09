@@ -7,8 +7,10 @@ export interface EventItem {
   dataEvento: string;
   createdAt: string;
   cartorio: string | null;
+  cartorioUserId?: string | null;
   coverPhotoUrl: string | null;
   coverPosition?: string | null;
+  sellPhotos?: boolean;
   lightroomUrl: string | null;
   driveUrl: string | null;
   temFoto: boolean;

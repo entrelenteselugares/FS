@@ -862,7 +862,7 @@ export const CheckoutPage = () => {
                  </div>
               </div>
               {showItems && (
-                <div className="space-y-2 animate-in slide-in-from-top-2 fade-in duration-300">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-2 animate-in slide-in-from-top-2 fade-in duration-300">
                   {order.items?.map((item) => (
                     <div key={item.id} className="flex justify-between items-center p-4 bg-theme-bg-muted border border-white/5 rounded-xl">
                       <div className="flex items-center gap-4">

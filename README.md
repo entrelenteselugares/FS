@@ -59,17 +59,13 @@ The adaptive UI engine dynamically switches modes depending on the current tenan
 ```bash
 POST /api/profissional/flash-event
 Authorization: Bearer <seu_token>
-Content-Type: application/json
-
-{
-  "nome": "Casamento Silva & Santos",
-  "data": "2026-06-15",
-  "local": "Villa Borghese",
-  "vertical": "Nautico"
-}
 ```
 
-### 3. Growth & Retention
+### 3. Premium Photo Printing Service
+
+Integrated Web-to-Print functionality allowing users to request premium physical photo prints ("Serviço de Revelação") directly from their event albums or digital memory vaults, delivered directly to their homes.
+
+### 4. Growth & Retention
 
 Discount coupons, dynamic upselling through the marketplace checkout, and an integrated Ambassador network.
 

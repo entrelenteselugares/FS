@@ -117,6 +117,7 @@ export async function updateEventLinks(req: AuthRequest, res: Response): Promise
         ...(dataEvento !== undefined && { dataEvento: dataEvento ? new Date(dataEvento) : { set: new Date() } }),
         ...(coverPosition !== undefined && { coverPosition: String(coverPosition) || "center" }),
         ...(edicaoId !== undefined && { edicaoId: edicaoId === "null" || edicaoId === null ? null : String(edicaoId) }),
+        ...(req.body.sellPhotos !== undefined && { sellPhotos: Boolean(req.body.sellPhotos) }),
       },
     });
 

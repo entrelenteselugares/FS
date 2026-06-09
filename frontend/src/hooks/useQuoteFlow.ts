@@ -258,6 +258,7 @@ export function useQuoteFlow() {
       title: name, email, whatsapp, attendees: Number(attendees), locationType, usageType, selectedPartnerId, 
       category, customCep, 
       location: fullAddress,
+      city: locationType === "PARTNER" ? currentPartner?.city : addressData.cidade,
       eventDate, eventHours, eventDays, description, selectedServices, totalPrice, 
       availableBudget,
       preferredProfessionalId,

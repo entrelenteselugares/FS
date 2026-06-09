@@ -3,7 +3,7 @@ import { useSearchParams, useNavigate } from "react-router-dom";
 
 import { API } from "../lib/api";
 import { QRCodeSVG } from "qrcode.react";
-import { QrCode, Copy, Check, X, Download, Calendar, DollarSign, Settings, Users2, Camera, Star, ShieldCheck, ArrowRight, Share2, MapPin, Phone, Printer, AlertTriangle, Play, RefreshCw, Activity } from "lucide-react";
+import { QrCode, Copy, Check, X, Download, Calendar, DollarSign, Settings, Users2, Camera, Star, ShieldCheck, ArrowRight, Share2, MapPin, Phone, Printer, AlertTriangle, Play, RefreshCw, Activity, Link, FileText } from "lucide-react";
 import { useAuth } from "../hooks/useAuth";
 import { DashboardLayout, type NavItem } from "../components/DashboardLayout";
 import { TeamTab } from "../components/profissional/TeamTab";
@@ -31,6 +31,7 @@ interface GlobalService {
   name: string;
   description: string;
   basePrice: number;
+  category?: string;
 }
 
 interface ProfissionalTeam {
@@ -475,8 +476,8 @@ export default function UnidadeFixaDashboard({
         )}
 
         {/* KPIs Dashboard */}
-        {!loading && stats && (
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-px bg-theme-border/20 border border-theme-border shadow-2xl">
+        {!loading && stats && tab === "financas" && (
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-px bg-theme-border/20 border border-theme-border rounded-2xl overflow-hidden shadow-sm">
             {[
               { label: "Operações / Mês", value: String(stats.eventosMes ?? 0), icon: <Calendar size={14} /> },
               user?.franchiseProfile 
@@ -512,14 +513,14 @@ export default function UnidadeFixaDashboard({
             {tab === "agenda" && (
           <div className="space-y-10">
             {/* Tactical Summary Bar */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-theme-border/20 border border-theme-border shadow-xl overflow-hidden">
-               <div className="bg-theme-bg-muted p-6 flex items-center gap-5">
-                  <div className="w-10 h-10 rounded-full bg-brand-tactical/10 flex items-center justify-center text-brand-tactical border border-brand-tactical/20">
+            <div className="grid grid-cols-3 gap-px bg-theme-border/20 border border-theme-border rounded-2xl shadow-sm overflow-hidden">
+               <div className="bg-theme-bg-muted p-4 md:p-6 flex flex-col md:flex-row justify-center items-center gap-3 md:gap-5 text-center md:text-left">
+                  <div className="w-10 h-10 shrink-0 rounded-full bg-brand-tactical/10 flex items-center justify-center text-brand-tactical border border-brand-tactical/20">
                     <Calendar size={18} />
                   </div>
-                  <div>
-                    <p className="text-[8px] font-black text-theme-muted uppercase tracking-widest">Próximas 72h</p>
-                    <p className="text-sm font-black text-theme-text uppercase italic">{eventos.filter(e => {
+                  <div className="overflow-hidden w-full">
+                    <p className="text-[8px] font-black text-theme-muted uppercase tracking-widest truncate">Próximas 72h</p>
+                    <p className="text-[10px] md:text-sm font-black text-theme-text uppercase italic truncate">{eventos.filter(e => {
                       const d = new Date(e.date);
                       const now = new Date();
                       const diff = d.getTime() - now.getTime();
@@ -527,22 +528,22 @@ export default function UnidadeFixaDashboard({
                     }).length} Missões</p>
                   </div>
                </div>
-               <div className="bg-theme-bg-muted p-6 flex items-center gap-5">
-                  <div className="w-10 h-10 rounded-full bg-blue-500/10 flex items-center justify-center text-blue-500 border border-blue-500/20">
+               <div className="bg-theme-bg-muted p-4 md:p-6 flex flex-col md:flex-row justify-center items-center gap-3 md:gap-5 text-center md:text-left">
+                  <div className="w-10 h-10 shrink-0 rounded-full bg-blue-500/10 flex items-center justify-center text-blue-500 border border-blue-500/20">
                     <Users2 size={18} />
                   </div>
-                  <div>
-                    <p className="text-[8px] font-black text-theme-muted uppercase tracking-widest">Rede Ativa</p>
-                    <p className="text-sm font-black text-theme-text uppercase italic">{teamData.length} Agentes</p>
+                  <div className="overflow-hidden w-full">
+                    <p className="text-[8px] font-black text-theme-muted uppercase tracking-widest truncate">Rede Ativa</p>
+                    <p className="text-[10px] md:text-sm font-black text-theme-text uppercase italic truncate">{teamData.length} Agentes</p>
                   </div>
                </div>
-               <div className="bg-theme-bg-muted p-6 flex items-center gap-5">
-                  <div className="w-10 h-10 rounded-full bg-amber-500/10 flex items-center justify-center text-amber-500 border border-amber-500/20">
+               <div className="bg-theme-bg-muted p-4 md:p-6 flex flex-col md:flex-row justify-center items-center gap-3 md:gap-5 text-center md:text-left">
+                  <div className="w-10 h-10 shrink-0 rounded-full bg-amber-500/10 flex items-center justify-center text-amber-500 border border-amber-500/20">
                     <ShieldCheck size={18} />
                   </div>
-                  <div>
-                    <p className="text-[8px] font-black text-theme-muted uppercase tracking-widest">Status de Unidade</p>
-                    <p className="text-sm font-black text-theme-text uppercase italic">Operacional</p>
+                  <div className="overflow-hidden w-full">
+                    <p className="text-[8px] font-black text-theme-muted uppercase tracking-widest truncate">Status Unidade</p>
+                    <p className="text-[10px] md:text-sm font-black text-theme-text uppercase italic truncate">Operacional</p>
                   </div>
                </div>
             </div>
@@ -651,76 +652,84 @@ export default function UnidadeFixaDashboard({
 
         
             {/* --- GOOGLE CALENDAR SYNC --- */}
-            <div className="pt-10 border-t border-theme-border">
-              <div className="lux-card p-10 border-l-4 border-l-brand-tactical bg-theme-bg border-2 border-theme-border relative overflow-hidden">
-                 <div className="absolute top-0 right-0 p-10 opacity-[0.03] pointer-events-none">
-                   <Calendar size={120} />
-                 </div>
-                 <div className="relative z-10 space-y-4">
-                   <h3 className="text-2xl font-heading font-black text-theme-text uppercase italic tracking-tight">Sincronização com Google Calendar</h3>
-                   <p className="text-[11px] font-bold text-theme-muted uppercase tracking-[0.2em] leading-relaxed max-w-3xl">
-                     Conecte sua conta do Google para bloquear automaticamente datas em sua agenda tática baseando-se em seus compromissos externos.
-                   </p>
-                 </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-theme-border/20 border border-theme-border shadow-2xl mt-8">
-                 <div className="bg-theme-bg-muted p-10 space-y-8">
-                    <div className="space-y-2">
-                      <p className="text-[10px] font-black text-brand-tactical uppercase tracking-widest">Status da Conexão</p>
-                      <div className="flex items-center gap-3">
-                         <div className={`w-3 h-3 rounded-full ${calendarStatus?.connected ? 'bg-emerald-500 animate-pulse' : 'bg-red-500'}`} />
-                         <p className="text-xl font-heading font-black text-theme-text uppercase italic">
-                           {calendarStatus?.connected ? 'CONECTADO' : 'NÃO VINCULADO'}
-                         </p>
+            <div className="lux-card p-6 md:p-10 space-y-8 bg-theme-bg border border-theme-border rounded-2xl shadow-sm mt-8">
+               <div className="flex flex-col md:flex-row justify-between md:items-center items-start gap-6 border-b border-theme-border/50 pb-8">
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-3">
+                      <div className="p-2 bg-brand-tactical/10 rounded-lg">
+                        <Calendar size={20} className="text-brand-tactical" />
                       </div>
+                      <h3 className="text-lg md:text-xl font-heading font-black text-theme-text uppercase tracking-tight">
+                        Sincronização <span className="text-theme-muted">(Google Calendar)</span>
+                      </h3>
                     </div>
+                    <p className="text-[10px] font-medium text-theme-muted uppercase tracking-widest pl-1 opacity-80 max-w-2xl">
+                      Conecte sua conta para bloquear datas automaticamente baseando-se em seus compromissos.
+                    </p>
+                  </div>
+                  
+                  <div className="flex items-center gap-3 shrink-0">
+                     <div className={`w-2 h-2 rounded-full ${calendarStatus?.connected ? 'bg-emerald-500 animate-pulse' : 'bg-red-500'}`} />
+                     <p className="text-[10px] font-black text-theme-text uppercase tracking-widest">
+                       {calendarStatus?.connected ? 'CONECTADO' : 'NÃO VINCULADO'}
+                     </p>
+                  </div>
+               </div>
 
+               <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
+                  <div className="space-y-6">
                     {calendarStatus?.connected ? (
                       <div className="space-y-6">
-                         <div className="p-6 bg-theme-bg border border-theme-border space-y-4">
-                            <p className="text-[9px] font-black text-theme-muted uppercase tracking-widest">Agenda Vinculada</p>
+                         <div className="bg-theme-bg-muted border border-theme-border rounded-xl p-5 space-y-3">
+                            <p className="text-[10px] font-black text-theme-muted uppercase tracking-widest flex items-center gap-2"><Activity size={12} className="text-emerald-500"/> Agenda Vinculada</p>
                             <p className="text-sm font-black text-theme-text truncate">{calendarStatus.credential?.calendarId}</p>
-                            <p className="text-[8px] text-theme-muted uppercase font-bold tracking-widest">Última Sincronização: {new Date(calendarStatus.credential?.updatedAt || "").toLocaleString()}</p>
+                            <p className="text-[9px] text-theme-muted font-bold tracking-widest">Última Sincronização: {new Date(calendarStatus.credential?.updatedAt || "").toLocaleString()}</p>
                          </div>
                          
-                         <div className="flex gap-4">
+                         <div className="flex flex-col sm:flex-row gap-3">
                             <button 
                               onClick={handleManualSync}
                               disabled={isSyncing}
-                              className="flex-1 py-4 bg-brand-tactical text-brand-text font-black text-[10px] uppercase tracking-widest hover:brightness-110 transition-all flex items-center justify-center gap-3"
+                              className="flex-1 py-3 bg-brand-tactical text-brand-text font-black text-[10px] uppercase tracking-widest hover:bg-brand-tactical/90 transition-all rounded-lg flex items-center justify-center gap-2 shadow-md"
                             >
                               <RefreshCw size={14} className={isSyncing ? "animate-spin" : ""} /> {isSyncing ? "SINCRONIZANDO..." : "SINCRONIZAR AGORA"}
                             </button>
                             <button 
                               onClick={() => window.open("/api/calendar/connect", "_blank")}
-                              className="px-6 py-4 border border-theme-border text-theme-text font-black text-[10px] uppercase tracking-widest hover:bg-theme-bg-muted transition-all"
+                              className="px-6 py-3 border border-theme-border text-theme-text font-black text-[10px] uppercase tracking-widest hover:bg-theme-bg-muted transition-all rounded-lg"
                             >
                               RECONECTAR
                             </button>
                          </div>
                       </div>
                     ) : (
-                      <button 
-                        onClick={() => window.open("/api/calendar/connect", "_blank")}
-                        className="w-full py-6 bg-white text-black font-black text-[11px] uppercase tracking-[0.3em] hover:bg-brand-tactical transition-all shadow-xl shadow-white/5"
-                      >
-                        CONECTAR CONTA DO GOOGLE
-                      </button>
+                      <div className="bg-theme-bg-muted border border-theme-border rounded-xl p-6 flex flex-col items-center justify-center text-center space-y-5">
+                        <div className="p-4 bg-white/5 rounded-full">
+                          <Calendar size={24} className="text-theme-muted" />
+                        </div>
+                        <p className="text-[11px] font-bold text-theme-muted leading-relaxed">Vincule sua agenda do Google para evitar sobreposição de horários.</p>
+                        <button 
+                          onClick={() => window.open("/api/calendar/connect", "_blank")}
+                          className="w-full py-3.5 bg-brand-tactical text-brand-text font-black text-[10px] uppercase tracking-[0.2em] hover:bg-brand-tactical/90 transition-all rounded-xl shadow-lg flex items-center justify-center gap-2"
+                        >
+                          CONECTAR CONTA <ArrowRight size={14} />
+                        </button>
+                      </div>
                     )}
-                 </div>
-                 <div className="bg-theme-bg p-10 space-y-6 flex flex-col justify-center">
-                    <div className="flex items-start gap-4">
-                       <ShieldCheck size={24} className="text-theme-muted shrink-0 mt-1" />
-                       <div className="space-y-2">
-                          <h4 className="text-[10px] font-black text-theme-text uppercase tracking-widest">Privacidade & Segurança</h4>
-                          <p className="text-[10px] font-bold text-theme-muted leading-relaxed uppercase tracking-wider">
-                            A integração do Foto Segundo Calendar apenas monitora os blocos de horário ocupados. Nenhum detalhe pessoal ou título de evento é lido ou armazenado em nossos servidores.
-                          </p>
-                       </div>
-                    </div>
-                 </div>
-              </div>
+                  </div>
+                  
+                  <div className="bg-theme-bg-muted/50 border border-theme-border/50 rounded-xl p-6 space-y-4">
+                     <div className="flex items-center gap-3">
+                        <div className="p-1.5 bg-brand-tactical/10 rounded">
+                           <ShieldCheck size={16} className="text-brand-tactical" />
+                        </div>
+                        <h4 className="text-[10px] font-black text-theme-text uppercase tracking-widest">Privacidade & Segurança</h4>
+                     </div>
+                     <p className="text-[11px] font-medium text-theme-muted leading-relaxed">
+                       A integração apenas monitora os blocos de horário ocupados. Nenhum detalhe pessoal ou título de evento é lido ou armazenado em nossos servidores. Garantimos total privacidade dos seus dados.
+                     </p>
+                  </div>
+               </div>
             </div>
           
         {/* ── FINANÇAS ── */}
@@ -728,7 +737,7 @@ export default function UnidadeFixaDashboard({
           <div className="space-y-10">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
               {/* Consolidation Info */}
-              <div className="lg:col-span-2 lux-card p-6 md:p-8 border-l-4 border-l-brand-tactical bg-theme-bg border-2 border-theme-border shadow-[0_0_15px_rgba(133,185,172,0.1)] relative overflow-hidden">
+              <div className="lg:col-span-2 lux-card p-6 md:p-8 border-l-4 border-l-brand-tactical rounded-2xl bg-theme-bg border border-theme-border shadow-[0_0_15px_rgba(133,185,172,0.1)] relative overflow-hidden">
                 <div className="absolute top-0 right-0 p-8 opacity-[0.03] pointer-events-none">
                   <ShieldCheck size={100} />
                 </div>
@@ -751,7 +760,7 @@ export default function UnidadeFixaDashboard({
               </div>
 
               {/* PIX Destination Widget */}
-              <div className="lux-card p-6 md:p-8 flex flex-col justify-between bg-theme-bg border-2 border-theme-border border-2 border-theme-border shadow-md">
+              <div className="lux-card p-6 md:p-8 flex flex-col justify-between bg-theme-bg rounded-2xl border border-theme-border shadow-sm">
                  <div className="space-y-4">
                     <p className="text-[9px] font-black text-theme-muted uppercase tracking-[0.3em]">Destino da Liquidação</p>
                     <div className="flex items-center gap-4">
@@ -766,7 +775,7 @@ export default function UnidadeFixaDashboard({
                  </div>
                  <button 
                   onClick={() => setTab("configuracoes")}
-                  className="w-full mt-8 py-3 text-[9px] font-black uppercase tracking-[0.4em] border border-theme-border hover:border-brand-tactical hover:text-brand-tactical transition-all italic"
+                  className="w-full mt-8 py-3 text-[9px] font-black uppercase tracking-[0.4em] border rounded-xl border-theme-border hover:border-brand-tactical hover:text-brand-tactical transition-all italic shadow-sm"
                  >
                    Alterar Destino
                  </button>
@@ -774,15 +783,15 @@ export default function UnidadeFixaDashboard({
             </div>
 
             {/* Financial History Table */}
-            <div className="lux-card overflow-hidden bg-theme-bg border-2 border-theme-border">
-              <div className="p-8 border-b-2 border-theme-border flex flex-col sm:flex-row justify-between items-center bg-theme-bg gap-6">
+            <div className="lux-card overflow-hidden rounded-2xl shadow-sm bg-theme-bg border border-theme-border">
+              <div className="p-8 border-b border-theme-border flex flex-col sm:flex-row justify-between items-center bg-theme-bg gap-6">
                 <div className="flex items-center gap-4">
-                   <div className="h-8 w-1 bg-brand-tactical" />
+                   <div className="h-8 w-1 bg-brand-tactical rounded-full" />
                    <p className="text-[10px] font-black text-theme-text uppercase tracking-[0.4em] italic">Livro de Liquidações Históricas</p>
                 </div>
                 <div className="flex items-center gap-4">
                   <span className="text-[9px] font-black text-theme-muted uppercase tracking-widest">Crédito Acumulado:</span>
-                  <div className="px-6 py-2.5 bg-brand-tactical text-brand-text shadow-lg shadow-brand-tactical/20">
+                  <div className="px-6 py-2.5 bg-brand-tactical text-brand-text rounded-xl shadow-md shadow-brand-tactical/20">
                     <p className="text-[11px] font-black uppercase tracking-widest">{formatCurrency(repasses.filter(r => r.status !== "PAID").reduce((acc, r) => acc + r.amount, 0))}</p>
                   </div>
                 </div>
@@ -799,14 +808,14 @@ export default function UnidadeFixaDashboard({
                   {repasses.map((r) => (
                     <div key={r.id} className="p-8 flex flex-col md:flex-row items-center justify-between group hover:bg-brand-tactical/[0.02] transition-all duration-500">
                       <div className="flex items-center gap-10">
-                        <div className="w-12 h-12 bg-theme-bg border border-theme-border flex items-center justify-center text-theme-muted group-hover:border-brand-tactical/40 group-hover:text-brand-tactical transition-all">
+                        <div className="w-12 h-12 rounded-xl bg-theme-bg border border-theme-border flex items-center justify-center text-theme-muted group-hover:border-brand-tactical/40 group-hover:text-brand-tactical transition-all">
                            <DollarSign size={20} />
                         </div>
                         <div className="space-y-2">
                           <p className="text-[9px] font-black text-theme-muted uppercase tracking-[0.2em]">Protocolo Semanal · {formatDate(r.payout.weekStart)} — {formatDate(r.payout.weekEnd)}</p>
                           <div className="flex items-center gap-6">
                             <span className="text-3xl font-heading font-black italic text-theme-text tracking-tighter group-hover:scale-105 transition-transform origin-left">{formatCurrency(r.amount)}</span>
-                            <div className="flex items-center gap-3 px-3 py-1 bg-theme-bg border border-theme-border">
+                            <div className="flex items-center gap-3 px-3 py-1 rounded-lg bg-theme-bg border border-theme-border">
                                <span className="text-[8px] font-black text-theme-muted uppercase tracking-widest">{r.orderCount} OPERAÇÕES</span>
                             </div>
                           </div>
@@ -820,10 +829,10 @@ export default function UnidadeFixaDashboard({
                            )}
                            <p className="text-[8px] font-medium text-theme-muted/40 uppercase tracking-tighter">ID: {r.id.slice(-8).toUpperCase()}</p>
                         </div>
-                        <span className={`text-[10px] font-black uppercase tracking-[0.2em] px-6 py-3 border-2 transition-all ${
+                        <span className={`text-[10px] font-black uppercase tracking-[0.2em] px-6 py-2 border rounded-full transition-all shadow-sm ${
                           r.status === "PAID" 
-                            ? 'bg-brand-tactical/10 border-brand-tactical text-brand-tactical' 
-                            : 'bg-amber-500/5 border-amber-500 text-amber-500 animate-pulse'
+                            ? 'bg-brand-tactical/10 border-brand-tactical/30 text-brand-tactical' 
+                            : 'bg-amber-500/5 border-amber-500/30 text-amber-500 animate-pulse'
                         }`}>
                           {r.status === "PAID" ? "LIQUIDADO" : "PENDENTE"}
                         </span>
@@ -912,7 +921,7 @@ export default function UnidadeFixaDashboard({
             </div>
 
             {/* PIX STRATEGIC KEY */}
-            <div className="lux-card p-10 bg-theme-bg border-2 border-theme-border border-2 border-theme-border shadow-md">
+            <div className="lux-card p-8 md:p-10 bg-theme-bg border border-theme-border rounded-2xl shadow-sm">
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-10">
                 <div className="space-y-4">
                   <h4 className="text-[10px] font-black text-theme-text uppercase tracking-[0.5em] italic flex items-center gap-3">
@@ -927,13 +936,13 @@ export default function UnidadeFixaDashboard({
                   <input 
                     value={pixKey} 
                     onChange={e => setPixKey(e.target.value)} 
-                    className="flex-1 bg-theme-bg border border-theme-border p-4 text-xs font-black uppercase tracking-widest text-theme-text focus:border-brand-tactical outline-none transition-all"
+                    className="flex-1 bg-theme-bg-muted border border-theme-border rounded-xl p-4 text-xs font-black uppercase tracking-widest text-theme-text focus:border-brand-tactical outline-none transition-all focus:ring-1 focus:ring-brand-tactical/30"
                     placeholder="CHAVE-ALEATORIA-OU-CNPJ"
                   />
                   <button
                     disabled={savingPix}
                     onClick={savePixKey}
-                    className="bg-brand-tactical text-brand-text px-10 py-4 text-[10px] font-black uppercase tracking-[0.4em] hover:bg-brand-tactical/90 hover:scale-[1.02] hover:shadow-xl hover:shadow-brand-tactical/30 transition-all italic cursor-pointer"
+                    className="bg-brand-tactical text-brand-text px-10 py-4 text-[10px] font-black uppercase tracking-[0.4em] hover:bg-brand-tactical/90 hover:scale-[1.02] hover:shadow-xl hover:shadow-brand-tactical/30 transition-all italic rounded-xl cursor-pointer"
                   >
                     {savingPix ? "PROCESSANDO..." : "VINCULAR CHAVE"}
                   </button>
@@ -948,48 +957,65 @@ export default function UnidadeFixaDashboard({
                 <div className="h-px w-full bg-gradient-to-r from-theme-border/60 to-transparent" />
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-theme-border/20 border border-theme-border shadow-2xl overflow-hidden">
-                {globalServices.map(svc => {
-                  const isDisabled = disabledServices.includes(svc.id);
-                  return (
-                    <div key={svc.id} className={`p-8 flex flex-col justify-between gap-8 group transition-all duration-700 ${isDisabled ? 'bg-theme-bg opacity-50 grayscale' : 'bg-theme-bg-muted hover:bg-theme-bg-muted'}`}>
-                      <div className="space-y-4">
-                        <div className="flex items-center justify-between">
-                          <div className="space-y-1">
-                            <h5 className="text-base font-heading font-black text-theme-text uppercase italic tracking-tight group-hover:text-brand-tactical transition-colors">
-                              {svc.name}
-                              {isDisabled && <span className="ml-3 text-[7px] bg-theme-border px-2 py-0.5 rounded text-theme-text-muted not-italic">INATIVO</span>}
-                            </h5>
-                            <span className="text-[8px] font-black text-theme-muted uppercase tracking-[0.3em]">Referência de Rede: {formatCurrency(svc.basePrice)}</span>
+              <div className="space-y-8">
+                {Object.entries(
+                  globalServices.reduce((acc, svc) => {
+                    const group = svc.category || "Outros";
+                    if (!acc[group]) acc[group] = [];
+                    acc[group].push(svc);
+                    return acc;
+                  }, {} as Record<string, GlobalService[]>)
+                ).map(([categoryName, services]) => (
+                  <div key={categoryName} className="space-y-4">
+                    <h4 className="text-[11px] font-black text-theme-muted uppercase tracking-[0.3em] italic border-b border-theme-border/50 pb-2">
+                      {categoryName}
+                    </h4>
+                    <div className="grid grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-4">
+                      {services.map(svc => {
+                        const isDisabled = disabledServices.includes(svc.id);
+                        return (
+                          <div key={svc.id} className={`flex flex-col justify-between rounded-xl p-3 sm:p-5 border shadow-sm group transition-all duration-700 gap-3 relative overflow-hidden ${isDisabled ? 'bg-theme-bg border-theme-border opacity-50 grayscale' : 'bg-theme-bg-muted border-theme-border hover:border-brand-tactical/50 hover:shadow-md'}`}>
+                            <div className="space-y-1.5">
+                              <div className="flex items-center justify-between gap-2">
+                                <h5 className="text-[10px] sm:text-sm font-heading font-black text-theme-text uppercase italic tracking-tight group-hover:text-brand-tactical transition-colors line-clamp-2 leading-tight flex-1">
+                                  {svc.name}
+                                </h5>
+                                <button 
+                                  onClick={() => {
+                                    if (isDisabled) setDisabledServices(prev => prev.filter(id => id !== svc.id));
+                                    else setDisabledServices(prev => [...prev, svc.id]);
+                                  }}
+                                  className={`p-1.5 sm:p-2 border rounded-md transition-all shrink-0 ${isDisabled ? 'border-theme-border text-theme-text-muted hover:text-brand-tactical' : 'border-brand-tactical/30 text-brand-tactical hover:bg-brand-tactical/10'}`}
+                                  title={isDisabled ? "Ativar Serviço" : "Desativar Serviço"}
+                                >
+                                  <Settings size={12} className={isDisabled ? "" : "animate-spin-slow"} />
+                                </button>
+                              </div>
+                              <span className="block text-[8px] font-black text-theme-muted uppercase tracking-[0.3em] italic">Rede: {formatCurrency(svc.basePrice)}</span>
+                              {isDisabled && <span className="inline-block mt-1 text-[7px] bg-theme-border px-2 py-0.5 rounded text-theme-text-muted font-bold">INATIVO</span>}
+                              
+                              <p className="text-[8px] sm:text-[10px] font-medium text-theme-muted leading-relaxed opacity-60 group-hover:opacity-100 transition-opacity line-clamp-2 mt-2">{svc.description}</p>
+                            </div>
+                            
+                            <div className="border-t border-theme-border/50 pt-2 mt-auto">
+                              <div className="relative group/input flex items-center">
+                                <span className="absolute left-3 text-brand-tactical font-black text-xs sm:text-sm italic opacity-40 group-focus-within/input:opacity-100 transition-opacity">R$</span>
+                                <input 
+                                  type="number"
+                                  disabled={isDisabled}
+                                  value={localPrices[svc.id] || ""} 
+                                  onChange={e => setLocalPrices({ ...localPrices, [svc.id]: Number(e.target.value) })}
+                                  className="w-full bg-theme-bg border border-theme-border rounded-lg p-2 sm:p-3 pl-8 sm:pl-10 text-sm sm:text-lg font-heading font-black text-theme-text focus:border-brand-tactical outline-none transition-all italic placeholder:text-theme-muted/10 disabled:opacity-30"
+                                  placeholder={String(svc.basePrice)}
+                                />
+                              </div>
+                            </div>
                           </div>
-                          <button 
-                            onClick={() => {
-                              if (isDisabled) setDisabledServices(prev => prev.filter(id => id !== svc.id));
-                              else setDisabledServices(prev => [...prev, svc.id]);
-                            }}
-                            className={`p-2 border transition-all ${isDisabled ? 'border-theme-border text-theme-text-muted hover:text-brand-tactical' : 'border-brand-tactical/30 text-brand-tactical hover:bg-brand-tactical/10'}`}
-                            title={isDisabled ? "Ativar Serviço" : "Desativar Serviço"}
-                          >
-                            <Settings size={14} className={isDisabled ? "" : "animate-spin-slow"} />
-                          </button>
-                        </div>
-                        <p className="text-[10px] font-medium text-theme-muted leading-relaxed opacity-60 group-hover:opacity-100 transition-opacity">{svc.description}</p>
-                      </div>
-                      
-                      <div className="relative group/input">
-                        <span className="absolute left-5 top-1/2 -translate-y-1/2 text-brand-tactical font-black text-lg italic opacity-40 group-focus-within/input:opacity-100 transition-opacity">R$</span>
-                        <input 
-                          type="number"
-                          disabled={isDisabled}
-                          value={localPrices[svc.id] || ""} 
-                          onChange={e => setLocalPrices({ ...localPrices, [svc.id]: Number(e.target.value) })}
-                          className="w-full bg-theme-bg border border-theme-border p-5 pl-14 text-2xl font-heading font-black text-theme-text focus:border-brand-tactical outline-none transition-all italic placeholder:text-theme-muted/10 disabled:opacity-30"
-                          placeholder={String(svc.basePrice)}
-                        />
-                      </div>
+                        );
+                      })}
                     </div>
-                  );
-                })}
+                  </div>
+                ))}
               </div>
 
               <div className="space-y-6 mt-10">
@@ -1018,10 +1044,10 @@ export default function UnidadeFixaDashboard({
                           if (isSelected) setEventTypes(prev => prev.filter(t => t !== type.id));
                           else setEventTypes(prev => [...prev, type.id]);
                         }}
-                        className={`p-4 border transition-all text-left flex items-center justify-between group ${isSelected ? 'border-brand-tactical bg-brand-tactical/10' : 'border-theme-border bg-theme-bg hover:bg-theme-bg-muted'}`}
+                        className={`p-4 border rounded-xl transition-all text-left flex items-center justify-between group ${isSelected ? 'border-brand-tactical bg-brand-tactical/10 shadow-sm' : 'border-theme-border bg-theme-bg hover:bg-theme-bg-muted hover:border-theme-border/80'}`}
                       >
                         <span className={`text-[10px] font-black uppercase tracking-widest ${isSelected ? 'text-brand-tactical' : 'text-theme-text'}`}>{type.label}</span>
-                        <div className={`w-4 h-4 border flex items-center justify-center ${isSelected ? 'border-brand-tactical bg-brand-tactical' : 'border-theme-border'}`}>
+                        <div className={`w-4 h-4 border rounded-md flex items-center justify-center transition-all ${isSelected ? 'border-brand-tactical bg-brand-tactical' : 'border-theme-border'}`}>
                           {isSelected && <Check size={10} className="text-brand-text" />}
                         </div>
                       </button>
@@ -1030,11 +1056,11 @@ export default function UnidadeFixaDashboard({
                 </div>
               </div>
 
-              <div className="flex justify-end pt-4">
+              <div className="flex justify-end pt-6">
                 <button
                    disabled={savingPrices}
                    onClick={saveServicePrices}
-                   className="bg-brand-tactical text-brand-text px-16 py-5 text-[10px] font-black uppercase tracking-[0.5em] hover:bg-brand-tactical/90 hover:scale-[1.02] hover:shadow-2xl hover:shadow-brand-tactical/30 transition-all italic flex items-center gap-4 group cursor-pointer"
+                   className="bg-brand-tactical text-brand-text px-16 py-5 text-[10px] font-black uppercase tracking-[0.5em] hover:bg-brand-tactical/90 hover:scale-[1.02] hover:shadow-2xl hover:shadow-brand-tactical/30 transition-all italic rounded-xl flex items-center gap-4 group cursor-pointer shadow-lg"
                 >
                    {savingPrices ? "ATUALIZANDO MATRIZ..." : "CONSOLIDAR TABELA"}
                    <ArrowRight size={16} className="group-hover:translate-x-2 transition-transform" />
@@ -1043,49 +1069,70 @@ export default function UnidadeFixaDashboard({
             </div>
 
             {/* SEO & LANDING - PRESENÇA DIGITAL */}
-            <div className="lux-card p-10 space-y-12 bg-theme-bg border-2 border-theme-border border-l-4 border-l-theme-text">
-               <div className="flex flex-col md:flex-row justify-between items-end gap-6 border-b-2 border-theme-border pb-10">
-                  <div className="space-y-3">
-                    <h3 className="text-2xl font-heading font-black text-theme-text uppercase italic tracking-tight flex items-center gap-4">
-                      <Share2 size={24} className="text-brand-tactical" />
-                      Protocolo Digital (Vitrine)
-                    </h3>
-                    <p className="text-[10px] font-bold text-theme-muted uppercase tracking-[0.3em]">Gestão de Identidade Visual e Regras de Cobertura da Unidade.</p>
+            <div className="lux-card p-6 md:p-10 space-y-10 bg-theme-bg border border-theme-border rounded-2xl shadow-sm">
+               <div className="flex flex-col md:flex-row justify-between md:items-center items-start gap-6 border-b border-theme-border/50 pb-8">
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-3">
+                      <div className="p-2 bg-brand-tactical/10 rounded-lg">
+                        <Share2 size={20} className="text-brand-tactical" />
+                      </div>
+                      <h3 className="text-lg md:text-xl font-heading font-black text-theme-text uppercase tracking-tight">
+                        Protocolo Digital <span className="text-theme-muted">(Vitrine)</span>
+                      </h3>
+                    </div>
+                    <p className="text-[10px] font-medium text-theme-muted uppercase tracking-widest pl-1 opacity-80">Gestão de Identidade Visual e Regras de Cobertura.</p>
                   </div>
                   {lpSlug && (
-                    <a href={`/p/${lpSlug}`} target="_blank" rel="noreferrer" className="flex items-center gap-4 text-[9px] font-black text-brand-tactical uppercase tracking-[0.4em] group pb-2 border-b-2 border-transparent hover:border-brand-tactical transition-all">
-                      Sincronizar Preview <ArrowRight size={14} className="group-hover:translate-x-2 transition-transform" />
+                    <a href={`/p/${lpSlug}`} target="_blank" rel="noreferrer" className="flex items-center justify-center gap-2 text-[10px] font-black bg-brand-tactical text-brand-text px-5 py-3 md:py-2.5 rounded-lg hover:bg-brand-tactical/90 hover:scale-105 transition-all uppercase tracking-widest shadow-md w-full md:w-auto">
+                      Sincronizar Preview <ArrowRight size={14} />
                     </a>
                   )}
                </div>
 
-               <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-10">
+               <div className="grid grid-cols-1 gap-8">
+                  {/* SLUG */}
                   <div className="space-y-3">
-                    <label className="text-[9px] font-black text-theme-muted uppercase tracking-[0.4em] ml-1 opacity-60">Slug Identificador (URL)</label>
-                    <div className="flex items-center gap-2 text-theme-muted/40 font-black text-[10px] mb-1">{window.location.host.toLowerCase()}/p/</div>
-                    <input value={lpSlug} onChange={e => setLpSlug(e.target.value)} className="w-full bg-transparent border-b-2 border-theme-border py-3 text-sm font-black text-theme-text focus:border-brand-tactical outline-none transition-all" placeholder="UNIDADE-EXEMPLO" />
-                  </div>
-
-                  <div className="space-y-3">
-                    <label className="text-[9px] font-black text-theme-muted uppercase tracking-[0.4em] ml-1 opacity-60">Contato de Operação (WhatsApp)</label>
-                    <div className="relative group">
-                      <Phone size={14} className="absolute left-0 top-1/2 -translate-y-1/2 text-theme-muted/40 group-focus-within:text-brand-tactical transition-colors" />
-                      <input value={lpPhone} onChange={e => setLpPhone(e.target.value)} className="w-full bg-transparent border-b-2 border-theme-border py-3 pl-8 text-sm font-black text-theme-text focus:border-brand-tactical outline-none transition-all" placeholder="(00) 00000-0000" />
+                    <label className="text-[10px] font-black text-theme-text uppercase tracking-widest flex items-center gap-2"><Link size={12} className="text-brand-tactical"/> Identificador Único (URL)</label>
+                    <p className="text-[10px] text-theme-muted/70 leading-relaxed font-medium">Este será o endereço público da sua vitrine de serviços.</p>
+                    <div className="flex flex-col sm:flex-row items-stretch sm:items-center bg-theme-bg-muted border border-theme-border rounded-xl overflow-hidden focus-within:border-brand-tactical focus-within:ring-1 focus-within:ring-brand-tactical/30 transition-all">
+                      <div className="px-4 py-3 sm:py-0 h-full sm:h-12 bg-theme-border/20 text-theme-muted font-mono text-xs border-b sm:border-b-0 sm:border-r border-theme-border flex items-center justify-center sm:justify-start">
+                        {window.location.host.toLowerCase()}/p/
+                      </div>
+                      <input 
+                        value={lpSlug} 
+                        onChange={e => setLpSlug(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ''))} 
+                        className="flex-1 bg-transparent py-3 px-4 h-12 text-sm font-black text-theme-text outline-none placeholder:text-theme-muted/30" 
+                        placeholder="minha-unidade" 
+                      />
                     </div>
                   </div>
 
-                  <div className="md:col-span-2 space-y-3">
-                    <label className="text-[9px] font-black text-theme-muted uppercase tracking-[0.4em] ml-1 opacity-60">Logradouro Institucional</label>
-                    <div className="relative group">
-                      <MapPin size={14} className="absolute left-0 top-1/2 -translate-y-1/2 text-theme-muted/40 group-focus-within:text-brand-tactical transition-colors" />
-                      <input value={lpAddress} onChange={e => setLpAddress(e.target.value)} className="w-full bg-transparent border-b-2 border-theme-border py-3 pl-8 text-sm font-black text-theme-text focus:border-brand-tactical outline-none transition-all" placeholder="RUA EXECUTIVA, 100 - CENTRO" />
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    {/* WhatsApp */}
+                    <div className="space-y-3">
+                      <label className="text-[10px] font-black text-theme-text uppercase tracking-widest flex items-center gap-2"><Phone size={12} className="text-brand-tactical"/> Contato WhatsApp</label>
+                      <div className="relative group/input">
+                        <input value={lpPhone} onChange={e => setLpPhone(e.target.value)} className="w-full bg-theme-bg-muted border border-theme-border rounded-xl py-3 px-4 pl-11 text-sm font-black text-theme-text focus:border-brand-tactical focus:ring-1 focus:ring-brand-tactical/30 outline-none transition-all placeholder:text-theme-muted/30" placeholder="(00) 00000-0000" />
+                        <Phone size={14} className="absolute left-4 top-1/2 -translate-y-1/2 text-theme-muted group-focus-within/input:text-brand-tactical transition-colors" />
+                      </div>
+                    </div>
+
+                    {/* Logradouro */}
+                    <div className="space-y-3">
+                      <label className="text-[10px] font-black text-theme-text uppercase tracking-widest flex items-center gap-2"><MapPin size={12} className="text-brand-tactical"/> Logradouro Institucional</label>
+                      <div className="relative group/input">
+                        <input value={lpAddress} onChange={e => setLpAddress(e.target.value)} className="w-full bg-theme-bg-muted border border-theme-border rounded-xl py-3 px-4 pl-11 text-sm font-black text-theme-text focus:border-brand-tactical focus:ring-1 focus:ring-brand-tactical/30 outline-none transition-all placeholder:text-theme-muted/30" placeholder="Rua Executiva, 100 - Centro" />
+                        <MapPin size={14} className="absolute left-4 top-1/2 -translate-y-1/2 text-theme-muted group-focus-within/input:text-brand-tactical transition-colors" />
+                      </div>
                     </div>
                   </div>
 
-                  <div className="md:col-span-2 space-y-3">
-                    <label className="text-[9px] font-black text-theme-muted uppercase tracking-[0.4em] ml-1 opacity-60">Manifesto / Descrição da Unidade</label>
-                    <textarea value={lpDescription} onChange={e => setLpDescription(e.target.value)} rows={3} className="w-full bg-transparent border-b-2 border-theme-border py-3 text-xs font-medium text-theme-text focus:border-brand-tactical outline-none resize-none leading-relaxed" placeholder="Descreva o propósito e a infraestrutura desta unidade..." />
+                  {/* Manifesto */}
+                  <div className="space-y-3">
+                    <label className="text-[10px] font-black text-theme-text uppercase tracking-widest flex items-center gap-2"><FileText size={12} className="text-brand-tactical"/> Manifesto / Descrição da Unidade</label>
+                    <textarea value={lpDescription} onChange={e => setLpDescription(e.target.value)} rows={4} className="w-full bg-theme-bg-muted border border-theme-border rounded-xl p-4 text-sm font-medium text-theme-text focus:border-brand-tactical focus:ring-1 focus:ring-brand-tactical/30 outline-none resize-none placeholder:text-theme-muted/30 leading-relaxed" placeholder="Descreva o propósito e a infraestrutura desta unidade..." />
                   </div>
+
 
                   {/* Operational Controls Bar */}
                   <div className="md:col-span-2 bg-theme-bg-muted p-8 border border-theme-border space-y-8">
@@ -1095,7 +1142,7 @@ export default function UnidadeFixaDashboard({
                           <p className="text-[8px] font-bold text-theme-muted uppercase tracking-widest">Configuração padrão de tempo e visibilidade do cronômetro.</p>
                         </div>
                         <div className="flex items-center gap-6">
-                           <div className="flex items-center gap-4 bg-theme-bg px-5 py-2 border border-theme-border shadow-inner">
+                           <div className="flex items-center gap-4 bg-theme-bg px-5 py-2 border border-theme-border shadow-inner rounded-xl">
                               <input 
                                 type="number"
                                 step="0.1"
@@ -1106,9 +1153,9 @@ export default function UnidadeFixaDashboard({
                               />
                               <span className="text-[9px] font-black text-theme-muted uppercase tracking-widest">Horas</span>
                            </div>
-                           <div className="flex items-center gap-2 p-1 bg-theme-bg border border-theme-border">
-                              <button onClick={() => setLpFixedTime(!lpFixedTime)} className={`px-4 py-2 text-[8px] font-black uppercase tracking-widest border transition-all ${lpFixedTime ? 'bg-brand-tactical border-brand-tactical text-brand-text' : 'border-transparent text-theme-muted hover:text-brand-text'}`}>Fixo</button>
-                              <button onClick={() => setLpHideDuration(!lpHideDuration)} className={`px-4 py-2 text-[8px] font-black uppercase tracking-widest border transition-all ${lpHideDuration ? 'bg-brand-tactical border-brand-tactical text-brand-text' : 'border-transparent text-theme-muted hover:text-brand-text'}`}>Ocultar</button>
+                           <div className="flex items-center gap-2 p-1.5 bg-theme-bg border border-theme-border rounded-xl">
+                              <button onClick={() => setLpFixedTime(!lpFixedTime)} className={`px-4 py-2 text-[8px] font-black uppercase tracking-widest border transition-all rounded-lg ${lpFixedTime ? 'bg-brand-tactical border-brand-tactical text-brand-text' : 'border-transparent text-theme-muted hover:text-brand-text'}`}>Fixo</button>
+                              <button onClick={() => setLpHideDuration(!lpHideDuration)} className={`px-4 py-2 text-[8px] font-black uppercase tracking-widest border transition-all rounded-lg ${lpHideDuration ? 'bg-brand-tactical border-brand-tactical text-brand-text' : 'border-transparent text-theme-muted hover:text-brand-text'}`}>Ocultar</button>
                            </div>
                         </div>
                      </div>
@@ -1121,19 +1168,19 @@ export default function UnidadeFixaDashboard({
                        <p className="text-[10px] font-black text-theme-text uppercase tracking-[0.4em] italic">Grade de Disponibilidade Semanal</p>
                      </div>
 
-                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                     <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
                        {Object.entries(workingHours).map(([day, config]: [string, DayConfig]) => {
                          const dayNames: Record<string, string> = { 
                            mon: "Segunda", tue: "Terça", wed: "Quarta", 
                            thu: "Quinta", fri: "Sexta", sat: "Sábado", sun: "Domingo" 
                          };
                          return (
-                           <div key={day} className={`p-6 border transition-all duration-500 ${config.closed ? 'bg-theme-bg border-theme-border opacity-60' : 'bg-theme-bg border-theme-border hover:border-brand-tactical/40 shadow-xl shadow-black/5'}`}>
+                           <div key={day} className={`p-6 border rounded-2xl transition-all duration-500 flex flex-col ${config.closed ? 'bg-theme-bg border-theme-border opacity-60' : 'bg-theme-bg border-theme-border hover:border-brand-tactical/40 shadow-xl shadow-black/5'}`}>
                               <div className="flex items-center justify-between mb-6">
                                  <span className="text-[10px] font-black text-theme-text uppercase tracking-widest">{dayNames[day]}</span>
                                  <button 
                                    onClick={() => setWorkingHours({...workingHours, [day]: {...config, closed: !config.closed}})}
-                                   className={`px-3 py-1 text-[8px] font-black uppercase tracking-widest border transition-all ${config.closed ? 'bg-theme-border text-theme-text' : 'bg-brand-tactical/10 border-brand-tactical text-brand-tactical'}`}
+                                   className={`px-3 py-1 text-[8px] font-black uppercase tracking-widest border rounded-full transition-all ${config.closed ? 'bg-theme-border text-theme-text' : 'bg-brand-tactical/10 border-brand-tactical text-brand-tactical'}`}
                                  >
                                    {config.closed ? "FECHADO" : "ABERTO"}
                                  </button>
@@ -1156,7 +1203,7 @@ export default function UnidadeFixaDashboard({
                                         type="time" 
                                         value={config.close} 
                                         onChange={(e) => setWorkingHours({...workingHours, [day]: {...config, close: e.target.value}})}
-                                        className="bg-transparent text-xs font-black text-theme-text focus:text-brand-tactical outline-none"
+                                        className="bg-transparent text-xs font-black text-theme-text focus:text-brand-tactical outline-none rounded-lg p-1"
                                       />
                                    </div>
                                 </div>
@@ -1164,7 +1211,7 @@ export default function UnidadeFixaDashboard({
                                    <button
                                      type="button"
                                      onClick={() => { const isAllDay = config.open === "00:00" && config.close === "23:59"; setWorkingHours({...workingHours, [day]: {...config, open: isAllDay ? "09:00" : "00:00", close: isAllDay ? "18:00" : "23:59"}}); }}
-                                     className={`w-full py-1.5 text-[7px] font-black uppercase tracking-widest border transition-all ${ config.open === "00:00" && config.close === "23:59" ? "bg-brand-tactical border-brand-tactical text-zinc-950" : "border-theme-border text-theme-muted hover:text-brand-tactical hover:border-brand-tactical/40" }`}
+                                     className={`w-full py-2 text-[7px] font-black uppercase tracking-widest border rounded-xl transition-all mt-auto ${ config.open === "00:00" && config.close === "23:59" ? "bg-brand-tactical border-brand-tactical text-zinc-950" : "border-theme-border text-theme-muted hover:text-brand-tactical hover:border-brand-tactical/40" }`}
                                    >
                                      {config.open === "00:00" && config.close === "23:59" ? "✓ 24 Horas" : "24 Horas"}
                                    </button>
@@ -1179,7 +1226,7 @@ export default function UnidadeFixaDashboard({
                    <button
                      disabled={savingLp}
                      onClick={saveLpProfile}
-                     className="bg-theme-text text-theme-bg px-14 py-5 text-[10px] font-black uppercase tracking-[0.5em] hover:bg-brand-tactical hover:text-brand-text hover:scale-[1.02] hover:shadow-2xl hover:shadow-brand-tactical/20 transition-all italic shadow-xl cursor-pointer"
+                     className="bg-theme-text text-theme-bg px-14 py-5 text-[10px] font-black uppercase tracking-[0.5em] hover:bg-brand-tactical hover:text-brand-text hover:scale-[1.02] hover:shadow-2xl hover:shadow-brand-tactical/20 transition-all italic rounded-xl shadow-xl cursor-pointer"
                    >
                      {savingLp ? "SINCRO..." : "PUBLICAR DIRETRIZES DIGITAIS"}
                    </button>
