@@ -13,7 +13,7 @@ export const PushNotificationManager: React.FC = () => {
   );
   const [showPrompt, setShowPrompt] = useState(false);
 
-  const timerRef = React.useRef<any>(null);
+  const timerRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const checkSubscription = useCallback(async () => {
     if (!("serviceWorker" in navigator)) {
@@ -47,7 +47,6 @@ export const PushNotificationManager: React.FC = () => {
 
   useEffect(() => {
     if ("Notification" in window) {
-      // eslint-disable-next-line
       checkSubscription();
     }
     return () => {
