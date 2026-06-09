@@ -53,7 +53,6 @@ frontend/.env.production
  
 # scratch
 /scratch
-/api/server.js
 # brain
 /brain
 
@@ -65,6 +64,7 @@ ANOTAÇÕES/**/*.json
 /blob-report
 /test-results-output
 
-# build
+# build - esbuild JS bundles (api/*.ts wrappers are tracked)
+/api/server.js
 /api/server-v2.js
 printer-agent/node_modules/

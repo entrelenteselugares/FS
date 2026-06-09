@@ -18,4 +18,4 @@ app.use(express.json({ limit: "6mb" }));
 // Some routes are already handled by the specialized entrypoints but this guarantees no 404s
 app.use("/api", routes);
 
-module.exports = app;
+export default app;

@@ -21,4 +21,4 @@ app.use(express.json({ limit: "6mb" }));
 app.use("/api/checkout", checkoutRoutes);
 app.use("/api/webhooks", webhookRoutes);
 
-module.exports = app;
+export default app;

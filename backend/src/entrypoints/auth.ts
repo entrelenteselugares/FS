@@ -18,4 +18,4 @@ app.use(express.json({ limit: "6mb" }));
 app.use("/api/auth", authRoutes);
 app.use("/api/auth", driveAuthRoutes);
 
-module.exports = app;
+export default app;
