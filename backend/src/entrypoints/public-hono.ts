@@ -102,14 +102,6 @@ app.get('/api/public/events', async (req, res) => {
       isQuote: false,
       type: type ? String(type) : {
         in: ['ALBUM_FULL', 'PHOTO_MARKETPLACE', 'FOTO_POINT', 'FLASH_EVENT']
-      },
-      NOT: {
-        type: 'ALBUM_FULL',
-        pedidos: {
-          some: {
-            status: 'PENDENTE'
-          }
-        }
       }
     };
 
