@@ -1,18 +1,17 @@
-import { Hono } from 'hono';
-import { handle } from 'hono/vercel';
-import { cors } from 'hono/cors';
+import express from 'express';
+import cors from 'cors';
 import prisma from '../lib/prisma';
 
-const app = new Hono().basePath('/api/public');
+const app = express();
 
-app.use('*', cors({
-  origin: (origin) => origin || '*',
+app.use(cors({
+  origin: true,
   credentials: true,
 }));
 
 // GET /api/public/events/cities
 // Lista as cidades disponíveis com base nos eventos ativos na vitrine.
-app.get('/events/cities', async (c) => {
+app.get('/events/cities', async (req, res) => {
   try {
     const where: any = {
       active: true,
@@ -62,37 +61,37 @@ app.get('/events/cities', async (c) => {
       citiesSet.add("CAMPINAS");
     }
 
-    return c.json({ cities: Array.from(citiesSet).sort() });
+    return res.json({ cities: Array.from(citiesSet).sort() });
   } catch (error) {
     console.error("[getPublicCities] Erro ao listar cidades:", error);
-    return c.json({ error: "Erro ao listar cidades" }, 500);
+    return res.status(500).json({ error: "Erro ao listar cidades" });
   }
 });
 
 // GET /api/public/banners
 // Lista os banners dinâmicos da home
-app.get('/banners', async (c) => {
+app.get('/banners', async (req, res) => {
   try {
     const banners = await prisma.heroSlide.findMany({
       where: { active: true },
       orderBy: { order: 'asc' }
     });
-    return c.json({ banners });
+    return res.json({ banners });
   } catch (error) {
     console.error("[getPublicBanners] Erro:", error);
-    return c.json({ error: "Erro ao listar banners" }, 500);
+    return res.status(500).json({ error: "Erro ao listar banners" });
   }
 });
 
 // GET /api/public/events
 // Lista eventos para a vitrine pública com suporte a busca robusta e paginação real.
-app.get('/events', async (c) => {
+app.get('/events', async (req, res) => {
   try {
-    const query = c.req.query("q") as string;
-    const page = c.req.query("page") || "1";
-    const type = c.req.query("type");
-    const city = c.req.query("city");
-    const sortBy = c.req.query("sortBy");
+    const query = req.query.q as string;
+    const page = (req.query.page as string) || "1";
+    const type = req.query.type as string;
+    const city = req.query.city as string;
+    const sortBy = req.query.sortBy as string;
 
     const take = 20;
     const skip = (Number(page) - 1) * take;
@@ -201,7 +200,7 @@ app.get('/events', async (c) => {
       city: e.city || (e as any).cartorioUser?.cartorio?.cidade || null
     }));
 
-    return c.json({
+    return res.json({
       events: mapped,
       total,
       page: Number(page),
@@ -209,8 +208,8 @@ app.get('/events', async (c) => {
     });
   } catch (error) {
     console.error("[listPublic] Erro ao listar eventos públicos:", error);
-    return c.json({ error: "Erro ao carregar vitrine" }, 500);
+    return res.status(500).json({ error: "Erro ao carregar vitrine" });
   }
 });
 
-export default handle(app);
+export default app;

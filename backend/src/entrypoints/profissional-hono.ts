@@ -1,25 +1,19 @@
-import { Hono } from 'hono';
-import { handle } from 'hono/vercel';
-import { cors } from 'hono/cors';
-import { requireHonoAuth } from '../lib/hono-auth';
+import express from 'express';
+import cors from 'cors';
 import prisma from '../lib/prisma';
 import { GamificationService } from '../services/gamification.service';
-import { AuthPayload } from '../lib/auth';
+import { requireAuth } from '../lib/auth';
 
-type Variables = {
-  user: AuthPayload;
-};
+const app = express();
 
-const app = new Hono<{ Variables: Variables }>().basePath('/api/profissional');
-
-app.use('*', cors({
-  origin: (origin) => origin || '*',
+app.use(cors({
+  origin: true,
   credentials: true,
 }));
 
 // GET /api/profissional/me — retorna dados do perfil profissional
-app.get('/me', requireHonoAuth, async (c) => {
-  const user = c.get('user') as AuthPayload;
+app.get('/me', requireAuth, async (req: any, res) => {
+  const user = req.user;
   const userId = user.userId;
 
   try {
@@ -41,7 +35,7 @@ app.get('/me', requireHonoAuth, async (c) => {
       }
     });
 
-    if (!profile) return c.json({ error: "Perfil não encontrado." }, 404);
+    if (!profile) return res.status(404).json({ error: "Perfil não encontrado." });
 
     const ordersAsCaptador = await prisma.order.aggregate({
       where: { status: { in: ["PAGO", "APROVADO"] }, event: { captacaoId: userId } },
@@ -87,9 +81,9 @@ app.get('/me', requireHonoAuth, async (c) => {
       where: { userId, type: "PRO", status: "ACTIVE" }
     });
     const isSubscriber = !!activeProSub;
-    const badges = GamificationService.getProfessionalBadges(profile, isSubscriber);
+    const badges = GamificationService.getProfessionalBadges(profile as any, isSubscriber);
 
-    return c.json({
+    return res.json({
       ...profile,
       pixKey: profile.user?.pixKey,
       isPro: isSubscriber,
@@ -103,13 +97,13 @@ app.get('/me', requireHonoAuth, async (c) => {
     });
   } catch (err) {
     console.error("getProfile:", err);
-    return c.json({ error: "Erro ao buscar perfil." }, 500);
+    return res.status(500).json({ error: "Erro ao buscar perfil." });
   }
 });
 
 // GET /api/profissional/events — eventos atribuídos ao profissional logado
-app.get('/events', requireHonoAuth, async (c) => {
-  const user = c.get('user') as AuthPayload;
+app.get('/events', requireAuth, async (req: any, res) => {
+  const user = req.user;
   const userId = user.userId;
 
   try {
@@ -141,11 +135,11 @@ app.get('/events', requireHonoAuth, async (c) => {
       orderBy: { dataEvento: "desc" },
     });
 
-    return c.json(events);
+    return res.json(events);
   } catch (err) {
     console.error("getMeusEventos:", err);
-    return c.json({ error: "Erro ao buscar eventos." }, 500);
+    return res.status(500).json({ error: "Erro ao buscar eventos." });
   }
 });
 
-export default handle(app);
+export default app;
