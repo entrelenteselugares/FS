@@ -90,8 +90,8 @@ export class EventController {
             tenantLogoUrl: true,
             tenantBrandColor: true
           } },
-          captacao: { select: { id: true, nome: true } },
-          edicao: { select: { id: true, nome: true } },
+          captacao: { select: { id: true, nome: true, profileImageUrl: true, description: true } },
+          edicao: { select: { id: true, nome: true, profileImageUrl: true, description: true } },
           media: true
         }
       });
@@ -264,6 +264,8 @@ export class EventController {
         references: event.references,
         medias: (event as any).media || [],
         photographer: event.captacao ? { id: event.captacao.id, nome: event.captacao.nome } : null,
+        captacao: event.captacao,
+        edicao: event.edicao,
         isExpired,
         retentionDays,
         expirationDate,

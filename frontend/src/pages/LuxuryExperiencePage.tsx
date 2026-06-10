@@ -21,10 +21,14 @@ interface EventData {
   captacao: {
     id: string;
     nome: string;
+    profileImageUrl?: string | null;
+    description?: string | null;
   } | null;
   edicao: {
     id: string;
     nome: string;
+    profileImageUrl?: string | null;
+    description?: string | null;
   } | null;
 }
 
@@ -95,8 +99,28 @@ export default function LuxuryExperiencePage() {
 
   const captacaoName = event.captacao?.nome;
   const edicaoName = event.edicao?.nome;
-  const initialChar = (captacaoName || edicaoName || "F").charAt(0).toUpperCase();
   const coverImg = (event.coverPhotoUrl || '').trim().replace(/\s/g, '');
+
+  const professionals = [];
+  if (event.captacao) {
+    professionals.push({ ...event.captacao, role: "Fotografia & Captação" });
+  }
+  if (event.edicao && event.edicao.id !== event.captacao?.id) {
+    professionals.push({ ...event.edicao, role: "Edição & Color Grading" });
+  } else if (event.edicao && event.edicao.id === event.captacao?.id && professionals.length > 0) {
+    professionals[0].role = "Fotografia & Edição";
+  }
+
+  // Fallback if no professionals
+  if (professionals.length === 0) {
+    professionals.push({
+      id: "fs",
+      nome: "Foto Segundo",
+      role: "Curadoria Visual",
+      profileImageUrl: null,
+      description: "Cada frame desta galeria foi meticulosamente curado e processado. Acreditamos que a fotografia é mais do que um registro; é a imortalização de um legado."
+    });
+  }
 
   return (
     <div className="min-h-screen font-sans selection:bg-emerald-500 selection:text-white bg-[#030303] text-zinc-100 overflow-x-hidden">
@@ -180,51 +204,45 @@ export default function LuxuryExperiencePage() {
         <div className="max-w-6xl mx-auto px-6 space-y-32">
 
           {/* EDITORIAL ARTIST BLOCK */}
-          <motion.div 
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-100px" }}
-            transition={{ duration: 1 }}
-            className="flex flex-col md:flex-row items-center md:items-start gap-12 md:gap-24 pt-24"
-          >
-            <div className="relative shrink-0 group">
-              <div className="w-32 h-32 md:w-48 md:h-48 rounded-full border border-zinc-800/50 overflow-hidden bg-zinc-900/50 flex items-center justify-center text-4xl md:text-6xl font-display font-light text-emerald-500/50 transition-all duration-700 group-hover:border-emerald-500/30 group-hover:text-emerald-400">
-                {initialChar}
-              </div>
-              <div className="absolute -bottom-2 -right-2 md:bottom-2 md:right-2 p-3 bg-[#030303] border border-zinc-800 rounded-full text-zinc-400 group-hover:text-emerald-500 group-hover:border-emerald-500/50 transition-all duration-500">
-                <Camera size={18} strokeWidth={1.5} />
-              </div>
-            </div>
-            
-            <div className="space-y-8 text-center md:text-left flex-1 md:pt-4">
-              <div className="space-y-2">
-                <p className="text-[10px] font-medium text-zinc-500 uppercase tracking-[0.4em]">Curadoria Visual</p>
-                <h2 className="text-3xl md:text-5xl font-display font-medium uppercase tracking-tight text-zinc-100">
-                  {captacaoName || edicaoName || 'Foto Segundo'}
-                </h2>
-              </div>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-4">
-                {captacaoName && (
-                  <div className="space-y-2">
-                    <span className="text-[9px] uppercase font-medium tracking-[0.3em] text-emerald-500/80">Fotografia & Captação</span>
-                    <p className="text-sm md:text-base uppercase font-medium tracking-widest text-zinc-300">{captacaoName}</p>
+          <div className="flex flex-col gap-16 pt-24">
+            {professionals.map((prof, idx) => (
+              <motion.div 
+                key={prof.id}
+                initial={{ opacity: 0, y: 40 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-100px" }}
+                transition={{ duration: 1, delay: idx * 0.2 }}
+                className="flex flex-col md:flex-row items-center md:items-start gap-8 md:gap-16"
+              >
+                <div className="relative shrink-0 group">
+                  <div className="w-32 h-32 md:w-40 md:h-40 rounded-full border border-zinc-800/50 overflow-hidden bg-zinc-900/50 flex items-center justify-center text-4xl md:text-5xl font-display font-light text-emerald-500/50 transition-all duration-700 group-hover:border-emerald-500/30 group-hover:text-emerald-400">
+                    {prof.profileImageUrl ? (
+                      <img src={prof.profileImageUrl} alt={prof.nome} className="w-full h-full object-cover grayscale opacity-80 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-700" />
+                    ) : (
+                      prof.nome.charAt(0).toUpperCase()
+                    )}
                   </div>
-                )}
-                {edicaoName && edicaoName !== captacaoName && (
-                  <div className="space-y-2">
-                    <span className="text-[9px] uppercase font-medium tracking-[0.3em] text-emerald-500/80">Edição & Color Grading</span>
-                    <p className="text-sm md:text-base uppercase font-medium tracking-widest text-zinc-300">{edicaoName}</p>
+                  <div className="absolute -bottom-2 -right-2 md:bottom-2 md:right-2 p-3 bg-[#030303] border border-zinc-800 rounded-full text-zinc-400 group-hover:text-emerald-500 group-hover:border-emerald-500/50 transition-all duration-500">
+                    <Camera size={18} strokeWidth={1.5} />
                   </div>
-                )}
-              </div>
-              
-              <div className="w-12 h-px bg-zinc-800 mx-auto md:mx-0 mt-8" />
-              <p className="text-[11px] md:text-xs font-light tracking-[0.1em] text-zinc-400 max-w-lg leading-loose mx-auto md:mx-0">
-                Cada frame desta galeria foi meticulosamente curado e processado. Acreditamos que a fotografia é mais do que um registro; é a imortalização de um legado.
-              </p>
-            </div>
-          </motion.div>
+                </div>
+                
+                <div className="space-y-6 text-center md:text-left flex-1 md:pt-4">
+                  <div className="space-y-2">
+                    <p className="text-[10px] font-medium text-emerald-500/80 uppercase tracking-[0.4em]">{prof.role}</p>
+                    <h2 className="text-3xl md:text-4xl font-display font-medium uppercase tracking-tight text-zinc-100">
+                      {prof.nome}
+                    </h2>
+                  </div>
+                  
+                  <div className="w-12 h-px bg-zinc-800 mx-auto md:mx-0 mt-6" />
+                  <p className="text-[11px] md:text-xs font-light tracking-[0.1em] text-zinc-400 max-w-2xl leading-loose mx-auto md:mx-0 whitespace-pre-wrap">
+                    {prof.description || "Profissional dedicado a transformar momentos em legados visuais através de uma curadoria meticulosa e olhar apurado."}
+                  </p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
 
           {/* ACTION GATEWAYS */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8">
