@@ -1,11 +1,14 @@
 import express from 'express';
 import cors from 'cors';
+import cookieParser from 'cookie-parser';
 import prisma from '../lib/prisma';
 import { GamificationService } from '../services/gamification.service';
 import { requireAuth } from '../lib/auth';
 
 const app = express();
 
+app.set("trust proxy", 1);
+app.use(cookieParser());
 app.use(cors({
   origin: true,
   credentials: true,

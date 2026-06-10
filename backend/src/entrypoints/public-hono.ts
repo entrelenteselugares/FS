@@ -1,9 +1,12 @@
 import express from 'express';
 import cors from 'cors';
+import cookieParser from 'cookie-parser';
 import prisma from '../lib/prisma';
 
 const app = express();
 
+app.set("trust proxy", 1);
+app.use(cookieParser());
 app.use(cors({
   origin: true,
   credentials: true,
