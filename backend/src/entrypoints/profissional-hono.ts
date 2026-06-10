@@ -12,7 +12,7 @@ app.use(cors({
 }));
 
 // GET /api/profissional/me — retorna dados do perfil profissional
-app.get('/me', requireAuth, async (req: any, res) => {
+app.get('/api/profissional/me', requireAuth, async (req: any, res) => {
   const user = req.user;
   const userId = user.userId;
 
@@ -102,7 +102,7 @@ app.get('/me', requireAuth, async (req: any, res) => {
 });
 
 // GET /api/profissional/events — eventos atribuídos ao profissional logado
-app.get('/events', requireAuth, async (req: any, res) => {
+app.get('/api/profissional/events', requireAuth, async (req: any, res) => {
   const user = req.user;
   const userId = user.userId;
 

@@ -11,7 +11,7 @@ app.use(cors({
 
 // GET /api/public/events/cities
 // Lista as cidades disponíveis com base nos eventos ativos na vitrine.
-app.get('/events/cities', async (req, res) => {
+app.get('/api/public/events/cities', async (req, res) => {
   try {
     const where: any = {
       active: true,
@@ -70,7 +70,7 @@ app.get('/events/cities', async (req, res) => {
 
 // GET /api/public/banners
 // Lista os banners dinâmicos da home
-app.get('/banners', async (req, res) => {
+app.get('/api/public/banners', async (req, res) => {
   try {
     const banners = await prisma.heroSlide.findMany({
       where: { active: true },
@@ -85,7 +85,7 @@ app.get('/banners', async (req, res) => {
 
 // GET /api/public/events
 // Lista eventos para a vitrine pública com suporte a busca robusta e paginação real.
-app.get('/events', async (req, res) => {
+app.get('/api/public/events', async (req, res) => {
   try {
     const query = req.query.q as string;
     const page = (req.query.page as string) || "1";
