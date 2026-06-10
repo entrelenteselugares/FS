@@ -64,7 +64,13 @@ interface AgendaTabProps {
   onRespond: (eventId: string, status: "ACCEPTED" | "REJECTED") => void;
   onRespondUnit: (inviteId: string, status: "ACCEPTED" | "REJECTED") => void;
   opportunities: EventItem[];
-  calendarStatus?: any;
+  calendarStatus?: {
+    connected: boolean;
+    credential?: {
+      calendarId?: string;
+      updatedAt?: string | Date;
+    };
+  };
   isSyncing?: boolean;
   onConnectCalendar?: () => void;
   onDisconnectCalendar?: () => void;
@@ -196,7 +202,7 @@ export function AgendaTab({
                   <div className="min-w-[60px] flex flex-row md:flex-col items-center md:items-start border-b md:border-b-0 md:border-r border-theme-border pb-2 md:pb-0 md:pr-4 gap-2 md:gap-0 w-full md:w-auto">
                     <div className="text-[9px] font-black text-amber-500 uppercase tracking-widest hidden md:block mb-1">DATA</div>
                     <div className="text-xl md:text-2xl font-heading font-black text-amber-500 italic leading-none uppercase tracking-tighter">
-                      {parseDateSafe((invite as any).createdAt || new Date().toISOString()).toLocaleDateString("pt-BR", { day: "2-digit" })}
+                      {parseDateSafe(invite.createdAt || new Date().toISOString()).toLocaleDateString("pt-BR", { day: "2-digit" })}
                     </div>
                   </div>
 

@@ -1092,11 +1092,11 @@ export class PaymentController {
           }
         });
 
-        if (resolvedClienteId) {
+        if (finalUserId) {
           await prisma.order.updateMany({
             where: {
               eventId: event.id,
-              clienteId: resolvedClienteId,
+              clienteId: finalUserId,
               status: "PENDENTE",
               id: { not: order.id }
             },

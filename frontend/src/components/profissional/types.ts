@@ -45,6 +45,7 @@ export interface UnitInvite {
     razaoSocial: string;
     cidade: string;
   };
+  createdAt?: string;
 }
 
 export interface ServiceCatalog {
