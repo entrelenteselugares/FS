@@ -90,8 +90,8 @@ export class EventController {
             tenantLogoUrl: true,
             tenantBrandColor: true
           } },
-          captacao: { select: { id: true, nome: true, profileImageUrl: true, description: true } },
-          edicao: { select: { id: true, nome: true, profileImageUrl: true, description: true } },
+          captacao: { select: { id: true, nome: true, profileImageUrl: true } },
+          edicao: { select: { id: true, nome: true, profileImageUrl: true } },
           media: true
         }
       });

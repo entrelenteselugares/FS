@@ -1,11 +1,23 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { API } from "../lib/api";
-import { Download, ExternalLink, Camera, Calendar, MapPin, ChevronDown, ArrowRight } from "lucide-react";
+import { Download, ExternalLink, Camera, Calendar, MapPin, ChevronDown, ArrowRight, PlayCircle } from "lucide-react";
 import { motion, useScroll, useTransform } from "framer-motion";
 
 import { T } from "../lib/theme";
 import { useAuth } from "../hooks/useAuth";
+
+interface Media {
+  id: string;
+  url: string;
+  type: string;
+  isGuest: boolean;
+  createdAt: string;
+  metadata?: {
+    rawUrl?: string;
+    printUrl?: string;
+  };
+}
 
 interface EventData {
   id: string;
@@ -30,6 +42,7 @@ interface EventData {
     profileImageUrl?: string | null;
     description?: string | null;
   } | null;
+  medias: Media[];
 }
 
 interface Product {
@@ -49,6 +62,8 @@ export default function LuxuryExperiencePage() {
   const [event, setEvent] = useState<EventData | null>(null);
   const [loading, setLoading] = useState(true);
   const [products, setProducts] = useState<Product[]>([]);
+  const [activeTab, setActiveTab] = useState<'OFFICIAL' | 'GUEST' | 'VIDEO'>('OFFICIAL');
+  const [sortOrder, setSortOrder] = useState<'ASC' | 'DESC'>('DESC');
   
   const { scrollY } = useScroll();
   const heroY = useTransform(scrollY, [0, 1000], [0, 400]);
@@ -121,6 +136,17 @@ export default function LuxuryExperiencePage() {
       description: "Cada frame desta galeria foi meticulosamente curado e processado. Acreditamos que a fotografia é mais do que um registro; é a imortalização de um legado."
     });
   }
+
+  const filteredMedias = (event.medias || []).filter(m => {
+    if (activeTab === 'OFFICIAL') return !m.isGuest && m.type !== 'VIDEO';
+    if (activeTab === 'GUEST') return m.isGuest && m.type !== 'VIDEO';
+    if (activeTab === 'VIDEO') return m.type === 'VIDEO';
+    return true;
+  }).sort((a, b) => {
+    const timeA = new Date(a.createdAt).getTime();
+    const timeB = new Date(b.createdAt).getTime();
+    return sortOrder === 'ASC' ? timeA - timeB : timeB - timeA;
+  });
 
   return (
     <div className="min-h-screen font-sans selection:bg-emerald-500 selection:text-white bg-[#030303] text-zinc-100 overflow-x-hidden">
@@ -244,67 +270,102 @@ export default function LuxuryExperiencePage() {
             ))}
           </div>
 
-          {/* ACTION GATEWAYS */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8">
-            <motion.a 
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-100px" }}
-              transition={{ duration: 0.8 }}
-              href={(event.lightroomUrl || event.driveUrl || `/e/${event.slug || event.id}`).trim().replace(/\s/g, '')} 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="group relative h-[400px] bg-zinc-900/30 border border-zinc-800/50 hover:border-emerald-500/40 p-10 flex flex-col justify-between overflow-hidden transition-all duration-700 hover:bg-zinc-900/80"
-            >
-              <div className="absolute top-0 right-0 p-10 opacity-5 group-hover:opacity-10 group-hover:scale-110 group-hover:text-emerald-500 transition-all duration-700">
-                <Download size={160} strokeWidth={0.5} />
+          {/* GALLERY SECTION */}
+          <div className="pt-16" id="gallery">
+            <div className="flex flex-col md:flex-row items-center justify-between gap-6 mb-12">
+              <div className="flex items-center gap-4 border-b border-zinc-800 pb-px">
+                <button
+                  onClick={() => setActiveTab('OFFICIAL')}
+                  className={`pb-4 text-[10px] uppercase tracking-[0.2em] font-medium transition-colors ${activeTab === 'OFFICIAL' ? 'text-emerald-400 border-b border-emerald-400' : 'text-zinc-500 hover:text-zinc-300'}`}
+                >
+                  Curadoria Oficial
+                </button>
+                <button
+                  onClick={() => setActiveTab('GUEST')}
+                  className={`pb-4 text-[10px] uppercase tracking-[0.2em] font-medium transition-colors ${activeTab === 'GUEST' ? 'text-emerald-400 border-b border-emerald-400' : 'text-zinc-500 hover:text-zinc-300'}`}
+                >
+                  Live Connect
+                </button>
+                <button
+                  onClick={() => setActiveTab('VIDEO')}
+                  className={`pb-4 text-[10px] uppercase tracking-[0.2em] font-medium transition-colors ${activeTab === 'VIDEO' ? 'text-emerald-400 border-b border-emerald-400' : 'text-zinc-500 hover:text-zinc-300'}`}
+                >
+                  Cinematografia
+                </button>
               </div>
-              
-              <div className="space-y-4 relative z-10">
-                <div className="w-10 h-px bg-emerald-500/50 group-hover:w-20 transition-all duration-700" />
-                <h3 className="text-3xl font-display font-medium uppercase text-zinc-100">Acervo<br/>Digital</h3>
-                <p className="text-[10px] uppercase tracking-[0.2em] font-medium text-zinc-500">Galeria em Alta Resolução</p>
-              </div>
-              
-              <div className="relative z-10 flex items-center gap-6 mt-8">
-                <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-white group-hover:text-emerald-400 transition-colors">Acessar Galeria</span>
-                <div className="w-10 h-10 rounded-full border border-zinc-700 flex items-center justify-center group-hover:border-emerald-500 group-hover:bg-emerald-500/10 transition-all duration-500">
-                  <ArrowRight size={14} className="text-zinc-400 group-hover:text-emerald-400 group-hover:translate-x-1 transition-all" />
-                </div>
-              </div>
-            </motion.a>
 
-            <motion.a 
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-100px" }}
-              transition={{ duration: 0.8, delay: 0.2 }}
-              href={`${window.location.origin}/captura?eventId=${event.id}`}
-              className="group relative h-[400px] bg-emerald-950/20 border border-emerald-900/30 hover:border-emerald-500/50 p-10 flex flex-col justify-between overflow-hidden transition-all duration-700"
-            >
-              <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-duration-700" />
-              
-              <div className="space-y-4 relative z-10">
-                <div className="flex items-center gap-3">
-                  <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                  <span className="text-[9px] font-medium uppercase tracking-[0.3em] text-emerald-400">Live Connect</span>
-                </div>
-                <h3 className="text-3xl font-display font-medium uppercase text-zinc-100">Captura<br/>Phygital</h3>
-                <p className="text-[10px] uppercase tracking-[0.2em] font-medium text-emerald-500/60">Compartilhe sua visão</p>
+              <div className="flex items-center gap-4">
+                <button
+                  onClick={() => setSortOrder(prev => prev === 'DESC' ? 'ASC' : 'DESC')}
+                  className="flex items-center gap-2 text-[10px] font-medium uppercase tracking-widest text-zinc-400 hover:text-emerald-400 transition-colors"
+                >
+                  <ChevronDown size={14} className={`transition-transform ${sortOrder === 'ASC' ? 'rotate-180' : ''}`} />
+                  {sortOrder === 'DESC' ? 'Mais Recentes' : 'Mais Antigas'}
+                </button>
+
+                <a 
+                  href={`${window.location.origin}/captura?eventId=${event.id}`}
+                  className="flex items-center gap-2 px-4 py-2 border border-emerald-900 rounded-full text-[9px] uppercase tracking-[0.2em] font-medium text-emerald-400 hover:bg-emerald-900/30 transition-colors"
+                >
+                  <Camera size={12} />
+                  Enviar Foto
+                </a>
               </div>
-              
-              <div className="relative z-10 mt-8 space-y-6">
-                <p className="text-[11px] font-light tracking-[0.1em] text-zinc-400 max-w-[200px] leading-relaxed">
-                  Envie suas fotos agora para serem processadas e impressas em tempo real.
-                </p>
-                <div className="flex items-center gap-6">
-                  <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-emerald-400">Abrir Câmera</span>
-                  <div className="w-10 h-10 rounded-full border border-emerald-900 flex items-center justify-center group-hover:border-emerald-400 group-hover:bg-emerald-400/10 transition-all duration-500">
-                    <Camera size={14} className="text-emerald-600 group-hover:text-emerald-400 transition-all" />
-                  </div>
-                </div>
+            </div>
+
+            {filteredMedias.length === 0 ? (
+              <div className="py-32 flex flex-col items-center justify-center text-center space-y-4 border border-dashed border-zinc-800 rounded-3xl">
+                <Camera size={32} className="text-zinc-700" />
+                <p className="text-[11px] font-medium text-zinc-500 uppercase tracking-[0.2em]">Nenhuma mídia encontrada nesta categoria</p>
               </div>
-            </motion.a>
+            ) : (
+              <div className="columns-1 md:columns-2 lg:columns-3 gap-6 space-y-6">
+                {filteredMedias.map((midia, idx) => (
+                  <motion.div
+                    key={midia.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, margin: "-50px" }}
+                    transition={{ duration: 0.5, delay: (idx % 10) * 0.1 }}
+                    className="relative group overflow-hidden bg-zinc-900 break-inside-avoid"
+                  >
+                    <img 
+                      src={midia.url} 
+                      alt="Midia do Evento" 
+                      className="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105"
+                      loading="lazy"
+                    />
+                    
+                    {/* Hover Overlay */}
+                    <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-center justify-center gap-4 backdrop-blur-sm">
+                      <a 
+                        href={midia.metadata?.rawUrl || midia.url}
+                        download
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="w-12 h-12 rounded-full border border-zinc-600 flex items-center justify-center text-zinc-300 hover:text-emerald-400 hover:border-emerald-400 hover:bg-emerald-900/20 transition-all"
+                      >
+                        <Download size={18} />
+                      </a>
+                      <a 
+                        href={midia.metadata?.rawUrl || midia.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="w-12 h-12 rounded-full border border-zinc-600 flex items-center justify-center text-zinc-300 hover:text-emerald-400 hover:border-emerald-400 hover:bg-emerald-900/20 transition-all"
+                      >
+                        <ExternalLink size={18} />
+                      </a>
+                    </div>
+
+                    {midia.type === 'VIDEO' && (
+                      <div className="absolute top-4 right-4 p-2 bg-black/50 backdrop-blur-md rounded-full text-white">
+                        <PlayCircle size={16} />
+                      </div>
+                    )}
+                  </motion.div>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* UPSELL SECTION */}
