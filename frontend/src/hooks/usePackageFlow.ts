@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { API } from "../lib/api";
 import { useAuth } from "./useAuth";
+import { useViaCep } from "./useViaCep";
 
 export const MOCK_PACKAGES = [
   { id: "pocket", name: "Pacote Pocket", price: 900, hours: 4, services: ["foto"], desc: "4h Cobertura • 1 Fotógrafo • 100 Fotos Tratadas" },
@@ -41,17 +42,19 @@ export const usePackageFlow = () => {
 
   const selectedPackage = MOCK_PACKAGES.find(p => p.id === selectedPackageId) || MOCK_PACKAGES[1];
 
+  const { fetchAddress } = useViaCep();
+
   const handleCepChange = async (val: string) => {
     let raw = val.replace(/\D/g, "");
     if (raw.length > 5) raw = raw.replace(/^(\d{5})(\d)/, "$1-$2");
     setCustomCep(raw);
 
-    if (raw.length === 9) {
+    const clean = raw.replace("-", "");
+    if (clean.length === 8) {
       setIsCepLoading(true);
       try {
-        const res = await fetch(`https://viacep.com.br/ws/${raw.replace("-", "")}/json/`);
-        const data = await res.json();
-        if (!data.erro) {
+        const data = await fetchAddress(clean);
+        if (data && !data.erro) {
           setAddressData({
             logradouro: data.logradouro,
             bairro: data.bairro,

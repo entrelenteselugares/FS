@@ -5,6 +5,7 @@ import { Helmet } from "react-helmet-async";
 import { Navbar } from "../components/Navbar";
 import WhatsAppSupport from "../components/WhatsAppSupport";
 import { supabase } from "../lib/supabase";
+import { fetchCepData } from "../hooks/useViaCep";
 
 
 import { QRCodeSVG } from "qrcode.react";
@@ -366,9 +367,8 @@ export const CheckoutPage = () => {
     if (cleanCep.length !== 8) return;
     setIsShippingLoading(true);
     try {
-      const resp = await fetch(`https://viacep.com.br/ws/${cleanCep}/json/`);
-      const data = await resp.json();
-      if (!data.erro) {
+      const data = await fetchCepData(cleanCep);
+      if (data && !data.erro) {
         setShippingData(prev => ({
           ...prev,
           street: data.logradouro,

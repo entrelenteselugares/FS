@@ -4,6 +4,7 @@ import { useNavigate, Link, useSearchParams } from "react-router-dom";
 import { Camera, Mail, Lock, UserCircle, Phone, Eye, EyeOff, ShieldCheck } from "lucide-react";
 import { API } from "../lib/api";
 import { Helmet } from "react-helmet-async";
+import { fetchCepData } from "../hooks/useViaCep";
 
 export const RegisterPage: React.FC = () => {
   const [searchParams] = useSearchParams();
@@ -70,10 +71,9 @@ export const RegisterPage: React.FC = () => {
 
     if (rawCep.length === 8) {
       try {
-        const response = await fetch(`https://viacep.com.br/ws/${rawCep}/json/`);
-        const data = await response.json();
+        const data = await fetchCepData(rawCep);
         
-        if (!data.erro) {
+        if (data && !data.erro) {
           setFormData(prev => ({
             ...prev,
             logradouro: data.logradouro,
