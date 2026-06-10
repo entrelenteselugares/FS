@@ -194,6 +194,9 @@ interface EventData {
   tenantBrandColor?: string | null;
   tenantLogoUrl?: string | null;
   edicaoId?: string | null;
+  eventDays?: number;
+  eventHours?: number;
+  allowFreeDownload?: boolean;
 }
 
 interface EventMedia {
@@ -298,7 +301,7 @@ export default function EventPage() {
   const [orderId, setOrderId] = useState<string | null>(null);
   const [needsAccessChoice, setNeedsAccessChoice] = useState(false);
   const [authenticatedStudent, setAuthenticatedStudent] = useState<string | null>(null);
-  const { digitalPhotos, physicalItems, addToCart, removeFromCart, removePhysicalItem, totalPrice } = useCart();
+  const { digitalPhotos, physicalItems, addToCart, removeFromCart, removePhysicalItem } = useCart();
   const [serviceCatalog, setServiceCatalog] = useState<ServiceData[]>([]);
   const [selectedServices] = useState<string[]>([]);
   const [includeLivePrint] = useState(false);
@@ -311,7 +314,7 @@ export default function EventPage() {
   const eventPricePerPhoto = event?.type === "FOTO_POINT" || event?.isUnitSale 
     ? Number(event?.priceUnit || 10) 
     : Number(event?.pricePerPhoto || 15);
-  const cartTotal = totalPrice(eventPricePerPhoto, Number(event?.priceBase || 190));
+  const cartTotal = (eventCart.length * eventPricePerPhoto) + eventPhysicalItems.reduce((acc, i) => acc + (Number(i.price) * i.quantity), 0);
 
   // Sincroniza o preço por foto do evento corrente para ser consumido no modal do carrinho global
   useEffect(() => {
@@ -347,7 +350,8 @@ export default function EventPage() {
   const [isDownloading, setIsDownloading] = useState(false);
   const [downloadProgress, setDownloadProgress] = useState(0);
 
-  const eventStatus = useEventStatus(event?.dataEvento, null, 2, event?.isExpired, event?.active);
+  const durationHours = (event?.eventDays ? event.eventDays * 24 : 0) + (event?.eventHours || 2);
+  const eventStatus = useEventStatus(event?.dataEvento, null, durationHours, event?.isExpired, event?.active);
 
   const handleShare = async () => {
     if (access?.accessType === "PRIVATE") {
@@ -387,7 +391,8 @@ export default function EventPage() {
     let count = 0;
     for (const url of mediaUrls) {
       try {
-        const res = await fetch(url);
+        const proxyUrl = url.startsWith('http') && !url.includes('/api/proxy') && !url.includes('/api/storage') ? `/api/proxy?url=${encodeURIComponent(url)}` : url;
+        const res = await fetch(proxyUrl);
         const blob = await res.blob();
         const ext = url.split('?')[0].split('.').pop() || 'jpg';
         const filename = `foto_${String(count + 1).padStart(4,'0')}.${ext}`;
@@ -402,13 +407,13 @@ export default function EventPage() {
   };
 
   const handleDownloadAll = () => {
-    const urls = filteredMedias.map(m => m.url).filter(Boolean);
+    const urls = filteredMedias.map(m => m.metadata?.rawUrl || m.metadata?.printUrl || m.url).filter(Boolean) as string[];
     handleDownload(urls, `${event?.title || 'album'}-COMPLETO`);
   };
 
   const handleDownloadSelected = () => {
     const selected = filteredMedias.filter(m => eventCart.includes(m.shortId));
-    const urls = selected.map(m => m.url).filter(Boolean);
+    const urls = selected.map(m => m.metadata?.rawUrl || m.metadata?.printUrl || m.url).filter(Boolean) as string[];
     handleDownload(urls, `${event?.title || 'album'}-SELECIONADAS`);
   };
 
@@ -582,9 +587,9 @@ export default function EventPage() {
 
   const handleUnlockClick = async () => { 
     if (!event) return;
-    const isMarketplaceWithCart = isMarketplace && (eventCart.length > 0 || eventPhysicalItems.length > 0);
+    const hasItemsToBuy = isMarketplace || eventCart.length > 0 || eventPhysicalItems.length > 0;
     
-    if (!isMarketplaceWithCart && (event.isOwner || paid)) {
+    if (!hasItemsToBuy && (event.isOwner || paid)) {
       const gallery = document.getElementById('gallery-section');
       if (gallery) {
         gallery.scrollIntoView({ behavior: 'smooth' });
@@ -1069,8 +1074,8 @@ return (
                               </div>
                             )}
 
-                            {/* Download Toolbar — visible only to owner/admin/editor */}
-                            {(event.isOwner || event.edicaoId === event.photographer?.id || user?.role === 'ADMIN') && (
+                            {/* Download Toolbar — visible only to owner/admin/editor or free download events */}
+                            {(event.allowFreeDownload || event.isOwner || event.edicaoId === event.photographer?.id || user?.role === 'ADMIN') && (
                               <div className="flex flex-wrap items-center justify-between gap-3 pb-4 mb-4 border-b border-theme-border">
                                 <div className="flex items-center gap-2">
                                   <Archive size={14} className="text-brand-tactical" />
@@ -1103,6 +1108,7 @@ return (
                               onToggleCart={toggleCart}
                               isOwner={event.isOwner || user?.role === 'ADMIN'}
                               onDeleteMedia={handleDeleteMedia}
+                              allowFreeDownload={event.allowFreeDownload}
                             />
                           </div>
                         )}
@@ -1136,8 +1142,8 @@ return (
               </div>
             </div>
 
-            {/* Hub de Gestão (Apenas Profissional/Admin) */}
-            {(event.isOwner || user?.role === 'ADMIN') && (
+            {/* Hub de Gestão (Apenas Profissional/Admin/Contratante) */}
+            {(event.isOwner || event.isPrimaryClient || user?.role === 'ADMIN') && (
               <div className="p-4 lg:p-6 bg-brand-tactical/10 border border-brand-tactical/20 space-y-4">
                  <div className="flex items-center gap-2">
                     <ShieldCheck size={16} className="text-brand-tactical" />
@@ -1151,13 +1157,15 @@ return (
                     >
                       <QrCode size={16} /> {!qrOpen ? 'ENCERRADAS' : 'QR CODE'}
                     </button>
-                    <button 
-                      onClick={() => setShowPrintKit(true)}
-                      className="w-full py-4 bg-brand-tactical text-black text-[9px] lg:text-[10px] font-black uppercase tracking-widest hover:brightness-110 transition-all italic flex items-center justify-center gap-3"
-                    >
-                      <Printer size={16} /> IMPRESSÃO
-                    </button>
-                    {(user?.role === 'ADMIN' || user?.role === 'PROFISSIONAL' || user?.role === 'FRANCHISEE' || user?.role === 'CARTORIO' || user?.role === 'UNIDADE') && (
+                    {(!event.isPrimaryClient || user?.role === 'ADMIN') && (
+                      <button 
+                        onClick={() => setShowPrintKit(true)}
+                        className="w-full py-4 bg-brand-tactical text-black text-[9px] lg:text-[10px] font-black uppercase tracking-widest hover:brightness-110 transition-all italic flex items-center justify-center gap-3"
+                      >
+                        <Printer size={16} /> IMPRESSÃO
+                      </button>
+                    )}
+                    {(event.isOwner || event.isPrimaryClient || user?.role === 'ADMIN' || user?.role === 'PROFISSIONAL' || user?.role === 'FRANCHISEE' || user?.role === 'CARTORIO' || user?.role === 'UNIDADE') && (
                       <button 
                         onClick={() => {
                           setIsEditingEvent(true);
@@ -1225,7 +1233,7 @@ return (
                   </div>
                 ) : (
                   <>
-                    {isMarketplace && (
+                    {((isMarketplace || eventCart.length > 0 || eventPhysicalItems.length > 0) && !event.allowFreeDownload) && (
                       <div className="space-y-4">
                         <p className="text-[10px] text-brand-tactical font-black uppercase tracking-[0.6em] italic">Investimento</p>
                         <div className="flex items-baseline gap-2">
@@ -1233,7 +1241,7 @@ return (
                           <h2 className="text-6xl lg:text-7xl font-black tracking-tighter font-heading italic leading-none text-theme-text">
                             {Number(searchParams.get("intent") === "upgrade" 
                               ? (serviceCatalog.filter(s => selectedServices.includes(s.id)).reduce((acc, s) => acc + Number(s.basePrice), 0) + (includeLivePrint ? 150 : 0))
-                              : (isMarketplace ? cartTotal : event.priceBase)
+                              : ((isMarketplace || eventCart.length > 0 || eventPhysicalItems.length > 0) ? cartTotal : event.priceBase)
                             ).toFixed(0)}
                           </h2>
                           <span className="text-3xl font-black text-theme-text-muted/60 italic">,00</span>
@@ -1248,7 +1256,7 @@ return (
                       </div>
                     )}
 
-                    {!isMarketplace && !event.hasAccess && (
+                    {!isMarketplace && !event.hasAccess && !event.allowFreeDownload && (
                       <div className="space-y-4">
                         <p className="text-[10px] text-brand-tactical font-black uppercase tracking-[0.6em] italic">Investimento do Álbum</p>
                         <div className="flex items-baseline gap-2">
@@ -1267,7 +1275,7 @@ return (
                     )}
 
                     {/* Order Bump - Upgrade Phygital */}
-                    {isMarketplace && eventCart.length > 0 && event.temFotoImpressa && (
+                    {(isMarketplace && eventCart.length > 0 && event.temFotoImpressa && !event.allowFreeDownload) && (
                       <div className="p-6 border border-brand-tactical/30 bg-brand-tactical/10 rounded-[24px] space-y-4 shadow-lg shadow-brand-tactical/5">
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-2">
@@ -1305,9 +1313,8 @@ return (
                       </div>
                     )}
 
-                    {/* Botões de Ação Final */}
                     <div className="grid grid-cols-2 lg:grid-cols-1 gap-2 lg:gap-4">
-                      {(isMarketplace || (!event.hasAccess && (event.isPrimaryClient || event.isOwner))) && (
+                      {((isMarketplace || (!event.hasAccess && (event.isPrimaryClient || event.isOwner)) || eventCart.length > 0 || eventPhysicalItems.length > 0) && !event.allowFreeDownload) && (
                         <button 
                           onClick={handleUnlockClick} 
                           className="group relative w-full h-16 lg:h-24 rounded-xl bg-brand-tactical text-black font-black uppercase tracking-[0.1em] lg:tracking-[0.4em] text-[9px] lg:text-xs flex items-center justify-center gap-2 lg:gap-5 overflow-hidden transition-all shadow-2xl shadow-brand-tactical/30 italic hover-lift"
@@ -1315,14 +1322,14 @@ return (
                           <div className="absolute inset-0 bg-white translate-x-[-100%] group-hover:translate-x-0 transition-transform duration-700 opacity-20" />
                           <span className="relative z-10 text-center px-2 leading-tight">
                             {searchParams.get("intent") === "upgrade" ? "Finalizar Upgrade" : 
-                              event.type === 'ALBUM_FULL' ? "Desbloquear Álbum" : 
+                              (event.type === 'ALBUM_FULL' && eventCart.length === 0 && eventPhysicalItems.length === 0) ? "Desbloquear Álbum" : 
                               "Finalizar Compra"}
                           </span>
                           <ChevronRight size={16} className="relative z-10 group-hover:translate-x-2 transition-transform hidden lg:block" />
                         </button>
                       )}
                       
-                      {(!isMarketplace && event.hasAccess) && (
+                      {(!isMarketplace && event.hasAccess && !event.allowFreeDownload && eventCart.length === 0 && eventPhysicalItems.length === 0) && (
                         <div className="w-full h-16 lg:h-24 mb-4 bg-brand-tactical/10 border border-brand-tactical/30 rounded-xl flex items-center justify-center gap-2">
                            <CheckCircle2 size={16} className="text-brand-tactical" />
                            <span className="text-[9px] lg:text-xs font-black text-brand-tactical uppercase tracking-widest italic text-center leading-tight">Álbum Desbloqueado</span>

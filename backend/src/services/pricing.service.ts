@@ -8,6 +8,7 @@ export interface SplitResult {
   edicao: number;
   cartorio: number;
   franchisee: number;
+  owner?: number;
   lab?: number;
   passiveFranchiseeId?: string;
   ambassador?: number;
@@ -38,8 +39,8 @@ export class PricingService {
       return (cartCount ?? 0) * Number(event.priceUnit || event.priceBase || 10);
     }
 
-    // 2. Se for Marketplace (Venda por Foto Individual no Carrinho)
-    if (event.type === "PHOTO_MARKETPLACE") {
+    // 2. Se for Marketplace ou se foram selecionadas fotos avulsas no carrinho
+    if (event.type === "PHOTO_MARKETPLACE" || (cartCount !== undefined && cartCount > 0)) {
       return (cartCount ?? 0) * Number(event.pricePerPhoto ?? 15);
     }
 
@@ -90,11 +91,12 @@ export class PricingService {
     supplierCost?: number,
     professionalId?: string,
     ambassadorId?: string,
-    buyerUserId?: string // Afiliado: resolve cadeia a partir do comprador
+    buyerUserId?: string, // Afiliado: resolve cadeia a partir do comprador
+    eventId?: string // Evento para checar split customizado
   }): Promise<SplitResult> {
     if (isNaN(amount) || amount === null) {
       console.warn("[PricingService] amount is NaN or null, returning default zero splits");
-      return { matriz: 0, captacao: 0, edicao: 0, cartorio: 0, franchisee: 0, ambassador: 0 };
+      return { matriz: 0, captacao: 0, edicao: 0, cartorio: 0, franchisee: 0, ambassador: 0, owner: 0 };
     }
     const keys = ["split_matriz", "split_captacao", "split_edicao", "split_cartorio", "split_franchisee"];
     const configs = await prisma.platformConfig.findMany({
@@ -170,13 +172,71 @@ export class PricingService {
       return { matriz: amount, captacao: 0, edicao: 0, cartorio: 0, franchisee: 0 };
     }
 
-    const captacao = +(netAmount * getPct("split_captacao")).toFixed(2);
-    const edicao   = +(netAmount * getPct("split_edicao")).toFixed(2);
-    const cartorio = +(netAmount * getPct("split_cartorio")).toFixed(2);
+    let captacao = +(netAmount * getPct("split_captacao")).toFixed(2);
+    let edicao   = +(netAmount * getPct("split_edicao")).toFixed(2);
+    let cartorio = +(netAmount * getPct("split_cartorio")).toFixed(2);
     
     if (passiveFranchiseeId) {
       franchisee = +(netAmount * franchiseePct).toFixed(2);
       console.log(`[Pricing] Comissão Passiva detectada (${(franchiseePct * 100).toFixed(1)}% do Líquido): ${franchisee} para ${passiveFranchiseeId}`);
+    }
+
+    // ── BUSCA COMISSÃO CUSTOMIZADA DE EVENTO (DONO VS PROFISSIONAIS PROGRESSIVO) ──
+    let customOwnerSplitPct = 0;
+    let customProSplitPct = 0;
+    let hasCustomSplit = false;
+
+    if (options?.eventId) {
+      const event = await prisma.event.findUnique({ where: { id: options.eventId } });
+      if (event?.sellPhotos) {
+        const C = Number(event.priceBase) || 1000;
+        
+        // Consultar total acumulado de vendas aprovadas
+        const paidOrders = await prisma.order.findMany({
+          where: {
+            eventId: event.id,
+            status: "APROVADO",
+          },
+          select: {
+            valor: true,
+          }
+        });
+        const prevSales = paidOrders.reduce((sum, o) => sum + Number(o.valor), 0);
+        
+        // Vendas totais considerando a transação atual
+        const S = prevSales + amount;
+        const x = S / C;
+
+        let teamPct = 0;
+        if (x <= 0.5) {
+          teamPct = 0;
+        } else if (x >= 5.0) {
+          teamPct = 0.50;
+        } else {
+          teamPct = ((x - 0.5) / 4.5) * 0.50;
+        }
+
+        customOwnerSplitPct = 1 - teamPct;
+        customProSplitPct = teamPct;
+        hasCustomSplit = true;
+      }
+    }
+
+    let owner = 0;
+
+    if (hasCustomSplit) {
+      owner = +(netAmount * customOwnerSplitPct).toFixed(2);
+      const proTotal = +(netAmount * customProSplitPct).toFixed(2);
+      
+      // Divide proTotal entre captador e editor (ex: 60% e 40%), ou 100% para captador
+      if (options?.hasEditor) {
+        captacao = +(proTotal * 0.60).toFixed(2);
+        edicao = +(proTotal - captacao).toFixed(2);
+      } else {
+        captacao = proTotal;
+        edicao = 0;
+      }
+      cartorio = 0; // Neste caso, quem ganha é o dono (owner), então o cartório não entra no split custom
     }
 
     // ── BUSCA COMISSÃO AFILIADO (REDE DE INDICAÇÃO) ──
@@ -199,10 +259,11 @@ export class PricingService {
     }
 
     // Matriz fica com o resto — afiliado é deduzido da margem da Matriz
-    const matriz = +(amount - (captacao + edicao + cartorio + franchisee + ambassador + affiliateL1Amount + affiliateL2Amount)).toFixed(2);
+    const matriz = +(amount - (captacao + edicao + cartorio + franchisee + ambassador + owner + affiliateL1Amount + affiliateL2Amount)).toFixed(2);
 
     return { 
       matriz, captacao, edicao, cartorio, franchisee, passiveFranchiseeId, 
+      owner,
       ambassador, ambassadorId,
       affiliateL1Id, affiliateL2Id, affiliateL1Amount, affiliateL2Amount,
     };

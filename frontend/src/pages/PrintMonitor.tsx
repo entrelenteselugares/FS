@@ -78,6 +78,7 @@ interface EventInfo {
   id: string;
   title: string;
   tenantLogoUrl?: string;
+  verticalConfigs?: Record<string, unknown>;
 }
 
 export default function PrintMonitor() {
@@ -135,7 +136,13 @@ export default function PrintMonitor() {
   });
 
   useEffect(() => {
-    API.get(`/profissional/events/${eventId}`).then(r => setEvent(r.data));
+    API.get(`/profissional/events/${eventId}`).then(r => {
+      setEvent(r.data);
+      const designer = (r.data?.verticalConfigs?.printDesigner as { showLogo?: boolean; showTimestamp?: boolean; clientLogoUrl?: string }) || {};
+      setShowLogo(designer.showLogo ?? true);
+      setShowTimestamp(designer.showTimestamp ?? true);
+      setClientLogoUrl(designer.clientLogoUrl ?? '');
+    });
     fetchPrints();
     
     // Serverless-Native: Utiliza WebSockets via Supabase Realtime invés de polling
@@ -338,35 +345,14 @@ export default function PrintMonitor() {
           </button>
         </div>
 
-        <label className="flex-shrink-0 flex items-center gap-2 cursor-pointer border border-theme-border bg-theme-bg px-3 py-1.5 rounded-full hover:bg-zinc-800/50 transition-colors">
-          <input type="checkbox" checked={showLogo} onChange={e => setShowLogo(e.target.checked)} className="accent-brand-tactical" />
-          <span className="text-[10px] font-black uppercase tracking-widest text-theme-text">Logo</span>
-        </label>
-        
-        <label className="flex-shrink-0 flex items-center gap-2 cursor-pointer border border-theme-border bg-theme-bg px-3 py-1.5 rounded-full hover:bg-zinc-800/50 transition-colors">
-          <input type="checkbox" checked={showTimestamp} onChange={e => setShowTimestamp(e.target.checked)} className="accent-brand-tactical" />
-          <span className="text-[10px] font-black uppercase tracking-widest text-theme-text">Data/Hora</span>
-        </label>
+
 
         <label className="flex-shrink-0 flex items-center gap-2 cursor-pointer border border-theme-border bg-theme-bg px-3 py-1.5 rounded-full hover:bg-zinc-800/50 transition-colors">
           <input type="checkbox" checked={showCropMarks} onChange={e => setShowCropMarks(e.target.checked)} className="accent-brand-tactical" />
           <span className="text-[10px] font-black uppercase tracking-widest text-theme-text">Marcas de Corte</span>
         </label>
 
-        <label className="flex-shrink-0 flex items-center gap-2 cursor-pointer border border-brand-tactical bg-brand-tactical/10 px-3 py-1.5 rounded-full hover:bg-brand-tactical/20 transition-colors">
-          <span className="text-[10px] font-black uppercase tracking-widest text-brand-tactical">{clientLogoUrl ? 'Logo Adicionado ✓' : '+ Add Logo Cliente'}</span>
-          <input 
-            type="file" 
-            accept="image/*" 
-            className="hidden" 
-            onChange={(e) => {
-              if (e.target.files && e.target.files[0]) {
-                const url = URL.createObjectURL(e.target.files[0]);
-                setClientLogoUrl(url);
-              }
-            }}
-          />
-        </label>
+
 
         <button onClick={() => navigate(`/profissional/monitor/${eventId}/full`)} className="flex-shrink-0 flex items-center justify-center gap-2 px-4 py-2 rounded-full text-[9px] font-black uppercase tracking-widest bg-brand-tactical text-zinc-950 hover:brightness-110 transition-all shadow-sm ml-auto">
           <Expand size={12} /> Full Screen

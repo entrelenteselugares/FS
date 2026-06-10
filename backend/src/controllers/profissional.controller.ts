@@ -62,6 +62,7 @@ export async function getMeusEventos(req: AuthRequest, res: Response): Promise<v
         coverPhotoUrl: true,
         lightroomUrl: true,
         driveUrl: true,
+        sellPhotos: true,
         temFotoImpressa: true,
         captacaoId: true,
         captacaoStatus: true,
@@ -72,7 +73,7 @@ export async function getMeusEventos(req: AuthRequest, res: Response): Promise<v
       orderBy: { dataEvento: "desc" },
     });
 
-    res.json(events);
+    res.json(events.map((e: any) => ({ ...e, allowFreeDownload: !e.sellPhotos })));
   } catch (err) {
     console.error("getMeusEventos:", err);
     res.status(500).json({ error: "Erro ao buscar eventos." });
@@ -82,7 +83,7 @@ export async function getMeusEventos(req: AuthRequest, res: Response): Promise<v
 // PATCH /api/profissional/events/:id/links — atualiza lightroomUrl e driveUrl
 export async function updateEventLinks(req: AuthRequest, res: Response): Promise<void> {
   const { id } = req.params;
-  const { lightroomUrl, driveUrl, dataEvento, coverPosition, edicaoId } = req.body;
+  const { lightroomUrl, driveUrl, dataEvento, coverPosition, edicaoId, printDesigner, pricePerPhoto } = req.body;
   const userId = req.user?.userId;
   if (!userId) { res.status(401).json({ error: "Não autenticado." }); return; }
 
@@ -109,6 +110,17 @@ export async function updateEventLinks(req: AuthRequest, res: Response): Promise
       res.status(400).json({ error: "URL inválida para o Google Drive." }); return;
     }
 
+    let updatedVerticalConfigs = event.verticalConfigs as any || {};
+    if (printDesigner !== undefined) {
+      updatedVerticalConfigs = {
+        ...updatedVerticalConfigs,
+        printDesigner: {
+          ...(updatedVerticalConfigs.printDesigner || {}),
+          ...printDesigner
+        }
+      };
+    }
+
     const updated = await prisma.event.update({
       where: { id: String(id) },
       data: {
@@ -116,8 +128,12 @@ export async function updateEventLinks(req: AuthRequest, res: Response): Promise
         ...(finalDriveUrl !== undefined && { driveUrl: finalDriveUrl || null }),
         ...(dataEvento !== undefined && { dataEvento: dataEvento ? new Date(dataEvento) : { set: new Date() } }),
         ...(coverPosition !== undefined && { coverPosition: String(coverPosition) || "center" }),
-        ...(edicaoId !== undefined && { edicaoId: edicaoId === "null" || edicaoId === null ? null : String(edicaoId) }),
-        ...(req.body.sellPhotos !== undefined && { sellPhotos: Boolean(req.body.sellPhotos) }),
+        ...(edicaoId !== undefined && {
+          edicao: edicaoId === "null" || edicaoId === null ? { disconnect: true } : { connect: { id: String(edicaoId) } }
+        }),
+        ...(req.body.allowFreeDownload !== undefined && { sellPhotos: !Boolean(req.body.allowFreeDownload) }),
+        ...(pricePerPhoto !== undefined && { pricePerPhoto: Number(pricePerPhoto) }),
+        ...(printDesigner !== undefined && { verticalConfigs: updatedVerticalConfigs }),
       },
     });
 
@@ -595,7 +611,9 @@ export async function registerManualSale(req: AuthRequest, res: Response): Promi
     if (!event) { res.status(403).json({ error: "Acesso negado." }); return; }
 
     // Calcula splits usando a inteligência centralizada
-    const { matriz, captacao, edicao, cartorio } = await PricingService.calculateSplits(Number(amount));
+    const { matriz, captacao, edicao, cartorio, owner } = await PricingService.calculateSplits(Number(amount), {
+      eventId: event.id
+    });
 
     // Cria o pedido aprovado com a tag de manual
     const order = await prisma.order.create({
@@ -613,6 +631,7 @@ export async function registerManualSale(req: AuthRequest, res: Response): Promi
         splitCaptacao: captacao,
         splitEdicao: edicao,
         splitCartorio: cartorio,
+        splitOwner: owner,
         hasPaid: true
       }
     });
@@ -652,7 +671,7 @@ export async function registerManualSale(req: AuthRequest, res: Response): Promi
       customerEmail: customerEmail ?? null,
       amount: Number(amount),
       manualType: manualType || "SD_CARD",
-      splits: { matriz, captacao, edicao, cartorio },
+      splits: { matriz, captacao, edicao, cartorio, owner },
     });
 
     res.json(order);

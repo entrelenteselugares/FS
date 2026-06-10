@@ -30,6 +30,7 @@ import portfolioRoutes from "./portfolioRoutes";
 import * as NotificationController from "../controllers/notification.controller";
 import analyticsRoutes from "./analytics.routes";
 import { checkDbStatus } from "../controllers/admin.controller";
+import { PriceVoteController } from "../controllers/priceVote.controller";
 
 import adminRoutes from "./admin.routes";
 import authRoutes from "./auth.routes";
@@ -211,6 +212,10 @@ router.get("/cliente/pedidos/:id", requireAuth, getMeuPedidoDetalhe);
 router.patch("/cliente/pedidos/:id/personalize", requireAuth, personalizePedido);
 router.patch("/cliente/pedidos/:id/cover",       requireAuth, uploadClientCover);
 router.get("/affiliate/dashboard", requireAuth, AffiliateController.getDashboard);
+
+router.post("/events/:id/suggest-price", requireAuth, PriceVoteController.suggestPrice);
+router.post("/events/:id/vote-price", requireAuth, PriceVoteController.votePrice);
+router.get("/events/:id/voting-status", requireAuth, PriceVoteController.getVotingStatus);
 
 router.post("/events/:slug/photos/like", requireAuth, likePhoto);
 router.get("/me/points",                 requireAuth, getMyPoints);

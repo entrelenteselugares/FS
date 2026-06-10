@@ -252,6 +252,7 @@ export class EventController {
           select: { id: true, contributorName: true, valor: true, createdAt: true }
         }),
         isUnitSale: event.isUnitSale,
+        allowFreeDownload: !event.sellPhotos,
         priceUnit: event.priceUnit,
         type: event.type,
         isPrivate: event.isPrivate,
@@ -755,6 +756,8 @@ export class EventController {
           captacaoStatus: "PENDING",
           retentionDays: 15,
           isPrivate: true,
+          isUnitSale: true,
+          sellPhotos: false,
           ticketUrl: ticketUrl ? String(ticketUrl) : null,
           fotoSegundoPromoCode: fotoSegundoPromoCode ? String(fotoSegundoPromoCode) : null
         }

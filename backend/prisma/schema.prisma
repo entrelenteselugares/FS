@@ -207,6 +207,8 @@ model Event {
   preSaleEnabled     Boolean             @default(false)
   postSaleEnabled    Boolean             @default(true)
   sellPhotos         Boolean             @default(true)
+  splitOwnerPct      Decimal?            @default(70) @db.Decimal(5, 2)
+  splitProPct        Decimal?            @default(30) @db.Decimal(5, 2)
   calendarSlots      CalendarSlot[]
   media              EventMedia[]
   captacao           User?               @relation("CaptacaoEvents", fields: [captacaoId], references: [id])
@@ -377,6 +379,7 @@ model Order {
   splitCartorio        Decimal?              @db.Decimal(10, 2)
   splitEdicao          Decimal?              @db.Decimal(10, 2)
   splitMatriz          Decimal?              @db.Decimal(10, 2)
+  splitOwner           Decimal?              @db.Decimal(10, 2)
   accessChosenAt       DateTime?
   accessExpiresAt      DateTime?
   accessType           String?

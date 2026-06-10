@@ -198,21 +198,61 @@ export class PhygitalService {
           }
 
           if (logoBuffer) {
-            const logoWidth = Math.floor(w * 0.35); // 35% da largura da imagem
+            const designerConfig = (foundEvent as any)?.verticalConfigs?.printDesigner || {};
+            const clientLogoUrl = designerConfig.clientLogoUrl;
+            
+            let clientLogoBuffer = null;
+            if (clientLogoUrl) {
+              try {
+                const response = await fetch(clientLogoUrl);
+                if (response.ok) {
+                  const arrayBuffer = await response.arrayBuffer();
+                  clientLogoBuffer = Buffer.from(arrayBuffer);
+                }
+              } catch(e) { console.error("[PHYGITAL] Erro ao baixar logo do cliente", e); }
+            }
+
+            const maxClientHeight = Math.floor(bottomBorder * 0.55); // Cliente tem destaque
+            const maxFsHeight = Math.floor(bottomBorder * 0.35); // FS atua como assinatura (powered by)
+            
             const { data: logoResized, info: logoInfo } = await sharp(logoBuffer)
-              .resize({ width: logoWidth, withoutEnlargement: true })
+              .resize({ height: maxFsHeight, withoutEnlargement: true })
               .png()
               .toBuffer({ resolveWithObject: true });
               
-            const logoY = h + borderSize + Math.floor((bottomBorder - logoInfo.height) / 2);
-            const logoX = Math.floor((finalWidth - logoInfo.width) / 2); // Centralizado
+            if (clientLogoBuffer) {
+              const { data: clientResized, info: clientInfo } = await sharp(clientLogoBuffer)
+                .resize({ width: Math.floor(w * 0.4), height: maxClientHeight, fit: 'inside', withoutEnlargement: true })
+                .png()
+                .toBuffer({ resolveWithObject: true });
+                
+              const gap = Math.floor(w * 0.035); // 3.5% de espaçamento
+              const lineWidth = 2;
+              const lineHeight = Math.floor(Math.max(clientInfo.height, logoInfo.height) * 0.7); // Linha um pouco menor que as logos
+              const lineSvg = Buffer.from(`<svg width="${lineWidth}" height="${lineHeight}" xmlns="http://www.w3.org/2000/svg"><rect width="${lineWidth}" height="${lineHeight}" fill="#e5e7eb"/></svg>`);
+              const lineBuffer = await sharp(lineSvg).png().toBuffer();
+              
+              const totalWidth = clientInfo.width + gap + lineWidth + gap + logoInfo.width;
+              const startX = Math.floor((finalWidth - totalWidth) / 2);
+              const centerY = h + borderSize + Math.floor(bottomBorder / 2);
 
-            compositeLayers.push({ 
-              input: logoResized, 
-              top: logoY,
-              left: logoX,
-              blend: 'over' 
-            });
+              const clientX = startX;
+              const clientY = Math.floor(centerY - clientInfo.height / 2);
+
+              const lineX = clientX + clientInfo.width + gap;
+              const lineY = Math.floor(centerY - lineHeight / 2);
+
+              const logoX = lineX + lineWidth + gap;
+              const logoY = Math.floor(centerY - logoInfo.height / 2);
+
+              compositeLayers.push({ input: clientResized, top: clientY, left: clientX, blend: 'over' });
+              compositeLayers.push({ input: lineBuffer, top: lineY, left: lineX, blend: 'over' });
+              compositeLayers.push({ input: logoResized, top: logoY, left: logoX, blend: 'over' });
+            } else {
+              const logoY = h + borderSize + Math.floor((bottomBorder - logoInfo.height) / 2);
+              const logoX = Math.floor((finalWidth - logoInfo.width) / 2); 
+              compositeLayers.push({ input: logoResized, top: logoY, left: logoX, blend: 'over' });
+            }
           }
           // Removemos o texto SVG para evitar quadrados (missing fonts) no ambiente serverless (Vercel)
         } catch (err) {

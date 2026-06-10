@@ -9,6 +9,7 @@ export const updateEventSchema = z.object({
   targetAmount: z.number().nonnegative().optional().nullable(),
   isPrivate: z.boolean().optional(),
   isUnitSale: z.boolean().optional(),
+  allowFreeDownload: z.boolean().optional(),
   priceUnit: z.number().nonnegative().optional(),
   type: z.string().optional(),
   pricePerPhoto: z.number().nonnegative().optional(),

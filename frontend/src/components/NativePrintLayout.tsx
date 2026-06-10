@@ -270,12 +270,22 @@ export function NativePrintLayout({
                     </div>
 
                     {showLogo && (
-                      <img 
-                        src={clientLogoUrl || defaultLogo} 
-                        alt="Logo" 
-                        style={{ height: '6mm', objectFit: 'contain' }}
-                        crossOrigin="anonymous"
-                      />
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '4mm' }}>
+                        <img 
+                          src={defaultLogo} 
+                          alt="Foto Segundo" 
+                          style={{ height: '5mm', objectFit: 'contain' }}
+                          crossOrigin="anonymous"
+                        />
+                        {clientLogoUrl && (
+                          <img 
+                            src={clientLogoUrl} 
+                            alt="Cliente" 
+                            style={{ height: '6mm', objectFit: 'contain' }}
+                            crossOrigin="anonymous"
+                          />
+                        )}
+                      </div>
                     )}
                   </div>
                 </div>

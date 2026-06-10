@@ -410,6 +410,7 @@ export async function adminCreateEvent(req: AuthRequest, res: Response): Promise
         isPrivate: req.body.isPrivate ?? true,
         // @ts-ignore
         isUnitSale: req.body.isUnitSale ?? false,
+        sellPhotos: req.body.allowFreeDownload !== undefined ? !req.body.allowFreeDownload : true,
         // @ts-ignore
         priceUnit: req.body.priceUnit ? Number(req.body.priceUnit) : 10,
         type: type || "ALBUM_FULL",
@@ -519,6 +520,7 @@ export async function adminUpdateEvent(req: AuthRequest, res: Response): Promise
       }
     }
     if (req.body.isUnitSale !== undefined) (data as Prisma.EventUpdateInput).isUnitSale = req.body.isUnitSale;
+    if (req.body.allowFreeDownload !== undefined) (data as Prisma.EventUpdateInput).sellPhotos = !req.body.allowFreeDownload;
     if (req.body.priceUnit !== undefined) (data as Prisma.EventUpdateInput).priceUnit = Number(req.body.priceUnit);
     if (req.body.type !== undefined) (data as Prisma.EventUpdateInput).type = req.body.type;
     if (req.body.pricePerPhoto !== undefined) (data as Prisma.EventUpdateInput).pricePerPhoto = Number(req.body.pricePerPhoto);

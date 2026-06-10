@@ -175,13 +175,15 @@ export class PaymentController {
         affiliateL1Id,
         affiliateL2Id,
         affiliateL1Amount: splitAffiliateL1,
-        affiliateL2Amount: splitAffiliateL2
+        affiliateL2Amount: splitAffiliateL2,
+        owner: splitOwner
       } = await PricingService.calculateSplits(preco, { 
         professionalId: event.captacaoId || undefined,
         supplierCost: totalSupplierCost,
         shippingFee: Number(req.body.shippingFee || 0),
         ambassadorId: req.cookies?.fs_referral,
-        buyerUserId: resolvedClienteId || undefined
+        buyerUserId: resolvedClienteId || undefined,
+        eventId: eventId
       });
 
       console.log(`[Checkout] Repasse Manual Calculado: Snapshot salvo. Valor: ${preco}`);
@@ -310,10 +312,12 @@ export class PaymentController {
           affiliateL1Id: fAffiliateL1Id,
           affiliateL2Id: fAffiliateL2Id,
           affiliateL1Amount: fSplitAffiliateL1,
-          affiliateL2Amount: fSplitAffiliateL2
+          affiliateL2Amount: fSplitAffiliateL2,
+          owner: fSplitOwner
         } = await PricingService.calculateSplits(finalPreco, { 
           professionalId: event.captacaoId || undefined,
-          buyerUserId: resolvedClienteId || undefined
+          buyerUserId: resolvedClienteId || undefined,
+          eventId: eventId
         });
 
         order = await prisma.order.update({
@@ -325,6 +329,7 @@ export class PaymentController {
             splitCaptacao: fCaptacao,
             splitEdicao: fEdicao,
             splitCartorio: fCartorio,
+            splitOwner: fSplitOwner,
             splitFranchisee: fFranchisee,
             passiveFranchiseeId: fPassiveId,
             ambassadorId: req.cookies?.fs_referral,
@@ -352,6 +357,7 @@ export class PaymentController {
             splitCaptacao,
             splitEdicao,
             splitCartorio,
+            splitOwner,
             splitFranchisee,
             passiveFranchiseeId,
             ambassadorId: req.cookies?.fs_referral,
@@ -859,12 +865,14 @@ export class PaymentController {
         cartorio: splitCartorio,
         franchisee: splitFranchisee,
         passiveFranchiseeId,
-        ambassadorId
+        ambassadorId,
+        owner: splitOwner
       } = await PricingService.calculateSplits(preco, { 
         professionalId: event.captacaoId || undefined,
         shippingFee: finalShippingFee,
         supplierCost: totalSupplierCost,
-        ambassadorId: req.cookies?.fs_referral
+        ambassadorId: req.cookies?.fs_referral,
+        eventId: eventId
       });
 
       // 4. Identificação do Comprador (Lead -> Customer)
@@ -1014,6 +1022,7 @@ export class PaymentController {
             splitCaptacao,
             splitEdicao,
             splitCartorio,
+            splitOwner,
             splitFranchisee,
             passiveFranchiseeId,
             ambassadorId: req.cookies?.fs_referral,
@@ -1054,6 +1063,7 @@ export class PaymentController {
             splitCaptacao,
             splitEdicao,
             splitCartorio,
+            splitOwner,
             splitFranchisee,
             passiveFranchiseeId,
             ambassadorId: req.cookies?.fs_referral,
@@ -1683,9 +1693,10 @@ export class PaymentController {
       const totalPrice = subtotal + shippingFee;
 
       // 3. Calcula Splits Reais baseados no custo e margem
-      const { matriz, captacao, edicao, cartorio, franchisee, passiveFranchiseeId } = await PricingService.calculateSplits(totalPrice, {
+      const { matriz, captacao, edicao, cartorio, franchisee, passiveFranchiseeId, owner } = await PricingService.calculateSplits(totalPrice, {
         professionalId: event.captacaoId || undefined,
-        productType: "ALBUM_IMPRESSO" // Trata como produto físico para splits
+        productType: "ALBUM_IMPRESSO", // Trata como produto físico para splits
+        eventId: event.id
       });
 
       // 4. Prepara notas internas com fotos do álbum se houver
@@ -1708,6 +1719,7 @@ export class PaymentController {
           splitCaptacao: captacao,
           splitEdicao: edicao,
           splitCartorio: cartorio,
+          splitOwner: owner,
           splitFranchisee: franchisee,
           passiveFranchiseeId,
           items: {

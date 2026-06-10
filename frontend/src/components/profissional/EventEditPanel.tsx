@@ -9,6 +9,7 @@ import { T } from "../../lib/theme";
 import { API } from "../../lib/api";
 import type { EventItem, Partner } from "./types";
 import { CoverPhotoInput } from "./CoverPhotoInput";
+import { useAuth } from "../../hooks/useAuth";
 
 interface EventEditPanelProps {
   event: EventItem;
@@ -36,7 +37,9 @@ interface ServiceOption {
 }
 
 export function EventEditPanel({ event, onUpdated, onClose, onNotify }: EventEditPanelProps) {
-  const [activeTab, setActiveTab] = useState<"SETUP" | "TEAM">("SETUP");
+  const { user } = useAuth();
+  const isClient = user?.role === "CLIENTE";
+  const [activeTab, setActiveTab] = useState<"SETUP" | "DESIGNER" | "TEAM">("SETUP");
 
   // Setup state
   const [lrUrl, setLrUrl] = useState(event.lightroomUrl ?? "");
@@ -48,7 +51,21 @@ export function EventEditPanel({ event, onUpdated, onClose, onNotify }: EventEdi
   const [editingLr, setEditingLr] = useState(!event.lightroomUrl);
   const [editingDr, setEditingDr] = useState(!event.driveUrl);
 
-  const [sellPhotos, setSellPhotos] = useState(event.sellPhotos ?? true);
+  const [sellPhotos, setSellPhotos] = useState(!event.allowFreeDownload);
+  const [pricePerPhoto, setPricePerPhoto] = useState(event.pricePerPhoto ?? 15);
+
+  // Voting states
+  const [votingStatus, setVotingStatus] = useState<any>(null);
+  const [mySuggestion, setMySuggestion] = useState<number | "">("");
+  const [loadingVoting, setLoadingVoting] = useState(false);
+
+
+  // Designer state
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const designerConfig = (event as any).verticalConfigs?.printDesigner || {};
+  const [showLogo, setShowLogo] = useState<boolean>(designerConfig.showLogo ?? true);
+  const [showTimestamp, setShowTimestamp] = useState<boolean>(designerConfig.showTimestamp ?? true);
+  const [clientLogoUrl, setClientLogoUrl] = useState<string>(designerConfig.clientLogoUrl ?? "");
 
   // Team state
   const [edicaoId, setEdicaoId] = useState<string | null>(event.edicaoId ?? null);
@@ -104,6 +121,50 @@ export function EventEditPanel({ event, onUpdated, onClose, onNotify }: EventEdi
     return () => clearTimeout(t);
   }, [searchQuery]);
 
+  // Load voting status on mount
+  useEffect(() => {
+    if (event.id) {
+      setLoadingVoting(true);
+      API.get(`/events/${event.id}/voting-status`)
+        .then(({ data }) => {
+          setVotingStatus(data);
+          if (isClient && data.suggestions?.owner) {
+            setMySuggestion(data.suggestions.owner);
+          } else if (!isClient && data.suggestions?.pro) {
+            setMySuggestion(data.suggestions.pro);
+          }
+        })
+        .catch(console.error)
+        .finally(() => setLoadingVoting(false));
+    }
+  }, [event.id, isClient]);
+
+  const handleSuggest = async () => {
+    if (!mySuggestion || isNaN(Number(mySuggestion))) return;
+    try {
+      await API.post(`/events/${event.id}/suggest-price`, { price: Number(mySuggestion) });
+      onNotify?.("Sugestão enviada com sucesso!", "success");
+      const { data } = await API.get(`/events/${event.id}/voting-status`);
+      setVotingStatus(data);
+    } catch {
+      onNotify?.("Erro ao enviar sugestão.", "error");
+    }
+  };
+
+  const handleVote = async (option: "OWNER" | "PRO" | "SYSTEM") => {
+    try {
+      await API.post(`/events/${event.id}/vote-price`, { vote: option });
+      onNotify?.("Voto computado com sucesso!", "success");
+      const { data } = await API.get(`/events/${event.id}/voting-status`);
+      setVotingStatus(data);
+      if (data.pricePerPhoto) {
+        onUpdated({ pricePerPhoto: data.pricePerPhoto });
+      }
+    } catch {
+      onNotify?.("Erro ao votar.", "error");
+    }
+  };
+
   const handleSave = async () => {
     setSaving(true);
     try {
@@ -113,7 +174,13 @@ export function EventEditPanel({ event, onUpdated, onClose, onNotify }: EventEdi
         dataEvento: date,
         coverPosition: coverPos,
         edicaoId: edicaoId || null,
-        sellPhotos,
+        allowFreeDownload: !sellPhotos,
+        pricePerPhoto,
+        printDesigner: {
+          showLogo,
+          showTimestamp,
+          clientLogoUrl
+        }
       });
       onUpdated(data);
       onNotify?.("Painel atualizado!", "success");
@@ -180,19 +247,21 @@ export function EventEditPanel({ event, onUpdated, onClose, onNotify }: EventEdi
 
         {/* ─── Tabs ─── */}
         <div className="flex gap-1 px-7 shrink-0">
-          {(["SETUP", "TEAM"] as const).map((tab) => (
-            <button
-              key={tab}
-              onClick={() => setActiveTab(tab)}
-              className={`flex-1 py-2.5 text-[10px] font-black uppercase tracking-widest rounded-xl transition-all ${
-                activeTab === tab
-                  ? "bg-brand-tactical text-black"
-                  : "text-theme-muted hover:text-theme-text bg-theme-bg-muted"
-              }`}
-            >
-              {tab === "SETUP" ? "📋 Setup" : "👥 Equipe"}
-            </button>
-          ))}
+          {(["SETUP", "DESIGNER", "TEAM"] as const)
+            .filter(tab => !isClient || tab !== "TEAM")
+            .map((tab) => (
+              <button
+                key={tab}
+                onClick={() => setActiveTab(tab)}
+                className={`flex-1 py-2.5 text-[10px] font-black uppercase tracking-widest rounded-xl transition-all ${
+                  activeTab === tab
+                    ? "bg-brand-tactical text-black"
+                    : "text-theme-muted hover:text-theme-text bg-theme-bg-muted"
+                }`}
+              >
+                {tab === "SETUP" ? "📋 Setup" : tab === "DESIGNER" ? "🎨 Designer" : "👥 Equipe"}
+              </button>
+            ))}
         </div>
 
         {/* ─── Content ─── */}
@@ -202,126 +271,130 @@ export function EventEditPanel({ event, onUpdated, onClose, onNotify }: EventEdi
           {activeTab === "SETUP" && (
             <div className="space-y-3 animate-in fade-in slide-in-from-bottom-2 duration-200">
 
-              {/* ── Data do Evento ── */}
-              <div className="p-4 bg-theme-bg-muted rounded-2xl border border-theme-border flex items-center gap-4">
-                <div className="w-10 h-10 rounded-xl bg-brand-tactical/10 flex items-center justify-center shrink-0">
-                  <CalendarDays size={18} className="text-brand-tactical" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-[9px] font-black uppercase tracking-widest opacity-50 mb-1">Data do Evento</p>
-                  <input
-                    type="date"
-                    value={date}
-                    onChange={(e) => setDate(e.target.value)}
-                    className="w-full bg-transparent border-none outline-none text-sm font-black text-theme-text"
-                  />
-                </div>
-                {date && <span className="text-[9px] font-black text-brand-tactical uppercase">✓</span>}
-              </div>
-
-              {/* ── Lightroom / Portfolio ── */}
-              <div className="p-4 bg-theme-bg-muted rounded-2xl border border-theme-border space-y-3">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center shrink-0">
-                      <Layers size={18} className="text-blue-400" />
+              {!isClient && (
+                <>
+                  {/* ── Data do Evento ── */}
+                  <div className="p-4 bg-theme-bg-muted rounded-2xl border border-theme-border flex items-center gap-4">
+                    <div className="w-10 h-10 rounded-xl bg-brand-tactical/10 flex items-center justify-center shrink-0">
+                      <CalendarDays size={18} className="text-brand-tactical" />
                     </div>
-                    <div>
-                      <p className="text-[9px] font-black uppercase tracking-widest opacity-50">Lightroom / Portfolio</p>
-                      {lrUrl && !editingLr ? (
-                        <p className="text-xs font-bold text-theme-text truncate max-w-[180px]">{urlLabel(lrUrl)}</p>
-                      ) : (
-                        <p className="text-[10px] text-theme-muted italic">Compartilhe o link de sincronização</p>
-                      )}
+                    <div className="flex-1 min-w-0">
+                      <p className="text-[9px] font-black uppercase tracking-widest opacity-50 mb-1">Data do Evento</p>
+                      <input
+                        type="date"
+                        value={date}
+                        onChange={(e) => setDate(e.target.value)}
+                        className="w-full bg-transparent border-none outline-none text-sm font-black text-theme-text"
+                      />
                     </div>
+                    {date && <span className="text-[9px] font-black text-brand-tactical uppercase">✓</span>}
                   </div>
-                  <div className="flex gap-1.5">
-                    {lrUrl && !editingLr && (
-                      <button onClick={() => copyText(lrUrl, "lr")} className="p-2 rounded-lg hover:bg-black/20 transition-colors text-theme-muted">
-                        {copiedField === "lr" ? <Check size={14} className="text-brand-tactical" /> : <Copy size={14} />}
-                      </button>
+
+                  {/* ── Lightroom / Portfolio ── */}
+                  <div className="p-4 bg-theme-bg-muted rounded-2xl border border-theme-border space-y-3">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center shrink-0">
+                          <Layers size={18} className="text-blue-400" />
+                        </div>
+                        <div>
+                          <p className="text-[9px] font-black uppercase tracking-widest opacity-50">Lightroom / Portfolio</p>
+                          {lrUrl && !editingLr ? (
+                            <p className="text-xs font-bold text-theme-text truncate max-w-[180px]">{urlLabel(lrUrl)}</p>
+                          ) : (
+                            <p className="text-[10px] text-theme-muted italic">Compartilhe o link de sincronização</p>
+                          )}
+                        </div>
+                      </div>
+                      <div className="flex gap-1.5">
+                        {lrUrl && !editingLr && (
+                          <button onClick={() => copyText(lrUrl, "lr")} className="p-2 rounded-lg hover:bg-black/20 transition-colors text-theme-muted">
+                            {copiedField === "lr" ? <Check size={14} className="text-brand-tactical" /> : <Copy size={14} />}
+                          </button>
+                        )}
+                        <button
+                          onClick={() => setEditingLr(!editingLr)}
+                          className={`px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-wider transition-all ${editingLr ? "bg-brand-tactical text-black" : "bg-theme-bg text-theme-muted hover:text-theme-text border border-theme-border"}`}
+                        >
+                          {editingLr ? "OK" : "Editar"}
+                        </button>
+                      </div>
+                    </div>
+                    {editingLr && (
+                      <input
+                        placeholder="https://adobe.ly/... ou qualquer link de portfolio"
+                        value={lrUrl}
+                        onChange={(e) => setLrUrl(e.target.value)}
+                        onKeyDown={(e) => { if (e.key === "Enter") setEditingLr(false); }}
+                        className="w-full bg-theme-bg border border-theme-border rounded-xl px-4 py-3 text-xs font-mono text-theme-text outline-none focus:border-brand-tactical/60 transition-all"
+                        autoFocus
+                      />
                     )}
-                    <button
-                      onClick={() => setEditingLr(!editingLr)}
-                      className={`px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-wider transition-all ${editingLr ? "bg-brand-tactical text-black" : "bg-theme-bg text-theme-muted hover:text-theme-text border border-theme-border"}`}
-                    >
-                      {editingLr ? "OK" : "Editar"}
-                    </button>
                   </div>
-                </div>
-                {editingLr && (
-                  <input
-                    placeholder="https://adobe.ly/... ou qualquer link de portfolio"
-                    value={lrUrl}
-                    onChange={(e) => setLrUrl(e.target.value)}
-                    onKeyDown={(e) => { if (e.key === "Enter") setEditingLr(false); }}
-                    className="w-full bg-theme-bg border border-theme-border rounded-xl px-4 py-3 text-xs font-mono text-theme-text outline-none focus:border-brand-tactical/60 transition-all"
-                    autoFocus
-                  />
-                )}
-              </div>
 
-              {/* ── Repositório Final ── */}
-              <div className="p-4 bg-theme-bg-muted rounded-2xl border border-theme-border space-y-3">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-green-500/10 flex items-center justify-center shrink-0">
-                      <FolderOpen size={18} className="text-green-400" />
+                  {/* ── Repositório Final ── */}
+                  <div className="p-4 bg-theme-bg-muted rounded-2xl border border-theme-border space-y-3">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-xl bg-green-500/10 flex items-center justify-center shrink-0">
+                          <FolderOpen size={18} className="text-green-400" />
+                        </div>
+                        <div>
+                          <p className="text-[9px] font-black uppercase tracking-widest opacity-50">Repositório Final</p>
+                          {drUrl && !editingDr ? (
+                            <p className="text-xs font-bold text-theme-text truncate max-w-[180px]">{urlLabel(drUrl)}</p>
+                          ) : (
+                            <p className="text-[10px] text-theme-muted italic">Drive, Dropbox, WeTransfer...</p>
+                          )}
+                        </div>
+                      </div>
+                      <div className="flex gap-1.5">
+                        {drUrl && !editingDr && (
+                          <button onClick={() => copyText(drUrl, "dr")} className="p-2 rounded-lg hover:bg-black/20 transition-colors text-theme-muted">
+                            {copiedField === "dr" ? <Check size={14} className="text-brand-tactical" /> : <Copy size={14} />}
+                          </button>
+                        )}
+                        <button
+                          onClick={() => setEditingDr(!editingDr)}
+                          className={`px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-wider transition-all ${editingDr ? "bg-brand-tactical text-black" : "bg-theme-bg text-theme-muted hover:text-theme-text border border-theme-border"}`}
+                        >
+                          {editingDr ? "OK" : "Editar"}
+                        </button>
+                      </div>
                     </div>
-                    <div>
-                      <p className="text-[9px] font-black uppercase tracking-widest opacity-50">Repositório Final</p>
-                      {drUrl && !editingDr ? (
-                        <p className="text-xs font-bold text-theme-text truncate max-w-[180px]">{urlLabel(drUrl)}</p>
-                      ) : (
-                        <p className="text-[10px] text-theme-muted italic">Drive, Dropbox, WeTransfer...</p>
-                      )}
-                    </div>
-                  </div>
-                  <div className="flex gap-1.5">
-                    {drUrl && !editingDr && (
-                      <button onClick={() => copyText(drUrl, "dr")} className="p-2 rounded-lg hover:bg-black/20 transition-colors text-theme-muted">
-                        {copiedField === "dr" ? <Check size={14} className="text-brand-tactical" /> : <Copy size={14} />}
-                      </button>
+                    {editingDr && (
+                      <input
+                        placeholder="https://drive.google.com/... ou outro serviço"
+                        value={drUrl}
+                        onChange={(e) => setDrUrl(e.target.value)}
+                        onKeyDown={(e) => { if (e.key === "Enter") setEditingDr(false); }}
+                        className="w-full bg-theme-bg border border-theme-border rounded-xl px-4 py-3 text-xs font-mono text-theme-text outline-none focus:border-brand-tactical/60 transition-all"
+                        autoFocus
+                      />
                     )}
-                    <button
-                      onClick={() => setEditingDr(!editingDr)}
-                      className={`px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-wider transition-all ${editingDr ? "bg-brand-tactical text-black" : "bg-theme-bg text-theme-muted hover:text-theme-text border border-theme-border"}`}
-                    >
-                      {editingDr ? "OK" : "Editar"}
-                    </button>
                   </div>
-                </div>
-                {editingDr && (
-                  <input
-                    placeholder="https://drive.google.com/... ou outro serviço"
-                    value={drUrl}
-                    onChange={(e) => setDrUrl(e.target.value)}
-                    onKeyDown={(e) => { if (e.key === "Enter") setEditingDr(false); }}
-                    className="w-full bg-theme-bg border border-theme-border rounded-xl px-4 py-3 text-xs font-mono text-theme-text outline-none focus:border-brand-tactical/60 transition-all"
-                    autoFocus
-                  />
-                )}
-              </div>
 
-              {/* ── Capa do Evento ── */}
-              <div className="p-4 bg-theme-bg-muted rounded-2xl border border-theme-border space-y-3">
-                <div className="flex items-center gap-3 mb-1">
-                  <div className="w-10 h-10 rounded-xl bg-purple-500/10 flex items-center justify-center shrink-0">
-                    <Layers size={18} className="text-purple-400" />
+                  {/* ── Foto de Capa ── */}
+                  <div className="p-4 bg-theme-bg-muted rounded-2xl border border-theme-border space-y-3">
+                    <div className="flex items-center gap-3 mb-1">
+                      <div className="w-10 h-10 rounded-xl bg-purple-500/10 flex items-center justify-center shrink-0">
+                        <Layers size={18} className="text-purple-400" />
+                      </div>
+                      <div>
+                        <p className="text-[9px] font-black uppercase tracking-widest opacity-50">Foto de Capa</p>
+                        <p className="text-[10px] text-theme-muted italic">Imagem exibida no topo da galeria</p>
+                      </div>
+                    </div>
+                    <CoverPhotoInput
+                      currentUrl={event.coverPhotoUrl}
+                      currentPosition={coverPos}
+                      eventId={event.id}
+                      onPositionChange={(pos) => setCoverPos(pos)}
+                      onChange={() => {}}
+                    />
                   </div>
-                  <div>
-                    <p className="text-[9px] font-black uppercase tracking-widest opacity-50">Foto de Capa</p>
-                    <p className="text-[10px] text-theme-muted italic">Imagem exibida no topo da galeria</p>
-                  </div>
-                </div>
-                <CoverPhotoInput
-                  currentUrl={event.coverPhotoUrl}
-                  currentPosition={coverPos}
-                  eventId={event.id}
-                  onPositionChange={(pos) => setCoverPos(pos)}
-                  onChange={() => {}}
-                />
-              </div>
+                </>
+              )}
 
               {/* ── Venda de Fotos ── */}
               <div className="p-4 bg-theme-bg-muted rounded-2xl border border-theme-border flex items-center justify-between">
@@ -344,6 +417,174 @@ export function EventEditPanel({ event, onUpdated, onClose, onNotify }: EventEdi
                 </button>
               </div>
 
+              {sellPhotos && (
+                <div className="p-4 bg-theme-bg-muted/50 rounded-2xl border border-theme-border/50 space-y-4 animate-in fade-in slide-in-from-top-2">
+                  
+                  {/* Central de Votação do Preço */}
+                  <div className="space-y-4">
+                    <div>
+                      <h4 className="text-[10px] font-black uppercase tracking-widest text-brand-tactical mb-2">💰 Votação do Preço da Foto</h4>
+                      <p className="text-[10px] text-theme-muted leading-relaxed">
+                        Definam juntos o preço ideal por foto. Em caso de empate, o valor adotado será a média recomendada.
+                      </p>
+                    </div>
+
+                    {/* Sugestão de Preço do Usuário */}
+                    <div className="flex gap-2">
+                      <div className="flex-1 flex flex-col gap-1.5">
+                        <label className="text-[9px] font-black uppercase tracking-widest opacity-50 font-bold">Sua Sugestão de Preço (R$)</label>
+                        <input
+                          type="number"
+                          value={mySuggestion}
+                          onChange={(e) => setMySuggestion(e.target.value === "" ? "" : Number(e.target.value))}
+                          placeholder="Ex: 15"
+                          className="w-full bg-theme-bg border border-theme-border rounded-xl px-4 py-3 text-sm font-bold text-theme-text outline-none focus:border-brand-tactical/60 transition-all"
+                          min={1}
+                        />
+                      </div>
+                      <button
+                        onClick={handleSuggest}
+                        className="px-5 self-end py-3 bg-brand-tactical text-black text-[10px] font-black uppercase tracking-widest rounded-xl hover:brightness-110 active:scale-[0.98] transition-all h-[44px]"
+                      >
+                        Sugerir
+                      </button>
+                    </div>
+
+                    {/* Comparação de Sugestões */}
+                    {votingStatus && (
+                      <div className="p-4 bg-theme-bg rounded-xl border border-theme-border space-y-2">
+                        <p className="text-[9px] font-black uppercase tracking-wider text-theme-muted">Sugestões Atuais</p>
+                        <div className="grid grid-cols-3 gap-2 text-[10px] text-center">
+                          <div className="bg-theme-bg-muted p-2 rounded-lg">
+                            <span className="block text-[8px] uppercase tracking-wider text-theme-muted">Contratante</span>
+                            <span className="font-bold text-theme-text">
+                              {votingStatus.suggestions?.owner ? `R$ ${votingStatus.suggestions.owner}` : "Pendente"}
+                            </span>
+                          </div>
+                          <div className="bg-theme-bg-muted p-2 rounded-lg">
+                            <span className="block text-[8px] uppercase tracking-wider text-theme-muted">Equipe</span>
+                            <span className="font-bold text-theme-text">
+                              {votingStatus.suggestions?.pro ? `R$ ${votingStatus.suggestions.pro}` : "Pendente"}
+                            </span>
+                          </div>
+                          <div className="bg-theme-bg-muted p-2 rounded-lg border border-brand-tactical/30">
+                            <span className="block text-[8px] uppercase tracking-wider text-brand-tactical">Recomendado</span>
+                            <span className="font-bold text-brand-tactical">
+                              {votingStatus.suggestions?.system ? `R$ ${votingStatus.suggestions.system}` : "Pendente"}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Projeção de Faturamento */}
+                    {votingStatus && votingStatus.projections && (
+                      <div className="space-y-2">
+                        <label className="text-[9px] font-black uppercase tracking-widest opacity-50 block font-bold">📈 Projeção de Faturamento ({votingStatus.guests} Convidados)</label>
+                        <div className="overflow-hidden border border-theme-border rounded-xl">
+                          <table className="w-full text-left border-collapse text-[9px]">
+                            <thead>
+                              <tr className="bg-theme-bg-muted border-b border-theme-border text-theme-muted uppercase tracking-wider">
+                                <th className="p-2.5 font-black">Conversão</th>
+                                <th className="p-2.5 font-black">Compradores</th>
+                                <th className="p-2.5 font-black">Contratante</th>
+                                <th className="p-2.5 font-black">Equipe</th>
+                                <th className="p-2.5 font-black">Recomendado</th>
+                              </tr>
+                            </thead>
+                            <tbody className="divide-y divide-theme-border/50 font-bold">
+                              {votingStatus.projections.map((row: any) => (
+                                <tr key={row.pct} className="hover:bg-white/[0.01]">
+                                  <td className="p-2.5">{row.pct}%</td>
+                                  <td className="p-2.5">{row.buyers} pessoas</td>
+                                  <td className="p-2.5 text-theme-text-muted">R$ {row.revenueOwner}</td>
+                                  <td className="p-2.5 text-theme-text-muted">R$ {row.revenuePro}</td>
+                                  <td className="p-2.5 text-brand-tactical">R$ {row.revenueSystem}</td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Área de Voto */}
+                    {votingStatus && (
+                      <div className="space-y-2">
+                        <label className="text-[9px] font-black uppercase tracking-widest opacity-50 block font-bold">🗳 Escolha a melhor opção</label>
+                        <div className="grid grid-cols-3 gap-2">
+                          <button
+                            onClick={() => handleVote("OWNER")}
+                            disabled={!votingStatus.suggestions?.owner}
+                            className={`py-2 px-3 text-[9px] font-black uppercase rounded-lg border transition-all ${
+                              votingStatus.votes[user?.userId || ""] === "OWNER"
+                                ? "bg-brand-tactical border-brand-tactical text-black animate-pulse"
+                                : "bg-theme-bg border-theme-border text-theme-text hover:border-theme-muted disabled:opacity-30"
+                            }`}
+                          >
+                            Contratante
+                          </button>
+                          <button
+                            onClick={() => handleVote("PRO")}
+                            disabled={!votingStatus.suggestions?.pro}
+                            className={`py-2 px-3 text-[9px] font-black uppercase rounded-lg border transition-all ${
+                              votingStatus.votes[user?.userId || ""] === "PRO"
+                                ? "bg-brand-tactical border-brand-tactical text-black animate-pulse"
+                                : "bg-theme-bg border-theme-border text-theme-text hover:border-theme-muted disabled:opacity-30"
+                            }`}
+                          >
+                            Equipe
+                          </button>
+                          <button
+                            onClick={() => handleVote("SYSTEM")}
+                            disabled={!votingStatus.suggestions?.system}
+                            className={`py-2 px-3 text-[9px] font-black uppercase rounded-lg border transition-all ${
+                              votingStatus.votes[user?.userId || ""] === "SYSTEM"
+                                ? "bg-brand-tactical border-brand-tactical text-black animate-pulse"
+                                : "bg-theme-bg border-theme-border text-theme-text hover:border-theme-muted disabled:opacity-30"
+                            }`}
+                          >
+                            Recomendado
+                          </button>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Votos Computados e Vencedor */}
+                    {votingStatus && Object.keys(votingStatus.votes).length > 0 && (
+                      <div className="p-3 bg-theme-bg-muted rounded-xl text-[9px] space-y-1">
+                        <div className="font-bold text-theme-muted">Votos confirmados:</div>
+                        {Object.entries(votingStatus.votes).map(([voterId, chosenOption]: any) => {
+                          let label = "Membro da equipe";
+                          if (voterId === event.ownerId || votingStatus.eventStatus?.clientEmail === user?.email) {
+                            label = "Contratante";
+                          } else if (voterId === votingStatus.eventStatus?.captacao?.id) {
+                            label = `Fotógrafo (${votingStatus.eventStatus.captacao.nome})`;
+                          } else if (voterId === votingStatus.eventStatus?.edicao?.id) {
+                            label = `Editor (${votingStatus.eventStatus.edicao.nome})`;
+                          }
+                          const optionLabel = chosenOption === "OWNER" ? "Preço do Contratante" : chosenOption === "PRO" ? "Preço da Equipe" : "Média Recomendada";
+                          return (
+                            <div key={voterId} className="flex justify-between">
+                              <span className="text-theme-text-muted">{label}</span>
+                              <span className="font-bold text-brand-tactical">{optionLabel}</span>
+                            </div>
+                          );
+                        })}
+                        {votingStatus.winner && (
+                          <div className="pt-2 border-t border-theme-border/30 mt-2 font-black text-brand-tactical flex justify-between uppercase tracking-wider text-[10px]">
+                            <span>Preço Definido:</span>
+                            <span>R$ {event.pricePerPhoto} ({votingStatus.winner})</span>
+                          </div>
+                        )}
+                      </div>
+                    )}
+
+                  </div>
+                  
+                </div>
+              )}
+
               {/* ── Luxury Link ── */}
               <div className="p-4 bg-brand-tactical/8 rounded-2xl border border-brand-tactical/20 space-y-3">
                 <div className="flex items-center gap-3">
@@ -362,6 +603,79 @@ export function EventEditPanel({ event, onUpdated, onClose, onNotify }: EventEdi
                     {copiedField === "luxury" ? "Copiado!" : "Copiar"}
                   </button>
                 </div>
+              </div>
+
+            </div>
+          )}
+
+          {/* ══════════ DESIGNER TAB ══════════ */}
+          {activeTab === "DESIGNER" && (
+            <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-200">
+              
+              {/* Info */}
+              <div className="p-4 bg-brand-tactical/10 border border-brand-tactical/20 rounded-2xl">
+                <p className="text-[10px] text-theme-text font-bold leading-relaxed">
+                  Defina o layout e os elementos visuais que serão impressos nas fotos deste evento.
+                  Estas configurações <span className="text-brand-tactical">substituem o controle do operador</span> na central de impressão.
+                </p>
+              </div>
+
+              {/* Toggles */}
+              <div className="space-y-3">
+                <div className="p-4 bg-theme-bg-muted rounded-2xl border border-theme-border flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-colors ${showLogo ? "bg-brand-tactical/10" : "bg-theme-border/50"}`}>
+                      <Check size={18} className={showLogo ? "text-brand-tactical" : "text-theme-muted"} />
+                    </div>
+                    <div>
+                      <p className="text-[9px] font-black uppercase tracking-widest opacity-50">Logo Padrão</p>
+                      <p className="text-[10px] text-theme-muted italic">Exibir logo da Foto Segundo na base.</p>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => setShowLogo(!showLogo)}
+                    className={`w-12 h-6 rounded-full relative transition-colors ${showLogo ? "bg-brand-tactical" : "bg-theme-border"}`}
+                  >
+                    <div className={`absolute top-1 w-4 h-4 rounded-full bg-white transition-all ${showLogo ? "left-7" : "left-1"}`} />
+                  </button>
+                </div>
+
+                <div className="p-4 bg-theme-bg-muted rounded-2xl border border-theme-border flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-colors ${showTimestamp ? "bg-brand-tactical/10" : "bg-theme-border/50"}`}>
+                      <CalendarDays size={18} className={showTimestamp ? "text-brand-tactical" : "text-theme-muted"} />
+                    </div>
+                    <div>
+                      <p className="text-[9px] font-black uppercase tracking-widest opacity-50">Data e Hora</p>
+                      <p className="text-[10px] text-theme-muted italic">Imprimir a hora da captura.</p>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => setShowTimestamp(!showTimestamp)}
+                    className={`w-12 h-6 rounded-full relative transition-colors ${showTimestamp ? "bg-brand-tactical" : "bg-theme-border"}`}
+                  >
+                    <div className={`absolute top-1 w-4 h-4 rounded-full bg-white transition-all ${showTimestamp ? "left-7" : "left-1"}`} />
+                  </button>
+                </div>
+              </div>
+
+              {/* Logo do Cliente */}
+              <div className="p-4 bg-theme-bg-muted rounded-2xl border border-theme-border space-y-3">
+                <div className="flex items-center gap-3 mb-1">
+                  <div className="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center shrink-0">
+                    <Layers size={18} className="text-blue-400" />
+                  </div>
+                  <div>
+                    <p className="text-[9px] font-black uppercase tracking-widest opacity-50">Logo do Cliente / Patrocinador</p>
+                    <p className="text-[10px] text-theme-muted italic">Exibida no canto da impressão</p>
+                  </div>
+                </div>
+                <CoverPhotoInput
+                  currentUrl={clientLogoUrl}
+                  currentPosition="center"
+                  onPositionChange={() => {}}
+                  onChange={(url) => setClientLogoUrl(url || "")}
+                />
               </div>
 
             </div>

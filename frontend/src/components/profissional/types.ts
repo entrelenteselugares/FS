@@ -10,7 +10,7 @@ export interface EventItem {
   cartorioUserId?: string | null;
   coverPhotoUrl: string | null;
   coverPosition?: string | null;
-  sellPhotos?: boolean;
+  allowFreeDownload?: boolean;
   lightroomUrl: string | null;
   driveUrl: string | null;
   temFoto: boolean;
@@ -28,6 +28,9 @@ export interface EventItem {
   isPublicCall?: boolean;
   type: "ALBUM_FULL" | "PHOTO_MARKETPLACE" | "FOTO_POINT";
   priceUnit: number | null;
+  pricePerPhoto?: number | null;
+  splitOwnerPct?: number | null;
+  splitProPct?: number | null;
   itinerary: string | null;
   references: string[];
   isPrivate: boolean;

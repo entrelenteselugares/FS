@@ -20,6 +20,7 @@ interface TouchSelectionGalleryProps {
   onToggleCart: (shortId: string, url: string) => void;
   isOwner?: boolean;
   onDeleteMedia?: (mediaId: string) => void;
+  allowFreeDownload?: boolean;
 }
 
 export const TouchSelectionGallery: React.FC<TouchSelectionGalleryProps> = ({
@@ -29,6 +30,7 @@ export const TouchSelectionGallery: React.FC<TouchSelectionGalleryProps> = ({
   onToggleCart,
   isOwner,
   onDeleteMedia,
+  allowFreeDownload,
 }) => {
   const [fullscreenIndex, setFullscreenIndex] = useState<number | null>(null);
   const [isSelectMode, setIsSelectMode] = useState(false);
@@ -107,10 +109,9 @@ export const TouchSelectionGallery: React.FC<TouchSelectionGalleryProps> = ({
       <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3 md:gap-6">
         {medias.map((m, idx) => {
           const isSelected = selectedIds.includes(m.shortId);
-          const isUnlocked = unlockedIds.includes(m.shortId) || unlockedIds.includes(m.id);
+          const isUnlocked = allowFreeDownload || unlockedIds.includes(m.shortId) || unlockedIds.includes(m.id);
           
-          const cleanUrl = m.metadata?.rawUrl || m.metadata?.printUrl;
-          const displayUrl = (isUnlocked && cleanUrl) ? cleanUrl : m.url;
+          const displayUrl = m.url;
 
           return (
             <motion.div
@@ -212,8 +213,24 @@ export const TouchSelectionGallery: React.FC<TouchSelectionGalleryProps> = ({
               )}
 
               {/* Status Info */}
-              <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/80 to-transparent">
+              <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/80 to-transparent flex items-center justify-between">
                 <span className="text-[10px] font-black text-white italic opacity-80">#{m.shortId}</span>
+                {allowFreeDownload && (
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      const dlUrl = m.url;
+                      const a = document.createElement('a');
+                      a.href = getProxyUrl(dlUrl);
+                      a.download = `foto-${m.shortId}.jpg`;
+                      a.click();
+                    }}
+                    className="w-7 h-7 bg-brand-tactical/90 rounded-full flex items-center justify-center text-black hover:bg-brand-tactical transition-all z-20"
+                    title="Baixar Foto"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
+                  </button>
+                )}
               </div>
             </motion.div>
           );
@@ -236,22 +253,41 @@ export const TouchSelectionGallery: React.FC<TouchSelectionGalleryProps> = ({
                 <span className="text-[10px] font-black text-brand-tactical uppercase tracking-widest italic">Visualização Tactical</span>
                 <span className="text-xl font-black text-white italic tracking-tighter">#{medias[fullscreenIndex]?.shortId}</span>
               </div>
-              <button 
-                onClick={() => setFullscreenIndex(null)}
-                className="w-12 h-12 flex items-center justify-center bg-theme-bg-muted rounded-full text-white"
-                aria-label="Fechar visualização"
-              >
-                <X size={24} />
-              </button>
+              <div className="flex items-center gap-4">
+                {allowFreeDownload && (
+                  <button 
+                    onClick={() => {
+                      const m = medias[fullscreenIndex];
+                      if (m) {
+                        const dlUrl = m.url;
+                        const a = document.createElement('a');
+                        a.href = getProxyUrl(dlUrl);
+                        a.download = `foto-${m.shortId}.jpg`;
+                        a.click();
+                      }
+                    }}
+                    className="w-12 h-12 flex items-center justify-center bg-brand-tactical rounded-full text-black hover:brightness-110"
+                    title="Baixar Foto"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
+                  </button>
+                )}
+                <button 
+                  onClick={() => setFullscreenIndex(null)}
+                  className="w-12 h-12 flex items-center justify-center bg-theme-bg-muted rounded-full text-white"
+                  aria-label="Fechar visualização"
+                >
+                  <X size={24} />
+                </button>
+              </div>
             </div>
 
             {/* Image Viewer */}
             <div className="flex-1 relative flex items-center justify-center overflow-hidden">
               {(() => {
                 const fm = medias[fullscreenIndex];
-                const fmIsUnlocked = fm && (unlockedIds.includes(fm.shortId) || unlockedIds.includes(fm.id));
-                const fmCleanUrl = fm?.metadata?.rawUrl || fm?.metadata?.printUrl;
-                const fmDisplayUrl = (fmIsUnlocked && fmCleanUrl) ? fmCleanUrl : (fm?.url || '');
+                const fmIsUnlocked = allowFreeDownload || (fm && (unlockedIds.includes(fm.shortId) || unlockedIds.includes(fm.id)));
+                const fmDisplayUrl = fm?.url || '';
                 return (
                   <>
                   {fm?.shortId.startsWith('V') || fm?.type === 'VIDEO' ? (
@@ -335,19 +371,38 @@ export const TouchSelectionGallery: React.FC<TouchSelectionGalleryProps> = ({
                   <p className="text-[10px] font-black text-white uppercase tracking-widest italic">Memória Premium</p>
                   <p className="text-xs text-white font-medium">Fotos entregues em alta resolução 300DPI.</p>
                 </div>
-                <button
-                  onClick={() => {
-                    const m = medias[fullscreenIndex];
-                    if (m) onToggleCart(m.shortId, m.url);
-                  }}
-                  className={`px-8 py-4 rounded-xl font-black uppercase tracking-widest text-[10px] italic transition-all ${
-                    medias[fullscreenIndex] && selectedIds.includes(medias[fullscreenIndex].shortId)
-                      ? "bg-emerald-500 text-black"
-                      : "bg-white text-black hover:bg-brand-tactical"
-                  }`}
-                >
-                  {medias[fullscreenIndex] && selectedIds.includes(medias[fullscreenIndex].shortId) ? "Selecionada" : "Selecionar"}
-                </button>
+                {allowFreeDownload ? (
+                  <button
+                    onClick={() => {
+                      const m = medias[fullscreenIndex];
+                      if (m) {
+                        const dlUrl = m.url;
+                        const a = document.createElement('a');
+                        a.href = getProxyUrl(dlUrl);
+                        a.download = `foto-${m.shortId}.jpg`;
+                        a.click();
+                      }
+                    }}
+                    className="px-8 py-4 rounded-xl font-black uppercase tracking-widest text-[10px] italic transition-all bg-brand-tactical text-black hover:brightness-110 flex items-center gap-2"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
+                    BAIXAR FOTO
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => {
+                      const m = medias[fullscreenIndex];
+                      if (m) onToggleCart(m.shortId, m.url);
+                    }}
+                    className={`px-8 py-4 rounded-xl font-black uppercase tracking-widest text-[10px] italic transition-all ${
+                      medias[fullscreenIndex] && selectedIds.includes(medias[fullscreenIndex].shortId)
+                        ? "bg-emerald-500 text-black"
+                        : "bg-white text-black hover:bg-brand-tactical"
+                    }`}
+                  >
+                    {medias[fullscreenIndex] && selectedIds.includes(medias[fullscreenIndex].shortId) ? "Selecionada" : "Selecionar"}
+                  </button>
+                )}
               </div>
             </div>
             </motion.div>

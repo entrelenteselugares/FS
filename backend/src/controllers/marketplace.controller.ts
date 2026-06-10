@@ -146,11 +146,12 @@ export class MarketplaceController {
 
       // 4. Cria o Pedido
       const isDigital = isDigitalPayment;
-      const { matriz, captacao, edicao, cartorio } = await PricingService.calculateSplits(finalAmount, {
+      const { matriz, captacao, edicao, cartorio, owner } = await PricingService.calculateSplits(finalAmount, {
         isExpressSale: true,
         paymentMethod: finalMethod,
         hasEditor: !!editorId,
-        productType: finalProduct
+        productType: finalProduct,
+        eventId: event.id
       });
 
       const guestToken = "GT-" + Math.random().toString(36).slice(-12).toUpperCase();
@@ -173,6 +174,7 @@ export class MarketplaceController {
           splitCaptacao: captacao,
           splitEdicao: edicao,
           splitCartorio: cartorio,
+          splitOwner: owner,
           guestToken: guestToken,
           isGuestOrder: true,
           items: {

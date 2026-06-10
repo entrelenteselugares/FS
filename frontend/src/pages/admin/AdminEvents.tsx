@@ -175,6 +175,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
     previewPhotos: [string, string, string];
     isPrivate: boolean;
     isUnitSale: boolean;
+    allowFreeDownload: boolean;
     priceUnit: number;
     type: 'ALBUM_FULL' | 'PHOTO_MARKETPLACE' | 'SCHOOL' | 'SPORTS';
     preSaleEnabled: boolean;
@@ -202,6 +203,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
     previewPhotos: ["", "", ""],
     isPrivate: true,
     isUnitSale: false,
+    allowFreeDownload: false,
     priceUnit: 10,
     type: 'ALBUM_FULL',
     pricePerPhoto: 15,
@@ -298,6 +300,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
         previewPhotos: ["", "", ""],
         isPrivate: true,
         isUnitSale: false,
+        allowFreeDownload: false,
         priceUnit: 10,
         type: 'ALBUM_FULL',
         pricePerPhoto: 15,
@@ -415,6 +418,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
         })(),
         isPrivate: data.isPrivate || false,
         isUnitSale: data.isUnitSale || false,
+        allowFreeDownload: data.allowFreeDownload || false,
         priceUnit: Number(data.priceUnit || 10),
         type: data.type || 'ALBUM_FULL',
         pricePerPhoto: Number(data.pricePerPhoto || 15),
@@ -521,8 +525,8 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
                   priceBase: 200, priceEarly: 190, cartorioId: "", captacaoId: "", edicaoId: "", 
                   temFoto: true, temVideo: false, temReels: false, temFotoImpressa: false, 
                   coverPhotoUrl: "", eventHours: 2, isCrowdfund: false, targetAmount: 0, 
-                  lightroomUrl: "", driveUrl: "", previewPhotos: ["", "", ""], isPrivate: true, 
-                  isUnitSale: false, priceUnit: 10, type: 'ALBUM_FULL', pricePerPhoto: 15, 
+                  lightroomUrl: "", driveUrl: "", previewPhotos: ["", "", ""], isPrivate: true,
+                  isUnitSale: false, allowFreeDownload: false, priceUnit: 10, type: 'ALBUM_FULL', pricePerPhoto: 15, 
                   clientName: "", clientEmail: "", franchiseeId: "", retentionDays: 15,
                   preSaleEnabled: false, postSaleEnabled: true, verticalConfigs: {}, coverPosition: "center"
                 });
@@ -880,7 +884,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
                           </div>
                         )}
                         <div className="grid grid-cols-2 gap-x-6 gap-y-4 pt-6 border-t border-theme-border">
-                          {["temFoto", "temVideo", "temReels", "temFotoImpressa", "isCrowdfund", "isPrivate", "preSaleEnabled", "postSaleEnabled"].map(f => (
+                          {["temFoto", "temVideo", "temReels", "temFotoImpressa", "isCrowdfund", "isPrivate", "preSaleEnabled", "postSaleEnabled", "allowFreeDownload"].map(f => (
                             <label key={f} className="flex items-center gap-3 cursor-pointer group">
                               <div className={`w-5 h-5 rounded-md border flex items-center justify-center transition-all ${formData[f as keyof EventFormData] ? 'bg-brand-tactical border-brand-tactical shadow-sm shadow-brand-tactical/20' : 'bg-theme-bg-muted border-theme-border group-hover:border-theme-text'}`}>
                                 {formData[f as keyof EventFormData] && <div className="w-2.5 h-2.5 bg-black rounded-sm" />}
