@@ -52,12 +52,11 @@ export function EventEditPanel({ event, onUpdated, onClose, onNotify }: EventEdi
   const [editingDr, setEditingDr] = useState(!event.driveUrl);
 
   const [sellPhotos, setSellPhotos] = useState(!event.allowFreeDownload);
-  const [pricePerPhoto, setPricePerPhoto] = useState(event.pricePerPhoto ?? 15);
+  const pricePerPhoto = event.pricePerPhoto ?? 15;
 
   // Voting states
   const [votingStatus, setVotingStatus] = useState<any>(null);
   const [mySuggestion, setMySuggestion] = useState<number | "">("");
-  const [loadingVoting, setLoadingVoting] = useState(false);
 
 
   // Designer state
@@ -124,7 +123,6 @@ export function EventEditPanel({ event, onUpdated, onClose, onNotify }: EventEdi
   // Load voting status on mount
   useEffect(() => {
     if (event.id) {
-      setLoadingVoting(true);
       API.get(`/events/${event.id}/voting-status`)
         .then(({ data }) => {
           setVotingStatus(data);
@@ -134,8 +132,7 @@ export function EventEditPanel({ event, onUpdated, onClose, onNotify }: EventEdi
             setMySuggestion(data.suggestions.pro);
           }
         })
-        .catch(console.error)
-        .finally(() => setLoadingVoting(false));
+        .catch(console.error);
     }
   }, [event.id, isClient]);
 
@@ -517,7 +514,7 @@ export function EventEditPanel({ event, onUpdated, onClose, onNotify }: EventEdi
                             onClick={() => handleVote("OWNER")}
                             disabled={!votingStatus.suggestions?.owner}
                             className={`py-2 px-3 text-[9px] font-black uppercase rounded-lg border transition-all ${
-                              votingStatus.votes[user?.userId || ""] === "OWNER"
+                              votingStatus.votes[user?.id || ""] === "OWNER"
                                 ? "bg-brand-tactical border-brand-tactical text-black animate-pulse"
                                 : "bg-theme-bg border-theme-border text-theme-text hover:border-theme-muted disabled:opacity-30"
                             }`}
@@ -528,7 +525,7 @@ export function EventEditPanel({ event, onUpdated, onClose, onNotify }: EventEdi
                             onClick={() => handleVote("PRO")}
                             disabled={!votingStatus.suggestions?.pro}
                             className={`py-2 px-3 text-[9px] font-black uppercase rounded-lg border transition-all ${
-                              votingStatus.votes[user?.userId || ""] === "PRO"
+                              votingStatus.votes[user?.id || ""] === "PRO"
                                 ? "bg-brand-tactical border-brand-tactical text-black animate-pulse"
                                 : "bg-theme-bg border-theme-border text-theme-text hover:border-theme-muted disabled:opacity-30"
                             }`}
@@ -539,7 +536,7 @@ export function EventEditPanel({ event, onUpdated, onClose, onNotify }: EventEdi
                             onClick={() => handleVote("SYSTEM")}
                             disabled={!votingStatus.suggestions?.system}
                             className={`py-2 px-3 text-[9px] font-black uppercase rounded-lg border transition-all ${
-                              votingStatus.votes[user?.userId || ""] === "SYSTEM"
+                              votingStatus.votes[user?.id || ""] === "SYSTEM"
                                 ? "bg-brand-tactical border-brand-tactical text-black animate-pulse"
                                 : "bg-theme-bg border-theme-border text-theme-text hover:border-theme-muted disabled:opacity-30"
                             }`}

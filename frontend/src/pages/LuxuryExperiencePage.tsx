@@ -4,7 +4,6 @@ import { API } from "../lib/api";
 import { Download, ExternalLink, Camera, Calendar, MapPin, ChevronDown, ArrowRight, PlayCircle } from "lucide-react";
 import { motion, useScroll, useTransform } from "framer-motion";
 
-import { T } from "../lib/theme";
 import { useAuth } from "../hooks/useAuth";
 
 interface Media {
@@ -112,8 +111,6 @@ export default function LuxuryExperiencePage() {
     </div>
   );
 
-  const captacaoName = event.captacao?.nome;
-  const edicaoName = event.edicao?.nome;
   const coverImg = (event.coverPhotoUrl || '').trim().replace(/\s/g, '');
 
   const professionals = [];
