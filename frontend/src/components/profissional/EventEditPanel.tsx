@@ -36,6 +36,34 @@ interface ServiceOption {
   price: number | string;
 }
 
+interface VotingSuggestion {
+  owner?: number;
+  pro?: number;
+  system?: number;
+}
+
+interface VotingProjection {
+  pct: number;
+  buyers: number;
+  revenueOwner: number;
+  revenuePro: number;
+  revenueSystem: number;
+}
+
+interface VotingStatus {
+  winner?: string;
+  pricePerPhoto?: number;
+  guests?: number;
+  suggestions?: VotingSuggestion;
+  votes: Record<string, string>;
+  projections?: VotingProjection[];
+  eventStatus?: {
+    clientEmail?: string | null;
+    captacao?: { id: string; nome: string } | null;
+    edicao?: { id: string; nome: string } | null;
+  };
+}
+
 export function EventEditPanel({ event, onUpdated, onClose, onNotify }: EventEditPanelProps) {
   const { user } = useAuth();
   const isClient = user?.role === "CLIENTE";
@@ -55,7 +83,7 @@ export function EventEditPanel({ event, onUpdated, onClose, onNotify }: EventEdi
   const pricePerPhoto = event.pricePerPhoto ?? 15;
 
   // Voting states
-  const [votingStatus, setVotingStatus] = useState<any>(null);
+  const [votingStatus, setVotingStatus] = useState<VotingStatus | null>(null);
   const [mySuggestion, setMySuggestion] = useState<number | "">("");
 
 
@@ -490,7 +518,7 @@ export function EventEditPanel({ event, onUpdated, onClose, onNotify }: EventEdi
                               </tr>
                             </thead>
                             <tbody className="divide-y divide-theme-border/50 font-bold">
-                              {votingStatus.projections.map((row: any) => (
+                              {votingStatus.projections.map((row) => (
                                 <tr key={row.pct} className="hover:bg-white/[0.01]">
                                   <td className="p-2.5">{row.pct}%</td>
                                   <td className="p-2.5">{row.buyers} pessoas</td>
@@ -551,7 +579,7 @@ export function EventEditPanel({ event, onUpdated, onClose, onNotify }: EventEdi
                     {votingStatus && Object.keys(votingStatus.votes).length > 0 && (
                       <div className="p-3 bg-theme-bg-muted rounded-xl text-[9px] space-y-1">
                         <div className="font-bold text-theme-muted">Votos confirmados:</div>
-                        {Object.entries(votingStatus.votes).map(([voterId, chosenOption]: any) => {
+                        {Object.entries(votingStatus.votes).map(([voterId, chosenOption]) => {
                           let label = "Membro da equipe";
                           if (voterId === event.ownerId || votingStatus.eventStatus?.clientEmail === user?.email) {
                             label = "Contratante";
