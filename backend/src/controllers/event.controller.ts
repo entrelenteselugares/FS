@@ -92,7 +92,14 @@ export class EventController {
           } },
           captacao: { select: { id: true, nome: true, profileImageUrl: true } },
           edicao: { select: { id: true, nome: true, profileImageUrl: true } },
-          media: true
+          media: true,
+          teamMembers: {
+            include: {
+              user: {
+                select: { id: true, nome: true, email: true, profileImageUrl: true }
+              }
+            }
+          }
         }
       });
 
@@ -263,6 +270,7 @@ export class EventController {
         itinerary: event.itinerary,
         description: event.description,
         references: event.references,
+        teamMembers: (event as any).teamMembers || [],
         medias: (event as any).media || [],
         photographer: event.captacao ? { id: event.captacao.id, nome: event.captacao.nome } : null,
         captacao: event.captacao,

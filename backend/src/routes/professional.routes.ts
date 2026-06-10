@@ -17,7 +17,9 @@ import {
   listProServices,
   addProService,
   updateProService,
-  deleteProService
+  deleteProService,
+  addTeamMember,
+  removeTeamMember
 } from "../controllers/profissional.controller";
 import * as ReportController from "../controllers/report.controller";
 import { EventController } from "../controllers/event.controller";
@@ -75,6 +77,8 @@ router.get("/events/:slug", requireAuth, requireProOrFranchise, EventController.
 router.post("/flash-event", requireAuth, requireProOrFranchise, EventController.createFlashEvent);
 router.post("/foto-point", requireAuth, requireProOrFranchise, EventController.createFotoPoint);
 router.patch("/events/:id/foto-point", requireAuth, requireProOrFranchise, EventController.updateFotoPoint);
+router.post("/events/:id/team", requireAuth, requireProOrFranchise, addTeamMember);
+router.delete("/events/:id/team/:memberId", requireAuth, requireProOrFranchise, removeTeamMember);
 
 // ── Gestão de Serviços (Vitrine do Profissional)
 router.get("/services", requireAuth, requireProOrFranchise, listProServices);

@@ -112,6 +112,59 @@ export function EventEditPanel({ event, onUpdated, onClose, onNotify }: EventEdi
   const [saving, setSaving] = useState(false);
   const [copiedField, setCopiedField] = useState<string | null>(null);
 
+  // Event team members state
+  const [teamMembers, setTeamMembers] = useState<any[]>(event.teamMembers || []);
+  const [memberSearchQuery, setMemberSearchQuery] = useState("");
+  const [memberSearchResults, setMemberSearchResults] = useState<Partner[]>([]);
+  const [isSearchingMember, setIsSearchingMember] = useState(false);
+  const [selectedRole, setSelectedRole] = useState("FOTOGRAFO_AUXILIAR");
+  const [addingMember, setAddingMember] = useState(false);
+
+  // Live search for event team members
+  useEffect(() => {
+    if (memberSearchQuery.length < 3) { setMemberSearchResults([]); return; }
+    const t = setTimeout(() => {
+      setIsSearchingMember(true);
+      API.get(`/profissional/network/search?query=${memberSearchQuery}`)
+        .then(({ data }) => setMemberSearchResults(data))
+        .catch(console.error)
+        .finally(() => setIsSearchingMember(false));
+    }, 400);
+    return () => clearTimeout(t);
+  }, [memberSearchQuery]);
+
+  const handleAddTeamMember = async (userId: string) => {
+    setAddingMember(true);
+    try {
+      const { data } = await API.post(`/profissional/events/${event.id}/team`, {
+        userId,
+        role: selectedRole
+      });
+      const newMembers = [...teamMembers, data];
+      setTeamMembers(newMembers);
+      onUpdated({ teamMembers: newMembers });
+      onNotify?.("Membro adicionado com sucesso!", "success");
+      setMemberSearchQuery("");
+      setMemberSearchResults([]);
+    } catch {
+      onNotify?.("Erro ao adicionar membro à equipe.", "error");
+    } finally {
+      setAddingMember(false);
+    }
+  };
+
+  const handleRemoveTeamMember = async (memberId: string) => {
+    try {
+      await API.delete(`/profissional/events/${event.id}/team/${memberId}`);
+      const newMembers = teamMembers.filter(m => m.id !== memberId);
+      setTeamMembers(newMembers);
+      onUpdated({ teamMembers: newMembers });
+      onNotify?.("Membro removido da equipe.", "success");
+    } catch {
+      onNotify?.("Erro ao remover membro da equipe.", "error");
+    }
+  };
+
   const luxuryUrl = `${window.location.origin}/delivery/${event.id}`;
 
   const copyText = (text: string, field: string) => {
@@ -716,10 +769,14 @@ export function EventEditPanel({ event, onUpdated, onClose, onNotify }: EventEdi
                   <Users size={18} className="text-brand-tactical" />
                 </div>
                 <div>
-                  <p className="text-[9px] font-black uppercase tracking-widest opacity-40">Criador do Evento</p>
+                  <p className="text-[9px] font-black uppercase tracking-widest opacity-40">
+                    {event.ownerId && event.captacaoId === event.ownerId ? "Fotógrafo Principal" : "Criador do Evento"}
+                  </p>
                   <p className="text-sm font-black text-theme-text">Você</p>
                 </div>
-                <span className="ml-auto text-[9px] font-black px-2 py-1 rounded-full bg-brand-tactical/15 text-brand-tactical uppercase">Dono</span>
+                <span className="ml-auto text-[9px] font-black px-2 py-1 rounded-full bg-brand-tactical/15 text-brand-tactical uppercase">
+                  {event.ownerId && event.captacaoId === event.ownerId ? "Principal" : "Dono"}
+                </span>
               </div>
 
               {/* Editor */}
@@ -825,6 +882,107 @@ export function EventEditPanel({ event, onUpdated, onClose, onNotify }: EventEdi
                   </div>
                 )}
               </div>
+
+              {/* Outros Membros da Equipe */}
+              <div className="space-y-4 pt-4 border-t border-theme-border/40">
+                <p className="text-[9px] font-black uppercase tracking-widest opacity-40 pl-1">Outros Membros da Equipe</p>
+
+                {/* Listagem de Membros */}
+                {teamMembers.length > 0 && (
+                  <div className="space-y-2">
+                    {teamMembers.map((member) => (
+                      <div key={member.id} className="p-4 bg-theme-bg-muted border border-theme-border rounded-2xl flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-xl bg-brand-tactical/10 flex items-center justify-center shrink-0">
+                          {member.user?.profileImageUrl ? (
+                            <img src={member.user.profileImageUrl} alt={member.user.nome} className="w-full h-full object-cover rounded-xl" />
+                          ) : (
+                            <Users size={18} className="text-brand-tactical" />
+                          )}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-xs font-black text-theme-text uppercase">{member.user?.nome}</p>
+                          <p className="text-[10px] text-theme-muted uppercase tracking-wider font-bold">
+                            {member.role === "FOTOGRAFO_AUXILIAR" ? "Segundo Fotógrafo" :
+                             member.role === "ASSISTENTE" ? "Assistente" :
+                             member.role === "VIDEOMAKER" ? "Videomaker" : member.role}
+                          </p>
+                        </div>
+                        <button
+                          onClick={() => handleRemoveTeamMember(member.id)}
+                          className="p-2 text-theme-muted hover:text-red-400 hover:bg-red-500/10 transition-all rounded-xl"
+                          title="Remover membro"
+                        >
+                          <UserMinus size={16} />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {/* Formulário para Adicionar Membro */}
+                <div className="space-y-3 bg-theme-bg-muted/30 p-4 border border-theme-border/50 rounded-2xl">
+                  <p className="text-[9px] font-black uppercase tracking-widest opacity-40">Adicionar Membro à Equipe</p>
+                  
+                  {/* Select Role */}
+                  <div className="flex flex-col gap-1.5">
+                    <label className="text-[8px] font-black uppercase tracking-widest opacity-50 font-bold">Função / Papel</label>
+                    <select
+                      value={selectedRole}
+                      onChange={(e) => setSelectedRole(e.target.value)}
+                      className="w-full bg-theme-bg border border-theme-border rounded-xl px-4 py-3 text-xs font-bold text-theme-text outline-none focus:border-brand-tactical/60 transition-all"
+                    >
+                      <option value="FOTOGRAFO_AUXILIAR">Segundo Fotógrafo</option>
+                      <option value="ASSISTENTE">Assistente</option>
+                      <option value="VIDEOMAKER">Videomaker</option>
+                    </select>
+                  </div>
+
+                  {/* Search input */}
+                  <div className="relative">
+                    <Search size={15} className="absolute left-4 top-1/2 -translate-y-1/2 text-theme-muted pointer-events-none" />
+                    <input
+                      placeholder="Buscar profissional por nome..."
+                      value={memberSearchQuery}
+                      onChange={(e) => setMemberSearchQuery(e.target.value)}
+                      className="w-full bg-theme-bg border border-theme-border rounded-xl py-3.5 pl-11 pr-4 text-xs text-theme-text outline-none focus:border-brand-tactical/50 transition-all"
+                    />
+                    {isSearchingMember && (
+                      <div className="absolute right-4 top-1/2 -translate-y-1/2 w-3.5 h-3.5 border-2 border-brand-tactical border-t-transparent rounded-full animate-spin" />
+                    )}
+                  </div>
+
+                  {memberSearchQuery.length > 0 && memberSearchQuery.length < 3 && (
+                    <p className="text-[10px] text-theme-muted pl-2">Digite ao menos 3 caracteres...</p>
+                  )}
+
+                  {memberSearchResults.length > 0 && (
+                    <div className="bg-theme-bg border border-theme-border rounded-xl overflow-hidden divide-y divide-theme-border/40">
+                      {memberSearchResults.map((pro) => (
+                        <button
+                          key={pro.id}
+                          onClick={() => handleAddTeamMember(pro.id)}
+                          disabled={addingMember}
+                          className="w-full flex items-center gap-3 px-4 py-3 hover:bg-white/[0.02] transition-colors text-left"
+                        >
+                          <div className="w-7 h-7 rounded-full bg-theme-bg-muted border border-theme-border flex items-center justify-center text-[10px] font-black text-theme-muted shrink-0">
+                            {(pro.nome || "?")[0].toUpperCase()}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-xs font-black text-theme-text truncate">{pro.nome}</p>
+                            <p className="text-[10px] text-theme-muted truncate">{pro.email}</p>
+                          </div>
+                          <span className="text-[9px] font-black text-brand-tactical uppercase shrink-0">Adicionar +</span>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+
+                  {memberSearchResults.length === 0 && memberSearchQuery.length >= 3 && !isSearchingMember && (
+                    <p className="text-[10px] text-theme-muted pl-2 italic">Nenhum profissional encontrado.</p>
+                  )}
+                </div>
+              </div>
+
             </div>
           )}
         </div>

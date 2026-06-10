@@ -80,6 +80,7 @@ model User {
   affiliateCommissions    AffiliateCommission[]
   editorContractsAsEditor EditorContract[]      @relation("EditorContracts")
   editorContractsAsOwner  EditorContract[]      @relation("OwnerContracts")
+  eventTeamMemberships    EventTeamMember[]
 
   // World Cup Gamification
   worldCupBadges        WorldCupBadge[]
@@ -227,6 +228,7 @@ model Event {
   views              Int                 @default(0)
   eventReferences    EventReference[]
   editorContracts    EditorContract[]
+  teamMembers        EventTeamMember[]
 
   @@map("events")
 }
@@ -242,6 +244,22 @@ model EventReference {
   event        Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
 
   @@map("event_references")
+}
+
+model EventTeamMember {
+  id        String   @id @default(cuid())
+  eventId   String
+  userId    String
+  role      String   // e.g. "FOTOGRAFO_AUXILIAR" | "ASSISTENTE" | "VIDEOMAKER"
+  splitPct  Decimal? @db.Decimal(5, 2)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  event Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([eventId, userId, role])
+  @@map("event_team_members")
 }
 
 model Coupon {

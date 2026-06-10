@@ -1067,3 +1067,100 @@ export async function getNetwork(req: AuthRequest, res: Response): Promise<void>
     res.status(500).json({ error: "Erro ao buscar rede de parcerias." });
   }
 }
+
+/**
+ * Adiciona um membro à equipe do evento.
+ * POST /api/profissional/events/:id/team
+ */
+export async function addTeamMember(req: AuthRequest, res: Response): Promise<void> {
+  const { id: eventId } = req.params;
+  const { userId, role, splitPct } = req.body;
+  const currentUserId = req.user?.userId;
+
+  if (!currentUserId) {
+    res.status(401).json({ error: "Não autenticado." });
+    return;
+  }
+
+  if (!userId || !role) {
+    res.status(400).json({ error: "userId e role são obrigatórios." });
+    return;
+  }
+
+  try {
+    const event = await prisma.event.findUnique({
+      where: { id: String(eventId) }
+    });
+
+    if (!event) {
+      res.status(404).json({ error: "Evento não encontrado." });
+      return;
+    }
+
+    // Apenas o criador/dono do evento ou admin pode alterar a equipe
+    const isOwner = currentUserId === event.ownerId || req.user?.role === "ADMIN";
+    if (!isOwner) {
+      res.status(403).json({ error: "Acesso negado. Apenas o criador do evento ou admin pode alterar a equipe." });
+      return;
+    }
+
+    const member = await prisma.eventTeamMember.create({
+      data: {
+        eventId: String(eventId),
+        userId,
+        role,
+        splitPct: splitPct !== undefined ? new Prisma.Decimal(splitPct) : null
+      },
+      include: {
+        user: {
+          select: { id: true, nome: true, email: true, profileImageUrl: true }
+        }
+      }
+    });
+
+    res.status(201).json(member);
+  } catch (err) {
+    console.error("addTeamMember:", err);
+    res.status(500).json({ error: "Erro ao adicionar membro à equipe." });
+  }
+}
+
+/**
+ * Remove um membro da equipe do evento.
+ * DELETE /api/profissional/events/:id/team/:memberId
+ */
+export async function removeTeamMember(req: AuthRequest, res: Response): Promise<void> {
+  const { id: eventId, memberId } = req.params;
+  const currentUserId = req.user?.userId;
+
+  if (!currentUserId) {
+    res.status(401).json({ error: "Não autenticado." });
+    return;
+  }
+
+  try {
+    const event = await prisma.event.findUnique({
+      where: { id: String(eventId) }
+    });
+
+    if (!event) {
+      res.status(404).json({ error: "Evento não encontrado." });
+      return;
+    }
+
+    const isOwner = currentUserId === event.ownerId || req.user?.role === "ADMIN";
+    if (!isOwner) {
+      res.status(403).json({ error: "Acesso negado. Apenas o criador do evento ou admin pode alterar a equipe." });
+      return;
+    }
+
+    await prisma.eventTeamMember.delete({
+      where: { id: String(memberId) }
+    });
+
+    res.json({ success: true, message: "Membro da equipe removido com sucesso." });
+  } catch (err) {
+    console.error("removeTeamMember:", err);
+    res.status(500).json({ error: "Erro ao remover membro da equipe." });
+  }
+}

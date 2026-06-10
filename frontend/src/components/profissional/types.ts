@@ -37,6 +37,22 @@ export interface EventItem {
   active: boolean;
   description: string | null;
   _count: { pedidos: number };
+  teamMembers?: EventTeamMember[];
+}
+
+export interface EventTeamMember {
+  id: string;
+  eventId: string;
+  userId: string;
+  role: string;
+  splitPct: number | null;
+  createdAt: string;
+  user: {
+    id: string;
+    nome: string;
+    email: string;
+    profileImageUrl?: string | null;
+  };
 }
 
 export interface UnitInvite {
