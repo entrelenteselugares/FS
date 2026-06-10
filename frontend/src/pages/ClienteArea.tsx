@@ -233,32 +233,70 @@ export default function ClienteArea() {
  });
 
  const handleCepChange = async (val: string) => {
- const cleanCep = val.replace(/\D/g, "").slice(0, 8);
- let formattedCep = cleanCep;
- if (cleanCep.length > 5) {
- formattedCep = `${cleanCep.slice(0, 5)}-${cleanCep.slice(5, 8)}`;
- }
- 
- setProfileData(p => ({ ...p, cep: formattedCep }));
+    const cleanCep = val.replace(/\D/g, "").slice(0, 8);
+    let formattedCep = cleanCep;
+    if (cleanCep.length > 5) {
+      formattedCep = `${cleanCep.slice(0, 5)}-${cleanCep.slice(5, 8)}`;
+    }
+    
+    setProfileData(p => ({ ...p, cep: formattedCep }));
 
- if (cleanCep.length === 8) {
- try {
- const response = await fetch(`https://viacep.com.br/ws/${cleanCep}/json/`);
- const data = await response.json();
- if (!data.erro) {
- setProfileData(p => ({
- ...p,
- endereco: data.logradouro || "",
- bairro: data.bairro || "",
- cidade: data.localidade || "",
- estado: data.uf || "",
- }));
- }
- } catch (err) {
- console.error("Erro ao buscar CEP:", err);
- }
- }
- };
+    if (cleanCep.length === 8) {
+      try {
+        let logradouro = "";
+        let bairro = "";
+        let localidade = "";
+        let uf = "";
+
+        const response = await fetch(`https://viacep.com.br/ws/${cleanCep}/json/`);
+        const data = await response.json();
+        
+        if (!data.erro && data.localidade) {
+          logradouro = data.logradouro || "";
+          bairro = data.bairro || "";
+          localidade = data.localidade || "";
+          uf = data.uf || "";
+        } else {
+          // Fallback para AwesomeAPI caso o ViaCEP não encontre o CEP
+          const fallback = await fetch(`https://cep.awesomeapi.com.br/json/${cleanCep}`);
+          if (fallback.ok) {
+            const fData = await fallback.json();
+            logradouro = fData.address || "";
+            bairro = fData.district || "";
+            localidade = fData.city || "";
+            uf = fData.state || "";
+          }
+        }
+
+        if (localidade) {
+          setProfileData(p => ({
+            ...p,
+            endereco: logradouro,
+            bairro: bairro,
+            cidade: localidade,
+            estado: uf,
+          }));
+        }
+      } catch (err) {
+        // Se a chamada principal falhar (ex: erro de rede), tenta o fallback diretamente
+        try {
+          const fallback = await fetch(`https://cep.awesomeapi.com.br/json/${cleanCep}`);
+          if (fallback.ok) {
+            const fData = await fallback.json();
+            setProfileData(p => ({
+              ...p,
+              endereco: fData.address || "",
+              bairro: fData.district || "",
+              cidade: fData.city || "",
+              estado: fData.state || "",
+            }));
+          }
+        } catch (e2) {
+          console.error("Erro ao buscar CEP:", err, e2);
+        }
+      }
+    }
+  };
 
  const [isSaving, setIsSaving] = useState(false);
  const [saveSuccess, setSaveSuccess] = useState(false);
