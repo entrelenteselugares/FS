@@ -1,1 +1,2 @@
-export { GET, POST, PUT, PATCH, DELETE, OPTIONS } from '../backend/src/entrypoints/public-hono';
+import app from '../backend/src/entrypoints/public-hono';
+export default app;

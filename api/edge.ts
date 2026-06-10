@@ -1,1 +1,2 @@
-export { default, config } from '../backend/src/entrypoints/edge';
+export const config = { runtime: 'edge' };
+export { default } from '../backend/src/entrypoints/edge';
