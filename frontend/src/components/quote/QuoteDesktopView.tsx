@@ -822,7 +822,7 @@ export const QuoteDesktopView = (props: any) => {
                   >
                     <option value="">NENHUM (DEIXAR PARA CURADORIA)</option>
                     {pros.map((p: any) => (
-                      <option key={p.id} value={p.id}>
+                      <option key={p.id} value={p.userId}>
                         {p.nome?.toUpperCase() || "PROFISSIONAL"} - {p.address?.toUpperCase() || "GLOBAL"}
                       </option>
                     ))}
