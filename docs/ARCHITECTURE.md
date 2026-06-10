@@ -163,6 +163,7 @@ graph TD
 - **Order Motor (`payment.controller.ts`):** Splits, cupons, e status fulfillment.
 - **Admin Controller (`admin.controller.ts`):** Dashboard Master, gerindo verticais.
 - **CRM Engine (`crm.service.ts`):** Recuperação de vendas.
+- **Event Team Management (`profissional.controller.ts`):** Gerenciamento dinâmico de equipe de evento (Segundo Fotógrafo, Assistente, Videomaker) com controle de acesso baseado em propriedade (`ownerId`) ou perfil de administração.
 
 <!-- GSD-DOCS-UPDATE: SUPPLEMENTED -->
 

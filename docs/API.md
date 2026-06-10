@@ -37,6 +37,8 @@ Most endpoints require a JSON Web Token (JWT).
 | `POST` | `/api/profissional/foto-point`  | Creates a new Foto Point event.                                  | Pro       |
 | `GET`  | `/api/flash/:shortId`           | Resolves a Flash Event PIN for anonymous access.                 | No        |
 | `GET`  | `/api/flash/:eventId/stats`     | Aggregated live metrics for a Flash Event (funnel, print queue). | Pro/Admin |
+| `POST` | `/api/profissional/events/:id/team` | Adds a professional to the event's team.                     | Pro/Admin |
+| `DELETE` | `/api/profissional/events/:id/team/:memberId` | Removes a professional from the event's team.             | Pro/Admin |
 
 ### 🛒 Marketplace & Checkout
 

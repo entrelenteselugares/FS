@@ -19,6 +19,7 @@ Todas as tabelas e colunas, incluindo os recém adicionados campos da fase 54 (M
 
 ## 2. Atualizações Recentes do Schema
 
+### Gestão de Serviços & Motor Multi-Vertical
 Foram adicionadas novas colunas no modelo `ServiceCatalog` e `ProfessionalService` para suporte ao Motor Multi-Vertical e Serviços Personalizados:
 - `eventTypes` (String Array) - Para associar pacotes a tipos específicos de eventos (ex: só Casamento, ou só Evento de Esporte).
 - `pricingType` (FIXED, HOURLY, PER_UNIT) - Flexibilização do modelo de preço.
@@ -26,6 +27,16 @@ Foram adicionadas novas colunas no modelo `ServiceCatalog` e `ProfessionalServic
 - `deliveryDays` e `minQuantity` - Prazos e volumetrias.
 - `availableInVault` - Flag para Cross-sell no Cofre de Memórias do cliente.
 
+### Gestão de Equipe (Múltiplos Profissionais)
+- **Tabela `EventTeamMember` (`event_team_members`):** Permite associar múltiplos profissionais a um evento com funções dinâmicas.
+  - `id` (String) - Chave primária.
+  - `eventId` (String) - ID do evento correspondente (FK para `Event`).
+  - `userId` (String) - ID do profissional na plataforma (FK para `User`).
+  - `role` (String) - A função desempenhada no evento (`SEGUNDO_FOTOGRAFO`, `ASSISTENTE`, `VIDEOMAKER`).
+  - `splitPct` (Decimal) - Percentual opcional de repasse financeiro/split.
+  - `createdAt` / `updatedAt` - Timestamps.
+  - Restrição única composta (`eventId`, `userId`, `role`) para evitar registros de equipe duplicados com a mesma função.
+
 ## 3. Segurança e Relacionamentos
 
-Todas as constraints, chaves estrangeiras, `onDelete: Cascade` (ex: em `PhotoLike` e `StockMovement`) e índices (`@@index`) estão estruturados corretamente para evitar orfandade de dados e manter a integridade referencial.
+Todas as constraints, chaves estrangeiras, `onDelete: Cascade` (ex: em `PhotoLike`, `StockMovement` e `EventTeamMember`) e índices (`@@index`/`@@unique`) estão estruturados corretamente para evitar orfandade de dados e manter a integridade referencial.
