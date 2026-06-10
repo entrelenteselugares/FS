@@ -4,6 +4,15 @@ import type { EventItem, UnitInvite } from "./types";
 import { CalendarView } from "./CalendarView";
 import { parseDateSafe } from "../../lib/utils/formatters";
 
+const cleanDescription = (desc: string | null | undefined) => {
+  if (!desc) return desc;
+  const match = desc.match(/\[BUDGET_BREAKDOWN\][\s\S]*?\n\nOriginal:\s*/);
+  if (match) {
+    return desc.replace(match[0], "");
+  }
+  return desc;
+};
+
 // Delivery timer sub-component
 function DeadlineTimer({ event, type }: { event: EventItem; type: "FOTO" | "VIDEO" }) {
   const [timeLeft, setTimeLeft] = useState<number>(0);
@@ -135,7 +144,7 @@ export function AgendaTab({
                     {(ev.description || ev.itinerary) && (
                       <div className="space-y-1.5 pt-1">
                         {ev.description && (
-                          <p className="text-xs text-theme-text/80 line-clamp-2 whitespace-pre-line leading-relaxed">{ev.description}</p>
+                          <p className="text-xs text-theme-text/80 line-clamp-2 whitespace-pre-line leading-relaxed">{cleanDescription(ev.description)}</p>
                         )}
                         {ev.itinerary && (
                           <p className="text-xs text-theme-text/70 line-clamp-2"><strong className="text-theme-text/90 uppercase tracking-wider text-[10px]">Observações:</strong> {ev.itinerary}</p>
@@ -256,7 +265,7 @@ export function AgendaTab({
                       {(ev.description || ev.itinerary) && (
                         <div className="space-y-1.5 pt-1">
                           {ev.description && (
-                            <p className="text-xs text-theme-text/80 line-clamp-2 whitespace-pre-line leading-relaxed">{ev.description}</p>
+                            <p className="text-xs text-theme-text/80 line-clamp-2 whitespace-pre-line leading-relaxed">{cleanDescription(ev.description)}</p>
                           )}
                           {ev.itinerary && (
                             <p className="text-xs text-theme-text/70 line-clamp-2"><strong className="text-theme-text/90 uppercase tracking-wider text-[10px]">Observações:</strong> {ev.itinerary}</p>
