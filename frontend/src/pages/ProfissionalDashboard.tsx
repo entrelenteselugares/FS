@@ -96,7 +96,7 @@ export default function ProfissionalDashboard({
  calendarId?: string; 
  updatedAt?: string; 
  } 
- } | null>(null);
+ } | undefined>(undefined);
  const [isSyncing, setIsSyncing] = useState(false);
  const [supplyOrders, setSupplyOrders] = useState<SupplyOrder[]>([]);
 
