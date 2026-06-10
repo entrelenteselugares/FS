@@ -313,6 +313,42 @@ export default function LuxuryExperiencePage() {
               </div>
             </div>
 
+            {/* EXTERNAL LINKS SECTION (DRIVE / LIGHTROOM) */}
+            {activeTab === 'OFFICIAL' && (event.lightroomUrl || event.driveUrl) && (
+              <div className="mb-12 p-6 rounded-2xl border border-zinc-800 bg-zinc-900/50 flex flex-col md:flex-row items-center justify-between gap-6">
+                <div className="space-y-2 text-center md:text-left">
+                  <h4 className="text-sm font-medium uppercase tracking-widest text-emerald-400">Acervo Completo em Alta Resolução</h4>
+                  <p className="text-[11px] text-zinc-400 leading-relaxed max-w-lg">
+                    Acesse o repositório externo configurado pelo fotógrafo para visualizar ou baixar todas as fotos em qualidade original.
+                  </p>
+                </div>
+                <div className="flex flex-wrap items-center justify-center gap-4">
+                  {event.lightroomUrl && (
+                    <a 
+                      href={event.lightroomUrl.trim().replace(/\s/g, '')} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-2 px-6 py-3 bg-zinc-800 hover:bg-zinc-700 transition-colors border border-zinc-700 rounded-full text-[10px] font-bold uppercase tracking-widest text-zinc-100"
+                    >
+                      <ExternalLink size={14} />
+                      Lightroom
+                    </a>
+                  )}
+                  {event.driveUrl && (
+                    <a 
+                      href={event.driveUrl.trim().replace(/\s/g, '')} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-2 px-6 py-3 bg-zinc-800 hover:bg-zinc-700 transition-colors border border-zinc-700 rounded-full text-[10px] font-bold uppercase tracking-widest text-zinc-100"
+                    >
+                      <Download size={14} />
+                      Google Drive
+                    </a>
+                  )}
+                </div>
+              </div>
+            )}
+
             {filteredMedias.length === 0 ? (
               <div className="py-32 flex flex-col items-center justify-center text-center space-y-4 border border-dashed border-zinc-800 rounded-3xl">
                 <Camera size={32} className="text-zinc-700" />
