@@ -78,13 +78,14 @@
 
 ## 📸 Área do Profissional
 
-| #   | URL                                   | Descrição                                                               | Acesso       | Manual                                                      |
-| --- | ------------------------------------- | ----------------------------------------------------------------------- | ------------ | ----------------------------------------------------------- |
-| 40  | `/profissional`                       | **Dashboard do Profissional** — Visão geral com missões e ganhos        | PROFISSIONAL | ✅ [profissional-dashboard.md](./profissional-dashboard.md) |
-| 41  | `/profissional/novo-servico`          | **Novo Serviço Customizado** — Formulário para criar serviço sob medida | PROFISSIONAL | ❌                                                          |
-| 42  | `/profissional/portfolio`             | **Gestão de Portfólio** — Upload e organização de fotos                 | PROFISSIONAL | ❌                                                          |
-| 43  | `/profissional/monitor/:eventId`      | **Monitor de Impressão** — Painel de monitoramento ao vivo de evento    | PROFISSIONAL | ❌                                                          |
-| 44  | `/profissional/monitor/:eventId/full` | **Monitor Fullscreen** — Versão tela cheia do monitor                   | PROFISSIONAL | ❌                                                          |
+| #   | URL                                         | Descrição                                                               | Acesso       | Manual                                                      |
+| --- | ------------------------------------------- | ----------------------------------------------------------------------- | ------------ | ----------------------------------------------------------- |
+| 40  | `/profissional`                             | **Dashboard do Profissional** — Visão geral com missões e ganhos        | PROFISSIONAL | ✅ [profissional-dashboard.md](./profissional-dashboard.md) |
+| 41  | `/profissional/novo-servico`                | **Novo Serviço Customizado** — Formulário para criar serviço sob medida | PROFISSIONAL | ❌                                                          |
+| 42  | `/profissional/portfolio`                   | **Gestão de Portfólio** — Upload e organização de fotos                 | PROFISSIONAL | ❌                                                          |
+| 43  | `/profissional/monitor/:eventId`            | **Monitor de Impressão** — Painel de monitoramento ao vivo de evento    | PROFISSIONAL | ❌                                                          |
+| 44  | `/profissional/monitor/:eventId/full`       | **Monitor Fullscreen** — Versão tela cheia do monitor                   | PROFISSIONAL | ❌                                                          |
+| 45  | `/profissional/monitor/:eventId/fullscreen` | **Monitor Fullscreen** — Alias de /monitor/:eventId/full                | PROFISSIONAL | ❌                                                          |
 
 ---
 
@@ -92,7 +93,7 @@
 
 | #   | URL             | Descrição                                                     | Acesso             | Manual |
 | --- | --------------- | ------------------------------------------------------------- | ------------------ | ------ |
-| 45  | `/unidade-fixa` | **Dashboard da Unidade** — Gestão de eventos da casa parceira | CARTORIO / UNIDADE | ❌     |
+| 46  | `/unidade-fixa` | **Dashboard da Unidade** — Gestão de eventos da casa parceira | CARTORIO / UNIDADE | ❌     |
 
 ---
 
@@ -100,7 +101,7 @@
 
 | #   | URL         | Descrição                                            | Acesso     | Manual |
 | --- | ----------- | ---------------------------------------------------- | ---------- | ------ |
-| 46  | `/franquia` | **Dashboard da Franquia** — Hub B2B para franqueados | FRANCHISEE | ❌     |
+| 47  | `/franquia` | **Dashboard da Franquia** — Hub B2B para franqueados | FRANCHISEE | ❌     |
 
 ---
 
@@ -110,24 +111,24 @@
 
 | #   | URL                           | Descrição                                                         | Acesso | Manual                    |
 | --- | ----------------------------- | ----------------------------------------------------------------- | ------ | ------------------------- |
-| 47  | `/admin`                      | **Painel Admin — Visão Geral**                                    | ADMIN  | ✅ [admin.md](./admin.md) |
-| 48  | `/admin?s=usuarios`           | **Admin: Usuários** — Gestão de todos os usuários                 | ADMIN  | ✅ [admin.md](./admin.md) |
-| 49  | `/admin?s=pedidos`            | **Admin: Pedidos** — Todos os pedidos da plataforma               | ADMIN  | ✅ [admin.md](./admin.md) |
-| 50  | `/admin?s=eventos`            | **Admin: Eventos** — Gestão de eventos e álbuns                   | ADMIN  | ✅ [admin.md](./admin.md) |
-| 51  | `/admin?s=financeiro`         | **Admin: Financeiro** — Pagamentos e repasses                     | ADMIN  | ✅ [admin.md](./admin.md) |
-| 52  | `/admin?s=profissionais`      | **Admin: Aprovação Hub** — Aprovação de fotógrafos e serviços     | ADMIN  | ✅ [admin.md](./admin.md) |
-| 53  | `/admin?s=servicos`           | **Admin: Serviços** — Catálogo de serviços da plataforma          | ADMIN  | ✅ [admin.md](./admin.md) |
-| 54  | `/admin?s=unidades`           | **Admin: Unidades** — Casas parceiras cadastradas                 | ADMIN  | ✅ [admin.md](./admin.md) |
-| 55  | `/admin?s=franquias`          | **Admin: Franquias** — Gestão de franqueados                      | ADMIN  | ✅ [admin.md](./admin.md) |
-| 56  | `/admin?s=growth`             | **Admin: Growth** — Métricas de crescimento e campanhas           | ADMIN  | ✅ [admin.md](./admin.md) |
-| 57  | `/admin?s=concursos`          | **Admin: Concursos** — Gestão de competições fotográficas         | ADMIN  | ✅ [admin.md](./admin.md) |
-| 58  | `/admin?s=embaixadores`       | **Admin: Embaixadores** — Programa de embaixadores                | ADMIN  | ✅ [admin.md](./admin.md) |
-| 59  | `/admin?s=catalogo-impressao` | **Admin: Catálogo de Impressão** — Produtos para impressão física | ADMIN  | ✅ [admin.md](./admin.md) |
-| 60  | `/admin?s=fornecedores`       | **Admin: Fornecedores** — Gestão de fornecedores                  | ADMIN  | ✅ [admin.md](./admin.md) |
-| 61  | `/admin?s=estoque`            | **Admin: Estoque** — Controle de insumos e materiais              | ADMIN  | ✅ [admin.md](./admin.md) |
-| 62  | `/admin?s=leads`              | **Admin: Leads** — CRM de oportunidades                           | ADMIN  | ✅ [admin.md](./admin.md) |
-| 63  | `/admin?s=configuracoes`      | **Admin: Configurações** — Configs gerais da plataforma           | ADMIN  | ✅ [admin.md](./admin.md) |
-| 64  | `/admin?s=analytics`          | **Admin: Analytics** — Relatórios e dados de uso                  | ADMIN  | ✅ [admin.md](./admin.md) |
+| 48  | `/admin`                      | **Painel Admin — Visão Geral**                                    | ADMIN  | ✅ [admin.md](./admin.md) |
+| 49  | `/admin?s=usuarios`           | **Admin: Usuários** — Gestão de todos os usuários                 | ADMIN  | ✅ [admin.md](./admin.md) |
+| 50  | `/admin?s=pedidos`            | **Admin: Pedidos** — Todos os pedidos da plataforma               | ADMIN  | ✅ [admin.md](./admin.md) |
+| 51  | `/admin?s=eventos`            | **Admin: Eventos** — Gestão de eventos e álbuns                   | ADMIN  | ✅ [admin.md](./admin.md) |
+| 52  | `/admin?s=financeiro`         | **Admin: Financeiro** — Pagamentos e repasses                     | ADMIN  | ✅ [admin.md](./admin.md) |
+| 53  | `/admin?s=profissionais`      | **Admin: Aprovação Hub** — Aprovação de fotógrafos e serviços     | ADMIN  | ✅ [admin.md](./admin.md) |
+| 54  | `/admin?s=servicos`           | **Admin: Serviços** — Catálogo de serviços da plataforma          | ADMIN  | ✅ [admin.md](./admin.md) |
+| 55  | `/admin?s=unidades`           | **Admin: Unidades** — Casas parceiras cadastradas                 | ADMIN  | ✅ [admin.md](./admin.md) |
+| 56  | `/admin?s=franquias`          | **Admin: Franquias** — Gestão de franqueados                      | ADMIN  | ✅ [admin.md](./admin.md) |
+| 57  | `/admin?s=growth`             | **Admin: Growth** — Métricas de crescimento e campanhas           | ADMIN  | ✅ [admin.md](./admin.md) |
+| 58  | `/admin?s=concursos`          | **Admin: Concursos** — Gestão de competições fotográficas         | ADMIN  | ✅ [admin.md](./admin.md) |
+| 59  | `/admin?s=embaixadores`       | **Admin: Embaixadores** — Programa de embaixadores                | ADMIN  | ✅ [admin.md](./admin.md) |
+| 60  | `/admin?s=catalogo-impressao` | **Admin: Catálogo de Impressão** — Produtos para impressão física | ADMIN  | ✅ [admin.md](./admin.md) |
+| 61  | `/admin?s=fornecedores`       | **Admin: Fornecedores** — Gestão de fornecedores                  | ADMIN  | ✅ [admin.md](./admin.md) |
+| 62  | `/admin?s=estoque`            | **Admin: Estoque** — Controle de insumos e materiais              | ADMIN  | ✅ [admin.md](./admin.md) |
+| 63  | `/admin?s=leads`              | **Admin: Leads** — CRM de oportunidades                           | ADMIN  | ✅ [admin.md](./admin.md) |
+| 64  | `/admin?s=configuracoes`      | **Admin: Configurações** — Configs gerais da plataforma           | ADMIN  | ✅ [admin.md](./admin.md) |
+| 65  | `/admin?s=analytics`          | **Admin: Analytics** — Relatórios e dados de uso                  | ADMIN  | ✅ [admin.md](./admin.md) |
 
 ---
 
@@ -135,14 +136,24 @@
 
 | #   | URL                     | Descrição                                                            | Acesso       | Manual                                |
 | --- | ----------------------- | -------------------------------------------------------------------- | ------------ | ------------------------------------- |
-| 65  | `/meus-albuns`          | **Gestão de Álbuns (Vaults)** — Cofres de fotos do usuário           | Autenticado  | ✅ [meus-albuns.md](./meus-albuns.md) |
-| 66  | `/meus-albuns/:vaultId` | **Álbum / Cofre** — Visualização das fotos de um evento              | Autenticado  | ✅ [meus-albuns.md](./meus-albuns.md) |
-| 67  | `/delivery/:id`         | **Entrega Luxury** — Experiência de entrega premium das fotos        | Autenticado  | ❌                                    |
-| 68  | `/captura`              | **Captura Phygital** — Interface de captura ao vivo em evento        | PROFISSIONAL | ❌                                    |
-| 69  | `/flash/:shortId`       | **Flash Unlock** — Desbloqueio rápido de álbum por link              | Público      | ❌                                    |
-| 70  | `/embaixador/:slug`     | **Página do Embaixador** — Perfil público do embaixador              | Público      | ❌                                    |
-| 71  | `/invitation/:code`     | **Convite** — Aceite de convite para vault compartilhado             | Público      | ❌                                    |
-| 72  | `/dashboard`            | **Redirect Inteligente** — Redireciona para o painel correto do role | Autenticado  | ❌                                    |
+| 66  | `/meus-albuns`          | **Gestão de Álbuns (Vaults)** — Cofres de fotos do usuário           | Autenticado  | ✅ [meus-albuns.md](./meus-albuns.md) |
+| 67  | `/meus-albuns/:vaultId` | **Álbum / Cofre** — Visualização das fotos de um evento              | Autenticado  | ✅ [meus-albuns.md](./meus-albuns.md) |
+| 68  | `/delivery/:id`         | **Entrega Luxury** — Experiência de entrega premium das fotos        | Autenticado  | ❌                                    |
+| 69  | `/captura`              | **Captura Phygital** — Interface de captura ao vivo em evento        | PROFISSIONAL | ❌                                    |
+| 70  | `/phygital-capture`     | **Captura Phygital** — Alias de /captura                             | PROFISSIONAL | ❌                                    |
+| 71  | `/flash/:shortId`       | **Flash Unlock** — Desbloqueio rápido de álbum por link              | Público      | ❌                                    |
+| 72  | `/embaixador/:slug`     | **Página do Embaixador** — Perfil público do embaixador              | Público      | ❌                                    |
+| 73  | `/invitation/:code`     | **Convite** — Aceite de convite para vault compartilhado             | Público      | ❌                                    |
+| 74  | `/dashboard`            | **Redirect Inteligente** — Redireciona para o painel correto do role | Autenticado  | ❌                                    |
+
+---
+
+## 🏆 Copa do Mundo (Gamificação)
+
+| #   | URL                                | Descrição                                                      | Acesso      | Manual |
+| --- | ---------------------------------- | -------------------------------------------------------------- | ----------- | ------ |
+| 75  | `/album-torcida`                   | **Álbum da Torcida** — Visualização e figurinhas Copa do Mundo | Autenticado | ❌      |
+| 76  | `/album-torcida/match/:matchId`    | **Folha de Partida** — Visão e detalhe de partida específica   | Autenticado | ❌      |
 
 ---
 
@@ -154,11 +165,12 @@
 | Autenticação            | 6                |
 | Cotação / Checkout      | 6                |
 | Área do Cliente         | 10               |
-| Área do Profissional    | 5                |
+| Área do Profissional    | 6                |
 | Área Unidade / Franquia | 2                |
 | Área Administrativa     | 18               |
-| Fluxos Especiais        | 8                |
-| **TOTAL**               | **72 páginas**   |
+| Fluxos Especiais        | 9                |
+| Copa do Mundo           | 2                |
+| **TOTAL**               | **76 páginas**   |
 
 ---
 
