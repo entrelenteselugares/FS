@@ -1092,6 +1092,23 @@ export class PaymentController {
           }
         });
 
+        if (resolvedClienteId) {
+          await prisma.order.updateMany({
+            where: {
+              eventId: event.id,
+              clienteId: resolvedClienteId,
+              status: "PENDENTE",
+              id: { not: order.id }
+            },
+            data: {
+              status: "APROVADO",
+              hasPaid: true,
+              paymentMethod: "FREE",
+              paymentId: `FREE-LINKED-${Date.now()}`
+            }
+          });
+        }
+
         await PaymentController.finalizeApprovedOrder(updatedOrder, event, req);
 
         return res.json({
