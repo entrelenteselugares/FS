@@ -69,8 +69,24 @@ Lista cronológica de eventos confirmados com:
 
 ---
 
+## ⚙️ Painel de Edição de Evento & Gestão de Equipe
+
+Ao clicar no botão de configurações/ajustes de um evento de sua propriedade, abre-se o modal de edição que agora contém a aba **EQUIPE** para gestão de múltiplos profissionais.
+
+### Funções e Rótulos
+- **Fotógrafo Principal:** O criador e dono original do evento é explicitamente identificado sob o rótulo **Fotógrafo Principal**, diferenciando-o do restante da equipe técnica.
+- **Outros Membros da Equipe:** Permite buscar profissionais da rede por nome ou e-mail na caixa de pesquisa em tempo real.
+- **Funções Dinâmicas:** Ao adicionar um novo membro, é possível selecionar uma das funções disponíveis:
+  - `Segundo Fotógrafo`
+  - `Assistente`
+  - `Videomaker`
+- **Remoção de Membros:** O Fotógrafo Principal ou administradores do sistema podem excluir membros da equipe clicando no botão de lixeira correspondente na listagem de equipe.
+
+---
+
 ## ⚙️ Observações Técnicas
 
 - O tour de onboarding aparece apenas uma vez (estado salvo no banco)
 - Eventos no painel profissional são apenas os atribuídos ao profissional logado
+- Base de dados sincronizada com a vitrine pública e central de cotações
 - Integração com Google Calendar disponível via `Agenda Google` no menu lateral
