@@ -1259,7 +1259,7 @@ const CheckoutPageInner = () => {
 
 export const CheckoutPage = () => (
   <Sentry.ErrorBoundary 
-    fallback={({ error, resetError }) => (
+    fallback={({ error: _error, resetError }) => (
       <div className="min-h-screen bg-theme-bg flex flex-col items-center justify-center p-8 text-center space-y-6">
         <ShieldCheck size={48} className="text-red-500" />
         <h2 className="text-2xl font-bold text-white uppercase tracking-widest">Falha Crítica Identificada</h2>
