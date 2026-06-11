@@ -23,6 +23,7 @@
   
   /* Brand (Teal) */
   --brand:        #14B8A6;
+  --brand-tactical: var(--brand);
   --brand-hover:  #0D9488;
   --brand-active: #0F766E;
   --brand-muted:  rgba(20, 184, 166, 0.15);
@@ -66,14 +67,15 @@
   --border:       #E2E8F0;
   --border-hover: #CBD5E1;
   
-  --text:         #0F172A; /* Navy */
+  --text:         #545454; /* User requested grey */
   --text-muted:   #64748B;
   --text-disabled:#94A3B8;
   
-  --brand:        #0D9488; /* Teal Darker */
-  --brand-hover:  #0F766E;
-  --brand-active: #115E59;
-  --brand-muted:  rgba(13, 148, 136, 0.1);
+  --brand:        #85b9ac; /* User requested primary green */
+  --brand-tactical: var(--brand);
+  --brand-hover:  #6c9d90;
+  --brand-active: #578478;
+  --brand-muted:  rgba(133, 185, 172, 0.15);
   --brand-text:   #FFFFFF;
 
   --overlay:      rgba(15, 23, 42, 0.5);

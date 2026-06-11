@@ -122,12 +122,12 @@ function MatchCard({ f, highlight = false, now }: { f: typeof FIXTURES[0]; highl
       {highlight && (
         <div
           className="absolute top-0 left-0 right-0"
-          style={{ height: 2, background: "linear-gradient(90deg, #10b981, #34d399, #10b981)" }}
+          style={{ height: 2, background: "linear-gradient(90deg, #10b981, #85b9ac, #10b981)" }}
         />
       )}
 
       {/* Group badge */}
-      <div style={{ fontSize: 9, color: highlight ? "#34d399" : "#4b5563", fontWeight: 900, letterSpacing: "0.12em", marginBottom: 8, textTransform: "uppercase" }}>
+      <div style={{ fontSize: 9, color: highlight ? "#85b9ac" : "#4b5563", fontWeight: 900, letterSpacing: "0.12em", marginBottom: 8, textTransform: "uppercase" }}>
         Grupo {f.group} · Rodada {f.round}
         {isBrasil && !highlight && (
           <span style={{ marginLeft: 8, color: "#f59e0b", fontSize: 8 }}>🇧🇷 BRASIL</span>
@@ -671,8 +671,8 @@ export const AlbumTorcidaPage = () => {
                                   onClick={() => handlePlaceBet(f.id, bets[f.id]?.homeScore ?? 0, bets[f.id]?.awayScore ?? 0)}
                                   disabled={isSubmittingBet || bets[f.id] === undefined}
                                   style={{
-                                    padding: "5px 12px", background: myBet ? "#065f46" : "#10b981", color: myBet ? "#34d399" : "black",
-                                    fontSize: 10, fontWeight: 900, borderRadius: 4, border: myBet ? "1px solid #34d399" : "none",
+                                    padding: "5px 12px", background: myBet ? "#065f46" : "#10b981", color: myBet ? "#85b9ac" : "black",
+                                    fontSize: 10, fontWeight: 900, borderRadius: 4, border: myBet ? "1px solid #85b9ac" : "none",
                                     textTransform: "uppercase", cursor: "pointer", opacity: isSubmittingBet ? 0.5 : 1
                                   }}
                                 >
