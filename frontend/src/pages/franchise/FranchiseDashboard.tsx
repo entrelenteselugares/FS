@@ -20,7 +20,9 @@ import {
   Lock,
   User,
   ImageIcon,
-  Settings
+  Settings,
+  Wallet,
+  Building2
 } from 'lucide-react';
 import { API as api } from '../../lib/api';
 import { useAuth } from '../../hooks/useAuth';
@@ -63,35 +65,48 @@ const FranchiseDashboard: React.FC = () => {
   const navigate = useNavigate();
   const navItems = useMemo<NavItem[]>(() => {
     const items: NavItem[] = [
-      { label: "Histórico de Compras", onClick: () => navigate("/minha-conta?s=files"), isActive: false, icon: <ShoppingBag size={18} /> },
+      { label: "Histórico de Compras", onClick: () => navigate("/minha-conta?tab=files"), isActive: false, icon: <ShoppingBag size={18} /> },
       { label: "Meus Álbuns", onClick: () => navigate("/meus-albuns"), isActive: false, icon: <Lock size={18} /> },
-      { label: "Indique e Ganhe", onClick: () => navigate("/minha-conta?s=affiliate"), isActive: false, icon: <Users size={18} /> },
-      { label: "Meus Dados", onClick: () => navigate("/minha-conta?s=profile"), isActive: false, icon: <User size={18} /> },
+      { label: "Minha Carteira", onClick: () => navigate("/minha-conta?tab=wallet"), isActive: false, icon: <Wallet size={18} /> },
+      { label: "Indique e Ganhe", onClick: () => navigate("/minha-conta?tab=affiliate"), isActive: false, icon: <Users size={18} /> },
+      { label: "Meus Dados", onClick: () => navigate("/minha-conta?tab=profile"), isActive: false, icon: <User size={18} /> },
     ];
 
     const isProOrFranchise = (user?.role === "PROFISSIONAL" || user?.role === "FRANCHISEE" || !!user?.franchiseProfile) && user?.role !== "UNIDADE" && user?.role !== "CARTORIO";
     const isVerified = (user?.verificationStatus === "APPROVED" || user?.isVerified || !!user?.franchiseProfile) && user?.role !== "UNIDADE" && user?.role !== "CARTORIO";
 
     if (isProOrFranchise && isVerified) {
-      items.push(
-        { label: "ÁREA PROFISSIONAL", isHeader: true },
-        { label: "Minha Agenda", onClick: () => navigate("/minha-conta?s=agenda"), isActive: false, icon: <Play size={18} /> },
-        { label: "Meu Portfólio", onClick: () => navigate("/minha-conta?s=portfolio"), isActive: false, icon: <ImageIcon size={18} /> },
-        { label: "Serviços & Preços", onClick: () => navigate("/minha-conta?s=servicos"), isActive: false, icon: <Briefcase size={18} /> },
-        { label: "Ficha Técnica & Pix", onClick: () => navigate("/minha-conta?s=perfil"), isActive: false, icon: <Settings size={18} /> },
-        { label: "Vendas & Ganhos", onClick: () => navigate("/minha-conta?s=financeiro"), isActive: false, icon: <DollarSign size={18} /> }
-      );
+      const proSubItems: NavItem[] = [
+        { label: "Minha Agenda", onClick: () => navigate("/minha-conta?tab=agenda"), isActive: false, icon: <Play size={18} /> },
+        { label: "Meu Portfólio", onClick: () => navigate("/minha-conta?tab=portfolio"), isActive: false, icon: <ImageIcon size={18} /> },
+        { label: "Serviços & Preços", onClick: () => navigate("/minha-conta?tab=servicos"), isActive: false, icon: <Briefcase size={18} /> },
+        { label: "Ficha Técnica & Pix", onClick: () => navigate("/minha-conta?tab=perfil"), isActive: false, icon: <Settings size={18} /> },
+        { label: "Vendas & Ganhos", onClick: () => navigate("/minha-conta?tab=financeiro"), isActive: false, icon: <DollarSign size={18} /> }
+      ];
+
+      items.push({
+        label: "Painel Profissional",
+        icon: <Briefcase size={18} />,
+        subItems: proSubItems
+      });
 
       if (user?.role === "FRANCHISEE" || user?.franchiseProfile) {
+        const franchiseSubItems: NavItem[] = [];
         if (user?.role === "FRANCHISEE") {
-          items.push(
+          franchiseSubItems.push(
             { label: "Gestão de Franquia", onClick: () => navigate("/franquia"), isActive: true, icon: <LayoutDashboard size={18} /> }
           );
         }
-        items.push(
-          { label: "Rede Técnica", onClick: () => navigate("/minha-conta?s=equipe"), isActive: false, icon: <Users size={18} /> },
-          { label: "Franquia Print", onClick: () => navigate("/minha-conta?s=franquia"), isActive: false, icon: <Printer size={18} /> }
+        franchiseSubItems.push(
+          { label: "Rede Técnica", onClick: () => navigate("/minha-conta?tab=equipe"), isActive: false, icon: <Users size={18} /> },
+          { label: "Franquia Print", onClick: () => navigate("/minha-conta?tab=franquia"), isActive: false, icon: <Printer size={18} /> }
         );
+
+        items.push({
+          label: "Gestão de Franquia",
+          icon: <Building2 size={18} />,
+          subItems: franchiseSubItems
+        });
       }
     }
     return items;
@@ -205,7 +220,7 @@ const FranchiseDashboard: React.FC = () => {
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-3 md:gap-6">
         <div className="space-y-2">
           <span className="text-[11px] font-black text-brand-tactical uppercase tracking-[0.4em] italic">Gestão de Franquia</span>
-          <h1 className="text-2xl md:text-4xl md:text-6xl font-heading font-black text-theme-text uppercase tracking-tighter leading-none italic">
+          <h1 className="text-2xl md:text-4xl font-heading font-black uppercase italic tracking-tighter text-theme-text">
             Command <span className="text-brand-tactical">Center</span>
           </h1>
         </div>
@@ -252,7 +267,7 @@ const FranchiseDashboard: React.FC = () => {
             
             <div className="relative z-10 space-y-4 md:space-y-8">
               <div className="flex items-center justify-between">
-                <h3 className="text-lg md:text-xl font-heading font-black text-theme-text uppercase italic tracking-tight">Monitor de Insumos</h3>
+                <h3 className="text-xl md:text-2xl font-heading font-black uppercase tracking-tight text-theme-text">Monitor de Insumos</h3>
                 <ShieldCheck size={18} className="text-brand-tactical opacity-50" />
               </div>
 
@@ -347,7 +362,7 @@ const FranchiseDashboard: React.FC = () => {
           <div className="bg-theme-bg-muted border border-theme-border p-4 md:p-8 space-y-4 md:space-y-8 border-brand-tactical/20">
             <div className="space-y-1.5">
               <Users size={22} className="text-brand-tactical" />
-              <h3 className="text-xl md:text-2xl font-heading font-black text-theme-text uppercase italic tracking-tighter">Minha Rede</h3>
+              <h3 className="text-xl md:text-2xl font-heading font-black uppercase tracking-tight text-theme-text">Minha Rede</h3>
               <p className="text-[10px] text-theme-muted font-black leading-relaxed uppercase tracking-tight">
                 Indique fotógrafos e expanda sua capilaridade regional.
               </p>
