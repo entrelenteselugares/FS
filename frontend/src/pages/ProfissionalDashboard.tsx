@@ -386,16 +386,18 @@ export default function ProfissionalDashboard({
  onClick: () => setActiveTab("agenda"), 
  isActive: activeTab === "agenda" || activeTab === "convites", 
  icon: <LayoutDashboard size={16} />,
- badge: pendingEvents.length + unitInvites.length + opportunities.length
+ badge: pendingEvents.length + unitInvites.length + opportunities.length,
+ isPrimaryMobile: true
  },
- { label: "Financeiro", onClick: () => setActiveTab("financeiro"), isActive: activeTab === "financeiro", icon: <DollarSign size={16} /> },
+ { label: "Financeiro", onClick: () => setActiveTab("financeiro"), isActive: activeTab === "financeiro", icon: <DollarSign size={16} />, isPrimaryMobile: true },
  { label: "Serviços", onClick: () => setActiveTab("servicos"), isActive: activeTab === "servicos", icon: <Briefcase size={16} /> },
  { label: "Minha Rede", onClick: () => setActiveTab("network"), isActive: activeTab === "network", icon: <Users size={16} /> },
  { 
  label: "Franquia Print", 
  onClick: () => setActiveTab("franquia"), 
  isActive: activeTab === "franquia", 
- icon: <Printer size={16} /> 
+ icon: <Printer size={16} />,
+ isPrimaryMobile: true
  },
  { label: "Meu Perfil", onClick: () => setActiveTab("perfil"), isActive: activeTab === "perfil", icon: <Settings size={16} /> },
  ], [activeTab, pendingEvents.length, unitInvites.length, opportunities.length, setActiveTab]);

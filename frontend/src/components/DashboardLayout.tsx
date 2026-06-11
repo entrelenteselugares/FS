@@ -453,7 +453,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
         width:       "100%",
         height:      "calc(100% - 64px)", // leave space for bottom nav
         top:         drawerOpen ? 0 : "100%",
-        bottom:      drawerOpen ? 64 : "auto",
+        bottom:      drawerOpen ? 0 : "auto",
         transform:   "none",
         transition:  "top 0.35s cubic-bezier(0.16,1,0.3,1), bottom 0.35s",
       }} className="dashboard-drawer">
@@ -472,39 +472,39 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
       {/* ── Main Content ── */}
       <div style={{ flex: 1, display: "flex", flexDirection: "column", minWidth: 0, overflow: "hidden" }}>
 
-        {/* Mobile App Header (Super App Style) */}
-        <nav className="flex lg:hidden items-center justify-between px-5 py-3 border-b shrink-0 sticky top-0 z-30" style={{ background: T.bg, borderColor: T.border }}>
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-full bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center font-display font-bold text-emerald-500 shrink-0">
-              {user?.nome ? user.nome.charAt(0).toUpperCase() : "A"}
-            </div>
-            <div className="flex flex-col min-w-0">
-              <span className="text-[10px] font-bold uppercase tracking-widest text-emerald-500/60 leading-none mb-0.5">
-                {title || "Painel"}
-              </span>
-              <span className="text-sm font-bold text-theme-text leading-none truncate">
-                Olá, {user?.nome ? user.nome.split(" ")[0] : "Usuário"}
-              </span>
-            </div>
-          </div>
-          <div className="flex items-center gap-3">
-            <NotificationBell />
-            <button
-              onClick={() => setDrawerOpen(true)}
-              className="p-1.5 border border-theme-border rounded-lg text-theme-text-muted hover:text-theme-text bg-theme-bg-muted/50 hover:bg-theme-bg-muted transition-colors"
-              aria-label="Abrir menu"
-            >
-              <Menu size={18} />
-            </button>
-          </div>
-        </nav>
+        {/* Mobile App Header Removido - Agora na parte inferior */}
 
         {/* Scrollable page content */}
         <main style={{ flex: 1, overflowY: "auto", background: T.bg }} className="pb-28 lg:pb-0 relative">
           {children}
         </main>
 
-
+        {/* ── Mobile Bottom Nav (Super App Style) ── */}
+        <nav className="flex lg:hidden fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md bg-[var(--bg)]/90 backdrop-blur-xl border-t border-theme-border/10 z-[100] px-3 py-3 items-center justify-around pb-safe">
+          {/* Render isPrimaryMobile items */}
+          {navItems.filter(item => item.isPrimaryMobile).map((item, idx) => {
+             const active = item.isActive;
+             return (
+               <button
+                 key={idx}
+                 onClick={() => { item.onClick?.(); if (item.to) { /* We don't have navigate here directly, but DashboardLayout is inside Router, wait, useLocation but not useNavigate. Let's rely on onClick and Link if to exists */ } }}
+                 className={`flex flex-col items-center gap-1 transition-all ${active ? "text-brand-tactical" : "text-theme-text opacity-40 hover:opacity-100"}`}
+               >
+                 {item.icon}
+                 <span className="text-[7.5px] font-bold uppercase truncate max-w-[60px]">{item.label}</span>
+               </button>
+             );
+          })}
+          
+          {/* Menu Toggle Button */}
+          <button
+            onClick={() => setDrawerOpen(true)}
+            className={`flex flex-col items-center gap-1 transition-all ${drawerOpen ? "text-brand-tactical" : "text-theme-text opacity-40 hover:opacity-100"}`}
+          >
+            <Menu size={20} strokeWidth={1.5} />
+            <span className="text-[7.5px] font-bold uppercase truncate max-w-[60px]">Menu</span>
+          </button>
+        </nav>
       </div>
 
       {/* ── Responsive CSS via <style> ── */}

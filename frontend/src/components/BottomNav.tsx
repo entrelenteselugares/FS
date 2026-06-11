@@ -29,6 +29,9 @@ export const BottomNav: React.FC = () => {
     "/register",
     "/meus-albuns/",
     "/admin",
+    "/profissional",
+    "/franquia",
+    "/unidade-fixa",
     // "/minha-conta",
   ];
 
