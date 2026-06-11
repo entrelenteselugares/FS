@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from "react";
 import { useNavigate, useLocation, useSearchParams, Link } from "react-router-dom";
-import { Home, Search, ShoppingBag, Image, Menu, X, Play, Briefcase, DollarSign, Printer, Settings, Lock, Users, User, LayoutDashboard } from "lucide-react";
+import { Home, Search, ShoppingBag, Image, Menu, X, Play, Briefcase, DollarSign, Printer, Settings, Lock, Users, User, LayoutDashboard, Wallet, Building2, MapPin } from "lucide-react";
 import { useAuth } from "../hooks/useAuth";
 // ImageIcon alias for portfolio nav item
 const ImageIcon = Image;
@@ -34,45 +34,59 @@ export const BottomNav: React.FC = () => {
   const shouldHide = hiddenPaths.some(p => location.pathname.startsWith(p));
 
   const NAV_ITEMS = useMemo<NavItem[]>(() => {
+    const tab = searchParams.get("tab") || searchParams.get("s");
+
     const items: NavItem[] = [
-      { label: "Compras", onClick: () => { setDrawerOpen(false); setTimeout(() => navigate("/minha-conta?s=files", { replace: true }), 50); }, isActive: location.pathname === "/minha-conta" && (s === "files" || s === "fotos" || s === "wallet" || s === "pedidos"), icon: <ShoppingBag size={18} /> },
+      { label: "Histórico de Compras", onClick: () => { setDrawerOpen(false); setTimeout(() => navigate("/minha-conta?tab=files", { replace: true }), 50); }, isActive: location.pathname === "/minha-conta" && (tab === "files" || tab === "fotos" || tab === "pedidos"), icon: <ShoppingBag size={18} /> },
       { label: "Meus Álbuns", onClick: () => { setDrawerOpen(false); setTimeout(() => navigate("/meus-albuns", { replace: true }), 50); }, isActive: location.pathname.startsWith("/meus-albuns"), icon: <Lock size={18} /> },
-      { label: "Indique e Ganhe", onClick: () => { setDrawerOpen(false); setTimeout(() => navigate("/minha-conta?s=affiliate", { replace: true }), 50); }, isActive: location.pathname === "/minha-conta" && s === "affiliate", icon: <Users size={18} /> },
-      { label: "Meus Dados", onClick: () => { setDrawerOpen(false); setTimeout(() => navigate("/minha-conta?s=menu", { replace: true }), 50); }, isActive: location.pathname === "/minha-conta" && s === "menu", icon: <User size={18} /> },
+      { label: "Minha Carteira", onClick: () => { setDrawerOpen(false); setTimeout(() => navigate("/minha-conta?tab=wallet", { replace: true }), 50); }, isActive: location.pathname === "/minha-conta" && tab === "wallet", icon: <Wallet size={18} /> },
+      { label: "Indique e Ganhe", onClick: () => { setDrawerOpen(false); setTimeout(() => navigate("/minha-conta?tab=affiliate", { replace: true }), 50); }, isActive: location.pathname === "/minha-conta" && tab === "affiliate", icon: <Users size={18} /> },
+      { label: "Meus Dados", onClick: () => { setDrawerOpen(false); setTimeout(() => navigate("/minha-conta?tab=profile", { replace: true }), 50); }, isActive: location.pathname === "/minha-conta" && tab === "profile", icon: <User size={18} /> },
     ];
 
-    if ((user?.role === "PROFISSIONAL" || user?.role === "FRANCHISEE") && user?.verificationStatus === "APPROVED") {
+    const isProOrFranchise = (user?.role === "PROFISSIONAL" || user?.role === "FRANCHISEE" || !!user?.franchiseProfile) && user?.role !== "UNIDADE" && user?.role !== "CARTORIO";
+    const isVerified = (user?.verificationStatus === "APPROVED" || !!user?.franchiseProfile) && user?.role !== "UNIDADE" && user?.role !== "CARTORIO";
+
+    if (isProOrFranchise && isVerified) {
       items.push(
-        { label: "ÁREA PROFISSIONAL", isHeader: true },
-        { label: "Minha Agenda", onClick: () => { setDrawerOpen(false); setTimeout(() => navigate("/minha-conta?s=agenda", { replace: true }), 50); }, isActive: location.pathname === "/minha-conta" && (s === "agenda" || s === "convites"), icon: <Play size={18} /> },
-        { label: "Meu Portfólio", onClick: () => { setDrawerOpen(false); setTimeout(() => navigate("/minha-conta?s=portfolio", { replace: true }), 50); }, isActive: location.pathname === "/minha-conta" && s === "portfolio", icon: <ImageIcon size={18} /> },
-        { label: "Serviços & Preços", onClick: () => { setDrawerOpen(false); setTimeout(() => navigate("/minha-conta?s=servicos", { replace: true }), 50); }, isActive: location.pathname === "/minha-conta" && s === "servicos", icon: <Briefcase size={18} /> },
-        { label: "Ficha Técnica & Pix", onClick: () => { setDrawerOpen(false); setTimeout(() => navigate("/minha-conta?s=perfil", { replace: true }), 50); }, isActive: location.pathname === "/minha-conta" && s === "perfil", icon: <Settings size={18} /> },
-        { label: "Vendas & Ganhos", onClick: () => { setDrawerOpen(false); setTimeout(() => navigate("/minha-conta?s=financeiro", { replace: true }), 50); }, isActive: location.pathname === "/minha-conta" && s === "financeiro", icon: <DollarSign size={18} /> }
+        { label: "PAINEL PROFISSIONAL", isHeader: true },
+        { label: "Minha Agenda", onClick: () => { setDrawerOpen(false); setTimeout(() => navigate("/minha-conta?tab=agenda", { replace: true }), 50); }, isActive: location.pathname === "/minha-conta" && (tab === "agenda" || tab === "convites"), icon: <Play size={18} /> },
+        { label: "Meu Portfólio", onClick: () => { setDrawerOpen(false); setTimeout(() => navigate("/minha-conta?tab=portfolio", { replace: true }), 50); }, isActive: location.pathname === "/minha-conta" && tab === "portfolio", icon: <ImageIcon size={18} /> },
+        { label: "Serviços & Preços", onClick: () => { setDrawerOpen(false); setTimeout(() => navigate("/minha-conta?tab=servicos", { replace: true }), 50); }, isActive: location.pathname === "/minha-conta" && tab === "servicos", icon: <Briefcase size={18} /> },
+        { label: "Ficha Técnica & Pix", onClick: () => { setDrawerOpen(false); setTimeout(() => navigate("/minha-conta?tab=perfil", { replace: true }), 50); }, isActive: location.pathname === "/minha-conta" && tab === "perfil", icon: <Settings size={18} /> },
+        { label: "Vendas & Ganhos", onClick: () => { setDrawerOpen(false); setTimeout(() => navigate("/minha-conta?tab=financeiro", { replace: true }), 50); }, isActive: location.pathname === "/minha-conta" && tab === "financeiro", icon: <DollarSign size={18} /> }
       );
 
       if (user?.role === "FRANCHISEE" || user?.franchiseProfile) {
+        items.push({ label: "GESTÃO DE FRANQUIA", isHeader: true });
+
         if (user?.role === "FRANCHISEE") {
           items.push(
-            { label: "Gestão de Franquia", onClick: () => { setDrawerOpen(false); setTimeout(() => navigate("/franquia", { replace: true }), 50); }, isActive: location.pathname === "/franquia", icon: <LayoutDashboard size={18} /> }
+            { label: "Painel da Franquia", onClick: () => { setDrawerOpen(false); setTimeout(() => navigate("/franquia", { replace: true }), 50); }, isActive: location.pathname === "/franquia", icon: <Building2 size={18} /> }
           );
         }
         items.push(
-          { label: "Rede Técnica", onClick: () => { setDrawerOpen(false); setTimeout(() => navigate("/minha-conta?s=equipe", { replace: true }), 50); }, isActive: location.pathname === "/minha-conta" && s === "equipe", icon: <Users size={18} /> },
-          { label: "Franquia Print", onClick: () => { setDrawerOpen(false); setTimeout(() => navigate("/minha-conta?s=franquia", { replace: true }), 50); }, isActive: location.pathname === "/minha-conta" && s === "franquia", icon: <Printer size={18} /> }
+          { label: "Rede Técnica", onClick: () => { setDrawerOpen(false); setTimeout(() => navigate("/minha-conta?tab=equipe", { replace: true }), 50); }, isActive: location.pathname === "/minha-conta" && tab === "equipe", icon: <Users size={18} /> },
+          { label: "Franquia Print", onClick: () => { setDrawerOpen(false); setTimeout(() => navigate("/minha-conta?tab=franquia", { replace: true }), 50); }, isActive: location.pathname === "/minha-conta" && tab === "franquia", icon: <Printer size={18} /> }
         );
       }
     }
 
     if ((user?.role === "CARTORIO" || user?.role === "UNIDADE") && user?.verificationStatus === "APPROVED") {
       items.push(
-        { label: "ÁREA DA UNIDADE", isHeader: true },
-        { label: "Agenda Unidade", onClick: () => { setDrawerOpen(false); setTimeout(() => navigate("/minha-conta?s=agenda", { replace: true }), 50); }, isActive: location.pathname === "/minha-conta" && s === "agenda", icon: <Play size={18} /> },
-        { label: "Fluxo Financeiro", onClick: () => { setDrawerOpen(false); setTimeout(() => navigate("/minha-conta?s=financeiro", { replace: true }), 50); }, isActive: location.pathname === "/minha-conta" && s === "financeiro", icon: <DollarSign size={18} /> },
-        { label: "Rede Técnica", onClick: () => { setDrawerOpen(false); setTimeout(() => navigate("/minha-conta?s=equipe", { replace: true }), 50); }, isActive: location.pathname === "/minha-conta" && s === "equipe", icon: <Users size={18} /> },
-        { label: "Franquia Print", onClick: () => { setDrawerOpen(false); setTimeout(() => navigate("/minha-conta?s=franquia", { replace: true }), 50); }, isActive: location.pathname === "/minha-conta" && s === "franquia", icon: <Printer size={18} /> },
-        { label: "Configuração Pública", onClick: () => { setDrawerOpen(false); setTimeout(() => navigate("/minha-conta?s=configuracoes", { replace: true }), 50); }, isActive: location.pathname === "/minha-conta" && s === "configuracoes", icon: <Settings size={18} /> }
+        { label: "GESTÃO DA UNIDADE", isHeader: true },
+        { label: "Agenda Unidade", onClick: () => { setDrawerOpen(false); setTimeout(() => navigate("/minha-conta?tab=agenda", { replace: true }), 50); }, isActive: location.pathname === "/minha-conta" && tab === "agenda", icon: <Play size={18} /> },
+        { label: "Fluxo Financeiro", onClick: () => { setDrawerOpen(false); setTimeout(() => navigate("/minha-conta?tab=financeiro", { replace: true }), 50); }, isActive: location.pathname === "/minha-conta" && tab === "financeiro", icon: <DollarSign size={18} /> },
+        { label: "Rede Técnica", onClick: () => { setDrawerOpen(false); setTimeout(() => navigate("/minha-conta?tab=equipe", { replace: true }), 50); }, isActive: location.pathname === "/minha-conta" && tab === "equipe", icon: <Users size={18} /> },
+        { label: "Configuração Pública", onClick: () => { setDrawerOpen(false); setTimeout(() => navigate("/minha-conta?tab=configuracoes", { replace: true }), 50); }, isActive: location.pathname === "/minha-conta" && tab === "configuracoes", icon: <Settings size={18} /> }
       );
+
+      if (user?.franchiseProfile) {
+        items.push(
+          { label: "Franquia Print", onClick: () => { setDrawerOpen(false); setTimeout(() => navigate("/minha-conta?tab=franquia", { replace: true }), 50); }, isActive: location.pathname === "/minha-conta" && tab === "franquia", icon: <Printer size={18} /> },
+          { label: "Monitor de Fila", onClick: () => { setDrawerOpen(false); setTimeout(() => navigate("/minha-conta?tab=monitor", { replace: true }), 50); }, isActive: location.pathname === "/minha-conta" && tab === "monitor", icon: <Settings size={18} /> }
+        );
+      }
     }
 
     if (user?.role === "ADMIN") {
@@ -83,7 +97,7 @@ export const BottomNav: React.FC = () => {
     }
 
     return items;
-  }, [user, navigate, location.pathname, s]);
+  }, [user, navigate, location.pathname, searchParams]);
 
   if (shouldHide) return null;
 
@@ -116,12 +130,10 @@ export const BottomNav: React.FC = () => {
               onClick={() => {
                 navigate("?action=camera", { replace: true });
               }}
-              className="flex flex-col items-center justify-center gap-1 -mt-8"
+              className="flex flex-col items-center gap-1 transition-all text-brand-tactical"
             >
-              <div className="w-14 h-14 bg-brand-tactical rounded-full flex items-center justify-center shadow-lg shadow-brand-tactical/30 border-4 border-[var(--bg)] text-black">
-                <Camera size={24} strokeWidth={2} />
-              </div>
-              <span className="text-[9px] font-black uppercase tracking-widest text-brand-tactical italic mt-1">Câmera</span>
+              <Camera size={20} strokeWidth={1.5} />
+              <span className="text-[7.5px] font-bold uppercase tracking-tight">Câmera</span>
             </button>
 
             {user && (
