@@ -4,7 +4,7 @@ import cors from "cors";
 import helmet from "helmet";
 import rateLimit from "express-rate-limit";
 import RedisStore from "rate-limit-redis";
-import Redis from "ioredis";
+import redisClient from "./lib/redis";
 import cookieParser from "cookie-parser";
 import routes from "./routes/index";
 import { initSentry } from "./lib/sentry";
@@ -100,11 +100,9 @@ if (process.env.NODE_ENV !== "production") {
 const isProduction = process.env.NODE_ENV === "production";
 const redisUrl = process.env.REDIS_URL || process.env.KV_URL; // Suporte a Upstash/Vercel KV
 
-let redisClient: Redis | undefined;
 let rateLimitStore: RedisStore | undefined;
 
-if (redisUrl) {
-  redisClient = new Redis(redisUrl);
+if (redisClient) {
   rateLimitStore = new RedisStore({
     sendCommand: (...args: string[]) => redisClient!.call(args[0], ...args.slice(1)) as any,
   });
