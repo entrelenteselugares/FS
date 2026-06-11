@@ -117,7 +117,8 @@ export const AdminApprovalHub: React.FC = () => {
         <div className="absolute -top-10 -left-10 w-40 h-40 bg-brand-tactical/10 blur-3xl rounded-full" />
         <div className="flex flex-col xl:flex-row justify-between items-start xl:items-end gap-3 md:gap-6 relative z-10">
           <div>
-            <p className="text-theme-muted mt-2 text-sm">Central de aprovações pendentes do sistema</p>
+            <h2 className="text-2xl font-bold uppercase text-theme-text font-heading">Aprovações</h2>
+            <p className="text-[10px] font-bold uppercase tracking-[0.5em] text-theme-muted mt-2">Central de aprovações pendentes do sistema</p>
           </div>
           {totalPending > 0 && (
             <div className="px-4 py-2 bg-amber-500/10 border border-amber-500/30 rounded-xl flex items-center gap-2">

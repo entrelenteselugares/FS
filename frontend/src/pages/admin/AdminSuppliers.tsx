@@ -162,12 +162,15 @@ export default function AdminSuppliers() {
       {isModalOpen && <NewSupplierModal onClose={() => setIsModalOpen(false)} onSave={handleCreateSupplier} />}
 
       {/* HEADER MASTER */}
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between border-b border-theme-border pb-10 gap-3 md:gap-6">
-        <div>
-                    <p className="text-theme-muted mt-2 text-sm">Fila de produção, ROI de equipamentos e fornecedores</p>
-        </div>
-        
-        <div className="grid grid-cols-3 md:flex bg-theme-bg border border-theme-border p-1.5 shadow-sm gap-1 rounded-2xl">
+      <div className="relative border-b border-theme-border pb-8 md:pb-12 space-y-4 md:space-y-6">
+        <div className="absolute -top-10 -left-10 w-40 h-40 bg-brand-tactical/10 blur-3xl rounded-full" />
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between relative z-10 gap-3 md:gap-6">
+          <div>
+            <h2 className="text-2xl font-bold uppercase text-theme-text font-heading">Impressão (Lab)</h2>
+            <p className="text-[10px] font-bold uppercase tracking-[0.5em] text-theme-muted mt-2">Fila de produção, ROI de equipamentos e fornecedores</p>
+          </div>
+          
+          <div className="grid grid-cols-3 md:flex bg-theme-bg border border-theme-border p-1.5 shadow-sm gap-1 rounded-2xl w-full lg:w-auto">
           <button 
             onClick={() => setView("production")} 
             className={`px-3 md:px-6 py-3 text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest transition-all whitespace-nowrap italic ${view === "production" ? 'bg-brand-tactical text-zinc-950 shadow-md' : 'text-theme-muted hover:text-brand-text'}`}

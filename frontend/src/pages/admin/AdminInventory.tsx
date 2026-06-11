@@ -116,7 +116,8 @@ export default function AdminInventory() {
         
         <div className="flex flex-col xl:flex-row justify-between items-start xl:items-end gap-3 md:gap-6 relative z-10">
           <div>
-                        <p className="text-theme-muted mt-2 text-sm">Gestão de produtos e estoque</p>
+            <h2 className="text-2xl font-bold uppercase text-theme-text font-heading">Estoque</h2>
+            <p className="text-[10px] font-bold uppercase tracking-[0.5em] text-theme-muted mt-2">Gestão de produtos e estoque</p>
           </div>
           <div className="flex flex-wrap items-center gap-4 w-full xl:w-auto">
             <button 
