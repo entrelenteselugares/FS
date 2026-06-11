@@ -40,28 +40,25 @@ export const AdminAnalytics: React.FC = () => {
 
   return (
     <div className="space-y-6 animate-fade-in pb-12">
-      {/* Header */}
-      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-        <div>
-          <div className="flex items-center gap-3 mb-2">
-            <div className="w-1.5 h-6 bg-brand-tactical rounded-full" />
-            <h2 className="text-xl md:text-2xl font-heading font-bold uppercase leading-none" style={{ color: T.text }}>
-              Advanced Analytics
-            </h2>
+      {/* Header Padronizado */}
+      <div className="relative border-b border-theme-border pb-8 md:pb-12 space-y-4 md:space-y-6">
+        <div className="absolute -top-10 -left-10 w-40 h-40 bg-brand-tactical/10 blur-3xl rounded-full" />
+        
+        <div className="flex flex-col xl:flex-row justify-between items-start xl:items-end gap-3 md:gap-6 relative z-10">
+          <div>
+            <h2 className="text-2xl font-bold uppercase text-theme-text font-heading">Analytics</h2>
+            <p className="text-[10px] font-bold uppercase tracking-[0.5em] text-theme-muted mt-2">Monitoramento Global de Mercado e Cupons</p>
           </div>
-          <p className="text-[10px] md:text-[11px] font-bold uppercase tracking-widest" style={{ color: T.text3 }}>
-            Monitoramento Global de Mercado e Cupons
-          </p>
+          <div className="flex flex-wrap items-center gap-4 w-full xl:w-auto">
+            <button
+              onClick={fetchAnalytics}
+              disabled={loading}
+              className="flex-1 md:flex-none px-4 md:px-8 py-4 bg-brand-tactical text-zinc-950 text-[10px] font-bold uppercase tracking-widest hover:brightness-110 transition-all flex items-center justify-center gap-3 shadow-xl whitespace-nowrap rounded-xl"
+            >
+              <RefreshCw size={14} className={loading ? "animate-spin" : ""} /> ATUALIZAR
+            </button>
+          </div>
         </div>
-        <button
-          onClick={fetchAnalytics}
-          disabled={loading}
-          className="p-3 border rounded-xl hover:border-brand-tactical transition-colors flex items-center gap-2"
-          style={{ borderColor: T.border, color: T.text }}
-        >
-          <RefreshCw size={14} className={loading ? "animate-spin" : ""} />
-          <span className="text-[9px] font-bold tracking-widest uppercase">Atualizar</span>
-        </button>
       </div>
 
       {loading ? (

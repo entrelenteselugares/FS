@@ -190,7 +190,8 @@ export const AdminContests: React.FC = () => {
         
         <div className="flex flex-col xl:flex-row justify-between items-start xl:items-end gap-3 md:gap-6 relative z-10">
           <div>
-                        <p className="text-theme-muted mt-2 text-sm">Gerenciamento de concursos e competições</p>
+            <h2 className="text-2xl font-bold uppercase text-theme-text font-heading">Concursos</h2>
+            <p className="text-[10px] font-bold uppercase tracking-[0.5em] text-theme-muted mt-2">Gerenciamento de concursos e competições</p>
           </div>
           <div className="flex flex-wrap items-center gap-4 w-full xl:w-auto">
             <button 

@@ -135,13 +135,10 @@ export function AdminGrowth() {
       {/* Header */}
       <div className="relative border-b border-theme-border pb-8 md:pb-12 space-y-4 md:space-y-6">
         <div className="absolute -top-10 -left-10 w-40 h-40 bg-brand-tactical/10 blur-3xl rounded-full" />
-        <div className="space-y-4 relative z-10">
-          <h1 className="text-2xl sm:text-4xl md:text-5xl xl:text-6xl font-heading font-bold text-theme-text uppercase leading-none truncate whitespace-nowrap">
-            Motor de <span className="text-brand-tactical">Growth</span>
-          </h1>
-          <div className="flex items-center gap-4">
-            <div className="h-1 w-12 bg-brand-tactical" />
-            <p className="text-[9px] sm:text-[11px] font-bold text-brand-tactical uppercase tracking-[0.2em] sm:tracking-[0.4em] truncate max-w-[80vw]">Expansão e Inteligência de Mercado</p>
+        <div className="flex flex-col xl:flex-row justify-between items-start xl:items-end gap-3 md:gap-6 relative z-10">
+          <div>
+            <h2 className="text-2xl font-bold uppercase text-theme-text font-heading">Growth</h2>
+            <p className="text-[10px] font-bold uppercase tracking-[0.5em] text-theme-muted mt-2">Expansão e Inteligência de Mercado</p>
           </div>
         </div>
       </div>
