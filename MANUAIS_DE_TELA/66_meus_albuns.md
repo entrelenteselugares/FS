@@ -20,6 +20,7 @@
 
 - **Botão:** `Histórico de Compras`
 - **Botão:** `Meus Álbuns`
+- **Botão:** `Minha Carteira`
 - **Botão:** `Indique e Ganhe`
 - **Botão:** `Meus Dados`
 - **Botão:** `1`

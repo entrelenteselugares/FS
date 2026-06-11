@@ -10,17 +10,14 @@
   "buttons": [
     "Histórico de Compras",
     "Meus Álbuns",
+    "Minha Carteira",
     "Indique e Ganhe",
     "Meus Dados",
-    "Minha Agenda",
-    "Meu Portfólio",
-    "Serviços & Preços",
-    "Ficha Técnica & Pix",
-    "Vendas & Ganhos",
+    "Painel Profissional",
     "Gestão de Franquia",
     "Rede Técnica",
     "Franquia Print",
-    "17",
+    "18",
     "ENCERRAR SESSÃO",
     "Encerrar Sessão",
     "REABASTECER CRÉDITOS (PIX)",
@@ -31,7 +28,13 @@
     "Home",
     "Buscar",
     "Compras",
-    "Opções"
+    "Opções",
+    "Minha Agenda",
+    "Meu Portfólio",
+    "Serviços & Preços",
+    "Ficha Técnica & Pix",
+    "Vendas & Ganhos",
+    "Painel da Franquia"
   ],
   "links": [
     {

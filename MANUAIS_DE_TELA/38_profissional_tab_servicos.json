@@ -6,13 +6,14 @@
     "CATÁLOGO GERAL DA REDE"
   ],
   "buttons": [
+    "Voltar ao Cliente",
     "Minha Agenda",
     "Financeiro",
     "Serviços",
     "Minha Rede",
     "Franquia Print",
     "Meu Perfil",
-    "17",
+    "18",
     "ENCERRAR SESSÃO",
     "Encerrar Sessão",
     "INVENTÁRIO",
@@ -23,13 +24,15 @@
     "Compras",
     "Meus Álbuns",
     "Opções",
+    "Histórico de Compras",
+    "Minha Carteira",
     "Indique e Ganhe",
     "Meus Dados",
     "Meu Portfólio",
     "Serviços & Preços",
     "Ficha Técnica & Pix",
     "Vendas & Ganhos",
-    "Gestão de Franquia",
+    "Painel da Franquia",
     "Rede Técnica"
   ],
   "links": [

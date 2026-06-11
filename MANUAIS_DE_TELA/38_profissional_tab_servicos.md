@@ -19,13 +19,14 @@
 
 ## 🔘 Ações e Botões Disponíveis
 
+- **Botão:** `Voltar ao Cliente`
 - **Botão:** `Minha Agenda`
 - **Botão:** `Financeiro`
 - **Botão:** `Serviços`
 - **Botão:** `Minha Rede`
 - **Botão:** `Franquia Print`
 - **Botão:** `Meu Perfil`
-- **Botão:** `17`
+- **Botão:** `18`
 - **Botão:** `ENCERRAR SESSÃO`
 - **Botão:** `Encerrar Sessão`
 - **Botão:** `INVENTÁRIO`
@@ -36,13 +37,15 @@
 - **Botão:** `Compras`
 - **Botão:** `Meus Álbuns`
 - **Botão:** `Opções`
+- **Botão:** `Histórico de Compras`
+- **Botão:** `Minha Carteira`
 - **Botão:** `Indique e Ganhe`
 - **Botão:** `Meus Dados`
 - **Botão:** `Meu Portfólio`
 - **Botão:** `Serviços & Preços`
 - **Botão:** `Ficha Técnica & Pix`
 - **Botão:** `Vendas & Ganhos`
-- **Botão:** `Gestão de Franquia`
+- **Botão:** `Painel da Franquia`
 - **Botão:** `Rede Técnica`
 
 ## 🔗 Links de Navegação

@@ -26,7 +26,7 @@
 - **Botão:** `Rede`
 - **Botão:** `Marketing`
 - **Botão:** `Sistema`
-- **Botão:** `56`
+- **Botão:** `57`
 - **Botão:** `ENCERRAR SESSÃO`
 - **Botão:** `Eventos9`
 - **Botão:** `Encerrar Sessão`
@@ -35,14 +35,6 @@
 - **Botão:** `Aprovações`
 - **Botão:** `Membros`
 - **Botão:** `EDITAR`
-- **Botão:** `Home`
-- **Botão:** `Buscar`
-- **Botão:** `Compras`
-- **Botão:** `Meus Álbuns`
-- **Botão:** `Opções`
-- **Botão:** `Indique e Ganhe`
-- **Botão:** `Meus Dados`
-- **Botão:** `Painel Central`
 
 ## 🔗 Links de Navegação
 

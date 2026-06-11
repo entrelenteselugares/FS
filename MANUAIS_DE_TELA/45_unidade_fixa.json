@@ -5,6 +5,7 @@
     "SINCRONIZAÇÃO (GOOGLE CALENDAR)"
   ],
   "buttons": [
+    "Voltar ao Cliente",
     "Agenda Tática",
     "Fluxo Financeiro",
     "Rede Técnica",
@@ -17,10 +18,11 @@
     "Compras",
     "Meus Álbuns",
     "Opções",
+    "Histórico de Compras",
+    "Minha Carteira",
     "Indique e Ganhe",
     "Meus Dados",
     "Agenda Unidade",
-    "Franquia Print",
     "Configuração Pública"
   ],
   "links": [

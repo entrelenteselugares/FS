@@ -18,6 +18,7 @@
 
 ## 🔘 Ações e Botões Disponíveis
 
+- **Botão:** `Voltar ao Cliente`
 - **Botão:** `Agenda Tática`
 - **Botão:** `Fluxo Financeiro`
 - **Botão:** `Rede Técnica`
@@ -30,10 +31,11 @@
 - **Botão:** `Compras`
 - **Botão:** `Meus Álbuns`
 - **Botão:** `Opções`
+- **Botão:** `Histórico de Compras`
+- **Botão:** `Minha Carteira`
 - **Botão:** `Indique e Ganhe`
 - **Botão:** `Meus Dados`
 - **Botão:** `Agenda Unidade`
-- **Botão:** `Franquia Print`
 - **Botão:** `Configuração Pública`
 
 ## 🔗 Links de Navegação

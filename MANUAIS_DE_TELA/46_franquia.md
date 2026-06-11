@@ -23,17 +23,14 @@
 
 - **Botão:** `Histórico de Compras`
 - **Botão:** `Meus Álbuns`
+- **Botão:** `Minha Carteira`
 - **Botão:** `Indique e Ganhe`
 - **Botão:** `Meus Dados`
-- **Botão:** `Minha Agenda`
-- **Botão:** `Meu Portfólio`
-- **Botão:** `Serviços & Preços`
-- **Botão:** `Ficha Técnica & Pix`
-- **Botão:** `Vendas & Ganhos`
+- **Botão:** `Painel Profissional`
 - **Botão:** `Gestão de Franquia`
 - **Botão:** `Rede Técnica`
 - **Botão:** `Franquia Print`
-- **Botão:** `17`
+- **Botão:** `18`
 - **Botão:** `ENCERRAR SESSÃO`
 - **Botão:** `Encerrar Sessão`
 - **Botão:** `REABASTECER CRÉDITOS (PIX)`
@@ -45,6 +42,12 @@
 - **Botão:** `Buscar`
 - **Botão:** `Compras`
 - **Botão:** `Opções`
+- **Botão:** `Minha Agenda`
+- **Botão:** `Meu Portfólio`
+- **Botão:** `Serviços & Preços`
+- **Botão:** `Ficha Técnica & Pix`
+- **Botão:** `Vendas & Ganhos`
+- **Botão:** `Painel da Franquia`
 
 ## 🔗 Links de Navegação
 

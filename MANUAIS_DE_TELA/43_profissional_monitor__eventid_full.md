@@ -30,6 +30,8 @@
 - **Botão:** `Compras`
 - **Botão:** `Meus Álbuns`
 - **Botão:** `Opções`
+- **Botão:** `Histórico de Compras`
+- **Botão:** `Minha Carteira`
 - **Botão:** `Indique e Ganhe`
 - **Botão:** `Meus Dados`
 - **Botão:** `Minha Agenda`
@@ -37,7 +39,7 @@
 - **Botão:** `Serviços & Preços`
 - **Botão:** `Ficha Técnica & Pix`
 - **Botão:** `Vendas & Ganhos`
-- **Botão:** `Gestão de Franquia`
+- **Botão:** `Painel da Franquia`
 - **Botão:** `Rede Técnica`
 - **Botão:** `Franquia Print`
 

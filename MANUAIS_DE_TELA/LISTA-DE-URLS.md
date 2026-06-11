@@ -113,23 +113,23 @@
 | #   | URL                           | Descrição                                                         | Acesso | Manual |
 | --- | ----------------------------- | ----------------------------------------------------------------- | ------ | ------ |
 | 48  | `/admin`                      | **Painel Admin — Visão Geral**                                    | ADMIN  | ✅     |
-| 49  | `/admin?s=usuarios`           | **Admin: Usuários** — Gestão de todos os usuários                 | ADMIN  | ✅     |
-| 50  | `/admin?s=pedidos`            | **Admin: Pedidos** — Todos os pedidos da plataforma               | ADMIN  | ✅     |
-| 51  | `/admin?s=eventos`            | **Admin: Eventos** — Gestão de eventos e álbuns                   | ADMIN  | ✅     |
-| 52  | `/admin?s=financeiro`         | **Admin: Financeiro** — Pagamentos e repasses                     | ADMIN  | ✅     |
-| 53  | `/admin?s=profissionais`      | **Admin: Aprovação Hub** — Aprovação de fotógrafos e serviços     | ADMIN  | ✅     |
-| 54  | `/admin?s=servicos`           | **Admin: Serviços** — Catálogo de serviços da plataforma          | ADMIN  | ✅     |
-| 55  | `/admin?s=unidades`           | **Admin: Unidades** — Casas parceiras cadastradas                 | ADMIN  | ✅     |
-| 56  | `/admin?s=franquias`          | **Admin: Franquias** — Gestão de franqueados                      | ADMIN  | ✅     |
-| 57  | `/admin?s=growth`             | **Admin: Growth** — Métricas de crescimento e campanhas           | ADMIN  | ✅     |
-| 58  | `/admin?s=concursos`          | **Admin: Concursos** — Gestão de competições fotográficas         | ADMIN  | ✅     |
-| 59  | `/admin?s=embaixadores`       | **Admin: Embaixadores** — Programa de embaixadores                | ADMIN  | ✅     |
-| 60  | `/admin?s=catalogo-impressao` | **Admin: Catálogo de Impressão** — Produtos para impressão física | ADMIN  | ✅     |
-| 61  | `/admin?s=fornecedores`       | **Admin: Fornecedores** — Gestão de fornecedores                  | ADMIN  | ✅     |
-| 62  | `/admin?s=estoque`            | **Admin: Estoque** — Controle de insumos e materiais              | ADMIN  | ✅     |
-| 63  | `/admin?s=leads`              | **Admin: Leads** — CRM de oportunidades                           | ADMIN  | ✅     |
-| 64  | `/admin?s=configuracoes`      | **Admin: Configurações** — Configs gerais da plataforma           | ADMIN  | ✅     |
-| 65  | `/admin?s=analytics`          | **Admin: Analytics** — Relatórios e dados de uso                  | ADMIN  | ✅     |
+| 49  | `/admin/users`                | **Admin: Usuários** — Gestão de todos os usuários                 | ADMIN  | ✅     |
+| 50  | `/admin/orders`               | **Admin: Pedidos** — Todos os pedidos da plataforma               | ADMIN  | ✅     |
+| 51  | `/admin/events`               | **Admin: Eventos** — Gestão de eventos e álbuns                   | ADMIN  | ✅     |
+| 52  | `/admin/finance`              | **Admin: Financeiro** — Pagamentos e repasses                     | ADMIN  | ✅     |
+| 53  | `/admin/approvals`            | **Admin: Aprovação Hub** — Aprovação de fotógrafos e serviços     | ADMIN  | ✅     |
+| 54  | `/admin/services`             | **Admin: Serviços** — Catálogo de serviços da plataforma          | ADMIN  | ✅     |
+| 55  | `/admin/printers`             | **Admin: Unidades/Fornecedores** — Gestão de impressão            | ADMIN  | ✅     |
+| 56  | `/admin/franchises`           | **Admin: Franquias** — Gestão de franqueados                      | ADMIN  | ✅     |
+| 57  | `/admin/growth`               | **Admin: Growth** — Métricas de crescimento e campanhas           | ADMIN  | ✅     |
+| 58  | `/admin/contests`             | **Admin: Concursos** — Gestão de competições fotográficas         | ADMIN  | ✅     |
+| 59  | `/admin/ambassadors`          | **Admin: Embaixadores** — Programa de embaixadores                | ADMIN  | ✅     |
+| 60  | `/admin/print-catalog`        | **Admin: Catálogo de Impressão** — Produtos para impressão física | ADMIN  | ✅     |
+| 61  | `/admin/suppliers`            | **Admin: Fornecedores** — Gestão de fornecedores                  | ADMIN  | ✅     |
+| 62  | `/admin/inventory`            | **Admin: Estoque** — Controle de insumos e materiais              | ADMIN  | ✅     |
+| 63  | `/admin/crm`                  | **Admin: Leads** — CRM de oportunidades                           | ADMIN  | ✅     |
+| 64  | `/admin/settings`             | **Admin: Configurações** — Configs gerais da plataforma           | ADMIN  | ✅     |
+| 65  | `/admin/analytics`            | **Admin: Analytics** — Relatórios e dados de uso                  | ADMIN  | ✅     |
 
 ---
 

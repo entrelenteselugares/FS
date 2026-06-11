@@ -35,10 +35,10 @@
 
 - **COPA 2026
 PRÓXIMOS
-COR
-11/06 · 23:00
+MÉXICO
+11/06 · 16:00
 GRP A
-TCHÉQUIA
+ÁFR
 Ver Álbum →** -> `/album-torcida`
 - **VISITAR SITE** -> `/`
 - **Visitar Site** -> `/`

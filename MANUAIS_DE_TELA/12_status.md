@@ -31,6 +31,8 @@ PLATAFORMA
 - **Botão:** `Compras`
 - **Botão:** `Meus Álbuns`
 - **Botão:** `Opções`
+- **Botão:** `Histórico de Compras`
+- **Botão:** `Minha Carteira`
 - **Botão:** `Indique e Ganhe`
 - **Botão:** `Meus Dados`
 
