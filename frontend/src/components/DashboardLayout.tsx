@@ -377,7 +377,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   navItems,
   title,
 }) => {
-  const { user } = useAuth();
+  // useAuth() was used for the top nav user info, now removed.
   const [drawerOpen, setDrawerOpen] = useState(false);
   const location = useLocation();
 
