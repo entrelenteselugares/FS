@@ -3,7 +3,7 @@
 ## ℹ️ Informações Gerais
 
 - **URL:** `/pro/:id`
-- **Caminho Resolvido:** `/pro/e685a36a-b7d5-4ab4-b5c2-f19df9bc0a5b`
+- **Caminho Resolvido:** `/pro/cmpmxqow3000cl804br1kl3zb`
 - **Nível de Acesso:** `Todos`
 - **Título da Página (HTML):** `Foto Segundo | Suas memórias, entregues agora.`
 
@@ -13,19 +13,35 @@
 
 ## 🌟 Títulos e Seções Encontradas
 
-*Nenhum título H1/H2/H3 detectado.*
+- RENATA MORAES
+- PACOTES DISPONÍVEIS
+- ALUGUEL DE ESTÚDIO FOTOGRÁFICO
+- GALERIA DE CONQUISTAS
 
 ## 🔘 Ações e Botões Disponíveis
 
+- **Botão:** `RC
+▾`
+- **Botão:** `AGENDAR`
+- **Botão:** `RESERVAR POR R$ 30.00`
 - **Botão:** `Home`
 - **Botão:** `Buscar`
+- **Botão:** `Compras`
+- **Botão:** `Meus Álbuns`
 - **Botão:** `Opções`
-- **Botão:** `Entrar`
-- **Botão:** `Vitrine de Eventos`
+- **Botão:** `Indique e Ganhe`
+- **Botão:** `Meus Dados`
 
 ## 🔗 Links de Navegação
 
-*Nenhum link de navigation detectado.*
+- **COPA 2026
+PRÓXIMOS
+COR
+11/06 · 23:00
+GRP A
+TCHÉQUIA
+Ver Álbum →** -> `/album-torcida`
+- **DIRETÓRIO** -> `/profissionais`
 
 ## ⚙️ Observações Técnicas e Fluxo
 

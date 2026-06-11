@@ -5,7 +5,7 @@ import { useNavigate, useLocation, useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
 import {
  DollarSign,
- Settings, Briefcase, Users, LayoutDashboard, Play, Camera, Printer
+ Settings, Briefcase, Users, LayoutDashboard, Play, Camera, Printer, ArrowLeft
 } from "lucide-react";
 import { DashboardLayout, type NavItem } from "../components/DashboardLayout";
 import { T } from "../lib/theme";
@@ -50,6 +50,8 @@ type ViewTab = "lista" | "calendario";
 
 // ─── Main Component ────────────────────────────────────────────────────────────
 
+const validTabs: ActiveTab[] = ["agenda", "convites", "financeiro", "servicos", "network", "franquia", "perfil", "equipe", "portfolio"];
+
 interface ProfissionalDashboardProps {
  noLayout?: boolean;
  activeTab?: ActiveTab;
@@ -74,14 +76,18 @@ export default function ProfissionalDashboard({
  const [loading, setLoading] = useState(true);
  const [minHourlyRate, setMinHourlyRate] = useState(14); // padrão €14/h da Irlanda
 
- // UI state
- const [searchParams, setSearchParams] = useSearchParams();
- const localActiveTab = (searchParams.get("tab") as ActiveTab) || "agenda";
- const setLocalActiveTab = (newTab: ActiveTab) => setSearchParams(prev => { prev.set("tab", newTab); return prev; }, { replace: true });
- const activeTab = propActiveTab || localActiveTab;
- const setActiveTab = propSetActiveTab || setLocalActiveTab;
- 
- const viewTab = (searchParams.get("view") as ViewTab) || "lista";
+  // UI state
+  const [searchParams, setSearchParams] = useSearchParams();
+  
+  const rawTab = searchParams.get("tab") as ActiveTab;
+  const localActiveTab = (rawTab && validTabs.includes(rawTab)) ? rawTab : "agenda";
+  const setLocalActiveTab = useCallback((newTab: ActiveTab) => {
+    setSearchParams(prev => { prev.set("tab", newTab); return prev; }, { replace: true });
+  }, [setSearchParams]);
+  const activeTab = propActiveTab || localActiveTab;
+  const setActiveTab = propSetActiveTab || setLocalActiveTab;
+  
+  const viewTab = (searchParams.get("view") as ViewTab) || "lista";
  const setViewTab = (newView: ViewTab) => setSearchParams(prev => { prev.set("view", newView); return prev; }, { replace: true });
  const [currentMonth, setCurrentMonth] = useState(new Date());
  const [selected, setSelected] = useState<EventItem | null>(null);
@@ -104,11 +110,16 @@ export default function ProfissionalDashboard({
  const [isSyncing, setIsSyncing] = useState(false);
  const [supplyOrders, setSupplyOrders] = useState<SupplyOrder[]>([]);
 
- useEffect(() => {
- const params = new URLSearchParams(location.search);
- const tab = params.get("tab") as ActiveTab;
- if (tab) setActiveTab(tab);
- }, [location.search, setActiveTab]);
+  // NOTE: intentionally only depends on location.search and setActiveTab to avoid
+  // an infinite loop where setActiveTab → URL change → triggers this effect again.
+   
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const tab = params.get("tab") as ActiveTab;
+    if (tab && validTabs.includes(tab)) {
+      setActiveTab(tab);
+    }
+  }, [location.search]); // eslint-disable-line react-hooks/exhaustive-deps
 
  // Network search state
  const [networkSearch, setNetworkSearch] = useState("");
@@ -368,6 +379,8 @@ export default function ProfissionalDashboard({
  // ─── Nav ──────────────────────────────────────────────────────────────────────
 
  const navItems: NavItem[] = useMemo(() => [
+ { label: "Voltar ao Cliente", onClick: () => navigate("/minha-conta?tab=files"), isActive: false, icon: <ArrowLeft size={16} /> },
+ { label: "ÁREA PROFISSIONAL", isHeader: true },
  { 
  label: "Minha Agenda", 
  onClick: () => setActiveTab("agenda"), 
@@ -599,7 +612,7 @@ export default function ProfissionalDashboard({
  {/* Histórico de Pedidos B2B */}
  <div className="bg-theme-bg border border-theme-border p-4 md:p-8 space-y-6 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300">
  <div className="flex items-center justify-between">
- <h3 className="text-xl font-display font-black text-theme-text uppercase tracking-tight">Histórico de Pedidos</h3>
+ <h3 className="text-xl md:text-2xl font-heading font-black uppercase tracking-tight text-theme-text">Histórico de Pedidos</h3>
  <div className="h-px flex-1 bg-theme-border/20 mx-6" />
  </div>
  
@@ -660,7 +673,7 @@ export default function ProfissionalDashboard({
  {/* Histórico de Consumo (Insumos) */}
  <div className="space-y-6">
  <div className="flex items-center justify-between">
- <h3 className="text-xl font-display font-black text-theme-text uppercase tracking-tight">Histórico de Consumo</h3>
+ <h3 className="text-xl md:text-2xl font-heading font-black uppercase tracking-tight text-theme-text">Histórico de Consumo</h3>
  <div className="h-px flex-1 bg-theme-border/20 mx-6" />
  </div>
  <div className="bg-theme-bg border border-theme-border overflow-hidden rounded-2xl shadow-xl">

@@ -6,20 +6,24 @@
   "buttons": [
     "Histórico de Compras",
     "Meus Álbuns",
+    "Minha Carteira",
     "Indique e Ganhe",
     "Meus Dados",
     "1",
     "ENCERRAR SESSÃO",
     "Encerrar Sessão",
-    "PEGAR MEU LINK →",
-    "VER COMPRA",
-    "ACESSAR",
+    "Ver Compra",
+    "Acessar",
     "Home",
     "Buscar",
     "Compras",
     "Opções"
   ],
   "links": [
+    {
+      "text": "COPA 2026\nPRÓXIMOS\nCOR\n11/06 · 23:00\nGRP A\nTCHÉQUIA\nVer Álbum →",
+      "href": "/album-torcida"
+    },
     {
       "text": "VISITAR SITE",
       "href": "/"

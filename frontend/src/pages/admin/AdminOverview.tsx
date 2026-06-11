@@ -60,7 +60,7 @@ export const AdminOverview: React.FC<OverviewProps> = ({ stats, recentOrders = [
         
         <div className="flex flex-col xl:flex-row justify-between items-start xl:items-end gap-3 md:gap-6 relative z-10">
           <div>
-            <h1 className="text-3xl md:text-4xl font-heading font-black uppercase italic tracking-tighter text-theme-text">VISÃO GERAL</h1>
+            <h1 className="text-2xl md:text-4xl font-heading font-black uppercase italic tracking-tighter text-theme-text">VISÃO GERAL</h1>
             <p className="text-theme-muted mt-2 text-sm">Métricas e performance da plataforma</p>
           </div>
         </div>
@@ -102,7 +102,7 @@ export const AdminOverview: React.FC<OverviewProps> = ({ stats, recentOrders = [
 
       {/* Recent Orders Chart */}
       <div className="bg-theme-bg border border-theme-border p-3 md:p-6 rounded-2xl">
-        <h3 className="text-sm font-bold text-theme-text uppercase mb-6 tracking-widest">Evolução de Vendas</h3>
+        <h3 className="fs-section-title">Evolução de Vendas</h3>
         <div className="h-64">
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart data={chartData}>
@@ -117,11 +117,11 @@ export const AdminOverview: React.FC<OverviewProps> = ({ stats, recentOrders = [
 
       {/* Pending Events Section */}
       <div className="bg-theme-bg border border-theme-border p-3 md:p-6 rounded-2xl">
-        <h3 className="text-sm font-bold text-theme-text uppercase mb-6 tracking-widest">Eventos Pendentes</h3>
+        <h3 className="fs-section-title">Eventos Pendentes</h3>
         <div className="space-y-4">
           {pendingEvents.map((event) => (
             <div key={event.id} className="flex items-center justify-between p-4 border border-theme-border rounded-xl">
-              <span className="text-sm font-medium">{event.title}</span>
+              <span className="text-sm font-black text-theme-text">{event.title}</span>
               <button 
                 onClick={() => onEditEvent(event.id)}
                 className="px-4 py-2 text-xs font-bold border border-theme-border text-theme-text hover:bg-theme-bg-muted transition-colors rounded-xl uppercase tracking-widest"

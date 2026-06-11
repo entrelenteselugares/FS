@@ -64,7 +64,7 @@ export function LgpdPage() {
             </h2>
             <div className="bg-theme-bg-muted border border-theme-border p-3 md:p-6 rounded-xl space-y-6">
               <p className="text-theme-text text-sm font-light leading-relaxed">
-                A LGPD garante a você diversos direitos. Na Foto Segundo, facilitamos esse processo através do painel "Minha Conta" ou via requisição direta ao nosso Encarregado de Dados (DPO).
+                A LGPD garante a você diversos direitos. Na Foto Segundo, facilitamos esse processo através do painel &quot;Minha Conta&quot; ou via requisição direta ao nosso Encarregado de Dados (DPO).
               </p>
               <div className="grid sm:grid-cols-2 gap-4">
                 <div className="bg-theme-bg p-4 rounded-lg border border-theme-border">

@@ -35,7 +35,6 @@
 - **Botão:** `Eventos
 9`
 - **Botão:** `Comercial`
-- **Botão:** `Operação`
 - **Botão:** `Rede`
 - **Botão:** `Marketing`
 - **Botão:** `Sistema`
@@ -57,6 +56,13 @@
 
 ## 🔗 Links de Navegação
 
+- **COPA 2026
+PRÓXIMOS
+COR
+11/06 · 23:00
+GRP A
+TCHÉQUIA
+Ver Álbum →** -> `/album-torcida`
 - **VISITAR SITE** -> `/`
 - **Visitar Site** -> `/`
 

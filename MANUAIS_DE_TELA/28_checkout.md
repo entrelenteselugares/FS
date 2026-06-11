@@ -22,7 +22,13 @@ ESTÁ VAZIO
 
 ## 🔗 Links de Navegação
 
-*Nenhum link de navigation detectado.*
+- **COPA 2026
+PRÓXIMOS
+MÉXICO
+11/06 · 16:00
+GRP A
+ÁFR
+Ver Álbum →** -> `/album-torcida`
 
 ## ⚙️ Observações Técnicas e Fluxo
 

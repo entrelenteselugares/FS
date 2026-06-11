@@ -5,6 +5,7 @@ import { Helmet } from "react-helmet-async";
 import { Navbar } from "../components/Navbar";
 import WhatsAppSupport from "../components/WhatsAppSupport";
 import { supabase } from "../lib/supabase";
+import { RealtimeChannel } from "@supabase/supabase-js";
 import { fetchCepData } from "../hooks/useViaCep";
 
 
@@ -109,7 +110,7 @@ export const CheckoutPage = () => {
 
   const brickController = useRef<{ unmount: () => void } | null>(null);
   const initializationStarted = useRef(false);
-  const pollingRef = useRef<any>(null);
+  const pollingRef = useRef<RealtimeChannel | null>(null);
   const { user: authUser, login: authLogin, register: authRegister, loading: authGlobalLoading } = useContext(AuthContext)!;
   const { digitalPhotos, physicalItems, totalPrice, clearCart } = useCart();
 
@@ -431,8 +432,8 @@ export const CheckoutPage = () => {
       )
       .subscribe();
 
-    // Store channel reference as fake interval ID to allow cleanup
-    pollingRef.current = channel as unknown as ReturnType<typeof setInterval>;
+    // Store channel reference for cleanup
+    pollingRef.current = channel as unknown as RealtimeChannel;
 
   }, [stopPolling]);
 
@@ -462,7 +463,7 @@ export const CheckoutPage = () => {
 
     const timer = setTimeout(() => {
        if (order.eventId === "FRANCHISE_SHOP") {
-         navigate("/profissional?tab=franquia");
+         navigate("/minha-conta?tab=franquia");
        } else {
          navigate(`/minha-conta?orderId=${order.id}`);
        }
@@ -850,46 +851,58 @@ export const CheckoutPage = () => {
             </div>
 
             <div className="space-y-4">
-              <div 
-                 className="flex items-center justify-between cursor-pointer group bg-theme-bg-muted border border-white/5 p-4 rounded-xl"
-                 onClick={() => setShowItems(!showItems)}
-              >
-                 <p className="text-[9px] font-black text-zinc-500 group-hover:text-white transition-colors uppercase tracking-widest italic">
-                   Resumo da Seleção ({order.items?.length || 0} {(order.items?.length || 0) === 1 ? 'item' : 'itens'})
-                 </p>
-                 <div className="w-6 h-6 rounded-md border border-white/10 flex items-center justify-center group-hover:border-white/30 group-hover:bg-theme-bg-muted transition-all text-white">
-                    {showItems ? "−" : "+"}
-                 </div>
-              </div>
-              {showItems && (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-2 animate-in slide-in-from-top-2 fade-in duration-300">
-                  {order.items?.map((item) => (
-                    <div key={item.id} className="flex justify-between items-center p-4 bg-theme-bg-muted border border-white/5 rounded-xl">
-                      <div className="flex items-center gap-4">
-                        <div className="w-10 h-10 bg-zinc-900 border border-white/10 flex items-center justify-center rounded-lg overflow-hidden">
-                          {item.media?.url ? (
-                             <img src={item.media.url} alt="Thumb" className="w-full h-full object-cover" />
-                          ) : item.media ? (
-                             <ImageIcon size={14} className="text-brand-tactical" />
-                          ) : (
-                             <Printer size={14} className="text-brand-tactical" />
-                          )}
+              {(order.items?.length ?? 0) > 0 ? (
+                <>
+                  <div 
+                     className="flex items-center justify-between cursor-pointer group bg-theme-bg-muted border border-white/5 p-4 rounded-xl"
+                     onClick={() => setShowItems(!showItems)}
+                  >
+                     <p className="text-[9px] font-black text-zinc-500 group-hover:text-white transition-colors uppercase tracking-widest italic">
+                       Resumo da Seleção ({order.items?.length} {(order.items?.length ?? 0) === 1 ? 'item' : 'itens'})
+                     </p>
+                     <div className="w-6 h-6 rounded-md border border-white/10 flex items-center justify-center group-hover:border-white/30 group-hover:bg-theme-bg-muted transition-all text-white">
+                        {showItems ? "−" : "+"}
+                     </div>
+                  </div>
+                  {showItems && (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-2 animate-in slide-in-from-top-2 fade-in duration-300">
+                      {order.items?.map((item) => (
+                        <div key={item.id} className="flex justify-between items-center p-4 bg-theme-bg-muted border border-white/5 rounded-xl">
+                          <div className="flex items-center gap-4">
+                            <div className="w-10 h-10 bg-zinc-900 border border-white/10 flex items-center justify-center rounded-lg overflow-hidden">
+                              {item.media?.url ? (
+                                 <img src={item.media.url} alt="Thumb" className="w-full h-full object-cover" />
+                              ) : item.media ? (
+                                 <ImageIcon size={14} className="text-brand-tactical" />
+                              ) : (
+                                 <Printer size={14} className="text-brand-tactical" />
+                              )}
+                            </div>
+                            <div className="flex flex-col">
+                              <span className="text-[10px] font-black text-white uppercase italic">
+                                {item.media ? `Foto #${item.media.shortId}` : item.printProduct?.name}
+                              </span>
+                              <span className="text-[8px] text-zinc-500 font-bold uppercase tracking-widest">
+                                {item.media ? "Digital HD" : "Produto Físico"}
+                              </span>
+                            </div>
+                          </div>
+                          <span className="text-xs font-black italic text-white">R$ {Number(item.price).toFixed(2)}</span>
                         </div>
-                        <div className="flex flex-col">
-                          <span className="text-[10px] font-black text-white uppercase italic">
-                            {item.media ? `Foto #${item.media.shortId}` : item.printProduct?.name}
-                          </span>
-                          <span className="text-[8px] text-zinc-500 font-bold uppercase tracking-widest">
-                            {item.media ? "Digital HD" : "Produto Físico"}
-                          </span>
-                        </div>
-                      </div>
-                      <span className="text-xs font-black italic text-white">R$ {Number(item.price).toFixed(2)}</span>
+                      ))}
                     </div>
-                  ))}
+                  )}
+                </>
+              ) : (
+                <div className="flex items-center gap-3 bg-theme-bg-muted border border-white/5 p-4 rounded-xl">
+                  <ShieldCheck size={16} className="text-brand-tactical flex-shrink-0" />
+                  <p className="text-[9px] font-black text-zinc-400 uppercase tracking-widest italic">
+                    {order.manualType || "Upgrade de Serviço"} — Acesso liberado após confirmação do pagamento
+                  </p>
                 </div>
               )}
             </div>
+
 
             {/* Logística Condicional */}
             {order.deliveryType === 'SHIPPING' && authStep === 'authorized' && (

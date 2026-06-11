@@ -63,7 +63,7 @@ export const StickerFrame = ({
 
       {/* Imagem */}
       <div style={{ flex: 1, borderRadius: "6px", overflow: "hidden", position: "relative", border: "1px solid rgba(255,255,255,0.1)" }}>
-        <img src={imageUrl} alt="Figurinha" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+        <img src={imageUrl} alt="Figurinha" style={{ width: "100%", height: "100%", objectFit: "cover" }} loading="lazy" />
       </div>
 
       {/* Legenda inferior */}
@@ -169,13 +169,13 @@ export const MatchFolhaPage = () => {
       if (data.success) {
         setLikes(data.slot.metadata.likes || []);
         
-        // Atualiza a folha no estado principal
         if (folha) {
           const newSlots = folha.slots.map((s: any) => 
             s.slotIndex === selectedPreviewSlot.slotIndex ? data.slot : s
           );
           setFolha({ ...folha, slots: newSlots });
         }
+        if ("vibrate" in navigator) navigator.vibrate(50);
         toast.success(data.slot.metadata.likes.includes(user?.id) ? "Curtido!" : "Curtida removida");
       }
     } catch {

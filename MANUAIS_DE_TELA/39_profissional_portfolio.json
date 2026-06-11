@@ -1,0 +1,31 @@
+{
+  "title": "Foto Segundo | Suas memórias, entregues agora.",
+  "headings": [
+    "GERENCIAR PORTFÓLIO",
+    "STANDUP COMEDY"
+  ],
+  "buttons": [
+    "NOVO ÁLBUM",
+    "Home",
+    "Buscar",
+    "Compras",
+    "Meus Álbuns",
+    "Opções",
+    "Indique e Ganhe",
+    "Meus Dados",
+    "Minha Agenda",
+    "Meu Portfólio",
+    "Serviços & Preços",
+    "Ficha Técnica & Pix",
+    "Vendas & Ganhos",
+    "Gestão de Franquia",
+    "Rede Técnica",
+    "Franquia Print"
+  ],
+  "links": [
+    {
+      "text": "COPA 2026\nPRÓXIMOS\nCOR\n11/06 · 23:00\nGRP A\nTCHÉQUIA\nVer Álbum →",
+      "href": "/album-torcida"
+    }
+  ]
+}

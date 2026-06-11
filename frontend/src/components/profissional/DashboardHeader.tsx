@@ -17,7 +17,7 @@ export function DashboardHeader({ activeTab, viewTab, onViewTabChange, residentU
       
       <div className="flex flex-col xl:flex-row justify-between items-start xl:items-end gap-6 relative z-10">
         <div className="flex items-center gap-4">
-            {residentUnits.length > 0 && (
+            {residentUnits.length > 0 && (activeTab === "agenda" || activeTab === "convites") && (
               <div className="flex items-center gap-2">
                 <ShieldCheck size={14} className="text-brand-tactical" />
                 <p className="text-[11px] font-black text-brand-tactical uppercase tracking-[0.4em] italic">

@@ -310,7 +310,7 @@ export const AdminApprovalHub: React.FC = () => {
                               ))}
                             </div>
                             {app.profissional?.otherHabilities && (
-                              <p className="text-[10px] text-theme-muted line-clamp-2 italic">"{app.profissional.otherHabilities}"</p>
+                              <p className="text-[10px] text-theme-muted line-clamp-2 italic">&quot;{app.profissional.otherHabilities}&quot;</p>
                             )}
                           </div>
                         ) : (

@@ -1,0 +1,40 @@
+{
+  "title": "Foto Segundo | Suas memórias, entregues agora.",
+  "headings": [
+    "CIANORTE EM MOVIMENTO",
+    "SINCRONIZAÇÃO (GOOGLE CALENDAR)"
+  ],
+  "buttons": [
+    "Agenda Tática",
+    "Fluxo Financeiro",
+    "Rede Técnica",
+    "Configuração",
+    "ENCERRAR SESSÃO",
+    "Encerrar Sessão",
+    "CONECTAR CONTA",
+    "Home",
+    "Buscar",
+    "Compras",
+    "Meus Álbuns",
+    "Opções",
+    "Indique e Ganhe",
+    "Meus Dados",
+    "Agenda Unidade",
+    "Franquia Print",
+    "Configuração Pública"
+  ],
+  "links": [
+    {
+      "text": "COPA 2026\nPRÓXIMOS\nMÉXICO\n11/06 · 16:00\nGRP A\nÁFR\nVer Álbum →",
+      "href": "/album-torcida"
+    },
+    {
+      "text": "VISITAR SITE",
+      "href": "/"
+    },
+    {
+      "text": "Visitar Site",
+      "href": "/"
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "title": "Foto Segundo | Suas memórias, entregues agora.",
+  "headings": [
+    "BDAY KURIÓ",
+    "FOTO SEGUNDO"
+  ],
+  "buttons": [
+    "CURADORIA OFICIAL",
+    "LIVE CONNECT",
+    "CINEMATOGRAFIA",
+    "MAIS RECENTES"
+  ],
+  "links": [
+    {
+      "text": "COPA 2026\nPRÓXIMOS\nMÉXICO\n11/06 · 16:00\nGRP A\nÁFR\nVer Álbum →",
+      "href": "/album-torcida"
+    },
+    {
+      "text": "ENVIAR FOTO",
+      "href": "http://localhost:3003/captura?eventId=cmpmy7dq20000jo04306mhl5q"
+    }
+  ]
+}

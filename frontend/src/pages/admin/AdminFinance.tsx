@@ -496,7 +496,7 @@ export const AdminFinance: React.FC = () => {
               </div>
 
               <div className="bg-zinc-950/20 p-4 border border-theme-border italic text-[11px] text-theme-muted leading-relaxed uppercase tracking-widest font-bold">
-                "O faturamento é vaidade, o lucro é sanidade, e o caixa é rei." — Foque em manter a margem acima de 30% para sustentar a escala da Foto Segundo.
+                &quot;O faturamento é vaidade, o lucro é sanidade, e o caixa é rei.&quot; — Foque em manter a margem acima de 30% para sustentar a escala da Foto Segundo.
               </div>
            </div>
 

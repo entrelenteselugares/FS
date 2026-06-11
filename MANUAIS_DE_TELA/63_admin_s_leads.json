@@ -10,7 +10,6 @@
     "Pedidos",
     "Catálogo",
     "Serviços",
-    "Operação",
     "Rede",
     "Marketing",
     "Sistema",
@@ -31,6 +30,10 @@
     "Painel Central"
   ],
   "links": [
+    {
+      "text": "COPA 2026\nPRÓXIMOS\nMÉXICO\n11/06 · 16:00\nGRP A\nÁFR\nVer Álbum →",
+      "href": "/album-torcida"
+    },
     {
       "text": "VISITAR SITE",
       "href": "/"

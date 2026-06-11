@@ -179,7 +179,7 @@ export function BusinessLanding() {
             Quero fazer <span className="text-brand-tactical">Parte</span>
           </h2>
           <p className="text-theme-text-muted font-light mb-10 max-w-lg mx-auto">
-            Entre em contato com nossa equipe com o assunto <strong className="text-theme-text">"Quero ser profissional da rede"</strong> e não se esqueça de incluir o link do seu portfólio.
+            Entre em contato com nossa equipe com o assunto <strong className="text-theme-text">&quot;Quero ser profissional da rede&quot;</strong> e não se esqueça de incluir o link do seu portfólio.
           </p>
           <Link to="/contato" className="inline-block px-3 md:px-6 md:px-12 py-5 bg-brand-tactical text-black font-black uppercase tracking-[0.3em] text-[10px] italic hover:brightness-110 transition-all shadow-2xl shadow-brand-tactical/20">
             Acessar Contato

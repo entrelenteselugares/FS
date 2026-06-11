@@ -1,0 +1,36 @@
+{
+  "title": "Registro — Foto Segundo",
+  "headings": [
+    "SOLICITAR REGISTRO"
+  ],
+  "buttons": [
+    "←\nVITRINE",
+    "CLIENTE PRIVADO",
+    "PROFISSIONAL DA REDE",
+    "UNIDADE FIXA",
+    "FOTO",
+    "VÍDEO",
+    "EDIÇÃO",
+    "IMPRESSÃO",
+    "TRADICIONAL",
+    "MOBILE MAKER",
+    "CONFIRMAR INSCRIÇÃO",
+    "Home",
+    "Buscar",
+    "Compras",
+    "Meus Álbuns",
+    "Opções",
+    "Indique e Ganhe",
+    "Meus Dados"
+  ],
+  "links": [
+    {
+      "text": "COPA 2026\nPRÓXIMOS\nMÉXICO\n11/06 · 16:00\nGRP A\nÁFR\nVer Álbum →",
+      "href": "/album-torcida"
+    },
+    {
+      "text": "FAZER LOGIN",
+      "href": "/login"
+    }
+  ]
+}

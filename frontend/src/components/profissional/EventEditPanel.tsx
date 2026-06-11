@@ -89,7 +89,7 @@ export function EventEditPanel({ event, onUpdated, onClose, onNotify, onOpenPrin
 
 
   // Designer state
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   const designerConfig = (event as any).verticalConfigs?.printDesigner || {};
   const [showLogo, setShowLogo] = useState<boolean>(designerConfig.showLogo ?? true);
   const [showTimestamp, setShowTimestamp] = useState<boolean>(designerConfig.showTimestamp ?? true);
@@ -97,7 +97,7 @@ export function EventEditPanel({ event, onUpdated, onClose, onNotify, onOpenPrin
 
   // Team state
   const [edicaoId, setEdicaoId] = useState<string | null>(event.edicaoId ?? null);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   const [editorName, setEditorName] = useState<string>((event as any).edicao?.nome || "Editor");
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<Partner[]>([]);

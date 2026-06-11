@@ -3,7 +3,7 @@ import { useSearchParams, useNavigate } from "react-router-dom";
 
 import { API } from "../lib/api";
 import { QRCodeSVG } from "qrcode.react";
-import { QrCode, Copy, Check, X, Download, Calendar, DollarSign, Settings, Users2, Camera, Star, ShieldCheck, ArrowRight, Share2, MapPin, Phone, Printer, AlertTriangle, Play, RefreshCw, Activity, Link, FileText } from "lucide-react";
+import { QrCode, Copy, Check, X, Download, Calendar, DollarSign, Settings, Users2, Camera, Star, ShieldCheck, ArrowRight, Share2, MapPin, Phone, Printer, AlertTriangle, Play, RefreshCw, Activity, Link, FileText, ArrowLeft } from "lucide-react";
 import { useAuth } from "../hooks/useAuth";
 import { DashboardLayout, type NavItem } from "../components/DashboardLayout";
 import { TeamTab } from "../components/profissional/TeamTab";
@@ -133,7 +133,9 @@ export default function UnidadeFixaDashboard({
   const navigate = useNavigate();
 
   const localTab = (searchParams.get("tab") as Tab) || (user?.franchiseProfile ? "franquia" : "agenda");
-  const setLocalTab = (newTab: Tab) => setSearchParams(prev => { prev.set("tab", newTab); return prev; }, { replace: true });
+  const setLocalTab = useCallback((newTab: Tab) => {
+    setSearchParams(prev => { prev.set("tab", newTab); return prev; }, { replace: true });
+  }, [setSearchParams]);
   const tab = propActiveTab || localTab;
   const setTab = propSetActiveTab || setLocalTab;
   const [stats, setStats] = useState<UnidadeStats | null>(null);
@@ -357,6 +359,8 @@ export default function UnidadeFixaDashboard({
   };
 
   const NAV_ITEMS = (tab: Tab, setTab: (t: Tab) => void): NavItem[] => [
+    { label: "Voltar ao Cliente", onClick: () => navigate("/minha-conta?tab=files"), isActive: false, icon: <ArrowLeft size={18} /> },
+    { label: "UNIDADE OPERACIONAL", isHeader: true },
     ...(user?.franchiseProfile ? [
       { label: "Franquia Print", onClick: () => setTab("franquia"), isActive: tab === "franquia", icon: <Printer size={18} /> },
       { label: "Monitor de Fila", onClick: () => setTab("monitor"), isActive: tab === "monitor", icon: <Activity size={18} /> }
@@ -421,7 +425,7 @@ export default function UnidadeFixaDashboard({
                </div>
                <div className="space-y-2">
                   <div className="flex items-center gap-3">
-                    <h2 className="text-3xl md:text-5xl font-display font-black text-theme-text uppercase tracking-tighter italic">
+                    <h2 className="text-xl md:text-2xl font-heading font-black uppercase tracking-tight text-theme-text">
                       {stats.user.franchiseProfile.tier}
                     </h2>
                     <span className="px-3 py-1 bg-brand-tactical/10 border border-brand-tactical/30 text-brand-tactical text-[8px] font-black uppercase tracking-[0.2em] italic">Franqueado Verificado</span>
@@ -586,7 +590,7 @@ export default function UnidadeFixaDashboard({
                         {/* Data Column */}
                         <div className="md:w-24 bg-theme-bg-muted p-4 md:p-6 flex flex-col items-center justify-center border-b md:border-b-0 md:border-r border-theme-border group-hover:bg-brand-tactical/10 transition-colors">
                            <span className="text-[8px] font-black text-brand-tactical uppercase tracking-tighter mb-0.5">{new Date(ev.date).toLocaleDateString('pt-BR', { month: 'long' })}</span>
-                           <span className="text-2xl md:text-3xl font-heading font-black text-theme-text italic leading-none">{new Date(ev.date).getDate()}</span>
+                           <span className="text-2xl md:text-4xl font-heading font-black uppercase italic tracking-tighter text-theme-text">{new Date(ev.date).getDate()}</span>
                            <span className="text-[9px] font-bold text-theme-muted uppercase tracking-widest mt-1">{new Date(ev.date).getFullYear()}</span>
                         </div>
 
@@ -596,7 +600,7 @@ export default function UnidadeFixaDashboard({
                               <div className="space-y-2 md:space-y-3">
                                  <div className="flex items-center gap-3">
                                     <div className="w-1.5 h-1.5 rounded-full bg-brand-tactical animate-pulse" />
-                                    <h3 className="text-lg md:text-xl font-heading font-black text-theme-text uppercase italic tracking-tight group-hover:text-brand-tactical transition-colors">{ev.title}</h3>
+                                    <h3 className="text-xl md:text-2xl font-heading font-black uppercase tracking-tight text-theme-text">{ev.title}</h3>
                                  </div>
                                  <div className="flex flex-wrap items-center gap-4 md:gap-6">
                                      <span className="flex items-center gap-2 text-[9px] font-black text-theme-muted uppercase tracking-widest"><MapPin size={10} className="text-brand-tactical" /> {ev.city || (ev.location?.startsWith("CEP:") ? null : ev.location) || "—"}</span>
@@ -660,7 +664,7 @@ export default function UnidadeFixaDashboard({
                       <div className="p-2 bg-brand-tactical/10 rounded-lg">
                         <Calendar size={20} className="text-brand-tactical" />
                       </div>
-                      <h3 className="text-lg md:text-xl font-heading font-black text-theme-text uppercase tracking-tight">
+                      <h3 className="text-xl md:text-2xl font-heading font-black uppercase tracking-tight text-theme-text">
                         Sincronização <span className="text-theme-muted">(Google Calendar)</span>
                       </h3>
                     </div>
@@ -743,7 +747,7 @@ export default function UnidadeFixaDashboard({
                   <ShieldCheck size={100} />
                 </div>
                 <div className="relative z-10 space-y-4 md:space-y-6">
-                  <h3 className="text-xl md:text-2xl font-heading font-black text-theme-text uppercase italic tracking-tight">Consolidação de Repasses</h3>
+                  <h3 className="text-xl md:text-2xl font-heading font-black uppercase tracking-tight text-theme-text">Consolidação de Repasses</h3>
                   <p className="text-[11px] font-bold text-theme-muted uppercase tracking-[0.2em] leading-relaxed max-w-2xl">
                     O fechamento tático da unidade ocorre semanalmente. Créditos são liquidados em <span className="text-brand-tactical">D+7</span> após a consolidação da rede Técnica. Todas as sextas-feiras, os saldos aprovados são transferidos para a conta estratégica designada.
                   </p>
@@ -815,7 +819,7 @@ export default function UnidadeFixaDashboard({
                         <div className="space-y-2">
                           <p className="text-[9px] font-black text-theme-muted uppercase tracking-[0.2em]">Protocolo Semanal · {formatDate(r.payout.weekStart)} — {formatDate(r.payout.weekEnd)}</p>
                           <div className="flex items-center gap-3 md:gap-6">
-                            <span className="text-3xl font-heading font-black italic text-theme-text tracking-tighter group-hover:scale-105 transition-transform origin-left">{formatCurrency(r.amount)}</span>
+                            <span className="text-2xl md:text-4xl font-heading font-black uppercase italic tracking-tighter text-theme-text">{formatCurrency(r.amount)}</span>
                             <div className="flex items-center gap-3 px-3 py-1 rounded-lg bg-theme-bg border border-theme-border">
                                <span className="text-[8px] font-black text-theme-muted uppercase tracking-widest">{r.orderCount} OPERAÇÕES</span>
                             </div>
@@ -861,7 +865,7 @@ export default function UnidadeFixaDashboard({
                 <Printer size={120} />
               </div>
               <div className="relative z-10 space-y-6">
-                <h3 className="text-2xl font-heading font-black text-theme-text uppercase italic tracking-tight">Monitor de Operação Phygital</h3>
+                <h3 className="text-xl md:text-2xl font-heading font-black uppercase tracking-tight text-theme-text">Monitor de Operação Phygital</h3>
                 <p className="text-[11px] font-bold text-theme-muted uppercase tracking-[0.2em] leading-relaxed max-w-3xl">
                   Acompanhe em tempo real a fila de impressão de cada evento. Gerencie capturas pendentes e garanta a entrega instantânea das memórias físicas.
                 </p>
@@ -914,7 +918,7 @@ export default function UnidadeFixaDashboard({
                 <Settings size={120} />
               </div>
               <div className="relative z-10 space-y-4">
-                <h3 className="text-2xl font-heading font-black text-theme-text uppercase italic tracking-tight">Diretrizes e Parâmetros</h3>
+                <h3 className="text-xl md:text-2xl font-heading font-black uppercase tracking-tight text-theme-text">Diretrizes e Parâmetros</h3>
                 <p className="text-[11px] font-bold text-theme-muted uppercase tracking-[0.2em] leading-relaxed max-w-3xl">
                   Configure os vetores estratégicos da sua unidade, desde a liquidação financeira (PIX) até o catálogo técnico de Serviços e presença digital.
                 </p>
@@ -1077,7 +1081,7 @@ export default function UnidadeFixaDashboard({
                       <div className="p-2 bg-brand-tactical/10 rounded-lg">
                         <Share2 size={20} className="text-brand-tactical" />
                       </div>
-                      <h3 className="text-lg md:text-xl font-heading font-black text-theme-text uppercase tracking-tight">
+                      <h3 className="text-xl md:text-2xl font-heading font-black uppercase tracking-tight text-theme-text">
                         Protocolo Digital <span className="text-theme-muted">(Vitrine)</span>
                       </h3>
                     </div>
@@ -1244,7 +1248,7 @@ export default function UnidadeFixaDashboard({
                  <Printer size={120} />
                </div>
                <div className="relative z-10 space-y-4">
-                 <h3 className="text-2xl font-heading font-black text-theme-text uppercase italic tracking-tight">Franquia de Impressão Phygital</h3>
+                 <h3 className="text-xl md:text-2xl font-heading font-black uppercase tracking-tight text-theme-text">Franquia de Impressão Phygital</h3>
                  <p className="text-[11px] font-bold text-theme-muted uppercase tracking-[0.2em] leading-relaxed max-w-3xl">
                    Esta unidade está habilitada como ponto oficial de impressão Foto Segundo. Gerencie seus créditos de impressão e status de operação em tempo real.
                  </p>
@@ -1421,7 +1425,7 @@ export default function UnidadeFixaDashboard({
                 <div className="w-16 h-16 bg-brand-tactical/10 text-brand-tactical flex items-center justify-center mx-auto border border-brand-tactical/20">
                   <QrCode size={32} />
                 </div>
-                <h3 className="text-2xl font-heading font-black text-theme-text uppercase italic tracking-tight">QR Code Tático</h3>
+                <h3 className="text-xl md:text-2xl font-heading font-black uppercase tracking-tight text-theme-text">QR Code Tático</h3>
                 <p className="text-[11px] font-bold text-theme-muted uppercase tracking-widest max-w-xs mx-auto">Imprima para acesso direto via balcão ou compartilhe o protocolo digital.</p>
               </div>
 

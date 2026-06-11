@@ -7,12 +7,14 @@
     "Visão Geral",
     "Eventos\n9",
     "Comercial",
-    "Operação",
     "Rede",
     "Marketing",
     "Sistema",
     "Financeiro",
     "Configurações",
+    "Aprovações",
+    "Impressão (Lab)",
+    "Estoque",
     "56",
     "ENCERRAR SESSÃO",
     "Eventos9",
@@ -34,6 +36,10 @@
     "Painel Central"
   ],
   "links": [
+    {
+      "text": "COPA 2026\nPRÓXIMOS\nMÉXICO\n11/06 · 16:00\nGRP A\nÁFR\nVer Álbum →",
+      "href": "/album-torcida"
+    },
     {
       "text": "VISITAR SITE",
       "href": "/"

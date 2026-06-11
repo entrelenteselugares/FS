@@ -1,23 +1,37 @@
 {
-  "title": "Acesso — Foto Segundo",
+  "title": "",
   "headings": [
-    "ACESSAR CONTA"
+    "MOMENTOS\nInesquecíveis",
+    "ÚLTIMOS REGISTROS(8)",
+    "NA LOJA",
+    "GELIN",
+    "CIANORTE EM MOVIMENTO",
+    "EM CASA",
+    "RENATA MORAES",
+    "RECOMENDO MEDIA",
+    "AMOREIRACELL - PLAYNIGHT",
+    "DSJ",
+    "COMO FUNCIONA",
+    "AGENDAR",
+    "CONFIGURAR",
+    "RESERVAR"
   ],
   "buttons": [
-    "ENTRAR NO SISTEMA"
+    "RC\n▾",
+    "AGENDAR",
+    "EXPLORAR VITRINE",
+    "Home",
+    "Buscar",
+    "Compras",
+    "Meus Álbuns",
+    "Opções",
+    "Indique e Ganhe",
+    "Meus Dados"
   ],
   "links": [
     {
-      "text": "ESQUECI A SENHA →",
-      "href": "/forgot-password"
-    },
-    {
-      "text": "SOLICITAR CADASTRO",
-      "href": "/registro"
-    },
-    {
-      "text": "← VOLTAR PARA A VITRINE",
-      "href": "/"
+      "text": "COPA 2026\nPRÓXIMOS\nMÉXICO\n11/06 · 16:00\nGRP A\nÁFR\nVer Álbum →",
+      "href": "/album-torcida"
     }
   ]
 }

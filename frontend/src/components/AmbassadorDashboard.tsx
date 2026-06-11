@@ -250,7 +250,7 @@ export const AmbassadorDashboard = () => {
                 <div className="border  border-theme-border p-20 text-center space-y-4">
                   <Users size={36} className="mx-auto text-theme-border/20" />
                   <p className="text-[10px] font-black text-theme-muted uppercase tracking-widest italic">Nenhuma campanha ativa.</p>
-                  <p className="text-[9px] text-zinc-600 font-bold max-w-xs mx-auto">Clique em "Gerar Meu Link" para começar a ganhar com indicações.</p>
+                  <p className="text-[9px] text-zinc-600 font-bold max-w-xs mx-auto">Clique em &quot;Gerar Meu Link&quot; para começar a ganhar com indicações.</p>
                 </div>
               ) : (
                 network?.campaigns.map(c => (

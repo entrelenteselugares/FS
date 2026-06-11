@@ -27,7 +27,6 @@
 - **Botão:** `Pedidos`
 - **Botão:** `Catálogo`
 - **Botão:** `Serviços`
-- **Botão:** `Operação`
 - **Botão:** `Rede`
 - **Botão:** `Marketing`
 - **Botão:** `Sistema`
@@ -51,6 +50,13 @@
 
 ## 🔗 Links de Navegação
 
+- **COPA 2026
+PRÓXIMOS
+MÉXICO
+11/06 · 16:00
+GRP A
+ÁFR
+Ver Álbum →** -> `/album-torcida`
 - **VISITAR SITE** -> `/`
 - **Visitar Site** -> `/`
 

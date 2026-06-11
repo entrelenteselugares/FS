@@ -21,12 +21,14 @@
 - **Botão:** `Eventos
 9`
 - **Botão:** `Comercial`
-- **Botão:** `Operação`
 - **Botão:** `Rede`
 - **Botão:** `Marketing`
 - **Botão:** `Sistema`
 - **Botão:** `Financeiro`
 - **Botão:** `Configurações`
+- **Botão:** `Aprovações`
+- **Botão:** `Impressão (Lab)`
+- **Botão:** `Estoque`
 - **Botão:** `56`
 - **Botão:** `ENCERRAR SESSÃO`
 - **Botão:** `Eventos9`
@@ -49,6 +51,13 @@
 
 ## 🔗 Links de Navegação
 
+- **COPA 2026
+PRÓXIMOS
+MÉXICO
+11/06 · 16:00
+GRP A
+ÁFR
+Ver Álbum →** -> `/album-torcida`
 - **VISITAR SITE** -> `/`
 - **Visitar Site** -> `/`
 

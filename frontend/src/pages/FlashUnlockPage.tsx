@@ -167,7 +167,7 @@ const FlashUnlockPage: React.FC = () => {
                 className="w-full py-4 bg-emerald-500 hover:bg-emerald-400 text-black font-black rounded-xl transition-all transform active:scale-[0.98] flex items-center justify-center gap-3 shadow-[0_0_20px_rgba(16,185,129,0.3)]"
               >
                 <Download className="w-6 h-6" />
-                REMOVER MARCA D'ÁGUA E SALVAR
+                REMOVER MARCA D&apos;ÁGUA E SALVAR
               </button>
               
               <button 

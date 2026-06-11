@@ -13,14 +13,21 @@
 
 ## 🌟 Títulos e Seções Encontradas
 
-- ACESSAR CONTA
+- Acessar Conta
 
 ## 🔘 Ações e Botões Disponíveis
 
-- **Botão:** `ENTRAR NO SISTEMA`
+- **Botão:** `Entrar no sistema`
 
 ## 🔗 Links de Navegação
 
+- **COPA 2026
+PRÓXIMOS
+MÉXICO
+11/06 · 16:00
+GRP A
+ÁFR
+Ver Álbum →** -> `/album-torcida`
 - **ESQUECI A SENHA →** -> `/forgot-password`
 - **SOLICITAR CADASTRO** -> `/registro`
 - **← VOLTAR PARA A VITRINE** -> `/`

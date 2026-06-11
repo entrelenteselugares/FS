@@ -1,4 +1,4 @@
-# Manual de Tela — **Álbum da Torcida** — Visualização e figurinhas Copa do Mundo
+# Manual de Tela — **Álbum da Torcida** — Visualização base
 
 ## ℹ️ Informações Gerais
 
@@ -9,7 +9,7 @@
 
 ## 📸 Captura da Tela
 
-![Screenshot de **Álbum da Torcida** — Visualização e figurinhas Copa do Mundo](./screenshots/75_album_torcida.png)
+![Screenshot de **Álbum da Torcida** — Visualização base](./screenshots/75_album_torcida.png)
 
 ## 🌟 Títulos e Seções Encontradas
 
@@ -38,10 +38,10 @@ DA TORCIDA
 
 - **COPA 2026
 PRÓXIMOS
-MÉXICO
-11/06 · 16:00
+COR
+11/06 · 23:00
 GRP A
-ÁFR
+TCHÉQUIA
 Ver Álbum →** -> `/album-torcida`
 - **VOLTAR PARA A HOME** -> `/`
 

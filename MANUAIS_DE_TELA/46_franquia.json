@@ -1,0 +1,50 @@
+{
+  "title": "Foto Segundo | Suas memórias, entregues agora.",
+  "headings": [
+    "COMMAND CENTER",
+    "MONITOR DE INSUMOS",
+    "LOGS DE OPERAÇÃO",
+    "MINHA REDE",
+    "COMISSÕES & FECHAMENTO"
+  ],
+  "buttons": [
+    "Histórico de Compras",
+    "Meus Álbuns",
+    "Indique e Ganhe",
+    "Meus Dados",
+    "Minha Agenda",
+    "Meu Portfólio",
+    "Serviços & Preços",
+    "Ficha Técnica & Pix",
+    "Vendas & Ganhos",
+    "Gestão de Franquia",
+    "Rede Técnica",
+    "Franquia Print",
+    "17",
+    "ENCERRAR SESSÃO",
+    "Encerrar Sessão",
+    "REABASTECER CRÉDITOS (PIX)",
+    "SOLICITAR KIT FÍSICO",
+    "VER TUDO",
+    "SALVAR CUSTOMIZAÇÃO",
+    "EXPORTAR CSV",
+    "Home",
+    "Buscar",
+    "Compras",
+    "Opções"
+  ],
+  "links": [
+    {
+      "text": "COPA 2026\nPRÓXIMOS\nMÉXICO\n11/06 · 16:00\nGRP A\nÁFR\nVer Álbum →",
+      "href": "/album-torcida"
+    },
+    {
+      "text": "VISITAR SITE",
+      "href": "/"
+    },
+    {
+      "text": "Visitar Site",
+      "href": "/"
+    }
+  ]
+}

@@ -21,7 +21,6 @@
 - **Botão:** `Eventos
 9`
 - **Botão:** `Comercial`
-- **Botão:** `Operação`
 - **Botão:** `Rede`
 - **Botão:** `Franquias`
 - **Botão:** `Membros`
@@ -33,12 +32,12 @@
 - **Botão:** `Eventos9`
 - **Botão:** `Encerrar Sessão`
 - **Botão:** `CONVOCAR MEMBRO`
-- **Botão:** `TODOS`
-- **Botão:** `ADMIN`
-- **Botão:** `PROFISSIONAL`
-- **Botão:** `UNIDADE FIXA`
-- **Botão:** `FRANQUEADO`
-- **Botão:** `CLIENTE`
+- **Botão:** `Todos`
+- **Botão:** `Admin`
+- **Botão:** `Profissional`
+- **Botão:** `Unidade Fixa`
+- **Botão:** `Franqueado`
+- **Botão:** `Cliente`
 - **Botão:** `Home`
 - **Botão:** `Buscar`
 - **Botão:** `Compras`
@@ -50,6 +49,13 @@
 
 ## 🔗 Links de Navegação
 
+- **COPA 2026
+PRÓXIMOS
+MÉXICO
+11/06 · 16:00
+GRP A
+ÁFR
+Ver Álbum →** -> `/album-torcida`
 - **VISITAR SITE** -> `/`
 - **Visitar Site** -> `/`
 

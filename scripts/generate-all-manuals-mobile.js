@@ -3,7 +3,7 @@ const { chromium } = require('@playwright/test');
 const fs = require('fs');
 const path = require('path');
 
-const BASE_URL = 'http://localhost:3003';
+const BASE_URL = process.env.BASE_URL || 'http://localhost:3003';
 const MANUAIS_DIR = path.join(__dirname, '..', 'MANUAIS_DE_TELA');
 const SCREENSHOTS_DIR = path.join(MANUAIS_DIR, 'screenshots_mobile');
 const LIST_FILE = path.join(MANUAIS_DIR, 'LISTA-DE-URLS.md');
@@ -175,7 +175,7 @@ async function run() {
       state = cartorioState;
     } else if (item.rawPath.startsWith('/franquia') || item.access.includes('FRANCHISEE')) {
       state = franchiseeState;
-    } else if (item.access.includes('Autenticado')) {
+    } else if (item.access.includes('Autenticado') || item.access.includes('Todos') || item.access.includes('Público')) {
       state = clientState;
     }
     
@@ -215,8 +215,8 @@ async function run() {
         }, activeRole);
         
         // Reload page to apply forced role
-        await page.goto(fullUrl, { waitUntil: 'networkidle', timeout: 20000 });
-        await sleep(2000); // Wait for animations/dynamic renders
+        await page.goto(fullUrl, { waitUntil: 'networkidle', timeout: 30000 });
+        await sleep(3000); // Wait for animations/dynamic renders
         
         // Take full-page screenshot
         const screenshotPath = path.join(SCREENSHOTS_DIR, `${filenameBase}.png`);

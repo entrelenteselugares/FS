@@ -21,7 +21,6 @@
     "Visão Geral",
     "Eventos\n9",
     "Comercial",
-    "Operação",
     "Rede",
     "Marketing",
     "Sistema",
@@ -42,6 +41,10 @@
     "Painel Central"
   ],
   "links": [
+    {
+      "text": "COPA 2026\nPRÓXIMOS\nCOR\n11/06 · 23:00\nGRP A\nTCHÉQUIA\nVer Álbum →",
+      "href": "/album-torcida"
+    },
     {
       "text": "VISITAR SITE",
       "href": "/"

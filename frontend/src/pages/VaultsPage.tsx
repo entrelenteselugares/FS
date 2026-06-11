@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { API as api } from "../lib/api";
 import { useAuth } from "../hooks/useAuth";
 import { motion } from "framer-motion";
-import { Lock, Plus, Images, Users, Loader2, Image as ImageIcon, ShoppingBag, User, Play, Briefcase, DollarSign, Calendar, Printer, Settings, LayoutDashboard } from "lucide-react";
+import { Lock, Plus, Images, Users, Loader2, Image as ImageIcon, ShoppingBag, User, Play, Briefcase, DollarSign, Calendar, Printer, Settings, LayoutDashboard, Wallet, Building2, MapPin } from "lucide-react";
 import { Helmet } from "react-helmet-async";
 import { DashboardLayout } from "../components/DashboardLayout";
 
@@ -223,49 +223,73 @@ export default function VaultsPage() {
   }, [authLoading, user, navigate]);
 
   const NAV_ITEMS = useMemo(() => {
-    const items: Array<{ label: string; onClick?: () => void; isActive?: boolean; icon?: React.ReactNode; isHeader?: boolean }> = [
-      { label: "Histórico de Compras", onClick: () => navigate("/minha-conta?s=files"), isActive: false, icon: <ShoppingBag size={18} /> },
+    const items: Array<{ label: string; onClick?: () => void; isActive?: boolean; icon?: React.ReactNode; isHeader?: boolean; subItems?: any[] }> = [
+      { label: "Histórico de Compras", onClick: () => navigate("/minha-conta?tab=files"), isActive: false, icon: <ShoppingBag size={18} /> },
       { label: "Meus Álbuns", onClick: () => {}, isActive: true, icon: <Lock size={18} /> },
-      { label: "Indique e Ganhe", onClick: () => navigate("/minha-conta?s=affiliate"), isActive: false, icon: <Users size={18} /> },
-      { label: "Meus Dados", onClick: () => navigate("/minha-conta?s=profile"), isActive: false, icon: <User size={18} /> },
+      { label: "Minha Carteira", onClick: () => navigate("/minha-conta?tab=wallet"), isActive: false, icon: <Wallet size={18} /> },
+      { label: "Indique e Ganhe", onClick: () => navigate("/minha-conta?tab=affiliate"), isActive: false, icon: <Users size={18} /> },
+      { label: "Meus Dados", onClick: () => navigate("/minha-conta?tab=profile"), isActive: false, icon: <User size={18} /> },
     ];
 
     const isProOrFranchise = (user?.role === "PROFISSIONAL" || user?.role === "FRANCHISEE" || !!user?.franchiseProfile) && user?.role !== "UNIDADE" && user?.role !== "CARTORIO";
     const isVerified = (user?.verificationStatus === "APPROVED" || user?.isVerified || !!user?.franchiseProfile) && user?.role !== "UNIDADE" && user?.role !== "CARTORIO";
 
     if (isProOrFranchise && isVerified) {
-      items.push(
-        { label: "ÁREA PROFISSIONAL", isHeader: true },
-        { label: "Minha Agenda", onClick: () => navigate("/minha-conta?s=agenda"), isActive: false, icon: <Play size={18} /> },
-        { label: "Meu Portfólio", onClick: () => navigate("/minha-conta?s=portfolio"), isActive: false, icon: <ImageIcon size={18} /> },
-        { label: "Serviços & Preços", onClick: () => navigate("/minha-conta?s=servicos"), isActive: false, icon: <Briefcase size={18} /> },
-        { label: "Ficha Técnica & Pix", onClick: () => navigate("/minha-conta?s=perfil"), isActive: false, icon: <Settings size={18} /> },
-        { label: "Vendas & Ganhos", onClick: () => navigate("/minha-conta?s=financeiro"), isActive: false, icon: <DollarSign size={18} /> }
-      );
+      const proSubItems = [
+        { label: "Minha Agenda", onClick: () => navigate("/minha-conta?tab=agenda"), isActive: false, icon: <Play size={18} /> },
+        { label: "Meu Portfólio", onClick: () => navigate("/minha-conta?tab=portfolio"), isActive: false, icon: <ImageIcon size={18} /> },
+        { label: "Serviços & Preços", onClick: () => navigate("/minha-conta?tab=servicos"), isActive: false, icon: <Briefcase size={18} /> },
+        { label: "Ficha Técnica & Pix", onClick: () => navigate("/minha-conta?tab=perfil"), isActive: false, icon: <Settings size={18} /> },
+        { label: "Vendas & Ganhos", onClick: () => navigate("/minha-conta?tab=financeiro"), isActive: false, icon: <DollarSign size={18} /> }
+      ];
+
+      items.push({
+        label: "Painel Profissional",
+        icon: <Briefcase size={18} />,
+        subItems: proSubItems
+      });
 
       if (user?.role === "FRANCHISEE" || user?.franchiseProfile) {
+        const franchiseSubItems = [];
         if (user?.role === "FRANCHISEE") {
-          items.push(
+          franchiseSubItems.push(
             { label: "Gestão de Franquia", onClick: () => navigate("/franquia"), isActive: false, icon: <LayoutDashboard size={18} /> }
           );
         }
-        items.push(
-          { label: "Rede Técnica", onClick: () => navigate("/minha-conta?s=equipe"), isActive: false, icon: <Users size={18} /> },
-          { label: "Franquia Print", onClick: () => navigate("/minha-conta?s=franquia"), isActive: false, icon: <Printer size={18} /> }
+        franchiseSubItems.push(
+          { label: "Rede Técnica", onClick: () => navigate("/minha-conta?tab=equipe"), isActive: false, icon: <Users size={18} /> },
+          { label: "Franquia Print", onClick: () => navigate("/minha-conta?tab=franquia"), isActive: false, icon: <Printer size={18} /> }
         );
+        
+        items.push({
+          label: "Gestão de Franquia",
+          icon: <Building2 size={18} />,
+          subItems: franchiseSubItems
+        });
       }
     }
 
     if ((user?.role === "CARTORIO" || user?.role === "UNIDADE") && user?.verificationStatus === "APPROVED") {
-      items.push(
-        { label: "ÁREA DA UNIDADE", isHeader: true },
-        { label: "Agenda Unidade", onClick: () => navigate("/minha-conta?s=agenda"), isActive: false, icon: <Play size={18} /> },
-        { label: "Fluxo Financeiro", onClick: () => navigate("/minha-conta?s=financeiro"), isActive: false, icon: <DollarSign size={18} /> },
-        { label: "Rede Técnica", onClick: () => navigate("/minha-conta?s=equipe"), isActive: false, icon: <Users size={18} /> },
-        { label: "Google Calendar", onClick: () => navigate("/minha-conta?s=calendar"), isActive: false, icon: <Calendar size={18} /> },
-        { label: "Franquia Print", onClick: () => navigate("/minha-conta?s=franquia"), isActive: false, icon: <Printer size={18} /> },
-        { label: "Configuração Pública", onClick: () => navigate("/minha-conta?s=configuracoes"), isActive: false, icon: <Settings size={18} /> }
-      );
+      const unitSubItems = [
+        { label: "Agenda Unidade", onClick: () => navigate("/minha-conta?tab=agenda"), isActive: false, icon: <Play size={18} /> },
+        { label: "Fluxo Financeiro", onClick: () => navigate("/minha-conta?tab=financeiro"), isActive: false, icon: <DollarSign size={18} /> },
+        { label: "Rede Técnica", onClick: () => navigate("/minha-conta?tab=equipe"), isActive: false, icon: <Users size={18} /> },
+        { label: "Google Calendar", onClick: () => navigate("/minha-conta?tab=calendar"), isActive: false, icon: <Calendar size={18} /> },
+        { label: "Configuração Pública", onClick: () => navigate("/minha-conta?tab=configuracoes"), isActive: false, icon: <Settings size={18} /> }
+      ];
+
+      if (user?.franchiseProfile) {
+        unitSubItems.push(
+          { label: "Franquia Print", onClick: () => navigate("/minha-conta?tab=franquia"), isActive: false, icon: <Printer size={18} /> },
+          { label: "Monitor de Fila", onClick: () => navigate("/minha-conta?tab=monitor"), isActive: false, icon: <Settings size={18} /> }
+        );
+      }
+
+      items.push({
+        label: "Gestão da Unidade",
+        icon: <MapPin size={18} />,
+        subItems: unitSubItems
+      });
     }
 
     return items;

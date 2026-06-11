@@ -583,7 +583,7 @@ export async function adminUpdateEvent(req: AuthRequest, res: Response): Promise
 
     // 3. Processa GamificaÃ§Ã£o de Agilidade (SLA)
     if (isAddingLinks) {
-      // eslint-disable-next-line @typescript-eslint/no-require-imports
+       
       const { GamificationService } = require("../services/gamification.service");
       GamificationService.processSLA(event.id).catch((e: any) => console.error("Erro ao processar SLA:", e));
     }

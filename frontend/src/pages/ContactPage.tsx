@@ -83,7 +83,7 @@ export function ContactPage() {
             <a href="mailto:profissionais@fotosegundo.com.br" className="text-sm font-bold text-theme-text hover:text-brand-tactical transition-colors flex items-center gap-2 mb-3">
               <MessageSquare size={16} className="text-brand-tactical" /> profissionais@fotosegundo.com.br
             </a>
-            <p className="text-xs text-theme-text-muted font-light">Assunto sugerido: <strong className="text-theme-text">"Quero ser profissional da rede"</strong> (Não esqueça o portfólio!)</p>
+            <p className="text-xs text-theme-text-muted font-light">Assunto sugerido: <strong className="text-theme-text">&quot;Quero ser profissional da rede&quot;</strong> (Não esqueça o portfólio!)</p>
           </div>
 
           {/* Imprensa */}

@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useLayoutEffect } from "react";
 import * as reactWindow from "react-window";
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+ 
 const List = (reactWindow as any).List as React.ElementType;
 import { API } from "../lib/api";
 import { useCart } from "../hooks/useCart";

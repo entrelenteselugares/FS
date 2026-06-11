@@ -380,7 +380,7 @@ export default function PortfolioManage({ isTab = false }: PortfolioManageProps)
                       <div className="border-t border-theme-border p-4">
                         {(!album.images || album.images.length === 0) ? (
                           <div className="py-3 md:py-6 md:py-12 text-center text-[10px] text-theme-muted uppercase tracking-widest border  border-theme-border rounded-xl">
-                            Nenhuma foto neste álbum. Clique em "Adicionar" para enviar.
+                            Nenhuma foto neste álbum. Clique em &quot;Adicionar&quot; para enviar.
                           </div>
                         ) : (
                           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3">

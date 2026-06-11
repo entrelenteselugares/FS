@@ -12,7 +12,7 @@ import {
  Users, Play, CheckCircle2, ArrowRight, 
  ShoppingBag, ShieldCheck, Clock, Image as ImageIcon,
  Zap, Lock, User, AlertTriangle, Briefcase, Building2, Camera,
- DollarSign, Printer, Settings, Sparkles, LayoutDashboard, MapPin
+ DollarSign, Printer, Settings, Sparkles, LayoutDashboard, MapPin, Wallet
 } from "lucide-react";
 import { ProfilePhotoUpload } from "../components/ProfilePhotoUpload";
 import { toast } from "sonner";
@@ -140,35 +140,19 @@ export default function ClienteArea() {
       targetTab = "financeiro";
     }
 
-    const proTabs = ["agenda", "portfolio", "servicos", "financeiro", "perfil", "network"];
-    const unitTabs = ["agenda", "financeiro", "equipe", "configuracoes", "monitor"];
-
-    if (proTabs.includes(targetTab) && (user?.role === "PROFISSIONAL" || user?.role === "FRANCHISEE" || user?.franchiseProfile)) {
-      navigate(`/profissional?tab=${targetTab}`);
-      return;
-    }
-    if (unitTabs.includes(targetTab) && (user?.role === "CARTORIO" || user?.role === "UNIDADE")) {
-      navigate(`/unidade-fixa?tab=${targetTab}`);
-      return;
-    }
-    if (targetTab === "franquia") {
-      navigate(`/franquia`);
+    // REMOVED redirects to /profissional and /unidade-fixa.
+    // ClienteArea will now render these dashboards inline using noLayout={true}.
+    if (targetTab === "franquia" && user?.role === "FRANCHISEE") {
+      navigate("/franquia");
       return;
     }
 
     setSearchParams(prev => {
       prev.set("tab", targetTab);
-      // Manter compatibilidade legada do parâmetro 's' caso outros links dependam disso
-      const searchMap: Record<string, string> = {
-        wallet: "files",
-        files: "files",
-        profile: "menu",
-        affiliate: "affiliate",
-      };
-      prev.set("s", searchMap[targetTab] || targetTab);
+      // Removemos o set('s', ...) para evitar o loop infinito com o useEffect que escuta e deleta 's'
       return prev;
     }, { replace: true });
-  }, [setSearchParams]);
+  }, [setSearchParams, user, navigate]);
  
  // Franchise States
  const [network, setNetwork] = useState<Partner[]>([]);
@@ -184,56 +168,72 @@ export default function ClienteArea() {
  const NAV_ITEMS = useMemo<NavItem[]>(() => {
  const items: NavItem[] = [
   { label: "Histórico de Compras", onClick: () => handleTabChange("files"), isActive: activeTab === "files", icon: <ShoppingBag size={18} /> },
- { label: "Meus Álbuns", onClick: () => navigate("/meus-albuns"), isActive: false, icon: <Lock size={18} /> },
- { label: "Indique e Ganhe", onClick: () => handleTabChange("affiliate"), isActive: activeTab === "affiliate", icon: <Users size={18} /> },
- { label: "Meus Dados", onClick: () => handleTabChange("profile"), isActive: activeTab === "profile", icon: <User size={18} /> },
+  { label: "Meus Álbuns", onClick: () => navigate("/meus-albuns"), isActive: false, icon: <Lock size={18} /> },
+  { label: "Minha Carteira", onClick: () => handleTabChange("wallet"), isActive: activeTab === "wallet", icon: <Wallet size={18} /> },
+  { label: "Indique e Ganhe", onClick: () => handleTabChange("affiliate"), isActive: activeTab === "affiliate", icon: <Users size={18} /> },
+  { label: "Meus Dados", onClick: () => handleTabChange("profile"), isActive: activeTab === "profile", icon: <User size={18} /> },
  ];
 
- const isProOrFranchise = (user?.role === "PROFISSIONAL" || user?.role === "FRANCHISEE" || !!user?.franchiseProfile) && user?.role !== "UNIDADE" && user?.role !== "CARTORIO";
- const isVerified = (user?.verificationStatus === "APPROVED" || !!user?.franchiseProfile) && user?.role !== "UNIDADE" && user?.role !== "CARTORIO";
+  const isProOrFranchise = (user?.role === "PROFISSIONAL" || user?.role === "FRANCHISEE" || !!user?.franchiseProfile) && user?.role !== "UNIDADE" && user?.role !== "CARTORIO";
+  const isVerified = (user?.verificationStatus === "APPROVED" || !!user?.franchiseProfile) && user?.role !== "UNIDADE" && user?.role !== "CARTORIO";
 
- if (isProOrFranchise && isVerified) {
- items.push(
- { label: "ÁREA PROFISSIONAL", isHeader: true },
- { label: "Minha Agenda", onClick: () => handleTabChange("agenda"), isActive: activeTab === "agenda" || activeTab === "convites", icon: <Play size={18} /> },
- { label: "Meu Portfólio", onClick: () => handleTabChange("portfolio"), isActive: activeTab === "portfolio", icon: <ImageIcon size={18} /> },
- { label: "Serviços & Preços", onClick: () => handleTabChange("servicos"), isActive: activeTab === "servicos", icon: <Briefcase size={18} /> },
- { label: "Ficha Técnica & Pix", onClick: () => handleTabChange("perfil"), isActive: activeTab === "perfil", icon: <Settings size={18} /> },
- { label: "Vendas & Ganhos", onClick: () => handleTabChange("financeiro"), isActive: activeTab === "financeiro", icon: <DollarSign size={18} /> }
- );
+  if (isProOrFranchise && isVerified) {
+    const proSubItems: NavItem[] = [
+      { label: "Minha Agenda", onClick: () => handleTabChange("agenda"), isActive: activeTab === "agenda" || activeTab === "convites", icon: <Play size={18} /> },
+      { label: "Meu Portfólio", onClick: () => handleTabChange("portfolio"), isActive: activeTab === "portfolio", icon: <ImageIcon size={18} /> },
+      { label: "Serviços & Preços", onClick: () => handleTabChange("servicos"), isActive: activeTab === "servicos", icon: <Briefcase size={18} /> },
+      { label: "Ficha Técnica & Pix", onClick: () => handleTabChange("perfil"), isActive: activeTab === "perfil", icon: <Settings size={18} /> },
+      { label: "Vendas & Ganhos", onClick: () => handleTabChange("financeiro"), isActive: activeTab === "financeiro", icon: <DollarSign size={18} /> }
+    ];
+    
+    items.push({
+      label: "Painel Profissional",
+      icon: <Briefcase size={18} />,
+      subItems: proSubItems
+    });
 
- if (user?.role === "FRANCHISEE" || user?.franchiseProfile) {
- if (user?.role === "FRANCHISEE") {
- items.push(
- { label: "Gestão de Franquia", onClick: () => navigate("/franquia"), isActive: false, icon: <LayoutDashboard size={18} /> }
- );
- }
- items.push(
- { label: "Rede Técnica", onClick: () => handleTabChange("equipe"), isActive: activeTab === "equipe", icon: <Users size={18} /> },
- { label: "Franquia Print", onClick: () => handleTabChange("franquia"), isActive: activeTab === "franquia", icon: <Printer size={18} /> }
- );
- }
- }
-
- if ((user?.role === "CARTORIO" || user?.role === "UNIDADE") && user?.verificationStatus === "APPROVED") {
-  items.push(
-  { label: "ÁREA DA UNIDADE", isHeader: true },
-  { label: "Agenda Unidade", onClick: () => handleTabChange("agenda"), isActive: activeTab === "agenda", icon: <Play size={18} /> },
-  { label: "Fluxo Financeiro", onClick: () => handleTabChange("financeiro"), isActive: activeTab === "financeiro", icon: <DollarSign size={18} /> },
-  { label: "Rede Técnica", onClick: () => handleTabChange("equipe"), isActive: activeTab === "equipe", icon: <Users size={18} /> },
-  { label: "Configuração Pública", onClick: () => handleTabChange("configuracoes"), isActive: activeTab === "configuracoes", icon: <Settings size={18} /> }
-  );
-  // Franquia Print e Monitor só aparecem se a unidade tiver um ponto de impressão ativo
-  if (user?.franchiseProfile) {
-    items.push(
-      { label: "Franquia Print", onClick: () => handleTabChange("franquia"), isActive: activeTab === "franquia", icon: <Printer size={18} /> },
-      { label: "Monitor de Fila", onClick: () => handleTabChange("monitor"), isActive: activeTab === "monitor", icon: <Settings size={18} /> }
-    );
+    if (user?.role === "FRANCHISEE" || user?.franchiseProfile) {
+      const franchiseSubItems: NavItem[] = [];
+      if (user?.role === "FRANCHISEE") {
+        franchiseSubItems.push({ label: "Gestão de Franquia", onClick: () => navigate("/franquia"), isActive: false, icon: <LayoutDashboard size={18} /> });
+      }
+      franchiseSubItems.push(
+        { label: "Rede Técnica", onClick: () => handleTabChange("equipe"), isActive: activeTab === "equipe", icon: <Users size={18} /> },
+        { label: "Franquia Print", onClick: () => handleTabChange("franquia"), isActive: activeTab === "franquia", icon: <Printer size={18} /> }
+      );
+      
+      items.push({
+        label: "Gestão de Franquia",
+        icon: <Building2 size={18} />,
+        subItems: franchiseSubItems
+      });
+    }
   }
- }
 
- return items;
- }, [user, activeTab, navigate, handleTabChange]);
+  if ((user?.role === "CARTORIO" || user?.role === "UNIDADE") && user?.verificationStatus === "APPROVED") {
+    const unitSubItems: NavItem[] = [
+      { label: "Agenda Unidade", onClick: () => handleTabChange("agenda"), isActive: activeTab === "agenda", icon: <Play size={18} /> },
+      { label: "Fluxo Financeiro", onClick: () => handleTabChange("financeiro"), isActive: activeTab === "financeiro", icon: <DollarSign size={18} /> },
+      { label: "Rede Técnica", onClick: () => handleTabChange("equipe"), isActive: activeTab === "equipe", icon: <Users size={18} /> },
+      { label: "Configuração Pública", onClick: () => handleTabChange("configuracoes"), isActive: activeTab === "configuracoes", icon: <Settings size={18} /> }
+    ];
+    
+    if (user?.franchiseProfile) {
+      unitSubItems.push(
+        { label: "Franquia Print", onClick: () => handleTabChange("franquia"), isActive: activeTab === "franquia", icon: <Printer size={18} /> },
+        { label: "Monitor de Fila", onClick: () => handleTabChange("monitor"), isActive: activeTab === "monitor", icon: <Settings size={18} /> }
+      );
+    }
+
+    items.push({
+      label: "Gestão da Unidade",
+      icon: <MapPin size={18} />,
+      subItems: unitSubItems
+    });
+  }
+
+  return items;
+  }, [user, activeTab, navigate, handleTabChange]);
 
  // Profile States
  const [profileData, setProfileData] = useState({ 
@@ -351,30 +351,14 @@ export default function ClienteArea() {
  useEffect(() => {
   // 1. Atualização instantânea da aba (não bloqueia UX)
   const section = searchParams.get("s");
-  const currentTab = searchParams.get("tab") || "files";
-  const finalTab = section && section !== "files" ? section : currentTab;
-
-  const clientTabs = ["files", "affiliate", "profile", "wallet"];
-  if (finalTab && !clientTabs.includes(finalTab)) {
-    // Redireciona para o lugar certo
-    if (user?.role === "CARTORIO" || user?.role === "UNIDADE") {
-      navigate(`/unidade-fixa?tab=${finalTab}`, { replace: true });
-    } else if (user?.role === "PROFISSIONAL" || user?.role === "FRANCHISEE" || user?.franchiseProfile) {
-      if (finalTab === "franquia") {
-        navigate(`/franquia`, { replace: true });
-      } else {
-        navigate(`/profissional?tab=${finalTab}`, { replace: true });
-      }
-    }
-  } else {
-    if (section) {
-      setSearchParams(prev => {
-        const mapped = section === "menu" ? "profile" : section === "pedidos" ? "files" : section === "fotos" ? "files" : section;
-        prev.set("tab", mapped);
-        prev.delete("s");
-        return prev;
-      }, { replace: true });
-    }
+  
+  if (section) {
+    setSearchParams(prev => {
+      const mapped = section === "menu" ? "profile" : section === "pedidos" ? "files" : section === "fotos" ? "files" : section;
+      prev.set("tab", mapped);
+      prev.delete("s");
+      return prev;
+    }, { replace: true });
   }
 
   // 2. Fetch em background de pedidos
@@ -404,7 +388,7 @@ export default function ClienteArea() {
  API.get("profissional/network").then(r => setNetwork(r.data)).catch(() => {});
  }
  }
- }, [searchParams, handleSelect, fetchPedidos, user]);
+ }, [searchParams, setSearchParams, handleSelect, fetchPedidos, user]);
 
  const handleUpdateProfile = async (e: React.FormEvent) => {
  e.preventDefault();
@@ -574,41 +558,92 @@ export default function ClienteArea() {
  transition={{ duration: 0.3 }}
  className="space-y-4 md:space-y-12"
  >
- {activeTab === "files" ? (
- <div className="space-y-4 md:space-y-10">
- {/* Wallet Header Section */}
- <div className="grid grid-cols-2 gap-3 md:gap-8">
- <div className="relative overflow-hidden bg-theme-bg border-2 border-theme-border p-3 sm:p-5 md:p-8 rounded-2xl transition-all duration-500 hover:border-brand-tactical hover:shadow-[0_0_20px_rgba(133,185,172,0.3)] hover:border-brand-tactical group">
- <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-white/5 to-transparent rotate-45 translate-x-12 -translate-y-12 pointer-events-none" />
- <div className="relative z-10 space-y-2 sm:space-y-4">
- <label className="text-[8px] sm:text-[9px] font-black text-theme-text-muted uppercase tracking-[0.2em] block">Saldo Disponível</label>
- <div className="text-2xl sm:text-5xl md:text-6xl font-black tracking-tighter text-brand-tactical leading-none">
- {formatCurrency(user?.rewardCredits || 0)}
- </div>
- <p className="text-[8px] sm:text-[10px] text-theme-text-muted font-bold leading-normal sm:leading-relaxed uppercase tracking-widest max-w-xs ">
- Use seu saldo para abater em novos pedidos, impressões ou upgrades Phygital.
- </p>
- </div>
- </div>
- <div className="relative overflow-hidden bg-theme-bg border-2 border-theme-border p-3 sm:p-5 md:p-8 rounded-2xl transition-all duration-500 hover:border-brand-tactical hover:shadow-[0_0_20px_rgba(133,185,172,0.3)] hover:border-brand-tactical flex flex-col justify-between gap-3 sm:gap-6 group">
- <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-white/5 to-transparent rotate-45 translate-x-12 -translate-y-12 pointer-events-none" />
- <div className="relative z-10 space-y-2 sm:space-y-4">
- <p className="text-[8px] sm:text-[10px] font-black text-theme-text uppercase tracking-widest flex items-center gap-1.5 sm:gap-2">
- <Zap size={10} className="text-brand-tactical animate-pulse sm:w-3 sm:h-3" /> Como ganhar mais?
- </p>
- <p className="text-[8px] sm:text-[10px] text-theme-text-muted font-bold leading-relaxed uppercase tracking-widest max-w-[280px]">
- Indique amigos e ganhe cashback em todas as compras que eles fizerem na plataforma.
- </p>
- </div>
- <button 
- onClick={() => handleTabChange("affiliate")}
- className="relative z-10 self-start text-[8px] sm:text-[9px] font-black uppercase tracking-[0.2em] text-brand-tactical border border-brand-tactical/30 px-3 sm:px-6 py-2 sm:py-3 hover:bg-brand-tactical hover:text-black transition-all duration-300"
- >
- Pegar meu Link →
- </button>
- </div>
+ {activeTab === "wallet" ? (
+  <div className="space-y-4 md:space-y-10">
+  {/* Wallet Header Section */}
+  <div className="grid grid-cols-2 gap-3 md:gap-8">
+  <div className="relative overflow-hidden bg-theme-bg border-2 border-theme-border p-3 sm:p-5 md:p-8 rounded-2xl transition-all duration-500 hover:border-brand-tactical hover:shadow-[0_0_20px_rgba(133,185,172,0.3)] hover:border-brand-tactical group">
+  <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-white/5 to-transparent rotate-45 translate-x-12 -translate-y-12 pointer-events-none" />
+  <div className="relative z-10 space-y-2 sm:space-y-4">
+  <label className="text-[8px] sm:text-[9px] font-black text-theme-text-muted uppercase tracking-[0.2em] block">Saldo Disponível</label>
+  <div className="text-2xl md:text-4xl font-heading font-black uppercase italic tracking-tighter text-theme-text">
+  {formatCurrency(user?.rewardCredits || 0)}
+  </div>
+  <p className="text-[8px] sm:text-[10px] text-theme-text-muted font-bold leading-normal sm:leading-relaxed uppercase tracking-widest max-w-xs ">
+  Use seu saldo para abater em novos pedidos, impressões ou upgrades Phygital.
+  </p>
+  </div>
+  </div>
+  <div className="relative overflow-hidden bg-theme-bg border-2 border-theme-border p-3 sm:p-5 md:p-8 rounded-2xl transition-all duration-500 hover:border-brand-tactical hover:shadow-[0_0_20px_rgba(133,185,172,0.3)] hover:border-brand-tactical flex flex-col justify-between gap-3 sm:gap-6 group">
+  <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-white/5 to-transparent rotate-45 translate-x-12 -translate-y-12 pointer-events-none" />
+  <div className="relative z-10 space-y-2 sm:space-y-4">
+  <p className="text-[8px] sm:text-[10px] font-black text-theme-text uppercase tracking-widest flex items-center gap-1.5 sm:gap-2">
+  <Zap size={10} className="text-brand-tactical animate-pulse sm:w-3 sm:h-3" /> Como ganhar mais?
+  </p>
+  <p className="text-[8px] sm:text-[10px] text-theme-text-muted font-bold leading-relaxed uppercase tracking-widest max-w-[280px]">
+  Indique amigos e ganhe cashback em todas as compras que eles fizerem na plataforma.
+  </p>
+  </div>
+  <button 
+  onClick={() => handleTabChange("affiliate")}
+  className="relative z-10 self-start text-[8px] sm:text-[9px] font-black uppercase tracking-[0.2em] text-brand-tactical border border-brand-tactical/30 px-3 sm:px-6 py-2 sm:py-3 hover:bg-brand-tactical hover:text-black transition-all duration-300"
+  >
+  Pegar meu Link →
+  </button>
+  </div>
+  </div>
+  
+  {/* ── HISTÓRICO DO LEDGER ── */}
+ <div className="space-y-6">
+ <div className="flex items-center gap-3">
+ <div className="h-0.5 w-6 bg-brand-tactical" />
+ <p className="text-[9px] font-black text-theme-muted uppercase tracking-[0.4em]">Extrato de Recompensas</p>
  </div>
 
+ <div className="bg-theme-bg/60 backdrop-blur-xl border border-white/5 rounded-2xl overflow-hidden shadow-[0_8px_30px_rgb(0,0,0,0.12)]">
+ {user?.gamificationLedger && user.gamificationLedger.length > 0 ? (
+ <div className="divide-y divide-white/5">
+ {user.gamificationLedger.map(item => (
+ <div key={item.id} className="p-5 flex items-center justify-between hover:bg-white/[0.02] transition-all">
+ <div className="space-y-1">
+ <div className="flex items-center gap-2">
+ <div className="w-1.5 h-1.5 rounded-full bg-brand-tactical shadow-[0_0_8px_rgba(133,185,172,0.8)]" />
+ <p className="text-[11px] font-black text-theme-text uppercase tracking-tight">
+ {item.description}
+ </p>
+ </div>
+ <p className="text-[8px] text-theme-text-muted font-bold uppercase tracking-widest ml-3">
+ {new Date(item.createdAt).toLocaleDateString('pt-BR')} • {item.type}
+ </p>
+ </div>
+ <div className="text-right">
+ {(item.amount && Number(item.amount) > 0) ? (
+ <p className="text-[14px] font-black tracking-tight text-brand-tactical">
+ +{formatCurrency(item.amount)}
+ </p>
+ ) : null}
+ {item.points && (
+ <p className="text-[8px] font-black text-theme-text-muted uppercase tracking-widest mt-0.5">
+ +{item.points} pts
+ </p>
+ )}
+ </div>
+ </div>
+ ))}
+ </div>
+ ) : (
+                  <div className="p-5 md:p-10 md:p-14 text-center space-y-4">
+                    <ShoppingBag size={24} className="mx-auto text-theme-border/30 drop-shadow-md mb-2" />
+                    <p className="text-[10px] text-theme-muted uppercase font-bold tracking-widest">
+                      Sua carteira está aguardando as primeiras recompensas.
+                    </p>
+                  </div>
+ )}
+ </div>
+ </div>
+  </div>
+  ) : activeTab === "files" ? (
+ <div className="space-y-4 md:space-y-10">
  {/* Espaçamento tático para as memórias */}
  <div className="h-1 md:h-4" />
 
@@ -635,7 +670,7 @@ export default function ClienteArea() {
                       </div>
                       
                       <div className="relative space-y-2">
-                        <h3 className="text-lg md:text-xl font-heading font-black text-theme-text uppercase tracking-tight">Histórico Vazio</h3>
+                        <h3 className="text-xl md:text-2xl font-heading font-black uppercase tracking-tight text-theme-text">Histórico Vazio</h3>
                         <p className="text-[10px] md:text-[11px] font-bold text-theme-muted uppercase tracking-widest max-w-sm mx-auto leading-relaxed px-4">
                           Você ainda não realizou nenhuma compra. Explore a vitrine ou solicite uma cobertura.
                         </p>
@@ -725,7 +760,7 @@ export default function ClienteArea() {
     onProfileUpdated={() => window.location.reload()} 
   />
  <div className="space-y-2 text-center md:text-left">
- <h2 className="text-xl font-heading font-black text-theme-text uppercase tracking-tight">Meus Dados</h2>
+ <h2 className="text-xl md:text-2xl font-heading font-black uppercase tracking-tight text-theme-text">Meus Dados</h2>
  <p className="text-[11px] font-black text-theme-muted uppercase tracking-[0.4em] ">Gerencie suas informações de contato e entrega</p>
  </div>
  </div>
@@ -809,7 +844,7 @@ export default function ClienteArea() {
  <Briefcase size={24} />
  </div>
  <div className="space-y-1">
- <h3 className="text-lg md:text-xl font-heading font-black text-theme-text uppercase tracking-tight">Seja um Parceiro</h3>
+ <h3 className="text-xl md:text-2xl font-heading font-black uppercase tracking-tight text-theme-text">Seja um Parceiro</h3>
  <p className="text-[9px] md:text-[10px] font-black text-emerald-500 uppercase tracking-[0.4em] ">Transforme sua paixão em faturamento</p>
  </div>
  </div>
@@ -1234,7 +1269,7 @@ function PedidoDetalhe({ pedido, loading, onGoToEvent, onChangePrivacy, onRefres
  {!isEditing && (
  <div className="flex items-end justify-between">
  <div className="min-w-0 flex-1">
- <h3 className="text-2xl md:text-3xl font-heading font-black tracking-tighter uppercase text-theme-text leading-tight truncate">
+ <h3 className="text-xl md:text-2xl font-heading font-black uppercase tracking-tight text-theme-text">
  {pedido.event.type === 'ALBUM_FULL' ? `Álbum: ${pedido.event.title}` : pedido.event.title}
  </h3>
  <p className="text-[9px] font-bold text-theme-muted uppercase tracking-widest mt-1 whitespace-pre-line">

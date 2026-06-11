@@ -1,0 +1,40 @@
+{
+  "title": "Foto Segundo | Suas memórias, entregues agora.",
+  "headings": [
+    "INDIQUE E GANHE",
+    "INDICADOS DIRETOS",
+    "GANHOS DIRETOS (L1)",
+    "REDE INDIRETA (L2)",
+    "GANHOS DE REDE (L2)",
+    "LIBERADO PARA SAQUE",
+    "EM PROCESSAMENTO"
+  ],
+  "buttons": [
+    "Histórico de Compras",
+    "Meus Álbuns",
+    "Minha Carteira",
+    "Indique e Ganhe",
+    "Meus Dados",
+    "1",
+    "ENCERRAR SESSÃO",
+    "Encerrar Sessão",
+    "Home",
+    "Buscar",
+    "Compras",
+    "Opções"
+  ],
+  "links": [
+    {
+      "text": "COPA 2026\nPRÓXIMOS\nMÉXICO\n11/06 · 16:00\nGRP A\nÁFR\nVer Álbum →",
+      "href": "/album-torcida"
+    },
+    {
+      "text": "VISITAR SITE",
+      "href": "/"
+    },
+    {
+      "text": "Visitar Site",
+      "href": "/"
+    }
+  ]
+}

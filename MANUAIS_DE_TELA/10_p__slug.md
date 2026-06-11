@@ -5,7 +5,7 @@
 - **URL:** `/p/:slug`
 - **Caminho Resolvido:** `/p/bday-kurio-mpmxwdgz`
 - **Nível de Acesso:** `Todos`
-- **Título da Página (HTML):** `Acesso — Foto Segundo`
+- **Título da Página (HTML):** `N/A`
 
 ## 📸 Captura da Tela
 
@@ -13,17 +13,45 @@
 
 ## 🌟 Títulos e Seções Encontradas
 
-- ACESSAR CONTA
+- MOMENTOS
+Inesquecíveis
+- ÚLTIMOS REGISTROS(8)
+- NA LOJA
+- GELIN
+- CIANORTE EM MOVIMENTO
+- EM CASA
+- RENATA MORAES
+- RECOMENDO MEDIA
+- AMOREIRACELL - PLAYNIGHT
+- DSJ
+- COMO FUNCIONA
+- AGENDAR
+- CONFIGURAR
+- RESERVAR
 
 ## 🔘 Ações e Botões Disponíveis
 
-- **Botão:** `ENTRAR NO SISTEMA`
+- **Botão:** `RC
+▾`
+- **Botão:** `AGENDAR`
+- **Botão:** `EXPLORAR VITRINE`
+- **Botão:** `Home`
+- **Botão:** `Buscar`
+- **Botão:** `Compras`
+- **Botão:** `Meus Álbuns`
+- **Botão:** `Opções`
+- **Botão:** `Indique e Ganhe`
+- **Botão:** `Meus Dados`
 
 ## 🔗 Links de Navegação
 
-- **ESQUECI A SENHA →** -> `/forgot-password`
-- **SOLICITAR CADASTRO** -> `/registro`
-- **← VOLTAR PARA A VITRINE** -> `/`
+- **COPA 2026
+PRÓXIMOS
+MÉXICO
+11/06 · 16:00
+GRP A
+ÁFR
+Ver Álbum →** -> `/album-torcida`
 
 ## ⚙️ Observações Técnicas e Fluxo
 

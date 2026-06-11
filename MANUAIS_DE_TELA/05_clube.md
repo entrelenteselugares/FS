@@ -22,19 +22,28 @@ MEUS ÁLBUNS
 
 ## 🔘 Ações e Botões Disponíveis
 
-- **Botão:** `LOGIN`
+- **Botão:** `RC
+▾`
 - **Botão:** `AGENDAR`
 - **Botão:** `VOLTAR`
 - **Botão:** `ASSINAR AGORA`
 - **Botão:** `Home`
 - **Botão:** `Buscar`
+- **Botão:** `Compras`
+- **Botão:** `Meus Álbuns`
 - **Botão:** `Opções`
-- **Botão:** `Entrar`
-- **Botão:** `Vitrine de Eventos`
+- **Botão:** `Indique e Ganhe`
+- **Botão:** `Meus Dados`
 
 ## 🔗 Links de Navegação
 
-*Nenhum link de navigation detectado.*
+- **COPA 2026
+PRÓXIMOS
+MÉXICO
+11/06 · 16:00
+GRP A
+ÁFR
+Ver Álbum →** -> `/album-torcida`
 
 ## ⚙️ Observações Técnicas e Fluxo
 

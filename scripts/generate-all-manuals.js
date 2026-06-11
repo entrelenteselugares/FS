@@ -3,7 +3,7 @@ const { chromium } = require('@playwright/test');
 const fs = require('fs');
 const path = require('path');
 
-const BASE_URL = 'http://localhost:3003';
+const BASE_URL = process.env.BASE_URL || 'http://localhost:3003';
 const MANUAIS_DIR = path.join(__dirname, '..', 'MANUAIS_DE_TELA');
 const SCREENSHOTS_DIR = path.join(MANUAIS_DIR, 'screenshots');
 const LIST_FILE = path.join(MANUAIS_DIR, 'LISTA-DE-URLS.md');
@@ -163,7 +163,7 @@ async function run() {
   try {
     clientState = await loginAndGetState(browser, ACCOUNTS.CLIENT.email, ACCOUNTS.CLIENT.password);
     proState = await loginAndGetState(browser, ACCOUNTS.PRO.email, ACCOUNTS.PRO.password);
-    adminState = await loginAndGetState(browser, ACCOUNTS.ADMIN.email, ACCOUNTS.ADMIN.password);
+    adminState = await loginAndGetState(browser, 'contatofotosegundo@gmail.com', ACCOUNTS.ADMIN.password);
     cartorioState = await loginAndGetState(browser, ACCOUNTS.CARTORIO.email, ACCOUNTS.CARTORIO.password);
     franchiseeState = await loginAndGetState(browser, ACCOUNTS.FRANCHISEE.email, ACCOUNTS.FRANCHISEE.password);
   } catch (err) {
@@ -188,7 +188,7 @@ async function run() {
       state = cartorioState;
     } else if (item.rawPath.startsWith('/franquia') || item.access.includes('FRANCHISEE')) {
       state = franchiseeState;
-    } else if (item.access.includes('Autenticado')) {
+    } else if (item.access.includes('Autenticado') || item.access.includes('Todos') || item.access.includes('Público')) {
       state = clientState;
     }
     
@@ -227,8 +227,8 @@ async function run() {
         }, activeRole);
         
         // Reload page to apply forced role
-        await page.goto(fullUrl, { waitUntil: 'networkidle', timeout: 20000 });
-        await sleep(2000); // Wait for animations/dynamic renders
+        await page.goto(fullUrl, { waitUntil: 'networkidle', timeout: 30000 });
+        await sleep(3000); // Wait for animations/dynamic renders
         
         // Take full-page screenshot
         const screenshotPath = path.join(SCREENSHOTS_DIR, `${filenameBase}.png`);

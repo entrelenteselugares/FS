@@ -38,8 +38,8 @@
 | 18  | `/login`                       | **Login** — Acesso com e-mail e senha                              | Público | ✅     |
 | 19  | `/auth`                        | **Seleção de Tipo de Acesso** — Escolha entre cliente/profissional | Público | ✅     |
 | 20  | `/registro?role=CLIENTE`       | **Cadastro** — Criação de conta (Modalidade Cliente)               | Público | ✅     |
-| 20a | `/registro?role=PROFISSIONAL`  | **Cadastro** — Criação de conta (Modalidade Profissional)          | Público | ❌     |
-| 20b | `/registro?role=UNIDADE`       | **Cadastro** — Criação de conta (Modalidade Unidade/Ponto Fixo)    | Público | ❌     |
+| 20a | `/registro?role=PROFISSIONAL`  | **Cadastro** — Criação de conta (Modalidade Profissional)          | Público | ✅     |
+| 20b | `/registro?role=UNIDADE`       | **Cadastro** — Criação de conta (Modalidade Unidade/Ponto Fixo)    | Público | ✅     |
 | 21  | `/register`                    | **Cadastro** — Alias de /registro                                  | Público | ✅     |
 | 22  | `/forgot-password`             | **Esqueci minha Senha**                                            | Público | ✅     |
 | 23  | `/reset-password`              | **Redefinir Senha** — Via link do e-mail                           | Público | ✅     |
@@ -66,15 +66,10 @@
 | #   | URL                         | Descrição                                                  | Acesso       | Manual |
 | --- | --------------------------- | ---------------------------------------------------------- | ------------ | ------ |
 | 30  | `/minha-conta`              | **Dashboard do Cliente** — Visão geral de pedidos e perfil | Autenticado  | ✅     |
-| 31  | `/minha-conta?tab=perfil`     | **Aba: Perfil** — Dados pessoais e foto                    | Autenticado  | ✅     |
-| 32  | `/minha-conta?tab=files`      | **Aba: Meus Pedidos** — Histórico de pedidos e álbuns      | Autenticado  | ✅     |
-| 33  | `/minha-conta?tab=wallet`     | **Aba: Carteira / Créditos**                               | Autenticado  | ✅     |
-| 34  | `/minha-conta?tab=affiliate`  | **Aba: Afiliado** — Programa de indicação                  | Autenticado  | ✅     |
-| 35  | `/profissional?tab=agenda`     | **Aba: Agenda** — Próximos eventos                         | PROFISSIONAL | ✅     |
-| 36  | `/profissional?tab=financeiro` | **Aba: Financeiro** — Ganhos e repasses                    | PROFISSIONAL | ✅     |
-| 37  | `/profissional?tab=servicos`   | **Aba: Serviços** — Pacotes ofertados                      | PROFISSIONAL | ✅     |
-| 38  | `/profissional?tab=portfolio`  | **Aba: Portfólio** — Gestão do portfólio                   | PROFISSIONAL | ✅     |
-| 39  | `/profissional?tab=perfil`     | **Aba: Perfil Profissional** — Configurações de conta      | PROFISSIONAL | ✅     |
+| 31  | `/minha-conta?tab=profile`  | **Aba: Perfil** — Dados pessoais e foto                    | Autenticado  | ✅     |
+| 32  | `/minha-conta?tab=files`    | **Aba: Meus Pedidos** — Histórico de pedidos e álbuns      | Autenticado  | ✅     |
+| 33  | `/minha-conta?tab=wallet`   | **Aba: Carteira / Créditos**                               | Autenticado  | ✅     |
+| 34  | `/minha-conta?tab=affiliate`| **Aba: Afiliado** — Programa de indicação                  | Autenticado  | ✅     |
 
 ---
 
@@ -82,12 +77,16 @@
 
 | #   | URL                                         | Descrição                                                               | Acesso       | Manual |
 | --- | ------------------------------------------- | ----------------------------------------------------------------------- | ------------ | ------ |
-| 40  | `/profissional`                             | **Dashboard do Profissional** — Visão geral com missões e ganhos        | PROFISSIONAL | ✅     |
+| 35  | `/profissional`                             | **Dashboard do Profissional** — Visão geral com missões e ganhos        | PROFISSIONAL | ✅     |
+| 36  | `/profissional?tab=agenda`                  | **Aba: Agenda** — Próximos eventos                                      | PROFISSIONAL | ✅     |
+| 37  | `/profissional?tab=financeiro`              | **Aba: Financeiro** — Ganhos e repasses                                 | PROFISSIONAL | ✅     |
+| 38  | `/profissional?tab=servicos`                | **Aba: Serviços** — Pacotes ofertados                                   | PROFISSIONAL | ✅     |
+| 39  | `/profissional/portfolio`                   | **Aba: Portfólio** — Gestão do portfólio                                | PROFISSIONAL | ✅     |
+| 40  | `/profissional?tab=perfil`                  | **Aba: Perfil Profissional** — Configurações de conta                   | PROFISSIONAL | ✅     |
 | 41  | `/profissional/novo-servico`                | **Novo Serviço Customizado** — Formulário para criar serviço sob medida | PROFISSIONAL | ✅     |
-| 42  | `/profissional/portfolio`                   | **Gestão de Portfólio** — Upload e organização de fotos                 | PROFISSIONAL | ✅     |
-| 43  | `/profissional/monitor/:eventId`            | **Monitor de Impressão** — Painel de monitoramento ao vivo de evento    | PROFISSIONAL | ✅     |
-| 44  | `/profissional/monitor/:eventId/full`       | **Monitor Fullscreen** — Versão tela cheia do monitor                   | PROFISSIONAL | ✅     |
-| 45  | `/profissional/monitor/:eventId/fullscreen` | **Monitor Fullscreen** — Alias de /monitor/:eventId/full                | PROFISSIONAL | ✅     |
+| 42  | `/profissional/monitor/:eventId`            | **Monitor de Impressão** — Painel de monitoramento ao vivo de evento    | PROFISSIONAL | ✅     |
+| 43  | `/profissional/monitor/:eventId/full`       | **Monitor Fullscreen** — Versão tela cheia do monitor                   | PROFISSIONAL | ✅     |
+| 44  | `/profissional/monitor/:eventId/fullscreen` | **Monitor Fullscreen** — Alias de /monitor/:eventId/full                | PROFISSIONAL | ✅     |
 
 ---
 
@@ -95,7 +94,7 @@
 
 | #   | URL             | Descrição                                                     | Acesso             | Manual |
 | --- | --------------- | ------------------------------------------------------------- | ------------------ | ------ |
-| 46  | `/unidade-fixa` | **Dashboard da Unidade** — Gestão de eventos da casa parceira | CARTORIO / UNIDADE | ✅     |
+| 45  | `/unidade-fixa` | **Dashboard da Unidade** — Gestão de eventos da casa parceira | CARTORIO / UNIDADE | ✅     |
 
 ---
 
@@ -103,7 +102,7 @@
 
 | #   | URL         | Descrição                                            | Acesso     | Manual |
 | --- | ----------- | ---------------------------------------------------- | ---------- | ------ |
-| 47  | `/franquia` | **Dashboard da Franquia** — Hub B2B para franqueados | FRANCHISEE | ✅     |
+| 46  | `/franquia` | **Dashboard da Franquia** — Hub B2B para franqueados | FRANCHISEE | ✅     |
 
 ---
 

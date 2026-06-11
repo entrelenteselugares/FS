@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Check, X, ChevronLeft, ChevronRight, Trash2 } from "lucide-react";
@@ -22,6 +22,142 @@ interface TouchSelectionGalleryProps {
   onDeleteMedia?: (mediaId: string) => void;
   allowFreeDownload?: boolean;
 }
+
+const GalleryItem = React.memo(({ 
+  m, idx, isSelected, isUnlocked, isOwner, allowFreeDownload, 
+  onToggleCart, onDeleteMedia, handleTouchStart, handleTouchEnd, handlePhotoClick 
+}: any) => {
+  const displayUrl = m.url;
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ delay: (idx % 20) * 0.03 }}
+      className={`relative aspect-[3/4] overflow-hidden border-2 transition-all duration-300 active:scale-95 select-none ${
+        isUnlocked ? "border-brand-tactical shadow-lg shadow-brand-tactical/10" : 
+        isSelected ? "border-emerald-500 scale-95 shadow-xl shadow-emerald-500/20" : 
+        "border-theme-border"
+      }`}
+      onTouchStart={() => !isUnlocked && handleTouchStart(m.shortId, m.url)}
+      onTouchEnd={handleTouchEnd}
+      onTouchMove={handleTouchEnd}
+      onClick={() => handlePhotoClick(idx, m)}
+    >
+      {m.shortId.startsWith('V') || m.type === 'VIDEO' ? (
+        <video
+          src={getProxyUrl(displayUrl)}
+          className={`w-full h-full object-cover transition-all duration-700 ${
+            isSelected ? "opacity-40" : "opacity-100"
+          } ${!isUnlocked && "blur-[0.5px]"}`}
+          preload="metadata"
+          muted
+          playsInline
+          autoPlay
+          loop
+        />
+      ) : (
+        <img
+          src={getProxyUrl(displayUrl)}
+          alt={m.shortId}
+          className={`w-full h-full object-cover transition-all duration-700 ${
+            isSelected ? "opacity-40" : "opacity-100"
+          } ${!isUnlocked && "blur-[0.5px]"}`}
+          loading="lazy"
+        />
+      )}
+
+      {/* Watermark Overlay for locked images */}
+      {!isUnlocked && (
+        <div className="absolute inset-[-50%] pointer-events-none flex items-center justify-center overflow-hidden z-10" style={{ transform: "rotate(-30deg)" }}>
+           <div className="flex flex-wrap justify-center items-center gap-12 md:gap-16 w-full h-full opacity-50">
+             {Array.from({ length: 60 }).map((_, i) => (
+               <img 
+                 key={i}
+                 src="/logo.png" 
+                 alt="Watermark" 
+                 className="w-[100px] select-none pointer-events-none shrink-0" 
+                 style={{ filter: "var(--logo-filter) drop-shadow(0px 4px 6px rgba(0,0,0,0.5))" }} 
+               />
+             ))}
+           </div>
+        </div>
+      )}
+
+      {/* Botão de Seleção Rápida (Shortcut Selection Button) */}
+      {!isUnlocked && (
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            onToggleCart(m.shortId, m.url);
+          }}
+          className={`absolute top-3 right-3 w-7 h-7 rounded-full flex items-center justify-center border backdrop-blur-md transition-all active:scale-90 z-20 ${
+            isSelected
+              ? "bg-emerald-500 border-emerald-400 text-black shadow-lg shadow-emerald-500/30"
+              : "bg-black/40 border-white/30 text-white/70 hover:bg-white hover:text-black hover:border-white"
+          }`}
+        >
+          <Check size={14} strokeWidth={isSelected ? 4 : 2} className={isSelected ? "opacity-100" : "opacity-100"} />
+        </button>
+      )}
+
+      {/* Botão de Excluir Foto (Apenas Owner) */}
+      {isOwner && onDeleteMedia && (
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            if (window.confirm(`Tem certeza que deseja excluir a foto #${m.shortId}?`)) {
+              onDeleteMedia(m.id);
+            }
+          }}
+          className="absolute top-3 left-3 w-7 h-7 rounded-full flex items-center justify-center border border-red-500/50 bg-black/60 text-red-400 hover:bg-red-500 hover:text-white hover:border-red-500 backdrop-blur-md transition-all active:scale-90 z-20"
+          title="Excluir foto"
+        >
+          <Trash2 size={12} />
+        </button>
+      )}
+
+      {/* Selection Badge */}
+      {isSelected && (
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+          <div className="w-12 h-12 bg-emerald-500 rounded-full flex items-center justify-center text-black shadow-2xl">
+            <Check size={24} strokeWidth={4} />
+          </div>
+        </div>
+      )}
+
+      {/* Status Info */}
+      <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/80 to-transparent flex items-center justify-between">
+        <span className="text-[10px] font-black text-white italic opacity-80">#{m.shortId}</span>
+        {allowFreeDownload && (
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              const dlUrl = m.url;
+              const a = document.createElement('a');
+              a.href = getProxyUrl(dlUrl);
+              a.download = `foto-${m.shortId}.jpg`;
+              a.click();
+            }}
+            className="w-7 h-7 bg-brand-tactical/90 rounded-full flex items-center justify-center text-black hover:bg-brand-tactical transition-all z-20"
+            title="Baixar Foto"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
+          </button>
+        )}
+      </div>
+    </motion.div>
+  );
+}, (prevProps, nextProps) => {
+  return (
+    prevProps.isSelected === nextProps.isSelected &&
+    prevProps.isUnlocked === nextProps.isUnlocked &&
+    prevProps.isOwner === nextProps.isOwner &&
+    prevProps.allowFreeDownload === nextProps.allowFreeDownload &&
+    prevProps.m.id === nextProps.m.id &&
+    prevProps.idx === nextProps.idx
+  );
+});
+GalleryItem.displayName = "GalleryItem";
 
 export const TouchSelectionGallery: React.FC<TouchSelectionGalleryProps> = ({
   medias,
@@ -49,37 +185,39 @@ export const TouchSelectionGallery: React.FC<TouchSelectionGalleryProps> = ({
     };
   }, [fullscreenIndex]);
 
-  const handleTouchStart = (shortId: string, url: string) => {
+  const latestProps = useRef({ isSelectMode, onToggleCart });
+  useEffect(() => {
+    latestProps.current = { isSelectMode, onToggleCart };
+  }, [isSelectMode, onToggleCart]);
+
+  const handleTouchStart = useCallback((shortId: string, url: string) => {
     longPressTimer.current = setTimeout(() => {
       setIsSelectMode(true);
-      onToggleCart(shortId, url);
+      latestProps.current.onToggleCart(shortId, url);
       if ("vibrate" in navigator) navigator.vibrate(50);
     }, 600);
-  };
+  }, []);
 
-  const handleTouchEnd = () => {
+  const handleTouchEnd = useCallback(() => {
     if (longPressTimer.current) clearTimeout(longPressTimer.current);
-  };
+  }, []);
 
-  const handlePhotoClick = (index: number, m: Media) => {
-    if (isSelectMode) {
-      onToggleCart(m.shortId, m.url);
+  const handlePhotoClick = useCallback((index: number, m: Media) => {
+    if (latestProps.current.isSelectMode) {
+      if ("vibrate" in navigator) navigator.vibrate(20);
+      latestProps.current.onToggleCart(m.shortId, m.url);
     } else {
       setFullscreenIndex(index);
     }
-  };
+  }, []);
 
-  const nextPhoto = () => {
-    if (fullscreenIndex !== null && fullscreenIndex < medias.length - 1) {
-      setFullscreenIndex(fullscreenIndex + 1);
-    }
-  };
+  const nextPhoto = useCallback(() => {
+    setFullscreenIndex((prev) => (prev !== null && prev < medias.length - 1 ? prev + 1 : prev));
+  }, [medias.length]);
 
-  const prevPhoto = () => {
-    if (fullscreenIndex !== null && fullscreenIndex > 0) {
-      setFullscreenIndex(fullscreenIndex - 1);
-    }
-  };
+  const prevPhoto = useCallback(() => {
+    setFullscreenIndex((prev) => (prev !== null && prev > 0 ? prev - 1 : prev));
+  }, []);
 
   return (
     <div className="space-y-8">
@@ -111,128 +249,21 @@ export const TouchSelectionGallery: React.FC<TouchSelectionGalleryProps> = ({
           const isSelected = selectedIds.includes(m.shortId);
           const isUnlocked = allowFreeDownload || unlockedIds.includes(m.shortId) || unlockedIds.includes(m.id);
           
-          const displayUrl = m.url;
-
           return (
-            <motion.div
+            <GalleryItem 
               key={m.id}
-              layout
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: (idx % 20) * 0.03 }}
-              className={`relative aspect-[3/4] overflow-hidden border-2 transition-all duration-300 active:scale-95 select-none ${
-                isUnlocked ? "border-brand-tactical shadow-lg shadow-brand-tactical/10" : 
-                isSelected ? "border-emerald-500 scale-95 shadow-xl shadow-emerald-500/20" : 
-                "border-theme-border"
-              }`}
-              onTouchStart={() => !isUnlocked && handleTouchStart(m.shortId, m.url)}
-              onTouchEnd={handleTouchEnd}
-              onTouchMove={handleTouchEnd}
-              onClick={() => handlePhotoClick(idx, m)}
-            >
-              {m.shortId.startsWith('V') || m.type === 'VIDEO' ? (
-                <video
-                  src={getProxyUrl(displayUrl)}
-                  className={`w-full h-full object-cover transition-all duration-700 ${
-                    isSelected ? "opacity-40" : "opacity-100"
-                  } ${!isUnlocked && "blur-[0.5px]"}`}
-                  preload="metadata"
-                  muted
-                  playsInline
-                  autoPlay
-                  loop
-                />
-              ) : (
-                <img
-                  src={getProxyUrl(displayUrl)}
-                  alt={m.shortId}
-                  className={`w-full h-full object-cover transition-all duration-700 ${
-                    isSelected ? "opacity-40" : "opacity-100"
-                  } ${!isUnlocked && "blur-[0.5px]"}`}
-                  loading="lazy"
-                />
-              )}
-
-              {/* Watermark Overlay for locked images */}
-              {!isUnlocked && (
-                <div className="absolute inset-[-50%] pointer-events-none flex items-center justify-center overflow-hidden z-10" style={{ transform: "rotate(-30deg)" }}>
-                   <div className="flex flex-wrap justify-center items-center gap-12 md:gap-16 w-full h-full opacity-50">
-                     {Array.from({ length: 60 }).map((_, i) => (
-                       <img 
-                         key={i}
-                         src="/logo.png" 
-                         alt="Watermark" 
-                         className="w-[100px] select-none pointer-events-none shrink-0" 
-                         style={{ filter: "var(--logo-filter) drop-shadow(0px 4px 6px rgba(0,0,0,0.5))" }} 
-                       />
-                     ))}
-                   </div>
-                </div>
-              )}
-
-              {/* Botão de Seleção Rápida (Shortcut Selection Button) */}
-              {!isUnlocked && (
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onToggleCart(m.shortId, m.url);
-                  }}
-                  className={`absolute top-3 right-3 w-7 h-7 rounded-full flex items-center justify-center border backdrop-blur-md transition-all active:scale-90 z-20 ${
-                    isSelected
-                      ? "bg-emerald-500 border-emerald-400 text-black shadow-lg shadow-emerald-500/30"
-                      : "bg-black/40 border-white/30 text-white/70 hover:bg-white hover:text-black hover:border-white"
-                  }`}
-                >
-                  <Check size={14} strokeWidth={isSelected ? 4 : 2} className={isSelected ? "opacity-100" : "opacity-100"} />
-                </button>
-              )}
-
-              {/* Botão de Excluir Foto (Apenas Owner) */}
-              {isOwner && onDeleteMedia && (
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    if (window.confirm(`Tem certeza que deseja excluir a foto #${m.shortId}?`)) {
-                      onDeleteMedia(m.id);
-                    }
-                  }}
-                  className="absolute top-3 left-3 w-7 h-7 rounded-full flex items-center justify-center border border-red-500/50 bg-black/60 text-red-400 hover:bg-red-500 hover:text-white hover:border-red-500 backdrop-blur-md transition-all active:scale-90 z-20"
-                  title="Excluir foto"
-                >
-                  <Trash2 size={12} />
-                </button>
-              )}
-
-              {/* Selection Badge */}
-              {isSelected && (
-                <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                  <div className="w-12 h-12 bg-emerald-500 rounded-full flex items-center justify-center text-black shadow-2xl">
-                    <Check size={24} strokeWidth={4} />
-                  </div>
-                </div>
-              )}
-
-              {/* Status Info */}
-              <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/80 to-transparent flex items-center justify-between">
-                <span className="text-[10px] font-black text-white italic opacity-80">#{m.shortId}</span>
-                {allowFreeDownload && (
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      const dlUrl = m.url;
-                      const a = document.createElement('a');
-                      a.href = getProxyUrl(dlUrl);
-                      a.download = `foto-${m.shortId}.jpg`;
-                      a.click();
-                    }}
-                    className="w-7 h-7 bg-brand-tactical/90 rounded-full flex items-center justify-center text-black hover:bg-brand-tactical transition-all z-20"
-                    title="Baixar Foto"
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
-                  </button>
-                )}
-              </div>
-            </motion.div>
+              m={m}
+              idx={idx}
+              isSelected={isSelected}
+              isUnlocked={isUnlocked}
+              isOwner={isOwner}
+              allowFreeDownload={allowFreeDownload}
+              onToggleCart={onToggleCart}
+              onDeleteMedia={onDeleteMedia}
+              handleTouchStart={handleTouchStart}
+              handleTouchEnd={handleTouchEnd}
+              handlePhotoClick={handlePhotoClick}
+            />
           );
         })}
       </div>

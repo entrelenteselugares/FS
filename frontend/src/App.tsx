@@ -126,20 +126,22 @@ const AnimatedRoutes = () => {
             <Route path="/lgpd" element={<ProtectedRoute><LgpdPage /></ProtectedRoute>} />
             <Route path="/contato" element={<ProtectedRoute><ContactPage /></ProtectedRoute>} />
             <Route path="/status" element={<ProtectedRoute><StatusPage /></ProtectedRoute>} />
+            <Route path="/vitrine" element={<ProtectedRoute><ProfissionaisPage /></ProtectedRoute>} />
+            <Route path="/profissionais" element={<ProtectedRoute><ProfissionaisPage /></ProtectedRoute>} />
+            <Route path="/pro/:id" element={<ProtectedRoute><ProfissionalProfilePage /></ProtectedRoute>} />
+            <Route path="/p/:slug" element={<ProtectedRoute><PartnerLP /></ProtectedRoute>} />
+            <Route path="/suporte" element={<ProtectedRoute><HelpPage /></ProtectedRoute>} />
+            
             <Route path="/e/:slug" element={<ProtectedRoute><EventPage /></ProtectedRoute>} />
             <Route path="/cotacao" element={<ProtectedRoute><QuotePage /></ProtectedRoute>} />
             <Route path="/cotacao/pacotes" element={<ProtectedRoute><PackageFlowPage /></ProtectedRoute>} />
             <Route path="/cotacao/unidades" element={<ProtectedRoute><PartnerFlowPage /></ProtectedRoute>} />
             <Route path="/cotacao/customizado" element={<ProtectedRoute><CustomFlowPage /></ProtectedRoute>} />
-            <Route path="/p/:slug" element={<ProtectedRoute><PartnerLP /></ProtectedRoute>} />
             <Route path="/checkout" element={<ProtectedRoute><CheckoutPage /></ProtectedRoute>} />
             <Route path="/checkout/:orderId" element={<ProtectedRoute><CheckoutPage /></ProtectedRoute>} />
             <Route path="/delivery/:id" element={<ProtectedRoute><LuxuryExperiencePage /></ProtectedRoute>} />
             <Route path="/captura" element={<ProtectedRoute><PhygitalCapture /></ProtectedRoute>} />
             <Route path="/phygital-capture" element={<ProtectedRoute><PhygitalCapture /></ProtectedRoute>} />
-            <Route path="/vitrine" element={<ProtectedRoute><ProfissionaisPage /></ProtectedRoute>} />
-            <Route path="/profissionais" element={<ProtectedRoute><ProfissionaisPage /></ProtectedRoute>} />
-            <Route path="/pro/:id" element={<ProtectedRoute><ProfissionalProfilePage /></ProtectedRoute>} />
             <Route path="/negocios" element={<ProtectedRoute><BusinessLanding /></ProtectedRoute>} />
             <Route path="/clube" element={<ProtectedRoute><ClubLandingPage /></ProtectedRoute>} />
             <Route path="/flash/:shortId" element={<ProtectedRoute><FlashUnlockPage /></ProtectedRoute>} />

@@ -23,7 +23,13 @@
 
 ## 🔗 Links de Navegação
 
-*Nenhum link de navigation detectado.*
+- **COPA 2026
+PRÓXIMOS
+COR
+11/06 · 23:00
+GRP A
+TCHÉQUIA
+Ver Álbum →** -> `/album-torcida`
 
 ## ⚙️ Observações Técnicas e Fluxo
 

@@ -29,7 +29,7 @@ import {
   LayoutDashboard, 
   Camera, 
   Users, 
-  Printer, 
+
   Briefcase,
   Settings,
   TrendingUp
@@ -54,14 +54,6 @@ const NAV_ITEMS = (activeTab: string, setActiveTab: (t: string) => void, stats: 
       ]
     },
     {
-      label: "Operação", icon: <Printer size={16} />, hide: role === 'FRANCHISEE',
-      subItems: [
-        { label: "Impressão",      onClick: () => setActiveTab("printers"),      isActive: activeTab === "printers" },
-        { label: "Estoque",        onClick: () => setActiveTab("inventory"),     isActive: activeTab === "inventory" },
-        { label: "Aprovações",     onClick: () => setActiveTab("approvals"),     isActive: activeTab === "approvals" },
-      ]
-    },
-    {
       label: "Rede", icon: <Users size={16} />,
       subItems: [
         { label: "Franquias",      onClick: () => setActiveTab("franchises"),    isActive: activeTab === "franchises" },
@@ -83,6 +75,9 @@ const NAV_ITEMS = (activeTab: string, setActiveTab: (t: string) => void, stats: 
       subItems: [
         { label: "Financeiro",     onClick: () => setActiveTab("finance"),       isActive: activeTab === "finance", icon: <Settings size={16} />, isPrimaryMobile: true },
         { label: "Configurações",  onClick: () => setActiveTab("settings"),      isActive: activeTab === "settings" },
+        { label: "Aprovações",     onClick: () => setActiveTab("approvals"),     isActive: activeTab === "approvals" },
+        { label: "Impressão (Lab)",onClick: () => setActiveTab("printers"),      isActive: activeTab === "printers" },
+        { label: "Estoque",        onClick: () => setActiveTab("inventory"),     isActive: activeTab === "inventory" },
       ]
     }
   ];
@@ -201,6 +196,8 @@ export const AdminDashboard: React.FC = () => {
       return data;
     },
     enabled: user?.role === "ADMIN",
+    staleTime: 5 * 60 * 1000,
+    refetchOnWindowFocus: false,
   });
 
   const stats = statsData?.stats ?? null;

@@ -29,7 +29,7 @@ export function TermsPage() {
           <div className="mt-8 p-3 md:p-6 bg-theme-bg-muted border border-theme-border rounded-2xl flex items-start gap-4">
             <FileText className="text-brand-tactical shrink-0 mt-1" size={24} />
             <p className="text-sm md:text-base text-theme-text font-light leading-relaxed">
-              Ao acessar ou utilizar a plataforma Foto Segundo ("Plataforma"), você concorda com estes Termos de Uso. Se não concordar com qualquer parte, não utilize a Plataforma.
+              Ao acessar ou utilizar a plataforma Foto Segundo (&quot;Plataforma&quot;), você concorda com estes Termos de Uso. Se não concordar com qualquer parte, não utilize a Plataforma.
             </p>
           </div>
         </div>

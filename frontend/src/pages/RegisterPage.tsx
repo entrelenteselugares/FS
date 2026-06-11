@@ -8,7 +8,8 @@ import { fetchCepData } from "../hooks/useViaCep";
 
 export const RegisterPage: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
-  const role = (searchParams.get("role") || "CLIENTE") as "CLIENTE" | "PROFISSIONAL" | "CARTORIO";
+  const rawRole = searchParams.get("role")?.toUpperCase() || "CLIENTE";
+  const role = (rawRole === "UNIDADE" ? "CARTORIO" : rawRole) as "CLIENTE" | "PROFISSIONAL" | "CARTORIO";
   
   // Detecta convite de álbum pendente via ?next= ou localStorage
   const nextUrl = searchParams.get("next") || "";
@@ -17,7 +18,7 @@ export const RegisterPage: React.FC = () => {
 
   const updateRole = (newRole: string) => {
     setSearchParams(prev => {
-      prev.set("role", newRole);
+      prev.set("role", newRole === "CARTORIO" ? "UNIDADE" : newRole);
       return prev;
     }, { replace: true });
   };

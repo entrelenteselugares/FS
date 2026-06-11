@@ -26,7 +26,7 @@ function formatBSB(utcStr: string) {
  */
 export const AlbumTorcidaPromoBanner = () => {
   const nextBrasil = NEXT_MATCHES.find(
-    // eslint-disable-next-line react-hooks/purity
+     
     (m) => new Date(m.utc).getTime() > Date.now()
   ) ?? NEXT_MATCHES[0];
 

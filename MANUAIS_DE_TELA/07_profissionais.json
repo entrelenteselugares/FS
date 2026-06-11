@@ -2,7 +2,6 @@
   "title": "Foto Segundo | Suas memórias, entregues agora.",
   "headings": [
     "DIRETÓRIO DE\nPROFISSIONAIS",
-    "MATHEUS ROCHA",
     "RENATA MORAES",
     "LUIZ CARLOS EDUARDO DA SILVA",
     "RC - PROFISSIONAL",
@@ -16,61 +15,63 @@
     "FRANQUEADO DIAMANTE"
   ],
   "buttons": [
-    "LOGIN",
+    "RC\n▾",
     "AGENDAR",
     "Home",
     "Buscar",
+    "Compras",
+    "Meus Álbuns",
     "Opções",
-    "Entrar",
-    "Vitrine de Eventos"
+    "Indique e Ganhe",
+    "Meus Dados"
   ],
   "links": [
     {
-      "text": "PRO\nMATHEUS ROCHA\n\nJARDIM SÃO JOÃO, CAMPINAS\n\nFOTO\nVÍDEO\nEDIÇÃO\nIMPRESSÃO\n\n7\n\nANOS\n\n0\n\nMISSÕES\n\n0\n\nPONTOS",
-      "href": "/pro/cmpmxqfg70006l804jgntjybn"
+      "text": "COPA 2026\nPRÓXIMOS\nCOR\n11/06 · 23:00\nGRP A\nTCHÉQUIA\nVer Álbum →",
+      "href": "/album-torcida"
     },
     {
-      "text": "PRO\nRENATA MORAES\n\nCONJUNTO RESIDENCIAL PARQUE SÃO BENTO, CAMPINAS\n\nFOTO\n\n0\n\nANOS\n\n0\n\nMISSÕES\n\n0\n\nPONTOS",
+      "text": "PRO\nRENATA MORAES\n\nCONJUNTO RESIDENCIAL PARQUE SÃO BENTO, CAMPINAS\n\nFOTO\n\n0\n\nANOS\n\n0\n\nMIS.\n\n0\n\nPTS",
       "href": "/pro/cmpmxqow3000cl804br1kl3zb"
     },
     {
-      "text": "LC\nPRO\nLUIZ CARLOS EDUARDO DA SILVA\n\nJARDIM CAPIVARI, CAMPINAS\n\nFOTO\nVÍDEO\nEDIÇÃO\n\n0\n\nANOS\n\n0\n\nMISSÕES\n\n0\n\nPONTOS",
+      "text": "LC\nPRO\nLUIZ CARLOS EDUARDO DA SILVA\n\nJARDIM CAPIVARI, CAMPINAS\n\nFOTO\nVÍDEO\nEDIÇÃ.\n\n0\n\nANOS\n\n0\n\nMIS.\n\n0\n\nPTS",
       "href": "/pro/cmpmxr57i000jl804dlbx78wi"
     },
     {
-      "text": "R-\nPRO\nRC - PROFISSIONAL\nFOTO\nVÍDEO\nEDIÇÃO\nIMPRESSÃO\n\n0\n\nANOS\n\n0\n\nMISSÕES\n\n0\n\nPONTOS",
+      "text": "R-\nPRO\nRC - PROFISSIONAL\nFOTO\nVÍDEO\nEDIÇÃ.\n+1\n\n0\n\nANOS\n\n0\n\nMIS.\n\n0\n\nPTS",
       "href": "/pro/cmq49tthk0002js04vyd5uy5x"
     },
     {
-      "text": "BP\nPRO\nBR PRO FOTOGRAFO\n\n0\n\nANOS\n\n0\n\nMISSÕES\n\n0\n\nPONTOS",
+      "text": "BP\nPRO\nBR PRO FOTOGRAFO\n\n0\n\nANOS\n\n0\n\nMIS.\n\n0\n\nPTS",
       "href": "/pro/cmq565j720003vz7c4zv1fqap"
     },
     {
-      "text": "BP\nPRO\nBR PRO EDITOR\n\n0\n\nANOS\n\n0\n\nMISSÕES\n\n0\n\nPONTOS",
+      "text": "BP\nPRO\nBR PRO EDITOR\n\n0\n\nANOS\n\n0\n\nMIS.\n\n0\n\nPTS",
       "href": "/pro/cmq565jby0006vz7cqw7xlp3j"
     },
     {
-      "text": "BP\nPRO\nBR PRO HIBRIDO\n\n0\n\nANOS\n\n0\n\nMISSÕES\n\n0\n\nPONTOS",
+      "text": "BP\nPRO\nBR PRO HIBRIDO\n\n0\n\nANOS\n\n0\n\nMIS.\n\n0\n\nPTS",
       "href": "/pro/cmq565jgd0009vz7cd2h5tdsq"
     },
     {
-      "text": "BP\nPRO\nBR PRO MOBILE\n\n0\n\nANOS\n\n0\n\nMISSÕES\n\n0\n\nPONTOS",
+      "text": "BP\nPRO\nBR PRO MOBILE\n\n0\n\nANOS\n\n0\n\nMIS.\n\n0\n\nPTS",
       "href": "/pro/cmq565jkr000cvz7chrvkciin"
     },
     {
-      "text": "BP\nPRO\nBR PRO MOBILE HIBRIDO\n\n0\n\nANOS\n\n0\n\nMISSÕES\n\n0\n\nPONTOS",
+      "text": "BP\nPRO\nBR PRO MOBILE HIBRIDO\n\n0\n\nANOS\n\n0\n\nMIS.\n\n0\n\nPTS",
       "href": "/pro/cmq565jp4000fvz7cr7u8e4lo"
     },
     {
-      "text": "FB\nPRO\nFRANQUEADO BRONZE\n\n0\n\nANOS\n\n0\n\nMISSÕES\n\n0\n\nPONTOS",
+      "text": "FB\nPRO\nFRANQUEADO BRONZE\n\n0\n\nANOS\n\n0\n\nMIS.\n\n0\n\nPTS",
       "href": "/pro/cmq565kbr000xvz7cwamkuony"
     },
     {
-      "text": "FO\nPRO\nFRANQUEADO OURO\n\n0\n\nANOS\n\n0\n\nMISSÕES\n\n0\n\nPONTOS",
+      "text": "FO\nPRO\nFRANQUEADO OURO\n\n0\n\nANOS\n\n0\n\nMIS.\n\n0\n\nPTS",
       "href": "/pro/cmq565kg40010vz7cwa7dmvhe"
     },
     {
-      "text": "FD\nPRO\nFRANQUEADO DIAMANTE\n\n0\n\nANOS\n\n0\n\nMISSÕES\n\n0\n\nPONTOS",
+      "text": "FD\nPRO\nFRANQUEADO DIAMANTE\n\n0\n\nANOS\n\n0\n\nMIS.\n\n0\n\nPTS",
       "href": "/pro/cmq565kkn0013vz7cboreogj7"
     }
   ]

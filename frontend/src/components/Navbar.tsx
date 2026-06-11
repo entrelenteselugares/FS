@@ -55,9 +55,8 @@ export const Navbar: React.FC<NavbarProps> = ({ tenantLogoUrl }) => {
         </div>
 
         <div className="flex items-center gap-2">
-          <div className="mobile-hide md:flex items-center gap-2">
+          <div className="flex items-center gap-2">
             <ThemeToggle />
-            <span style={{ fontSize: 16 }}>🇧🇷</span>
           </div>
 
           <button 
@@ -91,7 +90,8 @@ export const Navbar: React.FC<NavbarProps> = ({ tenantLogoUrl }) => {
                     {user.nome?.[0] || "?"}
                   </div>
                 )}
-                {user.nome?.split(" ")[0] || "CONTA"} <span style={{ fontSize: 8, marginLeft: 2 }}>▾</span>
+                <span className="hidden sm:inline">{user.nome?.split(" ")[0] || "CONTA"}</span> 
+                <span className="hidden sm:inline" style={{ fontSize: 8, marginLeft: 2 }}>▾</span>
               </button>
               {userMenu && (
                 <div style={{ 
@@ -111,7 +111,7 @@ export const Navbar: React.FC<NavbarProps> = ({ tenantLogoUrl }) => {
             </button>
           )}
           
-          <button onClick={() => navigate("/cotacao")} style={{ ...BtnPrimary, fontSize: 9, padding: "8px 12px", whiteSpace: 'nowrap' }}>
+          <button onClick={() => navigate("/cotacao")} className="hidden sm:block" style={{ ...BtnPrimary, fontSize: 9, padding: "8px 12px", whiteSpace: 'nowrap' }}>
             Agendar
           </button>
         </div>

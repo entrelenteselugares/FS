@@ -47,7 +47,7 @@ function createPrismaClient(): PrismaClient {
     });
 
     const adapter = new PrismaPg(pool);
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+     
     return new PrismaClient({ adapter, log: [...log] } as any);
   }
 

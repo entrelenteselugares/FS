@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
+ 
 // 
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronLeft, CheckCircle2, MapPin, Building2, ArrowRight } from "lucide-react";

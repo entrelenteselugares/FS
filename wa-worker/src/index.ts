@@ -22,6 +22,7 @@ let isConnected = false;
 const processedMessageIds = new Set<string>();
 
 async function initWhatsApp() {
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   const { state, saveCreds } = await useMultiFileAuthState('./whatsapp-session');
 
   let version: [number, number, number] = [2, 3000, 1015907484];

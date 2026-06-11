@@ -19,14 +19,14 @@
 
 - **Botão:** `Histórico de Compras`
 - **Botão:** `Meus Álbuns`
+- **Botão:** `Minha Carteira`
 - **Botão:** `Indique e Ganhe`
 - **Botão:** `Meus Dados`
 - **Botão:** `1`
 - **Botão:** `ENCERRAR SESSÃO`
 - **Botão:** `Encerrar Sessão`
-- **Botão:** `PEGAR MEU LINK →`
-- **Botão:** `VER COMPRA`
-- **Botão:** `ACESSAR`
+- **Botão:** `Ver Compra`
+- **Botão:** `Acessar`
 - **Botão:** `Home`
 - **Botão:** `Buscar`
 - **Botão:** `Compras`
@@ -34,6 +34,13 @@
 
 ## 🔗 Links de Navegação
 
+- **COPA 2026
+PRÓXIMOS
+COR
+11/06 · 23:00
+GRP A
+TCHÉQUIA
+Ver Álbum →** -> `/album-torcida`
 - **VISITAR SITE** -> `/`
 - **Visitar Site** -> `/`
 

@@ -1,4 +1,4 @@
-# Manual de Tela — **Entrega Luxury** — Experiência de entrega premium das fotos
+# Manual de Tela — **Entrega Luxury** — Visão geral oficial do evento
 
 ## ℹ️ Informações Gerais
 
@@ -9,7 +9,7 @@
 
 ## 📸 Captura da Tela
 
-![Screenshot de **Entrega Luxury** — Experiência de entrega premium das fotos](./screenshots/68_delivery__id.png)
+![Screenshot de **Entrega Luxury** — Visão geral oficial do evento](./screenshots/68_delivery__id.png)
 
 ## 🌟 Títulos e Seções Encontradas
 
@@ -21,7 +21,13 @@
 
 ## 🔗 Links de Navegação
 
-*Nenhum link de navigation detectado.*
+- **COPA 2026
+PRÓXIMOS
+MÉXICO
+11/06 · 16:00
+GRP A
+ÁFR
+Ver Álbum →** -> `/album-torcida`
 
 ## ⚙️ Observações Técnicas e Fluxo
 

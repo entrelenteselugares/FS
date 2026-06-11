@@ -1,12 +1,16 @@
 {
   "title": "Acesso — Foto Segundo",
   "headings": [
-    "ACESSAR CONTA"
+    "Acessar Conta"
   ],
   "buttons": [
-    "ENTRAR NO SISTEMA"
+    "Entrar no sistema"
   ],
   "links": [
+    {
+      "text": "COPA 2026\nPRÓXIMOS\nMÉXICO\n11/06 · 16:00\nGRP A\nÁFR\nVer Álbum →",
+      "href": "/album-torcida"
+    },
     {
       "text": "ESQUECI A SENHA →",
       "href": "/forgot-password"

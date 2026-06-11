@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, Suspense, lazy } from "react";
 import { createPortal } from "react-dom";
 import { useEventStatus } from "../hooks/useEventStatus";
 import { Check, Printer, QrCode, ShoppingCart, Share2, ChevronRight, ChevronLeft, Image as ImageIcon, Camera, MapPin, Clock, ShieldCheck, CheckCircle2, Lock, UserCircle, Search, X, ExternalLink, Download, Archive } from "lucide-react";
@@ -16,10 +16,10 @@ import { Navbar } from "../components/Navbar";
 import SEO from "../components/SEO";
 import { getProxyUrl } from "../lib/utils/media";
 import LeadCapture from "../components/LeadCapture";
-import { PrintStoreModal } from "../components/PrintStoreModal";
-import { PrintKitModal } from "../components/PrintKitModal";
+const PrintStoreModal = lazy(() => import("../components/PrintStoreModal").then(m => ({ default: m.PrintStoreModal })));
+const PrintKitModal = lazy(() => import("../components/PrintKitModal").then(m => ({ default: m.PrintKitModal })));
 import { motion, AnimatePresence } from "framer-motion";
-import { EventEditPanel } from "../components/profissional/EventEditPanel";
+const EventEditPanel = lazy(() => import("../components/profissional/EventEditPanel").then(m => ({ default: m.EventEditPanel })));
 import type { EventItem } from "../components/profissional/types";
 import { TouchSelectionGallery } from "../components/TouchSelectionGallery";
 import { SchoolAuthenticationGate } from "../components/SchoolAuthenticationGate";
@@ -573,12 +573,17 @@ export default function EventPage() {
       return () => clearTimeout(timer);
     }
     if (searchParams.get("action") === "camera") {
+      if (event?.id) {
+        // Redirect directly to the camera capture route
+        window.location.href = `/phygital-capture?e=${event.id}`;
+      }
+    }
+    if (searchParams.get("action") === "qr") {
       setShowQrModal(true);
-      // Clean url to avoid opening again on reload
       const newUrl = window.location.pathname;
       window.history.replaceState({}, '', newUrl);
     }
-  }, [searchParams, step]);
+  }, [searchParams, step, event?.id]);
 
   const handleDeleteMedia = async (mediaId: string) => {
     try {
@@ -718,7 +723,15 @@ return (
              className="absolute top-6 left-6 z-50 flex items-center gap-2 px-5 py-2.5 bg-theme-bg/60 backdrop-blur-md border border-theme-border rounded-full text-theme-text hover:bg-brand-tactical hover:text-black transition-all shadow-xl"
           >
              <ChevronLeft size={16} />
-             <span className="text-[10px] font-black uppercase tracking-widest">Voltar</span>
+             <span className="text-[10px] font-black uppercase tracking-widest hidden md:inline">Voltar</span>
+          </button>
+
+          <button 
+             onClick={() => navigate(`/captura?eventId=${event.id}`)} 
+             className="absolute top-6 right-6 z-50 flex items-center gap-2 px-5 py-2.5 bg-brand-tactical text-black backdrop-blur-md border border-brand-tactical/50 rounded-full hover:brightness-110 transition-all shadow-[0_0_20px_rgba(16,185,129,0.3)]"
+          >
+             <Camera size={16} />
+             <span className="text-[10px] font-black uppercase tracking-widest">Câmera</span>
           </button>
           {/* Header Visual Cinematográfico (Compacto) */}
           <div className="relative min-h-[35vh] lg:min-h-[45vh] shrink-0 overflow-hidden flex flex-col justify-end">
@@ -889,9 +902,12 @@ return (
                 <CountdownTimer targetDate={event.dataEvento || ""} />
               </motion.div>
               
-              <div className="pt-8">
-                <button onClick={handleShare} className="px-3 md:px-6 md:px-12 py-5 border border-brand-tactical/30 text-[10px] font-black text-brand-tactical uppercase tracking-[0.4em] hover:bg-brand-tactical hover:text-black transition-all italic flex items-center gap-3 hover-lift">
+              <div className="pt-8 flex items-center gap-4 flex-wrap">
+                <button onClick={handleShare} className="px-3 md:px-6 py-5 border border-brand-tactical/30 text-[10px] font-black text-brand-tactical uppercase tracking-[0.4em] hover:bg-brand-tactical hover:text-black transition-all italic flex items-center gap-3 hover-lift">
                   <Share2 size={16} /> CONVIDAR AMIGOS
+                </button>
+                <button onClick={() => setShowQrModal(true)} className="px-3 md:px-6 py-5 border border-brand-tactical/30 text-[10px] font-black text-brand-tactical uppercase tracking-[0.4em] hover:bg-brand-tactical hover:text-black transition-all italic flex items-center gap-3 hover-lift">
+                  <QrCode size={16} /> QR CODE DE ACESSO
                 </button>
               </div>
             </div>
@@ -1154,10 +1170,10 @@ return (
                     <ShieldCheck size={16} className="text-brand-tactical" />
                     <span className="text-[10px] font-black text-brand-tactical uppercase tracking-widest italic">Gestão Tática do Evento</span>
                  </div>
-                 <div className="grid grid-cols-2 lg:grid-cols-1 gap-2">
+                 <div className="grid grid-cols-2 gap-2">
                     <button 
                       onClick={() => qrOpen && setShowQrModal(true)}
-                      className={`w-full py-4 bg-[var(--bg-card)] border border-brand-tactical/30 text-brand-tactical text-[9px] lg:text-[10px] font-black uppercase tracking-widest transition-all italic flex items-center justify-center gap-3 ${!qrOpen ? 'opacity-30 cursor-not-allowed grayscale' : 'hover:bg-brand-tactical hover:text-black'}`}
+                      className={`w-full py-4 bg-[var(--bg-card)] border border-brand-tactical/30 text-brand-tactical text-[9px] lg:text-[10px] font-black uppercase tracking-widest transition-all italic flex items-center justify-center gap-2 ${!qrOpen ? 'opacity-30 cursor-not-allowed grayscale' : 'hover:bg-brand-tactical hover:text-black'}`}
                       disabled={!qrOpen}
                     >
                       <QrCode size={16} /> {!qrOpen ? 'ENCERRADAS' : 'QR CODE'}
@@ -1167,7 +1183,7 @@ return (
                         onClick={() => {
                           setIsEditingEvent(true);
                         }}
-                        className="w-full py-4 border border-theme-border text-theme-text-muted text-[9px] lg:text-[10px] font-black uppercase tracking-widest hover:text-theme-text hover:border-theme-border hover:bg-theme-bg-muted transition-all italic flex items-center justify-center gap-3 col-span-2 lg:col-span-1"
+                        className="w-full py-4 border border-theme-border text-theme-text-muted text-[9px] lg:text-[10px] font-black uppercase tracking-widest hover:text-theme-text hover:border-theme-border hover:bg-theme-bg-muted transition-all italic flex items-center justify-center gap-2"
                       >
                         <Camera size={16} /> CONFIGURAÇÕES
                       </button>
@@ -1438,16 +1454,23 @@ return (
           <AuthModal onSuccess={() => setStep("success")} onClose={() => setStep("paywall")} />
         )
       )}
-      {showPrintStore && <PrintStoreModal eventId={event.id} eventTitle={event.title} medias={medias} unlockedMediaIds={event.unlockedMediaIds} isMarketplace={isMarketplace} isOwner={event.isOwner} onClose={() => setShowPrintStore(false)} />}
-      {showPrintKit && (
-        <PrintKitModal
-          eventId={event.id}
-          eventSlug={event.slug || undefined}
-          eventTitle={event.title}
-          eventDate={event.dataEvento || undefined}
-          tenantLogoUrl={event.tenantLogoUrl || undefined}
-          onClose={() => setShowPrintKit(false)}
-        />
+      {showPrintStore && (
+        <Suspense fallback={<div className="fixed inset-0 z-[300] flex items-center justify-center p-4 bg-theme-bg/80 backdrop-blur-xl"><div className="w-8 h-8 border-4 border-brand-tactical border-t-transparent rounded-full animate-spin"></div></div>}>
+          <PrintStoreModal eventId={event.id} eventTitle={event.title} medias={medias} unlockedMediaIds={event.unlockedMediaIds} isMarketplace={isMarketplace} isOwner={event.isOwner} onClose={() => setShowPrintStore(false)} />
+        </Suspense>
+      )}
+      {/* Print Kit Modal */}
+      {showPrintKit && event && (
+        <Suspense fallback={<div className="fixed inset-0 z-[300] flex items-center justify-center p-4 bg-theme-bg/80 backdrop-blur-xl"><div className="w-8 h-8 border-4 border-brand-tactical border-t-transparent rounded-full animate-spin"></div></div>}>
+          <PrintKitModal 
+            eventId={event.id}
+            eventSlug={event.slug || undefined}
+            eventTitle={event.title}
+            eventDate={event.dataEvento || undefined}
+            tenantLogoUrl={event.tenantLogoUrl || undefined}
+            onClose={() => setShowPrintKit(false)}
+          />
+        </Suspense>
       )}
       {needsAccessChoice && orderId && <AccessTypeModal orderId={orderId} eventTitle={event.title} isPrimaryClient={true} isMarketplace={isMarketplace} onConfirmed={() => setNeedsAccessChoice(false)} onClose={() => setNeedsAccessChoice(false)} />}
       
@@ -1466,13 +1489,15 @@ return (
         </div>
       </Modal>
       {isEditingEvent && event && (
-        <EventEditPanel 
-          event={event as unknown as EventItem}
-          onUpdated={(u) => setEvent(prev => prev ? { ...prev, ...u } as EventData : null)}
-          onClose={() => setIsEditingEvent(false)}
-          onNotify={(msg) => alert(msg)}
-          onOpenPrintKit={() => setShowPrintKit(true)}
-        />
+        <Suspense fallback={<div className="fixed inset-0 z-[300] flex items-center justify-center p-4 bg-theme-bg/80 backdrop-blur-xl"><div className="w-8 h-8 border-4 border-brand-tactical border-t-transparent rounded-full animate-spin"></div></div>}>
+          <EventEditPanel 
+            event={event as unknown as EventItem}
+            onUpdated={(u) => setEvent(prev => prev ? { ...prev, ...u } as EventData : null)}
+            onClose={() => setIsEditingEvent(false)}
+            onNotify={(msg) => alert(msg)}
+            onOpenPrintKit={() => setShowPrintKit(true)}
+          />
+        </Suspense>
       )}
       {/* Download Progress Overlay */}
       {isDownloading && createPortal(

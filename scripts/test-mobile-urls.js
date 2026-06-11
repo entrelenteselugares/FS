@@ -4,7 +4,7 @@ const fs = require('fs');
 const path = require('path');
 
 
-const BASE_URL = 'http://localhost:3004';
+const BASE_URL = process.env.BASE_URL || 'http://localhost:3003';
 const MANUAIS_DIR = path.join(__dirname, '..', 'MANUAIS_DE_TELA');
 const LIST_FILE = path.join(MANUAIS_DIR, 'LISTA-DE-URLS.md');
 const REPORT_FILE = path.join(MANUAIS_DIR, 'RELATORIO-ERROS-MOBILE.md');

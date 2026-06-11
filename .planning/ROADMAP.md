@@ -100,17 +100,38 @@
 **Depends on:** Phase 58
 **Status:** Completed
 
+### Phase 64: Homologação e Testes de Permissões
+
+**Goal:** Auditar todas as 76 telas do sistema garantindo a renderização visual e checagem de permissões via Playwright.
+**Requirements:** 
+- Ajustar `generate-all-manuals.js` para usar login nas rotas públicas simulando o usuário Cliente.
+- Ajustar `generate-all-manuals-mobile.js` para Mobile.
+- Validar a geração e conferir a blindagem do `ProtectedRoute` contra acessos anônimos.
+- Produzir telas mobile e desktop 1 a 76 com renderização completa.
+**Depends on:** None
+**Status:** Completed
+
 ### Phase 62: Auth Wall Universal & Câmera Rápida
 
 **Goal:** Configurar bloqueio rigoroso exigindo login para acessar o sistema inteiro (exceto links públicos) usando `returnUrl` em convites, além de adicionar uma Bottom Bar com atalho central de câmera para convidados.
 **Requirements**: CONTEXT.md defined
 **Depends on:** None
-**Status:** Not Started
+**Status:** Completed
 
 ### Phase 63: Mobile Performance Optimization
 
 **Goal:** Refatorar, otimizar e melhorar a velocidade de resposta do aplicativo na versão mobile, eliminando lags e travamentos que prejudicam a percepção de qualidade do app.
 **Requirements**: TBD
 **Depends on:** None
-**Status:** Not Started
+**Status:** Completed
 
+### Phase 65: Refatoração e Padronização de UI/UX (Frontend Overhaul)
+
+**Goal:** Padronizar tipografia, espaçamentos, cores e componentes globais para garantir excelência estética e eliminar dívida visual técnica de ponta a ponta.
+**Requirements:** 
+- Limpar e reestruturar `index.css` com Design Tokens estritos.
+- Padronizar componentes globais (Buttons, Inputs).
+- Implementar containers responsivos padronizados.
+- Refinar tela a tela usando a nova fundação.
+**Depends on:** Phase 64
+**Status:** Em Andamento

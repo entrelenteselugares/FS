@@ -434,7 +434,7 @@ export const AdminQuotes: React.FC = () => {
                               </div>
                             </div>
                           )}
-                          <div className="bg-theme-bg-muted p-4 border border-theme-border text-[11px] text-theme-text leading-relaxed font-medium italic whitespace-pre-wrap rounded-lg">{cleanText||"Nenhuma observação adicional."}</div>
+                          <div className="bg-theme-bg-muted p-4 border border-theme-border text-[11px] text-theme-text leading-relaxed font-black italic whitespace-pre-wrap rounded-lg">{cleanText||"Nenhuma observação adicional."}</div>
                         </div>
                       );
                     })()}
@@ -691,7 +691,7 @@ export const AdminQuotes: React.FC = () => {
           <div className={`p-5 border ${notification.type==="success"?"border-brand-tactical bg-theme-bg shadow-2xl":"border-red-900 bg-theme-bg"} min-w-[300px] relative overflow-hidden rounded-xl`}>
             <div className="flex flex-col gap-1">
               <span className={`text-[8px] font-black uppercase tracking-widest ${notification.type==="success"?"text-brand-tactical":"text-red-500"}`}>Protocolo Administrativo</span>
-              <p className="text-sm font-bold text-theme-text uppercase tracking-tight mt-1">{notification.message}</p>
+              <p className="text-sm font-black text-theme-text uppercase tracking-tight mt-1">{notification.message}</p>
             </div>
             <div className={`absolute bottom-0 left-0 h-1 ${notification.type==="success"?"bg-brand-tactical":"bg-red-500"} animate-out fade-out duration-[5000ms] w-full`}/>
           </div>

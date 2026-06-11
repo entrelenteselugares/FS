@@ -6,7 +6,8 @@ import { Helmet } from "react-helmet-async";
 import { Mail, Lock, Eye, EyeOff, ArrowRight, Sun, Moon } from "lucide-react";
 import { useTheme } from "../contexts/ThemeContextCore";
 import { PhotoMosaic } from "../components/PhotoMosaic";
-
+import { Button } from "../components/UI/Button";
+import { Input } from "../components/UI/Input";
 const ROLE_DESTINATIONS: Record<string, string> = {
   ADMIN:        "/admin",
   PROFISSIONAL: "/minha-conta?s=agenda",
@@ -128,13 +129,13 @@ export const LoginPage: React.FC = () => {
         <div className="flex-1 flex flex-col justify-center px-3 md:px-6 md:px-10 xl:px-14 py-3 md:py-6 md:py-12 space-y-10">
           {/* Header Group */}
           <div className="space-y-2">
-            <div className="text-[9px] font-black text-brand-tactical uppercase tracking-[0.5em] mb-4 italic">
+            <div className="text-overline mb-2">
               Portal de Acesso
             </div>
-            <h1 className="text-3xl font-black uppercase tracking-tight text-theme-text">
+            <h1 className="mb-1">
               Acessar Conta
             </h1>
-            <p className="text-[10px] md:text-xs font-medium uppercase tracking-widest text-theme-muted">
+            <p className="text-caption uppercase tracking-widest text-theme-muted">
               Bem-vindo de volta ao sistema
             </p>
           </div>
@@ -149,76 +150,59 @@ export const LoginPage: React.FC = () => {
           {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-5">
             {/* Email */}
-            <div className="space-y-2">
-              <label className="text-[9px] font-black uppercase tracking-[0.3em] text-theme-muted">
-                Identificação
-              </label>
-              <div className="relative flex items-center rounded-xl border border-theme-border bg-theme-bg-muted focus-within:border-brand-tactical transition-all">
-                <Mail className="absolute left-4 text-theme-muted" size={14} />
-                <input
-                  type="email"
-                  required
-                  value={email}
-                  onChange={e => setEmail(e.target.value)}
-                  className="w-full bg-transparent py-4 pl-11 pr-4 text-xs outline-none text-theme-text placeholder:text-theme-muted placeholder:opacity-50"
-                  placeholder="seu@email.com"
-                  autoComplete="email"
-                />
-              </div>
-            </div>
+            <Input
+              type="email"
+              label="Identificação"
+              required
+              value={email}
+              onChange={e => setEmail(e.target.value)}
+              placeholder="seu@email.com"
+              autoComplete="email"
+              leftIcon={<Mail size={16} />}
+            />
 
             {/* Password */}
-            <div className="space-y-2">
-              <div className="flex justify-between items-center">
-                <label className="text-[9px] font-black uppercase tracking-[0.3em] text-theme-muted">
-                  Chave de Acesso
-                </label>
+            <div className="space-y-1">
+              <div className="flex justify-end w-full mb-1">
                 <Link
                   to="/forgot-password"
-                  className="text-[8px] font-black uppercase tracking-widest text-brand-tactical hover:brightness-110 transition-colors italic"
+                  className="text-[10px] font-bold uppercase tracking-widest text-brand hover:brightness-110 transition-colors"
                 >
                   Esqueci a senha →
                 </Link>
               </div>
-              <div className="relative flex items-center rounded-xl border border-theme-border bg-theme-bg-muted focus-within:border-brand-tactical transition-all">
-                <Lock className="absolute left-4 text-theme-muted" size={14} />
-                <input
-                  type={showSenha ? "text" : "password"}
-                  required
-                  value={senha}
-                  onChange={e => setSenha(e.target.value)}
-                  className="w-full bg-transparent py-4 pl-11 pr-12 text-xs outline-none text-theme-text placeholder:text-theme-muted placeholder:opacity-50"
-                  placeholder="••••••••"
-                  autoComplete="current-password"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowSenha(!showSenha)}
-                  className="absolute right-4 text-theme-muted hover:text-theme-text transition-colors"
-                >
-                  {showSenha ? <EyeOff size={16} /> : <Eye size={16} />}
-                </button>
-              </div>
+              <Input
+                type={showSenha ? "text" : "password"}
+                label="Chave de Acesso"
+                required
+                value={senha}
+                onChange={e => setSenha(e.target.value)}
+                placeholder="••••••••"
+                autoComplete="current-password"
+                leftIcon={<Lock size={16} />}
+                rightIcon={
+                  <button
+                    type="button"
+                    onClick={() => setShowSenha(!showSenha)}
+                    className="hover:text-theme-text transition-colors"
+                  >
+                    {showSenha ? <EyeOff size={16} /> : <Eye size={16} />}
+                  </button>
+                }
+              />
             </div>
 
             {/* Submit */}
-            <button
+            <Button
               type="submit"
-              disabled={loading}
-              className="fs-btn w-full bg-brand-tactical text-zinc-950 py-5 group italic shadow-lg shadow-brand-tactical/20 mt-2"
+              variant="primary"
+              isLoading={loading}
+              fullWidth
+              className="mt-4"
+              rightIcon={<ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />}
             >
-              {loading ? (
-                <span className="flex items-center gap-2">
-                  <span className="w-3 h-3 border-2 border-zinc-900/30 border-t-zinc-900 rounded-full animate-spin" />
-                  Validando acesso...
-                </span>
-              ) : (
-                <>
-                  Entrar no sistema
-                  <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
-                </>
-              )}
-            </button>
+              Entrar no sistema
+            </Button>
           </form>
         </div>
 

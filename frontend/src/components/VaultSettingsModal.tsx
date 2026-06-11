@@ -159,7 +159,7 @@ export function VaultSettingsModal({ isOpen, onClose, vault, onUpdate, sortConfi
                       placeholder="https://drive.google.com/drive/folders/..."
                     />
                     <p className="text-[9px] text-zinc-500 mt-2 leading-relaxed">
-                      Se preenchido, os membros verão um botão "🎬 Acessar Vídeos Brutos" para acessar arquivos massivos.
+                      Se preenchido, os membros verão um botão &quot;🎬 Acessar Vídeos Brutos&quot; para acessar arquivos massivos.
                     </p>
                   </div>
 

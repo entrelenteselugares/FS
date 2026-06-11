@@ -25,13 +25,21 @@ POR BDAY
 - **Botão:** `Fazer Login`
 - **Botão:** `Home`
 - **Botão:** `Buscar`
+- **Botão:** `Compras`
+- **Botão:** `Meus Álbuns`
 - **Botão:** `Opções`
-- **Botão:** `Entrar`
-- **Botão:** `Vitrine de Eventos`
+- **Botão:** `Indique e Ganhe`
+- **Botão:** `Meus Dados`
 
 ## 🔗 Links de Navegação
 
-*Nenhum link de navigation detectado.*
+- **COPA 2026
+PRÓXIMOS
+COR
+11/06 · 23:00
+GRP A
+TCHÉQUIA
+Ver Álbum →** -> `/album-torcida`
 
 ## ⚙️ Observações Técnicas e Fluxo
 
