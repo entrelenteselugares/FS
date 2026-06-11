@@ -17,6 +17,13 @@ interface Coupon {
   expiresAt?: string | null;
 }
 
+interface Affiliate {
+  id: string;
+  nome: string;
+  email: string;
+  affiliatePayoutType: string;
+}
+
 interface AnalyticsData {
   marketplace: {
     funnel: { profileViews: number; eventViews: number; leads: number; orders: number; };
@@ -33,7 +40,7 @@ export function AdminGrowth() {
   const activeTab = (searchParams.get("tab") as "COUPONS" | "WHATSAPP" | "ANALYTICS" | "AFFILIATES") || "COUPONS";
   const setActiveTab = (tab: "COUPONS" | "WHATSAPP" | "ANALYTICS" | "AFFILIATES") => setSearchParams(prev => { prev.set("tab", tab); return prev; }, { replace: true });
   const [coupons, setCoupons] = useState<Coupon[]>([]);
-  const [affiliates, setAffiliates] = useState<any[]>([]);
+  const [affiliates, setAffiliates] = useState<Affiliate[]>([]);
   const [analyticsData, setAnalyticsData] = useState<AnalyticsData | null>(null);
   const [waStatus, setWaStatus] = useState<{connected?: boolean, qrCode?: string} | null>(null);
   const [loading, setLoading] = useState(true);
@@ -280,7 +287,7 @@ export function AdminGrowth() {
                     </tr>
                   </thead>
                   <tbody>
-                    {affiliates.map((aff: any) => (
+                    {affiliates.map((aff: Affiliate) => (
                       <tr key={aff.id} className="border-t border-theme-border/50">
                         <td className="px-6 py-4">
                           <p className="font-bold text-brand-tactical">{aff.nome}</p>
@@ -294,7 +301,7 @@ export function AdminGrowth() {
                                 await API.patch(`/admin/users/${aff.id}`, { affiliatePayoutType: e.target.value });
                                 toast.success("Tipo de pagamento atualizado.");
                                 fetchData();
-                              } catch(err) {
+                              } catch {
                                 toast.error("Erro ao atualizar tipo de pagamento.");
                               }
                             }}
