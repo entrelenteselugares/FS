@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { X, Zap, Sparkles, Calendar, Clock } from "lucide-react";
 import { API } from "../../lib/api";
@@ -16,6 +16,9 @@ export function FlashEventModal({ onClose, onSuccess, onError, network }: FlashE
   const [name, setName] = useState("");
   const [price, setPrice] = useState("1");
   const [city, setCity] = useState("");
+  const [uf, setUf] = useState("");
+  const [statesList, setStatesList] = useState<{sigla: string; nome: string}[]>([]);
+  const [citiesList, setCitiesList] = useState<{nome: string}[]>([]);
   const [loading, setLoading] = useState(false);
   const [isPrivate, setIsPrivate] = useState(true);
   const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
@@ -24,6 +27,24 @@ export function FlashEventModal({ onClose, onSuccess, onError, network }: FlashE
   const [delegatedUserId, setDelegatedUserId] = useState<string | null>(null);
   const [isPublicCall, setIsPublicCall] = useState(false);
 
+  useEffect(() => {
+    fetch("https://servicodados.ibge.gov.br/api/v1/localidades/estados?orderBy=nome")
+      .then(res => res.json())
+      .then(data => setStatesList(data))
+      .catch(err => console.error("Erro ao carregar estados:", err));
+  }, []);
+
+  useEffect(() => {
+    if (!uf) {
+      setCitiesList([]);
+      return;
+    }
+    fetch(`https://servicodados.ibge.gov.br/api/v1/localidades/estados/${uf}/municipios?orderBy=nome`)
+      .then(res => res.json())
+      .then(data => setCitiesList(data))
+      .catch(err => console.error("Erro ao carregar cidades:", err));
+  }, [uf]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -31,7 +52,7 @@ export function FlashEventModal({ onClose, onSuccess, onError, network }: FlashE
       const { data } = await API.post("/profissional/flash-event", {
         name,
         pricePerPhoto: Number(price),
-        city,
+        city: city ? `${city} - ${uf}` : "",
         dataEvento: date,
         startTime,
         endTime,
@@ -104,15 +125,39 @@ export function FlashEventModal({ onClose, onSuccess, onError, network }: FlashE
               </div>
             </div>
             
-            <div className="space-y-2">
-              <label className="text-[10px] font-black text-theme-muted uppercase tracking-widest italic">Cidade</label>
-              <input
-                required
-                placeholder="Ex: Campinas"
-                value={city}
-                onChange={e => setCity(e.target.value)}
-                className="w-full bg-theme-bg-muted border border-theme-border p-4 text-theme-text outline-none focus:border-yellow-400/50 transition-all font-medium"
-              />
+            <div className="flex gap-4">
+              <div className="space-y-2 w-[100px]">
+                <label className="text-[10px] font-black text-theme-muted uppercase tracking-widest italic">Estado</label>
+                <select
+                  required
+                  value={uf}
+                  onChange={e => {
+                    setUf(e.target.value);
+                    setCity("");
+                  }}
+                  className="w-full bg-theme-bg-muted border border-theme-border p-4 text-theme-text outline-none focus:border-yellow-400/50 transition-all font-medium appearance-none"
+                >
+                  <option value="">UF</option>
+                  {statesList.map(state => (
+                    <option key={state.sigla} value={state.sigla}>{state.sigla}</option>
+                  ))}
+                </select>
+              </div>
+              <div className="space-y-2 flex-1">
+                <label className="text-[10px] font-black text-theme-muted uppercase tracking-widest italic">Cidade</label>
+                <select
+                  required
+                  disabled={!uf || citiesList.length === 0}
+                  value={city}
+                  onChange={e => setCity(e.target.value)}
+                  className="w-full bg-theme-bg-muted border border-theme-border p-4 text-theme-text outline-none focus:border-yellow-400/50 transition-all font-medium appearance-none disabled:opacity-50"
+                >
+                  <option value="">Selecione...</option>
+                  {citiesList.map(c => (
+                    <option key={c.nome} value={c.nome}>{c.nome}</option>
+                  ))}
+                </select>
+              </div>
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">

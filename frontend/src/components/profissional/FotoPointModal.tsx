@@ -215,8 +215,8 @@ export function FotoPointModal({ onClose, onSuccess, onError, network }: FotoPoi
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="grid grid-cols-3 gap-2">
-                    <div className="space-y-2 col-span-1">
+                <div className="flex gap-4">
+                    <div className="space-y-2 w-[100px]">
                         <label className="text-[10px] font-black text-theme-muted uppercase tracking-widest italic flex items-center gap-2">
                             <MapPin size={12} /> Estado
                         </label>
@@ -235,7 +235,7 @@ export function FotoPointModal({ onClose, onSuccess, onError, network }: FotoPoi
                             ))}
                         </select>
                     </div>
-                    <div className="space-y-2 col-span-2">
+                    <div className="space-y-2 flex-1">
                         <label className="text-[10px] font-black text-theme-muted uppercase tracking-widest italic flex items-center gap-2">
                             Cidade
                         </label>
