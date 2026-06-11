@@ -213,7 +213,7 @@ export const AdminDashboard: React.FC = () => {
       <div style={{ padding: "clamp(8px, 2vw, 32px)", maxWidth: "100%", margin: "0 auto", minHeight: "100vh" }}>
         {/* Tab Content */}
         {loading && activeTab === "overview" ? (
-           <div className="py-40 flex flex-col items-center justify-center gap-8 relative overflow-hidden">
+           <div className="py-40 flex flex-col items-center justify-center gap-4 md:gap-8 relative overflow-hidden">
              <div className="absolute inset-0 bg-emerald-500/5 blur-[120px] rounded-full -m-64 opacity-20" />
              <div className="w-px h-16 bg-gradient-to-b from-transparent via-emerald-500 to-transparent" />
              <img src="/logo.png" alt="Logo" className="h-6 object-contain opacity-50 grayscale brightness-200" />
@@ -231,7 +231,7 @@ export const AdminDashboard: React.FC = () => {
                 transition={{ duration: 0.3 }}
               >
                 <React.Suspense fallback={
-                  <div className="py-20 flex flex-col items-center gap-6">
+                  <div className="py-20 flex flex-col items-center gap-3 md:gap-6">
                     <div className="w-px h-8 bg-gradient-to-b from-transparent via-emerald-500 to-transparent" />
                     <div className="text-[10px] font-display font-black uppercase tracking-[0.3em] text-emerald-500/40 animate-pulse">Acessando Módulo...</div>
                   </div>

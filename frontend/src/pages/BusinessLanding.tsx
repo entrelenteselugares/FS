@@ -16,14 +16,14 @@ export function BusinessLanding() {
         </Link>
       </header>
 
-      <main className="pt-32 pb-24 px-6 md:px-8 max-w-5xl mx-auto">
+      <main className="pt-32 pb-24 px-3 md:px-6 md:px-8 max-w-5xl mx-auto">
         <div className="mb-16 md:mb-24 text-center max-w-4xl mx-auto">
           <div className="flex items-center justify-center gap-4 mb-6">
             <div className="h-px w-12 bg-brand-tactical" />
             <span className="text-[10px] font-black text-brand-tactical uppercase tracking-[0.5em] italic">Rede Profissional</span>
             <div className="h-px w-12 bg-brand-tactical" />
           </div>
-          <h1 className="text-5xl md:text-7xl font-heading font-black text-theme-text uppercase tracking-tighter mb-6 italic leading-none">
+          <h1 className="text-3xl md:text-5xl md:text-7xl font-heading font-black text-theme-text uppercase tracking-tighter mb-6 italic leading-none">
             A maior rede de <br /><span className="text-brand-tactical">Audiovisual</span> do Brasil
           </h1>
           <p className="text-theme-text-muted font-light text-base md:text-lg leading-relaxed max-w-2xl mx-auto">
@@ -33,7 +33,7 @@ export function BusinessLanding() {
 
         {/* Intro */}
         <section className="mb-20">
-          <div className="bg-brand-tactical/10 border border-brand-tactical/20 p-8 md:p-12 rounded-3xl text-center">
+          <div className="bg-brand-tactical/10 border border-brand-tactical/20 p-4 md:p-8 md:p-12 rounded-3xl text-center">
             <Camera className="text-brand-tactical mx-auto mb-6" size={48} />
             <p className="text-lg md:text-xl font-light leading-relaxed max-w-3xl mx-auto">
               Se você é fotógrafo, videomaker, editor, drone operator ou qualquer profissional do universo audiovisual, a plataforma é a sua central de negócios: <strong className="text-brand-tactical font-black">mais clientes, menos burocracia, pagamento garantido.</strong>
@@ -43,9 +43,9 @@ export function BusinessLanding() {
 
         {/* Problema vs Solução */}
         <section className="mb-24">
-          <div className="grid lg:grid-cols-2 gap-8">
+          <div className="grid lg:grid-cols-2 gap-4 md:gap-8">
             {/* Problema */}
-            <div className="border border-red-500/30 bg-red-500/5 p-8 md:p-10 rounded-3xl">
+            <div className="border border-red-500/30 bg-red-500/5 p-4 md:p-8 md:p-10 rounded-3xl">
               <h2 className="text-xl font-black text-red-500 uppercase italic tracking-tight mb-6">
                 O problema que resolvemos
               </h2>
@@ -64,7 +64,7 @@ export function BusinessLanding() {
             </div>
 
             {/* Solução */}
-            <div className="border border-brand-tactical/30 bg-brand-tactical/10 p-8 md:p-10 rounded-3xl">
+            <div className="border border-brand-tactical/30 bg-brand-tactical/10 p-4 md:p-8 md:p-10 rounded-3xl">
               <h2 className="text-xl font-black text-brand-tactical uppercase italic tracking-tight mb-6 flex items-center gap-2">
                 <ShieldCheck size={24} /> O que oferecemos
               </h2>
@@ -91,13 +91,13 @@ export function BusinessLanding() {
           <h2 className="text-3xl font-black uppercase italic tracking-tight mb-12 text-center">
             Modalidades de <span className="text-brand-tactical">Atuação</span>
           </h2>
-          <div className="grid md:grid-cols-3 gap-6">
+          <div className="grid md:grid-cols-3 gap-3 md:gap-6">
             {[
               { i: <Camera size={28} />, t: "Fotógrafo / Captador", d: "Atende eventos agendados (casamentos, corporativos) e Flash Events. Recebe jobs do sistema e entrega via painel." },
               { i: <Edit3 size={28} />, t: "Editor", d: "Recebe material bruto de captações da rede e realiza a edição dentro dos padrões editoriais. Remunerado por job." },
               { i: <Video size={28} />, t: "Ponto Fixo (Flash Event)", d: "Atua em locais de alto fluxo (praias, pontos turísticos) criando eventos instantâneos e vendendo fotos avulsas na hora." }
             ].map((m, idx) => (
-              <div key={idx} className="bg-theme-bg-muted border border-theme-border p-8 rounded-2xl hover:border-brand-tactical/50 transition-colors">
+              <div key={idx} className="bg-theme-bg-muted border border-theme-border p-4 md:p-8 rounded-2xl hover:border-brand-tactical/50 transition-colors">
                 <div className="w-14 h-14 bg-brand-tactical/10 text-brand-tactical rounded-xl flex items-center justify-center mb-6">
                   {m.i}
                 </div>
@@ -109,7 +109,7 @@ export function BusinessLanding() {
         </section>
 
         {/* Como funciona o credenciamento e Remuneração */}
-        <section className="mb-24 grid lg:grid-cols-2 gap-12">
+        <section className="mb-24 grid lg:grid-cols-2 gap-3 md:gap-6 md:gap-12">
           <div>
             <h2 className="text-2xl font-black uppercase italic tracking-tight mb-8">
               Como funciona o <span className="text-brand-tactical">Credenciamento</span>
@@ -134,7 +134,7 @@ export function BusinessLanding() {
             </div>
           </div>
 
-          <div className="bg-brand-tactical text-black rounded-3xl p-8 md:p-10 relative overflow-hidden">
+          <div className="bg-brand-tactical text-black rounded-3xl p-4 md:p-8 md:p-10 relative overflow-hidden">
             <DollarSign className="absolute -right-8 -top-8 text-black/5" size={200} />
             <div className="relative z-10">
               <h2 className="text-2xl font-black uppercase italic tracking-tight mb-6">
@@ -175,19 +175,19 @@ export function BusinessLanding() {
 
         {/* CTA */}
         <section className="text-center">
-          <h2 className="text-4xl font-heading font-black uppercase italic tracking-tighter mb-6">
+          <h2 className="text-2xl md:text-4xl font-heading font-black uppercase italic tracking-tighter mb-6">
             Quero fazer <span className="text-brand-tactical">Parte</span>
           </h2>
           <p className="text-theme-text-muted font-light mb-10 max-w-lg mx-auto">
             Entre em contato com nossa equipe com o assunto <strong className="text-theme-text">"Quero ser profissional da rede"</strong> e não se esqueça de incluir o link do seu portfólio.
           </p>
-          <Link to="/contato" className="inline-block px-12 py-5 bg-brand-tactical text-black font-black uppercase tracking-[0.3em] text-[10px] italic hover:brightness-110 transition-all shadow-2xl shadow-brand-tactical/20">
+          <Link to="/contato" className="inline-block px-3 md:px-6 md:px-12 py-5 bg-brand-tactical text-black font-black uppercase tracking-[0.3em] text-[10px] italic hover:brightness-110 transition-all shadow-2xl shadow-brand-tactical/20">
             Acessar Contato
           </Link>
         </section>
       </main>
 
-      <footer className="py-8 text-center border-t border-theme-border">
+      <footer className="py-4 md:py-8 text-center border-t border-theme-border">
         <p className="text-theme-text-muted text-xs font-bold uppercase tracking-widest mb-1">© 2026 Foto Segundo. Todos os direitos reservados.</p>
         <p className="text-brand-tactical/50 text-[10px] font-black italic uppercase tracking-[0.3em]">Protocolo Editorial de Imagem e Cinema</p>
       </footer>

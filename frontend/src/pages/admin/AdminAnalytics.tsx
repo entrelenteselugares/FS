@@ -65,13 +65,13 @@ export const AdminAnalytics: React.FC = () => {
       </div>
 
       {loading ? (
-        <div className="flex items-center justify-center p-12 text-[10px] uppercase font-black tracking-widest" style={{ color: T.text3 }}>
+        <div className="flex items-center justify-center p-3 md:p-6 md:p-12 text-[10px] uppercase font-black tracking-widest" style={{ color: T.text3 }}>
           Carregando Metadados...
         </div>
       ) : (
         <div className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-             <div className="p-6 rounded-2xl border" style={{ background: T.bgCard, borderColor: T.border }}>
+             <div className="p-3 md:p-6 rounded-2xl border" style={{ background: T.bgCard, borderColor: T.border }}>
                 <div className="flex items-center justify-between mb-4">
                   <h4 className="text-[10px] font-black uppercase tracking-widest" style={{ color: T.text3 }}>Total Gerado via Cupons</h4>
                   <BarChart3 size={16} color={T.brand} />
@@ -80,7 +80,7 @@ export const AdminAnalytics: React.FC = () => {
                   {formatCurrency(coupons.reduce((acc, c) => acc + c.totalRevenueGenerated, 0))}
                 </div>
              </div>
-             <div className="p-6 rounded-2xl border" style={{ background: T.bgCard, borderColor: T.border }}>
+             <div className="p-3 md:p-6 rounded-2xl border" style={{ background: T.bgCard, borderColor: T.border }}>
                 <div className="flex items-center justify-between mb-4">
                   <h4 className="text-[10px] font-black uppercase tracking-widest" style={{ color: T.text3 }}>Uso de Cupons Convertidos</h4>
                   <TrendingUp size={16} color={T.brand} />
@@ -91,7 +91,7 @@ export const AdminAnalytics: React.FC = () => {
              </div>
           </div>
 
-          <div className="p-6 rounded-2xl border" style={{ background: T.bgCard, borderColor: T.border }}>
+          <div className="p-3 md:p-6 rounded-2xl border" style={{ background: T.bgCard, borderColor: T.border }}>
             <h3 className="text-xs font-black uppercase tracking-widest mb-6 flex items-center gap-2" style={{ color: T.text }}>
               <Users size={14} /> Relatório de Eficiência de Cupons
             </h3>
@@ -126,7 +126,7 @@ export const AdminAnalytics: React.FC = () => {
                   ))}
                   {coupons.length === 0 && (
                     <tr>
-                      <td colSpan={6} className="py-8 text-center text-[10px] font-black uppercase tracking-widest" style={{ color: T.text3 }}>
+                      <td colSpan={6} className="py-4 md:py-8 text-center text-[10px] font-black uppercase tracking-widest" style={{ color: T.text3 }}>
                         Nenhum dado disponível.
                       </td>
                     </tr>

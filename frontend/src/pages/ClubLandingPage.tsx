@@ -55,7 +55,7 @@ export const ClubLandingPage = () => {
         <Navbar />
       </div>
 
-      <main className="flex-1 max-w-7xl mx-auto px-6 py-12 md:py-24 w-full">
+      <main className="flex-1 max-w-7xl mx-auto px-3 md:px-6 py-3 md:py-6 md:py-12 md:py-24 w-full">
         <button 
           onClick={() => navigate(-1)} 
           className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-zinc-500 hover:text-white transition-all mb-12"
@@ -71,7 +71,7 @@ export const ClubLandingPage = () => {
               <Star size={14} fill="currentColor" />
               <span className="text-[9px] font-black uppercase tracking-widest">Assinatura Premium</span>
             </div>
-                     <h1 className="text-5xl md:text-8xl font-heading font-black uppercase tracking-tighter italic leading-none text-white">
+                     <h1 className="text-3xl md:text-5xl md:text-8xl font-heading font-black uppercase tracking-tighter italic leading-none text-white">
               Os Seus <span className="text-brand-tactical block">Meus Álbuns</span>
             </h1>
             
@@ -112,7 +112,7 @@ export const ClubLandingPage = () => {
 
           {/* Lado Direito - Pricing Card */}
           <div className="animate-in fade-in slide-in-from-right-8 duration-700 delay-150">
-            <div className="bg-zinc-900/50 border border-zinc-800 rounded-3xl p-8 md:p-12 shadow-2xl relative overflow-hidden group hover:border-brand-tactical/50 transition-colors">
+            <div className="bg-zinc-900/50 border border-zinc-800 rounded-3xl p-4 md:p-8 md:p-12 shadow-2xl relative overflow-hidden group hover:border-brand-tactical/50 transition-colors">
               <div className="absolute top-0 right-0 -m-16 w-64 h-64 bg-brand-tactical/10 blur-[100px] rounded-full group-hover:bg-brand-tactical/20 transition-all" />
               
               <div className="relative z-10 space-y-8">
@@ -123,7 +123,7 @@ export const ClubLandingPage = () => {
 
                 <div className="flex items-baseline gap-2">
                   <span className="text-zinc-500 text-lg font-bold">R$</span>
-                  <span className="text-6xl font-heading font-black text-white tracking-tighter italic leading-none">49,90</span>
+                  <span className="text-2xl md:text-4xl md:text-6xl font-heading font-black text-white tracking-tighter italic leading-none">49,90</span>
                   <span className="text-zinc-500 text-sm font-bold uppercase tracking-widest">/ mês</span>
                 </div>
 
@@ -163,8 +163,8 @@ export const ClubLandingPage = () => {
       </main>
 
       {/* Footer minimalista */}
-      <footer className="border-t border-white/5 py-8 mt-auto">
-        <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4">
+      <footer className="border-t border-white/5 py-4 md:py-8 mt-auto">
+        <div className="max-w-7xl mx-auto px-3 md:px-6 flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-3 opacity-50">
             <img src="/logo.png" alt="Foto Segundo" style={{ height: 16, objectFit: "contain", filter: "var(--logo-filter)" }} />
             <span className="text-[9px] font-black uppercase tracking-[0.3em] text-white">Advanced Phygital Engine</span>

@@ -72,10 +72,10 @@ export default function InvitationPage() {
 
   if (error) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center p-6 text-center" style={{ background: T.bg, color: T.text }}>
+      <div className="min-h-screen flex flex-col items-center justify-center p-3 md:p-6 text-center" style={{ background: T.bg, color: T.text }}>
         <Shield size={48} className="text-red-500/30 mb-4" />
         <h1 className="text-2xl font-black uppercase italic tracking-tighter">Ops! {error}</h1>
-        <button onClick={() => navigate("/")} className="mt-8 text-emerald-500 font-black uppercase tracking-widest text-[11px] border border-emerald-500/20 px-6 py-3 rounded-full hover:bg-emerald-500/5 transition-all">
+        <button onClick={() => navigate("/")} className="mt-8 text-emerald-500 font-black uppercase tracking-widest text-[11px] border border-emerald-500/20 px-3 md:px-6 py-3 rounded-full hover:bg-emerald-500/5 transition-all">
           Voltar para Início
         </button>
       </div>
@@ -89,18 +89,18 @@ export default function InvitationPage() {
       </Helmet>
       <Navbar />
 
-      <main className="max-w-xl mx-auto px-6 py-20 flex flex-col items-center text-center">
+      <main className="max-w-xl mx-auto px-3 md:px-6 py-20 flex flex-col items-center text-center">
         <div className="w-24 h-24 bg-emerald-500/10 border border-emerald-500/20 rounded-full flex items-center justify-center mb-8 shadow-[0_0_50px_rgba(16,185,129,0.1)]">
           <Lock size={40} className="text-emerald-500" />
         </div>
 
         <p className="text-[10px] font-black text-emerald-500 uppercase tracking-[0.4em] mb-4">Você foi convidado</p>
         
-        <h1 className="text-4xl md:text-5xl font-black uppercase italic tracking-tighter leading-none mb-6">
+        <h1 className="text-2xl md:text-4xl md:text-5xl font-black uppercase italic tracking-tighter leading-none mb-6">
           {invitation?.album?.nome}
         </h1>
 
-        <div className="flex items-center gap-6 mb-12 py-4 px-8 bg-theme-bg-muted border border-white/10 rounded-2xl">
+        <div className="flex items-center gap-3 md:gap-6 mb-12 py-4 px-4 md:px-8 bg-theme-bg-muted border border-white/10 rounded-2xl">
           <div className="flex flex-col items-center">
              <span className="text-lg font-black text-white">{invitation?.album?._count?.media || 0}</span>
              <span className="text-[9px] font-bold text-gray-500 uppercase tracking-widest">Fotos</span>

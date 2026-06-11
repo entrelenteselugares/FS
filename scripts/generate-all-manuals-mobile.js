@@ -25,7 +25,7 @@ const ACCOUNTS = {
 const PARAMS = {
   slug: 'bday-kurio-mpmxwdgz',
   eventId: 'cmpmy7dq20000jo04306mhl5q',
-  proId: 'e685a36a-b7d5-4ab4-b5c2-f19df9bc0a5b',
+  proId: 'cmpmxqow3000cl804br1kl3zb',
   orderId: 'cmpmy7e6z0004jo04ced409z4',
   vaultId: 'cmpmxw9s50001l804h92037nd',
   shortId: '1265F8E9',
@@ -82,7 +82,7 @@ function parseUrls() {
   const urls = [];
   
   for (const line of lines) {
-    const match = line.match(/^\|\s*(\d+)\s*\|\s*`([^`]+)`\s*\|\s*([^|]+)\s*\|\s*([^|]+)\s*\|/);
+    const match = line.match(/^\|\s*(\d+[a-zA-Z]?)\s*\|\s*`([^`]+)`\s*\|\s*([^|]+)\s*\|\s*([^|]+)\s*\|/);
     if (match) {
       urls.push({
         num: match[1],

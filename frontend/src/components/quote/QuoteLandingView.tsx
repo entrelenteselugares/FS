@@ -103,10 +103,10 @@ export const QuoteLandingView: React.FC<QuoteLandingViewProps> = ({ selectFlow }
           <p className="text-theme-text-muted text-sm">Escolha a jornada perfeita para o seu evento.</p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 max-w-5xl mx-auto">
+        <div className="flex md:grid overflow-x-auto md:overflow-visible snap-x snap-mandatory md:grid-cols-3 gap-4 md:gap-6 max-w-5xl mx-auto pb-6 md:pb-0 hide-scrollbar -mx-6 px-6 md:mx-auto md:px-0">
           
           {/* PACOTE ESSENCIAL */}
-          <div className="relative group p-6 rounded-xl bg-theme-bg/90 backdrop-blur-md border border-brand-tactical/50 shadow-xl flex flex-col hover:-translate-y-1 transition-all duration-300">
+          <div className="relative group p-6 rounded-xl bg-theme-bg/90 backdrop-blur-md border border-brand-tactical/50 shadow-xl flex flex-col hover:-translate-y-1 transition-all duration-300 min-w-[280px] snap-center">
             <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-brand-tactical text-brand-text px-3 py-0.5 rounded-full text-[8px] font-black uppercase tracking-widest flex items-center gap-1 shadow-lg shadow-brand-tactical/20 whitespace-nowrap">
               <Crown size={10} /> O Mais Vendido
             </div>
@@ -139,7 +139,7 @@ export const QuoteLandingView: React.FC<QuoteLandingViewProps> = ({ selectFlow }
           </div>
 
           {/* UNIDADES FIXAS */}
-          <div className="relative group p-6 rounded-xl bg-theme-bg/80 backdrop-blur-md border border-theme-border flex flex-col hover:-translate-y-1 transition-all duration-300">
+          <div className="relative group p-6 rounded-xl bg-theme-bg/80 backdrop-blur-md border border-theme-border flex flex-col hover:-translate-y-1 transition-all duration-300 min-w-[280px] snap-center">
             <h3 className="text-lg font-black uppercase tracking-widest text-center text-theme-text mt-2">Unidades Fixas</h3>
             <p className="text-theme-text-muted text-[10px] text-center mb-6 px-2 min-h-[30px]">
               Vai casar/festejar em uma das nossas casas parceiras?
@@ -168,7 +168,7 @@ export const QuoteLandingView: React.FC<QuoteLandingViewProps> = ({ selectFlow }
           </div>
 
           {/* PACOTE CUSTOMIZADO */}
-          <div className="relative group p-6 rounded-xl bg-theme-bg/80 backdrop-blur-md border border-theme-border flex flex-col hover:-translate-y-1 transition-all duration-300">
+          <div className="relative group p-6 rounded-xl bg-theme-bg/80 backdrop-blur-md border border-theme-border flex flex-col hover:-translate-y-1 transition-all duration-300 min-w-[280px] snap-center">
             <h3 className="text-lg font-black uppercase tracking-widest text-center text-theme-text mt-2">Customizado</h3>
             <p className="text-theme-text-muted text-[10px] text-center mb-6 px-2 min-h-[30px]">
               Monte exatamente do seu jeito, serviço por serviço.

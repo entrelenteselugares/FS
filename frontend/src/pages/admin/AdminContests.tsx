@@ -188,14 +188,14 @@ export const AdminContests: React.FC = () => {
       <div className="relative border-b border-theme-border pb-8 md:pb-12 space-y-4 md:space-y-6">
         <div className="absolute -top-10 -left-10 w-40 h-40 bg-brand-tactical/10 blur-3xl rounded-full" />
         
-        <div className="flex flex-col xl:flex-row justify-between items-start xl:items-end gap-6 relative z-10">
+        <div className="flex flex-col xl:flex-row justify-between items-start xl:items-end gap-3 md:gap-6 relative z-10">
           <div>
                         <p className="text-theme-muted mt-2 text-sm">Gerenciamento de concursos e competições</p>
           </div>
           <div className="flex flex-wrap items-center gap-4 w-full xl:w-auto">
             <button 
               onClick={handleCreateClick}
-              className="flex-1 md:flex-none px-8 py-4 bg-brand-tactical text-zinc-950 text-[10px] font-black uppercase tracking-[0.4em] hover:brightness-110 shadow-xl transition-all italic text-center w-full break-words leading-tight"
+              className="flex-1 md:flex-none px-4 md:px-8 py-4 bg-brand-tactical text-zinc-950 text-[10px] font-black uppercase tracking-[0.4em] hover:brightness-110 shadow-xl transition-all italic text-center w-full break-words leading-tight"
             >
               NOVO CONCURSO
             </button>
@@ -287,7 +287,7 @@ export const AdminContests: React.FC = () => {
           
           <div className="relative w-full max-w-2xl bg-theme-card border border-theme-border rounded-[40px] overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300 flex flex-col h-[90vh]">
             {/* Header */}
-            <div className="p-8 md:p-10 border-b border-theme-border flex items-center justify-between shrink-0 bg-theme-bg-muted rounded-2xl">
+            <div className="p-4 md:p-8 md:p-10 border-b border-theme-border flex items-center justify-between shrink-0 bg-theme-bg-muted rounded-2xl">
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 bg-brand-tactical/10 rounded-2xl flex items-center justify-center border border-brand-tactical/20">
                   <TrendingUp className="text-brand-tactical" size={24} strokeWidth={1.5} />
@@ -301,14 +301,14 @@ export const AdminContests: React.FC = () => {
             </div>
 
             {/* Content */}
-            <form id="contest-form" onSubmit={handleCreate} className="flex-1 overflow-y-auto p-8 md:p-10 space-y-8 custom-scrollbar">
+            <form id="contest-form" onSubmit={handleCreate} className="flex-1 overflow-y-auto p-4 md:p-8 md:p-10 space-y-8 custom-scrollbar">
               <div className="space-y-2">
                 <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest block mb-2 opacity-60 italic">Título da Campanha</label>
                 <input required className="w-full bg-theme-bg-muted border border-theme-border p-4 text-[11px] text-theme-text font-black outline-none focus:border-brand-tactical rounded-xl uppercase placeholder:opacity-20" value={formData.title} onChange={e => setFormData({...formData, title: e.target.value.toUpperCase()})} placeholder="EX: CORRIDA DOS 10 ÁLBUNS" />
               </div>
 
               {/* DINÂMICA / META */}
-              <div className="p-8 bg-brand-tactical/10 border border-brand-tactical/20 rounded-[30px] space-y-6">
+              <div className="p-4 md:p-8 bg-brand-tactical/10 border border-brand-tactical/20 rounded-[30px] space-y-6">
                 <div className="space-y-2">
                   <label className="text-[8px] font-black text-brand-tactical uppercase tracking-widest block mb-1 italic">Estilo da Dinâmica (Meta Tática)</label>
                   <select 
@@ -352,7 +352,7 @@ export const AdminContests: React.FC = () => {
                 )}
               </div>
 
-              <div className="grid grid-cols-2 gap-8">
+              <div className="grid grid-cols-2 gap-4 md:gap-8">
                 <div className="space-y-2">
                   <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest block mb-2 opacity-60 italic">Início da Operação</label>
                   <input type="date" required className="w-full bg-theme-bg-muted border border-theme-border p-4 text-[11px] text-theme-text font-black outline-none focus:border-brand-tactical rounded-xl [color-scheme:dark]" value={formData.startDate} onChange={e => setFormData({...formData, startDate: e.target.value})} />
@@ -363,7 +363,7 @@ export const AdminContests: React.FC = () => {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-8 border-t border-theme-border">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8 pt-8 border-t border-theme-border">
                 <div className="space-y-2">
                   <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest block mb-2 opacity-60 italic">Recompensa: 1º Lugar</label>
                   <input className="w-full bg-theme-bg-muted border border-theme-border p-4 text-[11px] text-theme-text font-black outline-none focus:border-brand-tactical rounded-xl uppercase placeholder:opacity-20" value={formData.prize1st} onChange={e => setFormData({...formData, prize1st: e.target.value.toUpperCase()})} placeholder="EX: 3 FOTOS IMPRESSAS" />
@@ -376,7 +376,7 @@ export const AdminContests: React.FC = () => {
             </form>
 
             {/* Footer */}
-            <div className="p-8 md:p-10 bg-theme-bg-muted border-t border-theme-border flex gap-4 shrink-0 rounded-2xl">
+            <div className="p-4 md:p-8 md:p-10 bg-theme-bg-muted border-t border-theme-border flex gap-4 shrink-0 rounded-2xl">
               <button onClick={() => setShowModal(false)} className="flex-1 py-5 border border-theme-border text-[11px] font-black uppercase tracking-[0.3em] text-theme-muted hover:text-white transition-all rounded-[20px] italic">Cancelar</button>
               <button 
                 type="submit" form="contest-form"                className="flex-[2] py-5 bg-brand-tactical text-zinc-950 text-[11px] font-black uppercase tracking-[0.3em] shadow-2xl shadow-brand-tactical/20 hover:brightness-110 transition-all rounded-[20px] italic flex items-center justify-center gap-4"

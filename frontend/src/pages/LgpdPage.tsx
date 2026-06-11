@@ -14,19 +14,19 @@ export function LgpdPage() {
         </Link>
       </header>
 
-      <main className="pt-32 pb-24 px-6 md:px-8 max-w-4xl mx-auto">
+      <main className="pt-32 pb-24 px-3 md:px-6 md:px-8 max-w-4xl mx-auto">
         <div className="mb-16">
           <div className="flex items-center gap-4 mb-4">
             <div className="h-px w-12 bg-brand-tactical" />
             <span className="text-[10px] font-black text-brand-tactical uppercase tracking-[0.5em] italic">Transparência Legal</span>
           </div>
-          <h1 className="text-4xl md:text-5xl font-heading font-black text-theme-text uppercase tracking-tighter mb-4 italic">
+          <h1 className="text-2xl md:text-4xl md:text-5xl font-heading font-black text-theme-text uppercase tracking-tighter mb-4 italic">
             Portal <span className="text-brand-tactical">LGPD</span>
           </h1>
           <p className="text-theme-text-muted font-medium text-sm">
             Conformidade com a Lei nº 13.709/2018 — Lei Geral de Proteção de Dados Pessoais
           </p>
-          <div className="mt-8 p-6 bg-brand-tactical/10 border border-brand-tactical/20 rounded-2xl flex items-start gap-4">
+          <div className="mt-8 p-3 md:p-6 bg-brand-tactical/10 border border-brand-tactical/20 rounded-2xl flex items-start gap-4">
             <Scale className="text-brand-tactical shrink-0 mt-1" size={24} />
             <p className="text-sm md:text-base text-theme-text font-light leading-relaxed">
               A Foto Segundo preza pela privacidade e segurança dos seus dados. Este portal foi criado para dar transparência ao uso de dados na nossa plataforma e facilitar o exercício dos seus direitos previstos na lei brasileira.
@@ -40,14 +40,14 @@ export function LgpdPage() {
             <h2 className="text-xl font-black uppercase italic tracking-tight mb-8 flex items-center gap-3">
               <span className="text-brand-tactical">1.</span> Nossos Princípios (Art. 6º)
             </h2>
-            <div className="grid md:grid-cols-2 gap-6">
+            <div className="grid md:grid-cols-2 gap-3 md:gap-6">
               {[
                 { title: "Finalidade", desc: "Apenas processamos dados para fins legítimos, específicos e informados." },
                 { title: "Necessidade", desc: "Coletamos o mínimo necessário para a realização da prestação de serviço fotográfico." },
                 { title: "Livre Acesso", desc: "Você tem o direito de consultar seus dados de forma gratuita." },
                 { title: "Segurança", desc: "Utilizamos medidas técnicas rígidas contra acessos não autorizados." },
               ].map((p, idx) => (
-                <div key={idx} className="border border-theme-border p-6 rounded-xl hover:border-brand-tactical/30 transition-colors">
+                <div key={idx} className="border border-theme-border p-3 md:p-6 rounded-xl hover:border-brand-tactical/30 transition-colors">
                   <h3 className="text-sm font-black text-theme-text uppercase tracking-widest mb-2 flex items-center gap-2">
                     <CheckSquare size={16} className="text-brand-tactical" /> {p.title}
                   </h3>
@@ -62,7 +62,7 @@ export function LgpdPage() {
             <h2 className="text-xl font-black uppercase italic tracking-tight mb-6 flex items-center gap-3">
               <span className="text-brand-tactical">2.</span> Exerça Seus Direitos (Art. 18)
             </h2>
-            <div className="bg-theme-bg-muted border border-theme-border p-6 rounded-xl space-y-6">
+            <div className="bg-theme-bg-muted border border-theme-border p-3 md:p-6 rounded-xl space-y-6">
               <p className="text-theme-text text-sm font-light leading-relaxed">
                 A LGPD garante a você diversos direitos. Na Foto Segundo, facilitamos esse processo através do painel "Minha Conta" ou via requisição direta ao nosso Encarregado de Dados (DPO).
               </p>
@@ -92,7 +92,7 @@ export function LgpdPage() {
             <h2 className="text-xl font-black uppercase italic tracking-tight mb-6 flex items-center gap-3">
               <span className="text-brand-tactical">3.</span> Encarregado de Dados (DPO)
             </h2>
-            <div className="border border-brand-tactical/30 bg-brand-tactical/10 p-8 rounded-xl flex flex-col sm:flex-row items-center gap-8">
+            <div className="border border-brand-tactical/30 bg-brand-tactical/10 p-4 md:p-8 rounded-xl flex flex-col sm:flex-row items-center gap-4 md:gap-8">
               <div className="w-16 h-16 rounded-full bg-brand-tactical/10 flex items-center justify-center text-brand-tactical shrink-0 border border-brand-tactical/20">
                 <ShieldCheck size={32} />
               </div>
@@ -100,7 +100,7 @@ export function LgpdPage() {
                 <p className="text-theme-text-muted text-sm font-light mb-4">
                   Se você tiver dúvidas sobre o processamento dos seus dados ou quiser exercer direitos que não estejam disponíveis de forma automatizada no painel, entre em contato direto com o nosso Encarregado de Proteção de Dados.
                 </p>
-                <a href="mailto:dpo@fotosegundo.com.br" className="inline-flex items-center gap-2 bg-theme-bg border border-brand-tactical/40 px-6 py-3 text-[10px] font-black text-brand-tactical uppercase tracking-widest hover:bg-brand-tactical hover:text-brand-text transition-all rounded-lg">
+                <a href="mailto:dpo@fotosegundo.com.br" className="inline-flex items-center gap-2 bg-theme-bg border border-brand-tactical/40 px-3 md:px-6 py-3 text-[10px] font-black text-brand-tactical uppercase tracking-widest hover:bg-brand-tactical hover:text-brand-text transition-all rounded-lg">
                   <Mail size={14} /> Falar com o DPO
                 </a>
               </div>
@@ -132,7 +132,7 @@ export function LgpdPage() {
         </div>
       </main>
 
-      <footer className="py-8 text-center border-t border-theme-border">
+      <footer className="py-4 md:py-8 text-center border-t border-theme-border">
         <p className="text-theme-text-muted text-xs font-bold uppercase tracking-widest mb-1">© 2026 Foto Segundo. Todos os direitos reservados.</p>
         <p className="text-brand-tactical/50 text-[10px] font-black italic uppercase tracking-[0.3em]">Conformidade Legal & Segurança</p>
       </footer>

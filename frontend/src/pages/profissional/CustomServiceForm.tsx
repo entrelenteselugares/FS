@@ -82,9 +82,9 @@ export default function CustomServiceForm() {
         </div>
       </header>
 
-      <main className="max-w-[1000px] mx-auto px-4 md:px-6 py-12">
+      <main className="max-w-[1000px] mx-auto px-4 md:px-6 py-3 md:py-6 md:py-12">
         {success && (
-          <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="mb-8 p-6 bg-green-500/10 border border-green-500/20 text-green-400 flex items-center gap-4">
+          <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="mb-8 p-3 md:p-6 bg-green-500/10 border border-green-500/20 text-green-400 flex items-center gap-4">
             <Check size={24} />
             <div>
               <h3 className="font-black uppercase tracking-widest text-sm">Serviço Enviado!</h3>
@@ -94,7 +94,7 @@ export default function CustomServiceForm() {
         )}
 
         {error && (
-          <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="mb-8 p-6 bg-red-500/10 border border-red-500/20 text-red-400 flex items-center gap-4">
+          <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="mb-8 p-3 md:p-6 bg-red-500/10 border border-red-500/20 text-red-400 flex items-center gap-4">
             <X size={24} />
             <div>
               <h3 className="font-black uppercase tracking-widest text-sm">Erro ao enviar</h3>

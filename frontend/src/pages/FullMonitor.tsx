@@ -267,7 +267,7 @@ export default function FullMonitor() {
         <div className="flex pt-16 flex-1 h-full w-full max-w-[100vw] overflow-hidden">
           
           {/* Main Content Area (Esquerda) */}
-          <main className="flex-1 overflow-y-auto p-6 md:p-8">
+          <main className="flex-1 overflow-y-auto p-3 md:p-6 md:p-8">
             {prints.length === 0 && !loading ? (
               <div className="flex flex-col items-center justify-center h-full min-h-[400px] gap-4 text-theme-muted">
                 <div className="w-16 h-16 rounded-2xl bg-theme-card border border-theme-border flex items-center justify-center">
@@ -348,12 +348,12 @@ export default function FullMonitor() {
           </main>
 
           {/* ── Banner Lateral Direito com QR Code ──────────────────── */}
-          <aside className="w-72 xl:w-80 border-l border-theme-border bg-theme-card/30 backdrop-blur-md flex flex-col items-center justify-center p-8 relative overflow-hidden hidden md:flex shrink-0">
+          <aside className="w-72 xl:w-80 border-l border-theme-border bg-theme-card/30 backdrop-blur-md flex flex-col items-center justify-center p-4 md:p-8 relative overflow-hidden hidden md:flex shrink-0">
             {/* Background elements para deixar chamativo */}
             <div className="absolute top-0 left-0 w-full h-1/2 bg-gradient-to-b from-brand-tactical/10 to-transparent pointer-events-none" />
             <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(20,184,166,0.1),transparent_70%)] pointer-events-none" />
 
-            <div className="relative z-10 w-full max-w-[200px] flex flex-col items-center text-center gap-8">
+            <div className="relative z-10 w-full max-w-[200px] flex flex-col items-center text-center gap-4 md:gap-8">
               <div className="space-y-2">
                 <div className="w-12 h-1 bg-brand-tactical mx-auto rounded-full mb-4 shadow-[0_0_10px_rgba(20,184,166,0.5)]" />
                 <h3 className="text-2xl font-black uppercase tracking-tighter text-theme-text leading-none">
@@ -381,7 +381,7 @@ export default function FullMonitor() {
         {/* ── QR Code Modal ────────────────────────────────────────── */}
         {showQR && (
           <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-md p-4">
-            <div className="bg-theme-card border border-theme-border p-8 rounded-2xl relative max-w-md w-full shadow-2xl">
+            <div className="bg-theme-card border border-theme-border p-4 md:p-8 rounded-2xl relative max-w-md w-full shadow-2xl">
               <button
                 onClick={() => setShowQR(false)}
                 className="absolute top-4 right-4 p-2 bg-theme-bg-muted rounded-full hover:bg-theme-border transition-colors"

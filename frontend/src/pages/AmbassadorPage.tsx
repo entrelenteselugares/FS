@@ -68,7 +68,7 @@ export default function AmbassadorPage() {
         <div className="absolute bottom-0 right-1/4 w-[400px] h-[400px] bg-blue-500/5 blur-[120px] rounded-full opacity-20" />
       </div>
 
-      <main className="relative z-10 max-w-5xl mx-auto px-6 pt-20 pb-32 flex flex-col items-center text-center">
+      <main className="relative z-10 max-w-5xl mx-auto px-3 md:px-6 pt-20 pb-32 flex flex-col items-center text-center">
         {/* Top Branding */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
@@ -84,7 +84,7 @@ export default function AmbassadorPage() {
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="inline-flex items-center gap-3 px-6 py-2.5 bg-brand-tactical/10 border border-brand-tactical/20 rounded-full text-brand-tactical"
+            className="inline-flex items-center gap-3 px-3 md:px-6 py-2.5 bg-brand-tactical/10 border border-brand-tactical/20 rounded-full text-brand-tactical"
           >
             <Users size={14} className="fill-brand-tactical" />
             <span className="text-[10px] font-black uppercase tracking-[0.2em]">Acesso Exclusivo via Convite</span>
@@ -94,7 +94,7 @@ export default function AmbassadorPage() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="text-5xl md:text-8xl font-heading font-black uppercase italic tracking-tighter leading-[0.85] text-white"
+            className="text-3xl md:text-5xl md:text-8xl font-heading font-black uppercase italic tracking-tighter leading-[0.85] text-white"
           >
             Você foi convidado <br />
             <span className="text-brand-tactical">por {name}</span>
@@ -111,7 +111,7 @@ export default function AmbassadorPage() {
         </div>
 
         {/* Features Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full mb-20">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-6 w-full mb-20">
           {[
             { icon: <Zap />, title: "Live Sync", desc: "Suas fotos transmitidas em tempo real." },
             { icon: <Star />, title: "Premium", desc: "Qualidade de museu em cada impressão." },
@@ -122,7 +122,7 @@ export default function AmbassadorPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 + (i * 0.1) }}
-              className="p-8 bg-zinc-900/40 border border-zinc-800/50 backdrop-blur-xl flex flex-col items-center text-center space-y-4 group hover:border-brand-tactical/40 transition-all"
+              className="p-4 md:p-8 bg-zinc-900/40 border border-zinc-800/50 backdrop-blur-xl flex flex-col items-center text-center space-y-4 group hover:border-brand-tactical/40 transition-all"
             >
               <div className="text-brand-tactical p-3 bg-brand-tactical/10 rounded-2xl group-hover:bg-brand-tactical group-hover:text-black transition-all">
                 {f.icon}
@@ -142,7 +142,7 @@ export default function AmbassadorPage() {
         >
           <button
             onClick={handleStart}
-            className="w-full py-6 bg-brand-tactical text-black font-black uppercase tracking-[0.4em] text-[12px] hover:bg-white transition-all shadow-[0_0_60px_rgba(133,185,172,0.2)] active:scale-95 flex items-center justify-center gap-4 italic"
+            className="w-full py-3 md:py-6 bg-brand-tactical text-black font-black uppercase tracking-[0.4em] text-[12px] hover:bg-white transition-all shadow-[0_0_60px_rgba(133,185,172,0.2)] active:scale-95 flex items-center justify-center gap-4 italic"
           >
             Aceitar Convite e Começar
             <ArrowRight size={18} />
@@ -155,7 +155,7 @@ export default function AmbassadorPage() {
       </main>
 
       {/* Footer Branding */}
-      <footer className="py-12 border-t border-zinc-900/50 text-center opacity-30">
+      <footer className="py-3 md:py-6 md:py-12 border-t border-zinc-900/50 text-center opacity-30">
         <div className="flex items-center justify-center gap-3">
           <ShieldCheck size={14} className="text-brand-tactical" />
           <span className="text-[9px] font-black uppercase tracking-[0.4em]">Protocolo de Rede Blindado</span>

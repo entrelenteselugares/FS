@@ -33,12 +33,13 @@ const KANBAN_COLUMNS = [
 ] as const;
 
 export const AdminQuotes: React.FC = () => {
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [quotes, setQuotes] = useState<Quote[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [selectedQuote, setSelectedQuote] = useState<Quote | null>(null);
-  const [activeTab, setActiveTab] = useState<"briefing"|"equipe"|"locacao"|"custos"|"fechamento">("briefing");
+  const activeTab = (searchParams.get("tab") as "briefing"|"equipe"|"locacao"|"custos"|"fechamento") || "briefing";
+  const setActiveTab = (tab: "briefing"|"equipe"|"locacao"|"custos"|"fechamento") => setSearchParams(prev => { prev.set("tab", tab); return prev; }, { replace: true });
   const [isNewQuoteModalOpen, setIsNewQuoteModalOpen] = useState(false);
   const [selectedStaff, setSelectedStaff] = useState<{instanceId:string,id:string,label:string,cost:number,userId?:string}[]>([]);
   const [selectedEquip, setSelectedEquip] = useState<{id:string,qty:number}[]>([]);
@@ -271,7 +272,7 @@ export const AdminQuotes: React.FC = () => {
       <div className="relative border-b border-theme-border pb-8 md:pb-12 space-y-4 md:space-y-6">
         <div className="absolute -top-10 -left-10 w-40 h-40 bg-brand-tactical/10 blur-3xl rounded-full" />
         
-        <div className="flex flex-col xl:flex-row justify-between items-start xl:items-end gap-6 relative z-10">
+        <div className="flex flex-col xl:flex-row justify-between items-start xl:items-end gap-3 md:gap-6 relative z-10">
           <div>
                         <p className="text-theme-muted mt-2 text-sm">Cotações e propostas comerciais</p>
           </div>
@@ -282,7 +283,7 @@ export const AdminQuotes: React.FC = () => {
                 className="bg-theme-bg-muted border border-theme-border pl-9 pr-4 py-3 text-[10px] text-theme-text uppercase tracking-widest outline-none focus:border-brand-tactical transition-all font-bold rounded-lg w-56"/>
             </div>
             <button onClick={()=>setIsNewQuoteModalOpen(true)}
-              className="bg-brand-tactical text-black font-display font-black uppercase tracking-[0.2em] px-6 py-3 text-[10px] flex items-center gap-2 hover:brightness-110 shadow-xl transition-all rounded-lg whitespace-nowrap">
+              className="bg-brand-tactical text-black font-display font-black uppercase tracking-[0.2em] px-3 md:px-6 py-3 text-[10px] flex items-center gap-2 hover:brightness-110 shadow-xl transition-all rounded-lg whitespace-nowrap">
               <Plus size={16}/> Novo Orçamento
             </button>
           </div>
@@ -324,7 +325,7 @@ export const AdminQuotes: React.FC = () => {
                 </div>
                 <div className="flex flex-col gap-3 overflow-y-auto" style={{maxHeight:"68vh"}}>
                   {colQuotes.length===0?(
-                    <div className="border  border-theme-border rounded-lg py-12 flex flex-col items-center justify-center gap-3 opacity-40">
+                    <div className="border  border-theme-border rounded-lg py-3 md:py-6 md:py-12 flex flex-col items-center justify-center gap-3 opacity-40">
                       <Briefcase size={20} className="text-theme-text-muted"/>
                       <p className="text-[9px] text-theme-text-muted uppercase tracking-widest font-bold text-center px-4">Nenhum protocolo</p>
                     </div>
@@ -361,7 +362,7 @@ export const AdminQuotes: React.FC = () => {
               className="relative w-full max-w-3xl bg-theme-card border border-theme-border rounded-[40px] overflow-hidden shadow-2xl flex flex-col" style={{maxHeight:"90vh"}}
             >
               {/* Modal Header */}
-              <div className="p-8 md:p-10 border-b border-theme-border flex items-start justify-between shrink-0">
+              <div className="p-4 md:p-8 md:p-10 border-b border-theme-border flex items-start justify-between shrink-0">
                 <div className="flex items-center gap-4">
                   <div className="w-12 h-12 bg-brand-tactical/10 rounded-2xl flex items-center justify-center border border-brand-tactical/20">
                     <Briefcase className="text-brand-tactical" size={24} strokeWidth={1.5}/>
@@ -374,7 +375,7 @@ export const AdminQuotes: React.FC = () => {
                 <button onClick={()=>setSelectedQuote(null)} className="p-3 hover:bg-theme-bg-muted rounded-full transition-all text-theme-muted"><X size={24}/></button>
               </div>
               {/* Tab Nav */}
-              <div className="px-8 md:px-10 pt-4 flex gap-1 border-b border-theme-border shrink-0 overflow-x-auto no-scrollbar">
+              <div className="px-4 md:px-8 md:px-10 pt-4 flex gap-1 border-b border-theme-border shrink-0 overflow-x-auto no-scrollbar">
                 {(["briefing","equipe","locacao","custos","fechamento"] as const).map(t=>(
                   <button key={t} onClick={()=>setActiveTab(t)}
                     className={`pb-3 px-4 text-[9px] font-black uppercase tracking-[0.2em] transition-all relative whitespace-nowrap italic ${activeTab===t?"text-brand-tactical":"text-theme-subtle hover:text-white"}`}>
@@ -384,7 +385,7 @@ export const AdminQuotes: React.FC = () => {
                 ))}
               </div>
               {/* Scrollable Body */}
-              <div className="flex-1 overflow-y-auto custom-scrollbar p-8 md:p-10">
+              <div className="flex-1 overflow-y-auto custom-scrollbar p-4 md:p-8 md:p-10">
                 {activeTab==="briefing"&&(
                   <div className="space-y-5 animate-in fade-in duration-300">
                     <div className="grid grid-cols-2 gap-3 bg-white/[0.02] p-4 border border-theme-border rounded-lg">
@@ -453,7 +454,7 @@ export const AdminQuotes: React.FC = () => {
                     </div>
                     <div className="space-y-2 pt-4 border-t border-theme-border">
                       <h4 className="text-[9px] font-black text-theme-text uppercase tracking-widest border-l-2 border-brand-tactical pl-2 mb-2">Cachês</h4>
-                      {selectedStaff.length===0?(<div className="py-8 text-center border  border-theme-border rounded-lg opacity-40"><p className="text-[9px] text-theme-text-muted uppercase tracking-widest">Selecione os papéis</p></div>):selectedStaff.map(s=>(
+                      {selectedStaff.length===0?(<div className="py-4 md:py-8 text-center border  border-theme-border rounded-lg opacity-40"><p className="text-[9px] text-theme-text-muted uppercase tracking-widest">Selecione os papéis</p></div>):selectedStaff.map(s=>(
                         <div key={s.instanceId} className="grid grid-cols-1 sm:grid-cols-[1fr_auto_auto_auto] gap-3 items-center bg-theme-bg p-4 border border-theme-border rounded-xl">
                           <div className="min-w-0 space-y-1">
                             <input type="text" value={s.label} onChange={e=>setSelectedStaff(selectedStaff.map(st=>st.instanceId===s.instanceId?{...st,label:e.target.value.toUpperCase()}:st))}
@@ -540,7 +541,7 @@ export const AdminQuotes: React.FC = () => {
                     </div>
                     <div className="space-y-3">
                       <label className="text-[9px] font-black text-theme-muted uppercase tracking-[0.4em] text-center block italic">Valor Final da Proposta</label>
-                      <input type="number" value={finalPrice} onChange={e=>setFinalPrice(Number(e.target.value))} className="w-full bg-theme-bg-muted border border-brand-tactical/30 p-5 text-4xl font-display font-black text-theme-text outline-none text-center italic shadow-[0_0_30px_rgba(133,185,172,0.1)] focus:border-brand-tactical transition-all rounded-lg"/>
+                      <input type="number" value={finalPrice} onChange={e=>setFinalPrice(Number(e.target.value))} className="w-full bg-theme-bg-muted border border-brand-tactical/30 p-5 text-2xl md:text-4xl font-display font-black text-theme-text outline-none text-center italic shadow-[0_0_30px_rgba(133,185,172,0.1)] focus:border-brand-tactical transition-all rounded-lg"/>
                       <button onClick={handleSaveDraft} className="w-full border border-theme-border text-theme-muted p-2.5 text-[8px] font-black uppercase tracking-[0.2em] hover:border-brand-tactical hover:text-brand-tactical transition-all rounded-lg italic flex items-center justify-center gap-2">
                         Salvar Rascunho (Em Análise)
                       </button>
@@ -549,8 +550,8 @@ export const AdminQuotes: React.FC = () => {
                 )}
               </div>
               {/* Modal Footer */}
-              <div className="p-8 md:p-10 bg-theme-bg-muted border-t border-theme-border flex gap-4 shrink-0 rounded-2xl">
-                <button onClick={handleReject} className="py-5 px-6 border border-red-500/20 text-red-500 text-[9px] font-black uppercase tracking-[0.2em] hover:bg-red-500 hover:text-white transition-all rounded-[20px] italic">Recusar</button>
+              <div className="p-4 md:p-8 md:p-10 bg-theme-bg-muted border-t border-theme-border flex gap-4 shrink-0 rounded-2xl">
+                <button onClick={handleReject} className="py-5 px-3 md:px-6 border border-red-500/20 text-red-500 text-[9px] font-black uppercase tracking-[0.2em] hover:bg-red-500 hover:text-white transition-all rounded-[20px] italic">Recusar</button>
                 
                 {selectedQuote.quoteStatus === "CONVERTED" && (
                   <button onClick={handleArchive} className="flex-1 py-5 bg-zinc-800 text-white text-[11px] font-black uppercase tracking-[0.3em] hover:bg-zinc-700 transition-all rounded-[20px] italic flex items-center justify-center gap-4">
@@ -577,7 +578,7 @@ export const AdminQuotes: React.FC = () => {
           
           <div className="relative w-full max-w-2xl bg-theme-card border border-theme-border rounded-[40px] overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300 flex flex-col h-[90vh]">
             {/* Header */}
-            <div className="p-8 md:p-10 border-b border-theme-border flex items-center justify-between shrink-0">
+            <div className="p-4 md:p-8 md:p-10 border-b border-theme-border flex items-center justify-between shrink-0">
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 bg-brand-tactical/10 rounded-2xl flex items-center justify-center border border-brand-tactical/20">
                   <Briefcase className="text-brand-tactical" size={24} strokeWidth={1.5} />
@@ -591,8 +592,8 @@ export const AdminQuotes: React.FC = () => {
             </div>
 
             {/* Scrollable Content */}
-            <form id="new-quote-form" onSubmit={handleCreateNewQuote} className="flex-1 overflow-y-auto p-8 md:p-10 space-y-8 custom-scrollbar">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <form id="new-quote-form" onSubmit={handleCreateNewQuote} className="flex-1 overflow-y-auto p-4 md:p-8 md:p-10 space-y-8 custom-scrollbar">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-6">
                 <div className="space-y-2">
                   <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest block mb-2 opacity-60 italic">Evento (Título)</label>
                   <input required placeholder="EX: CASAMENTO ANA & LEO" value={newQuoteData.title} onChange={e => setNewQuoteData({...newQuoteData, title: e.target.value.toUpperCase()})} className="w-full bg-theme-bg-muted border border-theme-border p-4 text-[10px] text-theme-text outline-none focus:border-brand-tactical font-black rounded-xl uppercase" />
@@ -615,7 +616,7 @@ export const AdminQuotes: React.FC = () => {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-6">
                 <div className="space-y-2">
                   <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest block mb-2 opacity-60 italic">Nome do Cliente</label>
                   <input required placeholder="NOME COMPLETO" value={newQuoteData.clientName} onChange={e => setNewQuoteData({...newQuoteData, clientName: e.target.value.toUpperCase()})} className="w-full bg-theme-bg-muted border border-theme-border p-4 text-[10px] text-theme-text outline-none focus:border-brand-tactical font-black rounded-xl uppercase" />
@@ -626,7 +627,7 @@ export const AdminQuotes: React.FC = () => {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-6">
                 <div className="space-y-2">
                   <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest block mb-2 opacity-60 italic">E-mail</label>
                   <input required type="email" placeholder="CLIENTE@EMAIL.COM" value={newQuoteData.clientEmail} onChange={e => setNewQuoteData({...newQuoteData, clientEmail: e.target.value})} className="w-full bg-theme-bg-muted border border-theme-border p-4 text-[10px] text-theme-text outline-none focus:border-brand-tactical font-black rounded-xl uppercase" />
@@ -669,7 +670,7 @@ export const AdminQuotes: React.FC = () => {
             </form>
 
             {/* Footer */}
-            <div className="p-8 md:p-10 bg-theme-bg-muted border-t border-theme-border flex gap-4 shrink-0 rounded-2xl">
+            <div className="p-4 md:p-8 md:p-10 bg-theme-bg-muted border-t border-theme-border flex gap-4 shrink-0 rounded-2xl">
               <button type="button" onClick={() => setIsNewQuoteModalOpen(false)} className="flex-1 py-5 border border-theme-border text-[11px] font-black uppercase tracking-[0.3em] text-theme-muted hover:text-white transition-all rounded-[20px] italic">Cancelar</button>
               <button 
                 type="submit"

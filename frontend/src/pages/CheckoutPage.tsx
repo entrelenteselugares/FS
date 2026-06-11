@@ -646,7 +646,7 @@ export const CheckoutPage = () => {
   // Empty Cart State: No protocol and no items
   if (!effectiveOrderId && digitalPhotos.length === 0 && physicalItems.length === 0) {
     return (
-      <div className="min-h-screen bg-theme-bg flex flex-col items-center justify-center p-8 text-center">
+      <div className="min-h-screen bg-theme-bg flex flex-col items-center justify-center p-4 md:p-8 text-center">
         <div className="space-y-8 max-w-md animate-in fade-in slide-in-from-bottom-8 duration-700">
           <div className="relative mx-auto w-24 h-24 flex items-center justify-center">
             <div className="absolute inset-0 bg-theme-bg-muted blur-2xl rounded-full" />
@@ -708,14 +708,14 @@ export const CheckoutPage = () => {
     };
 
     return (
-      <div className="min-h-screen bg-theme-bg flex flex-col items-center justify-center p-8 text-center">
+      <div className="min-h-screen bg-theme-bg flex flex-col items-center justify-center p-4 md:p-8 text-center">
         <div className="space-y-8 max-w-lg animate-in fade-in slide-in-from-bottom-8 duration-700">
           <div className="relative mx-auto w-20 h-20 flex items-center justify-center">
             <div className="absolute inset-0 bg-brand-tactical/20 blur-2xl rounded-full" />
             <RefreshCw size={40} className="text-brand-tactical animate-spin-slow" />
           </div>
           <div className="space-y-4">
-            <h2 className="text-4xl md:text-5xl font-heading font-black text-white uppercase italic tracking-tighter leading-none">
+            <h2 className="text-2xl md:text-4xl md:text-5xl font-heading font-black text-white uppercase italic tracking-tighter leading-none">
               Recuperar Carrinho
             </h2>
             <p className="text-[10px] text-theme-text-muted font-black uppercase tracking-[0.2em] leading-relaxed max-w-sm mx-auto">
@@ -723,7 +723,7 @@ export const CheckoutPage = () => {
             </p>
           </div>
           
-          <div className="bg-theme-bg-muted border border-theme-border p-6 space-y-4 text-left">
+          <div className="bg-theme-bg-muted border border-theme-border p-3 md:p-6 space-y-4 text-left">
              <div className="flex justify-between text-[10px] font-black uppercase tracking-widest text-theme-text-muted">
                <span>Itens Digitais</span>
                <span className="text-white">{digitalPhotos.length}</span>
@@ -759,9 +759,9 @@ export const CheckoutPage = () => {
   }
 
   if (error || !order) return (
-    <div className="min-h-screen bg-theme-bg flex flex-col items-center justify-center p-8 text-center">
+    <div className="min-h-screen bg-theme-bg flex flex-col items-center justify-center p-4 md:p-8 text-center">
       <div className="space-y-6 max-w-md animate-in fade-in slide-in-from-bottom-8 duration-700">
-        <h2 className="text-4xl md:text-5xl font-heading font-black text-red-500 uppercase italic tracking-tighter leading-none">
+        <h2 className="text-2xl md:text-4xl md:text-5xl font-heading font-black text-red-500 uppercase italic tracking-tighter leading-none">
           Identidade de <br/> Compra Expirada
         </h2>
         <p className="text-[10px] text-theme-text-muted font-black uppercase tracking-[0.2em] leading-relaxed max-w-xs mx-auto">
@@ -775,7 +775,7 @@ export const CheckoutPage = () => {
               localStorage.removeItem('fs_cart_digital');
               navigate('/');
             }}
-            className="w-full px-8 py-4 bg-zinc-800 text-white text-[10px] font-black uppercase tracking-[0.4em] hover:bg-white hover:text-black transition-all italic shadow-2xl"
+            className="w-full px-4 md:px-8 py-4 bg-zinc-800 text-white text-[10px] font-black uppercase tracking-[0.4em] hover:bg-white hover:text-black transition-all italic shadow-2xl"
           >
             Limpar e Voltar para a Vitrine
           </button>
@@ -798,14 +798,14 @@ export const CheckoutPage = () => {
     return (
       <div className="min-h-screen bg-theme-bg text-theme-text font-sans flex flex-col">
         <Navbar tenantLogoUrl={order?.event?.tenantLogoUrl} />
-        <div className="flex-1 flex items-center justify-center p-6">
+        <div className="flex-1 flex items-center justify-center p-3 md:p-6">
           <div className="max-w-xl w-full text-center space-y-8 animate-in fade-in zoom-in duration-700">
             <div className="relative mx-auto w-24 h-24 flex items-center justify-center">
               <div className="absolute inset-0 bg-brand-tactical/20 blur-3xl rounded-full animate-pulse" />
               <CheckCircle2 size={80} className="text-brand-tactical relative z-10" />
             </div>
             <div className="space-y-4">
-              <h2 className="text-5xl md:text-6xl font-heading font-black text-white uppercase italic tracking-tighter leading-none">
+              <h2 className="text-3xl md:text-5xl md:text-6xl font-heading font-black text-white uppercase italic tracking-tighter leading-none">
                 Missão <br/> Cumprida
               </h2>
               <p className="text-[10px] text-theme-text-muted font-black uppercase tracking-[0.3em] leading-relaxed max-w-xs mx-auto">
@@ -830,7 +830,7 @@ export const CheckoutPage = () => {
     <div className="min-h-screen bg-theme-bg text-theme-text font-sans flex flex-col">
       <Navbar tenantLogoUrl={order?.event?.tenantLogoUrl} />
       <WhatsAppSupport message={`Olá! Estou no checkout do pedido ${effectiveOrderId} e preciso de ajuda com o pagamento.`} />
-      <div className="flex-1 max-w-7xl mx-auto px-6 py-12 w-full animate-in fade-in duration-700">
+      <div className="flex-1 max-w-7xl mx-auto px-3 md:px-6 py-3 md:py-6 md:py-12 w-full animate-in fade-in duration-700">
         <div className="flex justify-between items-center mb-12 border-b border-theme-border pb-8">
           <button onClick={() => navigate(-1)} className="text-[10px] font-black uppercase tracking-widest text-theme-text-muted hover:text-theme-text transition-all flex items-center gap-2"><ArrowLeft size={14} /> Voltar</button>
           <div className="flex items-center gap-2 text-brand-tactical text-[9px] font-black uppercase tracking-widest"><ShieldCheck size={14} /> Checkout Blindado</div>
@@ -841,7 +841,7 @@ export const CheckoutPage = () => {
           <div className="space-y-8">
             <div>
               <p className="text-[10px] font-black text-brand-tactical uppercase tracking-[0.4em] mb-4">Investimento</p>
-              <h1 className="text-4xl md:text-5xl font-black italic tracking-tighter uppercase leading-none">
+              <h1 className="text-2xl md:text-4xl md:text-5xl font-black italic tracking-tighter uppercase leading-none">
                 {order.event?.slug === "vaults-system" ? "Finalizar Pedido" : order.event?.title}
               </h1>
               <p className="text-zinc-500 text-sm mt-4 font-medium">
@@ -893,7 +893,7 @@ export const CheckoutPage = () => {
 
             {/* Logística Condicional */}
             {order.deliveryType === 'SHIPPING' && authStep === 'authorized' && (
-              <div className="animate-in slide-in-from-top-4 duration-500 space-y-6 p-8 bg-zinc-900/50 border border-white/5 rounded-3xl">
+              <div className="animate-in slide-in-from-top-4 duration-500 space-y-6 p-4 md:p-8 bg-zinc-900/50 border border-white/5 rounded-3xl">
                  <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center gap-3">
                        <div className="h-0.5 w-6 bg-brand-tactical" />
@@ -989,7 +989,7 @@ export const CheckoutPage = () => {
             )}
 
             {/* Totais */}
-            <div className="p-8 bg-theme-bg-muted border border-theme-border rounded-3xl space-y-6">
+            <div className="p-4 md:p-8 bg-theme-bg-muted border border-theme-border rounded-3xl space-y-6">
               <div className="flex justify-between items-center text-[10px] font-black text-theme-text-muted uppercase tracking-widest">
                 <span>Subtotal</span>
                 <span className="text-theme-text">R$ {(Number(order.amount) - Number(order.shippingFee || 0)).toFixed(2)}</span>
@@ -1008,7 +1008,7 @@ export const CheckoutPage = () => {
                   {validatedCoupon && (
                     <p className="text-[10px] text-zinc-500 line-through">R$ {baseAmountRaw.toFixed(2)}</p>
                   )}
-                  <span className="text-4xl font-black italic tracking-tighter text-theme-text">R$ {finalAmount.toFixed(2)}</span>
+                  <span className="text-2xl md:text-4xl font-black italic tracking-tighter text-theme-text">R$ {finalAmount.toFixed(2)}</span>
                 </div>
               </div>
 
@@ -1026,7 +1026,7 @@ export const CheckoutPage = () => {
 
             {/* Negotiation History / Linha do Tempo de Negociação */}
             {order.event?.priceHistory && order.event.priceHistory.length > 0 && (
-              <div className="p-8 bg-zinc-950/40 border border-white/5 rounded-3xl space-y-6">
+              <div className="p-4 md:p-8 bg-zinc-950/40 border border-white/5 rounded-3xl space-y-6">
                 <div className="flex items-center gap-2 mb-2">
                   <div className="h-2 w-2 bg-brand-tactical rounded-full animate-pulse" />
                   <h3 className="text-[10px] font-black text-brand-tactical uppercase tracking-[0.2em] italic">
@@ -1105,7 +1105,7 @@ export const CheckoutPage = () => {
                        <button 
                          onClick={handleManualCouponSubmit}
                          disabled={applyingCoupon}
-                         className="px-6 bg-brand-tactical text-black text-[10px] font-black uppercase tracking-widest hover:bg-white transition-all italic disabled:opacity-50"
+                         className="px-3 md:px-6 bg-brand-tactical text-black text-[10px] font-black uppercase tracking-widest hover:bg-white transition-all italic disabled:opacity-50"
                        >
                          {applyingCoupon ? "Aplicando..." : "Aplicar"}
                        </button>
@@ -1180,7 +1180,7 @@ export const CheckoutPage = () => {
               </div>
             ) : (
               <form onSubmit={handleAuthSubmit} className="space-y-6">
-                 <div className="text-center p-8 bg-zinc-900/50 border border-white/5 rounded-3xl">
+                 <div className="text-center p-4 md:p-8 bg-zinc-900/50 border border-white/5 rounded-3xl">
                     <p className="text-[10px] font-black text-brand-tactical uppercase tracking-widest mb-4">
                       {authStep === 'login' ? 'Identificação Necessária' : 'Crie sua Conta'}
                     </p>

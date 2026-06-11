@@ -67,10 +67,10 @@ export const HallOfFame: React.FC = () => {
       `}</style>
 
       {/* Back Button */}
-      <nav className="absolute top-0 left-0 w-full z-50 p-6 pointer-events-none flex justify-between items-center">
+      <nav className="absolute top-0 left-0 w-full z-50 p-3 md:p-6 pointer-events-none flex justify-between items-center">
         <button 
           onClick={() => navigate("/")} 
-          className="pointer-events-auto flex items-center gap-3 text-[10px] font-black uppercase tracking-[0.4em] text-theme-muted hover:text-theme-text transition-all bg-theme-bg-muted backdrop-blur-md px-6 py-3 border border-theme-border"
+          className="pointer-events-auto flex items-center gap-3 text-[10px] font-black uppercase tracking-[0.4em] text-theme-muted hover:text-theme-text transition-all bg-theme-bg-muted backdrop-blur-md px-3 md:px-6 py-3 border border-theme-border"
         >
           <span className="text-lg">←</span> Vitrine
         </button>
@@ -80,12 +80,12 @@ export const HallOfFame: React.FC = () => {
       </nav>
       
       {/* Hero Section */}
-      <section className="pt-20 pb-40 px-6 max-w-7xl mx-auto text-center">
+      <section className="pt-20 pb-40 px-3 md:px-6 max-w-7xl mx-auto text-center">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
           <div className="flex justify-center mb-6">
             <Award size={48} className="text-theme-border" />
           </div>
-          <h1 className="text-6xl md:text-8xl font-black uppercase tracking-tighter leading-none mb-6" style={{ fontFamily: "'Barlow Condensed', sans-serif" }}>
+          <h1 className="text-2xl md:text-4xl md:text-6xl md:text-8xl font-black uppercase tracking-tighter leading-none mb-6" style={{ fontFamily: "'Barlow Condensed', sans-serif" }}>
             Hall da <span style={{ color: THEME.accent }}>Fama</span>
           </h1>
           <p className="text-theme-muted uppercase tracking-[0.3em] text-[11px] font-bold max-w-md mx-auto leading-relaxed">
@@ -96,18 +96,18 @@ export const HallOfFame: React.FC = () => {
 
       {/* Concurso ATIVO */}
       {activeContest && activeContest.contest && (
-        <section className="pb-32 px-6 max-w-7xl mx-auto">
+        <section className="pb-32 px-3 md:px-6 max-w-7xl mx-auto">
           <div className="flex items-center gap-4 mb-12">
             <div className="w-10 h-[1px] bg-theme-border" />
             <h2 className="text-[10px] font-black uppercase tracking-[0.6em] text-theme-muted">Em Disputa: {activeContest.contest.title}</h2>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8">
             {activeContest.ranking.map((item: RankingItem, idx: number) => (
               <motion.div 
                 key={item.event.id}
                 whileHover={{ y: -5 }}
-                className="bg-theme-bg-muted border border-theme-border relative group p-6"
+                className="bg-theme-bg-muted border border-theme-border relative group p-3 md:p-6"
               >
                 <div className="absolute top-0 right-0 p-4">
                     <div className="text-[40px] font-black opacity-10 group-hover:opacity-30 transition-opacity" style={{ fontFamily: "'Barlow Condensed', sans-serif" }}>
@@ -136,7 +136,7 @@ export const HallOfFame: React.FC = () => {
 
       {/* Histórico / Galeria de Vencedores */}
       <section className="bg-theme-bg-muted py-32 border-t border-theme-border">
-        <div className="max-w-7xl mx-auto px-6">
+        <div className="max-w-7xl mx-auto px-3 md:px-6">
           <div className="flex items-center gap-4 mb-20 justify-center">
             <Shield size={20} className="text-theme-muted" />
             <h2 className="text-[11px] font-black uppercase tracking-[0.8em] text-theme-muted">Vencedores de Edições Anteriores</h2>
@@ -147,11 +147,11 @@ export const HallOfFame: React.FC = () => {
             {history.map((res) => (
               <div key={res.contest.id}>
                 <div className="text-center mb-16">
-                    <h3 className="text-4xl font-black uppercase tracking-tighter mb-2" style={{ fontFamily: "'Barlow Condensed', sans-serif" }}>{res.contest.title}</h3>
+                    <h3 className="text-2xl md:text-4xl font-black uppercase tracking-tighter mb-2" style={{ fontFamily: "'Barlow Condensed', sans-serif" }}>{res.contest.title}</h3>
                     <div className="text-[9px] text-theme-muted uppercase tracking-[0.3em] font-bold">Encerrado em {new Date(res.contest.endDate).toLocaleDateString()}</div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-6 md:gap-12">
                    {res.winners.map((winner, widx) => (
                       <div key={winner.event.id} className="text-center">
                         <div className="relative w-40 h-40 mx-auto mb-8">
@@ -176,10 +176,10 @@ export const HallOfFame: React.FC = () => {
 
       {/* Footer CTA */}
       <footer className="py-40 text-center border-t border-theme-border">
-        <div className="max-w-xl mx-auto px-6">
-            <h2 className="text-4xl font-black uppercase tracking-tighter mb-8" style={{ fontFamily: "'Barlow Condensed', sans-serif" }}>Quer ver seu álbum aqui?</h2>
+        <div className="max-w-xl mx-auto px-3 md:px-6">
+            <h2 className="text-2xl md:text-4xl font-black uppercase tracking-tighter mb-8" style={{ fontFamily: "'Barlow Condensed', sans-serif" }}>Quer ver seu álbum aqui?</h2>
             <p className="text-theme-muted text-[11px] uppercase tracking-widest font-bold leading-relaxed mb-12">Compartilhe sua galeria e peça curtidas aos seus convidados. Os álbuns mais engajados recebem premiações exclusivas em todos os concursos.</p>
-            <button onClick={() => window.location.href='/cotacao'} className="px-12 py-5 bg-brand-tactical text-theme-bg text-[10px] font-black uppercase tracking-[0.4em] hover:brightness-110 transition-all shadow-2xl shadow-brand-tactical/20">RESERVAR MEU GRANDE DIA</button>
+            <button onClick={() => window.location.href='/cotacao'} className="px-3 md:px-6 md:px-12 py-5 bg-brand-tactical text-theme-bg text-[10px] font-black uppercase tracking-[0.4em] hover:brightness-110 transition-all shadow-2xl shadow-brand-tactical/20">RESERVAR MEU GRANDE DIA</button>
         </div>
       </footer>
     </div>

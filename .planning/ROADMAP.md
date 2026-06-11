@@ -100,3 +100,17 @@
 **Depends on:** Phase 58
 **Status:** Completed
 
+### Phase 62: Auth Wall Universal & Câmera Rápida
+
+**Goal:** Configurar bloqueio rigoroso exigindo login para acessar o sistema inteiro (exceto links públicos) usando `returnUrl` em convites, além de adicionar uma Bottom Bar com atalho central de câmera para convidados.
+**Requirements**: CONTEXT.md defined
+**Depends on:** None
+**Status:** Not Started
+
+### Phase 63: Mobile Performance Optimization
+
+**Goal:** Refatorar, otimizar e melhorar a velocidade de resposta do aplicativo na versão mobile, eliminando lags e travamentos que prejudicam a percepção de qualidade do app.
+**Requirements**: TBD
+**Depends on:** None
+**Status:** Not Started
+

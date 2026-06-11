@@ -126,7 +126,7 @@ function NewVaultModal({ onClose, onCreated }: { onClose: () => void; onCreated:
         initial={{ opacity: 0, y: 40 }}
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: 40 }}
-        className="w-full h-full sm:h-auto sm:max-h-[90vh] max-w-md bg-theme-card border-none sm:border border-theme-border rounded-none sm:rounded-2xl p-6 sm:p-8 flex flex-col overflow-y-auto custom-scrollbar"
+        className="w-full h-full sm:h-auto sm:max-h-[90vh] max-w-md bg-theme-card border-none sm:border border-theme-border rounded-none sm:rounded-2xl p-3 md:p-6 sm:p-8 flex flex-col overflow-y-auto custom-scrollbar"
       >
         <div className="flex items-center gap-3 mb-6 shrink-0">
           <div className="p-2.5 bg-brand-tactical/10 border border-brand-tactical/20 rounded-xl">
@@ -230,7 +230,10 @@ export default function VaultsPage() {
       { label: "Meus Dados", onClick: () => navigate("/minha-conta?s=profile"), isActive: false, icon: <User size={18} /> },
     ];
 
-    if ((user?.role === "PROFISSIONAL" || user?.role === "FRANCHISEE") && user?.verificationStatus === "APPROVED") {
+    const isProOrFranchise = (user?.role === "PROFISSIONAL" || user?.role === "FRANCHISEE" || !!user?.franchiseProfile) && user?.role !== "UNIDADE" && user?.role !== "CARTORIO";
+    const isVerified = (user?.verificationStatus === "APPROVED" || user?.isVerified || !!user?.franchiseProfile) && user?.role !== "UNIDADE" && user?.role !== "CARTORIO";
+
+    if (isProOrFranchise && isVerified) {
       items.push(
         { label: "ÁREA PROFISSIONAL", isHeader: true },
         { label: "Minha Agenda", onClick: () => navigate("/minha-conta?s=agenda"), isActive: false, icon: <Play size={18} /> },
@@ -284,7 +287,7 @@ export default function VaultsPage() {
         <meta name="description" content="Álbuns privados compartilhados para preservar e materializar suas memórias." />
       </Helmet>
 
-      <div className="max-w-[1400px] mx-auto px-2 md:px-6 py-6 md:py-10 space-y-8 md:space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
+      <div className="max-w-[1400px] mx-auto px-2 md:px-6 py-3 md:py-6 md:py-10 space-y-8 md:space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
         {/* Page actions */}
         <div className="flex items-center justify-end gap-4 border-b border-theme-border pb-3 md:pb-4">
 
@@ -321,7 +324,7 @@ export default function VaultsPage() {
             animate={{ opacity: 1 }}
             className="flex flex-col items-center justify-center py-32 gap-5 text-center bg-theme-card border border-theme-border rounded-2xl"
           >
-            <div className="p-6 bg-brand-tactical/10 border border-brand-tactical/10 rounded-2xl">
+            <div className="p-3 md:p-6 bg-brand-tactical/10 border border-brand-tactical/10 rounded-2xl">
               <Lock size={48} className="text-brand-tactical/40" />
             </div>
             <div className="space-y-2">
@@ -332,7 +335,7 @@ export default function VaultsPage() {
             </div>
             <button
               onClick={() => setShowModal(true)}
-              className="mt-4 flex items-center gap-2 border border-brand-tactical/30 text-brand-tactical hover:bg-brand-tactical/10 text-[10px] font-black uppercase tracking-widest px-6 md:px-8 py-2.5 md:py-4 rounded-xl transition-all italic"
+              className="mt-4 flex items-center gap-2 border border-brand-tactical/30 text-brand-tactical hover:bg-brand-tactical/10 text-[10px] font-black uppercase tracking-widest px-3 md:px-6 md:px-8 py-2.5 md:py-4 rounded-xl transition-all italic"
             >
               <Plus size={14} />
               CRIAR PRIMEIRO ÁLBUM

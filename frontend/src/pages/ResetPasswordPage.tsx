@@ -49,7 +49,7 @@ export default function ResetPasswordPage() {
   };
 
   return (
-    <div className="min-h-screen bg-theme-bg flex items-center justify-center p-6 transition-colors duration-700">
+    <div className="min-h-screen bg-theme-bg flex items-center justify-center p-3 md:p-6 transition-colors duration-700">
       <div className="w-full max-w-lg space-y-10 animate-in fade-in slide-in-from-bottom-8 duration-1000">
         
         {/* Brand */}
@@ -57,7 +57,7 @@ export default function ResetPasswordPage() {
           <div className="inline-flex p-4 rounded-full bg-brand-tactical/10 text-brand-tactical mb-4">
             <ShieldCheck size={32} />
           </div>
-          <h1 className="text-4xl font-heading font-black italic text-theme-text uppercase tracking-tighter">
+          <h1 className="text-2xl md:text-4xl font-heading font-black italic text-theme-text uppercase tracking-tighter">
             Segurança de Conta
           </h1>
           <p className="text-[10px] font-black text-theme-muted uppercase tracking-[0.4em]">
@@ -66,7 +66,7 @@ export default function ResetPasswordPage() {
         </div>
 
         {/* Card */}
-        <div className="lux-card p-10 space-y-8 border-l-4 border-l-brand-tactical bg-theme-bg-muted/5 backdrop-blur-sm">
+        <div className="lux-card p-5 md:p-10 space-y-8 border-l-4 border-l-brand-tactical bg-theme-bg-muted/5 backdrop-blur-sm">
           {!token ? (
             <div className="text-center space-y-6">
               <div className="flex justify-center text-red-400">

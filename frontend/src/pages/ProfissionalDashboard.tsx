@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { useAuth } from "../hooks/useAuth";
 import { API } from "../lib/api";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
 import {
  DollarSign,
@@ -75,10 +75,14 @@ export default function ProfissionalDashboard({
  const [minHourlyRate, setMinHourlyRate] = useState(14); // padrão €14/h da Irlanda
 
  // UI state
- const [localActiveTab, setLocalActiveTab] = useState<ActiveTab>("agenda");
+ const [searchParams, setSearchParams] = useSearchParams();
+ const localActiveTab = (searchParams.get("tab") as ActiveTab) || "agenda";
+ const setLocalActiveTab = (newTab: ActiveTab) => setSearchParams(prev => { prev.set("tab", newTab); return prev; }, { replace: true });
  const activeTab = propActiveTab || localActiveTab;
  const setActiveTab = propSetActiveTab || setLocalActiveTab;
- const [viewTab, setViewTab] = useState<ViewTab>("lista");
+ 
+ const viewTab = (searchParams.get("view") as ViewTab) || "lista";
+ const setViewTab = (newView: ViewTab) => setSearchParams(prev => { prev.set("view", newView); return prev; }, { replace: true });
  const [currentMonth, setCurrentMonth] = useState(new Date());
  const [selected, setSelected] = useState<EventItem | null>(null);
  const [isProfileOpen, setIsProfileOpen] = useState(false);
@@ -471,7 +475,7 @@ export default function ProfissionalDashboard({
  onClick={() => setIsFlashModalOpen(true)}
  />
  ) : (
- <div className="bg-theme-bg-muted border border-theme-border p-6 flex items-center justify-center text-center opacity-40 grayscale group hover:grayscale-0 transition-all">
+ <div className="bg-theme-bg-muted border border-theme-border p-3 md:p-6 flex items-center justify-center text-center opacity-40 grayscale group hover:grayscale-0 transition-all">
  <div className="space-y-2">
  <Printer size={24} className="mx-auto mb-2 opacity-20 group-hover:opacity-100 transition-opacity" />
  <p className="text-[9px] font-black uppercase tracking-widest leading-relaxed max-w-[140px] mx-auto ">Recurso exclusivo para franqueados ativos</p>
@@ -547,8 +551,8 @@ export default function ProfissionalDashboard({
  {activeTab === "franquia" && (
  user?.franchiseProfile ? (
  <div className="space-y-8 animate-in fade-in duration-500">
- <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
- <div className="bg-theme-bg border-2 border-theme-border p-10 relative overflow-hidden group rounded-2xl shadow-sm hover:shadow-md transition-all duration-300">
+ <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-6">
+ <div className="bg-theme-bg border-2 border-theme-border p-5 md:p-10 relative overflow-hidden group rounded-2xl shadow-sm hover:shadow-md transition-all duration-300">
  <div className="absolute top-0 left-0 w-full h-1 bg-brand-tactical/20 group-hover:bg-brand-tactical transition-colors" />
  <label className="text-[9px] font-black text-theme-muted uppercase tracking-widest block mb-4">Saldo Disponível</label>
  <div className={`text-7xl font-display font-black tracking-tighter ${user.franchiseProfile.printCredits < 50 ? 'text-amber-500' : 'text-brand-tactical'}`}>
@@ -557,7 +561,7 @@ export default function ProfissionalDashboard({
  <p className="text-[10px] text-theme-muted font-black uppercase tracking-[0.2em] mt-2 ">Fotos para Impressão</p>
  </div>
  
- <div className="bg-theme-bg border border-theme-border p-10 relative group rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300">
+ <div className="bg-theme-bg border border-theme-border p-5 md:p-10 relative group rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300">
  <label className="text-[9px] font-black text-theme-muted uppercase tracking-widest block mb-4">Status do Terminal</label>
  <div className={`text-xl font-display font-black uppercase tracking-widest ${user.franchiseProfile.active ? 'text-brand-tactical' : 'text-red-500'}`}>
  {user.franchiseProfile.active ? 'Terminal Ativo' : 'Terminal Inativo'}
@@ -568,7 +572,7 @@ export default function ProfissionalDashboard({
  </div>
  </div>
 
- <div className="bg-theme-bg border border-theme-border p-10 flex flex-col justify-between rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300">
+ <div className="bg-theme-bg border border-theme-border p-5 md:p-10 flex flex-col justify-between rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300">
  <div>
  <label className="text-[9px] font-black text-theme-muted uppercase tracking-widest block mb-2">Abastecimento & Loja</label>
  <p className="text-[10px] text-theme-muted font-bold leading-relaxed uppercase tracking-wider">
@@ -593,14 +597,14 @@ export default function ProfissionalDashboard({
  </div>
 
  {/* Histórico de Pedidos B2B */}
- <div className="bg-theme-bg border border-theme-border p-8 space-y-6 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300">
+ <div className="bg-theme-bg border border-theme-border p-4 md:p-8 space-y-6 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300">
  <div className="flex items-center justify-between">
  <h3 className="text-xl font-display font-black text-theme-text uppercase tracking-tight">Histórico de Pedidos</h3>
  <div className="h-px flex-1 bg-theme-border/20 mx-6" />
  </div>
  
  {supplyOrders.length === 0 ? (
- <div className="py-12 text-center border border-theme-border bg-theme-bg-muted rounded-xl">
+ <div className="py-3 md:py-6 md:py-12 text-center border border-theme-border bg-theme-bg-muted rounded-xl">
  <p className="text-[10px] text-theme-muted font-black uppercase tracking-widest">Nenhum pedido realizado</p>
  </div>
  ) : (
@@ -644,7 +648,7 @@ export default function ProfissionalDashboard({
  )}
  </div>
  {user.franchiseProfile.printCredits < 50 && (
- <div className="border border-amber-500/30 bg-amber-500/5 p-6 flex items-start gap-4 rounded-2xl shadow-lg">
+ <div className="border border-amber-500/30 bg-amber-500/5 p-3 md:p-6 flex items-start gap-4 rounded-2xl shadow-lg">
  <div className="text-amber-500 text-2xl">⚠</div>
  <div>
  <p className="text-xs font-black text-amber-500 uppercase tracking-widest">Saldo Baixo</p>
@@ -680,7 +684,7 @@ export default function ProfissionalDashboard({
  </td>
  </tr>
  )) || (
- <tr><td colSpan={3} className="p-10 text-center text-[9px] text-theme-muted uppercase font-black tracking-widest">Nenhum consumo registrado.</td></tr>
+ <tr><td colSpan={3} className="p-5 md:p-10 text-center text-[9px] text-theme-muted uppercase font-black tracking-widest">Nenhum consumo registrado.</td></tr>
  )}
  </tbody>
  </table>
@@ -697,7 +701,7 @@ export default function ProfissionalDashboard({
  <div className="grid grid-cols-1 gap-4">
  {(() => { const myEvents = events.filter(ev => ev.captacaoId === user.id); return myEvents.length > 0 ? (
  myEvents.map(ev => (
- <div key={ev.id} className="bg-theme-bg border border-theme-border p-6 flex flex-col md:flex-row items-center justify-between gap-6 hover:border-brand-tactical/30 transition-all group rounded-2xl shadow-xl hover:shadow-2xl">
+ <div key={ev.id} className="bg-theme-bg border border-theme-border p-3 md:p-6 flex flex-col md:flex-row items-center justify-between gap-3 md:gap-6 hover:border-brand-tactical/30 transition-all group rounded-2xl shadow-xl hover:shadow-2xl">
  <div className="flex items-center gap-5">
  <div className="w-12 h-12 bg-theme-card border border-theme-border flex items-center justify-center text-brand-tactical group-hover:scale-110 transition-transform rounded-xl">
  <Printer size={20} />
@@ -709,14 +713,14 @@ export default function ProfissionalDashboard({
  </div>
  <button 
  onClick={() => navigate(`/profissional/monitor/${ev.id}`)}
- className="px-8 py-3 bg-brand-tactical text-zinc-950 text-[10px] font-black uppercase tracking-widest hover:brightness-110 transition-all flex items-center gap-3 shadow-lg shadow-brand-tactical/10 rounded-xl"
+ className="px-4 md:px-8 py-3 bg-brand-tactical text-zinc-950 text-[10px] font-black uppercase tracking-widest hover:brightness-110 transition-all flex items-center gap-3 shadow-lg shadow-brand-tactical/10 rounded-xl"
  >
  <Play size={12} /> ABRIR MONITOR
  </button>
  </div>
  ))
  ) : (
- <div className="p-10 border border-theme-border text-center space-y-4 rounded-2xl">
+ <div className="p-5 md:p-10 border border-theme-border text-center space-y-4 rounded-2xl">
  <p className="text-[10px] text-theme-muted uppercase font-black tracking-widest">Nenhum evento designado para você neste momento.</p>
  <p className="text-[8px] text-theme-muted/60 uppercase font-bold max-w-xs mx-auto leading-relaxed">Fique atento à sua agenda. Quando um admin vincular sua franquia a um evento, ele aparecerá aqui para impressão.</p>
  </div>
@@ -735,7 +739,7 @@ export default function ProfissionalDashboard({
  {user.franchiseProfile.transactions && user.franchiseProfile.transactions.length > 0 ? (
  <div className="divide-y divide-theme-border">
  {user.franchiseProfile.transactions.map(tx => (
- <div key={tx.id} className="p-6 flex items-center justify-between hover:bg-white/[0.02] transition-all group">
+ <div key={tx.id} className="p-3 md:p-6 flex items-center justify-between hover:bg-white/[0.02] transition-all group">
  <div className="space-y-1">
  <p className="text-[11px] font-black text-theme-text uppercase tracking-widest ">
  {tx.description || (tx.type === 'PRINT_CONSUMPTION' ? 'Impressão Phygital' : 'Recarga de Créditos')}
@@ -798,7 +802,7 @@ export default function ProfissionalDashboard({
  {selected && (
  <div
  onClick={() => setSelected(null)}
- className="fixed inset-0 z-[1000] flex items-center justify-center p-6"
+ className="fixed inset-0 z-[1000] flex items-center justify-center p-3 md:p-6"
  style={{ background: T.overlay, backdropFilter: "blur(20px)" }}
  >
  <div onClick={(e) => e.stopPropagation()} className="w-full max-w-2xl bg-theme-bg border border-theme-border shadow-2xl animate-in zoom-in duration-300">

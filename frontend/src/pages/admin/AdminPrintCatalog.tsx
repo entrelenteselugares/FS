@@ -132,13 +132,13 @@ export const AdminPrintCatalog: React.FC = () => {
       )}
 
       {/* HEADER MASTER */}
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between border-b border-theme-border pb-10 gap-6">
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between border-b border-theme-border pb-10 gap-3 md:gap-6">
         <div>
                     <p className="text-theme-muted mt-2 text-sm">Mix de produtos, margens e custos de produção</p>
         </div>
         
         <div className="flex gap-3">
-          <button onClick={() => setIsModalOpen(true)} className="px-8 py-4 bg-brand-tactical text-zinc-950 text-[9px] font-black uppercase tracking-[0.4em] shadow-xl hover:brightness-110 transition-all flex items-center gap-2 italic">
+          <button onClick={() => setIsModalOpen(true)} className="px-4 md:px-8 py-4 bg-brand-tactical text-zinc-950 text-[9px] font-black uppercase tracking-[0.4em] shadow-xl hover:brightness-110 transition-all flex items-center gap-2 italic">
             <Plus size={14} strokeWidth={1.5} /> NOVO ITEM
           </button>
         </div>
@@ -146,21 +146,21 @@ export const AdminPrintCatalog: React.FC = () => {
 
       {/* DASHBOARD DE MÉTRICAS */}
       <div className="max-w-6xl mx-auto w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
-         <div className="bg-theme-bg border border-theme-border p-6 space-y-3 shadow-sm group hover:border-brand-tactical/40 transition-all rounded-2xl">
+         <div className="bg-theme-bg border border-theme-border p-3 md:p-6 space-y-3 shadow-sm group hover:border-brand-tactical/40 transition-all rounded-2xl">
             <div className="flex justify-between items-start"><span className="text-[8px] font-black text-theme-muted uppercase tracking-widest italic">Mix Ativo</span><Package className="text-brand-tactical" size={14} strokeWidth={1.5} /></div>
             <div className="flex items-baseline gap-2">
                <span className="text-3xl font-heading font-black text-theme-text italic">{stats.activeCount}</span>
                <span className="text-[10px] font-bold text-theme-muted uppercase tracking-widest">/ {stats.totalCount} ITENS</span>
             </div>
          </div>
-         <div className="bg-theme-bg border border-theme-border p-6 space-y-3 shadow-sm group hover:border-brand-tactical/40 transition-all rounded-2xl">
+         <div className="bg-theme-bg border border-theme-border p-3 md:p-6 space-y-3 shadow-sm group hover:border-brand-tactical/40 transition-all rounded-2xl">
             <div className="flex justify-between items-start"><span className="text-[8px] font-black text-theme-muted uppercase tracking-widest italic">Margem Média</span><TrendingUp className="text-brand-tactical" size={14} strokeWidth={1.5} /></div>
             <div className="flex items-baseline gap-2">
                <span className="text-3xl font-heading font-black text-theme-text italic">{stats.avgMargin.toFixed(1)}%</span>
                <span className="text-[10px] font-bold text-theme-muted uppercase tracking-widest">PROPORCIONAL</span>
             </div>
          </div>
-          <div className="bg-theme-bg border border-theme-border p-6 space-y-3 shadow-sm group hover:border-brand-tactical/40 transition-all rounded-2xl">
+          <div className="bg-theme-bg border border-theme-border p-3 md:p-6 space-y-3 shadow-sm group hover:border-brand-tactical/40 transition-all rounded-2xl">
             <div className="flex justify-between items-start"><span className="text-[8px] font-black text-theme-muted uppercase tracking-widest italic">Hub de Produção</span><Layers className="text-brand-tactical" size={14} strokeWidth={1.5} /></div>
             <div className="flex items-baseline gap-2">
                <span className="text-3xl font-heading font-black text-theme-text italic">OPERACIONAL</span>
@@ -183,14 +183,14 @@ export const AdminPrintCatalog: React.FC = () => {
          <select 
             value={filterCategory}
             onChange={e => setFilterCategory(e.target.value)}
-            className="px-6 py-4 bg-theme-bg border border-theme-border text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest text-theme-text outline-none focus:border-brand-tactical transition-all cursor-pointer rounded-2xl"
+            className="px-3 md:px-6 py-4 bg-theme-bg border border-theme-border text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest text-theme-text outline-none focus:border-brand-tactical transition-all cursor-pointer rounded-2xl"
          >
             <option value="">TODAS AS CATEGORIAS</option>
             {Object.entries(CATEGORY_LABELS).map(([k, v]) => <option key={k} value={k}>{v.label}</option>)}
          </select>
          <button 
             onClick={() => setShowInactive(!showInactive)}
-            className="px-8 py-4 bg-theme-bg border border-theme-border text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest text-theme-muted hover:text-white flex items-center gap-3 transition-all rounded-2xl"
+            className="px-4 md:px-8 py-4 bg-theme-bg border border-theme-border text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest text-theme-muted hover:text-white flex items-center gap-3 transition-all rounded-2xl"
          >
             {showInactive ? <Eye size={14} /> : <EyeOff size={14} />} {showInactive ? 'OCULTAR INATIVOS' : 'EXIBIR TODOS'}
          </button>
@@ -222,7 +222,7 @@ export const AdminPrintCatalog: React.FC = () => {
                         <h3 className="text-xs font-heading font-black text-theme-text uppercase tracking-widest">{catInfo.label}</h3>
                         <span className="text-[8px] font-bold text-theme-muted uppercase tracking-[0.2em] opacity-60">• {catProducts.length} ITENS</span>
                      </div>
-                     <div className="flex items-center gap-6">
+                     <div className="flex items-center gap-3 md:gap-6">
                         <div className="flex items-center gap-2 group/bulk" onClick={e => e.stopPropagation()}>
                            <input 
                               placeholder="MARGEM %" 
@@ -366,7 +366,7 @@ function NewSupplierModal({ onClose, onSave }: { onClose: () => void, onSave: ()
       <div className="absolute inset-0 bg-theme-bg/80 backdrop-blur-xl animate-in fade-in duration-300" onClick={onClose} />
       
       <div className="relative w-full max-w-md bg-theme-card border border-theme-border rounded-[40px] overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300">
-        <div className="p-8 md:p-10 border-b border-theme-border flex items-center justify-between">
+        <div className="p-4 md:p-8 md:p-10 border-b border-theme-border flex items-center justify-between">
           <div className="flex items-center gap-4">
             <div className="w-12 h-12 bg-brand-tactical/10 rounded-2xl flex items-center justify-center border border-brand-tactical/20">
               <Plus className="text-brand-tactical" size={24} strokeWidth={1.5} />
@@ -379,7 +379,7 @@ function NewSupplierModal({ onClose, onSave }: { onClose: () => void, onSave: ()
           <button onClick={onClose} className="p-3 hover:bg-theme-bg-muted rounded-full transition-all text-theme-muted"><X size={24} /></button>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-8 md:p-10 space-y-6">
+        <form onSubmit={handleSubmit} className="p-4 md:p-8 md:p-10 space-y-6">
           <div>
             <label className={labelClass}>Identificação do Lab / Fornecedor</label>
             <input required className={inputClass} value={form.name} onChange={e => setForm({...form, name: e.target.value})} placeholder="Ex: LAB XPTO" />
@@ -485,7 +485,7 @@ function NewProductModal({ onClose, onSave, suppliers, onRefreshSuppliers }: {
        
        <div className="relative w-full max-w-2xl bg-theme-card border border-theme-border rounded-[40px] overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300 flex flex-col h-[85vh]">
           {/* Header */}
-          <div className="p-8 md:p-10 border-b border-theme-border flex items-center justify-between shrink-0">
+          <div className="p-4 md:p-8 md:p-10 border-b border-theme-border flex items-center justify-between shrink-0">
             <div className="flex items-center gap-4">
               <div className="w-12 h-12 bg-brand-tactical/10 rounded-2xl flex items-center justify-center border border-brand-tactical/20">
                 <Target className="text-brand-tactical" size={24} strokeWidth={1.5} />
@@ -499,8 +499,8 @@ function NewProductModal({ onClose, onSave, suppliers, onRefreshSuppliers }: {
           </div>
 
           {/* Scrollable Content */}
-          <form id="new-product-form" onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-8 md:p-10 space-y-8 custom-scrollbar">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <form id="new-product-form" onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-4 md:p-8 md:p-10 space-y-8 custom-scrollbar">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-6">
               <div className="space-y-2">
                 <label className={labelClass}>Operador Logístico</label>
                 <div className="flex items-stretch gap-2">
@@ -528,7 +528,7 @@ function NewProductModal({ onClose, onSave, suppliers, onRefreshSuppliers }: {
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-6">
               <div className="space-y-2">
                 <label className={labelClass}>Nome Comercial do Item</label>
                 <input required className={inputClass} value={form.name} onChange={e => setForm({...form, name: e.target.value})} placeholder="Ex: Álbum 15x21 - Capa Linho" />
@@ -557,7 +557,7 @@ function NewProductModal({ onClose, onSave, suppliers, onRefreshSuppliers }: {
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-6">
               <div className="space-y-2">
                 <label className={labelClass}>SKU / ID Interno</label>
                 <input required className={inputClass} value={form.sku} onChange={e => setForm({...form, sku: e.target.value})} placeholder="ALB-UNIQ-001" />
@@ -568,7 +568,7 @@ function NewProductModal({ onClose, onSave, suppliers, onRefreshSuppliers }: {
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-6 border-t border-theme-border">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-6 pt-6 border-t border-theme-border">
               <div className="space-y-2">
                 <label className={labelClass}>Custo Fornecedor (R$)</label>
                 <input required type="number" step="0.01" className={inputClass} value={form.supplierCost} onChange={e => setForm({...form, supplierCost: e.target.value})} placeholder="0,00" />
@@ -581,7 +581,7 @@ function NewProductModal({ onClose, onSave, suppliers, onRefreshSuppliers }: {
           </form>
 
           {/* Footer */}
-          <div className="p-8 md:p-10 bg-theme-bg-muted border-t border-theme-border flex gap-4 shrink-0 rounded-2xl">
+          <div className="p-4 md:p-8 md:p-10 bg-theme-bg-muted border-t border-theme-border flex gap-4 shrink-0 rounded-2xl">
             <button type="button" onClick={onClose} className="flex-1 py-5 border border-theme-border text-[11px] font-black uppercase tracking-[0.3em] text-theme-muted hover:text-white transition-all rounded-[20px] italic">Cancelar</button>
             <button 
               type="submit" 

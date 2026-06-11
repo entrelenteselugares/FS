@@ -132,27 +132,43 @@ export default function ClienteArea() {
  const [loading, setLoading] = useState(true);
  const [loadingDetalhe, setLoadingDetalhe] = useState(false);
  const [isPrivacyModalOpen, setIsPrivacyModalOpen] = useState(false);
- const [activeTab, setActiveTab] = useState<ActiveTab>("files");
+ const activeTab = (searchParams.get("tab") as ActiveTab) || "files";
 
  const handleTabChange = useCallback((tab: string) => {
- let targetTab = tab as ActiveTab;
- if (tab === "financas") {
- targetTab = "financeiro";
- }
- setActiveTab(targetTab);
+    let targetTab = tab as ActiveTab;
+    if (tab === "financas") {
+      targetTab = "financeiro";
+    }
 
- const searchMap: Record<string, string> = {
- wallet: "files",
- files: "files",
- profile: "menu",
- affiliate: "affiliate",
- };
- const s = searchMap[targetTab] || targetTab;
+    const proTabs = ["agenda", "portfolio", "servicos", "financeiro", "perfil", "network"];
+    const unitTabs = ["agenda", "financeiro", "equipe", "configuracoes", "monitor"];
 
- const nextParams = new URLSearchParams(searchParams);
- nextParams.set("s", s);
- setSearchParams(nextParams);
- }, [searchParams, setSearchParams]);
+    if (proTabs.includes(targetTab) && (user?.role === "PROFISSIONAL" || user?.role === "FRANCHISEE" || user?.franchiseProfile)) {
+      navigate(`/profissional?tab=${targetTab}`);
+      return;
+    }
+    if (unitTabs.includes(targetTab) && (user?.role === "CARTORIO" || user?.role === "UNIDADE")) {
+      navigate(`/unidade-fixa?tab=${targetTab}`);
+      return;
+    }
+    if (targetTab === "franquia") {
+      navigate(`/franquia`);
+      return;
+    }
+
+    setSearchParams(prev => {
+      prev.set("tab", targetTab);
+      // Manter compatibilidade legada do parâmetro 's' caso outros links dependam disso
+      const searchMap: Record<string, string> = {
+        wallet: "files",
+        files: "files",
+        profile: "menu",
+        affiliate: "affiliate",
+      };
+      prev.set("s", searchMap[targetTab] || targetTab);
+      return prev;
+    }, { replace: true });
+  }, [setSearchParams]);
  
  // Franchise States
  const [network, setNetwork] = useState<Partner[]>([]);
@@ -333,21 +349,35 @@ export default function ClienteArea() {
 
 
  useEffect(() => {
- // 1. Atualização instantânea da aba (não bloqueia UX)
- const section = searchParams.get("s");
- if (section === "pedidos" || section === "wallet" || section === "fotos" || section === "files") {
- setActiveTab("files");
- } else if (section === "menu") {
- setActiveTab("profile");
- } else if (section === "affiliate") {
- setActiveTab("affiliate");
- } else if (section === "convites") {
- setActiveTab("convites");
- } else if (section === "agenda" || section === "financeiro" || section === "servicos" || section === "calendar" || section === "franquia" || section === "equipe" || section === "configuracoes" || section === "perfil" || section === "portfolio") {
- setActiveTab(section as ActiveTab);
- }
+  // 1. Atualização instantânea da aba (não bloqueia UX)
+  const section = searchParams.get("s");
+  const currentTab = searchParams.get("tab") || "files";
+  const finalTab = section && section !== "files" ? section : currentTab;
 
- // 2. Fetch em background de pedidos
+  const clientTabs = ["files", "affiliate", "profile", "wallet"];
+  if (finalTab && !clientTabs.includes(finalTab)) {
+    // Redireciona para o lugar certo
+    if (user?.role === "CARTORIO" || user?.role === "UNIDADE") {
+      navigate(`/unidade-fixa?tab=${finalTab}`, { replace: true });
+    } else if (user?.role === "PROFISSIONAL" || user?.role === "FRANCHISEE" || user?.franchiseProfile) {
+      if (finalTab === "franquia") {
+        navigate(`/franquia`, { replace: true });
+      } else {
+        navigate(`/profissional?tab=${finalTab}`, { replace: true });
+      }
+    }
+  } else {
+    if (section) {
+      setSearchParams(prev => {
+        const mapped = section === "menu" ? "profile" : section === "pedidos" ? "files" : section === "fotos" ? "files" : section;
+        prev.set("tab", mapped);
+        prev.delete("s");
+        return prev;
+      }, { replace: true });
+    }
+  }
+
+  // 2. Fetch em background de pedidos
  fetchPedidos().then(data => {
  const urlOrderId = searchParams.get("orderId");
  if (urlOrderId) {
@@ -483,7 +513,7 @@ export default function ClienteArea() {
  });
  if (!exp.length) return null;
  return (
- <div className="flex items-center gap-4 px-6 py-4 bg-amber-500/10 border border-amber-500/30 text-amber-400">
+ <div className="flex items-center gap-4 px-3 md:px-6 py-4 bg-amber-500/10 border border-amber-500/30 text-amber-400">
  <AlertTriangle size={16} />
  <p className="text-[10px] font-black uppercase tracking-widest">Atenção: {exp.length} álbum(ns) expiram em menos de 7 dias. Faça o download agora.</p>
  </div>
@@ -511,7 +541,7 @@ export default function ClienteArea() {
  ].map((m, idx) => (
  <div 
  key={m.label} 
- className={`relative overflow-hidden p-4 sm:p-6 md:p-8 border rounded-2xl transition-all duration-500 group backdrop-blur-xl hover:-translate-y-1 ${
+ className={`relative overflow-hidden p-3 sm:p-5 md:p-6 border rounded-2xl transition-all duration-500 group backdrop-blur-xl hover:-translate-y-1 ${
  m.highlight ? 'bg-brand-tactical/10 border-brand-tactical/30 shadow-[0_8px_30px_rgba(133,185,172,0.1)]' : 'bg-theme-bg/60 border-white/5 shadow-[0_8px_30px_rgb(0,0,0,0.12)] hover:border-white/10'
  }`}
  style={{ animationDelay: `${idx * 150}ms` }}
@@ -547,8 +577,8 @@ export default function ClienteArea() {
  {activeTab === "files" ? (
  <div className="space-y-4 md:space-y-10">
  {/* Wallet Header Section */}
- <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-8">
- <div className="relative overflow-hidden bg-theme-bg border-2 border-theme-border p-4 sm:p-8 md:p-10 rounded-2xl transition-all duration-500 hover:border-brand-tactical hover:shadow-[0_0_20px_rgba(133,185,172,0.3)] hover:border-brand-tactical group">
+ <div className="grid grid-cols-2 gap-3 md:gap-8">
+ <div className="relative overflow-hidden bg-theme-bg border-2 border-theme-border p-3 sm:p-5 md:p-8 rounded-2xl transition-all duration-500 hover:border-brand-tactical hover:shadow-[0_0_20px_rgba(133,185,172,0.3)] hover:border-brand-tactical group">
  <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-white/5 to-transparent rotate-45 translate-x-12 -translate-y-12 pointer-events-none" />
  <div className="relative z-10 space-y-2 sm:space-y-4">
  <label className="text-[8px] sm:text-[9px] font-black text-theme-text-muted uppercase tracking-[0.2em] block">Saldo Disponível</label>
@@ -560,7 +590,7 @@ export default function ClienteArea() {
  </p>
  </div>
  </div>
- <div className="relative overflow-hidden bg-theme-bg border-2 border-theme-border p-4 sm:p-8 md:p-10 rounded-2xl transition-all duration-500 hover:border-brand-tactical hover:shadow-[0_0_20px_rgba(133,185,172,0.3)] hover:border-brand-tactical flex flex-col justify-between gap-3 sm:gap-6 group">
+ <div className="relative overflow-hidden bg-theme-bg border-2 border-theme-border p-3 sm:p-5 md:p-8 rounded-2xl transition-all duration-500 hover:border-brand-tactical hover:shadow-[0_0_20px_rgba(133,185,172,0.3)] hover:border-brand-tactical flex flex-col justify-between gap-3 sm:gap-6 group">
  <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-white/5 to-transparent rotate-45 translate-x-12 -translate-y-12 pointer-events-none" />
  <div className="relative z-10 space-y-2 sm:space-y-4">
  <p className="text-[8px] sm:text-[10px] font-black text-theme-text uppercase tracking-widest flex items-center gap-1.5 sm:gap-2">
@@ -595,7 +625,7 @@ export default function ClienteArea() {
  ))}
  </div>
  ) : pedidos.length === 0 ? (
-                    <div className="relative overflow-hidden border border-white/5 bg-theme-bg/40 backdrop-blur-xl p-10 md:p-14 text-center space-y-6 rounded-2xl shadow-xl">
+                     <div className="relative overflow-hidden border border-white/5 bg-theme-bg/40 backdrop-blur-xl p-4 md:p-10 text-center space-y-6 rounded-2xl shadow-xl">
                       {/* Background decoration */}
                       <div className="absolute inset-0 bg-gradient-to-br from-brand-tactical/5 to-transparent opacity-50" />
                       
@@ -612,10 +642,10 @@ export default function ClienteArea() {
                       </div>
                       
                       <div className="relative flex items-center justify-center gap-4 flex-wrap pt-2">
-                        <button onClick={() => navigate("/vitrine")} className="px-6 py-3 bg-brand-tactical text-brand-text font-black text-[10px] uppercase tracking-widest flex items-center gap-3 hover:brightness-110 transition-all shadow-lg shadow-brand-tactical/20">
+                        <button onClick={() => navigate("/vitrine")} className="px-3 md:px-6 py-3 bg-brand-tactical text-brand-text font-black text-[10px] uppercase tracking-widest flex items-center gap-3 hover:brightness-110 transition-all shadow-lg shadow-brand-tactical/20">
                           Explorar Vitrine <ArrowRight size={14} />
                         </button>
-                        <button onClick={() => navigate("/cotacao")} className="px-6 py-3 border border-theme-border text-theme-text font-black text-[10px] uppercase tracking-widest hover:bg-theme-bg-muted transition-all flex items-center gap-3">
+                        <button onClick={() => navigate("/cotacao")} className="px-3 md:px-6 py-3 border border-theme-border text-theme-text font-black text-[10px] uppercase tracking-widest hover:bg-theme-bg-muted transition-all flex items-center gap-3">
                           Solicitar Cobertura <ArrowRight size={14} />
                         </button>
                       </div>
@@ -675,7 +705,7 @@ export default function ClienteArea() {
  ))}
  </div>
  ) : (
-                  <div className="p-10 md:p-14 text-center space-y-4">
+                  <div className="p-5 md:p-10 md:p-14 text-center space-y-4">
                     <ShoppingBag size={24} className="mx-auto text-theme-border/30 drop-shadow-md mb-2" />
                     <p className="text-[10px] text-theme-muted uppercase font-bold tracking-widest">
                       Sua carteira está aguardando as primeiras recompensas.
@@ -687,7 +717,7 @@ export default function ClienteArea() {
  </div>
  ) : activeTab === "profile" ? (
   <div className="space-y-6 md:space-y-8">
-  <div className="lux-card p-5 md:p-10 max-w-2xl border-l-4 border-l-brand-tactical bg-theme-bg">
+  <div className="lux-card p-4 md:p-8 max-w-2xl border-l-4 border-l-brand-tactical bg-theme-bg">
   <div className="flex flex-col md:flex-row gap-4 md:gap-8 items-center md:items-start mb-6 pb-6 md:mb-8 md:pb-8 border-b border-theme-border">
   <ProfilePhotoUpload 
     currentProfileUrl={user?.profileImageUrl} 
@@ -754,7 +784,7 @@ export default function ClienteArea() {
  </div>
  </div>
  </div>
- <div className="flex items-center gap-6">
+ <div className="flex items-center gap-3 md:gap-6">
  <button type="submit" disabled={isSaving} className="fs-btn bg-brand-tactical text-brand-text hover:bg-brand-tactical/90 hover:scale-[1.02] hover:shadow-lg hover:shadow-brand-tactical/20 transition-all disabled:opacity-50 disabled:hover:scale-100 disabled:hover:shadow-none ">
  {isSaving ? "Salvando..." : "Salvar Alterações"}
  </button>
@@ -785,7 +815,7 @@ export default function ClienteArea() {
  </div>
 
  {user?.verificationStatus === "PENDING" ? (
- <div className="p-6 bg-amber-500/10 border border-amber-500/20 space-y-3">
+ <div className="p-3 md:p-6 bg-amber-500/10 border border-amber-500/20 space-y-3">
  <div className="flex items-center gap-3 text-amber-500">
  <Clock size={16} className="animate-pulse" />
  <p className="text-[10px] font-black uppercase tracking-widest">Perfil em Análise Técnica</p>
@@ -815,7 +845,7 @@ export default function ClienteArea() {
  setIsApplying(false);
  }
  }}
- className="p-6 border-2 border-theme-border hover:border-emerald-500/60 transition-all text-left space-y-3 group bg-theme-bg/20"
+ className="p-3 md:p-6 border-2 border-theme-border hover:border-emerald-500/60 transition-all text-left space-y-3 group bg-theme-bg/20"
  >
  <Camera size={20} className="text-theme-muted group-hover:text-emerald-500 transition-colors" />
  <div className="space-y-1">
@@ -837,7 +867,7 @@ export default function ClienteArea() {
  setIsApplying(false);
  }
  }}
- className="p-6 border-2 border-theme-border hover:border-emerald-500/60 transition-all text-left space-y-3 group bg-theme-bg/20"
+ className="p-3 md:p-6 border-2 border-theme-border hover:border-emerald-500/60 transition-all text-left space-y-3 group bg-theme-bg/20"
  >
  <Building2 size={20} className="text-theme-muted group-hover:text-emerald-500 transition-colors" />
  <div className="space-y-1">
@@ -1195,7 +1225,7 @@ function PedidoDetalhe({ pedido, loading, onGoToEvent, onChangePrivacy, onRefres
  <div className="absolute inset-0 bg-gradient-to-br from-brand-tactical/20 to-transparent" />
  )}
  
- <div className="absolute bottom-0 left-0 right-0 p-6 space-y-1">
+ <div className="absolute bottom-0 left-0 right-0 p-3 md:p-6 space-y-1">
  <div className="flex items-center gap-2 mb-1">
  <div className="h-0.5 w-6 bg-brand-tactical" />
  <p className="text-[9px] font-black text-brand-tactical uppercase tracking-[0.4em]">Meu Álbum</p>
@@ -1229,10 +1259,10 @@ function PedidoDetalhe({ pedido, loading, onGoToEvent, onChangePrivacy, onRefres
  </div>
  </div>
 
- <div className="p-6 space-y-8">
+ <div className="p-3 md:p-6 space-y-8">
  {isEditing && (
  <div className="space-y-6 animate-in fade-in slide-in-from-top-4 duration-500">
- <div className="flex flex-col gap-5 bg-theme-bg p-6 border-2 border-theme-border rounded-lg">
+ <div className="flex flex-col gap-5 bg-theme-bg p-3 md:p-6 border-2 border-theme-border rounded-lg">
  <div className="space-y-1.5">
  <label className="text-[8px] font-black text-brand-tactical uppercase tracking-[0.2em]">Identidade do Álbum</label>
  <input 
@@ -1362,7 +1392,7 @@ function PedidoDetalhe({ pedido, loading, onGoToEvent, onChangePrivacy, onRefres
  </div>
  
  {loading ? (
- <div className="py-10 flex flex-col items-center gap-3">
+ <div className="py-5 md:py-10 flex flex-col items-center gap-3">
  <div className="w-6 h-6 border-2 border-brand-tactical border-t-transparent rounded-full animate-spin" />
  <p className="text-[9px] font-black text-brand-tactical uppercase tracking-widest animate-pulse">Sincronizando...</p>
  </div>
@@ -1438,14 +1468,14 @@ function PedidoDetalhe({ pedido, loading, onGoToEvent, onChangePrivacy, onRefres
  )}
  </div>
  ) : (
- <div className="p-6 text-center border border-theme-border bg-brand-tactical/10 flex items-center justify-between gap-4">
+ <div className="p-3 md:p-6 text-center border border-theme-border bg-brand-tactical/10 flex items-center justify-between gap-4">
  <div className="text-left space-y-1">
  <p className="text-[10px] font-black text-theme-text uppercase tracking-widest ">Acesso Restrito</p>
  <p className="text-[9px] text-theme-muted uppercase font-bold tracking-widest">Aguardando pagamento</p>
  </div>
  <button 
  onClick={() => navigate(`/checkout?orderId=${pedido.id}`)}
- className="px-6 py-3 bg-brand-tactical text-black text-[10px] font-black uppercase tracking-[0.2em] shadow-lg hover:scale-105 transition-all"
+ className="px-3 md:px-6 py-3 bg-brand-tactical text-black text-[10px] font-black uppercase tracking-[0.2em] shadow-lg hover:scale-105 transition-all"
  >
  Pagar
  </button>

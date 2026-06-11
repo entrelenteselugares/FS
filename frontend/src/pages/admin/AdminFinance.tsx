@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback, useMemo } from "react";
+import { useSearchParams } from "react-router-dom";
 import { API } from "../../lib/api";
 import { 
   ShieldCheck, 
@@ -46,8 +47,12 @@ export const AdminFinance: React.FC = () => {
   const [orders, setOrders] = useState<PayoutOrder[]>([]);
   const [expenses, setExpenses] = useState<Expense[]>([]); 
   const [loading, setLoading] = useState(true);
-  const [view, setView] = useState<"payouts" | "balances" | "expenses" | "dre">("payouts");
-  const [payoutTab, setPayoutTab] = useState<"pending" | "history">("pending");
+  const [searchParams, setSearchParams] = useSearchParams();
+  const view = (searchParams.get("tab") as "payouts" | "balances" | "expenses" | "dre") || "payouts";
+  const setView = (v: "payouts" | "balances" | "expenses" | "dre") => setSearchParams(prev => { prev.set("tab", v); return prev; }, { replace: true });
+  
+  const payoutTab = (searchParams.get("sub") as "pending" | "history") || "pending";
+  const setPayoutTab = (s: "pending" | "history") => setSearchParams(prev => { prev.set("sub", s); return prev; }, { replace: true });
   const [confirmModal, setConfirmModal] = useState<string | null>(null);
 
   const [balances, setBalances] = useState<any[]>([]);
@@ -151,17 +156,17 @@ export const AdminFinance: React.FC = () => {
       <div className="relative border-b border-theme-border pb-8 md:pb-12 space-y-4 md:space-y-6">
         <div className="absolute -top-10 -left-10 w-40 h-40 bg-brand-tactical/10 blur-3xl rounded-full" />
         
-        <div className="flex flex-col xl:flex-row justify-between items-start xl:items-end gap-6 relative z-10">
+        <div className="flex flex-col xl:flex-row justify-between items-start xl:items-end gap-3 md:gap-6 relative z-10">
           <div>
             <h1 className="text-3xl md:text-4xl font-heading font-black uppercase italic tracking-tighter text-theme-text">FINANCEIRO</h1>
             <p className="text-theme-muted mt-2 text-sm">Controle financeiro, repasses e DRE</p>
           </div>
           
           <div className="flex overflow-x-auto w-full xl:w-auto bg-theme-bg-muted p-1 border border-theme-border rounded-xl snap-x snap-mandatory hide-scrollbar" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
-            <button onClick={() => setView("payouts")} className={`snap-start flex-none px-6 py-3 text-[11px] font-bold uppercase tracking-widest transition-all whitespace-nowrap rounded-lg ${view === "payouts" ? 'bg-theme-bg text-theme-text shadow-sm border border-theme-border/50' : 'text-theme-muted hover:text-theme-text'}`}>Pedidos</button>
-            <button onClick={() => setView("balances")} className={`snap-start flex-none px-6 py-3 text-[11px] font-bold uppercase tracking-widest transition-all whitespace-nowrap rounded-lg ${view === "balances" ? 'bg-theme-bg text-theme-text shadow-sm border border-theme-border/50' : 'text-theme-muted hover:text-theme-text'}`}>Saldos Pros</button>
-            <button onClick={() => setView("expenses")} className={`snap-start flex-none px-6 py-3 text-[11px] font-bold uppercase tracking-widest transition-all whitespace-nowrap rounded-lg ${view === "expenses" ? 'bg-theme-bg text-theme-text shadow-sm border border-theme-border/50' : 'text-theme-muted hover:text-theme-text'}`}>Lançamentos</button>
-            <button onClick={() => setView("dre")} className={`snap-start flex-none px-6 py-3 text-[11px] font-bold uppercase tracking-widest transition-all whitespace-nowrap rounded-lg ${view === "dre" ? 'bg-theme-bg text-theme-text shadow-sm border border-theme-border/50' : 'text-theme-muted hover:text-theme-text'}`}>DRE / Dashboard</button>
+            <button onClick={() => setView("payouts")} className={`snap-start flex-none px-3 md:px-6 py-3 text-[11px] font-bold uppercase tracking-widest transition-all whitespace-nowrap rounded-lg ${view === "payouts" ? 'bg-theme-bg text-theme-text shadow-sm border border-theme-border/50' : 'text-theme-muted hover:text-theme-text'}`}>Pedidos</button>
+            <button onClick={() => setView("balances")} className={`snap-start flex-none px-3 md:px-6 py-3 text-[11px] font-bold uppercase tracking-widest transition-all whitespace-nowrap rounded-lg ${view === "balances" ? 'bg-theme-bg text-theme-text shadow-sm border border-theme-border/50' : 'text-theme-muted hover:text-theme-text'}`}>Saldos Pros</button>
+            <button onClick={() => setView("expenses")} className={`snap-start flex-none px-3 md:px-6 py-3 text-[11px] font-bold uppercase tracking-widest transition-all whitespace-nowrap rounded-lg ${view === "expenses" ? 'bg-theme-bg text-theme-text shadow-sm border border-theme-border/50' : 'text-theme-muted hover:text-theme-text'}`}>Lançamentos</button>
+            <button onClick={() => setView("dre")} className={`snap-start flex-none px-3 md:px-6 py-3 text-[11px] font-bold uppercase tracking-widest transition-all whitespace-nowrap rounded-lg ${view === "dre" ? 'bg-theme-bg text-theme-text shadow-sm border border-theme-border/50' : 'text-theme-muted hover:text-theme-text'}`}>DRE / Dashboard</button>
           </div>
         </div>
       </div>
@@ -190,8 +195,8 @@ export const AdminFinance: React.FC = () => {
       {view === "payouts" && (
         <div className="space-y-6 animate-in fade-in duration-500">
           <div className="flex gap-2 border-b border-theme-border pb-4">
-             <button onClick={() => setPayoutTab("pending")} className={`px-6 py-2 text-[8px] font-black uppercase tracking-widest border transition-all ${payoutTab === 'pending' ? 'border-brand-tactical text-brand-tactical bg-brand-tactical/10' : 'border-theme-border text-theme-muted'}`}>PENDENTES</button>
-             <button onClick={() => setPayoutTab("history")} className={`px-6 py-2 text-[8px] font-black uppercase tracking-widest border transition-all ${payoutTab === 'history' ? 'border-brand-tactical text-brand-tactical bg-brand-tactical/10' : 'border-theme-border text-theme-muted'}`}>HISTÓRICO</button>
+             <button onClick={() => setPayoutTab("pending")} className={`px-3 md:px-6 py-2 text-[8px] font-black uppercase tracking-widest border transition-all ${payoutTab === 'pending' ? 'border-brand-tactical text-brand-tactical bg-brand-tactical/10' : 'border-theme-border text-theme-muted'}`}>PENDENTES</button>
+             <button onClick={() => setPayoutTab("history")} className={`px-3 md:px-6 py-2 text-[8px] font-black uppercase tracking-widest border transition-all ${payoutTab === 'history' ? 'border-brand-tactical text-brand-tactical bg-brand-tactical/10' : 'border-theme-border text-theme-muted'}`}>HISTÓRICO</button>
           </div>
           
           <div className="space-y-4">
@@ -213,7 +218,7 @@ export const AdminFinance: React.FC = () => {
                              <span className="text-[10px] font-black px-2 py-1 bg-brand-tactical text-zinc-950 uppercase tracking-widest">#{order.id.slice(-4).toUpperCase()}</span>
                              <h4 className="text-lg font-bold text-theme-text uppercase tracking-tight">{order.event.title}</h4>
                           </div>
-                          <div className="grid grid-cols-4 gap-6 pt-5 border-t border-theme-border/10">
+                          <div className="grid grid-cols-4 gap-3 md:gap-6 pt-5 border-t border-theme-border/10">
                              <div className="space-y-1.5"><span className="text-[10px] font-black text-theme-muted uppercase tracking-widest opacity-60">Matriz</span><p className="text-base font-black text-theme-text italic">{formatCurrency(Number(order.splitMatriz) || 0)}</p></div>
                              {order.event.partners.captacao && <div className="space-y-1.5"><span className="text-[10px] font-black text-brand-tactical uppercase tracking-widest opacity-60">Captação</span><p className="text-base font-black text-brand-tactical italic">{formatCurrency(Number(order.splitCaptacao) || 0)}</p></div>}
                              {order.event.partners.edicao && <div className="space-y-1.5"><span className="text-[10px] font-black text-brand-tactical uppercase tracking-widest opacity-60">Edição</span><p className="text-base font-black text-brand-tactical italic">{formatCurrency(Number(order.splitEdicao) || 0)}</p></div>}
@@ -222,7 +227,7 @@ export const AdminFinance: React.FC = () => {
                        </div>
                        <div className="flex items-center justify-center">
                           {payoutTab === 'pending' ? (
-                            <button onClick={() => setConfirmModal(order.id)} className="border border-brand-tactical bg-brand-tactical/10 text-brand-tactical px-6 py-3 rounded-lg text-[10px] font-bold uppercase tracking-widest hover:bg-brand-tactical hover:text-zinc-950 transition-all flex items-center gap-2"><Zap size={14} strokeWidth={1.5} /> LIQUIDAR REPASSE</button>
+                            <button onClick={() => setConfirmModal(order.id)} className="border border-brand-tactical bg-brand-tactical/10 text-brand-tactical px-3 md:px-6 py-3 rounded-lg text-[10px] font-bold uppercase tracking-widest hover:bg-brand-tactical hover:text-zinc-950 transition-all flex items-center gap-2"><Zap size={14} strokeWidth={1.5} /> LIQUIDAR REPASSE</button>
                           ) : (
                             <div className="text-right border-l border-theme-border pl-8"><span className="text-[10px] font-black text-theme-muted uppercase tracking-widest block mb-2">Pago em</span><span className="text-[12px] font-black text-brand-tactical uppercase tracking-tighter">{fmtDate(order.payoutPaidAt)}</span></div>
                           )}
@@ -358,7 +363,7 @@ export const AdminFinance: React.FC = () => {
 
       {/* VIEW: LANÇAMENTOS (EXPENSES) */}
       {view === "expenses" && (
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 md:gap-10 animate-in fade-in duration-500">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-3 md:gap-6 md:gap-10 animate-in fade-in duration-500">
            {/* Form - Engenharia de Custos */}
            <div className="lg:col-span-4 space-y-4">
               <div className="bg-theme-bg-muted border border-theme-border p-4 md:p-6 space-y-4 rounded-2xl">
@@ -468,8 +473,8 @@ export const AdminFinance: React.FC = () => {
 
       {/* VIEW: DRE / DASHBOARD */}
       {view === "dre" && (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-10 animate-in fade-in duration-500">
-           <div className="bg-theme-bg-muted border border-theme-border p-6 md:p-10 space-y-8 md:space-y-10 rounded-2xl">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 md:gap-6 md:gap-10 animate-in fade-in duration-500">
+           <div className="bg-theme-bg-muted border border-theme-border p-3 md:p-6 md:p-10 space-y-8 md:space-y-10 rounded-2xl">
               <div className="space-y-1">
                  <span className="text-[10px] font-black text-brand-tactical uppercase tracking-[0.5em]">Análise de Performance</span>
                  <h3 className="text-xl font-heading text-theme-text uppercase tracking-tighter italic">DRE Simplificado</h3>
@@ -495,14 +500,14 @@ export const AdminFinance: React.FC = () => {
               </div>
            </div>
 
-           <div className="bg-theme-bg-muted border border-theme-border p-6 md:p-10 flex flex-col items-center justify-center space-y-8 md:space-y-10 rounded-2xl">
+           <div className="bg-theme-bg-muted border border-theme-border p-3 md:p-6 md:p-10 flex flex-col items-center justify-center space-y-8 md:space-y-10 rounded-2xl">
               <div className="relative w-40 h-40 flex items-center justify-center">
                  <div className="absolute inset-0 border-[12px] border-theme-border rounded-full opacity-20" />
                  <div className="absolute inset-0 border-[12px] border-brand-tactical rounded-full" style={{ clipPath: `polygon(50% 50%, -50% -50%, ${financialData.margin > 50 ? '150% -50%' : '50% -50%'}, 150% 150%, -50% 150%, -50% -50%)`, transform: `rotate(${(financialData.margin / 100) * 360}deg)` }} />
                  <div className="flex flex-col items-center">
                  </div>
               </div>
-              <div className="grid grid-cols-2 gap-8 w-full border-t border-theme-border pt-10">
+              <div className="grid grid-cols-2 gap-4 md:gap-8 w-full border-t border-theme-border pt-10">
                  <div className="text-center space-y-2">
                     <span className="text-[9px] font-black text-theme-muted uppercase tracking-widest">Ponto de Equilíbrio</span>
                     <p className="text-lg font-heading font-black text-theme-text italic">ALCANÇADO</p>
@@ -522,7 +527,7 @@ export const AdminFinance: React.FC = () => {
            <div className="absolute inset-0 bg-theme-bg/80 backdrop-blur-xl animate-in fade-in duration-300" onClick={() => setConfirmModal(null)} />
            <div className="relative w-full max-w-md bg-theme-card border border-theme-border rounded-[40px] overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300">
               {/* Header */}
-              <div className="p-8 md:p-10 border-b border-theme-border flex items-center justify-between shrink-0">
+              <div className="p-4 md:p-8 md:p-10 border-b border-theme-border flex items-center justify-between shrink-0">
                 <div className="flex items-center gap-4">
                   <div className="w-12 h-12 bg-brand-tactical/10 rounded-2xl flex items-center justify-center border border-brand-tactical/20">
                     <ShieldCheck className="text-brand-tactical" size={24} strokeWidth={1.5} />
@@ -535,15 +540,15 @@ export const AdminFinance: React.FC = () => {
                 <button onClick={() => setConfirmModal(null)} className="p-3 hover:bg-theme-bg-muted rounded-full transition-all text-theme-muted"><X size={24} /></button>
               </div>
 
-              <div className="p-8 md:p-10 space-y-6 text-center">
+              <div className="p-4 md:p-8 md:p-10 space-y-6 text-center">
                  <h3 className="text-2xl font-black text-theme-text uppercase italic tracking-tighter leading-tight">Confirmar Repasse?</h3>
-                 <p className="text-[11px] text-theme-muted font-bold uppercase tracking-widest leading-relaxed italic border-y border-theme-border/10 py-6">
+                 <p className="text-[11px] text-theme-muted font-bold uppercase tracking-widest leading-relaxed italic border-y border-theme-border/10 py-3 md:py-6">
                     VOCÊ CONFIRMA QUE JÁ EXECUTOU OS REPASSES PIX PARA TODOS OS PARCEIROS DESTE EVENTO? ESTA AÇÃO É IRREVERSÍVEL NO LEDGER.
                  </p>
               </div>
 
               {/* Footer */}
-              <div className="p-8 md:p-10 bg-theme-bg-muted border-t border-theme-border flex gap-4 shrink-0 rounded-2xl">
+              <div className="p-4 md:p-8 md:p-10 bg-theme-bg-muted border-t border-theme-border flex gap-4 shrink-0 rounded-2xl">
                 <button onClick={() => setConfirmModal(null)} className="flex-1 py-5 border border-theme-border text-[11px] font-black uppercase tracking-[0.3em] text-theme-muted hover:text-white transition-all rounded-[20px] italic">Cancelar</button>
                 <button 
                   onClick={() => handleMarkAsPaid()} 

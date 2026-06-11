@@ -96,7 +96,7 @@ export default function ProfissionaisPage() {
         />
         <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/40 to-[var(--bg)] z-0 pointer-events-none" />
 
-        <div className="max-w-6xl mx-auto px-6 py-12 md:py-20 relative z-10 w-full">
+        <div className="max-w-6xl mx-auto px-3 md:px-6 py-3 md:py-6 md:py-12 md:py-20 relative z-10 w-full">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -107,7 +107,7 @@ export default function ProfissionaisPage() {
               Fotógrafos Verificados
             </div>
             
-            <h1 className="text-5xl md:text-7xl font-heading font-black text-white uppercase italic tracking-tighter leading-none drop-shadow-2xl">
+            <h1 className="text-3xl md:text-5xl md:text-7xl font-heading font-black text-white uppercase italic tracking-tighter leading-none drop-shadow-2xl">
               Diretório de<br />
               <span className="text-brand-tactical" style={{ textShadow: "0 0 30px var(--brand)" }}>Profissionais</span>
             </h1>
@@ -187,11 +187,11 @@ export default function ProfissionaisPage() {
       </div>
 
       {/* Grid */}
-      <div className="max-w-6xl mx-auto px-6 py-12">
+      <div className="max-w-6xl mx-auto px-3 md:px-6 py-3 md:py-6 md:py-12">
         {loading ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 md:gap-4">
             {[...Array(6)].map((_, i) => (
-              <div key={i} className="h-72 bg-theme-bg-muted border border-theme-border shadow-sm animate-pulse rounded-2xl" />
+              <div key={i} className="h-56 bg-theme-bg-muted border border-theme-border shadow-sm animate-pulse rounded-2xl" />
             ))}
           </div>
         ) : profs.length === 0 ? (
@@ -216,7 +216,7 @@ export default function ProfissionaisPage() {
               <p className="text-[10px] text-brand-tactical uppercase tracking-widest font-black italic">Ordenados por Pontuação</p>
             </div>
 
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 md:gap-6">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 md:gap-4">
               {profs.map((prof, i) => {
                 const location = cityFromAddress(prof.address);
                 return (
@@ -270,7 +270,7 @@ export default function ProfissionaisPage() {
                         </div>
 
                         {/* Info */}
-                        <div className="p-3 md:p-5 space-y-3 md:space-y-4">
+                        <div className="p-2 md:p-4 space-y-2 md:space-y-3">
                           <div>
                             <h3 className="text-[11px] md:text-base font-heading font-black text-theme-text uppercase italic tracking-tight group-hover:text-brand-tactical transition-colors line-clamp-1">
                               {prof.nome}

@@ -59,7 +59,7 @@ export const AdminConfigsPayouts: React.FC<Props> = ({ payouts, onOpenPayoutModa
     <div className="space-y-8 animate-in fade-in duration-500">
       {payouts.map((payout) => (
         <div key={payout.id} className="bg-theme-bg border border-theme-border shadow-sm group overflow-hidden rounded-2xl">
-          <div className="px-10 py-8 border-b border-theme-border flex flex-col md:flex-row md:items-center justify-between gap-6 bg-theme-bg rounded-2xl">
+          <div className="px-5 md:px-10 py-4 md:py-8 border-b border-theme-border flex flex-col md:flex-row md:items-center justify-between gap-3 md:gap-6 bg-theme-bg rounded-2xl">
             <div className="space-y-3">
               <div className="flex flex-wrap items-center gap-4">
                 <span className="text-2xl font-heading font-black text-theme-text uppercase tracking-tighter italic leading-none">
@@ -73,7 +73,7 @@ export const AdminConfigsPayouts: React.FC<Props> = ({ payouts, onOpenPayoutModa
                   {payout.status === "PAID" ? "LIQUIDADO" : "PENDENTE"}
                 </span>
               </div>
-              <div className="flex flex-wrap gap-8">
+              <div className="flex flex-wrap gap-4 md:gap-8">
                 <div className="space-y-1">
                   <span className="text-[7px] font-black text-theme-muted uppercase tracking-widest">Faturamento Bruto</span>
                   <p className="text-[12px] font-black text-theme-text font-mono italic">{formatCurrency(payout.totalRevenue)}</p>
@@ -84,14 +84,14 @@ export const AdminConfigsPayouts: React.FC<Props> = ({ payouts, onOpenPayoutModa
                 </div>
               </div>
             </div>
-            <div className="px-6 py-4 bg-theme-bg border border-theme-border text-theme-muted text-[8px] font-black uppercase tracking-[0.3em] font-mono shadow-inner group-hover:text-theme-text transition-colors rounded-2xl">
+            <div className="px-3 md:px-6 py-4 bg-theme-bg border border-theme-border text-theme-muted text-[8px] font-black uppercase tracking-[0.3em] font-mono shadow-inner group-hover:text-theme-text transition-colors rounded-2xl">
               ID: {payout.id.slice(-8).toUpperCase()}
             </div>
           </div>
 
           <div className="divide-y divide-theme-border/20">
             {payout.items?.map((item) => (
-              <div key={item.id} className="px-10 py-8 grid grid-cols-1 md:grid-cols-12 items-center gap-8 hover:bg-theme-bg-muted transition-all">
+              <div key={item.id} className="px-5 md:px-10 py-4 md:py-8 grid grid-cols-1 md:grid-cols-12 items-center gap-4 md:gap-8 hover:bg-theme-bg-muted transition-all">
                 <div className="md:col-span-1">
                   <span className="text-[7px] font-black text-theme-muted border border-theme-border px-2 py-1 uppercase tracking-widest block text-center italic">
                     {item.recipientType}
@@ -130,7 +130,7 @@ export const AdminConfigsPayouts: React.FC<Props> = ({ payouts, onOpenPayoutModa
                   ) : (
                     <button
                       onClick={() => onOpenPayoutModal({ payoutId: payout.id, itemId: item.id, name: item.recipientName, amount: item.amount })}
-                      className="text-[9px] font-black text-zinc-950 uppercase tracking-[0.4em] bg-brand-tactical px-8 py-4 hover:brightness-110 transition-all shadow-xl flex items-center gap-3"
+                      className="text-[9px] font-black text-zinc-950 uppercase tracking-[0.4em] bg-brand-tactical px-4 md:px-8 py-4 hover:brightness-110 transition-all shadow-xl flex items-center gap-3"
                     >
                       <DollarSign size={14} /> LIQUIDAR
                     </button>

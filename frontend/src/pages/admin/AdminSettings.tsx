@@ -58,13 +58,13 @@ export const AdminSettings: React.FC = () => {
     <div className="space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
       <div className="flex items-center justify-between border-b border-theme-border pb-8">
         <div>
-          <h2 className="text-4xl font-heading text-theme-text tracking-tighter uppercase">Configurações do Sistema</h2>
+          <h2 className="text-2xl md:text-4xl font-heading text-theme-text tracking-tighter uppercase">Configurações do Sistema</h2>
           <p className="text-[10px] text-theme-muted uppercase tracking-[0.5em] mt-2 font-bold italic">Infraestrutura e Parâmetros de Protocolo</p>
         </div>
         <button 
           onClick={handleSave}
           disabled={saving}
-          className="bg-brand-tactical text-brand-text text-[10px] font-black uppercase tracking-[0.4em] px-10 py-5 hover:brightness-110 transition-all rounded-none flex items-center gap-2 disabled:opacity-50 italic"
+          className="bg-brand-tactical text-brand-text text-[10px] font-black uppercase tracking-[0.4em] px-5 md:px-10 py-5 hover:brightness-110 transition-all rounded-none flex items-center gap-2 disabled:opacity-50 italic"
         >
           {saving ? "SINCRONIZANDO..." : <><Save size={14} strokeWidth={1.5} /> SALVAR ALTERAÇÕES</>}
         </button>
@@ -72,13 +72,13 @@ export const AdminSettings: React.FC = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-theme-bg-muted border border-theme-border">
         {/* Branding & Identity */}
-        <div className="bg-theme-bg p-10 space-y-10 border-b md:border-b-0 md:border-r border-theme-border rounded-2xl">
+        <div className="bg-theme-bg p-5 md:p-10 space-y-10 border-b md:border-b-0 md:border-r border-theme-border rounded-2xl">
           <div className="flex items-center gap-4 mb-4">
              <Palette className="text-brand-tactical" size={18} strokeWidth={1.5} />
              <h3 className="text-[11px] font-bold text-theme-text uppercase tracking-[0.4em]">Look & Feel (Identidade)</h3>
           </div>
           
-          <div className="grid grid-cols-1 gap-8">
+          <div className="grid grid-cols-1 gap-4 md:gap-8">
             {/* Primary Color */}
             <div className="space-y-4">
               <label className="text-[9px] font-bold text-zinc-600 uppercase tracking-[0.4em] flex justify-between">
@@ -128,7 +128,7 @@ export const AdminSettings: React.FC = () => {
         </div>
 
         {/* Financeiro */}
-        <div className="bg-theme-bg p-10 space-y-8 border-b md:border-b-0 border-theme-border rounded-2xl">
+        <div className="bg-theme-bg p-5 md:p-10 space-y-8 border-b md:border-b-0 border-theme-border rounded-2xl">
           <div className="flex items-center gap-4 mb-4">
              <Database className="text-brand-tactical" size={18} strokeWidth={1.5} />
              <h3 className="text-[11px] font-bold text-theme-text uppercase tracking-[0.4em]">Engenharia de Repasse</h3>
@@ -154,7 +154,7 @@ export const AdminSettings: React.FC = () => {
         </div>
 
         {/* Meritocracia de Valor Hora */}
-        <div className="bg-theme-bg p-10 space-y-8 border-b md:border-b-0 border-theme-border rounded-2xl">
+        <div className="bg-theme-bg p-5 md:p-10 space-y-8 border-b md:border-b-0 border-theme-border rounded-2xl">
           <div className="flex items-center gap-4 mb-4">
              <TrendingUp className="text-brand-tactical" size={18} strokeWidth={1.5} />
              <h3 className="text-[11px] font-bold text-theme-text uppercase tracking-[0.4em]">Meritocracia — Valor Hora</h3>
@@ -200,13 +200,13 @@ export const AdminSettings: React.FC = () => {
           </div>
         </div>
 
-        <div className="bg-theme-bg p-10 space-y-8 md:col-span-3 border-t border-theme-border rounded-2xl">
+        <div className="bg-theme-bg p-5 md:p-10 space-y-8 md:col-span-3 border-t border-theme-border rounded-2xl">
           <div className="flex items-center gap-4 mb-4">
              <Shield className="text-brand-tactical" size={18} strokeWidth={1.5} />
              <h3 className="text-[11px] font-bold text-theme-text uppercase tracking-[0.4em]">Protocolos de Acesso</h3>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-20">
-            <div className="flex items-center justify-between p-6 border border-theme-border">
+            <div className="flex items-center justify-between p-3 md:p-6 border border-theme-border">
                <div>
                   <div className="text-[10px] font-bold text-theme-text uppercase tracking-widest">Modo Manutenção</div>
                   <div className="text-[9px] text-zinc-700 uppercase mt-1">Bloqueia acesso público à plataforma</div>
@@ -218,7 +218,7 @@ export const AdminSettings: React.FC = () => {
                  <div className={`w-4 h-4 bg-white transition-all transform ${getConfig("maintenance_mode") === "true" ? "translate-x-6" : "translate-x-0"}`} />
                </button>
             </div>
-            <div className="flex items-center justify-between p-6 border border-theme-border">
+            <div className="flex items-center justify-between p-3 md:p-6 border border-theme-border">
                <div>
                   <div className="text-[10px] font-bold text-theme-text uppercase tracking-widest">Acesso Público à Vitrine</div>
                   <div className="text-[9px] text-zinc-700 uppercase mt-1">Permite visualização sem login</div>

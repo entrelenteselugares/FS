@@ -104,46 +104,47 @@ const AnimatedRoutes = () => {
         className="w-full h-full pb-20 md:pb-0"
       >
         <Routes location={location}>
-          {/* Public Routes */}
+          {/* Public / Whitelist Routes */}
           <Route path="/login" element={<LoginPage />} />
           <Route path="/reset-password" element={<ResetPasswordPage />} />
           <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+          <Route path="/registro" element={<RegisterPage />} />
+          <Route path="/register" element={<RegisterPage />} />
+          <Route path="/auth" element={<AuthSelectionPage />} />
+          <Route path="/invitation/:code" element={<InvitationPage />} />
 
-          {/* Public Routes */}
+          {/* Protected Routes */}
           <Route path="/" element={<ProtectedRoute><HomePage /></ProtectedRoute>} />
-            <Route path="/sobre" element={<AboutPage />} />
-            <Route path="/parcerias" element={<PartnershipsPage />} />
-            <Route path="/termos" element={<TermsPage />} />
-            <Route path="/privacidade" element={<PrivacyPage />} />
-            <Route path="/lgpd" element={<LgpdPage />} />
-            <Route path="/contato" element={<ContactPage />} />
-            <Route path="/status" element={<StatusPage />} />
-            <Route path="/registro" element={<RegisterPage />} />
-            <Route path="/register" element={<RegisterPage />} />
-            <Route path="/e/:slug" element={<EventPage />} />
-            <Route path="/auth" element={<AuthSelectionPage />} />
-            <Route path="/cotacao" element={<QuotePage />} />
-            <Route path="/cotacao/pacotes" element={<PackageFlowPage />} />
-            <Route path="/cotacao/unidades" element={<PartnerFlowPage />} />
-            <Route path="/cotacao/customizado" element={<CustomFlowPage />} />
-            <Route path="/p/:slug" element={<PartnerLP />} />
-            <Route path="/checkout" element={<CheckoutPage />} />
-            <Route path="/checkout/:orderId" element={<CheckoutPage />} />
-            <Route path="/delivery/:id" element={<LuxuryExperiencePage />} />
-            <Route path="/captura" element={<PhygitalCapture />} />
-            <Route path="/phygital-capture" element={<PhygitalCapture />} />
-            <Route path="/vitrine" element={<ProfissionaisPage />} />
-            <Route path="/profissionais" element={<ProfissionaisPage />} />
-            <Route path="/pro/:id" element={<ProfissionalProfilePage />} />
-            <Route path="/negocios" element={<BusinessLanding />} />
-            <Route path="/clube" element={<ClubLandingPage />} />
-            <Route path="/flash/:shortId" element={<FlashUnlockPage />} />
-            <Route path="/suporte" element={<HelpPage />} />
-            <Route path="/embaixador/:slug" element={<AmbassadorPage />} />
+            <Route path="/sobre" element={<ProtectedRoute><AboutPage /></ProtectedRoute>} />
+            <Route path="/parcerias" element={<ProtectedRoute><PartnershipsPage /></ProtectedRoute>} />
+            <Route path="/termos" element={<ProtectedRoute><TermsPage /></ProtectedRoute>} />
+            <Route path="/privacidade" element={<ProtectedRoute><PrivacyPage /></ProtectedRoute>} />
+            <Route path="/lgpd" element={<ProtectedRoute><LgpdPage /></ProtectedRoute>} />
+            <Route path="/contato" element={<ProtectedRoute><ContactPage /></ProtectedRoute>} />
+            <Route path="/status" element={<ProtectedRoute><StatusPage /></ProtectedRoute>} />
+            <Route path="/e/:slug" element={<ProtectedRoute><EventPage /></ProtectedRoute>} />
+            <Route path="/cotacao" element={<ProtectedRoute><QuotePage /></ProtectedRoute>} />
+            <Route path="/cotacao/pacotes" element={<ProtectedRoute><PackageFlowPage /></ProtectedRoute>} />
+            <Route path="/cotacao/unidades" element={<ProtectedRoute><PartnerFlowPage /></ProtectedRoute>} />
+            <Route path="/cotacao/customizado" element={<ProtectedRoute><CustomFlowPage /></ProtectedRoute>} />
+            <Route path="/p/:slug" element={<ProtectedRoute><PartnerLP /></ProtectedRoute>} />
+            <Route path="/checkout" element={<ProtectedRoute><CheckoutPage /></ProtectedRoute>} />
+            <Route path="/checkout/:orderId" element={<ProtectedRoute><CheckoutPage /></ProtectedRoute>} />
+            <Route path="/delivery/:id" element={<ProtectedRoute><LuxuryExperiencePage /></ProtectedRoute>} />
+            <Route path="/captura" element={<ProtectedRoute><PhygitalCapture /></ProtectedRoute>} />
+            <Route path="/phygital-capture" element={<ProtectedRoute><PhygitalCapture /></ProtectedRoute>} />
+            <Route path="/vitrine" element={<ProtectedRoute><ProfissionaisPage /></ProtectedRoute>} />
+            <Route path="/profissionais" element={<ProtectedRoute><ProfissionaisPage /></ProtectedRoute>} />
+            <Route path="/pro/:id" element={<ProtectedRoute><ProfissionalProfilePage /></ProtectedRoute>} />
+            <Route path="/negocios" element={<ProtectedRoute><BusinessLanding /></ProtectedRoute>} />
+            <Route path="/clube" element={<ProtectedRoute><ClubLandingPage /></ProtectedRoute>} />
+            <Route path="/flash/:shortId" element={<ProtectedRoute><FlashUnlockPage /></ProtectedRoute>} />
+            <Route path="/suporte" element={<ProtectedRoute><HelpPage /></ProtectedRoute>} />
+            <Route path="/embaixador/:slug" element={<ProtectedRoute><AmbassadorPage /></ProtectedRoute>} />
             
             {/* World Cup Gamification */}
-            <Route path="/album-torcida" element={<AlbumTorcidaPage />} />
-            <Route path="/album-torcida/match/:matchId" element={<MatchFolhaPage />} />
+            <Route path="/album-torcida" element={<ProtectedRoute><AlbumTorcidaPage /></ProtectedRoute>} />
+            <Route path="/album-torcida/match/:matchId" element={<ProtectedRoute><MatchFolhaPage /></ProtectedRoute>} />
 
             {/* Redireciona para o painel correto */}
             <Route path="/dashboard" element={<DashboardRedirect />} />
@@ -211,7 +212,6 @@ const AnimatedRoutes = () => {
                 <VaultDetailPage />
               </ProtectedRoute>
             } />
-            <Route path="/invitation/:code" element={<InvitationPage />} />
 
             {/* Home e 404 */}
             <Route path="/404" element={<NotFoundPage />} />

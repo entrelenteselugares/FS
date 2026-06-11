@@ -71,14 +71,14 @@ function BookingModal({
         className="w-full sm:max-w-lg bg-zinc-950 border border-white/10 sm:rounded-2xl rounded-t-2xl overflow-hidden"
       >
         {/* Header */}
-        <div className="px-6 pt-6 pb-4 border-b border-white/5">
+        <div className="px-3 md:px-6 pt-6 pb-4 border-b border-white/5">
           <p className="text-[9px] font-black text-brand-tactical uppercase tracking-widest italic mb-1">Taxa de Reserva</p>
           <h2 className="text-xl font-heading font-black text-white uppercase italic tracking-tight">
             Reservar {prof.nome}
           </h2>
         </div>
 
-        <div className="px-6 py-5 space-y-4">
+        <div className="px-3 md:px-6 py-5 space-y-4">
           {/* Package info */}
           <div className="flex items-center justify-between bg-white/5 rounded-xl p-4">
             <div>
@@ -112,7 +112,7 @@ function BookingModal({
         </div>
 
         {/* Actions */}
-        <div className="flex gap-3 px-6 pb-6">
+        <div className="flex gap-3 px-3 md:px-6 pb-6">
           <button
             onClick={onClose}
             className="flex-1 px-4 py-3.5 border border-white/10 rounded-xl text-zinc-400 text-[10px] font-black uppercase tracking-widest hover:border-white/20 transition-all"

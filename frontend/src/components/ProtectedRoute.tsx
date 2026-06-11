@@ -1,5 +1,5 @@
 import React from "react";
-import { Navigate } from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import { T } from "../lib/theme";
 
@@ -10,6 +10,7 @@ interface Props {
 
 export const ProtectedRoute: React.FC<Props> = ({ children, roles }) => {
   const { user, loading } = useAuth();
+  const location = useLocation();
 
   if (loading) {
     return (
@@ -19,7 +20,11 @@ export const ProtectedRoute: React.FC<Props> = ({ children, roles }) => {
     );
   }
 
-  if (!user) return <Navigate to="/login" replace />;
+  if (!user) {
+    const returnUrl = `${location.pathname}${location.search}`;
+    return <Navigate to={`/login?returnUrl=${encodeURIComponent(returnUrl)}`} replace />;
+  }
+  
   if (roles && !roles.includes(user.role)) return <Navigate to="/dashboard" replace />;
 
   return <>{children}</>;

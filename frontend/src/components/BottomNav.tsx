@@ -5,6 +5,7 @@ import { useAuth } from "../hooks/useAuth";
 // ImageIcon alias for portfolio nav item
 const ImageIcon = Image;
 import type { NavItem } from "./DashboardLayout";
+import { Camera } from "lucide-react";
 
 export const BottomNav: React.FC = () => {
   const navigate = useNavigate();
@@ -86,71 +87,127 @@ export const BottomNav: React.FC = () => {
 
   if (shouldHide) return null;
 
+  const isEventPage = location.pathname.startsWith("/e/");
+
   return (
     <>
       <div className="md:hidden fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md bg-[var(--bg)]/80 backdrop-blur-xl border-t border-theme-border/10 z-[100] px-3 py-3 flex items-center justify-around pb-safe">
-        <button 
-          onClick={() => navigate("/", { replace: true })}
-          className={`flex flex-col items-center gap-1 transition-all ${isActive("/") ? "text-emerald-500" : "text-theme-text opacity-40"}`}
-        >
-          <Home size={20} strokeWidth={1.5} />
-          <span className="text-[7.5px] font-bold uppercase tracking-tight">Home</span>
-        </button>
-
-        <button 
-          onClick={() => {
-            if (location.pathname !== "/") {
-              navigate("/", { replace: true });
-              setTimeout(() => {
-                window.scrollTo({ top: 0, behavior: "smooth" });
-                document.getElementById("mobile-search-input")?.focus();
-              }, 100);
-            } else {
-              window.scrollTo({ top: 0, behavior: "smooth" });
-              document.getElementById("mobile-search-input")?.focus();
-            }
-          }}
-          className="flex flex-col items-center gap-1 text-theme-text opacity-40 transition-all hover:opacity-100"
-        >
-          <Search size={20} strokeWidth={1.5} />
-          <span className="text-[7.5px] font-bold uppercase tracking-tight">Buscar</span>
-        </button>
-
-        {user && (
+        {isEventPage ? (
           <>
             <button 
-              onClick={() => navigate("/minha-conta?s=files", { replace: true })}
-              className={`flex flex-col items-center gap-1 transition-all ${location.pathname === "/minha-conta" && (s === "files" || s === "fotos" || s === "wallet" || s === "pedidos") ? "text-emerald-500" : "text-theme-text opacity-40"}`}
+              onClick={() => navigate("/", { replace: true })}
+              className="flex flex-col items-center gap-1 text-theme-text opacity-40 transition-all hover:opacity-100"
             >
-              <ShoppingBag size={20} strokeWidth={1.5} />
-              <span className="text-[7.5px] font-bold uppercase tracking-tight">Compras</span>
+              <Home size={20} strokeWidth={1.5} />
+              <span className="text-[7.5px] font-bold uppercase tracking-tight">Home</span>
+            </button>
+
+            {user && (
+              <button 
+                onClick={() => navigate("/minha-conta?s=files", { replace: true })}
+                className="flex flex-col items-center gap-1 text-theme-text opacity-40 transition-all hover:opacity-100"
+              >
+                <ShoppingBag size={20} strokeWidth={1.5} />
+                <span className="text-[7.5px] font-bold uppercase tracking-tight">Compras</span>
+              </button>
+            )}
+
+            <button 
+              onClick={() => {
+                navigate("?action=camera", { replace: true });
+              }}
+              className="flex flex-col items-center justify-center gap-1 -mt-8"
+            >
+              <div className="w-14 h-14 bg-brand-tactical rounded-full flex items-center justify-center shadow-lg shadow-brand-tactical/30 border-4 border-[var(--bg)] text-black">
+                <Camera size={24} strokeWidth={2} />
+              </div>
+              <span className="text-[9px] font-black uppercase tracking-widest text-brand-tactical italic mt-1">Câmera</span>
+            </button>
+
+            {user && (
+              <button 
+                onClick={() => navigate("/meus-albuns", { replace: true })}
+                className="flex flex-col items-center gap-1 text-theme-text opacity-40 transition-all hover:opacity-100"
+              >
+                <Image size={20} strokeWidth={1.5} />
+                <span className="text-[7.5px] font-bold uppercase tracking-tight">Álbuns</span>
+              </button>
+            )}
+
+            <button 
+              onClick={() => setDrawerOpen(true)}
+              className="flex flex-col items-center gap-1 text-theme-text opacity-40 transition-all hover:opacity-100"
+            >
+              <Menu size={20} strokeWidth={1.5} />
+              <span className="text-[7.5px] font-bold uppercase tracking-tight">Menu</span>
+            </button>
+          </>
+        ) : (
+          <>
+            <button 
+              onClick={() => navigate("/", { replace: true })}
+              className={`flex flex-col items-center gap-1 transition-all ${isActive("/") ? "text-emerald-500" : "text-theme-text opacity-40"}`}
+            >
+              <Home size={20} strokeWidth={1.5} />
+              <span className="text-[7.5px] font-bold uppercase tracking-tight">Home</span>
             </button>
 
             <button 
-              onClick={() => navigate("/meus-albuns", { replace: true })}
-              className={`flex flex-col items-center gap-1 transition-all ${location.pathname.startsWith("/meus-albuns") ? "text-emerald-500" : "text-theme-text opacity-40"}`}
+              onClick={() => {
+                if (location.pathname !== "/") {
+                  navigate("/", { replace: true });
+                  setTimeout(() => {
+                    window.scrollTo({ top: 0, behavior: "smooth" });
+                    document.getElementById("mobile-search-input")?.focus();
+                  }, 100);
+                } else {
+                  window.scrollTo({ top: 0, behavior: "smooth" });
+                  document.getElementById("mobile-search-input")?.focus();
+                }
+              }}
+              className="flex flex-col items-center gap-1 text-theme-text opacity-40 transition-all hover:opacity-100"
             >
-              <Image size={20} strokeWidth={1.5} />
-              <span className="text-[7.5px] font-bold uppercase tracking-tight">Meus Álbuns</span>
+              <Search size={20} strokeWidth={1.5} />
+              <span className="text-[7.5px] font-bold uppercase tracking-tight">Buscar</span>
+            </button>
+
+            {user && (
+              <>
+                <button 
+                  onClick={() => navigate("/minha-conta?s=files", { replace: true })}
+                  className={`flex flex-col items-center gap-1 transition-all ${location.pathname === "/minha-conta" && (s === "files" || s === "fotos" || s === "wallet" || s === "pedidos") ? "text-emerald-500" : "text-theme-text opacity-40"}`}
+                >
+                  <ShoppingBag size={20} strokeWidth={1.5} />
+                  <span className="text-[7.5px] font-bold uppercase tracking-tight">Compras</span>
+                </button>
+
+                <button 
+                  onClick={() => navigate("/meus-albuns", { replace: true })}
+                  className={`flex flex-col items-center gap-1 transition-all ${location.pathname.startsWith("/meus-albuns") ? "text-emerald-500" : "text-theme-text opacity-40"}`}
+                >
+                  <Image size={20} strokeWidth={1.5} />
+                  <span className="text-[7.5px] font-bold uppercase tracking-tight">Meus Álbuns</span>
+                </button>
+              </>
+            )}
+
+            <button 
+              onClick={() => setDrawerOpen(true)}
+              className={`flex flex-col items-center gap-1 transition-all ${
+                drawerOpen ||
+                location.pathname.startsWith("/profissional") || 
+                location.pathname.startsWith("/unidade-fixa") || 
+                location.pathname.startsWith("/admin") || 
+                (location.pathname === "/minha-conta" && s !== "wallet" && s !== "pedidos")
+                  ? "text-emerald-500" 
+                  : "text-theme-text opacity-40"
+              }`}
+            >
+              <Menu size={20} strokeWidth={1.5} />
+              <span className="text-[7.5px] font-bold uppercase tracking-tight">Opções</span>
             </button>
           </>
         )}
-
-        <button 
-          onClick={() => setDrawerOpen(true)}
-          className={`flex flex-col items-center gap-1 transition-all ${
-            drawerOpen ||
-            location.pathname.startsWith("/profissional") || 
-            location.pathname.startsWith("/unidade-fixa") || 
-            location.pathname.startsWith("/admin") || 
-            (location.pathname === "/minha-conta" && s !== "wallet" && s !== "pedidos")
-              ? "text-emerald-500" 
-              : "text-theme-text opacity-40"
-          }`}
-        >
-          <Menu size={20} strokeWidth={1.5} />
-          <span className="text-[7.5px] font-bold uppercase tracking-tight">Opções</span>
-        </button>
       </div>
 
       {/* ── Mobile Drawer Backdrop ── */}

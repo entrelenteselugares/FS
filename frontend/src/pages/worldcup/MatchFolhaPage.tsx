@@ -342,7 +342,7 @@ export const MatchFolhaPage = () => {
         )}
         {selectedPreviewSlot && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/95 backdrop-blur-md overflow-y-auto">
-            <div className="bg-theme-bg border border-theme-border w-full max-w-lg rounded-2xl overflow-hidden relative p-6 flex flex-col gap-4 my-8">
+            <div className="bg-theme-bg border border-theme-border w-full max-w-lg rounded-2xl overflow-hidden relative p-3 md:p-6 flex flex-col gap-4 my-8">
               <button 
                 onClick={() => { setSelectedPreviewSlot(null); setCommentText(""); }}
                 className="absolute top-4 right-4 p-2 text-gray-400 hover:text-white rounded-full hover:bg-theme-surface"

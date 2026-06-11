@@ -58,7 +58,7 @@ export const AdminOverview: React.FC<OverviewProps> = ({ stats, recentOrders = [
       <div className="relative border-b border-theme-border pb-8 md:pb-12 space-y-4 md:space-y-6">
         <div className="absolute -top-10 -left-10 w-40 h-40 bg-brand-tactical/10 blur-3xl rounded-full" />
         
-        <div className="flex flex-col xl:flex-row justify-between items-start xl:items-end gap-6 relative z-10">
+        <div className="flex flex-col xl:flex-row justify-between items-start xl:items-end gap-3 md:gap-6 relative z-10">
           <div>
             <h1 className="text-3xl md:text-4xl font-heading font-black uppercase italic tracking-tighter text-theme-text">VISÃO GERAL</h1>
             <p className="text-theme-muted mt-2 text-sm">Métricas e performance da plataforma</p>
@@ -75,7 +75,7 @@ export const AdminOverview: React.FC<OverviewProps> = ({ stats, recentOrders = [
           { label: "Membros", icon: <Users size={24} />, route: "/admin/users" },
         ].map((action, i) => (
           <button key={i} onClick={() => navigate(action.route)}
-            className="flex flex-col items-center justify-center p-6 bg-theme-bg border border-theme-border rounded-2xl gap-3 text-zinc-400 hover:text-emerald-500 hover:border-emerald-500/50 transition-all active:scale-95"
+            className="flex flex-col items-center justify-center p-3 md:p-6 bg-theme-bg border border-theme-border rounded-2xl gap-3 text-zinc-400 hover:text-emerald-500 hover:border-emerald-500/50 transition-all active:scale-95"
           >
             {action.icon}
             <span className="text-[10px] font-black uppercase tracking-widest">{action.label}</span>
@@ -93,7 +93,7 @@ export const AdminOverview: React.FC<OverviewProps> = ({ stats, recentOrders = [
           { label: "Assinaturas Ativas", value: stats?.totalActiveSubscriptions || 0, color: "text-emerald-500" },
           { label: "Eventos Ativos", value: stats?.activeEvents || 0, color: "text-brand-tactical" }
         ].map((kpi, i) => (
-          <div key={i} className="min-w-[75vw] md:min-w-0 snap-center bg-theme-bg p-6 space-y-2 rounded-2xl border border-theme-border md:border-none md:rounded-none flex-shrink-0">
+          <div key={i} className="min-w-[75vw] md:min-w-0 snap-center bg-theme-bg p-3 md:p-6 space-y-2 rounded-2xl border border-theme-border md:border-none md:rounded-none flex-shrink-0">
             <p className="text-[10px] uppercase tracking-widest text-theme-muted">{kpi.label}</p>
             <p className={`text-2xl md:text-3xl font-heading font-black italic ${kpi.color}`}>{kpi.value}</p>
           </div>
@@ -101,7 +101,7 @@ export const AdminOverview: React.FC<OverviewProps> = ({ stats, recentOrders = [
       </div>
 
       {/* Recent Orders Chart */}
-      <div className="bg-theme-bg border border-theme-border p-6 rounded-2xl">
+      <div className="bg-theme-bg border border-theme-border p-3 md:p-6 rounded-2xl">
         <h3 className="text-sm font-bold text-theme-text uppercase mb-6 tracking-widest">Evolução de Vendas</h3>
         <div className="h-64">
           <ResponsiveContainer width="100%" height="100%">
@@ -116,7 +116,7 @@ export const AdminOverview: React.FC<OverviewProps> = ({ stats, recentOrders = [
       </div>
 
       {/* Pending Events Section */}
-      <div className="bg-theme-bg border border-theme-border p-6 rounded-2xl">
+      <div className="bg-theme-bg border border-theme-border p-3 md:p-6 rounded-2xl">
         <h3 className="text-sm font-bold text-theme-text uppercase mb-6 tracking-widest">Eventos Pendentes</h3>
         <div className="space-y-4">
           {pendingEvents.map((event) => (

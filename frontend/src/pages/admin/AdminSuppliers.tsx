@@ -162,7 +162,7 @@ export default function AdminSuppliers() {
       {isModalOpen && <NewSupplierModal onClose={() => setIsModalOpen(false)} onSave={handleCreateSupplier} />}
 
       {/* HEADER MASTER */}
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between border-b border-theme-border pb-10 gap-6">
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between border-b border-theme-border pb-10 gap-3 md:gap-6">
         <div>
                     <p className="text-theme-muted mt-2 text-sm">Fila de produção, ROI de equipamentos e fornecedores</p>
         </div>
@@ -170,19 +170,19 @@ export default function AdminSuppliers() {
         <div className="grid grid-cols-3 md:flex bg-theme-bg border border-theme-border p-1.5 shadow-sm italic gap-1 rounded-2xl">
           <button 
             onClick={() => setView("production")} 
-            className={`px-6 py-3 text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest transition-all whitespace-nowrap italic ${view === "production" ? 'bg-brand-tactical text-zinc-950 shadow-md' : 'text-theme-muted hover:text-brand-text'}`}
+            className={`px-3 md:px-6 py-3 text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest transition-all whitespace-nowrap italic ${view === "production" ? 'bg-brand-tactical text-zinc-950 shadow-md' : 'text-theme-muted hover:text-brand-text'}`}
           >
             Fila de Produção
           </button>
           <button 
             onClick={() => setView("roi")} 
-            className={`px-6 py-3 text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest transition-all whitespace-nowrap italic ${view === "roi" ? 'bg-brand-tactical text-zinc-950 shadow-md' : 'text-theme-muted hover:text-brand-text'}`}
+            className={`px-3 md:px-6 py-3 text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest transition-all whitespace-nowrap italic ${view === "roi" ? 'bg-brand-tactical text-zinc-950 shadow-md' : 'text-theme-muted hover:text-brand-text'}`}
           >
             Engenharia de ROI
           </button>
           <button 
             onClick={() => setView("suppliers")} 
-            className={`px-6 py-3 text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest transition-all whitespace-nowrap italic ${view === "suppliers" ? 'bg-brand-tactical text-zinc-950 shadow-md' : 'text-theme-muted hover:text-brand-text'}`}
+            className={`px-3 md:px-6 py-3 text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest transition-all whitespace-nowrap italic ${view === "suppliers" ? 'bg-brand-tactical text-zinc-950 shadow-md' : 'text-theme-muted hover:text-brand-text'}`}
           >
             Ativos / Hardware
           </button>
@@ -194,15 +194,15 @@ export default function AdminSuppliers() {
         <div className="space-y-8 animate-in fade-in duration-500">
            {/* STATS DE FÁBRICA */}
            <div className="max-w-6xl mx-auto w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
-              <div className="bg-theme-bg border border-theme-border rounded-2xl p-6 space-y-3 group hover:border-brand-tactical/50 transition-all shadow-sm">
+              <div className="bg-theme-bg border border-theme-border rounded-2xl p-3 md:p-6 space-y-3 group hover:border-brand-tactical/50 transition-all shadow-sm">
                  <div className="flex justify-between items-start"><span className="text-[8px] font-black text-theme-muted uppercase tracking-widest">Aguardando Início</span><Clock className="text-amber-600" size={14} /></div>
                  <div className="text-3xl font-heading font-black text-theme-text italic">{productionStats.pending}</div>
               </div>
-              <div className="bg-theme-bg border border-theme-border rounded-2xl p-6 space-y-3 group hover:border-brand-tactical/50 transition-all shadow-sm">
+              <div className="bg-theme-bg border border-theme-border rounded-2xl p-3 md:p-6 space-y-3 group hover:border-brand-tactical/50 transition-all shadow-sm">
                  <div className="flex justify-between items-start"><span className="text-[8px] font-black text-theme-muted uppercase tracking-widest">Na Impressora</span><Printer className="text-brand-tactical" size={14} /></div>
                  <div className="text-3xl font-heading font-black text-theme-text italic">{productionStats.printing}</div>
               </div>
-              <div className="bg-theme-bg border border-theme-border rounded-2xl p-6 space-y-3 group hover:border-brand-tactical/50 transition-all shadow-sm">
+              <div className="bg-theme-bg border border-theme-border rounded-2xl p-3 md:p-6 space-y-3 group hover:border-brand-tactical/50 transition-all shadow-sm">
                  <div className="flex justify-between items-start"><span className="text-[8px] font-black text-theme-muted uppercase tracking-widest">Em Trânsito</span><Truck className="text-blue-600" size={14} /></div>
                  <div className="text-3xl font-heading font-black text-theme-text italic">{productionStats.shipped}</div>
               </div>
@@ -219,7 +219,7 @@ export default function AdminSuppliers() {
                     className="w-full bg-theme-bg border border-theme-border p-4 pl-12 text-[10px] text-theme-text font-black outline-none focus:border-brand-tactical transition-all uppercase tracking-widest placeholder:text-theme-muted/50 rounded-2xl" 
                  />
               </div>
-              <button className="px-8 py-4 bg-theme-bg border border-theme-border text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest text-theme-muted hover:text-theme-text flex items-center gap-3 transition-all rounded-2xl">
+              <button className="px-4 md:px-8 py-4 bg-theme-bg border border-theme-border text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest text-theme-muted hover:text-theme-text flex items-center gap-3 transition-all rounded-2xl">
                  <Filter size={12} /> Filtros Táticos
               </button>
            </div>
@@ -235,7 +235,7 @@ export default function AdminSuppliers() {
                 </div>
               ) : filteredRedemptions.map(r => (
                 <div key={r.id} className="bg-theme-bg-muted border border-theme-border rounded-2xl group hover:border-brand-tactical/40 transition-all overflow-hidden">
-                   <div className="p-6 md:p-8 flex flex-col lg:flex-row lg:items-center justify-between gap-8">
+                   <div className="p-3 md:p-6 md:p-8 flex flex-col lg:flex-row lg:items-center justify-between gap-4 md:gap-8">
                       <div className="flex-1 space-y-6">
                          <div className="flex flex-wrap items-center gap-3">
                             <span className={`px-2.5 py-1 text-[8px] font-black uppercase tracking-widest border ${
@@ -250,7 +250,7 @@ export default function AdminSuppliers() {
                             <span className="text-[10px] text-theme-muted font-bold uppercase tracking-widest opacity-60">• {r.packageType} ({r.quantity} un)</span>
                          </div>
 
-                         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-6 border-t border-theme-border">
+                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8 pt-6 border-t border-theme-border">
                             <div className="space-y-3">
                                <div className="flex items-center gap-2 text-[8px] font-black text-theme-muted uppercase tracking-widest"><MapPin size={10} /> Destino de Entrega</div>
                                <p className="text-[10px] text-theme-text font-black uppercase leading-relaxed max-w-sm italic opacity-80">
@@ -305,7 +305,7 @@ export default function AdminSuppliers() {
       {/* VIEW: ROI ANALYSIS */}
       {view === "roi" && (
         <div className="space-y-10 animate-in fade-in duration-500">
-           <div className="grid grid-cols-1 lg:grid-cols-[300px_1fr] gap-10">
+           <div className="grid grid-cols-1 lg:grid-cols-[300px_1fr] gap-5 md:gap-10">
               {/* Sidebar de Ativos */}
               <div className="space-y-6">
                  <div className="flex items-center gap-2 text-[9px] font-black text-theme-muted uppercase tracking-widest border-b border-theme-border pb-4">
@@ -313,7 +313,7 @@ export default function AdminSuppliers() {
                  </div>
                  <div className="space-y-3">
                     {suppliers.map(s => (
-                      <button key={s.id} onClick={() => setSelectedSupplierId(s.id)} className={`w-full p-6 text-left border transition-all relative shadow-sm ${selectedSupplierId === s.id ? 'bg-brand-tactical/10 border-brand-tactical shadow-[0_0_20px_rgba(133,185,172,0.1)]' : 'bg-theme-bg border-theme-border hover:border-zinc-500'}`}>
+                      <button key={s.id} onClick={() => setSelectedSupplierId(s.id)} className={`w-full p-3 md:p-6 text-left border transition-all relative shadow-sm ${selectedSupplierId === s.id ? 'bg-brand-tactical/10 border-brand-tactical shadow-[0_0_20px_rgba(133,185,172,0.1)]' : 'bg-theme-bg border-theme-border hover:border-zinc-500'}`}>
                          <span className={`text-[10px] font-black uppercase tracking-widest block mb-1 ${selectedSupplierId === s.id ? 'text-brand-tactical' : 'text-theme-text'}`}>{s.name}</span>
                          <span className="text-[8px] font-black text-theme-muted uppercase tracking-widest">{s.type === "OWN_PRINTER" ? "Ativo Local" : "Fulfillment"}</span>
                          {selectedSupplierId === s.id && <div className="absolute top-0 right-0 p-2"><CheckCircle2 size={10} className="text-brand-tactical" /></div>}
@@ -326,22 +326,22 @@ export default function AdminSuppliers() {
               <div className="space-y-10">
                  {breakeven ? (
                    <>
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                         <div className="bg-theme-bg border border-theme-border rounded-2xl p-6 space-y-4 shadow-sm">
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-6">
+                         <div className="bg-theme-bg border border-theme-border rounded-2xl p-3 md:p-6 space-y-4 shadow-sm">
                             <span className="text-[8px] font-black text-theme-muted uppercase tracking-widest block">Unitário Operacional</span>
                             <p className="text-2xl font-heading font-black text-theme-text italic">{formatCurrency(breakeven.costPerPhoto)}</p>
                          </div>
-                         <div className="bg-theme-bg border border-theme-border rounded-2xl p-6 space-y-4 shadow-sm">
+                         <div className="bg-theme-bg border border-theme-border rounded-2xl p-3 md:p-6 space-y-4 shadow-sm">
                             <span className="text-[8px] font-black text-theme-muted uppercase tracking-widest block">Valor do Equipamento</span>
                             <p className="text-2xl font-heading font-black text-theme-text italic">{formatCurrency(breakeven.printerCost)}</p>
                          </div>
-                         <div className="bg-brand-tactical/10 border border-brand-tactical rounded-2xl p-6 space-y-4 shadow-md">
+                         <div className="bg-brand-tactical/10 border border-brand-tactical rounded-2xl p-3 md:p-6 space-y-4 shadow-md">
                             <span className="text-[8px] font-black text-brand-tactical uppercase tracking-widest block">Fotos para Amortizar</span>
                             <p className="text-2xl font-heading font-black text-brand-tactical italic">{breakeven.photosToBreakeven} <span className="text-[10px] uppercase font-sans">un</span></p>
                          </div>
                       </div>
 
-                      <div className="bg-theme-bg border border-theme-border rounded-2xl p-10 relative overflow-hidden group shadow-sm">
+                      <div className="bg-theme-bg border border-theme-border rounded-2xl p-5 md:p-10 relative overflow-hidden group shadow-sm">
                          <div className="flex items-center justify-between mb-10">
                             <div className="space-y-1">
                                <h4 className="text-[11px] font-black uppercase tracking-[0.5em] text-theme-text italic">Simulador de Conversão</h4>
@@ -391,15 +391,15 @@ export default function AdminSuppliers() {
               <h3 className="text-xl font-heading text-theme-text uppercase tracking-tighter">Ativos & Hardware</h3>
               <button 
                 onClick={() => setIsModalOpen(true)}
-                className="bg-brand-tactical text-zinc-950 px-6 py-3 text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest shadow-lg flex items-center gap-2 hover:brightness-110 transition-all italic"
+                className="bg-brand-tactical text-zinc-950 px-3 md:px-6 py-3 text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest shadow-lg flex items-center gap-2 hover:brightness-110 transition-all italic"
               >
                 <Plus size={12} /> NOVO EQUIPAMENTO
               </button>
            </div>
            
-           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6">
               {suppliers.map(s => (
-                <div key={s.id} className="bg-theme-bg-muted border border-theme-border rounded-2xl p-8 space-y-6 group hover:border-brand-tactical transition-all relative">
+                <div key={s.id} className="bg-theme-bg-muted border border-theme-border rounded-2xl p-4 md:p-8 space-y-6 group hover:border-brand-tactical transition-all relative">
                    <div className="space-y-1">
                       <span className="text-[8px] font-black text-brand-tactical uppercase tracking-[0.4em]">{s.type}</span>
                       <h4 className="text-xl font-heading font-black text-theme-text uppercase tracking-tighter italic leading-none">{s.name}</h4>
@@ -461,7 +461,7 @@ function NewSupplierModal({ onClose, onSave }: { onClose: () => void; onSave: (d
       
       <div className="relative w-full max-w-3xl bg-theme-card border border-theme-border rounded-[40px] overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300 flex flex-col h-[85vh]">
         {/* Header */}
-        <div className="p-8 md:p-10 border-b border-theme-border flex items-center justify-between shrink-0 bg-theme-bg-muted rounded-2xl">
+        <div className="p-4 md:p-8 md:p-10 border-b border-theme-border flex items-center justify-between shrink-0 bg-theme-bg-muted rounded-2xl">
           <div className="flex items-center gap-4">
             <div className="w-12 h-12 bg-brand-tactical/10 rounded-2xl flex items-center justify-center border border-brand-tactical/20">
               <Printer className="text-brand-tactical" size={24} />
@@ -475,8 +475,8 @@ function NewSupplierModal({ onClose, onSave }: { onClose: () => void; onSave: (d
         </div>
 
         {/* Content */}
-        <form id="new-supplier-form" onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-8 md:p-10 space-y-10 custom-scrollbar bg-theme-card">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+        <form id="new-supplier-form" onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-4 md:p-8 md:p-10 space-y-10 custom-scrollbar bg-theme-card">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-10">
             <div className="space-y-6">
               <div className="space-y-4">
                 <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest block mb-2 opacity-60 italic">Informações do Ativo</label>
@@ -516,7 +516,7 @@ function NewSupplierModal({ onClose, onSave }: { onClose: () => void; onSave: (d
 
           <div className="pt-10 border-t border-theme-border">
             <label className="text-[8px] font-black text-brand-tactical uppercase tracking-widest block mb-8 opacity-60 italic">Custos Operacionais Unitários (OPEX)</label>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6">
               <div className="space-y-2">
                 <label className="text-[7px] font-black text-theme-muted uppercase tracking-widest block mb-1 opacity-40 italic">Papel/Tinta</label>
                 <input required type="number" step="0.0001" className="w-full bg-theme-bg-muted border border-theme-border p-4 text-[10px] text-theme-text font-black outline-none focus:border-brand-tactical rounded-xl" value={form.costPer10x15} onChange={e => setForm({...form, costPer10x15: e.target.value})} placeholder="0.00" />
@@ -536,13 +536,13 @@ function NewSupplierModal({ onClose, onSave }: { onClose: () => void; onSave: (d
             </div>
           </div>
 
-          <div className="p-8 bg-brand-tactical/10 border border-brand-tactical/20 rounded-[30px] shadow-inner text-center">
+          <div className="p-4 md:p-8 bg-brand-tactical/10 border border-brand-tactical/20 rounded-[30px] shadow-inner text-center">
             <p className="text-[9px] sm:text-[11px] font-black text-brand-tactical uppercase tracking-[0.2em] sm:tracking-[0.4em] italic truncate max-w-[80vw]">⚠ ESTES DADOS ALIMENTAM A ENGENHARIA DE ROI E O PONTO DE EQUILÍBRIO DA OPERAÇÃO DE IMPRESSÃO.</p>
           </div>
         </form>
 
         {/* Footer */}
-        <div className="p-8 md:p-10 bg-theme-bg-muted border-t border-theme-border flex gap-4 shrink-0 rounded-2xl">
+        <div className="p-4 md:p-8 md:p-10 bg-theme-bg-muted border-t border-theme-border flex gap-4 shrink-0 rounded-2xl">
           <button type="button" onClick={onClose} className="flex-1 py-5 border border-theme-border text-[11px] font-black uppercase tracking-[0.3em] text-theme-muted hover:text-white transition-all rounded-[20px] italic">Cancelar</button>
           <button 
             type="submit" 

@@ -3,6 +3,7 @@ import { toast } from "sonner";
 import { API } from "../../lib/api";
 import { Check, X, FileText, User as UserIcon, Building2, Clock, ExternalLink, ShieldCheck, Star } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useSearchParams } from "react-router-dom";
 
 interface Application {
   id: string;
@@ -41,7 +42,9 @@ export const AdminApprovalHub: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [expLoading, setExpLoading] = useState(true);
   const [processingId, setProcessingId] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<"applications" | "experience">("experience");
+  const [searchParams, setSearchParams] = useSearchParams();
+  const activeTab = (searchParams.get("tab") as "applications" | "experience") || "experience";
+  const setActiveTab = (tab: "applications" | "experience") => setSearchParams(prev => { prev.set("tab", tab); return prev; }, { replace: true });
 
   const fetchApplications = async () => {
     setLoading(true);
@@ -112,7 +115,7 @@ export const AdminApprovalHub: React.FC = () => {
       {/* Header */}
       <div className="relative border-b border-theme-border pb-8 space-y-4">
         <div className="absolute -top-10 -left-10 w-40 h-40 bg-brand-tactical/10 blur-3xl rounded-full" />
-        <div className="flex flex-col xl:flex-row justify-between items-start xl:items-end gap-6 relative z-10">
+        <div className="flex flex-col xl:flex-row justify-between items-start xl:items-end gap-3 md:gap-6 relative z-10">
           <div>
             <p className="text-theme-muted mt-2 text-sm">Central de aprovações pendentes do sistema</p>
           </div>
@@ -165,7 +168,7 @@ export const AdminApprovalHub: React.FC = () => {
               Buscando validações pendentes...
             </div>
           ) : expValidations.length === 0 ? (
-            <div className="bg-theme-surface border border-theme-border rounded-2xl p-12 flex flex-col items-center justify-center text-center gap-4">
+            <div className="bg-theme-surface border border-theme-border rounded-2xl p-3 md:p-6 md:p-12 flex flex-col items-center justify-center text-center gap-4">
               <div className="w-12 h-12 bg-brand-tactical/10 rounded-full flex items-center justify-center text-brand-tactical">
                 <Check size={24} />
               </div>
@@ -188,7 +191,7 @@ export const AdminApprovalHub: React.FC = () => {
                     exit={{ opacity: 0, scale: 0.95 }}
                     className="bg-theme-surface border border-theme-border rounded-2xl overflow-hidden hover:border-brand-tactical/30 transition-all"
                   >
-                    <div className="p-6 space-y-5">
+                    <div className="p-3 md:p-6 space-y-5">
                       {/* Profissional info */}
                       <div className="flex items-start justify-between gap-4">
                         <div className="flex items-center gap-3">
@@ -260,7 +263,7 @@ export const AdminApprovalHub: React.FC = () => {
               Sincronizando Solicitações Pendentes...
             </div>
           ) : applications.length === 0 ? (
-            <div className="bg-theme-surface border border-theme-border rounded-2xl p-12 flex flex-col items-center justify-center text-center gap-4">
+            <div className="bg-theme-surface border border-theme-border rounded-2xl p-3 md:p-6 md:p-12 flex flex-col items-center justify-center text-center gap-4">
               <div className="w-12 h-12 bg-brand-tactical/10 rounded-full flex items-center justify-center text-brand-tactical">
                 <Check size={24} />
               </div>

@@ -525,7 +525,7 @@ export default function VaultDetailPage() {
 
   if (!vault) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center p-6 text-center" style={{ background: T.bg, color: T.text }}>
+      <div className="min-h-screen flex flex-col items-center justify-center p-3 md:p-6 text-center" style={{ background: T.bg, color: T.text }}>
         <Lock size={48} className="text-red-500/30 mb-4" />
         <h1 className="text-2xl font-black uppercase italic">Álbum não encontrado</h1>
         <button onClick={() => navigate("/meus-albuns")} className="mt-6 text-brand-tactical font-bold uppercase tracking-widest text-[11px]">
@@ -669,7 +669,7 @@ export default function VaultDetailPage() {
 
       {/* Blocked Screen */}
       {isBlocked ? (
-        <main className="flex-1 flex flex-col items-center justify-center p-6 text-center">
+        <main className="flex-1 flex flex-col items-center justify-center p-3 md:p-6 text-center">
           <div className="w-24 h-24 bg-red-500/10 rounded-full flex items-center justify-center mb-6 border border-red-500/20">
             <Lock size={40} className="text-red-500" />
           </div>
@@ -681,13 +681,13 @@ export default function VaultDetailPage() {
             <button 
               onClick={handleSubscribe}
               disabled={checkingOut}
-              className="bg-emerald-500 hover:bg-emerald-400 text-black font-black uppercase tracking-widest text-[13px] px-10 py-4 rounded-full transition-all shadow-xl shadow-emerald-500/20 active:scale-95 flex items-center gap-2"
+              className="bg-emerald-500 hover:bg-emerald-400 text-black font-black uppercase tracking-widest text-[13px] px-5 md:px-10 py-4 rounded-full transition-all shadow-xl shadow-emerald-500/20 active:scale-95 flex items-center gap-2"
             >
               {checkingOut ? <Loader2 size={18} className="animate-spin" /> : <Zap size={18} fill="currentColor" />}
               Reativar Cofre Agora
             </button>
           ) : (
-            <div className="px-6 py-3 bg-red-500/10 border border-red-500/20 text-red-500 text-[11px] font-black uppercase tracking-widest">
+            <div className="px-3 md:px-6 py-3 bg-red-500/10 border border-red-500/20 text-red-500 text-[11px] font-black uppercase tracking-widest">
               Apenas o proprietário pode reativar o cofre.
             </div>
           )}
@@ -698,8 +698,8 @@ export default function VaultDetailPage() {
           {(!vault.subscription || vault.subscription.status !== 'ACTIVE') ? (
             vault.myRole === 'OWNER' && (
               <div className="mb-8 hidden">
-                <div className="bg-gradient-to-r from-emerald-600/20 to-teal-600/20 border border-emerald-500/30 rounded-2xl p-8 md:p-10 flex flex-col md:flex-row items-center justify-between gap-8 backdrop-blur-md">
-                  <div className="flex items-center gap-6">
+                <div className="bg-gradient-to-r from-emerald-600/20 to-teal-600/20 border border-emerald-500/30 rounded-2xl p-4 md:p-8 md:p-10 flex flex-col md:flex-row items-center justify-between gap-4 md:gap-8 backdrop-blur-md">
+                  <div className="flex items-center gap-3 md:gap-6">
                     <div className="w-14 h-14 bg-brand-tactical rounded-full flex items-center justify-center shadow-[0_0_20px_rgba(16,185,129,0.4)]">
                       <Printer className="text-black" size={24} />
                     </div>
@@ -712,7 +712,7 @@ export default function VaultDetailPage() {
                   </div>
                   <button 
                     onClick={() => setIsPrintStoreOpen(true)}
-                    className="w-full md:w-auto bg-emerald-500 hover:bg-emerald-400 text-black font-black uppercase tracking-widest text-[11px] px-8 py-3.5 rounded-full transition-all shadow-xl shadow-emerald-500/20 active:scale-95 flex items-center justify-center gap-2"
+                    className="w-full md:w-auto bg-emerald-500 hover:bg-emerald-400 text-black font-black uppercase tracking-widest text-[11px] px-4 md:px-8 py-3.5 rounded-full transition-all shadow-xl shadow-emerald-500/20 active:scale-95 flex items-center justify-center gap-2"
                   >
                     <Printer size={16} />
                     Materializar Álbum
@@ -722,7 +722,7 @@ export default function VaultDetailPage() {
             )
           ) : (
             <div className="mb-8">
-              <div className="bg-zinc-900/50 border border-emerald-500/10 rounded-2xl p-6 flex items-center justify-between gap-6">
+              <div className="bg-zinc-900/50 border border-emerald-500/10 rounded-2xl p-3 md:p-6 flex items-center justify-between gap-3 md:gap-6">
                 <div className="flex items-center gap-4">
                   <div className="w-8 h-8 bg-emerald-500/10 rounded-full flex items-center justify-center">
                     <Star className="text-brand-tactical" size={16} fill="currentColor" />
@@ -744,7 +744,7 @@ export default function VaultDetailPage() {
             </div>
           )}
           {uploading && (
-          <div className="mb-6 p-6 bg-emerald-500/10 border border-emerald-500/20 rounded-xl flex items-center gap-6 animate-pulse">
+          <div className="mb-6 p-3 md:p-6 bg-emerald-500/10 border border-emerald-500/20 rounded-xl flex items-center gap-3 md:gap-6 animate-pulse">
             <Loader2 className="animate-spin text-brand-tactical" size={24} />
             <div className="flex-1">
               <div className="flex justify-between text-[10px] font-black uppercase tracking-widest mb-1">
@@ -759,7 +759,7 @@ export default function VaultDetailPage() {
         )}
 
         {media.length === 0 && !uploading ? (
-          <div className="py-32 flex flex-col items-center justify-center text-center px-6">
+          <div className="py-32 flex flex-col items-center justify-center text-center px-3 md:px-6">
             <label className="w-20 h-20 bg-emerald-500/5 hover:bg-emerald-500/10 rounded-full flex items-center justify-center mb-6 border border-emerald-500/10 hover:border-emerald-500/30 transition-all cursor-pointer shadow-[0_0_15px_rgba(16,185,129,0.1)] hover:shadow-[0_0_25px_rgba(16,185,129,0.2)]">
               <Camera size={32} className="text-brand-tactical/50" />
               <input type="file" className="hidden" onChange={handleFileUpload} accept={vault.subscriptionStatus === "ACTIVE" ? "image/*,video/mp4,video/quicktime,video/webm" : "image/*"} multiple />

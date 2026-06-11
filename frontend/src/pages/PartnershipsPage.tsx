@@ -14,14 +14,14 @@ export function PartnershipsPage() {
         </Link>
       </header>
 
-      <main className="pt-32 pb-24 px-6 md:px-8 max-w-5xl mx-auto">
+      <main className="pt-32 pb-24 px-3 md:px-6 md:px-8 max-w-5xl mx-auto">
         <div className="mb-16 md:mb-24 text-center max-w-3xl mx-auto">
           <div className="flex items-center justify-center gap-4 mb-6">
             <div className="h-px w-12 bg-brand-tactical" />
             <span className="text-[10px] font-black text-brand-tactical uppercase tracking-[0.5em] italic">B2B & Institucional</span>
             <div className="h-px w-12 bg-brand-tactical" />
           </div>
-          <h1 className="text-5xl md:text-7xl font-heading font-black text-theme-text uppercase tracking-tighter mb-6 italic leading-none">
+          <h1 className="text-3xl md:text-5xl md:text-7xl font-heading font-black text-theme-text uppercase tracking-tighter mb-6 italic leading-none">
             Seja um ponto <br /><span className="text-brand-tactical">Autorizado</span>
           </h1>
           <p className="text-theme-text-muted font-light text-base md:text-lg leading-relaxed">
@@ -31,7 +31,7 @@ export function PartnershipsPage() {
 
         {/* Intro */}
         <section className="mb-20">
-          <div className="bg-brand-tactical/10 border border-brand-tactical/20 p-8 md:p-12 rounded-3xl text-center">
+          <div className="bg-brand-tactical/10 border border-brand-tactical/20 p-4 md:p-8 md:p-12 rounded-3xl text-center">
             <Handshake className="text-brand-tactical mx-auto mb-6" size={48} />
             <p className="text-lg md:text-xl font-light leading-relaxed max-w-3xl mx-auto">
               Se você tem um estabelecimento físico com fluxo de clientes que realizam ou planejam eventos — cartório, buffet, espaço de festas, floricultura, loja de noivas, academia, clube — você pode se tornar uma <strong className="text-brand-tactical font-black">Unidade Fixa Autorizada</strong> da rede.
@@ -44,14 +44,14 @@ export function PartnershipsPage() {
           <h2 className="text-3xl font-black uppercase italic tracking-tight mb-12 text-center">
             Como funciona a <span className="text-brand-tactical">Parceria</span>
           </h2>
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6">
             {[
               { i: <Store size={24} />, t: "Cadastro e Credenciamento", d: "Você se cadastra e passa por um processo simples. Recebe acesso ao painel exclusivo de parceiros." },
               { i: <QrCode size={24} />, t: "Indicação Orgânica", d: "Quando um cliente fecha um evento via seu balcão ou QR Code físico, o sistema vincula a venda a você." },
               { i: <Wallet size={24} />, t: "Receita Passiva (Split)", d: "A cada venda, você recebe automaticamente sua comissão pelo Split Dinâmico, direto na sua Wallet." },
               { i: <LayoutDashboard size={24} />, t: "Painel Exclusivo", d: "Acompanhe em tempo real todos os leads gerados, eventos vinculados e seu extrato financeiro." }
             ].map((s, idx) => (
-              <div key={idx} className="bg-theme-bg-muted border border-theme-border p-8 rounded-2xl relative overflow-hidden group hover:border-brand-tactical/50 transition-colors">
+              <div key={idx} className="bg-theme-bg-muted border border-theme-border p-4 md:p-8 rounded-2xl relative overflow-hidden group hover:border-brand-tactical/50 transition-colors">
                 <div className="text-[120px] font-black italic absolute -right-6 -bottom-10 text-theme-border/20 group-hover:text-brand-tactical/5 transition-colors z-0 pointer-events-none">
                   {idx + 1}
                 </div>
@@ -102,7 +102,7 @@ export function PartnershipsPage() {
         </section>
 
         {/* Vantagens */}
-        <section className="mb-24 bg-brand-tactical text-black rounded-3xl p-8 md:p-12">
+        <section className="mb-24 bg-brand-tactical text-black rounded-3xl p-4 md:p-8 md:p-12">
           <h2 className="text-3xl font-black uppercase italic tracking-tight mb-10">
             Vantagens da Rede
           </h2>
@@ -126,7 +126,7 @@ export function PartnershipsPage() {
         </section>
 
         {/* Afiliados Digitais */}
-        <section className="mb-24 border border-theme-border bg-theme-bg-muted p-8 md:p-12 rounded-3xl relative overflow-hidden">
+        <section className="mb-24 border border-theme-border bg-theme-bg-muted p-4 md:p-8 md:p-12 rounded-3xl relative overflow-hidden">
           <div className="absolute right-0 top-0 opacity-5 pointer-events-none">
             <Users size={300} />
           </div>
@@ -145,19 +145,19 @@ export function PartnershipsPage() {
 
         {/* CTA */}
         <section className="text-center">
-          <h2 className="text-4xl font-heading font-black uppercase italic tracking-tighter mb-6">
+          <h2 className="text-2xl md:text-4xl font-heading font-black uppercase italic tracking-tighter mb-6">
             Pronto para ser um <span className="text-brand-tactical">Parceiro?</span>
           </h2>
           <p className="text-theme-text-muted font-light mb-10 max-w-lg mx-auto">
             Preencha o formulário de interesse e nossa equipe entrará em contato em até 2 dias úteis com o seu link de ativação.
           </p>
-          <Link to="/contato" className="inline-block px-12 py-5 bg-brand-tactical text-black font-black uppercase tracking-[0.3em] text-[10px] italic hover:brightness-110 transition-all shadow-2xl shadow-brand-tactical/20">
+          <Link to="/contato" className="inline-block px-3 md:px-6 md:px-12 py-5 bg-brand-tactical text-black font-black uppercase tracking-[0.3em] text-[10px] italic hover:brightness-110 transition-all shadow-2xl shadow-brand-tactical/20">
             Preencher Formulário de Interesse
           </Link>
         </section>
       </main>
 
-      <footer className="py-8 text-center border-t border-theme-border">
+      <footer className="py-4 md:py-8 text-center border-t border-theme-border">
         <p className="text-theme-text-muted text-xs font-bold uppercase tracking-widest mb-1">© 2026 Foto Segundo. Todos os direitos reservados.</p>
         <p className="text-brand-tactical/50 text-[10px] font-black italic uppercase tracking-[0.3em]">Protocolo Editorial de Imagem e Cinema</p>
       </footer>

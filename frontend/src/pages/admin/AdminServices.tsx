@@ -4,6 +4,7 @@ import {
   TrendingUp, AlertCircle, DollarSign, Check, Ban, Camera, Video,
 } from "lucide-react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useSearchParams } from "react-router-dom";
 import { API } from "../../lib/api";
 import { toast } from "sonner";
 import { ServiceModal } from "./services/ServiceModal";
@@ -52,7 +53,7 @@ const PackageModal: React.FC<{ onClose: () => void, onSave: (data: any) => void,
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-      <div className="bg-theme-card border border-theme-border w-full max-w-2xl rounded-2xl p-6 shadow-2xl max-h-[90vh] overflow-y-auto">
+      <div className="bg-theme-card border border-theme-border w-full max-w-2xl rounded-2xl p-3 md:p-6 shadow-2xl max-h-[90vh] overflow-y-auto">
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-xl font-heading font-black text-theme-text uppercase italic">{initialData ? 'Editar Pacote' : 'Montar Novo Pacote'}</h2>
           <button onClick={onClose} className="text-theme-muted hover:text-white"><Trash2 size={20}/></button>
@@ -113,7 +114,9 @@ export const AdminServices: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingService, setEditingService] = useState<Service | null>(null);
   const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<"CATALOGO" | "PENDENTES" | "PACOTES">("CATALOGO");
+  const [searchParams, setSearchParams] = useSearchParams();
+  const activeTab = (searchParams.get("tab") as "CATALOGO" | "PENDENTES" | "PACOTES") || "CATALOGO";
+  const setActiveTab = (tab: "CATALOGO" | "PENDENTES" | "PACOTES") => setSearchParams(prev => { prev.set("tab", tab); return prev; }, { replace: true });
   const [isPackageModalOpen, setIsPackageModalOpen] = useState(false);
   const [editingPackage, setEditingPackage] = useState<Service | null>(null);
 
@@ -234,16 +237,16 @@ export const AdminServices: React.FC = () => {
       )}
 
       {/* HEADER */}
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between border-b border-theme-border pb-10 gap-6">
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between border-b border-theme-border pb-10 gap-3 md:gap-6">
         <div>
                     <p className="text-theme-muted mt-2 text-sm">Gestão de catálogo, portfólio de serviços e aprovações</p>
         </div>
         {activeTab === "PACOTES" ? (
-          <button onClick={() => { setEditingPackage(null); setIsPackageModalOpen(true); }} className="px-8 py-4 bg-amber-500 text-black text-[9px] font-black uppercase tracking-[0.4em] shadow-xl hover:brightness-110 transition-all flex items-center gap-3 italic">
+          <button onClick={() => { setEditingPackage(null); setIsPackageModalOpen(true); }} className="px-4 md:px-8 py-4 bg-amber-500 text-black text-[9px] font-black uppercase tracking-[0.4em] shadow-xl hover:brightness-110 transition-all flex items-center gap-3 italic">
             <Layers size={14} /> MONTAR PACOTE
           </button>
         ) : (
-          <button onClick={() => { setEditingService(null); setIsModalOpen(true); }} className="px-8 py-4 bg-brand-tactical text-[var(--brand-text)] text-[9px] font-black uppercase tracking-[0.4em] shadow-xl hover:brightness-110 transition-all flex items-center gap-3 italic">
+          <button onClick={() => { setEditingService(null); setIsModalOpen(true); }} className="px-4 md:px-8 py-4 bg-brand-tactical text-[var(--brand-text)] text-[9px] font-black uppercase tracking-[0.4em] shadow-xl hover:brightness-110 transition-all flex items-center gap-3 italic">
           <Plus size={14} /> ADICIONAR SERVIÇO
         </button>
         )}
@@ -272,7 +275,7 @@ export const AdminServices: React.FC = () => {
               { label: "Ticket Base Médio", value: formatCurrency(stats.avgPrice), suffix: "ESTIMADO", icon: TrendingUp },
               { label: "Diversidade", value: stats.categories, suffix: "CATEGORIAS", icon: Filter },
             ].map(({ label, value, suffix, icon: Icon }) => (
-              <div key={label} className="bg-theme-bg border border-theme-border p-6 space-y-3 shadow-sm group hover:border-brand-tactical/40 transition-all rounded-2xl">
+              <div key={label} className="bg-theme-bg border border-theme-border p-3 md:p-6 space-y-3 shadow-sm group hover:border-brand-tactical/40 transition-all rounded-2xl">
                 <div className="flex justify-between items-start">
                   <span className="text-[8px] font-black text-theme-muted uppercase tracking-widest italic">{label}</span>
                   <Icon className="text-brand-tactical" size={14} />
@@ -291,7 +294,7 @@ export const AdminServices: React.FC = () => {
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-theme-muted group-focus-within:text-brand-tactical transition-colors" size={14} />
               <input value={searchTerm} onChange={e => setSearchTerm(e.target.value)} placeholder="BUSCAR SERVIÇO OU DESCRIÇÃO..." className="w-full bg-theme-bg border border-theme-border p-4 pl-12 text-[10px] text-theme-text font-black outline-none focus:border-brand-tactical transition-all uppercase tracking-widest placeholder:text-theme-muted/40 rounded-2xl" />
             </div>
-            <select value={filterCategory} onChange={e => setFilterCategory(e.target.value)} className="px-6 py-4 bg-theme-bg border border-theme-border text-[9px] font-black uppercase tracking-widest text-theme-text outline-none focus:border-brand-tactical transition-all cursor-pointer rounded-2xl">
+            <select value={filterCategory} onChange={e => setFilterCategory(e.target.value)} className="px-3 md:px-6 py-4 bg-theme-bg border border-theme-border text-[9px] font-black uppercase tracking-widest text-theme-text outline-none focus:border-brand-tactical transition-all cursor-pointer rounded-2xl">
               <option value="">TODAS AS CATEGORIAS</option>
               <option value="FOTOGRAFIA">FOTOGRAFIA</option>
               <option value="VIDEO">VÍDEO</option>
@@ -322,8 +325,8 @@ export const AdminServices: React.FC = () => {
               const Icon = CATEGORY_ICONS[s.category] || CATEGORY_ICONS.DEFAULT;
               return (
                 <div key={s.id} className="bg-theme-bg-muted border border-theme-border rounded-2xl group hover:border-brand-tactical/50 transition-all overflow-hidden shadow-sm">
-                  <div className="p-6 md:p-8 flex flex-col lg:flex-row lg:items-center justify-between gap-8">
-                    <div className="flex-1 flex items-start gap-6">
+                  <div className="p-3 md:p-6 md:p-8 flex flex-col lg:flex-row lg:items-center justify-between gap-4 md:gap-8">
+                    <div className="flex-1 flex items-start gap-3 md:gap-6">
                       <div className="p-4 bg-theme-bg-muted border border-theme-border text-brand-tactical rounded-2xl"><Icon size={20} /></div>
                       <div className="space-y-2">
                         <div className="flex items-center gap-3">
@@ -337,7 +340,7 @@ export const AdminServices: React.FC = () => {
                         <p className="text-[10px] text-theme-muted uppercase tracking-widest font-medium max-w-xl leading-relaxed italic opacity-80 mt-1">{s.description}</p>
                       </div>
                     </div>
-                    <div className="lg:w-80 flex items-center justify-between lg:justify-end gap-10 border-t lg:border-t-0 pt-6 lg:pt-0 border-theme-border">
+                    <div className="lg:w-80 flex items-center justify-between lg:justify-end gap-5 md:gap-10 border-t lg:border-t-0 pt-6 lg:pt-0 border-theme-border">
                       <div className="text-right">
                         <span className="text-[8px] font-black text-theme-muted uppercase tracking-widest block mb-1">Preço Sugerido</span>
                         <span className="text-xl font-heading font-black text-theme-text italic">{formatCurrency(s.basePrice)}</span>
@@ -369,8 +372,8 @@ export const AdminServices: React.FC = () => {
               </div>
             </div>
           ) : pendingServices.map(ps => (
-            <div key={ps.id} className="bg-theme-bg border border-theme-border rounded-2xl p-6 space-y-4 shadow-sm relative overflow-hidden">
-              <div className="absolute top-0 right-0 p-8 opacity-[0.03]"><Briefcase size={80} /></div>
+            <div key={ps.id} className="bg-theme-bg border border-theme-border rounded-2xl p-3 md:p-6 space-y-4 shadow-sm relative overflow-hidden">
+              <div className="absolute top-0 right-0 p-4 md:p-8 opacity-[0.03]"><Briefcase size={80} /></div>
               <div className="flex justify-between items-start z-10 relative">
                 <div>
                   <h3 className="text-lg font-heading font-black text-theme-text uppercase italic">{ps.name}</h3>
@@ -404,9 +407,9 @@ export const AdminServices: React.FC = () => {
       )}
 
       {/* COMPLIANCE BANNER */}
-      <div className="bg-theme-bg border border-theme-border p-10 flex flex-col md:flex-row items-center gap-10 shadow-sm relative overflow-hidden group rounded-2xl">
-        <div className="absolute top-0 right-0 p-10 opacity-[0.03] group-hover:opacity-[0.07] transition-opacity"><DollarSign size={120} /></div>
-        <div className="p-6 bg-brand-tactical/10 border border-brand-tactical/20 text-brand-tactical rounded-full"><AlertCircle size={32} /></div>
+      <div className="bg-theme-bg border border-theme-border p-5 md:p-10 flex flex-col md:flex-row items-center gap-5 md:gap-10 shadow-sm relative overflow-hidden group rounded-2xl">
+        <div className="absolute top-0 right-0 p-5 md:p-10 opacity-[0.03] group-hover:opacity-[0.07] transition-opacity"><DollarSign size={120} /></div>
+        <div className="p-3 md:p-6 bg-brand-tactical/10 border border-brand-tactical/20 text-brand-tactical rounded-full"><AlertCircle size={32} /></div>
         <div className="flex-1 space-y-2 text-center md:text-left">
           <h4 className="text-[11px] font-black uppercase tracking-[0.5em] text-theme-text italic">Diretrizes de Precificação e Compliance</h4>
           <p className="text-[9px] text-theme-muted uppercase tracking-widest font-medium leading-relaxed max-w-3xl">
@@ -420,7 +423,7 @@ export const AdminServices: React.FC = () => {
         <div className="fixed inset-0 z-[600] flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-red-950/40 backdrop-blur-xl animate-in fade-in duration-300" onClick={() => setConfirmDelete(null)} />
           <div className="relative w-full max-w-md bg-theme-card border border-red-500/20 rounded-2xl overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300">
-            <div className="p-10 space-y-8 text-center">
+            <div className="p-5 md:p-10 space-y-8 text-center">
               <div className="w-20 h-20 bg-red-500/10 rounded-2xl flex items-center justify-center border border-red-500/20 mx-auto mb-6"><Trash2 className="text-red-500" size={32} /></div>
               <div className="space-y-2">
                 <h3 className="text-2xl font-black uppercase tracking-tighter text-theme-text italic">Remover Serviço?</h3>

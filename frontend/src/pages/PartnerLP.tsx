@@ -66,9 +66,9 @@ export const PartnerLP: React.FC = () => {
   }, [slug, navigate]);
 
   if (loading || !data) return (
-    <div className="min-h-screen flex flex-col items-center justify-center gap-6 relative overflow-hidden bg-theme-bg">
+    <div className="min-h-screen flex flex-col items-center justify-center gap-3 md:gap-6 relative overflow-hidden bg-theme-bg">
       <div className="absolute inset-0 bg-emerald-500/5 blur-[120px] rounded-full -m-64 opacity-20" />
-      <div className="relative z-10 flex flex-col items-center gap-8">
+      <div className="relative z-10 flex flex-col items-center gap-4 md:gap-8">
         <div className="w-px h-16 bg-gradient-to-b from-transparent via-emerald-500 to-transparent" />
         <div className="text-[18px] font-display font-black uppercase tracking-[0.8em] italic text-theme-text">FOTO SEGUNDO</div>
         <div className="text-[9px] font-black uppercase tracking-[0.4em] text-emerald-500 animate-pulse">Sincronizando Localização...</div>
@@ -91,15 +91,15 @@ export const PartnerLP: React.FC = () => {
     <div className="min-h-screen bg-theme-bg text-theme-text transition-colors duration-500 overflow-x-hidden selection:bg-emerald-500/30">
 
       {/* Navigation */}
-      <nav className="fixed top-0 left-0 w-full z-50 p-6 flex justify-between items-center pointer-events-none">
+      <nav className="fixed top-0 left-0 w-full z-50 p-3 md:p-6 flex justify-between items-center pointer-events-none">
         <button
           onClick={() => navigate("/")}
-          className="pointer-events-auto flex items-center gap-3 text-[10px] font-black uppercase tracking-[0.3em] text-theme-muted hover:text-white transition-all bg-black/80 backdrop-blur-xl px-6 py-3 border border-theme-border"
+          className="pointer-events-auto flex items-center gap-3 text-[10px] font-black uppercase tracking-[0.3em] text-theme-muted hover:text-white transition-all bg-black/80 backdrop-blur-xl px-3 md:px-6 py-3 border border-theme-border"
         >
           <ArrowLeft size={14} /> Vitrine
         </button>
 
-        <div className="pointer-events-auto flex items-center gap-6">
+        <div className="pointer-events-auto flex items-center gap-3 md:gap-6">
           <ThemeToggle />
           <Link to="/">
             <img
@@ -125,7 +125,7 @@ export const PartnerLP: React.FC = () => {
         <div className="relative z-10 text-center px-4 max-w-5xl">
           <motion.div initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}>
             <div className="text-[10px] font-black text-emerald-500 mb-6 uppercase tracking-[0.5em] italic">Unidade Fixa Autorizada</div>
-            <h1 className="text-4xl sm:text-5xl md:text-9xl font-display font-black mb-10 text-theme-text uppercase tracking-tighter leading-[0.85]">
+            <h1 className="text-2xl md:text-4xl sm:text-5xl md:text-9xl font-display font-black mb-10 text-theme-text uppercase tracking-tighter leading-[0.85]">
               {partner.razaoSocial}
             </h1>
             <div className="flex flex-wrap justify-center gap-4 sm:gap-8 text-[11px] font-black uppercase tracking-widest text-theme-muted">
@@ -137,7 +137,7 @@ export const PartnerLP: React.FC = () => {
       </section>
 
       {/* Info + CTA */}
-      <section className="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 py-12 md:py-24 border-b border-theme-border">
+      <section className="max-w-7xl mx-auto px-3 md:px-6 grid grid-cols-1 lg:grid-cols-2 gap-3 md:gap-6 md:gap-12 lg:gap-20 py-3 md:py-6 md:py-12 md:py-24 border-b border-theme-border">
         <div>
           <h2 className="text-2xl sm:text-3xl md:text-5xl font-display font-black tracking-tighter mb-10 uppercase leading-none text-theme-text">Sobre a Unidade</h2>
           <p className="text-theme-muted leading-relaxed tracking-widest text-[12px] font-bold mb-12 uppercase">
@@ -159,8 +159,8 @@ export const PartnerLP: React.FC = () => {
           </div>
         </div>
 
-        <div className="p-6 sm:p-12 md:p-16 bg-theme-card border border-theme-border flex flex-col justify-center items-center text-center shadow-2xl relative overflow-hidden group">
-          <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:scale-110 transition-transform duration-1000">
+        <div className="p-3 md:p-6 sm:p-12 md:p-16 bg-theme-card border border-theme-border flex flex-col justify-center items-center text-center shadow-2xl relative overflow-hidden group">
+          <div className="absolute top-0 right-0 p-4 md:p-8 opacity-5 group-hover:scale-110 transition-transform duration-1000">
              <Calendar size={180} className="text-emerald-500" />
           </div>
           <Calendar className="text-emerald-500 mb-10 relative z-10" size={56} strokeWidth={1} />
@@ -175,7 +175,7 @@ export const PartnerLP: React.FC = () => {
           </p>
           <button
             onClick={() => navigate(`/cotacao?partner=${partner.slug}`)}
-            className="w-full py-6 bg-white text-theme-text text-[11px] font-black uppercase tracking-[0.4em] hover:bg-emerald-500 transition-all relative z-10"
+            className="w-full py-3 md:py-6 bg-white text-theme-text text-[11px] font-black uppercase tracking-[0.4em] hover:bg-emerald-500 transition-all relative z-10"
           >
             INICIAR ORÇAMENTO EXPRESS
           </button>
@@ -184,11 +184,11 @@ export const PartnerLP: React.FC = () => {
 
       {/* ── CATÁLOGO DE SERVIÇOS ── */}
       {activeServices.length > 0 && (
-        <section className="max-w-7xl mx-auto px-6 py-24 md:py-32 border-b border-theme-border space-y-16">
-          <div className="flex flex-col md:flex-row items-start md:items-end justify-between gap-6">
+        <section className="max-w-7xl mx-auto px-3 md:px-6 py-24 md:py-32 border-b border-theme-border space-y-16">
+          <div className="flex flex-col md:flex-row items-start md:items-end justify-between gap-3 md:gap-6">
             <div className="space-y-3">
               <p className="text-[9px] font-black text-emerald-500 uppercase tracking-[0.5em]">Serviços Disponíveis</p>
-              <h2 className="text-4xl md:text-5xl font-display font-black tracking-tighter uppercase leading-none text-theme-text">Catálogo desta Unidade</h2>
+              <h2 className="text-2xl md:text-4xl md:text-5xl font-display font-black tracking-tighter uppercase leading-none text-theme-text">Catálogo desta Unidade</h2>
             </div>
             <p className="text-[10px] text-theme-muted font-bold uppercase tracking-[0.3em] max-w-xs">
               Preços configurados especificamente para {partner.razaoSocial}.
@@ -206,7 +206,7 @@ export const PartnerLP: React.FC = () => {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.5 }}
-                  className="bg-theme-bg p-6 sm:p-10 group hover:bg-theme-card transition-all duration-500"
+                  className="bg-theme-bg p-3 md:p-6 sm:p-10 group hover:bg-theme-card transition-all duration-500"
                 >
                   <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-2 sm:gap-6 mb-6">
                     <div className="space-y-2">
@@ -235,7 +235,7 @@ export const PartnerLP: React.FC = () => {
 
       {/* ── GRADE DE HORÁRIOS ── */}
       {hasSchedule && (
-        <section className="max-w-7xl mx-auto px-6 py-16 md:py-32 border-b border-theme-border space-y-12 sm:space-y-16">
+        <section className="max-w-7xl mx-auto px-3 md:px-6 py-16 md:py-32 border-b border-theme-border space-y-12 sm:space-y-16">
           <div className="space-y-3">
             <p className="text-[9px] font-black text-brand-tactical uppercase tracking-[0.5em]">Disponibilidade</p>
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tighter uppercase leading-none">Horários de Funcionamento</h2>
@@ -280,7 +280,7 @@ export const PartnerLP: React.FC = () => {
       )}
 
       {/* Recents Gallery */}
-      <section className="py-16 md:py-40 px-6 max-w-7xl mx-auto mobile-py">
+      <section className="py-16 md:py-40 px-3 md:px-6 max-w-7xl mx-auto mobile-py">
         <div className="flex flex-col md:flex-row items-center justify-between mb-10 md:mb-24 mobile-center">
           <div>
             <h2 className="text-3xl sm:text-5xl font-display font-black tracking-tighter uppercase text-theme-text">Registros Recentes</h2>
@@ -293,7 +293,7 @@ export const PartnerLP: React.FC = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-12 mobile-gap">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6 sm:gap-12 mobile-gap">
           {recentEvents.length === 0 ? (
             <div className="col-span-full py-20 text-center border  border-theme-border text-[10px] text-theme-muted uppercase tracking-widest">
               Aguardando primeiros registros oficiais.
@@ -313,7 +313,7 @@ export const PartnerLP: React.FC = () => {
                   style={{ objectPosition: evt.coverPosition || 'center' }}
                 />
                 <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                  <span className="text-theme-text text-[10px] font-black uppercase tracking-[0.5em] border border-theme-border-2 px-6 py-3 backdrop-blur-md">Ver Galeria</span>
+                  <span className="text-theme-text text-[10px] font-black uppercase tracking-[0.5em] border border-theme-border-2 px-3 md:px-6 py-3 backdrop-blur-md">Ver Galeria</span>
                 </div>
               </div>
               <h4 className="text-2xl font-black uppercase tracking-tighter mb-1 leading-none">{evt.title}</h4>
@@ -325,12 +325,12 @@ export const PartnerLP: React.FC = () => {
 
       {/* Footer / Contact */}
       <footer className="py-16 md:py-40 bg-theme-bg-muted text-theme-text text-center border-t border-theme-border mobile-py">
-        <div className="max-w-xl mx-auto px-6">
+        <div className="max-w-xl mx-auto px-3 md:px-6">
           <MessageSquare className="mx-auto mb-10 text-emerald-500" size={40} />
           <h2 className="text-3xl sm:text-4xl md:text-6xl font-display font-black tracking-tighter mb-10 leading-none uppercase text-theme-text">Dúvidas sobre o Local?</h2>
           <p className="text-theme-muted text-[11px] font-bold uppercase tracking-[0.2em] sm:tracking-[0.3em] leading-relaxed mb-12">Entre em contato direto com a administração da unidade para suporte logístico e agendamento de visitas técnicas.</p>
           <div className="flex flex-col gap-4">
-            <button className="px-12 py-6 bg-emerald-500 text-white text-[11px] font-black uppercase tracking-[0.4em] hover:bg-white transition-all">WhatsApp Unidade</button>
+            <button className="px-3 md:px-6 md:px-12 py-3 md:py-6 bg-emerald-500 text-white text-[11px] font-black uppercase tracking-[0.4em] hover:bg-white transition-all">WhatsApp Unidade</button>
             <button onClick={() => navigate("/")} className="text-[10px] font-black uppercase tracking-[0.8em] text-theme-subtle hover:text-white transition-colors mt-8">Voltar para Vitrine Global</button>
           </div>
         </div>

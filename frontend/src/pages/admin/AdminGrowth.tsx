@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { Plus, Tag, Phone, X, ArrowRight, BarChart3 } from "lucide-react";
+import { useSearchParams } from "react-router-dom";
 import { API } from "../../lib/api";
 import { toast } from "sonner";
 import { QRCodeSVG } from "qrcode.react";
@@ -28,7 +29,9 @@ interface AnalyticsData {
 }
 
 export function AdminGrowth() {
-  const [activeTab, setActiveTab] = useState<"COUPONS" | "WHATSAPP" | "ANALYTICS">("COUPONS");
+  const [searchParams, setSearchParams] = useSearchParams();
+  const activeTab = (searchParams.get("tab") as "COUPONS" | "WHATSAPP" | "ANALYTICS") || "COUPONS";
+  const setActiveTab = (tab: "COUPONS" | "WHATSAPP" | "ANALYTICS") => setSearchParams(prev => { prev.set("tab", tab); return prev; }, { replace: true });
   const [coupons, setCoupons] = useState<Coupon[]>([]);
   const [analyticsData, setAnalyticsData] = useState<AnalyticsData | null>(null);
   const [waStatus, setWaStatus] = useState<{connected?: boolean, qrCode?: string} | null>(null);
@@ -153,7 +156,7 @@ export function AdminGrowth() {
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id as "COUPONS" | "WHATSAPP" | "ANALYTICS")}
-            className={`flex items-center gap-2 px-6 py-4 text-[10px] font-black uppercase tracking-widest whitespace-nowrap transition-colors border-b-2 ${
+            className={`flex items-center gap-2 px-3 md:px-6 py-4 text-[10px] font-black uppercase tracking-widest whitespace-nowrap transition-colors border-b-2 ${
               activeTab === tab.id ? "border-brand-tactical text-brand-tactical" : "border-transparent text-theme-text-muted hover:text-theme-text"
             }`}
           >
@@ -179,13 +182,13 @@ export function AdminGrowth() {
               </button>
             </div>
             {coupons.length === 0 ? (
-              <div className="p-12 text-center border  border-theme-border rounded-xl">
+              <div className="p-3 md:p-6 md:p-12 text-center border  border-theme-border rounded-xl">
                 <p className="text-[10px] font-black text-theme-text-muted uppercase tracking-widest">Nenhum cupom ativo</p>
               </div>
             ) : (
               <div className="grid md:grid-cols-2 gap-4">
                 {coupons.map(c => (
-                  <div key={c.id} className="p-6 bg-theme-bg-muted border border-theme-border rounded-2xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4 shadow-sm group hover:border-brand-tactical/30 transition-all">
+                  <div key={c.id} className="p-3 md:p-6 bg-theme-bg-muted border border-theme-border rounded-2xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4 shadow-sm group hover:border-brand-tactical/30 transition-all">
                     <div>
                       <h4 className="text-xl font-black italic text-brand-tactical uppercase tracking-widest">{c.code}</h4>
                       <p className="text-[10px] font-bold text-theme-text-muted mt-1">
@@ -225,7 +228,7 @@ export function AdminGrowth() {
             )}
           </div>
         ) : activeTab === "WHATSAPP" ? (
-          <div className="p-8 border border-theme-border bg-theme-bg-muted rounded-3xl flex flex-col md:flex-row gap-8 items-center justify-center min-h-[400px]">
+          <div className="p-4 md:p-8 border border-theme-border bg-theme-bg-muted rounded-3xl flex flex-col md:flex-row gap-4 md:gap-8 items-center justify-center min-h-[400px]">
             {waStatus?.connected ? (
               <div className="text-center space-y-6">
                 <div className="w-24 h-24 bg-emerald-500/10 rounded-full flex items-center justify-center mx-auto">
@@ -254,7 +257,7 @@ export function AdminGrowth() {
             ) : (
               <div className="text-center space-y-4">
                 <p className="text-[10px] font-black text-theme-text-muted uppercase tracking-widest">Motor de WhatsApp Offline</p>
-                <button onClick={fetchData} className="px-6 py-3 bg-brand-tactical text-brand-text text-[10px] font-black uppercase tracking-widest">Tentar Iniciar Sessão</button>
+                <button onClick={fetchData} className="px-3 md:px-6 py-3 bg-brand-tactical text-brand-text text-[10px] font-black uppercase tracking-widest">Tentar Iniciar Sessão</button>
               </div>
             )}
           </div>
@@ -269,7 +272,7 @@ export function AdminGrowth() {
                   { label: "Total Leads", value: analyticsData.marketplace.funnel.leads },
                   { label: "Total Orders", value: analyticsData.marketplace.funnel.orders },
                 ].map((stat, i) => (
-                  <div key={i} className="p-6 bg-theme-bg-muted border border-theme-border rounded-2xl">
+                  <div key={i} className="p-3 md:p-6 bg-theme-bg-muted border border-theme-border rounded-2xl">
                     <p className="text-[10px] font-black uppercase text-theme-text-muted tracking-widest">{stat.label}</p>
                     <p className="text-3xl font-black text-brand-tactical mt-2">{stat.value}</p>
                   </div>
@@ -279,7 +282,7 @@ export function AdminGrowth() {
             
             {/* Top Professionals */}
             {analyticsData?.marketplace?.topProfessionals && (
-              <div className="bg-theme-bg-muted border border-theme-border rounded-2xl p-6">
+              <div className="bg-theme-bg-muted border border-theme-border rounded-2xl p-3 md:p-6">
                 <h3 className="text-sm font-black uppercase tracking-widest text-theme-text mb-4">Top Profissionais (Conversão)</h3>
                 <div className="space-y-4">
                   {analyticsData.marketplace.topProfessionals.map((pro, idx: number) => (
@@ -294,7 +297,7 @@ export function AdminGrowth() {
 
             {/* Coupons Efficiency */}
             {analyticsData?.coupons && (
-              <div className="bg-theme-bg-muted border border-theme-border rounded-2xl p-6">
+              <div className="bg-theme-bg-muted border border-theme-border rounded-2xl p-3 md:p-6">
                 <h3 className="text-sm font-black uppercase tracking-widest text-theme-text mb-4">Eficiência de Cupons</h3>
                 <div className="space-y-4">
                   {analyticsData.coupons.map((c) => (
@@ -322,7 +325,7 @@ export function AdminGrowth() {
           <div className="absolute inset-0 bg-theme-bg/80 backdrop-blur-xl" onClick={() => setIsModalOpen(false)} />
           <div className="relative w-full max-w-md bg-theme-card border border-theme-border rounded-[32px] overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300">
             {/* Header */}
-            <div className="p-8 border-b border-theme-border flex items-center justify-between">
+            <div className="p-4 md:p-8 border-b border-theme-border flex items-center justify-between">
               <div className="flex items-center gap-4">
                 <div className="w-10 h-10 bg-brand-tactical/10 rounded-xl flex items-center justify-center border border-brand-tactical/20">
                   <Tag className="text-brand-tactical" size={20} />
@@ -338,7 +341,7 @@ export function AdminGrowth() {
             </div>
 
             {/* Form */}
-            <form onSubmit={handleCreate} className="p-8 space-y-6">
+            <form onSubmit={handleCreate} className="p-4 md:p-8 space-y-6">
               {/* Código */}
               <div className="space-y-2">
                 <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest block opacity-60">Código do Cupom</label>

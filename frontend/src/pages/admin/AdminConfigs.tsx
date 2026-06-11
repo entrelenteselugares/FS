@@ -109,7 +109,7 @@ export const AdminConfigs: React.FC = () => {
   return (
     <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-700 pb-20">
       {/* HEADER */}
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between border-b border-theme-border pb-10 gap-6">
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between border-b border-theme-border pb-10 gap-3 md:gap-6">
         <div>
           <h1 className="text-3xl md:text-4xl font-black uppercase tracking-tight text-theme-text">Configurações do Sistema</h1>
           <p className="text-theme-muted mt-2 text-sm">Split de pagamentos, taxas, regras de negócio e infraestrutura</p>
@@ -117,7 +117,7 @@ export const AdminConfigs: React.FC = () => {
         <button
           onClick={() => setShowGenerateConfirm(true)}
           disabled={generating}
-          className="px-8 py-4 bg-brand-tactical text-zinc-950 text-[9px] font-black uppercase tracking-[0.4em] shadow-xl hover:brightness-110 transition-all flex items-center gap-3 italic"
+          className="px-4 md:px-8 py-4 bg-brand-tactical text-zinc-950 text-[9px] font-black uppercase tracking-[0.4em] shadow-xl hover:brightness-110 transition-all flex items-center gap-3 italic"
         >
           {generating ? <RefreshCw className="animate-spin" size={14} /> : <Calculator size={14} />}
           {generating ? "SINCRONIZANDO..." : "FECHAMENTO SEMANAL"}
@@ -130,7 +130,7 @@ export const AdminConfigs: React.FC = () => {
           <button
             key={t}
             onClick={() => setTab(t)}
-            className={`px-8 py-3 text-[8px] md:text-[9px] font-black uppercase tracking-wider transition-all rounded-xl ${
+            className={`px-4 md:px-8 py-3 text-[8px] md:text-[9px] font-black uppercase tracking-wider transition-all rounded-xl ${
               tab === t ? "bg-brand-tactical text-zinc-950 shadow-md" : "text-theme-muted hover:text-theme-text"
             }`}
           >
@@ -162,7 +162,7 @@ export const AdminConfigs: React.FC = () => {
         <div className="fixed inset-0 z-[600] flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-theme-bg/80 backdrop-blur-xl" onClick={() => setShowGenerateConfirm(false)} />
           <div className="relative w-full max-w-md bg-theme-card border border-theme-border rounded-[40px] overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300">
-            <div className="p-10 space-y-8 text-center">
+            <div className="p-5 md:p-10 space-y-8 text-center">
               <div className="w-20 h-20 bg-brand-tactical/10 rounded-[30px] flex items-center justify-center border border-brand-tactical/20 mx-auto">
                 <Calculator className="text-brand-tactical" size={32} strokeWidth={1.5} />
               </div>
@@ -191,7 +191,7 @@ export const AdminConfigs: React.FC = () => {
         <div className="fixed inset-0 z-[600] flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-theme-bg/80 backdrop-blur-xl" onClick={() => setPayoutModal(null)} />
           <div className="relative w-full max-w-md bg-theme-card border border-theme-border rounded-[40px] overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300 flex flex-col">
-            <div className="p-8 border-b border-theme-border flex items-center justify-between bg-theme-bg-muted rounded-2xl">
+            <div className="p-4 md:p-8 border-b border-theme-border flex items-center justify-between bg-theme-bg-muted rounded-2xl">
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 bg-brand-tactical/10 rounded-2xl flex items-center justify-center border border-brand-tactical/20">
                   <DollarSign className="text-brand-tactical" size={24} strokeWidth={1.5} />
@@ -203,8 +203,8 @@ export const AdminConfigs: React.FC = () => {
               </div>
               <button onClick={() => setPayoutModal(null)} className="p-3 hover:bg-theme-bg-muted rounded-full transition-all text-theme-muted"><X size={24} /></button>
             </div>
-            <div className="p-8 space-y-8">
-              <div className="bg-theme-bg-muted border border-theme-border p-8 rounded-[30px] space-y-6">
+            <div className="p-4 md:p-8 space-y-8">
+              <div className="bg-theme-bg-muted border border-theme-border p-4 md:p-8 rounded-[30px] space-y-6">
                 <div className="flex justify-between items-center border-b border-theme-border pb-4">
                   <span className="text-[8px] font-black text-theme-muted uppercase tracking-widest italic opacity-60">Favorecido</span>
                   <span className="text-[12px] text-theme-text font-black uppercase italic">{payoutModal.name}</span>

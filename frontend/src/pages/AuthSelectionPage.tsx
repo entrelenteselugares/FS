@@ -34,7 +34,7 @@ export const AuthSelectionPage: React.FC = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-theme-bg text-theme-text flex flex-col items-center justify-center px-4 py-8 overflow-hidden relative transition-colors duration-300">
+    <div className="min-h-screen bg-theme-bg text-theme-text flex flex-col items-center justify-center px-4 py-4 md:py-8 overflow-hidden relative transition-colors duration-300">
       {/* Editorial Background Lines */}
       <div className="absolute inset-0 z-0 opacity-20 pointer-events-none">
         <div className="absolute top-0 left-1/4 w-[1px] h-full bg-theme-border/5" />
@@ -45,14 +45,14 @@ export const AuthSelectionPage: React.FC = () => {
         <h1 className="font-sans tracking-tighter text-theme-text mb-4 uppercase font-black" style={{ fontSize: 'clamp(32px, 10vw, 96px)' }}>
           GATE<span className="text-brand-tactical">KEEPER</span>
         </h1>
-        <div className="flex items-center justify-center gap-6">
+        <div className="flex items-center justify-center gap-3 md:gap-6">
            <div className="w-16 h-1.5 bg-brand-tactical" />
            <p className="text-theme-muted uppercase tracking-[0.8em] text-[10px] font-bold">Protocolo de Identidade</p>
            <div className="w-16 h-1.5 bg-brand-tactical" />
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-7xl w-full relative z-10 px-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-8 max-w-7xl w-full relative z-10 px-4">
         {options.map((opt) => (
           <div
             key={opt.id}

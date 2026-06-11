@@ -313,7 +313,7 @@ export default function PhygitalCapture() {
 
   if (referenceCodes.length > 0) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center p-6 text-center animate-reveal" style={{ background: T.bg }}>
+      <div className="min-h-screen flex flex-col items-center justify-center p-3 md:p-6 text-center animate-reveal" style={{ background: T.bg }}>
         <button
           onClick={() => window.close()}
           className="fixed top-6 left-6 flex items-center gap-2 text-[10px] font-black uppercase tracking-widest opacity-40 hover:opacity-100 transition-opacity"
@@ -328,7 +328,7 @@ export default function PhygitalCapture() {
         <h1 className="text-3xl font-black uppercase tracking-[0.2em] mb-2" style={{ color: T.text }}>Arquivos Recebidos</h1>
         <p className="text-[11px] uppercase tracking-widest opacity-50 mb-10">Sua lembrança já está na fila de impressão</p>
         
-        <div className="w-full max-w-sm p-8 rounded-2xl border border-theme-border bg-white/[0.02] backdrop-blur-xl relative overflow-hidden">
+        <div className="w-full max-w-sm p-4 md:p-8 rounded-2xl border border-theme-border bg-white/[0.02] backdrop-blur-xl relative overflow-hidden">
           <div className="absolute top-0 left-0 w-full h-1 bg-brand-tactical" />
           <p className="text-[10px] font-bold uppercase tracking-[0.3em] opacity-40 mb-4">Códigos de Referência</p>
           <div className="space-y-3 max-h-48 overflow-y-auto custom-scrollbar">
@@ -343,7 +343,7 @@ export default function PhygitalCapture() {
 
         <button 
           onClick={() => window.location.reload()}
-          className="mt-12 text-[10px] font-black uppercase tracking-[0.3em] py-4 px-8 border border-theme-border hover:bg-theme-bg-muted transition-all"
+          className="mt-12 text-[10px] font-black uppercase tracking-[0.3em] py-4 px-4 md:px-8 border border-theme-border hover:bg-theme-bg-muted transition-all"
           style={{ color: T.text }}
         >
           Enviar Mais Arquivos
@@ -353,7 +353,7 @@ export default function PhygitalCapture() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center py-12 px-6" style={{ background: T.bg }}>
+    <div className="min-h-screen flex flex-col items-center py-3 md:py-6 md:py-12 px-3 md:px-6" style={{ background: T.bg }}>
       <div className="w-full max-w-md">
 
         {/* Botão Voltar */}
@@ -395,7 +395,7 @@ export default function PhygitalCapture() {
 
         {/* Progress bar de upload */}
         {currentUploadIndex !== null && (
-          <div className="space-y-4 text-center py-6 bg-white/[0.02] border border-theme-border rounded-2xl p-6 mb-8 animate-reveal">
+          <div className="space-y-4 text-center py-3 md:py-6 bg-white/[0.02] border border-theme-border rounded-2xl p-3 md:p-6 mb-8 animate-reveal">
             <Loader2 className="animate-spin text-brand-tactical mx-auto" size={32} />
             <h3 className="text-[11px] font-black uppercase tracking-widest text-white">Transmitindo capturas...</h3>
             <p className="text-[9px] text-theme-text-muted uppercase tracking-wider">
@@ -467,7 +467,7 @@ export default function PhygitalCapture() {
                 <button
                   type="button"
                   onClick={() => setShowInAppCamera(true)}
-                  className="flex flex-col items-center justify-center gap-4 p-8 bg-brand-tactical rounded-2xl text-zinc-950 hover:brightness-110 transition-all shadow-xl shadow-brand-tactical/20 active:scale-[0.98]"
+                  className="flex flex-col items-center justify-center gap-4 p-4 md:p-8 bg-brand-tactical rounded-2xl text-zinc-950 hover:brightness-110 transition-all shadow-xl shadow-brand-tactical/20 active:scale-[0.98]"
                 >
                   <Camera size={32} strokeWidth={2.5} />
                   <span className="text-xs font-black uppercase tracking-[0.2em]">Tirar Foto / Gravar Vídeo</span>
@@ -476,7 +476,7 @@ export default function PhygitalCapture() {
                 <button
                   type="button"
                   onClick={() => galleryInputRef.current?.click()}
-                  className="flex flex-col items-center justify-center gap-4 p-8 bg-white/[0.03] border border-theme-border rounded-2xl hover:bg-white/[0.06] transition-all active:scale-[0.98]"
+                  className="flex flex-col items-center justify-center gap-4 p-4 md:p-8 bg-white/[0.03] border border-theme-border rounded-2xl hover:bg-white/[0.06] transition-all active:scale-[0.98]"
                   style={{ color: T.text }}
                 >
                   <ImageIcon size={32} className="opacity-40" />

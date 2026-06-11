@@ -132,7 +132,7 @@ const HelpPage: React.FC = () => {
       <SEO title="Central de Ajuda | Foto Segundo" description="Encontre respostas rápidas para as dúvidas mais comuns." />
       <Navbar />
 
-      <main className="max-w-4xl mx-auto px-6 py-24 lg:py-32">
+      <main className="max-w-4xl mx-auto px-3 md:px-6 py-24 lg:py-32">
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -140,7 +140,7 @@ const HelpPage: React.FC = () => {
         >
           {/* Header */}
           <div className="text-center space-y-4">
-            <h1 className="text-4xl lg:text-5xl font-heading font-black uppercase italic tracking-tighter leading-none">
+            <h1 className="text-2xl md:text-4xl lg:text-5xl font-heading font-black uppercase italic tracking-tighter leading-none">
               Central de <span className="text-brand-tactical">Ajuda</span>
             </h1>
             <p className="text-theme-text-muted text-sm uppercase tracking-widest font-bold">
@@ -187,7 +187,7 @@ const HelpPage: React.FC = () => {
                     >
                       <button 
                         onClick={() => setOpenItem(isOpen ? null : `${activeCategory}-${idx}`)}
-                        className="w-full flex items-center justify-between p-6 text-left"
+                        className="w-full flex items-center justify-between p-3 md:p-6 text-left"
                       >
                         <h3 className="text-lg md:text-xl font-black uppercase italic tracking-tight pr-8">
                           {faq.q}
@@ -206,7 +206,7 @@ const HelpPage: React.FC = () => {
                             exit={{ height: 0, opacity: 0 }}
                             className="overflow-hidden"
                           >
-                            <div className="px-6 pb-6 text-theme-text-muted text-sm md:text-base leading-relaxed font-medium pt-2 border-t border-theme-border">
+                            <div className="px-3 md:px-6 pb-6 text-theme-text-muted text-sm md:text-base leading-relaxed font-medium pt-2 border-t border-theme-border">
                               {typeof faq.a === 'string' ? (
                                 <p dangerouslySetInnerHTML={{ __html: faq.a.replace(/\*\*(.*?)\*\*/g, '<strong class="text-theme-text">$1</strong>') }} />
                               ) : (
@@ -224,7 +224,7 @@ const HelpPage: React.FC = () => {
           </div>
 
           {/* Contact Section */}
-          <div className="p-8 md:p-12 bg-brand-tactical/10 border border-brand-tactical/20 text-center space-y-6 mt-16 rounded-2xl">
+          <div className="p-4 md:p-8 md:p-12 bg-brand-tactical/10 border border-brand-tactical/20 text-center space-y-6 mt-16 rounded-2xl">
             <HelpCircle size={48} className="mx-auto text-brand-tactical" />
             <div className="space-y-2">
               <h2 className="text-2xl font-black uppercase italic tracking-tight">Não encontrou sua resposta?</h2>
@@ -232,7 +232,7 @@ const HelpPage: React.FC = () => {
                 Entre em contato com nossa equipe pela página de contato. Respondemos em até 24 horas úteis.
               </p>
             </div>
-            <Link to="/contato" className="inline-block px-12 py-4 bg-brand-tactical text-black font-black uppercase tracking-[0.3em] text-[10px] italic hover:brightness-110 transition-all shadow-xl shadow-brand-tactical/20 rounded-full">
+            <Link to="/contato" className="inline-block px-3 md:px-6 md:px-12 py-4 bg-brand-tactical text-black font-black uppercase tracking-[0.3em] text-[10px] italic hover:brightness-110 transition-all shadow-xl shadow-brand-tactical/20 rounded-full">
               Falar com o Suporte
             </Link>
           </div>
@@ -240,8 +240,8 @@ const HelpPage: React.FC = () => {
       </main>
 
       {/* Footer Minimalista */}
-      <footer className="border-t border-theme-border py-12 px-6">
-        <div className="max-w-4xl mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
+      <footer className="border-t border-theme-border py-3 md:py-6 md:py-12 px-3 md:px-6">
+        <div className="max-w-4xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4 md:gap-8">
           <div className="text-[10px] font-black text-theme-text-muted uppercase tracking-[0.5em] italic">
             © 2026 Foto Segundo • Todos os direitos reservados
           </div>

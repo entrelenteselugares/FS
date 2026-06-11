@@ -202,10 +202,10 @@ const FranchiseDashboard: React.FC = () => {
       <div style={{ padding: "clamp(8px, 2vw, 32px)", maxWidth: "100%", margin: "0 auto", minHeight: "100vh" }}>
         <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
       {/* HEADER OPERACIONAL */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-3 md:gap-6">
         <div className="space-y-2">
           <span className="text-[11px] font-black text-brand-tactical uppercase tracking-[0.4em] italic">Gestão de Franquia</span>
-          <h1 className="text-4xl md:text-6xl font-heading font-black text-theme-text uppercase tracking-tighter leading-none italic">
+          <h1 className="text-2xl md:text-4xl md:text-6xl font-heading font-black text-theme-text uppercase tracking-tighter leading-none italic">
             Command <span className="text-brand-tactical">Center</span>
           </h1>
         </div>
@@ -246,7 +246,7 @@ const FranchiseDashboard: React.FC = () => {
         {/* COLUNA 1: INVENTÁRIO PREDITIVO */}
         <div className="lg:col-span-2 space-y-4 md:space-y-8">
           <div className="bg-theme-bg-muted border border-theme-border p-4 md:p-8 relative overflow-hidden group">
-            <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity">
+            <div className="absolute top-0 right-0 p-4 md:p-8 opacity-5 group-hover:opacity-10 transition-opacity">
               <Activity size={120} className="text-theme-text" />
             </div>
             

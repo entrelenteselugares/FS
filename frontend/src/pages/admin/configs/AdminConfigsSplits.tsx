@@ -28,8 +28,8 @@ export const AdminConfigsSplits: React.FC<Props> = ({
 
   return (
     <div className="space-y-10 animate-in fade-in duration-500">
-      <div className="bg-theme-bg border border-theme-border p-10 flex flex-col md:flex-row items-center gap-10 shadow-sm relative overflow-hidden group rounded-2xl">
-        <div className="p-6 bg-brand-tactical/10 border border-brand-tactical/20 text-brand-tactical rounded-none">
+      <div className="bg-theme-bg border border-theme-border p-5 md:p-10 flex flex-col md:flex-row items-center gap-5 md:gap-10 shadow-sm relative overflow-hidden group rounded-2xl">
+        <div className="p-3 md:p-6 bg-brand-tactical/10 border border-brand-tactical/20 text-brand-tactical rounded-none">
           <Shield size={32} />
         </div>
         <div className="flex-1 space-y-2">
@@ -40,13 +40,13 @@ export const AdminConfigsSplits: React.FC<Props> = ({
         </div>
       </div>
 
-      <div className="grid grid-cols-1 gap-10 items-start max-w-4xl">
+      <div className="grid grid-cols-1 gap-5 md:gap-10 items-start max-w-4xl">
         <AdminMenuSection>
           <div className="flex items-center justify-between border-b border-theme-border pb-6">
             <h3 className="text-[11px] font-black text-theme-text uppercase tracking-[0.4em] flex items-center gap-3">
               <Percent size={14} className="text-brand-tactical" /> Taxas e Margens
             </h3>
-            <div className="px-6 py-2 text-[10px] font-black border tracking-widest italic border-brand-tactical/30 text-brand-tactical bg-brand-tactical/10">
+            <div className="px-3 md:px-6 py-2 text-[10px] font-black border tracking-widest italic border-brand-tactical/30 text-brand-tactical bg-brand-tactical/10">
               MODELO MARKUP ATIVO
             </div>
           </div>

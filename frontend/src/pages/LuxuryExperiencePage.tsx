@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { API } from "../lib/api";
 import { Download, ExternalLink, Camera, Calendar, MapPin, ChevronDown, ArrowRight, PlayCircle } from "lucide-react";
 import { motion, useScroll, useTransform } from "framer-motion";
@@ -61,7 +61,8 @@ export default function LuxuryExperiencePage() {
   const [event, setEvent] = useState<EventData | null>(null);
   const [loading, setLoading] = useState(true);
   const [products, setProducts] = useState<Product[]>([]);
-  const [activeTab, setActiveTab] = useState<'OFFICIAL' | 'GUEST' | 'VIDEO'>('OFFICIAL');
+  const [searchParams, setSearchParams] = useSearchParams();
+  const activeTab = (searchParams.get("tab") || 'OFFICIAL') as 'OFFICIAL' | 'GUEST' | 'VIDEO';
   const [sortOrder, setSortOrder] = useState<'ASC' | 'DESC'>('DESC');
   
   const { scrollY } = useScroll();
@@ -91,9 +92,9 @@ export default function LuxuryExperiencePage() {
   }, [event, navigate]);
 
   if (loading) return (
-    <div className="min-h-screen flex flex-col items-center justify-center gap-6 relative overflow-hidden bg-[#050505]">
+    <div className="min-h-screen flex flex-col items-center justify-center gap-3 md:gap-6 relative overflow-hidden bg-[#050505]">
       <div className="absolute inset-0 bg-emerald-900/10 blur-[120px] rounded-full -m-64 opacity-30" />
-      <div className="relative z-10 flex flex-col items-center gap-8">
+      <div className="relative z-10 flex flex-col items-center gap-4 md:gap-8">
         <div className="w-px h-16 bg-gradient-to-b from-transparent via-emerald-500/50 to-transparent" />
         <div className="text-[14px] font-display font-black uppercase tracking-[0.8em] text-zinc-300">FOTO SEGUNDO</div>
         <div className="text-[9px] font-medium uppercase tracking-[0.4em] text-emerald-500/80 animate-pulse">Iniciando Experiência</div>
@@ -103,9 +104,9 @@ export default function LuxuryExperiencePage() {
   );
 
   if (!event) return (
-    <div className="min-h-screen flex items-center justify-center p-6 text-center bg-[#050505]">
+    <div className="min-h-screen flex items-center justify-center p-3 md:p-6 text-center bg-[#050505]">
       <div className="space-y-6 max-w-sm">
-        <p className="text-4xl font-display font-black uppercase text-zinc-100">404</p>
+        <p className="text-2xl md:text-4xl font-display font-black uppercase text-zinc-100">404</p>
         <p className="text-[11px] font-medium text-zinc-500 uppercase tracking-[0.2em] leading-relaxed">A galeria solicitada encontra-se indisponível ou privada.</p>
       </div>
     </div>
@@ -186,7 +187,7 @@ export default function LuxuryExperiencePage() {
           <div className="absolute inset-0 bg-gradient-to-t from-[#030303] via-transparent to-transparent h-full" />
         </motion.div>
         
-        <div className="relative z-10 text-center px-6 w-full max-w-5xl mx-auto flex flex-col items-center mt-20">
+        <div className="relative z-10 text-center px-3 md:px-6 w-full max-w-5xl mx-auto flex flex-col items-center mt-20">
           <motion.div
             initial={{ y: 40, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
@@ -194,7 +195,7 @@ export default function LuxuryExperiencePage() {
             className="space-y-8 w-full"
           >
             <p className="text-[10px] md:text-[12px] font-medium text-emerald-400 uppercase tracking-[0.5em] md:tracking-[1em]">Galeria Privada</p>
-            <h1 className="text-5xl md:text-8xl lg:text-[120px] font-display font-medium uppercase tracking-tighter leading-[0.85] text-white drop-shadow-2xl">
+            <h1 className="text-3xl md:text-5xl md:text-8xl lg:text-[120px] font-display font-medium uppercase tracking-tighter leading-[0.85] text-white drop-shadow-2xl">
               {event.title}
             </h1>
             <div className="flex flex-col md:flex-row justify-center items-center gap-4 md:gap-12 text-[10px] md:text-[11px] font-medium uppercase tracking-[0.3em] text-zinc-400 mt-12">
@@ -224,7 +225,7 @@ export default function LuxuryExperiencePage() {
 
       {/* MAIN CONTENT */}
       <section className="relative z-20 bg-[#030303] pb-32">
-        <div className="max-w-6xl mx-auto px-6 space-y-32">
+        <div className="max-w-6xl mx-auto px-3 md:px-6 space-y-32">
 
           {/* EDITORIAL ARTIST BLOCK */}
           <div className="flex flex-col gap-16 pt-24">
@@ -235,10 +236,10 @@ export default function LuxuryExperiencePage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-100px" }}
                 transition={{ duration: 1, delay: idx * 0.2 }}
-                className="flex flex-col md:flex-row items-center md:items-start gap-8 md:gap-16"
+                className="flex flex-col md:flex-row items-center md:items-start gap-4 md:gap-8 md:gap-16"
               >
                 <div className="relative shrink-0 group">
-                  <div className="w-32 h-32 md:w-40 md:h-40 rounded-full border border-zinc-800/50 overflow-hidden bg-zinc-900/50 flex items-center justify-center text-4xl md:text-5xl font-display font-light text-emerald-500/50 transition-all duration-700 group-hover:border-emerald-500/30 group-hover:text-emerald-400">
+                  <div className="w-32 h-32 md:w-40 md:h-40 rounded-full border border-zinc-800/50 overflow-hidden bg-zinc-900/50 flex items-center justify-center text-2xl md:text-4xl md:text-5xl font-display font-light text-emerald-500/50 transition-all duration-700 group-hover:border-emerald-500/30 group-hover:text-emerald-400">
                     {prof.profileImageUrl ? (
                       <img src={prof.profileImageUrl} alt={prof.nome} className="w-full h-full object-cover grayscale opacity-80 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-700" />
                     ) : (
@@ -269,22 +270,22 @@ export default function LuxuryExperiencePage() {
 
           {/* GALLERY SECTION */}
           <div className="pt-16" id="gallery">
-            <div className="flex flex-col md:flex-row items-center justify-between gap-6 mb-12">
+            <div className="flex flex-col md:flex-row items-center justify-between gap-3 md:gap-6 mb-12">
               <div className="flex items-center gap-4 border-b border-zinc-800 pb-px">
                 <button
-                  onClick={() => setActiveTab('OFFICIAL')}
+                  onClick={() => setSearchParams({ tab: 'OFFICIAL' }, { replace: true })}
                   className={`pb-4 text-[10px] uppercase tracking-[0.2em] font-medium transition-colors ${activeTab === 'OFFICIAL' ? 'text-emerald-400 border-b border-emerald-400' : 'text-zinc-500 hover:text-zinc-300'}`}
                 >
                   Curadoria Oficial
                 </button>
                 <button
-                  onClick={() => setActiveTab('GUEST')}
+                  onClick={() => setSearchParams({ tab: 'GUEST' }, { replace: true })}
                   className={`pb-4 text-[10px] uppercase tracking-[0.2em] font-medium transition-colors ${activeTab === 'GUEST' ? 'text-emerald-400 border-b border-emerald-400' : 'text-zinc-500 hover:text-zinc-300'}`}
                 >
                   Live Connect
                 </button>
                 <button
-                  onClick={() => setActiveTab('VIDEO')}
+                  onClick={() => setSearchParams({ tab: 'VIDEO' }, { replace: true })}
                   className={`pb-4 text-[10px] uppercase tracking-[0.2em] font-medium transition-colors ${activeTab === 'VIDEO' ? 'text-emerald-400 border-b border-emerald-400' : 'text-zinc-500 hover:text-zinc-300'}`}
                 >
                   Cinematografia
@@ -312,7 +313,7 @@ export default function LuxuryExperiencePage() {
 
             {/* EXTERNAL LINKS SECTION (DRIVE / LIGHTROOM) */}
             {activeTab === 'OFFICIAL' && (event.lightroomUrl || event.driveUrl) && (
-              <div className="mb-12 p-6 rounded-2xl border border-zinc-800 bg-zinc-900/50 flex flex-col md:flex-row items-center justify-between gap-6">
+              <div className="mb-12 p-3 md:p-6 rounded-2xl border border-zinc-800 bg-zinc-900/50 flex flex-col md:flex-row items-center justify-between gap-3 md:gap-6">
                 <div className="space-y-2 text-center md:text-left">
                   <h4 className="text-sm font-medium uppercase tracking-widest text-emerald-400">Acervo Completo em Alta Resolução</h4>
                   <p className="text-[11px] text-zinc-400 leading-relaxed max-w-lg">
@@ -325,7 +326,7 @@ export default function LuxuryExperiencePage() {
                       href={event.lightroomUrl.trim().replace(/\s/g, '')} 
                       target="_blank" 
                       rel="noopener noreferrer"
-                      className="flex items-center gap-2 px-6 py-3 bg-zinc-800 hover:bg-zinc-700 transition-colors border border-zinc-700 rounded-full text-[10px] font-bold uppercase tracking-widest text-zinc-100"
+                      className="flex items-center gap-2 px-3 md:px-6 py-3 bg-zinc-800 hover:bg-zinc-700 transition-colors border border-zinc-700 rounded-full text-[10px] font-bold uppercase tracking-widest text-zinc-100"
                     >
                       <ExternalLink size={14} />
                       Lightroom
@@ -336,7 +337,7 @@ export default function LuxuryExperiencePage() {
                       href={event.driveUrl.trim().replace(/\s/g, '')} 
                       target="_blank" 
                       rel="noopener noreferrer"
-                      className="flex items-center gap-2 px-6 py-3 bg-zinc-800 hover:bg-zinc-700 transition-colors border border-zinc-700 rounded-full text-[10px] font-bold uppercase tracking-widest text-zinc-100"
+                      className="flex items-center gap-2 px-3 md:px-6 py-3 bg-zinc-800 hover:bg-zinc-700 transition-colors border border-zinc-700 rounded-full text-[10px] font-bold uppercase tracking-widest text-zinc-100"
                     >
                       <Download size={14} />
                       Google Drive
@@ -352,7 +353,7 @@ export default function LuxuryExperiencePage() {
                 <p className="text-[11px] font-medium text-zinc-500 uppercase tracking-[0.2em]">Nenhuma mídia encontrada nesta categoria</p>
               </div>
             ) : (
-              <div className="columns-1 md:columns-2 lg:columns-3 gap-6 space-y-6">
+              <div className="columns-1 md:columns-2 lg:columns-3 gap-3 md:gap-6 space-y-6">
                 {filteredMedias.map((midia, idx) => (
                   <motion.div
                     key={midia.id}
@@ -406,13 +407,13 @@ export default function LuxuryExperiencePage() {
             <div className="space-y-20 pt-16">
               <div className="text-center space-y-6">
                 <p className="text-[10px] font-medium text-zinc-500 uppercase tracking-[0.5em]">Boutique</p>
-                <h3 className="text-4xl md:text-5xl font-display font-medium uppercase tracking-tight text-zinc-100">Obras Físicas</h3>
+                <h3 className="text-2xl md:text-4xl md:text-5xl font-display font-medium uppercase tracking-tight text-zinc-100">Obras Físicas</h3>
                 <p className="text-[11px] uppercase font-light tracking-[0.2em] text-zinc-400 max-w-xl mx-auto leading-relaxed">
                   Materialize suas memórias com nossa seleção de fine art e álbuns premium.
                 </p>
               </div>
               
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-8">
                 {products.map((p, idx) => (
                   <motion.div 
                     key={p.id}
@@ -465,7 +466,7 @@ export default function LuxuryExperiencePage() {
           )}
 
           {/* FOOTER */}
-          <footer className="text-center pt-24 pb-12 flex flex-col items-center gap-8">
+          <footer className="text-center pt-24 pb-12 flex flex-col items-center gap-4 md:gap-8">
              <div className="w-px h-12 bg-gradient-to-b from-zinc-800 to-transparent" />
              <img 
                src="/logo.png" 

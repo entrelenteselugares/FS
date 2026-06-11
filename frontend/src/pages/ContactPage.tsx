@@ -16,14 +16,14 @@ export function ContactPage() {
         </Link>
       </header>
 
-      <main className="pt-32 pb-24 px-6 md:px-8 max-w-4xl mx-auto">
+      <main className="pt-32 pb-24 px-3 md:px-6 md:px-8 max-w-4xl mx-auto">
         <div className="mb-16 md:mb-24 text-center max-w-3xl mx-auto">
           <div className="flex items-center justify-center gap-4 mb-6">
             <div className="h-px w-12 bg-brand-tactical" />
             <span className="text-[10px] font-black text-brand-tactical uppercase tracking-[0.5em] italic">Comunicação Direta</span>
             <div className="h-px w-12 bg-brand-tactical" />
           </div>
-          <h1 className="text-5xl md:text-7xl font-heading font-black text-theme-text uppercase tracking-tighter mb-6 italic leading-none">
+          <h1 className="text-3xl md:text-5xl md:text-7xl font-heading font-black text-theme-text uppercase tracking-tighter mb-6 italic leading-none">
             Fale com a <br /><span className="text-brand-tactical">Gente</span>
           </h1>
           <p className="text-theme-text-muted font-light text-base md:text-lg leading-relaxed max-w-xl mx-auto">
@@ -31,9 +31,9 @@ export function ContactPage() {
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-6 mb-16">
+        <div className="grid md:grid-cols-2 gap-3 md:gap-6 mb-16">
           {/* Suporte */}
-          <div className="bg-theme-bg-muted border border-theme-border p-8 rounded-3xl hover:border-brand-tactical/50 transition-colors">
+          <div className="bg-theme-bg-muted border border-theme-border p-4 md:p-8 rounded-3xl hover:border-brand-tactical/50 transition-colors">
             <div className="w-12 h-12 bg-brand-tactical/10 text-brand-tactical rounded-xl flex items-center justify-center mb-6">
               <HeadphonesIcon size={24} />
             </div>
@@ -53,7 +53,7 @@ export function ContactPage() {
           </div>
 
           {/* Parcerias */}
-          <div className="bg-theme-bg-muted border border-theme-border p-8 rounded-3xl hover:border-brand-tactical/50 transition-colors">
+          <div className="bg-theme-bg-muted border border-theme-border p-4 md:p-8 rounded-3xl hover:border-brand-tactical/50 transition-colors">
             <div className="w-12 h-12 bg-brand-tactical/10 text-brand-tactical rounded-xl flex items-center justify-center mb-6">
               <Building2 size={24} />
             </div>
@@ -72,7 +72,7 @@ export function ContactPage() {
           </div>
 
           {/* Profissionais */}
-          <div className="bg-theme-bg-muted border border-theme-border p-8 rounded-3xl hover:border-brand-tactical/50 transition-colors">
+          <div className="bg-theme-bg-muted border border-theme-border p-4 md:p-8 rounded-3xl hover:border-brand-tactical/50 transition-colors">
             <div className="w-12 h-12 bg-brand-tactical/10 text-brand-tactical rounded-xl flex items-center justify-center mb-6">
               <Camera size={24} />
             </div>
@@ -87,7 +87,7 @@ export function ContactPage() {
           </div>
 
           {/* Imprensa */}
-          <div className="bg-theme-bg-muted border border-theme-border p-8 rounded-3xl hover:border-brand-tactical/50 transition-colors">
+          <div className="bg-theme-bg-muted border border-theme-border p-4 md:p-8 rounded-3xl hover:border-brand-tactical/50 transition-colors">
             <div className="w-12 h-12 bg-brand-tactical/10 text-brand-tactical rounded-xl flex items-center justify-center mb-6">
               <Megaphone size={24} />
             </div>
@@ -101,7 +101,7 @@ export function ContactPage() {
           </div>
 
           {/* LGPD */}
-          <div className="bg-theme-bg-muted border border-theme-border p-8 rounded-3xl hover:border-brand-tactical/50 transition-colors">
+          <div className="bg-theme-bg-muted border border-theme-border p-4 md:p-8 rounded-3xl hover:border-brand-tactical/50 transition-colors">
             <div className="w-12 h-12 bg-brand-tactical/10 text-brand-tactical rounded-xl flex items-center justify-center mb-6">
               <ShieldCheck size={24} />
             </div>
@@ -120,7 +120,7 @@ export function ContactPage() {
           </div>
 
           {/* Status */}
-          <div className="bg-theme-bg-muted border border-theme-border p-8 rounded-3xl hover:border-brand-tactical/50 transition-colors flex flex-col justify-between">
+          <div className="bg-theme-bg-muted border border-theme-border p-4 md:p-8 rounded-3xl hover:border-brand-tactical/50 transition-colors flex flex-col justify-between">
             <div>
               <div className="w-12 h-12 bg-brand-tactical/10 text-brand-tactical rounded-xl flex items-center justify-center mb-6">
                 <Activity size={24} />
@@ -148,7 +148,7 @@ export function ContactPage() {
         </div>
       </main>
 
-      <footer className="py-8 text-center border-t border-theme-border">
+      <footer className="py-4 md:py-8 text-center border-t border-theme-border">
         <p className="text-theme-text-muted text-xs font-bold uppercase tracking-widest mb-1">© 2026 Foto Segundo. Todos os direitos reservados.</p>
         <p className="text-brand-tactical/50 text-[10px] font-black italic uppercase tracking-[0.3em]">Protocolo Editorial de Imagem e Cinema</p>
       </footer>

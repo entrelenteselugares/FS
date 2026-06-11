@@ -62,7 +62,7 @@ const FlashUnlockPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] text-white flex flex-col items-center justify-center p-6 relative overflow-hidden">
+    <div className="min-h-screen bg-[#0a0a0a] text-white flex flex-col items-center justify-center p-3 md:p-6 relative overflow-hidden">
       {/* Background Decor */}
       <div className="absolute top-[-10%] right-[-10%] w-96 h-96 bg-emerald-500/10 rounded-full blur-[120px]" />
       <div className="absolute bottom-[-10%] left-[-10%] w-96 h-96 bg-emerald-500/5 rounded-full blur-[120px]" />
@@ -147,13 +147,13 @@ const FlashUnlockPage: React.FC = () => {
                 />
                 {/* Watermark Placeholder Overlay */}
                 <div className="absolute inset-0 bg-black/20 pointer-events-none flex items-center justify-center overflow-hidden">
-                   <div className="rotate-[-30deg] opacity-20 text-6xl font-black whitespace-nowrap select-none">
+                   <div className="rotate-[-30deg] opacity-20 text-2xl md:text-4xl md:text-6xl font-black whitespace-nowrap select-none">
                       FOTO SEGUNDO • FOTO SEGUNDO • FOTO SEGUNDO
                    </div>
                 </div>
               </div>
             ) : (
-              <div className="w-full aspect-video bg-[#1a1a1a] rounded-2xl flex flex-col items-center justify-center text-center p-8 border border-white/10">
+              <div className="w-full aspect-video bg-[#1a1a1a] rounded-2xl flex flex-col items-center justify-center text-center p-4 md:p-8 border border-white/10">
                 <Camera className="w-16 h-16 text-gray-600 mb-4" />
                 <h2 className="text-xl font-bold mb-2">Quase lá!</h2>
                 <p className="text-gray-400">O fotógrafo está processando sua foto. Atualize esta página em alguns instantes.</p>

@@ -7,14 +7,20 @@ import { Helmet } from "react-helmet-async";
 import { fetchCepData } from "../hooks/useViaCep";
 
 export const RegisterPage: React.FC = () => {
-  const [searchParams] = useSearchParams();
-  const initialRole = (searchParams.get("role") || "CLIENTE") as "CLIENTE" | "PROFISSIONAL" | "CARTORIO";
+  const [searchParams, setSearchParams] = useSearchParams();
+  const role = (searchParams.get("role") || "CLIENTE") as "CLIENTE" | "PROFISSIONAL" | "CARTORIO";
+  
   // Detecta convite de álbum pendente via ?next= ou localStorage
   const nextUrl = searchParams.get("next") || "";
   const inviteCodeFromUrl = nextUrl.startsWith("/invitation/") ? nextUrl.replace("/invitation/", "") : null;
   const inviteCode = inviteCodeFromUrl || localStorage.getItem("fs_pending_invite") || null;
-  
-  const [role, setRole] = useState<"CLIENTE" | "PROFISSIONAL" | "CARTORIO">(initialRole);
+
+  const updateRole = (newRole: string) => {
+    setSearchParams(prev => {
+      prev.set("role", newRole);
+      return prev;
+    }, { replace: true });
+  };
   const [formData, setFormData] = useState({
     nome: searchParams.get("nome") || "",
     email: searchParams.get("email") || "",
@@ -121,9 +127,13 @@ export const RegisterPage: React.FC = () => {
       // Limpa o convite pendente do localStorage
       if (inviteCode) localStorage.removeItem("fs_pending_invite");
 
-      // Navegação imediata — prioridade: convite > claim > pending purchase > conta
+      // Navegação imediata — prioridade: convite > returnUrl > claim > pending purchase > conta
+      const returnUrl = searchParams.get("returnUrl");
+
       if (inviteCode) {
         window.location.href = `/invitation/${inviteCode}`;
+      } else if (returnUrl) {
+        window.location.href = returnUrl;
       } else if (claim) {
         window.location.href = "/minha-conta?claimed=true";
       } else if (hasPending) {
@@ -154,7 +164,7 @@ export const RegisterPage: React.FC = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-theme-bg flex items-center justify-center p-6 py-12">
+    <div className="min-h-screen bg-theme-bg flex items-center justify-center p-3 md:p-6 py-3 md:py-6 md:py-12">
       <Helmet>
         <title>Registro — Foto Segundo</title>
       </Helmet>
@@ -196,8 +206,8 @@ export const RegisterPage: React.FC = () => {
               <button
                 key={r.id}
                 type="button"
-                onClick={() => setRole(r.id as "CLIENTE" | "PROFISSIONAL" | "CARTORIO")}
-                className={`flex flex-col items-center justify-center py-6 px-4 rounded-3xl transition-all duration-500 border ${
+                onClick={() => updateRole(r.id)}
+                className={`flex flex-col items-center justify-center py-3 md:py-6 px-4 rounded-3xl transition-all duration-500 border ${
                   role === r.id ? "bg-brand-tactical border-brand-tactical text-black shadow-[0_15px_30px_rgba(133,185,172,0.2)]" : "bg-theme-bg-muted border-theme-border text-theme-text-muted hover:border-theme-border hover:text-theme-text"
                 }`}
               >
@@ -208,7 +218,7 @@ export const RegisterPage: React.FC = () => {
           </div>
 
           <form onSubmit={handleRegister} className="space-y-8">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8">
                <div className="space-y-2 md:col-span-2">
                  <label className="text-[10px] font-black uppercase tracking-[0.3em] text-zinc-500 ml-1">Entidade / Nome Completo</label>
                  <div className="relative group">
@@ -256,7 +266,7 @@ export const RegisterPage: React.FC = () => {
 
                {/* Campos Dinâmicos Profissional */}
                {role === "PROFISSIONAL" && (
-                 <div className="md:col-span-2 space-y-8 p-8 bg-theme-bg-muted border border-theme-border rounded-3xl animate-in fade-in duration-500">
+                 <div className="md:col-span-2 space-y-8 p-4 md:p-8 bg-theme-bg-muted border border-theme-border rounded-3xl animate-in fade-in duration-500">
                     <div className="space-y-4">
                         <p className="text-[10px] font-black text-brand-tactical uppercase tracking-widest italic">Especialidades</p>
                        <div className="flex flex-wrap gap-3">
@@ -309,8 +319,8 @@ export const RegisterPage: React.FC = () => {
 
                {/* Campos Dinâmicos Unidade */}
                {role === "CARTORIO" && (
-                 <div className="md:col-span-2 space-y-8 p-8 bg-theme-bg-muted border border-theme-border rounded-3xl animate-in fade-in duration-500">
-                    <div className="grid grid-cols-2 gap-6">
+                 <div className="md:col-span-2 space-y-8 p-4 md:p-8 bg-theme-bg-muted border border-theme-border rounded-3xl animate-in fade-in duration-500">
+                    <div className="grid grid-cols-2 gap-3 md:gap-6">
                        <div className="space-y-2 md:col-span-2">
                           <label className="text-[9px] font-black uppercase tracking-[0.3em] text-zinc-500">Razão Social / Nome Unidade</label>
                           <input
@@ -419,7 +429,7 @@ export const RegisterPage: React.FC = () => {
         </div>
 
         {/* Footer */}
-        <div className="pt-8 flex flex-col md:flex-row justify-between items-center gap-6 border-t border-theme-border">
+        <div className="pt-8 flex flex-col md:flex-row justify-between items-center gap-3 md:gap-6 border-t border-theme-border">
            <p className="text-zinc-600 text-[9px] font-black uppercase tracking-[0.3em]">
             Já possui acesso? <Link to="/login" className="text-white hover:text-brand-tactical ml-2 transition-all">Fazer Login</Link>
           </p>

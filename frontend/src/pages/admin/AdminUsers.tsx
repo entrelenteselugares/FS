@@ -164,7 +164,7 @@ export const AdminUsers: React.FC = () => {
       <div className="relative border-b border-theme-border pb-8 md:pb-12 space-y-4 md:space-y-6">
         <div className="absolute -top-10 -left-10 w-40 h-40 bg-brand-tactical/10 blur-3xl rounded-full" />
         
-        <div className="flex flex-col xl:flex-row justify-between items-start xl:items-end gap-6 relative z-10">
+        <div className="flex flex-col xl:flex-row justify-between items-start xl:items-end gap-3 md:gap-6 relative z-10">
           <div>
                         <p className="text-theme-muted mt-2 text-sm">Membros, profissionais e permissões</p>
           </div>
@@ -180,7 +180,7 @@ export const AdminUsers: React.FC = () => {
       </div>
 
         {/* SEARCH AND FILTERS */}
-        <div className="flex flex-col md:flex-row gap-6 items-center">
+        <div className="flex flex-col md:flex-row gap-3 md:gap-6 items-center">
            <div className="relative flex-1 group w-full">
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-theme-muted group-focus-within:text-brand-tactical transition-colors" size={16} />
               <input 
@@ -306,7 +306,7 @@ export const AdminUsers: React.FC = () => {
           
           <div className="relative w-full max-w-2xl bg-theme-card border border-theme-border rounded-2xl overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300 flex flex-col h-[90vh]">
             {/* Header */}
-            <div className="p-8 md:p-10 border-b border-theme-border flex items-center justify-between shrink-0 bg-theme-bg-muted rounded-2xl">
+            <div className="p-4 md:p-8 md:p-10 border-b border-theme-border flex items-center justify-between shrink-0 bg-theme-bg-muted rounded-2xl">
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 bg-brand-tactical/10 rounded-2xl flex items-center justify-center border border-brand-tactical/20">
                   <UserPlus className="text-brand-tactical" size={24} strokeWidth={1.5} />
@@ -320,8 +320,8 @@ export const AdminUsers: React.FC = () => {
             </div>
 
             {/* Content */}
-            <form id="member-form" onSubmit={handleCreate} className="flex-1 overflow-y-auto p-8 md:p-10 space-y-10 custom-scrollbar bg-theme-card">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <form id="member-form" onSubmit={handleCreate} className="flex-1 overflow-y-auto p-4 md:p-8 md:p-10 space-y-10 custom-scrollbar bg-theme-card">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8">
                 <div className="space-y-6">
                   <div className="space-y-4">
                     <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest block mb-2 opacity-60 italic">Identidade de Acesso</label>
@@ -371,7 +371,7 @@ export const AdminUsers: React.FC = () => {
 
               {formData.role === "PROFISSIONAL" && (
                 <div className="pt-10 border-t border-theme-border space-y-10">
-                  <div className="grid grid-cols-2 gap-8">
+                  <div className="grid grid-cols-2 gap-4 md:gap-8">
                     <div className="space-y-2">
                       <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest block mb-1 opacity-40 italic">% Comissão Captação</label>
                       <div className="relative">
@@ -419,7 +419,7 @@ export const AdminUsers: React.FC = () => {
 
               {/* ── SEÇÃO DE FRANQUIA ── */}
               <div className="pt-10 border-t border-theme-border space-y-6">
-                <div className="flex items-center justify-between bg-theme-bg-muted p-6 rounded-2xl border border-theme-border">
+                <div className="flex items-center justify-between bg-theme-bg-muted p-3 md:p-6 rounded-2xl border border-theme-border">
                   <div className="space-y-1">
                     <label className="text-[10px] font-black text-theme-text uppercase tracking-widest italic">Ponto de Impressão (Phygital)</label>
                     <p className="text-[8px] text-theme-muted uppercase font-bold opacity-40">Habilitar este usuário como franqueado phygital ativo</p>
@@ -434,7 +434,7 @@ export const AdminUsers: React.FC = () => {
                 </div>
 
                 {formData.isFranchise && (
-                  <div className="p-6 bg-brand-tactical/10 border border-brand-tactical/20 rounded-2xl animate-in slide-in-from-top-4 duration-300">
+                  <div className="p-3 md:p-6 bg-brand-tactical/10 border border-brand-tactical/20 rounded-2xl animate-in slide-in-from-top-4 duration-300">
                     <div className="flex items-center justify-between">
                       <div className="space-y-1">
                         <label className="text-[8px] font-black text-brand-tactical uppercase tracking-widest italic">Saldo de Créditos de Impressão</label>
@@ -454,7 +454,7 @@ export const AdminUsers: React.FC = () => {
               {/* ── VERIFICAÇÃO PRO E AFILIADO VIP ── */}
               <div className="pt-6 space-y-4">
                 {formData.role === "PROFISSIONAL" && (
-                  <div className="flex items-center justify-between bg-brand-tactical/10 p-6 rounded-2xl border border-brand-tactical/20">
+                  <div className="flex items-center justify-between bg-brand-tactical/10 p-3 md:p-6 rounded-2xl border border-brand-tactical/20">
                     <div className="space-y-1">
                       <label className="text-[10px] font-black text-brand-tactical uppercase tracking-widest italic">Verificação Elite (PRO)</label>
                       <p className="text-[8px] text-theme-muted uppercase font-bold opacity-40 italic">Habilitar repasse financeiro imediato (F-09 Protocol)</p>
@@ -469,7 +469,7 @@ export const AdminUsers: React.FC = () => {
                   </div>
                 )}
 
-                <div className="flex items-center justify-between bg-yellow-500/5 p-6 rounded-2xl border border-yellow-500/20">
+                <div className="flex items-center justify-between bg-yellow-500/5 p-3 md:p-6 rounded-2xl border border-yellow-500/20">
                   <div className="space-y-1">
                     <label className="text-[10px] font-black text-yellow-500 uppercase tracking-widest italic">Afiliado VIP (L2)</label>
                     <p className="text-[8px] text-theme-muted uppercase font-bold opacity-40 italic">Ativa ganhos de comissão passiva sobre indicados (Regra dos 50)</p>
@@ -486,7 +486,7 @@ export const AdminUsers: React.FC = () => {
             </form>
 
             {/* Footer */}
-            <div className="p-8 md:p-10 bg-theme-bg-muted border-t border-theme-border flex gap-4 shrink-0 rounded-2xl">
+            <div className="p-4 md:p-8 md:p-10 bg-theme-bg-muted border-t border-theme-border flex gap-4 shrink-0 rounded-2xl">
               <button type="button" onClick={() => setIsModalOpen(false)} className="fs-btn flex-1 border border-theme-border text-theme-muted hover:text-white transition-all italic">Cancelar</button>
               <button 
                 type="submit" 
@@ -507,7 +507,7 @@ export const AdminUsers: React.FC = () => {
           <div className="absolute inset-0 bg-red-950/40 backdrop-blur-xl animate-in fade-in duration-300" onClick={() => setConfirmDelete(null)} />
           
           <div className="relative w-full max-w-md bg-theme-card border border-red-500/20 rounded-[40px] overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300">
-            <div className="p-10 space-y-8 text-center">
+            <div className="p-5 md:p-10 space-y-8 text-center">
               <div className="w-20 h-20 bg-red-500/10 rounded-2xl flex items-center justify-center border border-red-500/20 mx-auto mb-6">
                 <Trash2 className="text-red-500" size={32} strokeWidth={1.5} />
               </div>

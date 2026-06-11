@@ -27,19 +27,19 @@ export function StatusPage() {
         </Link>
       </header>
 
-      <main className="pt-32 pb-24 px-6 md:px-8 max-w-4xl mx-auto">
+      <main className="pt-32 pb-24 px-3 md:px-6 md:px-8 max-w-4xl mx-auto">
         <div className="mb-16 md:mb-20 text-center max-w-3xl mx-auto">
           <div className="flex items-center justify-center gap-4 mb-6">
             <div className="h-px w-12 bg-brand-tactical" />
             <span className="text-[10px] font-black text-brand-tactical uppercase tracking-[0.5em] italic">Monitoramento</span>
             <div className="h-px w-12 bg-brand-tactical" />
           </div>
-          <h1 className="text-5xl md:text-7xl font-heading font-black text-theme-text uppercase tracking-tighter mb-10 italic leading-none">
+          <h1 className="text-3xl md:text-5xl md:text-7xl font-heading font-black text-theme-text uppercase tracking-tighter mb-10 italic leading-none">
             Status da <br /><span className="text-brand-tactical">Plataforma</span>
           </h1>
 
           {/* Status Geral */}
-          <div className="bg-emerald-500/5 border border-emerald-500/30 p-8 rounded-3xl flex flex-col items-center">
+          <div className="bg-emerald-500/5 border border-emerald-500/30 p-4 md:p-8 rounded-3xl flex flex-col items-center">
             <div className="w-16 h-16 bg-emerald-500/20 rounded-full flex items-center justify-center mb-6">
               <CheckCircle2 size={32} className="text-emerald-500" />
             </div>
@@ -80,14 +80,14 @@ export function StatusPage() {
           <h3 className="text-sm font-black uppercase italic tracking-widest mb-6 text-theme-text-muted">
             Histórico de Incidentes
           </h3>
-          <div className="bg-theme-bg-muted border border-theme-border p-8 rounded-2xl text-center">
+          <div className="bg-theme-bg-muted border border-theme-border p-4 md:p-8 rounded-2xl text-center">
             <p className="text-theme-text font-light italic">Nenhum incidente registrado nos últimos 90 dias.</p>
           </div>
         </section>
 
         {/* O que fazer / Notificações */}
-        <div className="grid md:grid-cols-2 gap-6">
-          <section className="bg-brand-tactical/10 border border-brand-tactical/20 p-8 rounded-3xl">
+        <div className="grid md:grid-cols-2 gap-3 md:gap-6">
+          <section className="bg-brand-tactical/10 border border-brand-tactical/20 p-4 md:p-8 rounded-3xl">
             <h3 className="text-sm font-black uppercase italic tracking-widest mb-4 flex items-center gap-2 text-brand-tactical">
               <AlertTriangle size={16} /> O que fazer em caso de instabilidade
             </h3>
@@ -99,12 +99,12 @@ export function StatusPage() {
               <li className="flex gap-2"><span>2.</span> Verifique sua conexão com a internet</li>
               <li className="flex gap-2"><span>3.</span> Se o problema persistir, entre em contato descrevendo o erro e o horário.</li>
             </ul>
-            <Link to="/contato" className="inline-block px-6 py-3 bg-brand-tactical text-black font-black uppercase tracking-widest text-[10px] italic hover:brightness-110 transition-all shadow-xl shadow-brand-tactical/20">
+            <Link to="/contato" className="inline-block px-3 md:px-6 py-3 bg-brand-tactical text-black font-black uppercase tracking-widest text-[10px] italic hover:brightness-110 transition-all shadow-xl shadow-brand-tactical/20">
               Acessar Contato
             </Link>
           </section>
 
-          <section className="bg-theme-bg-muted border border-theme-border p-8 rounded-3xl flex flex-col justify-between">
+          <section className="bg-theme-bg-muted border border-theme-border p-4 md:p-8 rounded-3xl flex flex-col justify-between">
             <div>
               <h3 className="text-sm font-black uppercase italic tracking-widest mb-4 flex items-center gap-2 text-theme-text">
                 <Bell size={16} /> Assinar Atualizações
@@ -120,7 +120,7 @@ export function StatusPage() {
         </div>
       </main>
 
-      <footer className="py-8 text-center border-t border-theme-border">
+      <footer className="py-4 md:py-8 text-center border-t border-theme-border">
         <p className="text-theme-text-muted text-xs font-bold uppercase tracking-widest mb-1">© 2026 Foto Segundo. Todos os direitos reservados.</p>
         <p className="text-brand-tactical/50 text-[10px] font-black italic uppercase tracking-[0.3em]">Protocolo Editorial de Imagem e Cinema</p>
       </footer>

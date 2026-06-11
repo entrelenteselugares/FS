@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { isAxiosError } from "axios";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useSearchParams } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import { Helmet } from "react-helmet-async";
 import { Mail, Lock, Eye, EyeOff, ArrowRight, Sun, Moon } from "lucide-react";
@@ -25,6 +25,7 @@ export const LoginPage: React.FC = () => {
 
   const { login }       = useAuth();
   const navigate        = useNavigate();
+  const [searchParams]  = useSearchParams();
   const { toggle, isDark } = useTheme();
 
 
@@ -40,6 +41,12 @@ export const LoginPage: React.FC = () => {
       import("../lib/analytics").then(({ trackEvent, GA_EVENTS }) => {
         trackEvent(GA_EVENTS.LOGIN, { role: authUser.role, user_id: authUser.id });
       });
+
+      const returnUrl = searchParams.get("returnUrl");
+      if (returnUrl) {
+        navigate(returnUrl);
+        return;
+      }
 
       const pending = localStorage.getItem("pending_purchase_event_id");
       if (pending) {
@@ -82,7 +89,7 @@ export const LoginPage: React.FC = () => {
 
         {/* Brand watermark / centered logo on photo side */}
         <div className="absolute inset-0 flex items-center justify-center z-30 pointer-events-none">
-          <div className="bg-theme-bg/60 backdrop-blur-md px-8 py-6 rounded-3xl shadow-2xl border border-theme-border/30 pointer-events-auto transition-transform hover:scale-105">
+          <div className="bg-theme-bg/60 backdrop-blur-md px-4 md:px-8 py-3 md:py-6 rounded-3xl shadow-2xl border border-theme-border/30 pointer-events-auto transition-transform hover:scale-105">
             <Link to="/">
               <img
                 src="/logo.png"
@@ -118,7 +125,7 @@ export const LoginPage: React.FC = () => {
         </button>
 
         {/* Center: Form & Header */}
-        <div className="flex-1 flex flex-col justify-center px-6 md:px-10 xl:px-14 py-12 space-y-10">
+        <div className="flex-1 flex flex-col justify-center px-3 md:px-6 md:px-10 xl:px-14 py-3 md:py-6 md:py-12 space-y-10">
           {/* Header Group */}
           <div className="space-y-2">
             <div className="text-[9px] font-black text-brand-tactical uppercase tracking-[0.5em] mb-4 italic">
@@ -216,7 +223,7 @@ export const LoginPage: React.FC = () => {
         </div>
 
         {/* Bottom: Footer */}
-        <div className="px-10 xl:px-14 pb-8 pt-6 border-t border-theme-border flex flex-col gap-4 text-center">
+        <div className="px-5 md:px-10 xl:px-14 pb-8 pt-6 border-t border-theme-border flex flex-col gap-4 text-center">
           <p className="text-[8px] font-black uppercase tracking-[0.3em] text-theme-muted">
             Novo por aqui?{" "}
             <Link

@@ -13,7 +13,7 @@ interface NetworkTabProps {
 export function NetworkTab({ network, networkSearch, searchResults, residentUnits, onSearch, onToggleFavorite }: NetworkTabProps) {
   return (
     <div className="space-y-12">
-      <div className="bg-theme-bg border border-theme-border rounded-xl p-5 space-y-6">
+      <div className="bg-theme-bg border border-theme-border rounded-xl p-3 md:p-5 space-y-4 md:space-y-6">
         <div className="space-y-4">
           <h3 className="text-2xl sm:text-3xl font-heading font-black text-theme-text uppercase tracking-tighter italic leading-none">
             Minha Rede e <span className="text-brand-tactical">Alianças</span>
@@ -33,7 +33,7 @@ export function NetworkTab({ network, networkSearch, searchResults, residentUnit
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {residentUnits.map((u) => (
-                <div key={u.id} className="bg-theme-bg-muted border border-cyan-400/20 rounded-xl p-5 relative group hover:border-cyan-400/50 transition-all">
+                <div key={u.id} className="bg-theme-bg-muted border border-cyan-400/20 rounded-xl p-3 md:p-5 relative group hover:border-cyan-400/50 transition-all">
                   <div className="absolute top-0 left-0 w-full h-[1px] bg-cyan-400/30" />
                   <div className="space-y-4">
                     <div className="flex justify-between items-start">
@@ -118,7 +118,7 @@ export function NetworkTab({ network, networkSearch, searchResults, residentUnit
               {network.map((p) => (
                 <div
                   key={p.id}
-                  className="group relative rounded-xl p-5 bg-theme-bg-muted border border-theme-border hover:border-brand-tactical/40 transition-all"
+                  className="group relative rounded-xl p-3 md:p-5 bg-theme-bg-muted border border-theme-border hover:border-brand-tactical/40 transition-all"
                 >
                   <div className="flex justify-between items-start">
                     <div className="space-y-2">

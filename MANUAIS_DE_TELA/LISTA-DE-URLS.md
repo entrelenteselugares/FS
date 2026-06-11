@@ -35,12 +35,14 @@
 
 | #   | URL                | Descrição                                                          | Acesso  | Manual |
 | --- | ------------------ | ------------------------------------------------------------------ | ------- | ------ |
-| 18  | `/login`           | **Login** — Acesso com e-mail e senha                              | Público | ✅     |
-| 19  | `/auth`            | **Seleção de Tipo de Acesso** — Escolha entre cliente/profissional | Público | ✅     |
-| 20  | `/registro`        | **Cadastro** — Criação de conta                                    | Público | ✅     |
-| 21  | `/register`        | **Cadastro** — Alias de /registro                                  | Público | ✅     |
-| 22  | `/forgot-password` | **Esqueci minha Senha**                                            | Público | ✅     |
-| 23  | `/reset-password`  | **Redefinir Senha** — Via link do e-mail                           | Público | ✅     |
+| 18  | `/login`                       | **Login** — Acesso com e-mail e senha                              | Público | ✅     |
+| 19  | `/auth`                        | **Seleção de Tipo de Acesso** — Escolha entre cliente/profissional | Público | ✅     |
+| 20  | `/registro?role=CLIENTE`       | **Cadastro** — Criação de conta (Modalidade Cliente)               | Público | ✅     |
+| 20a | `/registro?role=PROFISSIONAL`  | **Cadastro** — Criação de conta (Modalidade Profissional)          | Público | ❌     |
+| 20b | `/registro?role=UNIDADE`       | **Cadastro** — Criação de conta (Modalidade Unidade/Ponto Fixo)    | Público | ❌     |
+| 21  | `/register`                    | **Cadastro** — Alias de /registro                                  | Público | ✅     |
+| 22  | `/forgot-password`             | **Esqueci minha Senha**                                            | Público | ✅     |
+| 23  | `/reset-password`              | **Redefinir Senha** — Via link do e-mail                           | Público | ✅     |
 
 ---
 
@@ -59,20 +61,20 @@
 
 ## 👤 Área do Cliente / Minha Conta
 
-> **Rota base:** `/minha-conta` com query param `?s=<secao>`
+> **Rota base:** `/minha-conta` com query param `?tab=<secao>` (retrocompatível com `?s=`)
 
 | #   | URL                         | Descrição                                                  | Acesso       | Manual |
 | --- | --------------------------- | ---------------------------------------------------------- | ------------ | ------ |
 | 30  | `/minha-conta`              | **Dashboard do Cliente** — Visão geral de pedidos e perfil | Autenticado  | ✅     |
-| 31  | `/minha-conta?s=perfil`     | **Aba: Perfil** — Dados pessoais e foto                    | Autenticado  | ✅     |
-| 32  | `/minha-conta?s=files`      | **Aba: Meus Pedidos** — Histórico de pedidos e álbuns      | Autenticado  | ✅     |
-| 33  | `/minha-conta?s=wallet`     | **Aba: Carteira / Créditos**                               | Autenticado  | ✅     |
-| 34  | `/minha-conta?s=affiliate`  | **Aba: Afiliado** — Programa de indicação                  | Autenticado  | ✅     |
-| 35  | `/minha-conta?s=agenda`     | **Aba: Agenda** — Próximos eventos                         | PROFISSIONAL | ✅     |
-| 36  | `/minha-conta?s=financeiro` | **Aba: Financeiro** — Ganhos e repasses                    | PROFISSIONAL | ✅     |
-| 37  | `/minha-conta?s=servicos`   | **Aba: Serviços** — Pacotes ofertados                      | PROFISSIONAL | ✅     |
-| 38  | `/minha-conta?s=portfolio`  | **Aba: Portfólio** — Gestão do portfólio                   | PROFISSIONAL | ✅     |
-| 39  | `/minha-conta?s=perfil`     | **Aba: Perfil Profissional** — Configurações de conta      | PROFISSIONAL | ✅     |
+| 31  | `/minha-conta?tab=perfil`     | **Aba: Perfil** — Dados pessoais e foto                    | Autenticado  | ✅     |
+| 32  | `/minha-conta?tab=files`      | **Aba: Meus Pedidos** — Histórico de pedidos e álbuns      | Autenticado  | ✅     |
+| 33  | `/minha-conta?tab=wallet`     | **Aba: Carteira / Créditos**                               | Autenticado  | ✅     |
+| 34  | `/minha-conta?tab=affiliate`  | **Aba: Afiliado** — Programa de indicação                  | Autenticado  | ✅     |
+| 35  | `/profissional?tab=agenda`     | **Aba: Agenda** — Próximos eventos                         | PROFISSIONAL | ✅     |
+| 36  | `/profissional?tab=financeiro` | **Aba: Financeiro** — Ganhos e repasses                    | PROFISSIONAL | ✅     |
+| 37  | `/profissional?tab=servicos`   | **Aba: Serviços** — Pacotes ofertados                      | PROFISSIONAL | ✅     |
+| 38  | `/profissional?tab=portfolio`  | **Aba: Portfólio** — Gestão do portfólio                   | PROFISSIONAL | ✅     |
+| 39  | `/profissional?tab=perfil`     | **Aba: Perfil Profissional** — Configurações de conta      | PROFISSIONAL | ✅     |
 
 ---
 
@@ -138,7 +140,8 @@
 | --- | ----------------------- | -------------------------------------------------------------------- | ------------ | ------ |
 | 66  | `/meus-albuns`          | **Gestão de Álbuns (Vaults)** — Cofres de fotos do usuário           | Autenticado  | ✅     |
 | 67  | `/meus-albuns/:vaultId` | **Álbum / Cofre** — Visualização das fotos de um evento              | Autenticado  | ✅     |
-| 68  | `/delivery/:id`         | **Entrega Luxury** — Experiência de entrega premium das fotos        | Autenticado  | ✅     |
+| 68  | `/delivery/:id`           | **Entrega Luxury** — Visão geral oficial do evento                   | Autenticado  | ✅     |
+| 68a | `/delivery/:id?tab=GUEST` | **Entrega Luxury: Live Connect** — Fotos tiradas por convidados      | Autenticado  | ✅     |
 | 69  | `/captura`              | **Captura Phygital** — Interface de captura ao vivo em evento        | PROFISSIONAL | ✅     |
 | 70  | `/phygital-capture`     | **Captura Phygital** — Alias de /captura                             | PROFISSIONAL | ✅     |
 | 71  | `/flash/:shortId`       | **Flash Unlock** — Desbloqueio rápido de álbum por link              | Público      | ✅     |
@@ -152,7 +155,9 @@
 
 | #   | URL                                | Descrição                                                      | Acesso      | Manual |
 | --- | ---------------------------------- | -------------------------------------------------------------- | ----------- | ------ |
-| 75  | `/album-torcida`                   | **Álbum da Torcida** — Visualização e figurinhas Copa do Mundo | Autenticado | ✅      |
+| 75  | `/album-torcida`                   | **Álbum da Torcida** — Visualização base                           | Autenticado | ✅      |
+| 75a | `/album-torcida?tab=jogos`         | **Álbum da Torcida: Jogos** — Previsões e rodadas                  | Autenticado | ✅      |
+| 75b | `/album-torcida?tab=figurines`     | **Álbum da Torcida: Figurinhas** — Colecionáveis                   | Autenticado | ✅      |
 | 76  | `/album-torcida/match/:matchId`    | **Folha de Partida** — Visão e detalhe de partida específica   | Autenticado | ✅      |
 
 ---

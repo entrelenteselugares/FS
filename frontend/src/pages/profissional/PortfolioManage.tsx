@@ -37,7 +37,7 @@ function ConfirmModal({
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="w-full max-w-sm bg-theme-surface border border-red-500/20 rounded-2xl p-8 space-y-6"
+        className="w-full max-w-sm bg-theme-surface border border-red-500/20 rounded-2xl p-4 md:p-8 space-y-6"
       >
         <div className="flex flex-col items-center gap-3 text-center">
           <div className="w-12 h-12 rounded-full bg-red-500/10 flex items-center justify-center text-red-500">
@@ -186,7 +186,7 @@ export default function PortfolioManage({ isTab = false }: PortfolioManageProps)
     });
   };
 
-  if (loading) return <div className="p-10 text-theme-muted">Carregando...</div>;
+  if (loading) return <div className="p-5 md:p-10 text-theme-muted">Carregando...</div>;
 
   return (
     <div className={isTab ? "pb-20" : "min-h-screen pb-20"} style={isTab ? {} : { background: T.bg }}>
@@ -202,7 +202,7 @@ export default function PortfolioManage({ isTab = false }: PortfolioManageProps)
       {!isTab ? (
         <header className="pt-20 pb-10 border-b border-white/5 relative overflow-hidden">
           <div className="absolute inset-0 bg-brand-tactical/10 blur-3xl rounded-full -m-64 opacity-30" />
-          <div className="max-w-[1600px] mx-auto px-4 md:px-6 relative z-10 flex flex-col md:flex-row md:items-end justify-between gap-6">
+          <div className="max-w-[1600px] mx-auto px-4 md:px-6 relative z-10 flex flex-col md:flex-row md:items-end justify-between gap-3 md:gap-6">
             <div>
               <div className="w-12 h-1 bg-brand-tactical mb-6" />
               <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-theme-text uppercase tracking-tighter whitespace-normal md:whitespace-nowrap italic pr-6">
@@ -221,7 +221,7 @@ export default function PortfolioManage({ isTab = false }: PortfolioManageProps)
           </div>
         </header>
       ) : (
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8 border-b border-theme-border pb-6">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-3 md:gap-6 mb-8 border-b border-theme-border pb-6">
           <div>
             <h2 className="text-2xl font-heading font-black text-theme-text uppercase tracking-widest italic leading-none">
               Gerenciar <span className="text-brand-tactical">Portfólio</span>
@@ -239,7 +239,7 @@ export default function PortfolioManage({ isTab = false }: PortfolioManageProps)
         </div>
       )}
 
-      <main className={isTab ? "py-6" : "max-w-[1600px] mx-auto px-4 md:px-6 py-12"}>
+      <main className={isTab ? "py-3 md:py-6" : "max-w-[1600px] mx-auto px-4 md:px-6 py-3 md:py-6 md:py-12"}>
         {/* Create album form */}
         <AnimatePresence>
           {isCreating && (
@@ -248,7 +248,7 @@ export default function PortfolioManage({ isTab = false }: PortfolioManageProps)
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
               onSubmit={handleCreateAlbum}
-              className="bg-theme-bg border border-theme-border rounded-2xl p-6 mb-8 space-y-4"
+              className="bg-theme-bg border border-theme-border rounded-2xl p-3 md:p-6 mb-8 space-y-4"
             >
               <div className="flex items-center justify-between">
                 <h2 className="text-sm font-black text-white uppercase tracking-widest">Criar Álbum</h2>
@@ -280,10 +280,10 @@ export default function PortfolioManage({ isTab = false }: PortfolioManageProps)
                 className="w-full bg-black border border-white/10 rounded-xl p-3 text-xs text-white h-24 outline-none focus:border-brand-tactical"
               />
               <div className="flex gap-4">
-                <button type="submit" className="px-6 py-2 bg-brand-tactical text-black text-xs font-black uppercase tracking-widest rounded-xl">
+                <button type="submit" className="px-3 md:px-6 py-2 bg-brand-tactical text-black text-xs font-black uppercase tracking-widest rounded-xl">
                   Salvar
                 </button>
-                <button type="button" onClick={() => setIsCreating(false)} className="px-6 py-2 border border-white/10 text-white text-xs font-black uppercase tracking-widest rounded-xl">
+                <button type="button" onClick={() => setIsCreating(false)} className="px-3 md:px-6 py-2 border border-white/10 text-white text-xs font-black uppercase tracking-widest rounded-xl">
                   Cancelar
                 </button>
               </div>
@@ -379,7 +379,7 @@ export default function PortfolioManage({ isTab = false }: PortfolioManageProps)
                     >
                       <div className="border-t border-theme-border p-4">
                         {(!album.images || album.images.length === 0) ? (
-                          <div className="py-12 text-center text-[10px] text-theme-muted uppercase tracking-widest border  border-theme-border rounded-xl">
+                          <div className="py-3 md:py-6 md:py-12 text-center text-[10px] text-theme-muted uppercase tracking-widest border  border-theme-border rounded-xl">
                             Nenhuma foto neste álbum. Clique em "Adicionar" para enviar.
                           </div>
                         ) : (

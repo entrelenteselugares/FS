@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { parseDateSafe } from "../lib/utils/formatters";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useSearchParams } from "react-router-dom";
 import { API } from "../lib/api";
 import { Helmet } from "react-helmet-async";
 import { T } from "../lib/theme";
@@ -159,14 +159,16 @@ function FooterCol({ title, links }: { title: string; links: {label: string, hre
 // ── HomePage ──────────────────────────────────────────────────────────────────
 export const HomePage = () => {
   const navigate = useNavigate();
-  const [query, setQuery]       = useState(() => sessionStorage.getItem('hp_q') || "");
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const [query, setQuery]       = useState(() => searchParams.get('q') || sessionStorage.getItem('hp_q') || "");
   const [events, setEvents]     = useState<Event[]>([]);
   const [loading, setLoading]   = useState(true);
-  const [page, setPage]         = useState(() => parseInt(sessionStorage.getItem('hp_page') || '1', 10));
+  const [page, setPage]         = useState(() => parseInt(searchParams.get('page') || sessionStorage.getItem('hp_page') || '1', 10));
   const [totalPages, setTotal]  = useState(1);
-  const [selectedType, setSelectedType] = useState(() => sessionStorage.getItem('hp_type') || "");
-  const [selectedCity, setSelectedCity] = useState(() => sessionStorage.getItem('hp_city') || "");
-  const [sortBy, setSortBy]             = useState(() => sessionStorage.getItem('hp_sort') || "");
+  const [selectedType, setSelectedType] = useState(() => searchParams.get('type') || sessionStorage.getItem('hp_type') || "");
+  const [selectedCity, setSelectedCity] = useState(() => searchParams.get('city') || sessionStorage.getItem('hp_city') || "");
+  const [sortBy, setSortBy]             = useState(() => searchParams.get('sort') || sessionStorage.getItem('hp_sort') || "");
   const [availableCities, setAvailableCities] = useState<string[]>([]);
   const [showMobileFilters, setShowMobileFilters] = useState(false);
 
@@ -182,7 +184,19 @@ export const HomePage = () => {
     sessionStorage.setItem('hp_type', selectedType);
     sessionStorage.setItem('hp_city', selectedCity);
     sessionStorage.setItem('hp_sort', sortBy);
-  }, [query, page, selectedType, selectedCity, sortBy]);
+
+    const nextParams = new URLSearchParams(searchParams);
+    if (query) nextParams.set('q', query); else nextParams.delete('q');
+    if (page > 1) nextParams.set('page', page.toString()); else nextParams.delete('page');
+    if (selectedType) nextParams.set('type', selectedType); else nextParams.delete('type');
+    if (selectedCity) nextParams.set('city', selectedCity); else nextParams.delete('city');
+    if (sortBy) nextParams.set('sort', sortBy); else nextParams.delete('sort');
+    
+    // Only update if something changed to avoid endless loop
+    if (nextParams.toString() !== searchParams.toString()) {
+      setSearchParams(nextParams, { replace: true });
+    }
+  }, [query, page, selectedType, selectedCity, sortBy, searchParams, setSearchParams]);
 
   const isFirstMount = useRef(true);
 
@@ -246,7 +260,7 @@ export const HomePage = () => {
           .hp-search-input { border-right: 1px solid var(--border-2) !important; border-bottom: none !important; border-top: none !important; }
           .hp-stats { gap: 10px !important; justify-content: space-between !important; flex-wrap: nowrap !important; }
           .hp-stats-item { min-width: auto; }
-          .hp-stats-val { font-size: 22px !important; }
+          .hp-stats-val { font-size: 18px !important; }
            .hp-mobile-search { display: flex !important; }
            .hp-event-section { padding: 0 0 100px !important; }
            /* Compressed Hero on Mobile */
@@ -258,7 +272,7 @@ export const HomePage = () => {
              min-height: auto !important;
              background: linear-gradient(to bottom, var(--bg-card), var(--bg)) !important;
            }
-           .hp-hero-title { font-size: 38px !important; line-height: 0.85 !important; margin-bottom: 12px !important; text-align: center !important; letter-spacing: -0.04em !important; font-weight: 900 !important; }
+           .hp-hero-title { font-size: 28px !important; line-height: 0.85 !important; margin-bottom: 12px !important; text-align: center !important; letter-spacing: -0.04em !important; font-weight: 900 !important; }
            .hp-hero-desc { font-size: clamp(8.5px, 2.8vw, 11px) !important; line-height: 1.4 !important; margin-bottom: 20px !important; text-align: center !important; opacity: 0.7; max-width: 100% !important; white-space: nowrap !important; margin-left: auto !important; margin-right: auto !important; }
            .hp-stats { display: none !important; }
            .hp-hero-tagline { display: none !important; }
@@ -363,7 +377,7 @@ export const HomePage = () => {
           </div>
 
           {/* Header with Search & Filters (Desktop — hidden on mobile) */}
-          <div className="hp-vitrine-header-desktop flex flex-col lg:flex-row lg:items-center justify-between gap-3 mb-2 border-b border-theme-border pb-4 pt-2 px-8">
+          <div className="hp-vitrine-header-desktop flex flex-col lg:flex-row lg:items-center justify-between gap-3 mb-2 border-b border-theme-border pb-4 pt-2 px-4 md:px-8">
             <div style={{ borderLeft: `2px solid ${T.brand}`, paddingLeft: 12 }}>
               <p style={{ fontSize: 9, fontFamily: T.fontD, fontWeight: 900, color: "var(--theme-text-muted)", letterSpacing: "0.2em", textTransform: "uppercase", margin: "0 0 2px", fontStyle: 'italic' }}>{DICT.LATEST_REGISTERS_TAG}</p>
               <h2 style={{ fontFamily: T.fontD, fontWeight: 900, fontSize: "clamp(24px,3.5vw,32px)", color: "var(--text)", textTransform: "uppercase", margin: 0, lineHeight: 1 }}>
@@ -435,7 +449,7 @@ export const HomePage = () => {
             </div>
           ) : events.length === 0 ? (
             <div className="py-40 text-center opacity-20">
-              <p className="font-heading font-black text-4xl text-white uppercase italic">Nada encontrado.</p>
+              <p className="font-heading font-black text-2xl md:text-4xl text-white uppercase italic">Nada encontrado.</p>
               <p className="text-[10px] text-white font-black uppercase tracking-widest mt-4">Redefina os filtros ou a busca.</p>
             </div>
           ) : (

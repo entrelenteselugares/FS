@@ -17,10 +17,10 @@ export const AdminConfigsInfra: React.FC<Props> = ({ configs, saving, onChange, 
 
   return (
     <div className="space-y-12 animate-in fade-in duration-500">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-10">
 
         {/* Branding */}
-        <div className="bg-theme-bg border border-theme-border p-10 space-y-10 shadow-sm rounded-2xl">
+        <div className="bg-theme-bg border border-theme-border p-5 md:p-10 space-y-10 shadow-sm rounded-2xl">
           <div className="flex items-center gap-4 border-b border-theme-border pb-6">
             <Palette size={16} className="text-brand-tactical" />
             <h3 className="text-[11px] font-black text-theme-text uppercase tracking-[0.4em]">Identidade Visual Tática</h3>
@@ -32,7 +32,7 @@ export const AdminConfigsInfra: React.FC<Props> = ({ configs, saving, onChange, 
               return (
                 <div key={key} className="space-y-4">
                   <label className="text-[9px] font-black text-theme-muted uppercase tracking-[0.4em]">{config.label}</label>
-                  <div className="flex items-center gap-6">
+                  <div className="flex items-center gap-3 md:gap-6">
                     <div className="w-14 h-14 border border-theme-border shadow-inner" style={{ background: config.value }} />
                     <div className="flex-1 relative">
                       <input
@@ -56,7 +56,7 @@ export const AdminConfigsInfra: React.FC<Props> = ({ configs, saving, onChange, 
         </div>
 
         {/* Governance */}
-        <div className="bg-theme-bg border border-theme-border p-10 space-y-10 shadow-sm rounded-2xl">
+        <div className="bg-theme-bg border border-theme-border p-5 md:p-10 space-y-10 shadow-sm rounded-2xl">
           <div className="flex items-center gap-4 border-b border-theme-border pb-6">
             <Lock size={16} className="text-brand-tactical" />
             <h3 className="text-[11px] font-black text-theme-text uppercase tracking-[0.4em]">Protocolos de Governança</h3>
@@ -71,8 +71,8 @@ export const AdminConfigsInfra: React.FC<Props> = ({ configs, saving, onChange, 
               const isOn = config.value === "true";
               const Icon = item.icon;
               return (
-                <div key={item.key} className="flex items-center justify-between p-6 bg-theme-bg-muted border border-theme-border group hover:border-brand-tactical transition-all rounded-2xl">
-                  <div className="flex items-center gap-6">
+                <div key={item.key} className="flex items-center justify-between p-3 md:p-6 bg-theme-bg-muted border border-theme-border group hover:border-brand-tactical transition-all rounded-2xl">
+                  <div className="flex items-center gap-3 md:gap-6">
                     <div className={`p-4 border ${isOn ? 'border-brand-tactical text-brand-tactical bg-brand-tactical/10' : 'border-theme-border text-theme-muted'}`}>
                       <Icon size={20} />
                     </div>
@@ -95,7 +95,7 @@ export const AdminConfigsInfra: React.FC<Props> = ({ configs, saving, onChange, 
       </div>
 
       {/* Pricing Policy */}
-      <div className="bg-theme-bg border border-brand-tactical/30 p-10 space-y-8 shadow-sm rounded-2xl">
+      <div className="bg-theme-bg border border-brand-tactical/30 p-5 md:p-10 space-y-8 shadow-sm rounded-2xl">
         <div className="flex items-center gap-4 border-b border-theme-border pb-6">
           <DollarSign size={16} className="text-brand-tactical" />
           <div>
@@ -137,7 +137,7 @@ export const AdminConfigsInfra: React.FC<Props> = ({ configs, saving, onChange, 
         <button
           onClick={onSave}
           disabled={saving}
-          className="px-12 py-5 bg-theme-text text-theme-bg text-[10px] font-black uppercase tracking-[0.5em] shadow-2xl hover:brightness-110 transition-all flex items-center gap-4"
+          className="px-3 md:px-6 md:px-12 py-5 bg-theme-text text-theme-bg text-[10px] font-black uppercase tracking-[0.5em] shadow-2xl hover:brightness-110 transition-all flex items-center gap-4"
         >
           {saving ? <RefreshCw className="animate-spin" size={16} /> : <CheckCircle size={16} />}
           {saving ? "SINCRONIZANDO..." : "VALIDAR E SALVAR TODA INFRAESTRUTURA"}

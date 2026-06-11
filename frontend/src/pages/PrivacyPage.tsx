@@ -14,19 +14,19 @@ export function PrivacyPage() {
         </Link>
       </header>
 
-      <main className="pt-32 pb-24 px-6 md:px-8 max-w-4xl mx-auto">
+      <main className="pt-32 pb-24 px-3 md:px-6 md:px-8 max-w-4xl mx-auto">
         <div className="mb-16">
           <div className="flex items-center gap-4 mb-4">
             <div className="h-px w-12 bg-brand-tactical" />
             <span className="text-[10px] font-black text-brand-tactical uppercase tracking-[0.5em] italic">Segurança Legal</span>
           </div>
-          <h1 className="text-4xl md:text-5xl font-heading font-black text-theme-text uppercase tracking-tighter mb-4 italic">
+          <h1 className="text-2xl md:text-4xl md:text-5xl font-heading font-black text-theme-text uppercase tracking-tighter mb-4 italic">
             Política de <span className="text-brand-tactical">Privacidade</span>
           </h1>
           <p className="text-theme-text-muted font-medium text-sm">
             Última atualização: maio de 2026
           </p>
-          <div className="mt-8 p-6 bg-brand-tactical/10 border border-brand-tactical/20 rounded-2xl flex items-start gap-4">
+          <div className="mt-8 p-3 md:p-6 bg-brand-tactical/10 border border-brand-tactical/20 rounded-2xl flex items-start gap-4">
             <Shield className="text-brand-tactical shrink-0 mt-1" size={24} />
             <p className="text-sm md:text-base text-theme-text font-light leading-relaxed">
               Esta Política descreve como a Foto Segundo coleta, utiliza, armazena e protege seus dados pessoais, em total conformidade com a <strong className="text-brand-tactical font-black">Lei Geral de Proteção de Dados (LGPD — Lei nº 13.709/2018)</strong>.
@@ -40,7 +40,7 @@ export function PrivacyPage() {
             <h2 className="text-xl font-black uppercase italic tracking-tight mb-6 flex items-center gap-3">
               <span className="text-brand-tactical">1.</span> Controlador dos Dados
             </h2>
-            <div className="bg-theme-bg-muted border border-theme-border p-6 rounded-xl space-y-2">
+            <div className="bg-theme-bg-muted border border-theme-border p-3 md:p-6 rounded-xl space-y-2">
               <p className="font-bold text-theme-text uppercase tracking-wider text-sm">Foto Segundo</p>
               <p className="text-theme-text-muted text-sm">Sumaré, São Paulo — Brasil</p>
               <p className="text-sm mt-4">
@@ -56,8 +56,8 @@ export function PrivacyPage() {
               <span className="text-brand-tactical">2.</span> Dados que Coletamos
             </h2>
             
-            <div className="grid md:grid-cols-2 gap-6">
-              <div className="border border-theme-border p-6 rounded-xl hover:border-brand-tactical/30 transition-colors">
+            <div className="grid md:grid-cols-2 gap-3 md:gap-6">
+              <div className="border border-theme-border p-3 md:p-6 rounded-xl hover:border-brand-tactical/30 transition-colors">
                 <h3 className="text-sm font-black text-brand-tactical uppercase tracking-widest mb-4 flex items-center gap-2">
                   <User size={16} /> Fornecidos por você
                 </h3>
@@ -71,7 +71,7 @@ export function PrivacyPage() {
                 </ul>
               </div>
 
-              <div className="border border-theme-border p-6 rounded-xl hover:border-brand-tactical/30 transition-colors">
+              <div className="border border-theme-border p-3 md:p-6 rounded-xl hover:border-brand-tactical/30 transition-colors">
                 <h3 className="text-sm font-black text-brand-tactical uppercase tracking-widest mb-4 flex items-center gap-2">
                   <Eye size={16} /> Coletados automaticamente
                 </h3>
@@ -177,7 +177,7 @@ export function PrivacyPage() {
           </section>
 
           {/* Seções 7, 8, 9, 10 */}
-          <div className="grid md:grid-cols-2 gap-12">
+          <div className="grid md:grid-cols-2 gap-3 md:gap-6 md:gap-12">
             <section>
               <h2 className="text-lg font-black uppercase italic tracking-tight mb-4 flex items-center gap-2">
                 <span className="text-brand-tactical">7.</span> Cookies
@@ -218,7 +218,7 @@ export function PrivacyPage() {
         </div>
       </main>
 
-      <footer className="py-8 text-center border-t border-theme-border">
+      <footer className="py-4 md:py-8 text-center border-t border-theme-border">
         <p className="text-theme-text-muted text-xs font-bold uppercase tracking-widest mb-1">© 2026 Foto Segundo. Todos os direitos reservados.</p>
         <p className="text-brand-tactical/50 text-[10px] font-black italic uppercase tracking-[0.3em]">Protocolo Editorial de Imagem e Cinema</p>
       </footer>

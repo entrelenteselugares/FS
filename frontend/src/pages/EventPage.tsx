@@ -267,7 +267,7 @@ function CountdownTimer({ targetDate }: { targetDate: string }) {
         { val: timeLeft.s, label: "SEG" },
       ].map((item) => (
         <div key={item.label} className="flex flex-col items-center bg-theme-bg p-4 border border-theme-border">
-          <span className="text-4xl font-heading font-black text-theme-text tracking-tighter italic">{String(item.val).padStart(2, '0')}</span>
+          <span className="text-2xl md:text-4xl font-heading font-black text-theme-text tracking-tighter italic">{String(item.val).padStart(2, '0')}</span>
           <span className="text-[8px] font-black text-brand-tactical uppercase tracking-[0.2em]">{item.label}</span>
         </div>
       ))}
@@ -566,12 +566,17 @@ export default function EventPage() {
     };
   }, [event?.tenantBrandColor]);
 
-  // Handle URL actions like ?action=print
+  // Handle URL actions
   useEffect(() => {
     if (searchParams.get("action") === "print" && step === "success") {
-      // Delay slightly to ensure UI is ready
       const timer = setTimeout(() => setShowPrintStore(true), 500);
       return () => clearTimeout(timer);
+    }
+    if (searchParams.get("action") === "camera") {
+      setShowQrModal(true);
+      // Clean url to avoid opening again on reload
+      const newUrl = window.location.pathname;
+      window.history.replaceState({}, '', newUrl);
     }
   }, [searchParams, step]);
 
@@ -649,7 +654,7 @@ export default function EventPage() {
             <Skeleton className="h-12 w-64" />
           </div>
         </div>
-        <div className="bg-theme-bg p-12 space-y-12 border-l border-theme-border">
+        <div className="bg-theme-bg p-3 md:p-6 md:p-12 space-y-12 border-l border-theme-border">
           <div className="space-y-4">
             <Skeleton className="h-3 w-32" />
             <Skeleton className="h-10 w-48" />
@@ -758,7 +763,7 @@ return (
             )}
             <div className="absolute inset-0 bg-gradient-to-t from-theme-bg via-theme-bg/80 to-transparent" />
             
-            <div className="relative z-10 w-full px-6 pt-20 pb-6 lg:px-10 lg:pt-32 lg:pb-8 space-y-4">
+            <div className="relative z-10 w-full px-3 md:px-6 pt-20 pb-6 lg:px-10 lg:pt-32 lg:pb-8 space-y-4">
               <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} className="flex items-center gap-3 mb-2">
                 <div className="h-px w-8 bg-brand-tactical" />
                 <span className="text-[9px] font-black text-brand-tactical uppercase tracking-[0.4em] italic">
@@ -846,7 +851,7 @@ return (
               {showQrModal && (
                 <motion.div 
                   initial={{ opacity: 0, scale: 0.9, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.9, y: 20 }}
-                  className="bg-[var(--bg-card)] border border-brand-tactical/40 p-6 md:p-8 shadow-2xl mb-4 w-[90vw] max-w-[320px] md:w-[320px] relative pointer-events-auto"
+                  className="bg-[var(--bg-card)] border border-brand-tactical/40 p-3 md:p-6 md:p-8 shadow-2xl mb-4 w-[90vw] max-w-[320px] md:w-[320px] relative pointer-events-auto"
                 >
                     <div className="absolute top-0 left-0 w-full h-[2px] bg-brand-tactical" />
                     <div className="flex justify-between items-start mb-6">
@@ -870,7 +875,7 @@ return (
           {/* ── Professional Tactical Hub (Floating camera removed per request) ── */}
 
           {step === "countdown" ? (
-            <div className="flex-1 flex flex-col items-center justify-center p-8 lg:p-12 space-y-16 text-center relative">
+            <div className="flex-1 flex flex-col items-center justify-center p-4 md:p-8 lg:p-12 space-y-16 text-center relative">
               <div className="space-y-6 max-w-3xl">
                 <p className="text-xl md:text-2xl text-theme-text-muted font-medium italic">
                   {event.type === 'ALBUM_FULL' 
@@ -885,13 +890,13 @@ return (
               </motion.div>
               
               <div className="pt-8">
-                <button onClick={handleShare} className="px-12 py-5 border border-brand-tactical/30 text-[10px] font-black text-brand-tactical uppercase tracking-[0.4em] hover:bg-brand-tactical hover:text-black transition-all italic flex items-center gap-3 hover-lift">
+                <button onClick={handleShare} className="px-3 md:px-6 md:px-12 py-5 border border-brand-tactical/30 text-[10px] font-black text-brand-tactical uppercase tracking-[0.4em] hover:bg-brand-tactical hover:text-black transition-all italic flex items-center gap-3 hover-lift">
                   <Share2 size={16} /> CONVIDAR AMIGOS
                 </button>
               </div>
             </div>
           ) : (
-            <div className="flex-1 px-8 lg:px-12 pb-40 pt-2 space-y-8">
+            <div className="flex-1 px-4 md:px-8 lg:px-12 pb-40 pt-2 space-y-8">
               
               {/* Bloco de Informações / Roteiro (Prioridade) */}
               {(event.itinerary || event.type === 'FOTO_POINT') && (
@@ -943,19 +948,19 @@ return (
                       <div className="flex bg-theme-bg-muted border border-white/10 rounded-xl overflow-hidden p-1">
                         <button 
                           onClick={() => setFilterMode("ALL")}
-                          className={`px-6 py-2 text-[10px] font-black uppercase tracking-widest transition-all rounded-lg ${filterMode === "ALL" ? "bg-brand-tactical text-black" : "text-zinc-500 hover:text-white"}`}
+                          className={`px-3 md:px-6 py-2 text-[10px] font-black uppercase tracking-widest transition-all rounded-lg ${filterMode === "ALL" ? "bg-brand-tactical text-black" : "text-zinc-500 hover:text-white"}`}
                         >
                           TODAS
                         </button>
                         <button 
                           onClick={() => setFilterMode("PRO")}
-                          className={`px-6 py-2 text-[10px] font-black uppercase tracking-widest transition-all rounded-lg flex items-center gap-2 ${filterMode === "PRO" ? "bg-brand-tactical text-black" : "text-zinc-500 hover:text-white"}`}
+                          className={`px-3 md:px-6 py-2 text-[10px] font-black uppercase tracking-widest transition-all rounded-lg flex items-center gap-2 ${filterMode === "PRO" ? "bg-brand-tactical text-black" : "text-zinc-500 hover:text-white"}`}
                         >
                           <Camera size={12} /> PRO
                         </button>
                         <button 
                           onClick={() => setFilterMode("GUEST")}
-                          className={`px-6 py-2 text-[10px] font-black uppercase tracking-widest transition-all rounded-lg flex items-center gap-2 ${filterMode === "GUEST" ? "bg-brand-tactical text-black" : "text-zinc-500 hover:text-white"}`}
+                          className={`px-3 md:px-6 py-2 text-[10px] font-black uppercase tracking-widest transition-all rounded-lg flex items-center gap-2 ${filterMode === "GUEST" ? "bg-brand-tactical text-black" : "text-zinc-500 hover:text-white"}`}
                         >
                           <UserCircle size={12} /> CONVIDADOS
                         </button>
@@ -966,7 +971,7 @@ return (
                           href={`/phygital-capture?e=${event.id}&auto=1`}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="flex items-center gap-3 px-8 py-5 bg-brand-tactical text-black text-[10px] font-black uppercase tracking-widest hover:brightness-110 transition-all italic shadow-lg shadow-brand-tactical/20"
+                          className="flex items-center gap-3 px-4 md:px-8 py-5 bg-brand-tactical text-black text-[10px] font-black uppercase tracking-widest hover:brightness-110 transition-all italic shadow-lg shadow-brand-tactical/20"
                         >
                           <Camera size={18} /> ABRIR CÂMERA
                         </a>
@@ -975,7 +980,7 @@ return (
                   </div>
                   <div className="overflow-visible">
                         {medias.length === 0 ? (
-                          <div className="py-16 border  border-theme-border bg-theme-bg/20 flex flex-col items-center justify-center text-center px-10 group relative overflow-hidden">
+                          <div className="py-16 border  border-theme-border bg-theme-bg/20 flex flex-col items-center justify-center text-center px-5 md:px-10 group relative overflow-hidden">
                             <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(20,184,166,0.05),transparent_70%)] pointer-events-none" />
                             <div className="relative mb-6">
                               <div className="absolute inset-0 bg-brand-tactical/20 blur-3xl rounded-full scale-150 animate-pulse" />
@@ -995,14 +1000,14 @@ return (
                             <div className="flex flex-col sm:flex-row gap-4">
                               <button 
                                 onClick={() => window.location.reload()}
-                                className="px-8 py-4 border border-theme-border text-[10px] font-black text-theme-text-muted uppercase tracking-widest hover:border-brand-tactical hover:text-theme-text hover:bg-brand-tactical/10 transition-all italic"
+                                className="px-4 md:px-8 py-4 border border-theme-border text-[10px] font-black text-theme-text-muted uppercase tracking-widest hover:border-brand-tactical hover:text-theme-text hover:bg-brand-tactical/10 transition-all italic"
                               >
                                 Sincronizar Galeria
                               </button>
                               {(isMarketplace && qrOpen) && (
                                 <button 
                                   onClick={() => setShowQrModal(true)}
-                                  className="px-8 py-4 bg-brand-tactical text-black font-black uppercase tracking-widest text-[10px] italic shadow-[0_15px_30px_rgba(20,184,166,0.3)] flex items-center gap-3"
+                                  className="px-4 md:px-8 py-4 bg-brand-tactical text-black font-black uppercase tracking-widest text-[10px] italic shadow-[0_15px_30px_rgba(20,184,166,0.3)] flex items-center gap-3"
                                 >
                                   <QrCode size={18} /> TRANSMITIR MINHAS FOTOS
                                 </button>
@@ -1015,7 +1020,7 @@ return (
                                       setStep("checkout");
                                     }
                                   }}
-                                  className="px-8 py-4 bg-white text-black font-black uppercase tracking-widest text-[10px] italic flex items-center gap-3 hover:bg-brand-tactical transition-colors"
+                                  className="px-4 md:px-8 py-4 bg-white text-black font-black uppercase tracking-widest text-[10px] italic flex items-center gap-3 hover:bg-brand-tactical transition-colors"
                                 >
                                   <ShoppingCart size={18} /> COMPRAR PRÉ-VENDA (ALBUM COMPLETO)
                                 </button>
@@ -1157,14 +1162,6 @@ return (
                     >
                       <QrCode size={16} /> {!qrOpen ? 'ENCERRADAS' : 'QR CODE'}
                     </button>
-                    {(!event.isPrimaryClient || user?.role === 'ADMIN') && (
-                      <button 
-                        onClick={() => setShowPrintKit(true)}
-                        className="w-full py-4 bg-brand-tactical text-black text-[9px] lg:text-[10px] font-black uppercase tracking-widest hover:brightness-110 transition-all italic flex items-center justify-center gap-3"
-                      >
-                        <Printer size={16} /> IMPRESSÃO
-                      </button>
-                    )}
                     {(event.isOwner || event.isPrimaryClient || user?.role === 'ADMIN' || user?.role === 'PROFISSIONAL' || user?.role === 'FRANCHISEE' || user?.role === 'CARTORIO' || user?.role === 'UNIDADE') && (
                       <button 
                         onClick={() => {
@@ -1181,7 +1178,7 @@ return (
 
             {/* Hub de Participação (Para Convidados) */}
             {(!event.isOwner) && (
-              <div className="p-6 bg-theme-bg-muted border border-theme-border space-y-4">
+              <div className="p-3 md:p-6 bg-theme-bg-muted border border-theme-border space-y-4">
                  <div className="flex items-center gap-2">
                     <QrCode size={16} className={!qrOpen ? "text-zinc-600" : "text-brand-tactical"} />
                     <span className="text-[10px] font-black text-theme-text uppercase tracking-widest italic">Galeria Live</span>
@@ -1207,7 +1204,7 @@ return (
             {step === "paywall" || step === "success" ? (
               <div className="space-y-14 animate-in fade-in slide-in-from-right-8 duration-1000">
                 {event.type === 'ALBUM_FULL' && !event.isPrimaryClient && !event.isOwner && !event.hasAccess ? (
-                  <div className="space-y-8 bg-zinc-950/80 border border-zinc-800/80 p-8 rounded-2xl relative overflow-hidden backdrop-blur-md shadow-2xl">
+                  <div className="space-y-8 bg-zinc-950/80 border border-zinc-800/80 p-4 md:p-8 rounded-2xl relative overflow-hidden backdrop-blur-md shadow-2xl">
                     <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-red-500 via-amber-500 to-red-500" />
                     <div className="flex items-center gap-3">
                       <Lock size={18} className="text-amber-500 animate-pulse" />
@@ -1238,7 +1235,7 @@ return (
                         <p className="text-[10px] text-brand-tactical font-black uppercase tracking-[0.6em] italic">Investimento</p>
                         <div className="flex items-baseline gap-2">
                           <span className="text-3xl font-light text-theme-text-muted/60 tracking-tighter italic">R$</span>
-                          <h2 className="text-6xl lg:text-7xl font-black tracking-tighter font-heading italic leading-none text-theme-text">
+                          <h2 className="text-2xl md:text-4xl md:text-6xl lg:text-7xl font-black tracking-tighter font-heading italic leading-none text-theme-text">
                             {Number(searchParams.get("intent") === "upgrade" 
                               ? (serviceCatalog.filter(s => selectedServices.includes(s.id)).reduce((acc, s) => acc + Number(s.basePrice), 0) + (includeLivePrint ? 150 : 0))
                               : ((isMarketplace || eventCart.length > 0 || eventPhysicalItems.length > 0) ? cartTotal : event.priceBase)
@@ -1261,7 +1258,7 @@ return (
                         <p className="text-[10px] text-brand-tactical font-black uppercase tracking-[0.6em] italic">Investimento do Álbum</p>
                         <div className="flex items-baseline gap-2">
                           <span className="text-3xl font-light text-theme-text-muted/60 tracking-tighter italic">R$</span>
-                          <h2 className="text-6xl lg:text-7xl font-black tracking-tighter font-heading italic leading-none text-theme-text">
+                          <h2 className="text-2xl md:text-4xl md:text-6xl lg:text-7xl font-black tracking-tighter font-heading italic leading-none text-theme-text">
                             {Number(event.priceBase || 0).toFixed(0)}
                           </h2>
                           <span className="text-3xl font-black text-theme-text-muted/60 italic">,00</span>
@@ -1276,7 +1273,7 @@ return (
 
                     {/* Order Bump - Upgrade Phygital */}
                     {(isMarketplace && eventCart.length > 0 && event.temFotoImpressa && !event.allowFreeDownload) && (
-                      <div className="p-6 border border-brand-tactical/30 bg-brand-tactical/10 rounded-[24px] space-y-4 shadow-lg shadow-brand-tactical/5">
+                      <div className="p-3 md:p-6 border border-brand-tactical/30 bg-brand-tactical/10 rounded-[24px] space-y-4 shadow-lg shadow-brand-tactical/5">
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-2">
                             <Printer size={16} className="text-brand-tactical animate-pulse" />
@@ -1380,7 +1377,7 @@ return (
                     </h3>
                   </div>
                 
-                <div className="relative p-10 bg-theme-bg border border-theme-border group overflow-hidden">
+                <div className="relative p-5 md:p-10 bg-theme-bg border border-theme-border group overflow-hidden">
                   <div className="absolute top-0 right-0 w-24 h-24 bg-brand-tactical/10 blur-3xl rounded-full" />
                   <div className="relative z-10 space-y-6">
                     <div className="flex items-center gap-4">
@@ -1404,16 +1401,16 @@ return (
       
       {/* Carrinho Mobile Elevado */}
       {isMarketplace && eventCart.length > 0 && (
-        <motion.div initial={{ y: 120 }} animate={{ y: 0 }} className="lg:hidden fixed bottom-0 left-0 right-0 z-[100] bg-theme-bg/90 backdrop-blur-3xl border-t border-brand-tactical/40 p-8 pb-14 flex items-center justify-between shadow-2xl dark:bg-black/95">
+        <motion.div initial={{ y: 120 }} animate={{ y: 0 }} className="lg:hidden fixed bottom-0 left-0 right-0 z-[100] bg-theme-bg/90 backdrop-blur-3xl border-t border-brand-tactical/40 p-4 md:p-8 pb-14 flex items-center justify-between shadow-2xl dark:bg-black/95">
           <div className="space-y-1">
             <p className="text-[10px] font-black uppercase tracking-widest text-brand-tactical italic">{eventCart.length} selecionadas</p>
             <div className="flex items-baseline gap-1">
               <span className="text-sm font-light text-theme-text-muted/60 italic">R$</span>
-              <span className="text-4xl font-black tracking-tighter text-theme-text italic">{cartTotal.toFixed(0)}</span>
+              <span className="text-2xl md:text-4xl font-black tracking-tighter text-theme-text italic">{cartTotal.toFixed(0)}</span>
               <span className="text-sm font-bold text-theme-text-muted/60 italic">,00</span>
             </div>
           </div>
-          <button onClick={handleUnlockClick} className="px-12 py-5 bg-brand-tactical text-black font-black uppercase tracking-widest text-[11px] italic shadow-[0_15px_30px_rgba(20,184,166,0.3)]">DESBLOQUEAR</button>
+          <button onClick={handleUnlockClick} className="px-3 md:px-6 md:px-12 py-5 bg-brand-tactical text-black font-black uppercase tracking-widest text-[11px] italic shadow-[0_15px_30px_rgba(20,184,166,0.3)]">DESBLOQUEAR</button>
         </motion.div>
       )}
 
@@ -1421,7 +1418,7 @@ return (
       {step === "denied" && (
         user ? (
           <Modal isOpen={true} onClose={() => setStep("paywall")} title="Álbum Privado">
-            <div className="flex flex-col items-center gap-8 py-10 text-center">
+            <div className="flex flex-col items-center gap-4 md:gap-8 py-5 md:py-10 text-center">
               <div className="p-4 bg-red-500/10 text-red-500 rounded-full">
                 <Lock size={32} />
               </div>
@@ -1474,12 +1471,13 @@ return (
           onUpdated={(u) => setEvent(prev => prev ? { ...prev, ...u } as EventData : null)}
           onClose={() => setIsEditingEvent(false)}
           onNotify={(msg) => alert(msg)}
+          onOpenPrintKit={() => setShowPrintKit(true)}
         />
       )}
       {/* Download Progress Overlay */}
       {isDownloading && createPortal(
         <div className="fixed inset-0 z-[99999] flex flex-col items-center justify-center bg-black/90 backdrop-blur-xl">
-          <div className="space-y-6 text-center max-w-sm w-full px-6">
+          <div className="space-y-6 text-center max-w-sm w-full px-3 md:px-6">
             <div className="relative mx-auto w-20 h-20">
               <div className="absolute inset-0 rounded-full border-4 border-brand-tactical/20" />
               <div 
@@ -1512,9 +1510,9 @@ return (
 const Modal = ({ isOpen, onClose, title, children }: { isOpen: boolean, onClose: () => void, title: string, children: React.ReactNode }) => createPortal(
   <AnimatePresence>
     {isOpen && (
-      <div className="fixed inset-0 z-[9999] flex items-center justify-center p-6" style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0 }}>
+      <div className="fixed inset-0 z-[9999] flex items-center justify-center p-3 md:p-6" style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0 }}>
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={onClose} className="absolute inset-0 bg-theme-bg/80 backdrop-blur-md dark:bg-black/90" />
-        <motion.div initial={{ opacity: 0, scale: 0.95, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 20 }} className="relative w-full max-w-sm bg-theme-card border border-theme-border p-6 shadow-2xl flex flex-col max-h-[90vh] overflow-y-auto">
+        <motion.div initial={{ opacity: 0, scale: 0.95, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 20 }} className="relative w-full max-w-sm bg-theme-card border border-theme-border p-3 md:p-6 shadow-2xl flex flex-col max-h-[90vh] overflow-y-auto">
           <div className="absolute top-0 right-0 p-4"><button onClick={onClose} className="text-theme-subtle hover:text-white transition-colors"><Check size={20} className="rotate-45" /></button></div>
           <h3 className="font-display text-lg font-black uppercase tracking-tighter mb-2 pr-6 leading-tight">{title}</h3>
           {children}

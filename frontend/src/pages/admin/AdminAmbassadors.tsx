@@ -111,18 +111,18 @@ export const AdminAmbassadors: React.FC = () => {
   }
 
   return (
-    <div className="p-8 space-y-8 animate-in fade-in duration-700">
+    <div className="p-4 md:p-8 space-y-8 animate-in fade-in duration-700">
       {/* Header Padronizado */}
       <div className="relative border-b border-theme-border pb-8 md:pb-12 space-y-4 md:space-y-6">
         <div className="absolute -top-10 -left-10 w-40 h-40 bg-brand-tactical/10 blur-3xl rounded-full" />
         
-        <div className="flex flex-col xl:flex-row justify-between items-start xl:items-end gap-6 relative z-10">
+        <div className="flex flex-col xl:flex-row justify-between items-start xl:items-end gap-3 md:gap-6 relative z-10">
           <div>
                         <p className="text-theme-muted mt-2 text-sm">Campanhas de afiliados e referral</p>
           </div>
           <button 
             onClick={() => setIsModalOpen(true)}
-            className="px-8 py-4 bg-brand-tactical text-black text-[10px] font-black uppercase tracking-widest flex items-center gap-3 hover:bg-white transition-all italic shadow-2xl whitespace-nowrap"
+            className="px-4 md:px-8 py-4 bg-brand-tactical text-black text-[10px] font-black uppercase tracking-widest flex items-center gap-3 hover:bg-white transition-all italic shadow-2xl whitespace-nowrap"
           >
             <Plus size={16} /> Nova Campanha
           </button>
@@ -130,14 +130,14 @@ export const AdminAmbassadors: React.FC = () => {
       </div>
 
       {/* Stats Summary */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6">
         {[
           { label: "Campanhas", value: campaigns.length, icon: <Users size={16} /> },
           { label: "Cliques Globais", value: campaigns.reduce((acc, c) => acc + c._count.visits, 0), icon: <MousePointer2 size={16} /> },
           { label: "Conversões", value: campaigns.reduce((acc, c) => acc + c._count.conversions, 0), icon: <TrendingUp size={16} /> },
           { label: "Total Recompensas", value: `R$ ${campaigns.reduce((acc, c) => acc + (c._count.conversions * c.rewardValue), 0).toFixed(2)}`, icon: <Award size={16} /> },
         ].map((s, i) => (
-          <div key={i} className="bg-theme-card border border-theme-border p-6 space-y-2 rounded-2xl">
+          <div key={i} className="bg-theme-card border border-theme-border p-3 md:p-6 space-y-2 rounded-2xl">
             <div className="flex items-center gap-2 text-theme-subtle">
               {s.icon}
               <span className="text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest">{s.label}</span>
@@ -164,47 +164,47 @@ export const AdminAmbassadors: React.FC = () => {
         <table className="w-full text-left">
           <thead>
             <tr className="border-b border-theme-border text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest text-theme-subtle">
-              <th className="p-6">Campanha / Slug</th>
-              <th className="p-6">Embaixador</th>
-              <th className="p-6">Recompensa</th>
-              <th className="p-6 text-center">Cliques</th>
-              <th className="p-6 text-center">Conversões</th>
-              <th className="p-6">Status</th>
-              <th className="p-6 text-center">Ações</th>
+              <th className="p-3 md:p-6">Campanha / Slug</th>
+              <th className="p-3 md:p-6">Embaixador</th>
+              <th className="p-3 md:p-6">Recompensa</th>
+              <th className="p-3 md:p-6 text-center">Cliques</th>
+              <th className="p-3 md:p-6 text-center">Conversões</th>
+              <th className="p-3 md:p-6">Status</th>
+              <th className="p-3 md:p-6 text-center">Ações</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-theme-border">
             {filtered.map(c => (
               <tr key={c.id} className="hover:bg-theme-border/20 transition-colors group">
-                <td className="p-6">
+                <td className="p-3 md:p-6">
                   <div className="flex flex-col">
                     <span className="text-sm font-black text-theme-text uppercase italic">{c.name}</span>
                     <span className="text-[10px] font-mono text-theme-subtle">/embaixador/{c.slug}</span>
                   </div>
                 </td>
-                <td className="p-6">
+                <td className="p-3 md:p-6">
                   <div className="flex flex-col">
                     <span className="text-xs font-bold text-theme-text">{c.owner.nome}</span>
                     <span className="text-[10px] text-theme-subtle">{c.owner.email}</span>
                   </div>
                 </td>
-                <td className="p-6">
+                <td className="p-3 md:p-6">
                   <span className="text-xs font-black text-brand-tactical italic">
                     R$ {Number(c.rewardValue).toFixed(2)} ({c.rewardType})
                   </span>
                 </td>
-                <td className="p-6 text-center">
+                <td className="p-3 md:p-6 text-center">
                   <span className="text-sm font-black text-theme-muted">{c._count.visits}</span>
                 </td>
-                <td className="p-6 text-center">
+                <td className="p-3 md:p-6 text-center">
                   <span className="text-sm font-black text-emerald-500">{c._count.conversions}</span>
                 </td>
-                <td className="p-6">
+                <td className="p-3 md:p-6">
                   <span className={`px-2 py-1 text-[8px] font-black uppercase tracking-widest ${c.active ? 'bg-emerald-500/10 text-emerald-500' : 'bg-red-500/10 text-red-500'}`}>
                     {c.active ? 'Ativa' : 'Inativa'}
                   </span>
                 </td>
-                <td className="p-6">
+                <td className="p-3 md:p-6">
                   <div className="flex items-center justify-center gap-2">
                     <button
                       onClick={() => handleToggle(c.id)}
@@ -239,7 +239,7 @@ export const AdminAmbassadors: React.FC = () => {
           
           <div className="relative w-full max-w-lg bg-theme-card border border-theme-border rounded-[40px] overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300 flex flex-col h-[85vh]">
             {/* Header */}
-            <div className="p-8 md:p-10 border-b border-theme-border flex items-center justify-between shrink-0">
+            <div className="p-4 md:p-8 md:p-10 border-b border-theme-border flex items-center justify-between shrink-0">
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 bg-brand-tactical/10 rounded-2xl flex items-center justify-center border border-brand-tactical/20">
                   <Award className="text-brand-tactical" size={24} strokeWidth={1.5} />
@@ -253,7 +253,7 @@ export const AdminAmbassadors: React.FC = () => {
             </div>
 
             {/* Content */}
-            <form id="campaign-form" onSubmit={handleCreate} className="flex-1 overflow-y-auto p-8 md:p-10 space-y-8 custom-scrollbar">
+            <form id="campaign-form" onSubmit={handleCreate} className="flex-1 overflow-y-auto p-4 md:p-8 md:p-10 space-y-8 custom-scrollbar">
               <div className="space-y-2">
                 <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest block mb-2 opacity-60 italic">Nome da Campanha</label>
                 <input 
@@ -291,7 +291,7 @@ export const AdminAmbassadors: React.FC = () => {
                 </select>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-6">
                 <div className="space-y-2">
                   <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest block mb-2 opacity-60 italic">Tipo de Recompensa</label>
                   <select 
@@ -348,7 +348,7 @@ export const AdminAmbassadors: React.FC = () => {
                   };
 
                   return (
-                    <div key={category} className="space-y-4 bg-theme-bg-muted p-6 rounded-3xl border border-theme-border">
+                    <div key={category} className="space-y-4 bg-theme-bg-muted p-3 md:p-6 rounded-3xl border border-theme-border">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
                           <div className={`w-2 h-2 rounded-full ${isCategorySelected ? 'bg-brand-tactical' : 'bg-zinc-800'}`} />
@@ -417,7 +417,7 @@ export const AdminAmbassadors: React.FC = () => {
             </form>
 
             {/* Footer */}
-            <div className="p-8 md:p-10 bg-theme-bg-muted border-t border-theme-border flex gap-4 shrink-0 rounded-2xl">
+            <div className="p-4 md:p-8 md:p-10 bg-theme-bg-muted border-t border-theme-border flex gap-4 shrink-0 rounded-2xl">
               <button type="button" onClick={() => setIsModalOpen(false)} className="flex-1 py-5 border border-theme-border text-[11px] font-black uppercase tracking-[0.3em] text-theme-muted hover:text-white transition-all rounded-[20px] italic">Cancelar</button>
               <button 
                 type="submit"

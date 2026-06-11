@@ -14,19 +14,19 @@ export function TermsPage() {
         </Link>
       </header>
 
-      <main className="pt-32 pb-24 px-6 md:px-8 max-w-4xl mx-auto">
+      <main className="pt-32 pb-24 px-3 md:px-6 md:px-8 max-w-4xl mx-auto">
         <div className="mb-16">
           <div className="flex items-center gap-4 mb-4">
             <div className="h-px w-12 bg-brand-tactical" />
             <span className="text-[10px] font-black text-brand-tactical uppercase tracking-[0.5em] italic">Segurança Legal</span>
           </div>
-          <h1 className="text-4xl md:text-5xl font-heading font-black text-theme-text uppercase tracking-tighter mb-4 italic">
+          <h1 className="text-2xl md:text-4xl md:text-5xl font-heading font-black text-theme-text uppercase tracking-tighter mb-4 italic">
             Termos de <span className="text-brand-tactical">Uso</span>
           </h1>
           <p className="text-theme-text-muted font-medium text-sm">
             Última atualização: maio de 2026
           </p>
-          <div className="mt-8 p-6 bg-theme-bg-muted border border-theme-border rounded-2xl flex items-start gap-4">
+          <div className="mt-8 p-3 md:p-6 bg-theme-bg-muted border border-theme-border rounded-2xl flex items-start gap-4">
             <FileText className="text-brand-tactical shrink-0 mt-1" size={24} />
             <p className="text-sm md:text-base text-theme-text font-light leading-relaxed">
               Ao acessar ou utilizar a plataforma Foto Segundo ("Plataforma"), você concorda com estes Termos de Uso. Se não concordar com qualquer parte, não utilize a Plataforma.
@@ -60,8 +60,8 @@ export function TermsPage() {
           </section>
 
           {/* Seção 3 e 5 em Grid */}
-          <div className="grid md:grid-cols-2 gap-8">
-            <section className="bg-theme-bg-muted p-6 rounded-2xl border border-theme-border">
+          <div className="grid md:grid-cols-2 gap-4 md:gap-8">
+            <section className="bg-theme-bg-muted p-3 md:p-6 rounded-2xl border border-theme-border">
               <h2 className="text-lg font-black uppercase italic tracking-tight mb-4 flex items-center gap-2">
                 <span className="text-brand-tactical">3.</span> Cadastro e Conta
               </h2>
@@ -72,7 +72,7 @@ export function TermsPage() {
               </ul>
             </section>
 
-            <section className="bg-theme-bg-muted p-6 rounded-2xl border border-theme-border">
+            <section className="bg-theme-bg-muted p-3 md:p-6 rounded-2xl border border-theme-border">
               <h2 className="text-lg font-black uppercase italic tracking-tight mb-4 flex items-center gap-2">
                 <span className="text-brand-tactical">5.</span> Pagamentos e Reembolsos
               </h2>
@@ -90,8 +90,8 @@ export function TermsPage() {
             <h2 className="text-xl font-black uppercase italic tracking-tight mb-6 flex items-center gap-3">
               <span className="text-brand-tactical">4.</span> Uso Aceitável
             </h2>
-            <div className="grid md:grid-cols-2 gap-6">
-              <div className="border border-brand-tactical/30 bg-brand-tactical/10 p-6 rounded-xl">
+            <div className="grid md:grid-cols-2 gap-3 md:gap-6">
+              <div className="border border-brand-tactical/30 bg-brand-tactical/10 p-3 md:p-6 rounded-xl">
                 <h3 className="text-sm font-black text-brand-tactical uppercase tracking-widest mb-4 flex items-center gap-2">
                   <Check size={18} /> É permitido
                 </h3>
@@ -108,7 +108,7 @@ export function TermsPage() {
                   ))}
                 </ul>
               </div>
-              <div className="border border-red-500/30 bg-red-500/5 p-6 rounded-xl">
+              <div className="border border-red-500/30 bg-red-500/5 p-3 md:p-6 rounded-xl">
                 <h3 className="text-sm font-black text-red-500 uppercase tracking-widest mb-4 flex items-center gap-2">
                   <X size={18} /> É proibido
                 </h3>
@@ -155,7 +155,7 @@ export function TermsPage() {
           </section>
 
           {/* Seção 8, 9 e 10 */}
-          <div className="grid md:grid-cols-3 gap-6 pt-8 border-t border-theme-border">
+          <div className="grid md:grid-cols-3 gap-3 md:gap-6 pt-8 border-t border-theme-border">
             <div className="space-y-4">
               <h2 className="text-sm font-black uppercase italic tracking-widest flex items-center gap-2">
                 <ShieldAlert size={16} className="text-brand-tactical" /> 8. Limitações
@@ -184,7 +184,7 @@ export function TermsPage() {
         </div>
       </main>
 
-      <footer className="py-8 text-center border-t border-theme-border">
+      <footer className="py-4 md:py-8 text-center border-t border-theme-border">
         <p className="text-theme-text-muted text-xs font-bold uppercase tracking-widest mb-1">© 2026 Foto Segundo. Todos os direitos reservados.</p>
         <p className="text-brand-tactical/50 text-[10px] font-black italic uppercase tracking-[0.3em]">Protocolo Editorial de Imagem e Cinema</p>
       </footer>

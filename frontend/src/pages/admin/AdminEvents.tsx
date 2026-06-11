@@ -1,6 +1,6 @@
 // Optimized Admin Dashboard - Foto Segundo
 import React, { useState, useEffect, useCallback } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { API } from "../../lib/api";
 import { T } from "../../lib/theme";
 import { QRCodeSVG } from "qrcode.react";
@@ -74,7 +74,9 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
   const [qrModalEvent, setQrModalEvent] = useState<Event | null>(null);
   const [copied, setCopied] = useState(false);
   const [notification, setNotification] = useState<{message: string, type: 'success' | 'error'} | null>(null);
-  const [activeTab, setActiveTab] = useState<'info' | 'equipe' | 'comercial' | 'galeria' | 'referencias'>('info');
+  const [searchParams, setSearchParams] = useSearchParams();
+  const activeTab = (searchParams.get("sub") as 'info' | 'equipe' | 'comercial' | 'galeria' | 'referencias') || 'info';
+  const setActiveTab = (tab: 'info' | 'equipe' | 'comercial' | 'galeria' | 'referencias') => setSearchParams(prev => { prev.set("sub", tab); return prev; }, { replace: true });
   const [eventMedia, setEventMedia] = useState<EventMediaItem[]>([]); // TODO: Definir interface Media
   const [confirmDelete, setConfirmDelete] = useState<Event | null>(null);
   const [phygitalQueueEvent, setPhygitalQueueEvent] = useState<Event | null>(null);
@@ -502,7 +504,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
     <div className="space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
       {/* Actions */}
       <div className="relative border-b border-theme-border pb-4 space-y-4 md:space-y-6">
-        <div className="flex flex-col xl:flex-row justify-between items-start xl:items-end gap-6 relative z-10">
+        <div className="flex flex-col xl:flex-row justify-between items-start xl:items-end gap-3 md:gap-6 relative z-10">
           <div>
             <h1 className="text-3xl md:text-4xl font-heading font-black uppercase italic tracking-tighter text-theme-text">EVENTOS</h1>
             <p className="text-theme-muted mt-2 text-sm">Gestão de captação e catálogos</p>
@@ -654,7 +656,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
           
           <div className="relative w-full max-w-5xl bg-theme-card border border-theme-border rounded-[40px] overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300 flex flex-col h-[90vh]">
             {/* Header */}
-            <div className="p-8 md:p-10 border-b border-theme-border flex items-center justify-between shrink-0 bg-theme-bg-muted rounded-2xl">
+            <div className="p-4 md:p-8 md:p-10 border-b border-theme-border flex items-center justify-between shrink-0 bg-theme-bg-muted rounded-2xl">
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 bg-brand-tactical/10 rounded-2xl flex items-center justify-center border border-brand-tactical/20">
                   <Radar className="text-brand-tactical" size={24} />
@@ -678,9 +680,9 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
             </div>
 
             {/* Scrollable Content */}
-            <form onSubmit={handleCreate} className="flex-1 overflow-y-auto p-8 md:p-10 space-y-8 custom-scrollbar bg-theme-card">
+            <form onSubmit={handleCreate} className="flex-1 overflow-y-auto p-4 md:p-8 md:p-10 space-y-8 custom-scrollbar bg-theme-card">
               {activeTab === 'info' && (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-10 animate-in fade-in duration-500">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-10 animate-in fade-in duration-500">
                   <div className="space-y-6">
                     <div className="space-y-4">
                       <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest block mb-2 opacity-60 italic">Capa da Vitrine</label>
@@ -707,7 +709,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
                           </>
                         ) : (
                           <div className="text-center group-hover:text-brand-tactical transition-colors">
-                            <div className="text-4xl mb-4">📸</div>
+                            <div className="text-2xl md:text-4xl mb-4">📸</div>
                             <div className="text-[9px] uppercase tracking-[0.4em] text-theme-muted font-black">Enviar Capa</div>
                           </div>
                         )}
@@ -726,7 +728,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
                       <input type="text" className="fs-input font-black" value={formData.slug} onChange={e => setFormData({ ...formData, slug: e.target.value.toLowerCase().replace(/\s/g, "-") })} placeholder="ex: taynan-e-felipe" />
                     </div>
 
-                    <div className="grid grid-cols-2 gap-6 p-6 bg-brand-tactical/10 border border-brand-tactical/10 rounded-[24px]">
+                    <div className="grid grid-cols-2 gap-3 md:gap-6 p-3 md:p-6 bg-brand-tactical/10 border border-brand-tactical/10 rounded-[24px]">
                       <div className="space-y-2">
                         <label className="text-[8px] font-black text-brand-tactical uppercase tracking-widest block mb-2 opacity-60 italic">Nome do Cliente</label>
                         <input type="text" className="w-full bg-theme-bg/50 border border-brand-tactical/20 p-4 text-[10px] text-theme-text font-black outline-none focus:border-brand-tactical rounded-xl uppercase placeholder:text-brand-tactical/30" value={formData.clientName} onChange={e => setFormData({ ...formData, clientName: e.target.value })} placeholder="NOME DO CLIENTE" />
@@ -736,7 +738,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
                         <input type="email" className="w-full bg-theme-bg/50 border border-brand-tactical/20 p-4 text-[10px] text-theme-text font-black outline-none focus:border-brand-tactical rounded-xl lowercase placeholder:text-brand-tactical/30" value={formData.clientEmail} onChange={e => setFormData({ ...formData, clientEmail: e.target.value })} placeholder="provisorio@gmail.com" />
                       </div>
                     </div>
-                    <div className="grid grid-cols-2 gap-6">
+                    <div className="grid grid-cols-2 gap-3 md:gap-6">
                       <div className="space-y-2">
                         <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest block mb-2 opacity-60 italic">Data</label>
                         <input type="datetime-local" required className="w-full bg-theme-bg-muted border border-theme-border p-4 text-[10px] text-theme-text font-black outline-none focus:border-brand-tactical rounded-xl" value={formData.date} onChange={e => setFormData({...formData, date: e.target.value})} />
@@ -751,7 +753,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
               )}
 
               {activeTab === 'equipe' && (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-10 animate-in fade-in duration-500">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-10 animate-in fade-in duration-500">
                   <div className="space-y-6">
                     <div className="space-y-2">
                       <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest block mb-2 opacity-60 italic">Unidade Fixa</label>
@@ -777,7 +779,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
                     </div>
                   </div>
                   <div className="space-y-6">
-                    <div className="grid grid-cols-2 gap-6">
+                    <div className="grid grid-cols-2 gap-3 md:gap-6">
                       <div className="space-y-2">
                         <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest block mb-2 opacity-60 italic">Captação</label>
                         <select value={formData.captacaoId} onChange={e => setFormData({...formData, captacaoId: e.target.value})} className="w-full bg-theme-bg-muted border border-theme-border p-4 text-[10px] text-theme-text font-black outline-none focus:border-brand-tactical rounded-xl appearance-none cursor-pointer">
@@ -813,9 +815,9 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
 
               {activeTab === 'comercial' && (
                 <div className="animate-in fade-in duration-500 space-y-10">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-10">
                     <div className="space-y-6">
-                      <div className="grid grid-cols-2 gap-6">
+                      <div className="grid grid-cols-2 gap-3 md:gap-6">
                         <div className="space-y-2">
                           <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest block mb-2 opacity-60 italic">Preço Álbum (R$)</label>
                           <input type="number" className="w-full bg-theme-bg-muted border border-theme-border p-4 text-[10px] text-theme-text font-black outline-none focus:border-brand-tactical rounded-xl" value={formData.priceBase} onChange={e => setFormData({ ...formData, priceBase: Number(e.target.value) })} />
@@ -834,7 +836,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
                               type="button"
                               onClick={handleSyncDrive}
                               disabled={isSyncing || !formData.driveUrl}
-                              className="px-6 bg-brand-tactical text-zinc-950 text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest rounded-xl hover:brightness-110 transition-all flex items-center gap-2 disabled:opacity-50"
+                              className="px-3 md:px-6 bg-brand-tactical text-zinc-950 text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest rounded-xl hover:brightness-110 transition-all flex items-center gap-2 disabled:opacity-50"
                             >
                               <RefreshCw size={14} className={isSyncing ? "animate-spin" : ""} />
                               {isSyncing ? "SYNC..." : "SINCRO DRIVE"}
@@ -862,7 +864,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
                           <button type="button" onClick={() => setFormData({ ...formData, type: 'SPORTS' })} className={`py-4 border text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest transition-all rounded-xl italic ${formData.type === 'SPORTS' ? 'bg-brand-tactical border-brand-tactical text-zinc-950 shadow-lg shadow-brand-tactical/20' : 'bg-theme-bg-muted border-theme-border text-theme-muted hover:border-theme-text'}`}>Esportes</button>
                         </div>
                         {formData.type === 'SCHOOL' && (
-                          <div className="p-6 bg-brand-tactical/10 border border-brand-tactical/20 rounded-[20px] space-y-4">
+                          <div className="p-3 md:p-6 bg-brand-tactical/10 border border-brand-tactical/20 rounded-[20px] space-y-4">
                             <label className="text-[8px] font-black text-brand-tactical uppercase tracking-widest block opacity-60 italic">Lista de Alunos (Nomes separados por vírgula ou linha)</label>
                             <textarea 
                               className="w-full bg-theme-bg-muted border border-brand-tactical/20 p-4 text-[10px] text-theme-text font-black outline-none focus:border-brand-tactical rounded-xl h-24 resize-none placeholder:text-brand-tactical/30" 
@@ -873,7 +875,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
                           </div>
                         )}
                         {formData.type === 'SPORTS' && (
-                          <div className="p-6 bg-brand-tactical/10 border border-brand-tactical/20 rounded-[20px] space-y-4 flex items-center justify-between">
+                          <div className="p-3 md:p-6 bg-brand-tactical/10 border border-brand-tactical/20 rounded-[20px] space-y-4 flex items-center justify-between">
                             <label className="text-[8px] font-black text-brand-tactical uppercase tracking-widest block opacity-60 italic">Habilitar Busca por Número de Peito (Bib)</label>
                             <label className="flex items-center gap-3 cursor-pointer group">
                               <div className={`w-5 h-5 rounded-md border flex items-center justify-center transition-all ${formData.verticalConfigs?.enableBibSearch !== false ? 'bg-brand-tactical border-brand-tactical' : 'bg-theme-bg-muted border-theme-border'}`}>
@@ -896,7 +898,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
                         </div>
                       </div>
                       {formData.isCrowdfund && (
-                        <div className="p-8 bg-brand-tactical/10 border border-brand-tactical/20 rounded-[30px] flex justify-between items-center shadow-inner">
+                        <div className="p-4 md:p-8 bg-brand-tactical/10 border border-brand-tactical/20 rounded-[30px] flex justify-between items-center shadow-inner">
                           <div className="space-y-2">
                             <label className="text-[8px] font-black text-brand-tactical uppercase tracking-widest block opacity-60 italic">Meta de Arrecadação</label>
                             <div className="flex items-center gap-2">
@@ -918,7 +920,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
               {activeTab === 'galeria' && (
                 <div className="animate-in fade-in duration-500 space-y-8">
                   <div className="flex items-center justify-between border-b border-theme-border pb-4">
-                    <div className="flex items-center gap-6">
+                    <div className="flex items-center gap-3 md:gap-6">
                       <h3 className="text-sm font-black uppercase tracking-widest text-theme-text italic">Fotos do Marketplace</h3>
                       {editingEvent && (
                         <button 
@@ -935,7 +937,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
                     <p className="text-[10px] text-theme-muted font-bold uppercase">{eventMedia.length} Itens</p>
                   </div>
 
-                  <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">
+                  <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-3 md:gap-6">
                     {eventMedia.map((m) => (
                       <div key={m.id} className="bg-theme-bg-muted border border-theme-border rounded-2xl overflow-hidden flex flex-col group shadow-sm">
                         <div className="aspect-square relative overflow-hidden bg-black">
@@ -991,7 +993,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
 
                   {/* Not-saved hint */}
                   {!editingEvent && (
-                    <div className="py-10 text-center border  border-theme-border rounded-2xl">
+                    <div className="py-5 md:py-10 text-center border  border-theme-border rounded-2xl">
                       <p className="text-[10px] text-theme-muted uppercase tracking-widest font-black">Salve o evento primeiro para adicionar referências.</p>
                     </div>
                   )}
@@ -999,7 +1001,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
                   {editingEvent && (
                     <>
                       {/* Upload controls */}
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-6">
                         {/* Image upload */}
                         <div className="space-y-3">
                           <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest block opacity-60 italic">Upload de Imagem</label>
@@ -1100,7 +1102,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
             </form>
 
             {/* Footer */}
-            <div className="p-8 md:p-10 bg-theme-bg-muted border-t border-theme-border flex gap-4 shrink-0 rounded-2xl">
+            <div className="p-4 md:p-8 md:p-10 bg-theme-bg-muted border-t border-theme-border flex gap-4 shrink-0 rounded-2xl">
               <button type="button" onClick={() => setIsModalOpen(false)} className="fs-btn flex-1 border border-theme-border text-theme-muted hover:text-white transition-all italic">Cancelar</button>
               {activeTab !== 'comercial' && activeTab !== 'referencias' ? (
                 <button
@@ -1137,7 +1139,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
           
           <div className="relative w-full max-w-2xl bg-theme-card border border-theme-border rounded-[40px] overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300 flex flex-col">
             {/* Header */}
-            <div className="p-8 md:p-10 border-b border-theme-border flex items-center justify-between shrink-0 bg-theme-bg-muted rounded-2xl">
+            <div className="p-4 md:p-8 md:p-10 border-b border-theme-border flex items-center justify-between shrink-0 bg-theme-bg-muted rounded-2xl">
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 bg-brand-tactical/10 rounded-2xl flex items-center justify-center border border-brand-tactical/20">
                   <QrCode className="text-brand-tactical" size={24} strokeWidth={1.5} />
@@ -1151,15 +1153,15 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
             </div>
 
             {/* Content */}
-            <div className="p-8 md:p-10 space-y-10">
+            <div className="p-4 md:p-8 md:p-10 space-y-10">
               <div className="text-center space-y-2">
                 <h3 className="text-xl font-black text-theme-text uppercase italic tracking-tight">{qrModalEvent.title}</h3>
                 <p className="text-[9px] text-theme-muted font-bold uppercase tracking-widest italic opacity-40">Distribuição de Acesso Omnichannel</p>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-10">
                 {/* QR Code de Venda (Álbum) */}
-                <div className="bg-theme-bg-muted p-8 rounded-[30px] border border-theme-border flex flex-col items-center gap-6 shadow-inner">
+                <div className="bg-theme-bg-muted p-4 md:p-8 rounded-[30px] border border-theme-border flex flex-col items-center gap-3 md:gap-6 shadow-inner">
                   <div className="text-center">
                     <h4 className="text-[10px] font-black text-theme-text uppercase tracking-widest italic">Vitrine Online</h4>
                     <p className="text-[8px] text-theme-muted uppercase tracking-widest mt-1 italic opacity-60">Para Compra de Fotos</p>
@@ -1176,7 +1178,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
                 </div>
 
                 {/* QR Code Phygital (Captura) */}
-                <div className="bg-brand-tactical/10 p-8 rounded-[30px] border border-brand-tactical/20 flex flex-col items-center gap-6 shadow-inner">
+                <div className="bg-brand-tactical/10 p-4 md:p-8 rounded-[30px] border border-brand-tactical/20 flex flex-col items-center gap-3 md:gap-6 shadow-inner">
                   <div className="text-center">
                     <h4 className="text-[10px] font-black text-brand-tactical uppercase tracking-widest italic">Captura Phygital</h4>
                     <p className="text-[8px] text-brand-tactical/60 uppercase tracking-widest mt-1 italic opacity-60">Para Convidados</p>
@@ -1195,7 +1197,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
             </div>
 
             {/* Footer */}
-            <div className="p-8 md:p-10 bg-theme-bg-muted border-t border-theme-border shrink-0 text-center rounded-2xl">
+            <div className="p-4 md:p-8 md:p-10 bg-theme-bg-muted border-t border-theme-border shrink-0 text-center rounded-2xl">
                <button 
                 onClick={() => { 
                   const url = `${window.location.origin}/captura?e=${qrModalEvent.id}`; 
@@ -1239,7 +1241,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
       )}
 
       {notification && (
-        <div className="fixed bottom-10 right-10 z-[100] p-6 border border-brand-tactical bg-theme-bg shadow-2xl min-w-[300px] animate-in slide-in-from-right-10 duration-500">
+        <div className="fixed bottom-10 right-10 z-[100] p-3 md:p-6 border border-brand-tactical bg-theme-bg shadow-2xl min-w-[300px] animate-in slide-in-from-right-10 duration-500">
           <div className="flex flex-col gap-1">
              <span className="text-[8px] font-black uppercase tracking-[0.4em] text-brand-tactical">Notificação</span>
              <p className="text-[11px] font-bold text-theme-text uppercase tracking-widest">{notification.message}</p>
@@ -1253,7 +1255,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
           
           <div className="relative w-full max-w-5xl bg-theme-card border border-theme-border rounded-[40px] overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300 flex flex-col h-[85vh]">
             {/* Header */}
-            <div className="p-8 md:p-10 border-b border-theme-border flex items-center justify-between shrink-0 bg-theme-bg-muted rounded-2xl">
+            <div className="p-4 md:p-8 md:p-10 border-b border-theme-border flex items-center justify-between shrink-0 bg-theme-bg-muted rounded-2xl">
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 bg-brand-tactical/10 rounded-2xl flex items-center justify-center border border-brand-tactical/20">
                   <Radar className="text-brand-tactical" size={24} />
@@ -1267,8 +1269,8 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
             </div>
 
             {/* Content */}
-            <form onSubmit={handleExpressSaleSubmit} className="flex-1 overflow-y-auto p-8 md:p-10 space-y-10 custom-scrollbar">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+            <form onSubmit={handleExpressSaleSubmit} className="flex-1 overflow-y-auto p-4 md:p-8 md:p-10 space-y-10 custom-scrollbar">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-6 md:gap-12">
                 <div className="space-y-8">
                   <div className="space-y-4">
                     <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest block mb-2 opacity-60 italic">Identificação do Cliente</label>
@@ -1327,7 +1329,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
                 </div>
 
                 <div className="space-y-8">
-                  <div className="grid grid-cols-2 gap-6">
+                  <div className="grid grid-cols-2 gap-3 md:gap-6">
                     <div className="space-y-4">
                       <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest block opacity-60 italic">Valor Transação</label>
                       <div className="relative">
@@ -1357,7 +1359,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
                     </div>
                   </div>
 
-                  <div className="bg-brand-tactical/10 border border-brand-tactical/20 p-8 rounded-[30px] shadow-inner text-center">
+                  <div className="bg-brand-tactical/10 border border-brand-tactical/20 p-4 md:p-8 rounded-[30px] shadow-inner text-center">
                     <p className="text-[9px] sm:text-[11px] font-black text-brand-tactical uppercase tracking-[0.2em] sm:tracking-[0.4em] italic truncate max-w-[80vw]">⚠ ESTA OPERAÇÃO É FINALIZADA EM TEMPO REAL. SE FOR DIGITAL (CARD/PIX), UM LINK DE CHECKOUT SERÁ GERADO AUTOMATICAMENTE.</p>
                   </div>
                 </div>
@@ -1365,7 +1367,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
             </form>
 
             {/* Footer */}
-            <div className="p-8 md:p-10 bg-theme-bg-muted border-t border-theme-border flex gap-4 shrink-0 rounded-2xl">
+            <div className="p-4 md:p-8 md:p-10 bg-theme-bg-muted border-t border-theme-border flex gap-4 shrink-0 rounded-2xl">
               <button type="button" onClick={() => setIsExpressModalOpen(false)} className="flex-1 py-5 border border-theme-border text-[11px] font-black uppercase tracking-[0.3em] text-theme-muted hover:text-white transition-all rounded-[20px] italic">Cancelar</button>
               <button 
                 type="submit" 
@@ -1388,7 +1390,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
           
           <div className="relative w-full max-w-md bg-theme-card border border-theme-border rounded-[40px] overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300 flex flex-col">
             {/* Header */}
-            <div className="p-8 md:p-10 border-b border-theme-border flex items-center justify-between shrink-0">
+            <div className="p-4 md:p-8 md:p-10 border-b border-theme-border flex items-center justify-between shrink-0">
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 bg-red-500/10 rounded-2xl flex items-center justify-center border border-red-500/20">
                   <Trash2 className="text-red-500" size={24} strokeWidth={1.5} />
@@ -1402,16 +1404,16 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
             </div>
 
             {/* Content */}
-            <div className="p-8 md:p-10 space-y-6">
+            <div className="p-4 md:p-8 md:p-10 space-y-6">
               <p className="text-[9px] sm:text-[11px] font-black text-brand-tactical uppercase tracking-[0.2em] sm:tracking-[0.4em] italic truncate max-w-[80vw]">VOCÊ ESTÁ PRESTES A EXCLUIR O EVENTO <span className="text-theme-text font-black underline decoration-red-500/50 decoration-4 underline-offset-4">{confirmDelete.title}</span>.</p>
               
-              <div className="bg-red-500/5 border border-red-500/20 p-6 rounded-[24px]">
+              <div className="bg-red-500/5 border border-red-500/20 p-3 md:p-6 rounded-[24px]">
                 <p className="text-[9px] sm:text-[11px] font-black text-brand-tactical uppercase tracking-[0.2em] sm:tracking-[0.4em] italic truncate max-w-[80vw]">⚠ SE HOUVER PEDIDOS APROVADOS, O EVENTO SERÁ APENAS DESATIVADO PARA PRESERVAÇÃO DE DADOS. CASO CONTRÁRIO, SERÁ REMOVIDO PERMANENTEMENTE DO CORE.</p>
               </div>
             </div>
 
             {/* Footer */}
-            <div className="p-8 md:p-10 bg-theme-bg-muted border-t border-theme-border flex gap-4 shrink-0 rounded-2xl">
+            <div className="p-4 md:p-8 md:p-10 bg-theme-bg-muted border-t border-theme-border flex gap-4 shrink-0 rounded-2xl">
               <button onClick={() => setConfirmDelete(null)} className="flex-1 py-5 border border-theme-border text-[11px] font-black uppercase tracking-[0.3em] text-theme-muted hover:text-white transition-all rounded-[20px] italic">Cancelar</button>
               <button 
                 onClick={() => handleDelete(confirmDelete.id)}

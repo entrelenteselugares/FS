@@ -16,6 +16,7 @@ interface EventEditPanelProps {
   onUpdated: (u: Partial<EventItem>) => void;
   onClose: () => void;
   onNotify?: (msg: string, type: "success" | "error") => void;
+  onOpenPrintKit?: () => void;
 }
 
 // Helper: extracts a short, readable domain label from a URL
@@ -64,10 +65,10 @@ interface VotingStatus {
   };
 }
 
-export function EventEditPanel({ event, onUpdated, onClose, onNotify }: EventEditPanelProps) {
+export function EventEditPanel({ event, onUpdated, onClose, onNotify, onOpenPrintKit }: EventEditPanelProps) {
   const { user } = useAuth();
   const isClient = user?.role === "CLIENTE";
-  const [activeTab, setActiveTab] = useState<"SETUP" | "DESIGNER" | "TEAM">("SETUP");
+  const [activeTab, setActiveTab] = useState<"SETUP" | "DESIGNER" | "TEAM" | "PRINT">("SETUP");
 
   // Setup state
   const [lrUrl, setLrUrl] = useState(event.lightroomUrl ?? "");
@@ -325,19 +326,19 @@ export function EventEditPanel({ event, onUpdated, onClose, onNotify }: EventEdi
 
         {/* ─── Tabs ─── */}
         <div className="flex gap-1 px-7 shrink-0">
-          {(["SETUP", "DESIGNER", "TEAM"] as const)
-            .filter(tab => !isClient || tab !== "TEAM")
+          {(["SETUP", "DESIGNER", "TEAM", "PRINT"] as const)
+            .filter(tab => !isClient || (tab !== "TEAM" && tab !== "PRINT"))
             .map((tab) => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
-                className={`flex-1 py-2.5 text-[10px] font-black uppercase tracking-widest rounded-xl transition-all ${
+                className={`flex-1 py-2.5 text-[9px] sm:text-[10px] font-black uppercase tracking-widest rounded-xl transition-all ${
                   activeTab === tab
                     ? "bg-brand-tactical text-black"
                     : "text-theme-muted hover:text-theme-text bg-theme-bg-muted"
                 }`}
               >
-                {tab === "SETUP" ? "📋 Setup" : tab === "DESIGNER" ? "🎨 Designer" : "👥 Equipe"}
+                {tab === "SETUP" ? "📋 Setup" : tab === "DESIGNER" ? "🎨 Designer" : tab === "TEAM" ? "👥 Equipe" : "🖨️ Imprimir"}
               </button>
             ))}
         </div>
@@ -985,6 +986,33 @@ export function EventEditPanel({ event, onUpdated, onClose, onNotify }: EventEdi
 
             </div>
           )}
+
+          {/* ══════════ PRINT TAB ══════════ */}
+          {activeTab === "PRINT" && (
+            <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-200">
+              <div className="p-6 bg-brand-tactical/10 border border-brand-tactical/20 rounded-3xl flex flex-col items-center text-center space-y-4">
+                <div className="w-16 h-16 bg-brand-tactical/20 rounded-full flex items-center justify-center">
+                  <Printer size={28} className="text-brand-tactical" />
+                </div>
+                <div>
+                  <h3 className="text-sm font-black uppercase tracking-widest text-brand-tactical italic mb-2">Kit de Impressão Phygital</h3>
+                  <p className="text-[10px] text-theme-muted leading-relaxed max-w-sm">
+                    Gere displays de mesa, cartões de visita e pôsteres com o QR Code do evento para engajar seus convidados.
+                  </p>
+                </div>
+                <button
+                  onClick={() => {
+                    onClose();
+                    if (onOpenPrintKit) onOpenPrintKit();
+                  }}
+                  className="w-full py-4 mt-2 bg-brand-tactical text-black text-[10px] font-black uppercase tracking-widest rounded-xl hover:brightness-110 transition-all italic flex items-center justify-center gap-2"
+                >
+                  <Printer size={16} /> Abrir Estúdio de Impressão
+                </button>
+              </div>
+            </div>
+          )}
+
         </div>
 
         {/* ─── Footer ─── */}

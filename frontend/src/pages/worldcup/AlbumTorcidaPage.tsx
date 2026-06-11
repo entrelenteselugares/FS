@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { API as api } from "../../lib/api";
 import { T } from "../../lib/theme";
 import { Trophy, Camera, Clock, ChevronRight, ChevronLeft, Star, Zap, Calendar, Share2, Users, Upload, Heart, Award, Target, Network } from "lucide-react";
@@ -213,7 +213,9 @@ const ALL_PAST_COPAS = [
 ];
 
 export const AlbumTorcidaPage = () => {
-  const [tab, setTab] = useState<Tab>("jogos");
+  const [searchParams, setSearchParams] = useSearchParams();
+  const tab = (searchParams.get("tab") as Tab) || "jogos";
+  const setTab = (newTab: Tab) => setSearchParams(prev => { prev.set("tab", newTab); return prev; }, { replace: true });
   const [matches, setMatches] = useState<{ id: string; group: string; teamA: string; teamB: string; matchDate: string }[]>([]);
   const countdown = useCountdown(BRASIL_GAME.utc);
   const [now] = useState(() => Date.now());

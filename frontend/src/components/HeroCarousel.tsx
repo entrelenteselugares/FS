@@ -6,16 +6,6 @@ import { Camera, QrCode, Ticket, Star, ChevronRight, ChevronLeft, Trophy } from 
 
 const FALLBACK_SLIDES = [
   {
-    id: "copa2026",
-    title: "COPA 2026",
-    subtitle: "Álbum da Torcida",
-    desc: "Colecione figurinhas exclusivas das suas fotos nos jogos do mundial e acompanhe o chaveamento em tempo real!",
-    primaryBtn: "ACESSAR ÁLBUM",
-    primaryAction: "/album-torcida",
-    icon: "trophy",
-    bgImage: "/copa_stadium_banner.png",
-  },
-  {
     id: "revelacao",
     title: "REVELAÇÃO",
     subtitle: "Premium",
@@ -97,15 +87,6 @@ export function HeroCarousel() {
   const [slides, setSlides] = useState<Slide[]>(FALLBACK_SLIDES);
 
   useEffect(() => {
-    const mergeCopaBanner = (dbBanners: Slide[]) => {
-      const copaBanner = FALLBACK_SLIDES.find(s => s.id === "copa2026");
-      if (!copaBanner) return dbBanners;
-      // If db banners already include a copa banner, don't duplicate
-      if (dbBanners.some(b => b.id === "copa2026" || b.title?.toUpperCase().includes("COPA"))) {
-        return dbBanners;
-      }
-      return [copaBanner, ...dbBanners];
-    };
 
     fetch("https://foto-segundo.vercel.app/api/public/banners")
       .then(res => {
@@ -114,7 +95,7 @@ export function HeroCarousel() {
       })
       .then(data => {
         if (data.banners && data.banners.length > 0) {
-          setSlides(mergeCopaBanner(data.banners));
+          setSlides(data.banners);
         }
       })
       .catch(() => {
@@ -126,7 +107,7 @@ export function HeroCarousel() {
           })
           .then(data => {
              if (data.banners && data.banners.length > 0) {
-               setSlides(mergeCopaBanner(data.banners));
+               setSlides(data.banners);
              }
           })
           .catch(e => console.error("[HeroCarousel] Fallback to default slides.", e.message));

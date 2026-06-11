@@ -114,14 +114,14 @@ export default function AdminInventory() {
       <div className="relative border-b border-theme-border pb-8 md:pb-12 space-y-4 md:space-y-6">
         <div className="absolute -top-10 -left-10 w-40 h-40 bg-brand-tactical/10 blur-3xl rounded-full" />
         
-        <div className="flex flex-col xl:flex-row justify-between items-start xl:items-end gap-6 relative z-10">
+        <div className="flex flex-col xl:flex-row justify-between items-start xl:items-end gap-3 md:gap-6 relative z-10">
           <div>
                         <p className="text-theme-muted mt-2 text-sm">Gestão de produtos e estoque</p>
           </div>
           <div className="flex flex-wrap items-center gap-4 w-full xl:w-auto">
             <button 
               onClick={() => setShowCreateModal(true)}
-              className="flex-1 md:flex-none px-8 py-4 bg-brand-tactical text-zinc-950 text-[10px] font-black uppercase tracking-[0.3em] hover:brightness-110 transition-all shadow-xl shadow-brand-tactical/10 flex items-center justify-center gap-3 italic whitespace-nowrap"
+              className="flex-1 md:flex-none px-4 md:px-8 py-4 bg-brand-tactical text-zinc-950 text-[10px] font-black uppercase tracking-[0.3em] hover:brightness-110 transition-all shadow-xl shadow-brand-tactical/10 flex items-center justify-center gap-3 italic whitespace-nowrap"
             >
               <Plus size={14} /> NOVO PRODUTO
             </button>
@@ -130,7 +130,7 @@ export default function AdminInventory() {
       </div>
 
       {/* Dynamic Filters */}
-      <div className="flex flex-col md:flex-row gap-6 items-center">
+      <div className="flex flex-col md:flex-row gap-3 md:gap-6 items-center">
          <div className="relative flex-1 group w-full">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-theme-muted group-focus-within:text-brand-tactical transition-colors" size={16} />
             <input 
@@ -157,7 +157,7 @@ export default function AdminInventory() {
       {/* Grid de Alertas */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {filteredProducts.filter(p => p.stockLevel < 10 && p.stockType !== 'FORNECEDOR').map(p => (
-          <div key={p.id} className="bg-red-500/5 border border-red-500/20 p-6 flex items-center gap-4 animate-pulse">
+          <div key={p.id} className="bg-red-500/5 border border-red-500/20 p-3 md:p-6 flex items-center gap-4 animate-pulse">
             <AlertCircle className="text-red-500" size={20} />
             <div>
               <p className="text-[9px] font-black text-red-500 uppercase tracking-widest">Crítico: {p.name}</p>
@@ -166,7 +166,7 @@ export default function AdminInventory() {
           </div>
         ))}
         {filteredProducts.filter(p => p.stockLevel < 10 && p.stockType !== 'FORNECEDOR').length === 0 && (
-          <div className="bg-emerald-500/5 border border-emerald-500/20 p-6 col-span-4 flex items-center gap-4">
+          <div className="bg-emerald-500/5 border border-emerald-500/20 p-3 md:p-6 col-span-4 flex items-center gap-4">
             <Package className="text-emerald-500" size={20} />
             <div>
               <p className="text-[9px] font-black text-emerald-500 uppercase tracking-widest">Status do Inventário</p>
@@ -181,10 +181,10 @@ export default function AdminInventory() {
         <table className="w-full text-left border-collapse">
           <thead>
             <tr className="bg-theme-bg-muted">
-              <th className="p-6 text-[10px] font-black text-theme-muted uppercase tracking-widest">Produto / SKU</th>
-              <th className="p-6 text-[10px] font-black text-theme-muted uppercase tracking-widest text-center">Modelo</th>
-              <th className="p-6 text-[10px] font-black text-theme-muted uppercase tracking-widest text-center">Estoque</th>
-              <th className="p-6 text-[10px] font-black text-theme-muted uppercase tracking-widest text-right">Ações</th>
+              <th className="p-3 md:p-6 text-[10px] font-black text-theme-muted uppercase tracking-widest">Produto / SKU</th>
+              <th className="p-3 md:p-6 text-[10px] font-black text-theme-muted uppercase tracking-widest text-center">Modelo</th>
+              <th className="p-3 md:p-6 text-[10px] font-black text-theme-muted uppercase tracking-widest text-center">Estoque</th>
+              <th className="p-3 md:p-6 text-[10px] font-black text-theme-muted uppercase tracking-widest text-right">Ações</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-theme-border">
@@ -194,7 +194,7 @@ export default function AdminInventory() {
               <tr><td colSpan={4} className="p-20 text-center text-theme-muted text-[10px] font-black uppercase tracking-widest">Nenhum produto encontrado.</td></tr>
             ) : filteredProducts.map(p => (
               <tr key={p.id} className="hover:bg-theme-bg-muted transition-all group">
-                <td className="p-6">
+                <td className="p-3 md:p-6">
                   <div className="flex flex-col">
                     <span className="text-sm font-black text-theme-text uppercase italic tracking-tight">{p.name}</span>
                     <div className="flex items-center gap-2 mt-1">
@@ -212,7 +212,7 @@ export default function AdminInventory() {
                     </div>
                   </div>
                 </td>
-                <td className="p-6 text-center">
+                <td className="p-3 md:p-6 text-center">
                   <span className={`text-[9px] font-black px-3 py-1 uppercase tracking-widest ${
                     p.stockType === 'PROPRIO' ? 'bg-theme-bg-muted text-theme-text border border-theme-border' :
                     p.stockType === 'FORNECEDOR' ? 'bg-amber-500/10 text-amber-500 border border-amber-500/20' :
@@ -221,7 +221,7 @@ export default function AdminInventory() {
                     {p.stockType === 'PROPRIO' ? 'Próprio' : p.stockType === 'FORNECEDOR' ? 'Fornecedor (Drop)' : 'Híbrido (Ambos)'}
                   </span>
                 </td>
-                <td className="p-6 text-center">
+                <td className="p-3 md:p-6 text-center">
                   {p.stockType === 'FORNECEDOR' ? (
                     <div className="text-sm font-black text-theme-muted uppercase italic">Sob Demanda</div>
                   ) : (
@@ -233,7 +233,7 @@ export default function AdminInventory() {
                     </>
                   )}
                 </td>
-                <td className="p-6 text-right">
+                <td className="p-3 md:p-6 text-right">
                   <button 
                     onClick={() => setShowAdjustModal(p)}
                     className="p-3 border border-theme-border text-brand-tactical hover:bg-brand-tactical/10 transition-all disabled:opacity-30 disabled:cursor-not-allowed"
@@ -256,7 +256,7 @@ export default function AdminInventory() {
           
           <div className="relative w-full max-w-2xl bg-theme-card border border-theme-border rounded-[40px] overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300 flex flex-col h-[85vh]">
             {/* Header */}
-            <div className="p-8 md:p-10 border-b border-theme-border flex items-center justify-between shrink-0">
+            <div className="p-4 md:p-8 md:p-10 border-b border-theme-border flex items-center justify-between shrink-0">
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 bg-brand-tactical/10 rounded-2xl flex items-center justify-center border border-brand-tactical/20">
                   <Target className="text-brand-tactical" size={24} />
@@ -270,8 +270,8 @@ export default function AdminInventory() {
             </div>
 
             {/* Content */}
-            <form id="new-inventory-form" onSubmit={(e) => { e.preventDefault(); handleCreate(); }} className="flex-1 overflow-y-auto p-8 md:p-10 space-y-8 custom-scrollbar">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <form id="new-inventory-form" onSubmit={(e) => { e.preventDefault(); handleCreate(); }} className="flex-1 overflow-y-auto p-4 md:p-8 md:p-10 space-y-8 custom-scrollbar">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-6">
                 <div className="space-y-2">
                   <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest block mb-2 opacity-60 italic">Nome do Produto</label>
                   <input 
@@ -296,7 +296,7 @@ export default function AdminInventory() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-6">
                 <div className="space-y-2">
                   <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest block mb-2 opacity-60 italic">Categoria</label>
                   <select 
@@ -337,7 +337,7 @@ export default function AdminInventory() {
             </form>
 
             {/* Footer */}
-            <div className="p-8 md:p-10 bg-theme-bg-muted border-t border-theme-border flex gap-4 shrink-0 rounded-2xl">
+            <div className="p-4 md:p-8 md:p-10 bg-theme-bg-muted border-t border-theme-border flex gap-4 shrink-0 rounded-2xl">
               <button onClick={() => setShowCreateModal(false)} className="flex-1 py-5 border border-theme-border text-[11px] font-black uppercase tracking-[0.3em] text-theme-muted hover:text-white transition-all rounded-[20px] italic">Cancelar</button>
               <button 
                 type="submit"
@@ -359,7 +359,7 @@ export default function AdminInventory() {
           
           <div className="relative w-full max-w-md bg-theme-card border border-theme-border rounded-[40px] overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300">
             {/* Header */}
-            <div className="p-8 md:p-10 border-b border-theme-border flex items-center justify-between shrink-0">
+            <div className="p-4 md:p-8 md:p-10 border-b border-theme-border flex items-center justify-between shrink-0">
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 bg-brand-tactical/10 rounded-2xl flex items-center justify-center border border-brand-tactical/20">
                   <Package className="text-brand-tactical" size={24} />
@@ -372,7 +372,7 @@ export default function AdminInventory() {
               <button onClick={() => setShowAdjustModal(null)} className="p-3 hover:bg-theme-bg-muted rounded-full transition-all text-theme-muted"><X size={24} /></button>
             </div>
 
-            <div className="p-8 md:p-10 space-y-8">
+            <div className="p-4 md:p-8 md:p-10 space-y-8">
               <div className="grid grid-cols-2 gap-3">
                 {(['PURCHASE', 'ADJUSTMENT'] as const).map(t => (
                   <button 
@@ -385,10 +385,10 @@ export default function AdminInventory() {
                 ))}
               </div>
 
-              <div className="bg-theme-bg-muted p-8 border border-theme-border text-center space-y-4 rounded-2xl">
+              <div className="bg-theme-bg-muted p-4 md:p-8 border border-theme-border text-center space-y-4 rounded-2xl">
                 <div className="flex items-center justify-between max-w-[200px] mx-auto">
                   <button onClick={() => setAdjustData({...adjustData, quantity: Math.max(1, adjustData.quantity - 1)})} className="text-theme-text text-3xl font-black w-12 h-12 bg-theme-bg-muted rounded-full hover:bg-white/10 transition-colors">-</button>
-                  <div className="text-4xl font-black text-theme-text italic">{adjustData.quantity}</div>
+                  <div className="text-2xl md:text-4xl font-black text-theme-text italic">{adjustData.quantity}</div>
                   <button onClick={() => setAdjustData({...adjustData, quantity: adjustData.quantity + 1})} className="text-theme-text text-3xl font-black w-12 h-12 bg-theme-bg-muted rounded-full hover:bg-white/10 transition-colors">+</button>
                 </div>
                 <p className="text-[9px] text-theme-muted font-black uppercase tracking-widest">Unidades para movimentar</p>
