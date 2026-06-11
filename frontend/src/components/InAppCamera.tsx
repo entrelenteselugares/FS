@@ -235,7 +235,7 @@ export function InAppCamera({ onCapture, onClose, onGalleryOpen, maxFiles = 12, 
         <div style={{ display: 'flex', gap: 12, marginTop: 8 }}>
           <button
             onClick={() => startStream(facing)}
-            style={{ background: '#10b981', color: 'black', border: 'none', padding: '12px 20px', fontWeight: 900, fontSize: 12, borderRadius: 12, cursor: 'pointer', textTransform: 'uppercase', letterSpacing: '0.1em' }}
+            style={{ background: '#85b9ac', color: 'black', border: 'none', padding: '12px 20px', fontWeight: 900, fontSize: 12, borderRadius: 12, cursor: 'pointer', textTransform: 'uppercase', letterSpacing: '0.1em' }}
           >
             Tentar Novamente
           </button>
@@ -283,7 +283,7 @@ export function InAppCamera({ onCapture, onClose, onGalleryOpen, maxFiles = 12, 
           <button
             onClick={confirmCapture}
             style={{
-              flex: 2, padding: '16px', background: '#10b981', border: 'none',
+              flex: 2, padding: '16px', background: '#85b9ac', border: 'none',
               borderRadius: 16, color: 'black', fontSize: 13, fontWeight: 900, textTransform: 'uppercase',
               letterSpacing: '0.1em', cursor: 'pointer'
             }}

@@ -30,7 +30,7 @@ export function WorldCupBracket() {
   }, []);
 
   if (loading) {
-    return <div style={{ textAlign: "center", padding: 40, color: "#10b981" }}>Carregando chaveamento...</div>;
+    return <div style={{ textAlign: "center", padding: 40, color: "#85b9ac" }}>Carregando chaveamento...</div>;
   }
 
   if (!bracket) {
@@ -41,12 +41,12 @@ export function WorldCupBracket() {
   const renderMatch = (m: BracketMatch) => {
     const isLive = m.status === "LIVE" || m.status === "HALF_TIME";
     const isFinished = m.status === "FINISHED";
-    const statusColor = isLive ? "#10b981" : isFinished ? "#9ca3af" : "#6b7280";
+    const statusColor = isLive ? "#85b9ac" : isFinished ? "#9ca3af" : "#6b7280";
     
     return (
       <div key={m.id} style={{
         background: "rgba(0,0,0,0.5)",
-        border: `1px solid ${isLive ? "rgba(16,185,129,0.5)" : "rgba(255,255,255,0.1)"}`,
+        border: `1px solid ${isLive ? "rgba(133,185,172,0.5)" : "rgba(255,255,255,0.1)"}`,
         borderRadius: 4,
         padding: "8px 12px",
         minWidth: 160,
@@ -57,7 +57,7 @@ export function WorldCupBracket() {
         position: "relative"
       }}>
         {isLive && (
-          <div style={{ position: "absolute", top: -4, right: -4, background: "#10b981", color: "black", fontSize: 8, fontWeight: 900, padding: "2px 4px", borderRadius: 2 }}>
+          <div style={{ position: "absolute", top: -4, right: -4, background: "#85b9ac", color: "black", fontSize: 8, fontWeight: 900, padding: "2px 4px", borderRadius: 2 }}>
             AO VIVO
           </div>
         )}
@@ -89,7 +89,7 @@ export function WorldCupBracket() {
 
   const renderColumn = (title: string, matches: BracketMatch[]) => (
     <div style={{ display: "flex", flexDirection: "column", gap: 16, flex: 1, minWidth: 180 }}>
-      <div style={{ textAlign: "center", fontSize: 11, color: "#10b981", fontWeight: 900, textTransform: "uppercase", marginBottom: 16, letterSpacing: "0.1em" }}>
+      <div style={{ textAlign: "center", fontSize: 11, color: "#85b9ac", fontWeight: 900, textTransform: "uppercase", marginBottom: 16, letterSpacing: "0.1em" }}>
         {title}
       </div>
       <div style={{ display: "flex", flexDirection: "column", gap: 16, flex: 1, justifyContent: "space-around" }}>

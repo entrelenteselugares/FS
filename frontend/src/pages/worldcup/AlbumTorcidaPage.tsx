@@ -112,7 +112,7 @@ function MatchCard({ f, highlight = false, now }: { f: typeof FIXTURES[0]; highl
         background: highlight
           ? "linear-gradient(135deg, rgba(6,79,58,0.8), rgba(5,46,32,0.9))"
           : "rgba(255,255,255,0.03)",
-        border: `1px solid ${highlight ? "rgba(16,185,129,0.5)" : "rgba(255,255,255,0.07)"}`,
+        border: `1px solid ${highlight ? "rgba(133,185,172,0.5)" : "rgba(255,255,255,0.07)"}`,
         padding: "14px 16px",
         borderRadius: 2,
         position: "relative",
@@ -122,7 +122,7 @@ function MatchCard({ f, highlight = false, now }: { f: typeof FIXTURES[0]; highl
       {highlight && (
         <div
           className="absolute top-0 left-0 right-0"
-          style={{ height: 2, background: "linear-gradient(90deg, #10b981, #85b9ac, #10b981)" }}
+          style={{ height: 2, background: "linear-gradient(90deg, #85b9ac, #85b9ac, #85b9ac)" }}
         />
       )}
 
@@ -172,7 +172,7 @@ const CountdownBox = ({ val, label }: { val: number; label: string }) => (
     <div
       style={{
         fontSize: "clamp(20px, 6vw, 28px)", fontWeight: 900, color: "white", fontFamily: T.fontD, fontStyle: "italic",
-        lineHeight: 1, background: "rgba(0,0,0,0.4)", border: "1px solid rgba(16,185,129,0.3)",
+        lineHeight: 1, background: "rgba(0,0,0,0.4)", border: "1px solid rgba(133,185,172,0.3)",
         padding: "6px 4px", marginBottom: 4,
       }}
     >
@@ -386,7 +386,7 @@ export const AlbumTorcidaPage = () => {
         }}
       >
         {/* BG circles */}
-        <div style={{ position: "absolute", top: -60, right: -60, width: 300, height: 300, borderRadius: "50%", background: "radial-gradient(circle, rgba(16,185,129,0.08), transparent)", pointerEvents: "none" }} />
+        <div style={{ position: "absolute", top: -60, right: -60, width: 300, height: 300, borderRadius: "50%", background: "radial-gradient(circle, rgba(133,185,172,0.08), transparent)", pointerEvents: "none" }} />
         <div style={{ position: "absolute", bottom: 0, left: -40, width: 200, height: 200, borderRadius: "50%", background: "radial-gradient(circle, rgba(251,191,36,0.05), transparent)", pointerEvents: "none" }} />
 
         <div style={{ maxWidth: 800, margin: "0 auto" }}>
@@ -407,7 +407,7 @@ export const AlbumTorcidaPage = () => {
               fontStyle: "italic",
               transition: "color 0.2s",
             }}
-            onMouseEnter={(e) => (e.currentTarget.style.color = "#10b981")}
+            onMouseEnter={(e) => (e.currentTarget.style.color = "#85b9ac")}
             onMouseLeave={(e) => (e.currentTarget.style.color = "rgba(255,255,255,0.6)")}
           >
             <ChevronLeft size={14} /> Voltar para a Home
@@ -429,7 +429,7 @@ export const AlbumTorcidaPage = () => {
             }}
           >
             Álbum<br />
-            <span style={{ color: "#10b981" }}>da Torcida</span>
+            <span style={{ color: "#85b9ac" }}>da Torcida</span>
           </h1>
           <p style={{ fontSize: 13, color: "#9ca3af", marginBottom: 32, maxWidth: 480, lineHeight: 1.6 }}>
             Registre cada jogo com 12 fotos, conquiste selos exclusivos e reviva a Copa do Mundo em imagens.
@@ -440,21 +440,21 @@ export const AlbumTorcidaPage = () => {
             <div
               className="w-full sm:w-auto"
               style={{
-                background: "rgba(0,0,0,0.5)", border: "1px solid rgba(16,185,129,0.3)",
+                background: "rgba(0,0,0,0.5)", border: "1px solid rgba(133,185,172,0.3)",
                 padding: "16px 16px", marginBottom: 32, display: "inline-block",
               }}
             >
-              <div style={{ fontSize: 9, color: "#10b981", fontWeight: 900, letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: 12, display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap" }}>
+              <div style={{ fontSize: 9, color: "#85b9ac", fontWeight: 900, letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: 12, display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap" }}>
                 <Zap size={10} className="shrink-0" />
                 <span className="truncate">🇧🇷 Brasil × Marrocos 🇲🇦 · 13/06 (Brasília)</span>
               </div>
               <div style={{ display: "flex", gap: "clamp(4px, 2vw, 8px)", alignItems: "center", justifyContent: "space-between" }}>
                 <CountdownBox val={countdown.d} label="dias" />
-                <span style={{ color: "#10b981", fontSize: "clamp(16px, 5vw, 20px)", fontWeight: 900, marginBottom: 18 }}>:</span>
+                <span style={{ color: "#85b9ac", fontSize: "clamp(16px, 5vw, 20px)", fontWeight: 900, marginBottom: 18 }}>:</span>
                 <CountdownBox val={countdown.h} label="horas" />
-                <span style={{ color: "#10b981", fontSize: "clamp(16px, 5vw, 20px)", fontWeight: 900, marginBottom: 18 }}>:</span>
+                <span style={{ color: "#85b9ac", fontSize: "clamp(16px, 5vw, 20px)", fontWeight: 900, marginBottom: 18 }}>:</span>
                 <CountdownBox val={countdown.m} label="min" />
-                <span style={{ color: "#10b981", fontSize: "clamp(16px, 5vw, 20px)", fontWeight: 900, marginBottom: 18 }}>:</span>
+                <span style={{ color: "#85b9ac", fontSize: "clamp(16px, 5vw, 20px)", fontWeight: 900, marginBottom: 18 }}>:</span>
                 <CountdownBox val={countdown.s} label="seg" />
               </div>
             </div>
@@ -471,11 +471,11 @@ export const AlbumTorcidaPage = () => {
                 <div
                   key={f.id}
                   style={{
-                    flex: "1 0 200px", minWidth: "200px", background: "rgba(0,0,0,0.4)", borderTop: "2px solid #10b981",
-                    padding: "12px 14px", borderRight: "1px solid rgba(16,185,129,0.1)",
+                    flex: "1 0 200px", minWidth: "200px", background: "rgba(0,0,0,0.4)", borderTop: "2px solid #85b9ac",
+                    padding: "12px 14px", borderRight: "1px solid rgba(133,185,172,0.1)",
                   }}
                 >
-                  <div style={{ fontSize: 8, color: "#10b981", fontWeight: 900, letterSpacing: "0.1em", marginBottom: 6, textTransform: "uppercase" }}>
+                  <div style={{ fontSize: 8, color: "#85b9ac", fontWeight: 900, letterSpacing: "0.1em", marginBottom: 6, textTransform: "uppercase" }}>
                     R{f.round} · Grp {f.group}
                   </div>
                   <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 4 }}>
@@ -495,7 +495,7 @@ export const AlbumTorcidaPage = () => {
       </div>
 
       {/* ── TABS ─────────────────────────────────────────────────────────────── */}
-      <div style={{ position: "sticky", top: 0, zIndex: 50, background: "#050e08", borderBottom: "1px solid rgba(16,185,129,0.2)" }}>
+      <div style={{ position: "sticky", top: 0, zIndex: 50, background: "#050e08", borderBottom: "1px solid rgba(133,185,172,0.2)" }}>
         <div style={{ maxWidth: 800, margin: "0 auto", display: "flex", overflowX: "auto", scrollbarWidth: "none", msOverflowStyle: "none", WebkitOverflowScrolling: "touch", overscrollBehaviorX: "contain" }}>
           {[
             { id: "jogos" as Tab, icon: <Clock size={12} />, label: "Jogos" },
@@ -513,8 +513,8 @@ export const AlbumTorcidaPage = () => {
               style={{
                 display: "flex", alignItems: "center", gap: 6,
                 padding: "14px 20px", background: "transparent", border: "none",
-                borderBottom: tab === t.id ? "2px solid #10b981" : "2px solid transparent",
-                color: tab === t.id ? "#10b981" : "#4b5563",
+                borderBottom: tab === t.id ? "2px solid #85b9ac" : "2px solid transparent",
+                color: tab === t.id ? "#85b9ac" : "#4b5563",
                 fontSize: 10, fontWeight: 900, letterSpacing: "0.1em", textTransform: "uppercase",
                 cursor: "pointer", fontStyle: "italic", transition: "all 0.2s",
                 flexShrink: 0,
@@ -536,7 +536,7 @@ export const AlbumTorcidaPage = () => {
             <div style={{ marginBottom: 32 }}>
               <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 16 }}>
                 <span style={{ fontSize: 20 }}>🇧🇷</span>
-                <span style={{ fontSize: 11, fontWeight: 900, color: "#10b981", letterSpacing: "0.12em", textTransform: "uppercase", fontStyle: "italic" }}>
+                <span style={{ fontSize: 11, fontWeight: 900, color: "#85b9ac", letterSpacing: "0.12em", textTransform: "uppercase", fontStyle: "italic" }}>
                   Jogos do Brasil
                 </span>
               </div>
@@ -590,7 +590,7 @@ export const AlbumTorcidaPage = () => {
                 </div>
                 <div style={{ textAlign: "right" }}>
                   <div style={{ fontSize: 9, color: "#6b7280", fontWeight: 700, letterSpacing: "0.1em", marginBottom: 8 }}>PONTUAÇÃO</div>
-                  <div style={{ fontSize: 10, color: "#10b981" }}>🎯 Placar exato: <strong>10pts + 20💎</strong></div>
+                  <div style={{ fontSize: 10, color: "#85b9ac" }}>🎯 Placar exato: <strong>10pts + 20💎</strong></div>
                   <div style={{ fontSize: 10, color: "#60a5fa", marginTop: 2 }}>✓ Resultado certo: <strong>3pts + 6💎</strong></div>
                   <div style={{ fontSize: 10, color: "#6b7280", marginTop: 2 }}>Participou: 1pt + 2💎</div>
                 </div>
@@ -611,7 +611,7 @@ export const AlbumTorcidaPage = () => {
 
                       return (
                         <div key={f.id} style={{
-                          border: `1px solid ${isBrasil ? "rgba(16,185,129,0.4)" : "rgba(255,255,255,0.08)"}`,
+                          border: `1px solid ${isBrasil ? "rgba(133,185,172,0.4)" : "rgba(255,255,255,0.08)"}`,
                           borderRadius: 4, overflow: "hidden",
                           opacity: isPast && !myBet ? 0.5 : 1
                         }}>
@@ -643,7 +643,7 @@ export const AlbumTorcidaPage = () => {
                               <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
                                 <span style={{ fontSize: 11, color: "#9ca3af" }}>Seu palpite: <strong style={{ color: "white" }}>{myBet.homeScore} × {myBet.awayScore}</strong></span>
                                 {myBet.pointsAwarded > 0
-                                  ? <span style={{ fontSize: 10, color: "#10b981", fontWeight: 900 }}>+{myBet.pointsAwarded}pts · +{myBet.creditsAwarded}💎</span>
+                                  ? <span style={{ fontSize: 10, color: "#85b9ac", fontWeight: 900 }}>+{myBet.pointsAwarded}pts · +{myBet.creditsAwarded}💎</span>
                                   : <span style={{ fontSize: 10, color: "#ef4444" }}>Errou 😅</span>
                                 }
                               </div>
@@ -671,7 +671,7 @@ export const AlbumTorcidaPage = () => {
                                   onClick={() => handlePlaceBet(f.id, bets[f.id]?.homeScore ?? 0, bets[f.id]?.awayScore ?? 0)}
                                   disabled={isSubmittingBet || bets[f.id] === undefined}
                                   style={{
-                                    padding: "5px 12px", background: myBet ? "#065f46" : "#10b981", color: myBet ? "#85b9ac" : "black",
+                                    padding: "5px 12px", background: myBet ? "#065f46" : "#85b9ac", color: myBet ? "#85b9ac" : "black",
                                     fontSize: 10, fontWeight: 900, borderRadius: 4, border: myBet ? "1px solid #85b9ac" : "none",
                                     textTransform: "uppercase", cursor: "pointer", opacity: isSubmittingBet ? 0.5 : 1
                                   }}
@@ -702,7 +702,7 @@ export const AlbumTorcidaPage = () => {
                   padding: "16px",
                 }}
               >
-                <div style={{ fontSize: 9, color: "#10b981", fontWeight: 900, letterSpacing: "0.15em", marginBottom: 12, textTransform: "uppercase" }}>
+                <div style={{ fontSize: 9, color: "#85b9ac", fontWeight: 900, letterSpacing: "0.15em", marginBottom: 12, textTransform: "uppercase" }}>
                   Grupo {g.id}
                 </div>
                 <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
@@ -710,7 +710,7 @@ export const AlbumTorcidaPage = () => {
                     <div key={t.code} style={{ display: "flex", alignItems: "center", gap: 8 }}>
                       {flag(t.code, 18)}
                       <span style={{
-                        fontSize: 11, color: t.code === "br" ? "#10b981" : "white",
+                        fontSize: 11, color: t.code === "br" ? "#85b9ac" : "white",
                         fontWeight: t.code === "br" ? 900 : 400, fontStyle: t.code === "br" ? "italic" : "normal",
                       }}>
                         {t.name}
@@ -729,7 +729,7 @@ export const AlbumTorcidaPage = () => {
           <div>
             <div style={{ marginBottom: 24 }}>
               <p style={{ fontSize: 13, color: "#6b7280", lineHeight: 1.7 }}>
-                A cada jogo que você assistir, abra a folha do álbum e registre com até <strong style={{ color: "#10b981" }}>12 fotos</strong>: o local, o cardápio, a galera, selfies e os melhores momentos.
+                A cada jogo que você assistir, abra a folha do álbum e registre com até <strong style={{ color: "#85b9ac" }}>12 fotos</strong>: o local, o cardápio, a galera, selfies e os melhores momentos.
               </p>
             </div>
 
@@ -742,7 +742,7 @@ export const AlbumTorcidaPage = () => {
                   const opponent = isBrasilHome ? f.away : f.home;
                   const oppCode = isBrasilHome ? f.aCode : f.hCode;
                   return (
-                    <div key={f.id} style={{ border: "1px solid rgba(16,185,129,0.3)" }}>
+                    <div key={f.id} style={{ border: "1px solid rgba(133,185,172,0.3)" }}>
                       {/* Header do jogo */}
                       <div
                         style={{
@@ -767,8 +767,8 @@ export const AlbumTorcidaPage = () => {
                           </div>
                         </div>
                         <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 4 }}>
-                          <Camera size={20} color="#10b981" />
-                          <span style={{ fontSize: 8, color: "#10b981", fontWeight: 900, letterSpacing: "0.1em", textTransform: "uppercase" }}>
+                          <Camera size={20} color="#85b9ac" />
+                          <span style={{ fontSize: 8, color: "#85b9ac", fontWeight: 900, letterSpacing: "0.1em", textTransform: "uppercase" }}>
                             12 fotos
                           </span>
                         </div>
@@ -776,13 +776,13 @@ export const AlbumTorcidaPage = () => {
 
                       {/* Palpite / Bolão */}
                       <div style={{
-                        background: "rgba(0,0,0,0.3)", borderTop: "1px solid rgba(16,185,129,0.1)",
+                        background: "rgba(0,0,0,0.3)", borderTop: "1px solid rgba(133,185,172,0.1)",
                         padding: "12px 24px", display: "flex", alignItems: "center", justifyContent: "space-between"
                       }}>
                         <div style={{ fontSize: 11, color: "#9ca3af", fontWeight: 600 }}>SEU PALPITE:</div>
                         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
                           <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                            <span style={{ fontSize: 12, fontWeight: 700, color: isBrasilHome ? "#10b981" : "white" }}>Brasil</span>
+                            <span style={{ fontSize: 12, fontWeight: 700, color: isBrasilHome ? "#85b9ac" : "white" }}>Brasil</span>
                             <input
                               type="number"
                               min="0" max="20"
@@ -806,13 +806,13 @@ export const AlbumTorcidaPage = () => {
                               }}
                               style={{ width: 40, height: 32, background: "rgba(255,255,255,0.1)", border: "1px solid rgba(255,255,255,0.2)", borderRadius: 4, color: "white", textAlign: "center", fontWeight: "bold" }}
                             />
-                            <span style={{ fontSize: 12, fontWeight: 700, color: !isBrasilHome ? "#10b981" : "white" }}>{opponent}</span>
+                            <span style={{ fontSize: 12, fontWeight: 700, color: !isBrasilHome ? "#85b9ac" : "white" }}>{opponent}</span>
                           </div>
                           <button
                             onClick={() => handlePlaceBet(f.id, bets[f.id]?.homeScore ?? 0, bets[f.id]?.awayScore ?? 0)}
                             disabled={isSubmittingBet}
                             style={{
-                              marginLeft: 16, padding: "6px 12px", background: "#10b981", color: "black", fontSize: 11, fontWeight: 900,
+                              marginLeft: 16, padding: "6px 12px", background: "#85b9ac", color: "black", fontSize: 11, fontWeight: 900,
                               borderRadius: 4, textTransform: "uppercase", cursor: "pointer", opacity: isSubmittingBet ? 0.5 : 1,
                               border: "none"
                             }}
@@ -825,8 +825,8 @@ export const AlbumTorcidaPage = () => {
                   );
                 })}
 
-                <div style={{ marginTop: 24, padding: "20px", background: "rgba(16,185,129,0.05)", border: "1px dashed rgba(16,185,129,0.2)", textAlign: "center" }}>
-                  <Trophy size={32} color="#10b98130" style={{ margin: "0 auto 12px" }} />
+                <div style={{ marginTop: 24, padding: "20px", background: "rgba(133,185,172,0.05)", border: "1px dashed rgba(133,185,172,0.2)", textAlign: "center" }}>
+                  <Trophy size={32} color="#85b9ac30" style={{ margin: "0 auto 12px" }} />
                   <p style={{ fontSize: 12, color: "#4b5563", lineHeight: 1.7 }}>
                     As folhas de álbum serão ativadas pelo administrador antes de cada jogo.<br />
                     Assim que a Copa começar, você poderá preencher os 12 slots aqui.
@@ -844,7 +844,7 @@ export const AlbumTorcidaPage = () => {
                       background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.07)",
                       padding: "18px 20px", textDecoration: "none", color: "inherit",
                     }}
-                    onMouseEnter={(e) => (e.currentTarget.style.borderColor = "rgba(16,185,129,0.4)")}
+                    onMouseEnter={(e) => (e.currentTarget.style.borderColor = "rgba(133,185,172,0.4)")}
                     onMouseLeave={(e) => (e.currentTarget.style.borderColor = "rgba(255,255,255,0.07)")}
                   >
                     <div>
@@ -856,8 +856,8 @@ export const AlbumTorcidaPage = () => {
                       </div>
                     </div>
                     <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                      <span style={{ fontSize: 10, color: "#10b981", fontWeight: 700 }}>Abrir</span>
-                      <ChevronRight size={14} color="#10b981" />
+                      <span style={{ fontSize: 10, color: "#85b9ac", fontWeight: 700 }}>Abrir</span>
+                      <ChevronRight size={14} color="#85b9ac" />
                     </div>
                   </Link>
                 ))}
@@ -908,11 +908,11 @@ export const AlbumTorcidaPage = () => {
 
             {loadingRanking ? (
               <div style={{ display: "flex", justifyContent: "center", padding: "40px 0" }}>
-                <div style={{ width: 32, height: 32, border: "4px solid #10b981", borderTopColor: "transparent", borderRadius: "50%" }} className="animate-spin" />
+                <div style={{ width: 32, height: 32, border: "4px solid #85b9ac", borderTopColor: "transparent", borderRadius: "50%" }} className="animate-spin" />
               </div>
             ) : leaderboard.length === 0 ? (
-              <div style={{ textAlign: "center", padding: "40px 20px", background: "rgba(255,255,255,0.01)", border: "1px dashed rgba(16,185,129,0.15)" }}>
-                <Trophy size={32} color="#10b981" style={{ margin: "0 auto 12px", opacity: 0.3 }} />
+              <div style={{ textAlign: "center", padding: "40px 20px", background: "rgba(255,255,255,0.01)", border: "1px dashed rgba(133,185,172,0.15)" }}>
+                <Trophy size={32} color="#85b9ac" style={{ margin: "0 auto 12px", opacity: 0.3 }} />
                 <p style={{ fontSize: 12, color: "#9ca3af", margin: 0, fontWeight: 900, textTransform: "uppercase" }}>
                   A classificação começará assim que as fotos forem enviadas.
                 </p>
@@ -1036,7 +1036,7 @@ export const AlbumTorcidaPage = () => {
                           {item.nome}
                         </span>
                       </div>
-                      <span style={{ fontSize: 11, color: "#10b981", fontWeight: 700, textAlign: "center" }}>
+                      <span style={{ fontSize: 11, color: "#85b9ac", fontWeight: 700, textAlign: "center" }}>
                         {item.filledSlotsCount} / 12
                       </span>
                       <span style={{ fontSize: 11, color: "#fbbf24", fontWeight: 700, textAlign: "center" }}>
@@ -1060,7 +1060,7 @@ export const AlbumTorcidaPage = () => {
             <div
               style={{
                 background: "linear-gradient(135deg, rgba(6,79,58,0.4), rgba(5,46,32,0.6))",
-                border: "1px solid rgba(16,185,129,0.3)",
+                border: "1px solid rgba(133,185,172,0.3)",
                 padding: "24px", borderRadius: 4, marginBottom: 32,
                 display: "flex", flexDirection: "column", gap: 16
               }}
@@ -1078,7 +1078,7 @@ export const AlbumTorcidaPage = () => {
                   id="btn-convidar-amigos"
                   onClick={() => setShowInviteModal(true)}
                   style={{
-                    background: "#10b981", color: "black", border: "none", padding: "12px 20px",
+                    background: "#85b9ac", color: "black", border: "none", padding: "12px 20px",
                     fontSize: 11, fontWeight: 900, textTransform: "uppercase", letterSpacing: "0.1em",
                     cursor: "pointer", display: "flex", alignItems: "center", gap: 8, fontStyle: "italic"
                   }}
@@ -1095,9 +1095,9 @@ export const AlbumTorcidaPage = () => {
                   key={c.year}
                   onClick={() => setNostalgiaYear(c.year)}
                   style={{
-                    background: nostalgiaYear === c.year ? "#10b981" : "rgba(255,255,255,0.03)",
+                    background: nostalgiaYear === c.year ? "#85b9ac" : "rgba(255,255,255,0.03)",
                     color: nostalgiaYear === c.year ? "black" : "#9ca3af",
-                    border: nostalgiaYear === c.year ? "1px solid #10b981" : "1px solid rgba(255,255,255,0.08)",
+                    border: nostalgiaYear === c.year ? "1px solid #85b9ac" : "1px solid rgba(255,255,255,0.08)",
                     padding: "8px 16px", borderRadius: 20, fontSize: 11, fontWeight: 900,
                     cursor: "pointer", transition: "all 0.2s", whiteSpace: "nowrap"
                   }}
@@ -1124,7 +1124,7 @@ export const AlbumTorcidaPage = () => {
                     key={slot.id}
                     style={{
                       background: "rgba(255,255,255,0.02)",
-                      border: "2px dashed rgba(16,185,129,0.2)",
+                      border: "2px dashed rgba(133,185,172,0.2)",
                       padding: "16px", textAlign: "center", borderRadius: 4,
                       position: "relative", minHeight: 200, display: "flex", flexDirection: "column",
                       justifyContent: "center", alignItems: "center"
@@ -1151,7 +1151,7 @@ export const AlbumTorcidaPage = () => {
                         <button
                           onClick={() => document.getElementById(inputId)?.click()}
                           style={{
-                            background: "rgba(16,185,129,0.1)", color: "#10b981", border: "1px solid rgba(16,185,129,0.3)",
+                            background: "rgba(133,185,172,0.1)", color: "#85b9ac", border: "1px solid rgba(133,185,172,0.3)",
                             padding: "4px 8px", fontSize: 9, fontWeight: 900, cursor: "pointer"
                           }}
                         >
@@ -1160,13 +1160,13 @@ export const AlbumTorcidaPage = () => {
                       </div>
                     ) : (
                       <>
-                        <Upload size={24} color="#10b981" style={{ opacity: 0.5, marginBottom: 12 }} />
+                        <Upload size={24} color="#85b9ac" style={{ opacity: 0.5, marginBottom: 12 }} />
                         <h4 style={{ fontSize: 12, fontWeight: 900, color: "white", margin: "0 0 4px" }}>{slot.label}</h4>
                         <p style={{ fontSize: 9, color: "#6b7280", margin: "0 0 16px", maxWidth: 130 }}>{slot.desc}</p>
                         <button
                           onClick={() => document.getElementById(inputId)?.click()}
                           style={{
-                            background: "rgba(16,185,129,0.15)", color: "#10b981", border: "1px solid rgba(16,185,129,0.3)",
+                            background: "rgba(133,185,172,0.15)", color: "#85b9ac", border: "1px solid rgba(133,185,172,0.3)",
                             padding: "6px 12px", fontSize: 9, fontWeight: 900, textTransform: "uppercase",
                             cursor: "pointer"
                           }}
@@ -1183,12 +1183,12 @@ export const AlbumTorcidaPage = () => {
             {/* Community Feed / Mural */}
             <div style={{ marginTop: 48, borderTop: "1px solid rgba(255,255,255,0.06)", paddingTop: 32 }}>
               <h3 style={{ fontSize: 14, fontWeight: 900, color: "white", fontStyle: "italic", textTransform: "uppercase", marginBottom: 20, display: "flex", alignItems: "center", gap: 8 }}>
-                <Users size={16} color="#10b981" /> Mural Nostálgico da Galera
+                <Users size={16} color="#85b9ac" /> Mural Nostálgico da Galera
               </h3>
               <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))", gap: 16 }}>
                 {muralPosts.length === 0 ? (
-                  <div style={{ gridColumn: "1 / -1", textAlign: "center", padding: "40px 20px", background: "rgba(255,255,255,0.01)", border: "1px dashed rgba(16,185,129,0.15)" }}>
-                    <Users size={32} color="#10b981" style={{ margin: "0 auto 12px", opacity: 0.3 }} />
+                  <div style={{ gridColumn: "1 / -1", textAlign: "center", padding: "40px 20px", background: "rgba(255,255,255,0.01)", border: "1px dashed rgba(133,185,172,0.15)" }}>
+                    <Users size={32} color="#85b9ac" style={{ margin: "0 auto 12px", opacity: 0.3 }} />
                     <p style={{ fontSize: 12, color: "#9ca3af", margin: 0, fontWeight: 900, textTransform: "uppercase", letterSpacing: "0.05em" }}>
                       Nenhum momento compartilhado no mural ainda para esta Copa.
                     </p>
@@ -1210,7 +1210,7 @@ export const AlbumTorcidaPage = () => {
                           <strong style={{ fontSize: 12, color: "white" }}>{post.userName}</strong>
                           <span style={{ fontSize: 9, color: "#6b7280", marginLeft: 6 }}>Copa {post.year}</span>
                         </div>
-                        <span style={{ fontSize: 8, background: "rgba(16,185,129,0.1)", color: "#10b981", padding: "2px 6px", fontWeight: 900, textTransform: "uppercase" }}>
+                        <span style={{ fontSize: 8, background: "rgba(133,185,172,0.1)", color: "#85b9ac", padding: "2px 6px", fontWeight: 900, textTransform: "uppercase" }}>
                           {post.tag}
                         </span>
                       </div>
@@ -1251,7 +1251,7 @@ export const AlbumTorcidaPage = () => {
               >
                 <div
                   style={{
-                    background: "#050e08", border: "1px solid rgba(16,185,129,0.3)",
+                    background: "#050e08", border: "1px solid rgba(133,185,172,0.3)",
                     padding: "32px", maxWidth: 450, width: "100%", position: "relative"
                   }}
                 >
@@ -1266,14 +1266,14 @@ export const AlbumTorcidaPage = () => {
                       readOnly
                       value={`${window.location.origin}/album-torcida/nostalgia?user=Renata&copa=${nostalgiaYear}`}
                       style={{
-                        flex: 1, background: "rgba(0,0,0,0.3)", border: "1px solid rgba(16,185,129,0.2)",
-                        padding: "10px 12px", fontSize: 10, color: "#10b981", outline: "none"
+                        flex: 1, background: "rgba(0,0,0,0.3)", border: "1px solid rgba(133,185,172,0.2)",
+                        padding: "10px 12px", fontSize: 10, color: "#85b9ac", outline: "none"
                       }}
                     />
                     <button
                       onClick={copyInviteLink}
                       style={{
-                        background: "#10b981", color: "black", border: "none", padding: "10px 16px",
+                        background: "#85b9ac", color: "black", border: "none", padding: "10px 16px",
                         fontSize: 10, fontWeight: 900, cursor: "pointer"
                       }}
                     >
@@ -1284,7 +1284,7 @@ export const AlbumTorcidaPage = () => {
                     <button
                       onClick={() => window.open(`https://api.whatsapp.com/send?text=Confira meu álbum nostálgico das Copas passadas e adicione suas fotos também! ${encodeURIComponent(`${window.location.origin}/album-torcida/nostalgia?user=Renata&copa=${nostalgiaYear}`)}`, "_blank")}
                       style={{
-                        background: "rgba(16,185,129,0.15)", color: "#10b981", border: "1px solid rgba(16,185,129,0.3)",
+                        background: "rgba(133,185,172,0.15)", color: "#85b9ac", border: "1px solid rgba(133,185,172,0.3)",
                         padding: "10px 16px", fontSize: 10, fontWeight: 900, cursor: "pointer", textTransform: "uppercase"
                       }}
                     >

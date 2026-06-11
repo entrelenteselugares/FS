@@ -24,7 +24,7 @@ export const QuoteMobileView = (props: any) => {
   const THEME = {
     bg: "#09090b", // zinc-950
     card: "#18181b", // zinc-900
-    accent: "#10b981", // emerald-500
+    accent: "#85b9ac", // emerald-500
     text: "#fafafa",
     textMuted: "#a1a1aa"
   };

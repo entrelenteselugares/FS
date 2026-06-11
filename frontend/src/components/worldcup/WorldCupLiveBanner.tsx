@@ -180,7 +180,7 @@ export const WorldCupLiveBanner = ({ alwaysShow = false }: { alwaysShow?: boolea
       className="block w-full hover:brightness-110 transition-all"
       style={{
         background: "linear-gradient(90deg, #022c22 0%, #065f46 35%, #064e3b 65%, #022c22 100%)",
-        borderBottom: "1px solid rgba(16,185,129,0.4)",
+        borderBottom: "1px solid rgba(133,185,172,0.4)",
         textDecoration: "none",
       }}
     >
@@ -253,7 +253,7 @@ export const WorldCupLiveBanner = ({ alwaysShow = false }: { alwaysShow?: boolea
 
         {/* RIGHT — Pagination dots + CTA */}
         <div className="flex items-center gap-2 shrink-0">
-          <span style={{ fontSize: 7.5, color: "#10b981", fontWeight: 900, letterSpacing: "0.08em", whiteSpace: "nowrap" }}>
+          <span style={{ fontSize: 7.5, color: "#85b9ac", fontWeight: 900, letterSpacing: "0.08em", whiteSpace: "nowrap" }}>
             Ver Álbum →
           </span>
           <div className="flex gap-1">
@@ -264,8 +264,8 @@ export const WorldCupLiveBanner = ({ alwaysShow = false }: { alwaysShow?: boolea
                 onClick={(e) => { e.preventDefault(); setActive(i); }}
                 style={{
                   width: i === active ? 14 : 4, height: 4,
-                  background: i === active ? "#10b981" : "#064e3b",
-                  border: "1px solid #10b981",
+                  background: i === active ? "#85b9ac" : "#064e3b",
+                  border: "1px solid #85b9ac",
                   borderRadius: 2, cursor: "pointer",
                   transition: "width 0.2s ease",
                 }}

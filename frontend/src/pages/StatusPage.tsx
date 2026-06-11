@@ -67,7 +67,7 @@ export function StatusPage() {
                   <span className="font-bold text-theme-text">{comp.name}</span>
                 </div>
                 <div className="flex items-center gap-2 px-4 py-2 bg-theme-bg border border-theme-border rounded-full w-full sm:w-auto justify-center">
-                  <span className={`w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.8)] animate-pulse`} />
+                  <span className={`w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(133,185,172,0.8)] animate-pulse`} />
                   <span className="text-xs font-bold uppercase tracking-widest text-emerald-500">{comp.status}</span>
                 </div>
               </div>

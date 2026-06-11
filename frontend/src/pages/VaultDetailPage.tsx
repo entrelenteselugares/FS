@@ -700,7 +700,7 @@ export default function VaultDetailPage() {
               <div className="mb-8 hidden">
                 <div className="bg-gradient-to-r from-emerald-600/20 to-teal-600/20 border border-emerald-500/30 rounded-2xl p-4 md:p-8 md:p-10 flex flex-col md:flex-row items-center justify-between gap-4 md:gap-8 backdrop-blur-md">
                   <div className="flex items-center gap-3 md:gap-6">
-                    <div className="w-14 h-14 bg-brand-tactical rounded-full flex items-center justify-center shadow-[0_0_20px_rgba(16,185,129,0.4)]">
+                    <div className="w-14 h-14 bg-brand-tactical rounded-full flex items-center justify-center shadow-[0_0_20px_rgba(133,185,172,0.4)]">
                       <Printer className="text-black" size={24} />
                     </div>
                     <div>
@@ -760,7 +760,7 @@ export default function VaultDetailPage() {
 
         {media.length === 0 && !uploading ? (
           <div className="py-32 flex flex-col items-center justify-center text-center px-3 md:px-6">
-            <label className="w-20 h-20 bg-emerald-500/5 hover:bg-emerald-500/10 rounded-full flex items-center justify-center mb-6 border border-emerald-500/10 hover:border-emerald-500/30 transition-all cursor-pointer shadow-[0_0_15px_rgba(16,185,129,0.1)] hover:shadow-[0_0_25px_rgba(16,185,129,0.2)]">
+            <label className="w-20 h-20 bg-emerald-500/5 hover:bg-emerald-500/10 rounded-full flex items-center justify-center mb-6 border border-emerald-500/10 hover:border-emerald-500/30 transition-all cursor-pointer shadow-[0_0_15px_rgba(133,185,172,0.1)] hover:shadow-[0_0_25px_rgba(133,185,172,0.2)]">
               <Camera size={32} className="text-brand-tactical/50" />
               <input type="file" className="hidden" onChange={handleFileUpload} accept={vault.subscriptionStatus === "ACTIVE" ? "image/*,video/mp4,video/quicktime,video/webm" : "image/*"} multiple />
             </label>

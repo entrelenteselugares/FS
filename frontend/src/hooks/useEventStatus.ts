@@ -139,8 +139,8 @@ export function useEventStatus(
       },
       live: {
         bg: "bg-emerald-500",
-        color: "#10b981",
-        glow: "shadow-[0_0_15px_rgba(16,185,129,0.7)]",
+        color: "#85b9ac",
+        glow: "shadow-[0_0_15px_rgba(133,185,172,0.7)]",
         label: "Ao Vivo",
         pulse: true,
         printQueueOpen: true,

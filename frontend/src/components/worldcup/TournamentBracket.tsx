@@ -24,7 +24,7 @@ const MatchCard = ({ match, size = "sm" }: { match: BracketMatch; size?: "sm" | 
         background: isLive
           ? "linear-gradient(135deg, #064e3b, #065f46)"
           : "rgba(255,255,255,0.05)",
-        borderColor: isLive ? "#10b981" : "rgba(255,255,255,0.1)",
+        borderColor: isLive ? "#85b9ac" : "rgba(255,255,255,0.1)",
         padding: size === "lg" ? "10px 14px" : "6px 10px",
         minWidth: size === "lg" ? 160 : 120,
       }}
@@ -92,7 +92,7 @@ const RoundColumn = ({
   <div className="flex flex-col gap-3 items-center">
     <div
       className="text-center mb-2 uppercase font-bold tracking-widest"
-      style={{ fontSize: 9, color: "#10b981" }}
+      style={{ fontSize: 9, color: "#85b9ac" }}
     >
       {title}
     </div>

@@ -37,7 +37,7 @@ export const AlbumTorcidaPromoBanner = () => {
       className="block w-full hover:brightness-110 transition-all"
       style={{
         background: "linear-gradient(90deg, #022c22 0%, #065f46 35%, #064e3b 65%, #022c22 100%)",
-        borderBottom: "1px solid rgba(16,185,129,0.4)",
+        borderBottom: "1px solid rgba(133,185,172,0.4)",
         textDecoration: "none",
       }}
     >
@@ -85,8 +85,8 @@ export const AlbumTorcidaPromoBanner = () => {
 
         {/* RIGHT — CTA (desktop only) */}
         <div className="hidden md:flex items-center gap-2 shrink-0">
-          <Zap size={10} style={{ color: "#10b981" }} />
-          <span style={{ fontSize: 7.5, color: "#10b981", fontWeight: 900, letterSpacing: "0.08em", whiteSpace: "nowrap" }}>
+          <Zap size={10} style={{ color: "#85b9ac" }} />
+          <span style={{ fontSize: 7.5, color: "#85b9ac", fontWeight: 900, letterSpacing: "0.08em", whiteSpace: "nowrap" }}>
             Ver Álbum →
           </span>
         </div>

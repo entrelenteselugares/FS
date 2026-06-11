@@ -90,7 +90,7 @@ export default function InvitationPage() {
       <Navbar />
 
       <main className="max-w-xl mx-auto px-3 md:px-6 py-20 flex flex-col items-center text-center">
-        <div className="w-24 h-24 bg-emerald-500/10 border border-emerald-500/20 rounded-full flex items-center justify-center mb-8 shadow-[0_0_50px_rgba(16,185,129,0.1)]">
+        <div className="w-24 h-24 bg-emerald-500/10 border border-emerald-500/20 rounded-full flex items-center justify-center mb-8 shadow-[0_0_50px_rgba(133,185,172,0.1)]">
           <Lock size={40} className="text-emerald-500" />
         </div>
 

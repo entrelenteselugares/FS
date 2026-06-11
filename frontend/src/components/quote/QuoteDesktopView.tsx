@@ -347,7 +347,7 @@ export const QuoteDesktopView = (props: any) => {
                   onClick={() => props.setSelectedPackageId(pkg.id)}
                   className={`p-5 rounded-xl border cursor-pointer transition-all ${
                     props.selectedPackageId === pkg.id 
-                      ? "bg-emerald-500/10 border-emerald-500 shadow-[0_0_20px_rgba(16,185,129,0.15)] scale-[1.02]" 
+                      ? "bg-emerald-500/10 border-emerald-500 shadow-[0_0_20px_rgba(133,185,172,0.15)] scale-[1.02]" 
                       : "bg-theme-bg-muted border-theme-border hover:border-emerald-500/50 hover:bg-theme-bg"
                   }`}
                 >

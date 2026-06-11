@@ -128,7 +128,7 @@ export const AdminBanners: React.FC = () => {
                 </div>
 
                 <div style={{ display: "flex", gap: 8, alignItems: "center", marginLeft: "auto" }}>
-                  <button style={{ ...S.btnGhost, color: banner.active ? "#10b981" : T.text3 }} onClick={() => toggleActiveMutation.mutate(banner)}>
+                  <button style={{ ...S.btnGhost, color: banner.active ? "#85b9ac" : T.text3 }} onClick={() => toggleActiveMutation.mutate(banner)}>
                     {banner.active ? <Check size={16} /> : <X size={16} />}
                   </button>
                   <button style={S.btnGhost} onClick={() => handleEdit(banner)}>

@@ -176,7 +176,7 @@ export function HeroCarousel() {
               <div className="flex flex-wrap justify-center md:justify-start gap-4 mt-4 md:mt-8 w-full">
                 <button 
                   onClick={() => navigate(currentSlide.primaryAction)}
-                  className="px-6 py-2.5 md:px-8 md:py-4 bg-emerald-500 text-black text-[10px] md:text-[11px] font-bold uppercase tracking-[0.2em] hover:bg-emerald-400 transition-colors rounded-full shadow-[0_0_20px_rgba(16,185,129,0.3)]"
+                  className="px-6 py-2.5 md:px-8 md:py-4 bg-emerald-500 text-black text-[10px] md:text-[11px] font-bold uppercase tracking-[0.2em] hover:bg-emerald-400 transition-colors rounded-full shadow-[0_0_20px_rgba(133,185,172,0.3)]"
                 >
                   {currentSlide.primaryBtn}
                 </button>
