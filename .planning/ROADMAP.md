@@ -137,3 +137,15 @@
 - Refinar tela a tela usando a nova fundação.
 **Depends on:** Phase 64
 **Status:** Completed
+
+### Phase 66: Performance Optimization
+
+**Goal:** Melhorar a velocidade de carregamento inicial, eliminando splash screens desnecessárias e otimizando a montagem dos componentes principais (Vault, Album Torcida).
+**Depends on:** Phase 65
+**Status:** Completed
+
+### Phase 67: Code Cleanup & Bundle Optimization
+
+**Goal:** Depurar o código, remover arquivos e dependências desnecessárias, aplicar code-splitting (lazy loading) e reduzir o peso geral da aplicação para máxima velocidade de carregamento.
+**Depends on:** Phase 66
+**Status:** Active

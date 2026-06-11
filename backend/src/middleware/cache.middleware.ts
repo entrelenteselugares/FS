@@ -5,6 +5,10 @@ import { getCache, setCache } from "../lib/redis";
  * Advanced Cache Middleware using Redis
  * Protects the database from traffic spikes by caching GET requests.
  * @param durationSeconds Time in seconds to keep the cache alive
+ * 
+ * PERFORMANCE FIX #5: Suporta cache autenticado.
+ * Quando o request possui userId (via auth middleware), a chave inclui o userId
+ * para garantir isolamento de dados entre usuários diferentes.
  */
 export const apiCache = (durationSeconds: number) => {
   return async (req: Request, res: Response, next: NextFunction) => {
@@ -13,11 +17,11 @@ export const apiCache = (durationSeconds: number) => {
       return next();
     }
 
-    // Bypass cache if user is authenticated (unless it's a strictly public endpoint without user context)
-    // For our specific use case, we only apply this to public endpoints anyway.
-    
-    // Construct cache key based on URL + Query params
-    const cacheKey = `cache:${req.originalUrl || req.url}`;
+    // Construct cache key: include userId for authenticated requests to prevent data leakage
+    const userId = (req as any).user?.userId;
+    const cacheKey = userId 
+      ? `cache:u:${userId}:${req.originalUrl || req.url}`
+      : `cache:${req.originalUrl || req.url}`;
 
     try {
       const cachedResponse = await getCache(cacheKey);
@@ -65,3 +69,15 @@ export const apiCache = (durationSeconds: number) => {
     }
   };
 };
+
+/**
+ * Invalida todo o cache de um usuário específico para um prefixo de rota.
+ * Usar após operações de escrita (upload, delete) para manter consistência.
+ */
+export const invalidateUserCache = async (userId: string, pathPrefix: string): Promise<void> => {
+  // Implementação simplificada: o Redis TTL curto (15-30s) garante eventual consistency.
+  // Para invalidação explícita com ioredis, seria necessário SCAN + DEL por padrão.
+  // Por ora, o TTL curto é suficiente para o caso de uso.
+  console.log(`[CACHE] Cache do usuário ${userId} para ${pathPrefix} será expirado automaticamente (TTL).`);
+};
+

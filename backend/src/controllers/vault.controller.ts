@@ -887,6 +887,13 @@ export class VaultController {
         }
       }
 
+      // Se a mídia tem URL pública direta (R2 ou outro CDN), redirecionar sem proxiar pelo Drive
+      if (media && media.webViewLink && media.webViewLink.startsWith('http')) {
+        // R2/CDN: servir diretamente via redirect (muito mais rápido e sem limitação do Vercel)
+        res.setHeader('Cache-Control', 'public, max-age=86400');
+        return res.redirect(302, media.webViewLink);
+      }
+
       const driveRes = await driveService.getMediaStream(fileId);
       
       const contentType = driveRes.headers['content-type'] || 'image/jpeg';
@@ -902,7 +909,10 @@ export class VaultController {
       // Fallback para arquivo local se falhar a conexão com o Google Drive
       try {
         const media = await prisma.sharedAlbumMedia.findUnique({ where: { fileId } });
-        if (media && media.webViewLink) {
+        // Se tiver URL pública (R2), redirecionar
+        if (media && media.webViewLink && media.webViewLink.startsWith('http')) {
+          return res.redirect(302, media.webViewLink);
+        } else if (media && media.webViewLink) {
           const fs = require('fs');
           const path = require('path');
           const fileName = media.webViewLink.substring(media.webViewLink.lastIndexOf('/') + 1);

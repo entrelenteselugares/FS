@@ -3,6 +3,7 @@ import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Check, X, ChevronLeft, ChevronRight, Trash2 } from "lucide-react";
 import { getProxyUrl } from "../lib/utils/media";
+import { OptimizedImage } from "./OptimizedImage";
 
 interface Media {
   id: string;
@@ -23,10 +24,24 @@ interface TouchSelectionGalleryProps {
   allowFreeDownload?: boolean;
 }
 
+interface GalleryItemProps {
+  m: Media;
+  idx: number;
+  isSelected: boolean;
+  isUnlocked: boolean;
+  isOwner?: boolean;
+  allowFreeDownload?: boolean;
+  onToggleCart: (shortId: string, url: string) => void;
+  onDeleteMedia?: (mediaId: string) => void;
+  handleTouchStart: (shortId: string, url: string) => void;
+  handleTouchEnd: () => void;
+  handlePhotoClick: (index: number, m: Media) => void;
+}
+
 const GalleryItem = React.memo(({ 
   m, idx, isSelected, isUnlocked, isOwner, allowFreeDownload, 
   onToggleCart, onDeleteMedia, handleTouchStart, handleTouchEnd, handlePhotoClick 
-}: any) => {
+}: GalleryItemProps) => {
   const displayUrl = m.url;
   return (
     <motion.div
@@ -56,31 +71,27 @@ const GalleryItem = React.memo(({
           loop
         />
       ) : (
-        <img
+        <OptimizedImage
           src={getProxyUrl(displayUrl)}
           alt={m.shortId}
-          className={`w-full h-full object-cover transition-all duration-700 ${
+          className={`w-full h-full transition-all duration-700 ${
             isSelected ? "opacity-40" : "opacity-100"
           } ${!isUnlocked && "blur-[0.5px]"}`}
-          loading="lazy"
+          objectFit="cover"
         />
       )}
 
       {/* Watermark Overlay for locked images */}
       {!isUnlocked && (
-        <div className="absolute inset-[-50%] pointer-events-none flex items-center justify-center overflow-hidden z-10" style={{ transform: "rotate(-30deg)" }}>
-           <div className="flex flex-wrap justify-center items-center gap-12 md:gap-16 w-full h-full opacity-50">
-             {Array.from({ length: 60 }).map((_, i) => (
-               <img 
-                 key={i}
-                 src="/logo.png" 
-                 alt="Watermark" 
-                 className="w-[100px] select-none pointer-events-none shrink-0" 
-                 style={{ filter: "var(--logo-filter) drop-shadow(0px 4px 6px rgba(0,0,0,0.5))" }} 
-               />
-             ))}
-           </div>
-        </div>
+        <div 
+          className="absolute inset-0 pointer-events-none z-10 opacity-30" 
+          style={{ 
+            backgroundImage: "url('/logo.png')", 
+            backgroundRepeat: "repeat", 
+            backgroundSize: "60px 60px",
+            filter: "var(--logo-filter) drop-shadow(0px 2px 3px rgba(0,0,0,0.3))"
+          }} 
+        />
       )}
 
       {/* Botão de Seleção Rápida (Shortcut Selection Button) */}
@@ -358,19 +369,15 @@ export const TouchSelectionGallery: React.FC<TouchSelectionGalleryProps> = ({
                     />
                   )}
                   {!fmIsUnlocked && (
-                    <div className="absolute inset-[-50%] pointer-events-none flex items-center justify-center overflow-hidden z-10" style={{ transform: "rotate(-30deg)" }}>
-                       <div className="flex flex-wrap justify-center items-center gap-16 md:gap-24 w-full h-full opacity-50">
-                         {Array.from({ length: 150 }).map((_, i) => (
-                           <img 
-                             key={i}
-                             src="/logo.png" 
-                             alt="Watermark" 
-                             className="w-[150px] md:w-[200px] select-none pointer-events-none shrink-0" 
-                             style={{ filter: "var(--logo-filter) drop-shadow(0px 10px 15px rgba(0,0,0,0.5))" }} 
-                           />
-                         ))}
-                       </div>
-                    </div>
+                    <div 
+                      className="absolute inset-0 pointer-events-none z-10 opacity-30" 
+                      style={{ 
+                        backgroundImage: "url('/logo.png')", 
+                        backgroundRepeat: "repeat",
+                        backgroundSize: "100px 100px",
+                        filter: "var(--logo-filter) drop-shadow(0px 4px 6px rgba(0,0,0,0.4))"
+                      }} 
+                    />
                   )}
                 </>
                 );
@@ -414,7 +421,7 @@ export const TouchSelectionGallery: React.FC<TouchSelectionGalleryProps> = ({
                         a.click();
                       }
                     }}
-                    className="px-8 py-4 rounded-xl font-bold uppercase tracking-widest text-[10px] transition-all bg-brand-tactical text-black hover:brightness-110 flex items-center gap-2"
+                    className="fs-btn fs-btn-primary flex items-center gap-2 text-[10px] tracking-widest uppercase font-bold"
                   >
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
                     BAIXAR FOTO
@@ -425,10 +432,10 @@ export const TouchSelectionGallery: React.FC<TouchSelectionGalleryProps> = ({
                       const m = medias[fullscreenIndex];
                       if (m) onToggleCart(m.shortId, m.url);
                     }}
-                    className={`px-8 py-4 rounded-xl font-black uppercase tracking-widest text-[10px] italic transition-all ${
+                    className={`fs-btn text-[10px] tracking-widest uppercase font-black italic transition-all ${
                       medias[fullscreenIndex] && selectedIds.includes(medias[fullscreenIndex].shortId)
                         ? "bg-emerald-500 text-black"
-                        : "bg-white text-black hover:bg-brand-tactical"
+                        : "fs-btn-primary"
                     }`}
                   >
                     {medias[fullscreenIndex] && selectedIds.includes(medias[fullscreenIndex].shortId) ? "Selecionada" : "Selecionar"}

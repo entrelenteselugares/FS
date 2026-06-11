@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -34,9 +36,11 @@
   --glass:        rgba(30, 41, 59, 0.75);
   --glass-border: rgba(255, 255, 255, 0.08);
 
-  /* Fontes (Inter globalmente) */
-  --font-display: 'Inter', sans-serif;
+  /* Fontes (Barlow Condensed display, Inter body) */
+  --font-display: 'Barlow Condensed', sans-serif;
   --font-body: 'Inter', sans-serif;
+  --font-d: 'Barlow Condensed', sans-serif;
+  --font-b: 'Inter', sans-serif;
 
   /* Espaçamentos (Scale de 4px) */
   --space-1: 0.25rem; /* 4px */

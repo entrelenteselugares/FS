@@ -17,7 +17,8 @@ import {
   getBets,
   placeBet,
   settleBets,
-  getUserBetSummary
+  getUserBetSummary,
+  getNostalgia
 } from "../controllers/worldcup.controller";
 import { requireAuth } from "../lib/auth";
 import { requireRole } from "../lib/auth";
@@ -51,6 +52,9 @@ router.get("/bets/summary", getUserBetSummary);
 router.get("/bets", getBets);
 router.post("/bets", placeBet);
 router.post("/bets/settle", requireRole("ADMIN"), settleBets);
+
+// Nostalgia Mock
+router.get("/nostalgia", getNostalgia);
 
 
 export default router;

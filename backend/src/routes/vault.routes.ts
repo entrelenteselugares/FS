@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { requireAuth } from "../lib/auth";
 import { VaultController } from "../controllers/vault.controller";
+import { apiCache } from "../middleware/cache.middleware";
 import multer from "multer";
 
 const upload = multer({ storage: multer.memoryStorage() }); // sem limite — R2 gerencia o tamanho
@@ -8,12 +9,14 @@ const router = Router();
 
 // ── VAULTS (Cofres de Memórias - Fase 11)
 router.get("/media/proxy/:fileId", VaultController.proxyMedia);
-router.get("/", requireAuth, VaultController.listAlbums);
+// PERFORMANCE FIX #6: cache de 30s por usuário — lista de cofres muda com pouca frequência
+router.get("/", requireAuth, apiCache(30), VaultController.listAlbums);
 router.post("/", requireAuth, VaultController.createAlbum);
 router.patch("/:albumId", requireAuth, VaultController.renameAlbum);
 router.get("/:albumId", requireAuth, VaultController.getAlbumDetails);
 router.get("/:albumId/download-all", requireAuth, VaultController.downloadAllMedia);
-router.get("/:albumId/media", requireAuth, VaultController.listMedia);
+// PERFORMANCE FIX #6: cache de 15s por usuário — mídias mudam após uploads
+router.get("/:albumId/media", requireAuth, apiCache(15), VaultController.listMedia);
 // Upload direto de mídias (Direct Upload via Google Drive Resumable)
 router.post("/:albumId/upload/init", requireAuth, VaultController.initResumableUpload);
 router.post("/:albumId/upload/complete", requireAuth, VaultController.completeResumableUpload);

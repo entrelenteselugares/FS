@@ -730,3 +730,17 @@ export async function getUserBetSummary(req: Request, res: Response) {
   }
 }
 
+/**
+ * GET /worldcup/nostalgia
+ * Retorna os posts do mural de nostalgia para um ano específico
+ */
+export async function getNostalgia(req: Request, res: Response) {
+  try {
+    const year = req.query.year ? Number(req.query.year) : 2022;
+    // Mock data for nostalgia posts
+    return res.json({ posts: [] });
+  } catch (error) {
+    console.error("Error fetching nostalgia posts:", error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+}

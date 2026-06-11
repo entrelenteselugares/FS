@@ -321,6 +321,14 @@ export class EventController {
       const take = 20;
       const skip = (Number(page) - 1) * take;
 
+      const validTypes = ['ALBUM_FULL', 'PHOTO_MARKETPLACE', 'FOTO_POINT', 'FLASH_EVENT', 'SCHOOL', 'SPORTS'];
+      if (type && !validTypes.includes(String(type))) {
+        return res.json({
+          events: [],
+          meta: { total: 0, page: Number(page), pages: 0, hasMore: false }
+        });
+      }
+
       const where: any = {
         active: true,
         isPrivate: false,
@@ -328,16 +336,19 @@ export class EventController {
         type: type ? String(type) : {
           in: ['ALBUM_FULL', 'PHOTO_MARKETPLACE', 'FOTO_POINT', 'FLASH_EVENT']
         },
-        // Filtro Tático: Eventos contratados (ALBUM_FULL) não pagos não aparecem na vitrine
-        NOT: {
+      };
+
+      // Filtro Tático: Eventos contratados (ALBUM_FULL) não pagos não aparecem na vitrine
+      if (!type || String(type) === 'ALBUM_FULL') {
+        where.NOT = {
           type: 'ALBUM_FULL',
           pedidos: {
             some: {
               status: 'PENDENTE'
             }
           }
-        }
-      };
+        };
+      }
 
       const andConditions: any[] = [
         { NOT: { slug: { startsWith: 'vault-' } } }

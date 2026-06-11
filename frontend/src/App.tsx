@@ -57,9 +57,8 @@ const ClubLandingPage = React.lazy(() => import("./pages/ClubLandingPage").then(
 const HelpPage = React.lazy(() => import("./pages/HelpPage"));
 const AlbumTorcidaPage = React.lazy(() => import("./pages/worldcup/AlbumTorcidaPage").then(m => ({ default: m.AlbumTorcidaPage })));
 const MatchFolhaPage = React.lazy(() => import("./pages/worldcup/MatchFolhaPage").then(m => ({ default: m.MatchFolhaPage })));
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { API as api } from "./lib/api";
-import { T } from "./lib/theme";
 import { motion, AnimatePresence } from "framer-motion";
 
 /** Redireciona /dashboard para o painel correto baseado no role */
@@ -234,47 +233,31 @@ const AnimatedRoutes = () => {
 };
 
 function App() {
-  const [isWakingUp, setIsWakingUp] = useState(true);
-
+  // PERFORMANCE FIX #1: Não bloquear a UI com cold start.
+  // O wake-up roda em background. A app inicia imediatamente.
+  // Se o backend ainda não respondeu, a AuthProvider lida com os 503s silenciosamente.
   useEffect(() => {
-    const wakeUp = async () => {
-      try {
-        await api.get("/health");
-      } catch (err) {
-        console.warn("[WakeUp] Falha ao acordar o servidor, tentando novamente...", err);
-      } finally {
-        setIsWakingUp(false);
-      }
-    };
-    wakeUp();
+    api.get("/health").catch(() => {
+      // Silencioso — o servidor está aquecendo. As requisições subsequentes
+      // terão retry automático pelo interceptor do axios.
+      console.warn("[WakeUp] Backend ainda inicializando, continuando em background...");
+    });
   }, []);
 
   return (
     <ThemeProvider>
-      {isWakingUp ? (
-        <div className="min-h-screen flex flex-col items-center justify-center gap-6 relative overflow-hidden transition-colors duration-700" style={{ background: T.bg }}>
-          <div className="absolute inset-0 bg-brand-tactical/5 blur-[120px] rounded-full -m-64 opacity-20" />
-          <div className="relative z-10 flex flex-col items-center gap-8">
-            <div className="w-px h-16 bg-gradient-to-b from-transparent via-brand-tactical to-transparent" />
-            <div className="text-[18px] font-bold uppercase tracking-[0.8em] " style={{ color: T.text }}>FOTO SEGUNDO</div>
-            <div className="text-[9px] font-bold uppercase tracking-[0.4em] text-brand-tactical animate-pulse-soft">Sincronizando Rede Global</div>
-            <div className="w-px h-16 bg-gradient-to-t from-transparent via-brand-tactical to-transparent" />
-          </div>
-        </div>
-      ) : (
-        <AuthProvider>
-          <CartProvider>
-            <HelmetProvider>
-              <Router>
-                <WorldCupLiveBanner />
-                <AnimatedRoutes />
-                <BottomNav />
-                <PushNotificationManager />
-              </Router>
-            </HelmetProvider>
-          </CartProvider>
-        </AuthProvider>
-      )}
+      <AuthProvider>
+        <CartProvider>
+          <HelmetProvider>
+            <Router>
+              <WorldCupLiveBanner />
+              <AnimatedRoutes />
+              <BottomNav />
+              <PushNotificationManager />
+            </Router>
+          </HelmetProvider>
+        </CartProvider>
+      </AuthProvider>
     </ThemeProvider>
   );
 }

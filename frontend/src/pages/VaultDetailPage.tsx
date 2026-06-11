@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Navbar } from "../components/Navbar";
+import { OptimizedImage } from "../components/OptimizedImage";
 import { API as api } from "../lib/api";
 import { useAuth } from "../hooks/useAuth";
 import { motion, AnimatePresence } from "framer-motion";
@@ -72,16 +73,13 @@ export default function VaultDetailPage() {
 
   const fetchVaultDetails = useCallback(async () => {
     try {
-      // Tentar buscar detalhes específicos do álbum
-      let currentVault;
-      try {
-        const vRes = await api.get(`/vaults`);
-        currentVault = vRes.data.find((v: Vault) => v.id === vaultId);
-      } catch { console.error("Erro ao buscar álbum"); }
-
-      const mediaRes = await api.get(`/vaults/${vaultId}/media`);
+      // PERFORMANCE FIX #2: buscar apenas o vault específico + mídias em paralelo
+      const [vaultRes, mediaRes] = await Promise.all([
+        api.get(`/vaults/${vaultId}`),
+        api.get(`/vaults/${vaultId}/media`),
+      ]);
       
-      if (currentVault) setVault(currentVault);
+      if (vaultRes.data) setVault({ ...vaultRes.data, myRole: vaultRes.data.myRole || vaultRes.data.members?.find((m: any) => m.userId === vaultRes.data.ownerId) ? 'OWNER' : 'GUEST' });
       setMedia(mediaRes.data || []);
     } catch (err) {
       console.error("[VaultDetail] Erro:", err);
@@ -126,7 +124,7 @@ export default function VaultDetailPage() {
   const handleVote = async (mediaId: string) => {
     try {
       await api.post(`/vaults/media/${mediaId}/vote`);
-      // Update local state for immediate feedback
+      // PERFORMANCE FIX #3: update otimista local — sem re-fetch desnecessário
       setMedia(prev => prev.map(m => {
         if (m.id === mediaId) {
           const isVoted = m.votedByMe;
@@ -138,7 +136,7 @@ export default function VaultDetailPage() {
         }
         return m;
       }));
-      fetchVaultDetails(); // Sync with server
+      // Removido: fetchVaultDetails() — o estado local já reflete a mudança corretamente
     } catch (err) {
       console.error("[Vote] Erro:", err);
     }
@@ -591,10 +589,10 @@ export default function VaultDetailPage() {
             {vault.myRole === "OWNER" && (
               <button 
                 onClick={() => setIsPrintStoreOpen(true)}
-                className={`hidden md:flex items-center justify-center gap-2 text-[10px] font-black uppercase tracking-widest px-5 py-2.5 rounded-lg transition-all shadow-lg ${
+                className={`hidden md:flex fs-btn items-center justify-center gap-2 text-[10px] font-black uppercase tracking-widest px-5 transition-all shadow-lg ${
                   media.length >= vault.goalPoses 
-                    ? "bg-brand-tactical text-black shadow-[0_0_20px_rgba(133,185,172,0.4)] animate-pulse border-2 border-brand-tactical" 
-                    : "bg-theme-bg-muted border-2 border-theme-border text-theme-muted hover:border-brand-tactical hover:text-brand-tactical"
+                    ? "fs-btn-primary text-black shadow-[0_0_20px_rgba(133,185,172,0.4)] animate-pulse border-2 border-brand-tactical" 
+                    : "fs-btn-secondary"
                 }`}
               >
                 <Printer size={14} />
@@ -607,7 +605,7 @@ export default function VaultDetailPage() {
                 href={vault.externalVideoLink}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="hidden md:flex items-center justify-center gap-2 bg-blue-500 hover:bg-blue-400 text-black border-2 border-blue-500 text-[10px] font-bold uppercase tracking-widest px-4 py-2.5 rounded-lg transition-all shadow-lg shadow-blue-500/20"
+                className="hidden md:flex fs-btn items-center justify-center gap-2 bg-blue-500 hover:bg-blue-400 text-black border-2 border-blue-500 text-[10px] font-bold uppercase tracking-widest px-4 transition-all shadow-lg shadow-blue-500/20"
               >
                 <Video size={14} />
                 Acessar Vídeos Brutos
@@ -616,7 +614,7 @@ export default function VaultDetailPage() {
             
             <button 
               onClick={() => setIsServiceStoreOpen(true)}
-              className="hidden md:flex items-center justify-center gap-2 bg-theme-bg-muted border-2 border-theme-border hover:border-brand-tactical text-theme-text hover:text-brand-tactical text-[10px] font-bold uppercase tracking-widest px-4 py-2.5 rounded-lg transition-all"
+              className="hidden md:flex fs-btn fs-btn-secondary items-center justify-center gap-2 text-[10px] font-bold uppercase tracking-widest px-4 transition-all"
             >
               <Layers size={14} />
               Serviços
@@ -625,7 +623,7 @@ export default function VaultDetailPage() {
             <button 
               onClick={handleDownloadAllOrSelected}
               disabled={downloadingAll}
-              className="flex-1 md:flex-none flex items-center justify-center gap-2 bg-theme-bg-muted border-2 border-theme-border hover:border-brand-tactical text-theme-text hover:text-brand-tactical text-[10px] font-bold uppercase tracking-widest px-4 py-2.5 rounded-lg transition-all"
+              className="flex-1 md:flex-none fs-btn fs-btn-secondary flex items-center justify-center gap-2 text-[10px] font-bold uppercase tracking-widest px-4 transition-all"
             >
               {downloadingAll ? <Loader2 size={14} className="animate-spin" /> : <Download size={14} />}
               {selectedForDownload.length > 0 ? `Baixar Selecionadas (${selectedForDownload.length})` : "Baixar Tudo"}
@@ -633,16 +631,16 @@ export default function VaultDetailPage() {
 
             <button 
               onClick={handleInvite}
-              className="flex-1 md:flex-none flex items-center justify-center gap-2 bg-theme-bg-muted border-2 border-theme-border hover:border-brand-tactical text-theme-text hover:text-brand-tactical text-[10px] font-bold uppercase tracking-widest px-4 py-2.5 rounded-lg transition-all"
+              className="flex-1 md:flex-none fs-btn fs-btn-secondary flex items-center justify-center gap-2 text-[10px] font-bold uppercase tracking-widest px-4 transition-all"
             >
               <Share2 size={14} />
               Convidar
             </button>
             
-            <label className={`hidden md:flex items-center justify-center gap-2 text-[10px] font-black uppercase tracking-widest px-5 py-2.5 rounded-lg transition-all shadow-lg ${
+            <label className={`hidden md:flex fs-btn fs-btn-primary items-center justify-center gap-2 text-[10px] font-black uppercase tracking-widest px-5 transition-all shadow-lg cursor-pointer ${
               media.length >= vault.goalPoses * 2
-                ? "bg-zinc-800 text-gray-500 cursor-not-allowed opacity-50"
-                : "bg-brand-tactical hover:bg-white text-black shadow-[0_0_20px_rgba(133,185,172,0.4)] border-2 border-brand-tactical cursor-pointer"
+                ? "opacity-50 cursor-not-allowed"
+                : ""
             }`}>
               <Upload size={14} />
               {media.length >= vault.goalPoses * 2 ? "Limite Atingido" : "Enviar Mídia"}
@@ -777,7 +775,8 @@ export default function VaultDetailPage() {
                   key={item.id}
                   initial={{ opacity: 0, scale: 0.9 }}
                   animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: i * 0.02 }}
+                  // PERFORMANCE FIX #4: limitar delay máximo em 0.3s independente da quantidade de fotos
+                  transition={{ delay: Math.min(i * 0.02, 0.3) }}
                   onClick={() => setSelectedPhoto(item)}
                   className={`relative aspect-square bg-zinc-900 overflow-hidden group cursor-pointer transition-all duration-300 ${
                     item.votedByMe ? 'ring-4 ring-emerald-500 scale-95 rounded-xl' : 'hover:opacity-90 rounded-none'
@@ -785,10 +784,27 @@ export default function VaultDetailPage() {
                     item.status === 'PENDING' ? 'opacity-60' : ''
                   }`}
                 >
-                  <img 
-                    src={item.thumbnailLink || `${import.meta.env.VITE_API_URL?.replace(/\/$/, '') || window.location.origin}/vaults/media/proxy/${item.fileId}`}
+                  <OptimizedImage 
+                    src={(() => {
+                      // PERFORMANCE FIX #7: servir thumbnails reduzidos no grid.
+                      // Cloudflare R2 com Image Resizing: adiciona parâmetros de resize na URL.
+                      // Se a URL for do R2/Cloudflare, adiciona ?w=400 para reduzir de ~5MB para ~50KB.
+                      const rawSrc = item.thumbnailLink || `${import.meta.env.VITE_API_URL?.replace(/\/$/, '') || window.location.origin}/vaults/media/proxy/${item.fileId}`;
+                      try {
+                        if (rawSrc.includes('r2.cloudflarestorage.com') || rawSrc.includes('pub-') || rawSrc.includes('.r2.dev')) {
+                          const url = new URL(rawSrc);
+                          url.searchParams.set('w', '400');
+                          url.searchParams.set('h', '400');
+                          url.searchParams.set('fit', 'cover');
+                          url.searchParams.set('q', '75');
+                          return url.toString();
+                        }
+                      } catch { /* URL inválida, usa original */ }
+                      return rawSrc;
+                    })()}
                     alt="Memory" 
-                    className={`w-full h-full object-cover transition-transform duration-700 ${item.votedByMe ? 'scale-105' : 'group-hover:scale-110'}`}
+                    className={`w-full h-full transition-transform duration-700 ${item.votedByMe ? 'scale-105' : 'group-hover:scale-110'}`}
+                    objectFit="cover"
                     onError={(e) => {
                       const target = e.target as HTMLImageElement;
                       const proxyUrl = import.meta.env.VITE_API_URL ? `${import.meta.env.VITE_API_URL.replace(/\/$/, '')}/vaults/media/proxy/${item.fileId}` : `/api/vaults/media/proxy/${item.fileId}`;
