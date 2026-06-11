@@ -9,14 +9,15 @@ import { BottomNav } from "./components/BottomNav";
 import { PushNotificationManager } from "./components/PushNotificationManager";
 
 import React, { Suspense } from "react";
-import EventPage from "./pages/EventPage";
-import { LoginPage } from "./pages/LoginPage";
-import { HomePage } from "./pages/HomePage";
-import { AuthSelectionPage } from "./pages/AuthSelectionPage";
-import { RegisterPage } from "./pages/RegisterPage";
 import { WorldCupLiveBanner } from "./components/worldcup/WorldCupLiveBanner";
 
 // ─── Lazy Loaded Routes ───
+const EventPage = React.lazy(() => import("./pages/EventPage"));
+const LoginPage = React.lazy(() => import("./pages/LoginPage").then(m => ({ default: m.LoginPage })));
+const HomePage = React.lazy(() => import("./pages/HomePage").then(m => ({ default: m.HomePage })));
+const AuthSelectionPage = React.lazy(() => import("./pages/AuthSelectionPage").then(m => ({ default: m.AuthSelectionPage })));
+const RegisterPage = React.lazy(() => import("./pages/RegisterPage").then(m => ({ default: m.RegisterPage })));
+
 const ProfissionalDashboard = React.lazy(() => import("./pages/ProfissionalDashboard"));
 const PortfolioManage = React.lazy(() => import("./pages/profissional/PortfolioManage"));
 const CustomServiceForm = React.lazy(() => import("./pages/profissional/CustomServiceForm"));

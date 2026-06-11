@@ -23,6 +23,7 @@ const EventEditPanel = lazy(() => import("../components/profissional/EventEditPa
 import type { EventItem } from "../components/profissional/types";
 import { TouchSelectionGallery } from "../components/TouchSelectionGallery";
 import { SchoolAuthenticationGate } from "../components/SchoolAuthenticationGate";
+import { OptimizedImage } from "../components/OptimizedImage";
 
 const formatDate = (date: string | null | undefined) => {
   if (!date) return "Em breve";
@@ -53,7 +54,7 @@ function ReferenceCard({ item }: { item: RefItem }) {
           className="aspect-square bg-theme-bg-muted border border-theme-border overflow-hidden rounded-xl relative cursor-pointer group"
           onClick={() => setOpen(true)}
         >
-          <img src={thumb} alt="Referência YouTube" className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" />
+          <OptimizedImage src={thumb} alt="Referência YouTube" className="absolute inset-0 w-full h-full opacity-80 group-hover:opacity-100 transition-opacity" />
           <div className="absolute inset-0 flex items-center justify-center">
             <div className="w-10 h-10 rounded-full bg-red-600/90 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
               <span className="text-white text-sm ml-0.5">▶</span>
@@ -107,9 +108,9 @@ function ReferenceCard({ item }: { item: RefItem }) {
   if (!imgError) {
     return (
       <div className="aspect-square bg-theme-bg-muted border border-theme-border overflow-hidden rounded-xl relative">
-        <img
+        <OptimizedImage
           src={displayUrl}
-          className="w-full h-full object-cover"
+          className="absolute inset-0 w-full h-full"
           alt="Referência"
           onError={() => setImgError(true)}
         />
@@ -756,19 +757,19 @@ return (
                 className="absolute inset-0"
               >
                 {event.coverPhotoUrl ? (
-                  <img 
+                  <OptimizedImage 
                     src={getProxyUrl(event.coverPhotoUrl)} 
                     alt="" 
-                    className="w-full h-full object-cover opacity-80"
-                    fetchPriority="high"
+                    className="absolute inset-0 w-full h-full opacity-80"
+                    priority
                   />
                 ) : (
-                  <img 
+                  <OptimizedImage 
                     src={getFallbackByCategory(event.category, event.id)} 
                     alt="" 
-                    className="w-full h-full object-cover opacity-40 blur-sm scale-110"
+                    className="absolute inset-0 w-full h-full opacity-40 blur-sm scale-110"
                     style={{ objectPosition: event.coverPosition || 'center' }}
-                    fetchPriority="high"
+                    priority
                   />
                 )}
               </motion.div>

@@ -7,6 +7,7 @@ import { T } from "../lib/theme";
 import { DICT } from "../lib/dictionary";
 import { Navbar } from "../components/Navbar";
 import { HeroCarousel } from "../components/HeroCarousel";
+import { OptimizedImage } from "../components/OptimizedImage";
 import { Search, Calendar, MapPin, SlidersHorizontal } from "lucide-react";
 
 interface Event {
@@ -74,12 +75,12 @@ function EventCard({ event, onClick }: { event: Event; onClick: () => void }) {
       className="group relative overflow-hidden aspect-[3/4] md:aspect-[4/3] rounded-lg md:rounded-2xl bg-[var(--bg-card)] cursor-pointer border-none transition-transform duration-300 md:hover:scale-105"
     >
       {/* Background Image */}
-      <img
+      <OptimizedImage
         src={event.coverPhotoUrl || fallback}
         alt={event.title}
-        className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+        className="absolute inset-0 w-full h-full transition-transform duration-700 group-hover:scale-110"
+        objectFit="cover"
         style={{ objectPosition: event.coverPosition || 'center' }}
-        onError={e => { e.currentTarget.src = fallback; }}
       />
 
       {/* Immersive Gradient Overlay - REQUIRED for legibility */}

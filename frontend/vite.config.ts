@@ -49,14 +49,18 @@ export default defineConfig({
     })
   ],
   build: {
+    chunkSizeWarningLimit: 800,
     rollupOptions: {
       output: {
         manualChunks: (id: string) => {
-          if (id.includes("node_modules/react-router-dom")) return "vendor";
-          if (id.includes("node_modules/react-dom"))        return "vendor";
-          if (id.includes("node_modules/react/"))           return "vendor";
+          if (id.includes("node_modules/react-router-dom")) return "vendor-router";
+          if (id.includes("node_modules/react-dom"))        return "vendor-react";
+          if (id.includes("node_modules/react/"))           return "vendor-react";
           if (id.includes("node_modules/recharts"))         return "charts";
           if (id.includes("node_modules/framer-motion"))    return "motion";
+          if (id.includes("node_modules/lucide-react"))     return "icons";
+          if (id.includes("node_modules/@supabase"))        return "supabase";
+          if (id.includes("node_modules/react-easy-crop"))  return "vendor-crop";
           if (id.includes("node_modules/axios"))            return "http";
         },
       },
