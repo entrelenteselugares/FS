@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { API as api } from "../lib/api";
 import { useAuth } from "../hooks/useAuth";
 import { motion } from "framer-motion";
-import { Lock, Plus, Images, Users, Loader2, Image as ImageIcon, ShoppingBag, User, Play, Briefcase, DollarSign, Calendar, Printer, Settings } from "lucide-react";
+import { Lock, Plus, Images, Users, Loader2, Image as ImageIcon, ShoppingBag, User, Play, Briefcase, DollarSign, Calendar, Printer, Settings, LayoutDashboard } from "lucide-react";
 import { Helmet } from "react-helmet-async";
 import { DashboardLayout } from "../components/DashboardLayout";
 

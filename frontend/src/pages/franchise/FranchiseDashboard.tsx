@@ -18,7 +18,9 @@ import {
   Play,
   Briefcase,
   Lock,
-  User
+  User,
+  ImageIcon,
+  Settings
 } from 'lucide-react';
 import { API as api } from '../../lib/api';
 import { useAuth } from '../../hooks/useAuth';
