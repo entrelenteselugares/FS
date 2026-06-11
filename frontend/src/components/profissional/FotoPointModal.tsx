@@ -19,6 +19,9 @@ export function FotoPointModal({ onClose, onSuccess, onError, network }: FotoPoi
   const [price, setPrice] = useState("10");
   const [location, setLocation] = useState("");
   const [city, setCity] = useState("");
+  const [uf, setUf] = useState("");
+  const [statesList, setStatesList] = useState<{sigla: string; nome: string}[]>([]);
+  const [citiesList, setCitiesList] = useState<{nome: string}[]>([]);
   const [itinerary, setItinerary] = useState("");
   const [references, setReferences] = useState("");
   const [loading, setLoading] = useState(false);
@@ -39,6 +42,24 @@ export function FotoPointModal({ onClose, onSuccess, onError, network }: FotoPoi
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [onClose]);
 
+  useEffect(() => {
+    fetch("https://servicodados.ibge.gov.br/api/v1/localidades/estados?orderBy=nome")
+      .then(res => res.json())
+      .then(data => setStatesList(data))
+      .catch(err => console.error("Erro ao carregar estados:", err));
+  }, []);
+
+  useEffect(() => {
+    if (!uf) {
+      setCitiesList([]);
+      return;
+    }
+    fetch(`https://servicodados.ibge.gov.br/api/v1/localidades/estados/${uf}/municipios?orderBy=nome`)
+      .then(res => res.json())
+      .then(data => setCitiesList(data))
+      .catch(err => console.error("Erro ao carregar cidades:", err));
+  }, [uf]);
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -47,7 +68,7 @@ export function FotoPointModal({ onClose, onSuccess, onError, network }: FotoPoi
       const { data } = await API.post("/profissional/foto-point", {
         name,
         priceUnit: Number(price),
-        city,
+        city: city ? `${city} - ${uf}` : "",
         location,
         itinerary,
         dataEvento: date,
@@ -194,27 +215,53 @@ export function FotoPointModal({ onClose, onSuccess, onError, network }: FotoPoi
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-2">
-                    <label className="text-[10px] font-black text-theme-muted uppercase tracking-widest italic flex items-center gap-2">
-                        <MapPin size={12} /> Cidade
-                    </label>
-                    <input
-                        required
-                        placeholder="Ex: Campinas"
-                        value={city}
-                        onChange={e => setCity(e.target.value)}
-                        className="w-full bg-theme-bg-muted border border-theme-border p-4 text-theme-text outline-none focus:border-cyan-400/50 transition-all font-medium"
-                    />
+                <div className="grid grid-cols-3 gap-2">
+                    <div className="space-y-2 col-span-1">
+                        <label className="text-[10px] font-black text-theme-muted uppercase tracking-widest italic flex items-center gap-2">
+                            <MapPin size={12} /> Estado
+                        </label>
+                        <select
+                            required
+                            value={uf}
+                            onChange={e => {
+                                setUf(e.target.value);
+                                setCity("");
+                            }}
+                            className="w-full bg-theme-bg-muted border border-theme-border p-4 text-theme-text outline-none focus:border-cyan-400/50 transition-all font-medium appearance-none"
+                        >
+                            <option value="">UF</option>
+                            {statesList.map(state => (
+                                <option key={state.sigla} value={state.sigla}>{state.sigla}</option>
+                            ))}
+                        </select>
+                    </div>
+                    <div className="space-y-2 col-span-2">
+                        <label className="text-[10px] font-black text-theme-muted uppercase tracking-widest italic flex items-center gap-2">
+                            Cidade
+                        </label>
+                        <select
+                            required
+                            disabled={!uf || citiesList.length === 0}
+                            value={city}
+                            onChange={e => setCity(e.target.value)}
+                            className="w-full bg-theme-bg-muted border border-theme-border p-4 text-theme-text outline-none focus:border-cyan-400/50 transition-all font-medium appearance-none disabled:opacity-50"
+                        >
+                            <option value="">Selecione...</option>
+                            {citiesList.map(c => (
+                                <option key={c.nome} value={c.nome}>{c.nome}</option>
+                            ))}
+                        </select>
+                    </div>
                 </div>
                 <div className="space-y-2">
                     <label className="text-[10px] font-black text-theme-muted uppercase tracking-widest italic flex items-center gap-2">
-                        <MapPin size={12} /> Localização Exata
+                        <MapPin size={12} /> Localização (Google Maps ou Ponto Ref.)
                     </label>
                     <input
-                        placeholder="Ex: Em frente ao MASP, entre os pilares..."
+                        placeholder="Ex: https://maps.app.goo.gl/... ou MASP"
                         value={location}
                         onChange={e => setLocation(e.target.value)}
-                        className="w-full bg-theme-bg-muted border border-theme-border p-4 text-theme-text outline-none focus:border-cyan-400/50 transition-all font-medium"
+                        className={`w-full bg-theme-bg-muted border p-4 text-theme-text outline-none transition-all font-medium ${location.includes('maps.') || location.includes('http') ? 'border-green-400/50 text-green-400 focus:border-green-400' : 'border-theme-border focus:border-cyan-400/50'}`}
                     />
                 </div>
             </div>
