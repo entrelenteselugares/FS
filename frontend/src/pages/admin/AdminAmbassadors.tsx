@@ -118,7 +118,8 @@ export const AdminAmbassadors: React.FC = () => {
         
         <div className="flex flex-col xl:flex-row justify-between items-start xl:items-end gap-3 md:gap-6 relative z-10">
           <div>
-                        <p className="text-theme-muted mt-2 text-sm">Campanhas de afiliados e referral</p>
+            <h2 className="text-2xl font-bold uppercase text-theme-text font-heading">Embaixadores</h2>
+            <p className="text-[10px] font-bold uppercase tracking-[0.5em] text-theme-muted mt-2">Campanhas de afiliados e referral</p>
           </div>
           <button 
             onClick={() => setIsModalOpen(true)}
