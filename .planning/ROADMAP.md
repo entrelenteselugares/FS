@@ -103,7 +103,8 @@
 ### Phase 64: Homologação e Testes de Permissões
 
 **Goal:** Auditar todas as 76 telas do sistema garantindo a renderização visual e checagem de permissões via Playwright.
-**Requirements:** 
+**Requirements:**
+
 - Ajustar `generate-all-manuals.js` para usar login nas rotas públicas simulando o usuário Cliente.
 - Ajustar `generate-all-manuals-mobile.js` para Mobile.
 - Validar a geração e conferir a blindagem do `ProtectedRoute` contra acessos anônimos.
@@ -128,7 +129,8 @@
 ### Phase 65: Refatoração e Padronização de UI/UX (Frontend Overhaul)
 
 **Goal:** Padronizar tipografia, espaçamentos, cores e componentes globais para garantir excelência estética e eliminar dívida visual técnica de ponta a ponta.
-**Requirements:** 
+**Requirements:**
+
 - Limpar e reestruturar `index.css` com Design Tokens estritos.
 - Padronizar componentes globais (Buttons, Inputs).
 - Implementar containers responsivos padronizados.
