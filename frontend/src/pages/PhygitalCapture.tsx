@@ -96,9 +96,11 @@ export default function PhygitalCapture() {
     }
   }, [user]);
 
-  // Auto-abre câmera integrada se vier do botão flutuante (?auto=1)
+  // Auto-abre câmera integrada se vier do botão flutuante (?auto=1) ou se for dispositivo móvel
   useEffect(() => {
-    if (!autoCamera) return;
+    const isMobile = window.innerWidth <= 768;
+    if (!autoCamera && !isMobile) return;
+    
     const timer = setTimeout(() => {
       setShowInAppCamera(true);
     }, 300);
