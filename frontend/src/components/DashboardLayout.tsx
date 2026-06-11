@@ -1,10 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import { T, BtnGhost } from "../lib/theme";
 import { ThemeToggle } from "./ThemeToggle";
 import { NotificationBell } from "./notifications/NotificationBell";
-import { ShieldCheck } from "lucide-react";
+import { ShieldCheck, Menu } from "lucide-react";
 import '../styles/mobile-fix.css';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -56,27 +56,45 @@ interface SidebarContentProps {
   onNavigate: () => void;
 }
 
-const SidebarContent: React.FC<SidebarContentProps> = ({ navItems, onNavigate }) => {
+const SidebarContent: React.FC<SidebarContentProps & { currentPath: string }> = ({ navItems, onNavigate, currentPath }) => {
   const { user, logout } = useAuth();
-  const location = useLocation();
 
-  const isActive = (item: NavItem) => {
+  const checkIsActive = React.useCallback((item: NavItem) => {
     if (item.isActive !== undefined) return item.isActive;
     if (!item.to) return false;
     return item.exact
-      ? location.pathname === item.to
-      : location.pathname.startsWith(item.to);
-  };
+      ? currentPath === item.to
+      : currentPath.startsWith(item.to);
+  }, [currentPath]);
 
   const [expanded, setExpanded] = useState<Record<string, boolean>>(() => {
     const initialState: Record<string, boolean> = {};
     navItems.forEach(item => {
-      if (item.subItems?.some(isActive)) {
+      if (item.subItems?.some(checkIsActive)) {
         initialState[item.label] = true;
       }
     });
     return initialState;
   });
+
+  // Auto-expand sections that contain the active item, but preserve user's manual expansions
+  React.useEffect(() => {
+    setExpanded(prev => {
+      const next = { ...prev };
+      let changed = false;
+      navItems.forEach(item => {
+        if (item.subItems?.some(checkIsActive)) {
+          if (!next[item.label]) {
+            next[item.label] = true;
+            changed = true;
+          }
+        }
+      });
+      return changed ? next : prev;
+    });
+  }, [currentPath, navItems, checkIsActive]);
+
+
 
   const toggleExpand = (label: string) => {
     setExpanded(prev => ({ ...prev, [label]: !prev[label] }));
@@ -137,89 +155,47 @@ const SidebarContent: React.FC<SidebarContentProps> = ({ navItems, onNavigate })
 
           if (item.subItems) {
             const isExpanded = expanded[item.label];
-            const hasActiveChild = item.subItems.some(sub => isActive(sub));
+            const hasActiveChild = item.subItems.some(sub => checkIsActive(sub));
             
             return (
-              <div key={item.label} style={{ marginBottom: 4 }}>
+              <div key={item.label} className="mb-1">
                 <button
                   onClick={() => toggleExpand(item.label)}
-                  style={{
-                    display:       "flex",
-                    alignItems:    "center",
-                    gap:           12,
-                    padding:       "10px 20px",
-                    fontSize:      13,
-                    fontFamily:    T.fontB,
-                    fontWeight:    hasActiveChild ? 700 : 500,
-                    letterSpacing: "0.02em",
-                    cursor:        "pointer",
-                    border:        "none",
-                    background:    "transparent",
-                    color:         hasActiveChild ? T.text : T.text3,
-                    width:         "100%",
-                    textAlign:     "left",
-                    transition:    "all 0.2s ease",
-                  }}
+                  className={`flex items-center gap-3 px-5 py-2.5 text-[13px] font-heading tracking-wide cursor-pointer border-none w-full text-left transition-all duration-300 ${hasActiveChild ? "text-white font-black" : "text-zinc-400 font-medium hover:text-white hover:bg-white/5"}`}
+                  style={{ background: "transparent" }}
                 >
                   {item.icon && (
-                    <span style={{ color: hasActiveChild ? T.brand : T.text3, flexShrink: 0 }}>
+                    <span className={`shrink-0 transition-colors ${hasActiveChild ? "text-brand-tactical" : "text-zinc-500"}`}>
                       {item.icon}
                     </span>
                   )}
-                  <span style={{ flex: 1 }}>{item.label}</span>
+                  <span className="flex-1">{item.label}</span>
                   <svg 
                     width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
-                    style={{
-                      transform: isExpanded ? "rotate(180deg)" : "rotate(0deg)",
-                      transition: "transform 0.2s ease",
-                      color: T.text3
-                    }}
+                    className={`text-zinc-500 transition-transform duration-300 ${isExpanded ? "rotate-180" : "rotate-0"}`}
                   >
                     <polyline points="6 9 12 15 18 9" />
                   </svg>
                 </button>
 
                 {isExpanded && (
-                  <div style={{ paddingLeft: 44, paddingRight: 12, display: "flex", flexDirection: "column", gap: 2, marginTop: 4 }}>
+                  <div className="pl-11 pr-3 flex flex-col gap-0.5 mt-1 overflow-hidden animate-in slide-in-from-top-2 duration-200">
                     {item.subItems.map(subItem => {
                       if (subItem.hide) return null;
-                      const active = isActive(subItem);
+                      const active = checkIsActive(subItem);
                       const handleClick = () => {
                         onNavigate();
                         subItem.onClick?.();
                       };
                       
-                      const style: React.CSSProperties = {
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "space-between",
-                        padding: "8px 12px",
-                        fontSize: 12,
-                        fontFamily: T.fontB,
-                        fontWeight: active ? 700 : 500,
-                        color: active ? T.text : T.text3,
-                        textDecoration: "none",
-                        cursor: "pointer",
-                        background: active ? "var(--bg-field)" : "transparent",
-                        borderRadius: 6,
-                        border: "none",
-                        textAlign: "left"
-                      };
+                      const className = `flex items-center justify-between px-3 py-2 text-[12px] font-heading cursor-pointer border-none text-left rounded-md transition-all duration-300 ${active ? "bg-brand-tactical/10 text-brand-tactical font-black" : "bg-transparent text-zinc-400 font-medium hover:bg-white/5 hover:text-white"}`;
 
                       if (subItem.to) {
                         return (
-                          <Link key={subItem.label} to={subItem.to} style={style} onClick={handleClick}>
-                            <span style={{ color: active ? T.brand : 'inherit' }}>{subItem.label}</span>
+                          <Link key={subItem.label} to={subItem.to} className={className} onClick={handleClick}>
+                            <span>{subItem.label}</span>
                             {subItem.badge !== undefined && subItem.badge !== 0 && (
-                              <span style={{
-                                background: T.brand,
-                                color: T.brandText,
-                                fontSize: 9,
-                                fontWeight: 900,
-                                padding: "2px 6px",
-                                borderRadius: 4,
-                                textAlign: "center",
-                              }}>
+                              <span className="bg-brand-tactical text-black text-[9px] font-black px-1.5 py-0.5 rounded text-center">
                                 {subItem.badge}
                               </span>
                             )}
@@ -228,18 +204,10 @@ const SidebarContent: React.FC<SidebarContentProps> = ({ navItems, onNavigate })
                       }
 
                       return (
-                        <button key={subItem.label} style={style} onClick={handleClick}>
-                          <span style={{ color: active ? T.brand : 'inherit' }}>{subItem.label}</span>
+                        <button key={subItem.label} className={className} onClick={handleClick}>
+                          <span>{subItem.label}</span>
                           {subItem.badge !== undefined && subItem.badge !== 0 && (
-                            <span style={{
-                              background: T.brand,
-                              color: T.brandText,
-                              fontSize: 9,
-                              fontWeight: 900,
-                              padding: "2px 6px",
-                              borderRadius: 4,
-                              textAlign: "center",
-                            }}>
+                            <span className="bg-brand-tactical text-black text-[9px] font-black px-1.5 py-0.5 rounded text-center">
                               {subItem.badge}
                             </span>
                           )}
@@ -252,26 +220,8 @@ const SidebarContent: React.FC<SidebarContentProps> = ({ navItems, onNavigate })
             );
           }
 
-          const active = isActive(item);
-          const itemStyle: React.CSSProperties = {
-            display:       "flex",
-            alignItems:    "center",
-            gap:           12,
-            padding:       "10px 20px",
-            fontSize:      13,
-            fontFamily:    T.fontB,
-            fontWeight:    active ? 700 : 500,
-            letterSpacing: "0.02em",
-            cursor:        "pointer",
-            border:        "none",
-            background:    active ? "var(--bg-field)" : "transparent",
-            color:         active ? T.text : T.text3,
-            textDecoration:"none",
-            width:         "100%",
-            textAlign:     "left",
-            transition:    "all 0.2s ease",
-            borderRadius:  0,
-          };
+          const active = checkIsActive(item);
+          const itemClassName = `group relative flex items-center gap-3 px-5 py-2.5 text-[13px] font-heading tracking-wide w-full text-left transition-all duration-300 border-l-2 ${active ? "bg-brand-tactical/10 text-brand-tactical border-brand-tactical font-black" : "bg-transparent text-zinc-400 border-transparent font-medium hover:bg-white/5 hover:text-white hover:border-zinc-700"}`;
 
           const handleClick = () => {
             onNavigate();
@@ -280,25 +230,15 @@ const SidebarContent: React.FC<SidebarContentProps> = ({ navItems, onNavigate })
 
           if (item.to) {
             return (
-              <Link key={item.label} to={item.to} style={itemStyle} onClick={handleClick}>
+              <Link key={item.label} to={item.to} className={itemClassName} onClick={handleClick}>
                 {item.icon && (
-                  <span style={{ color: active ? T.brand : T.text3, flexShrink: 0 }}>
+                  <span className={`shrink-0 transition-colors ${active ? "text-brand-tactical" : "text-zinc-500 group-hover:text-zinc-300"}`}>
                     {item.icon}
                   </span>
                 )}
-                <span style={{ flex: 1 }}>{item.label}</span>
+                <span className="flex-1">{item.label}</span>
                 {item.badge !== undefined && item.badge !== 0 && (
-                  <span style={{
-                    background: T.brand,
-                    color: T.brandText,
-                    fontSize: 10,
-                    fontWeight: 900,
-                    padding: "3px 8px",
-                    borderRadius: 3,
-                    minWidth: 16,
-                    textAlign: "center",
-                    letterSpacing: 0
-                  }}>
+                  <span className="bg-brand-tactical text-black text-[10px] font-black px-2 py-0.5 rounded-sm min-w-[16px] text-center">
                     {item.badge}
                   </span>
                 )}
@@ -307,25 +247,15 @@ const SidebarContent: React.FC<SidebarContentProps> = ({ navItems, onNavigate })
           }
 
           return (
-            <button key={item.label} style={itemStyle} onClick={handleClick}>
+            <button key={item.label} className={itemClassName} onClick={handleClick}>
               {item.icon && (
-                <span style={{ color: active ? T.brand : T.text3, flexShrink: 0 }}>
+                <span className={`shrink-0 transition-colors ${active ? "text-brand-tactical" : "text-zinc-500 group-hover:text-zinc-300"}`}>
                   {item.icon}
                 </span>
               )}
-              <span style={{ flex: 1 }}>{item.label}</span>
+              <span className="flex-1">{item.label}</span>
               {item.badge !== undefined && item.badge !== 0 && (
-                <span style={{
-                  background: T.brand,
-                  color: T.brandText,
-                  fontSize: 9,
-                  fontWeight: 900,
-                  padding: "2px 6px",
-                  borderRadius: 2,
-                  minWidth: 16,
-                  textAlign: "center",
-                  letterSpacing: 0
-                }}>
+                <span className="bg-brand-tactical text-black text-[9px] font-black px-1.5 py-0.5 rounded-sm min-w-[16px] text-center">
                   {item.badge}
                 </span>
               )}
@@ -449,17 +379,20 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
 }) => {
   const { user } = useAuth();
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const location = useLocation();
 
-  const sidebarProps: SidebarContentProps = {
+  const sidebarProps: SidebarContentProps & { currentPath: string } = {
     title,
     navItems,
     onNavigate: () => setDrawerOpen(false),
+    currentPath: location.pathname,
   };
 
 
 
+
   // Force close drawer on desktop
-  React.useEffect(() => {
+  useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth >= 1024) setDrawerOpen(false);
     };
@@ -556,6 +489,13 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
           </div>
           <div className="flex items-center gap-3">
             <NotificationBell />
+            <button
+              onClick={() => setDrawerOpen(true)}
+              className="p-1.5 border border-theme-border rounded-lg text-theme-text-muted hover:text-theme-text bg-theme-bg-muted/50 hover:bg-theme-bg-muted transition-colors"
+              aria-label="Abrir menu"
+            >
+              <Menu size={18} />
+            </button>
           </div>
         </nav>
 
