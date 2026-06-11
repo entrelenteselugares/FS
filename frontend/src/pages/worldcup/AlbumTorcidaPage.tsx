@@ -4,7 +4,7 @@ import { API as api } from "../../lib/api";
 import { T } from "../../lib/theme";
 import { Trophy, Camera, Clock, ChevronRight, ChevronLeft, Star, Zap, Calendar, Share2, Users, Upload, Heart, Award, Target, Network } from "lucide-react";
 import { AlbumMissionsTab } from "../../components/worldcup/AlbumMissionsTab";
-import { WorldCupLiveBanner } from "../../components/worldcup/WorldCupLiveBanner";
+
 import { WorldCupBracket } from "../../components/worldcup/WorldCupBracket";
 
 // ─── Copa 2026 Data ───────────────────────────────────────────────────────────
