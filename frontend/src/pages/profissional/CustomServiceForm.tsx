@@ -103,7 +103,7 @@ export default function CustomServiceForm() {
           </motion.div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-10 bg-theme-card border border-theme-border p-8 md:p-12">
+        <form onSubmit={handleSubmit} className="space-y-8 md:space-y-10 bg-theme-card border border-theme-border p-4 md:p-8 lg:p-12">
           
           {/* IDENTIFICAÇÃO */}
           <section className="space-y-6">
@@ -137,16 +137,16 @@ export default function CustomServiceForm() {
           <section className="space-y-6">
             <h2 className="text-sm font-black text-white uppercase tracking-widest border-b border-white/5 pb-2">2. Formato de Trabalho</h2>
             <div className="flex flex-wrap gap-4 mb-4">
-              <label className={`cursor-pointer flex-1 border p-4 flex flex-col items-center justify-center gap-3 transition-colors ${!formData.isRemote ? 'bg-brand-tactical/10 border-brand-tactical text-brand-tactical' : 'bg-black border-white/10 text-theme-muted hover:border-white/30'}`}>
-                <input type="radio" name="isRemote" className="hidden" checked={!formData.isRemote} onChange={() => setFormData({...formData, isRemote: false})} />
-                <Camera size={24} />
-                <span className="text-[10px] font-black uppercase tracking-widest">Presencial (Em Campo)</span>
-              </label>
-              <label className={`cursor-pointer flex-1 border p-4 flex flex-col items-center justify-center gap-3 transition-colors ${formData.isRemote ? 'bg-brand-tactical/10 border-brand-tactical text-brand-tactical' : 'bg-black border-white/10 text-theme-muted hover:border-white/30'}`}>
-                <input type="radio" name="isRemote" className="hidden" checked={formData.isRemote} onChange={() => setFormData({...formData, isRemote: true})} />
-                <Laptop size={24} />
-                <span className="text-[10px] font-black uppercase tracking-widest">Remoto (Edição/Design)</span>
-              </label>
+            <label className={`cursor-pointer flex-1 border p-3 flex flex-col items-center justify-center gap-2 transition-colors ${!formData.isRemote ? 'bg-brand-tactical/10 border-brand-tactical text-brand-tactical' : 'bg-black border-white/10 text-theme-muted hover:border-white/30'}`}>
+              <input type="radio" name="isRemote" className="hidden" checked={!formData.isRemote} onChange={() => setFormData({...formData, isRemote: false})} />
+              <Camera size={20} />
+              <span className="text-[10px] font-black uppercase tracking-widest text-center">Presencial (Em Campo)</span>
+            </label>
+            <label className={`cursor-pointer flex-1 border p-3 flex flex-col items-center justify-center gap-2 transition-colors ${formData.isRemote ? 'bg-brand-tactical/10 border-brand-tactical text-brand-tactical' : 'bg-black border-white/10 text-theme-muted hover:border-white/30'}`}>
+              <input type="radio" name="isRemote" className="hidden" checked={formData.isRemote} onChange={() => setFormData({...formData, isRemote: true})} />
+              <Laptop size={20} />
+              <span className="text-[10px] font-black uppercase tracking-widest text-center">Remoto (Edição/Design)</span>
+            </label>
             </div>
             <div>
               <label className="block text-[10px] text-theme-muted uppercase tracking-widest font-black mb-2">
@@ -230,7 +230,7 @@ export default function CustomServiceForm() {
           <button 
             type="submit" 
             disabled={loading}
-            className="w-full py-4 bg-brand-tactical text-[var(--brand-text)] text-xs font-black uppercase tracking-widest hover:brightness-110 transition-all disabled:opacity-50"
+            className="w-full py-2.5 md:py-4 bg-brand-tactical text-[var(--brand-text)] text-xs font-black uppercase tracking-widest hover:brightness-110 transition-all disabled:opacity-50 rounded-xl"
           >
             {loading ? "Enviando..." : "Enviar Serviço para Aprovação"}
           </button>

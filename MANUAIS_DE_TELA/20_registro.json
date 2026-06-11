@@ -1,0 +1,24 @@
+{
+  "title": "Registro — Foto Segundo",
+  "headings": [
+    "SOLICITAR REGISTRO"
+  ],
+  "buttons": [
+    "←\nVITRINE",
+    "CLIENTE PRIVADO",
+    "PROFISSIONAL DA REDE",
+    "UNIDADE FIXA",
+    "CONFIRMAR INSCRIÇÃO",
+    "Home",
+    "Buscar",
+    "Opções",
+    "Entrar",
+    "Vitrine de Eventos"
+  ],
+  "links": [
+    {
+      "text": "FAZER LOGIN",
+      "href": "/login"
+    }
+  ]
+}

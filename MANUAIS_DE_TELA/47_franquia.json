@@ -1,0 +1,47 @@
+{
+  "title": "Foto Segundo | Suas memórias, entregues agora.",
+  "headings": [
+    "COMMAND CENTER",
+    "MONITOR DE INSUMOS",
+    "LOGS DE OPERAÇÃO",
+    "MINHA REDE",
+    "COMISSÕES & FECHAMENTO"
+  ],
+  "buttons": [
+    "Carrinho",
+    "Meus Álbuns",
+    "Indique e Ganhe",
+    "Meus Dados",
+    "Minha Agenda",
+    "Portfólio & Serviços",
+    "Vendas & Ganhos",
+    "Gestão de Franquia",
+    "Rede Técnica",
+    "Franquia Print",
+    "17",
+    "ENCERRAR SESSÃO",
+    "Encerrar Sessão",
+    "REABASTECER CRÉDITOS (PIX)",
+    "SOLICITAR KIT FÍSICO",
+    "VER TUDO",
+    "SALVAR CUSTOMIZAÇÃO",
+    "EXPORTAR CSV",
+    "Home",
+    "Buscar",
+    "Compras",
+    "Opções",
+    "Meu Portfólio",
+    "Serviços & Preços",
+    "Ficha Técnica & Pix"
+  ],
+  "links": [
+    {
+      "text": "VISITAR SITE",
+      "href": "/"
+    },
+    {
+      "text": "Visitar Site",
+      "href": "/"
+    }
+  ]
+}

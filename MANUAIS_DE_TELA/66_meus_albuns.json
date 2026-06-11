@@ -1,0 +1,31 @@
+{
+  "title": "Meus Álbuns | Foto Segundo",
+  "headings": [
+    "RR - CLIENTE",
+    "TESTE"
+  ],
+  "buttons": [
+    "Histórico de Compras",
+    "Meus Álbuns",
+    "Indique e Ganhe",
+    "Meus Dados",
+    "1",
+    "ENCERRAR SESSÃO",
+    "Encerrar Sessão",
+    "NOVO ÁLBUM",
+    "Home",
+    "Buscar",
+    "Compras",
+    "Opções"
+  ],
+  "links": [
+    {
+      "text": "VISITAR SITE",
+      "href": "/"
+    },
+    {
+      "text": "Visitar Site",
+      "href": "/"
+    }
+  ]
+}

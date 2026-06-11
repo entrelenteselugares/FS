@@ -434,10 +434,10 @@ export default function ProfissionalDashboard({
  animate={{ opacity: 1, x: 0 }}
  exit={{ opacity: 0, x: -10 }}
  transition={{ duration: 0.3 }}
- className="space-y-12"
+ className="space-y-6 md:space-y-12"
  >
  {activeTab === "agenda" && (
- <div className="space-y-12">
+ <div className="space-y-6 md:space-y-12">
  {/* Banner de Venda Expressa & Flash Event */}
  <div className="grid grid-cols-3 gap-2 md:gap-6">
  {/* Venda Rápida */}

@@ -1,0 +1,64 @@
+{
+  "title": "Foto Segundo | Contato | Foto Segundo",
+  "headings": [
+    "FALE COM A\nGENTE",
+    "SUPORTE AO CLIENTE",
+    "PARCERIAS B2B",
+    "PROFISSIONAIS DA REDE",
+    "IMPRENSA",
+    "PRIVACIDADE E LGPD",
+    "STATUS DA PLATAFORMA",
+    "SEDE"
+  ],
+  "buttons": [
+    "LOGIN",
+    "AGENDAR",
+    "Home",
+    "Buscar",
+    "Opções",
+    "Entrar",
+    "Vitrine de Eventos"
+  ],
+  "links": [
+    {
+      "text": "VOLTAR PARA O INÍCIO",
+      "href": "/"
+    },
+    {
+      "text": "suporte@fotosegundo.com.br",
+      "href": "mailto:suporte@fotosegundo.com.br"
+    },
+    {
+      "text": "Central de Ajuda",
+      "href": "/suporte"
+    },
+    {
+      "text": "parcerias@fotosegundo.com.br",
+      "href": "mailto:parcerias@fotosegundo.com.br"
+    },
+    {
+      "text": "CONHECER O PROGRAMA",
+      "href": "/parcerias"
+    },
+    {
+      "text": "profissionais@fotosegundo.com.br",
+      "href": "mailto:profissionais@fotosegundo.com.br"
+    },
+    {
+      "text": "imprensa@fotosegundo.com.br",
+      "href": "mailto:imprensa@fotosegundo.com.br"
+    },
+    {
+      "text": "privacidade@fotosegundo.com.br",
+      "href": "mailto:privacidade@fotosegundo.com.br"
+    },
+    {
+      "text": "LER POLÍTICA DE PRIVACIDADE",
+      "href": "/privacidade"
+    },
+    {
+      "text": "ACESSAR PAINEL DE STATUS",
+      "href": "/status"
+    }
+  ]
+}

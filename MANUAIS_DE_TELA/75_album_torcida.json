@@ -1,0 +1,33 @@
+{
+  "title": "Foto Segundo | Suas memórias, entregues agora.",
+  "headings": [
+    "ÁLBUM\nDA TORCIDA"
+  ],
+  "buttons": [
+    "JOGOS",
+    "BOLÃO",
+    "GRUPOS",
+    "MEU ÁLBUM",
+    "MISSÕES",
+    "CHAVEAMENTO",
+    "CLASSIFICAÇÃO",
+    "NOSTALGIA",
+    "Home",
+    "Buscar",
+    "Compras",
+    "Meus Álbuns",
+    "Opções",
+    "Indique e Ganhe",
+    "Meus Dados"
+  ],
+  "links": [
+    {
+      "text": "COPA 2026\nPRÓXIMOS\nMÉXICO\n11/06 · 16:00\nGRP A\nÁFR\nVer Álbum →",
+      "href": "/album-torcida"
+    },
+    {
+      "text": "VOLTAR PARA A HOME",
+      "href": "/"
+    }
+  ]
+}

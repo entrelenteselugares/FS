@@ -80,9 +80,10 @@ export function FinanceTab({
           <div className="relative group flex-1 md:flex-none">
             <button
               onClick={onDownloadTaxReport}
-              className="w-full flex justify-center items-center gap-2 px-4 py-2 bg-brand-tactical/10 text-brand-tactical border border-brand-tactical/30 hover:bg-brand-tactical hover:text-black rounded-lg text-[9px] font-black uppercase tracking-widest italic transition-all shadow-sm"
+              className="w-full flex justify-center items-center gap-1.5 px-3 md:px-4 py-2 bg-brand-tactical/10 text-brand-tactical border border-brand-tactical/30 hover:bg-brand-tactical hover:text-black rounded-lg text-[9px] font-black uppercase tracking-widest italic transition-all shadow-sm whitespace-nowrap"
             >
-              <Download size={12} /> Relatório de Tributos
+              <Download size={12} />
+              <span className="hidden sm:inline">Relatório de </span>Tributos
             </button>
             <div className="absolute top-full right-0 mt-1 hidden group-hover:flex flex-col bg-theme-bg border border-theme-border shadow-2xl rounded-lg overflow-hidden z-50 min-w-[160px]">
               <button onClick={() => window.open(`${API.defaults.baseURL}/profissional/finance/tax-report?format=pdf`, '_blank')} className="px-4 py-3 text-[9px] font-black uppercase text-theme-text hover:bg-brand-tactical/10 flex items-center gap-2 border-b border-theme-border transition-colors">

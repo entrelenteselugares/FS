@@ -282,14 +282,14 @@ export default function VaultsPage() {
 
       <div className="max-w-[1400px] mx-auto px-2 md:px-6 py-6 md:py-10 space-y-8 md:space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
         {/* Page actions */}
-        <div className="flex flex-col md:flex-row md:items-end justify-end gap-6 border-b border-theme-border pb-4">
+        <div className="flex items-center justify-end gap-4 border-b border-theme-border pb-3 md:pb-4">
 
           <button
             id="btn-novo-album"
             onClick={() => setShowModal(true)}
-            className="flex items-center gap-2 bg-brand-tactical hover:bg-brand-tactical/90 text-black text-[11px] font-black uppercase tracking-widest px-6 py-4 rounded-xl transition-all active:scale-95 shadow-lg shadow-brand-tactical/20 italic"
+            className="flex items-center gap-2 bg-brand-tactical hover:bg-brand-tactical/90 text-black text-[11px] font-black uppercase tracking-widest px-4 md:px-6 py-2.5 md:py-4 rounded-xl transition-all active:scale-95 shadow-lg shadow-brand-tactical/20 italic"
           >
-            <Plus size={16} />
+            <Plus size={14} />
             NOVO ÁLBUM
           </button>
         </div>
@@ -328,7 +328,7 @@ export default function VaultsPage() {
             </div>
             <button
               onClick={() => setShowModal(true)}
-              className="mt-4 flex items-center gap-2 border border-brand-tactical/30 text-brand-tactical hover:bg-brand-tactical/10 text-[10px] font-black uppercase tracking-widest px-8 py-4 rounded-xl transition-all italic"
+              className="mt-4 flex items-center gap-2 border border-brand-tactical/30 text-brand-tactical hover:bg-brand-tactical/10 text-[10px] font-black uppercase tracking-widest px-6 md:px-8 py-2.5 md:py-4 rounded-xl transition-all italic"
             >
               <Plus size={14} />
               CRIAR PRIMEIRO ÁLBUM

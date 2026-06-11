@@ -29,18 +29,18 @@ export function DashboardHeader({ activeTab, viewTab, onViewTabChange, residentU
         </div>
         
         {(activeTab === "agenda" || activeTab === "convites") && (
-          <div className="flex flex-wrap items-center gap-4 w-full xl:w-auto">
+          <div className="flex flex-wrap items-center gap-2 md:gap-4 w-full xl:w-auto">
             <button
               onClick={() => onViewTabChange("lista")}
-              className={`px-4 md:px-6 py-3 text-[9px] font-black uppercase tracking-widest rounded-xl transition-all flex items-center justify-center gap-2 border ${viewTab === "lista" ? "bg-brand-tactical text-brand-text border-brand-tactical shadow-lg shadow-brand-tactical/20" : "text-theme-muted border-theme-border hover:text-theme-text"} flex-1 md:flex-none whitespace-nowrap`}
+              className={`px-3 md:px-6 py-2 md:py-3 text-[9px] font-black uppercase tracking-widest rounded-xl transition-all flex items-center justify-center gap-2 border ${viewTab === "lista" ? "bg-brand-tactical text-brand-text border-brand-tactical shadow-lg shadow-brand-tactical/20" : "text-theme-muted border-theme-border hover:text-theme-text"} flex-1 md:flex-none whitespace-nowrap`}
             >
-              <List size={14} /> Lista
+              <List size={13} /> Lista
             </button>
             <button
               onClick={() => onViewTabChange("calendario")}
-              className={`px-4 md:px-6 py-3 text-[9px] font-black uppercase tracking-widest rounded-xl transition-all flex items-center justify-center gap-2 border ${viewTab === "calendario" ? "bg-brand-tactical text-brand-text border-brand-tactical shadow-lg shadow-brand-tactical/20" : "text-theme-muted border-theme-border hover:text-theme-text"} flex-1 md:flex-none whitespace-nowrap`}
+              className={`px-3 md:px-6 py-2 md:py-3 text-[9px] font-black uppercase tracking-widest rounded-xl transition-all flex items-center justify-center gap-2 border ${viewTab === "calendario" ? "bg-brand-tactical text-brand-text border-brand-tactical shadow-lg shadow-brand-tactical/20" : "text-theme-muted border-theme-border hover:text-theme-text"} flex-1 md:flex-none whitespace-nowrap`}
             >
-              <CalendarIcon size={14} /> Calendário
+              <CalendarIcon size={13} /> Calendário
             </button>
           </div>
         )}

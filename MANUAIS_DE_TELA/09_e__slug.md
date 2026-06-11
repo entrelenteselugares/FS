@@ -1,0 +1,35 @@
+# Manual de Tela — **Página do Evento** — Álbum público de um evento específico
+
+## ℹ️ Informações Gerais
+
+- **URL:** `/e/:slug`
+- **Caminho Resolvido:** `/e/bday-kurio-mpmxwdgz`
+- **Nível de Acesso:** `Todos`
+- **Título da Página (HTML):** `Foto Segundo | Suas memórias, entregues agora.`
+
+## 📸 Captura da Tela
+
+![Screenshot de **Página do Evento** — Álbum público de um evento específico](./screenshots/09_e__slug.png)
+
+## 🌟 Títulos e Seções Encontradas
+
+- 404
+- Ops! Evento indisponível ou não encontrado.
+
+## 🔘 Ações e Botões Disponíveis
+
+- **Botão:** `RETORNAR À VITRINE`
+- **Botão:** `Home`
+- **Botão:** `Buscar`
+- **Botão:** `Opções`
+- **Botão:** `Entrar`
+- **Botão:** `Vitrine de Eventos`
+
+## 🔗 Links de Navegação
+
+*Nenhum link de navigation detectado.*
+
+## ⚙️ Observações Técnicas e Fluxo
+
+1. **Acesso:** O carregamento requer privilégios de tipo `Todos`.
+2. **Responsividade:** Layout testado em formato desktop (1280x1080) e mobile.

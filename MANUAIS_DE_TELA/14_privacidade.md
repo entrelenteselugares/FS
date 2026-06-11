@@ -1,0 +1,56 @@
+# Manual de Tela — **Política de Privacidade**
+
+## ℹ️ Informações Gerais
+
+- **URL:** `/privacidade`
+- **Caminho Resolvido:** `/privacidade`
+- **Nível de Acesso:** `Todos`
+- **Título da Página (HTML):** `Foto Segundo | Política de Privacidade | Foto Segundo`
+
+## 📸 Captura da Tela
+
+![Screenshot de **Política de Privacidade**](./screenshots/14_privacidade.png)
+
+## 🌟 Títulos e Seções Encontradas
+
+- POLÍTICA DE PRIVACIDADE
+- 1.
+CONTROLADOR DOS DADOS
+- 2.
+DADOS QUE COLETAMOS
+- FORNECIDOS POR VOCÊ
+- COLETADOS AUTOMATICAMENTE
+- 3.
+COMO USAMOS SEUS DADOS
+- 4.
+ARMAZENAMENTO E RETENÇÃO
+- 5.
+COMPARTILHAMENTO DE DADOS
+- 6.
+SEUS DIREITOS (LGPD)
+- 7.
+COOKIES
+- 8.
+SEGURANÇA
+- 9.
+MENORES DE IDADE
+- 10.
+ALTERAÇÕES
+
+## 🔘 Ações e Botões Disponíveis
+
+- **Botão:** `Home`
+- **Botão:** `Buscar`
+- **Botão:** `Opções`
+- **Botão:** `Entrar`
+- **Botão:** `Vitrine de Eventos`
+
+## 🔗 Links de Navegação
+
+- **VOLTAR PARA O INÍCIO** -> `/`
+- **privacidade@fotosegundo.com.br** -> `mailto:privacidade@fotosegundo.com.br`
+
+## ⚙️ Observações Técnicas e Fluxo
+
+1. **Acesso:** O carregamento requer privilégios de tipo `Todos`.
+2. **Responsividade:** Layout testado em formato desktop (1280x1080) e mobile.

@@ -491,11 +491,11 @@ export default function ClienteArea() {
  })()}
 
  {/* Header Section */}
- <div className="flex flex-col md:flex-row md:items-end justify-end gap-6 mb-6 animate-in fade-in slide-in-from-top-4 duration-700">
+ <div className="flex flex-col md:flex-row md:items-end justify-end gap-3 mb-3 md:mb-6 animate-in fade-in slide-in-from-top-4 duration-700">
  {user?.nome && (
- <div className="flex items-center gap-2 px-4 py-2 bg-brand-tactical/10 rounded-xl border border-brand-tactical/20 shrink-0">
- <ShieldCheck size={14} className="text-brand-tactical" />
- <p className="text-[10px] font-black text-brand-tactical uppercase tracking-widest">{user.nome}</p>
+ <div className="flex items-center gap-2 px-3 py-1.5 bg-brand-tactical/10 rounded-xl border border-brand-tactical/20 self-start md:shrink-0">
+ <ShieldCheck size={12} className="text-brand-tactical" />
+ <p className="text-[9px] font-black text-brand-tactical uppercase tracking-widest">{user.nome}</p>
  </div>
  )}
  </div>
@@ -542,10 +542,10 @@ export default function ClienteArea() {
  animate={{ opacity: 1, x: 0 }}
  exit={{ opacity: 0, x: -10 }}
  transition={{ duration: 0.3 }}
- className="space-y-12"
+ className="space-y-4 md:space-y-12"
  >
  {activeTab === "files" ? (
- <div className="space-y-10">
+ <div className="space-y-4 md:space-y-10">
  {/* Wallet Header Section */}
  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-8">
  <div className="relative overflow-hidden bg-theme-bg border-2 border-theme-border p-4 sm:p-8 md:p-10 rounded-2xl transition-all duration-500 hover:border-brand-tactical hover:shadow-[0_0_20px_rgba(133,185,172,0.3)] hover:border-brand-tactical group">
@@ -580,7 +580,7 @@ export default function ClienteArea() {
  </div>
 
  {/* Espaçamento tático para as memórias */}
- <div className="h-4" />
+ <div className="h-1 md:h-4" />
 
  {loading ? (
  <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
@@ -621,7 +621,7 @@ export default function ClienteArea() {
                       </div>
                     </div>
  ) : (
- <div className="space-y-10">
+ <div className="space-y-4 md:space-y-10">
  {groupedEvents.length > 0 && (
  <div className="space-y-6">
  {groupedEvents.map((group) => (
@@ -1048,7 +1048,7 @@ group: EventGroup;
           </div>
 
           {/* Action Buttons */}
-          <div className="shrink-0 flex flex-row sm:flex-col items-center justify-center gap-2 sm:w-40 border-t sm:border-t-0 sm:border-l border-theme-border/50 pt-4 sm:pt-0 sm:pl-6">
+          <div className="shrink-0 flex flex-col items-center justify-center gap-2 w-full sm:w-40 border-t sm:border-t-0 sm:border-l border-theme-border/50 pt-4 sm:pt-0 sm:pl-6">
             {hasAprovado ? (
               <>
                 <button 

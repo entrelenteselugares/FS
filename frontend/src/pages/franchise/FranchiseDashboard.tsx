@@ -206,51 +206,53 @@ const FranchiseDashboard: React.FC = () => {
           </h1>
         </div>
 
-        {/* PRINTER STATUS WIDGET */}
-        <div className={`flex items-center gap-4 px-6 py-4 border border-theme-border bg-theme-bg-muted transition-all ${printerStatus === 'ONLINE' ? 'border-brand-tactical/30' : 'border-red-500/30'}`}>
-          <div className="relative">
-            <Printer size={24} className={printerStatus === 'ONLINE' ? 'text-brand-tactical' : 'text-red-500'} />
-            <div className={`absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full animate-ping ${printerStatus === 'ONLINE' ? 'bg-brand-tactical' : 'bg-red-500'}`} />
+        <div className="grid grid-cols-2 md:flex gap-4 w-full md:w-auto">
+          {/* PRINTER STATUS WIDGET */}
+          <div className={`flex items-center gap-4 px-4 py-3 sm:px-6 sm:py-4 border border-theme-border bg-theme-bg-muted transition-all ${printerStatus === 'ONLINE' ? 'border-brand-tactical/30' : 'border-red-500/30'}`}>
+            <div className="relative">
+              <Printer size={20} className={printerStatus === 'ONLINE' ? 'text-brand-tactical' : 'text-red-500'} />
+              <div className={`absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full animate-ping ${printerStatus === 'ONLINE' ? 'bg-brand-tactical' : 'bg-red-500'}`} />
+            </div>
+            <div className="space-y-0.5">
+              <span className="text-[8px] font-black text-theme-muted uppercase tracking-widest block opacity-60">Status Agent</span>
+              <span className={`text-xs sm:text-sm font-black uppercase italic ${printerStatus === 'ONLINE' ? 'text-brand-tactical' : 'text-red-500'}`}>
+                {printerStatus}
+              </span>
+            </div>
           </div>
-          <div className="space-y-0.5">
-            <span className="text-[9px] font-black text-theme-muted uppercase tracking-widest block opacity-60">Status Agent</span>
-            <span className={`text-sm font-black uppercase italic ${printerStatus === 'ONLINE' ? 'text-brand-tactical' : 'text-red-500'}`}>
-              {printerStatus}
-            </span>
-          </div>
-        </div>
 
-        {/* REVENUE STATUS WIDGET */}
-        <div className="flex items-center gap-4 px-6 py-4 border border-theme-border bg-theme-bg-muted border-blue-500/30">
-          <div className="relative">
-            <DollarSign size={24} className="text-blue-400" />
-            <div className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-blue-500 animate-pulse" />
-          </div>
-          <div className="space-y-0.5">
-            <span className="text-[9px] font-black text-theme-muted uppercase tracking-widest block opacity-60">Renda Passiva</span>
-            <span className="text-sm font-black uppercase italic text-blue-400">
-              {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(finance.totalEarned)}
-            </span>
+          {/* REVENUE STATUS WIDGET */}
+          <div className="flex items-center gap-4 px-4 py-3 sm:px-6 sm:py-4 border border-theme-border bg-theme-bg-muted border-blue-500/30">
+            <div className="relative">
+              <DollarSign size={20} className="text-blue-400" />
+              <div className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-blue-500 animate-pulse" />
+            </div>
+            <div className="space-y-0.5">
+              <span className="text-[8px] font-black text-theme-muted uppercase tracking-widest block opacity-60">Renda Passiva</span>
+              <span className="text-xs sm:text-sm font-black uppercase italic text-blue-400">
+                {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(finance.totalEarned)}
+              </span>
+            </div>
           </div>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-8">
         
         {/* COLUNA 1: INVENTÁRIO PREDITIVO */}
-        <div className="lg:col-span-2 space-y-8">
-          <div className="bg-theme-bg-muted border border-theme-border p-8 relative overflow-hidden group">
+        <div className="lg:col-span-2 space-y-4 md:space-y-8">
+          <div className="bg-theme-bg-muted border border-theme-border p-4 md:p-8 relative overflow-hidden group">
             <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity">
               <Activity size={120} className="text-theme-text" />
             </div>
             
-            <div className="relative z-10 space-y-8">
+            <div className="relative z-10 space-y-4 md:space-y-8">
               <div className="flex items-center justify-between">
-                <h3 className="text-xl font-heading font-black text-theme-text uppercase italic tracking-tight">Monitor de Insumos</h3>
-                <ShieldCheck size={20} className="text-brand-tactical opacity-50" />
+                <h3 className="text-lg md:text-xl font-heading font-black text-theme-text uppercase italic tracking-tight">Monitor de Insumos</h3>
+                <ShieldCheck size={18} className="text-brand-tactical opacity-50" />
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-10">
                 {/* CRÉDITOS DE IMPRESSÃO */}
                 <div className="space-y-4">
                   <div className="flex justify-between items-end">
@@ -293,25 +295,25 @@ const FranchiseDashboard: React.FC = () => {
               </div>
 
               {/* QUICK REORDER CTA */}
-              <div className="pt-6 border-t border-theme-border/10 flex flex-col md:flex-row gap-4">
+              <div className="pt-3 md:pt-6 border-t border-theme-border/10 flex flex-col sm:flex-row gap-3">
                 <button 
                   onClick={() => handleReorder('CREDITS_500')}
-                  className="flex-1 bg-brand-tactical text-zinc-950 py-5 text-[11px] font-black uppercase tracking-[0.2em] shadow-xl hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-3"
+                  className="flex-1 bg-brand-tactical text-zinc-950 py-2.5 md:py-5 text-[10px] md:text-[11px] font-black uppercase tracking-[0.2em] shadow-xl hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-2"
                 >
-                  <ShoppingBag size={16} /> Reabastecer Créditos (Pix)
+                  <ShoppingBag size={14} /> Reabastecer Créditos (Pix)
                 </button>
                 <button 
                   onClick={() => handleReorder('PHYSICAL_KIT')}
-                  className="flex-1 bg-transparent border border-theme-border text-theme-text py-5 text-[11px] font-black uppercase tracking-[0.2em] hover:bg-theme-bg-muted transition-all flex items-center justify-center gap-3"
+                  className="flex-1 bg-transparent border border-theme-border text-theme-text py-2.5 md:py-5 text-[10px] md:text-[11px] font-black uppercase tracking-[0.2em] hover:bg-theme-bg-muted transition-all flex items-center justify-center gap-2"
                 >
-                  <Zap size={16} /> Solicitar Kit Físico
+                  <Zap size={14} /> Solicitar Kit Físico
                 </button>
               </div>
             </div>
           </div>
 
           {/* HISTÓRICO DE IMPRESSÕES */}
-          <div className="bg-theme-bg-muted border border-theme-border p-6 space-y-6">
+          <div className="bg-theme-bg-muted border border-theme-border p-4 md:p-6 space-y-4 md:space-y-6">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                  <History size={18} className="text-theme-muted" />
@@ -337,11 +339,11 @@ const FranchiseDashboard: React.FC = () => {
         </div>
 
         {/* COLUNA 2: NETWORKING & REFERRALS */}
-        <div className="space-y-8">
-          <div className="bg-theme-bg-muted border border-theme-border p-8 space-y-8 border-brand-tactical/20">
-            <div className="space-y-2">
-              <Users size={28} className="text-brand-tactical" />
-              <h3 className="text-2xl font-heading font-black text-theme-text uppercase italic tracking-tighter">Minha Rede</h3>
+        <div className="space-y-4 md:space-y-8">
+          <div className="bg-theme-bg-muted border border-theme-border p-4 md:p-8 space-y-4 md:space-y-8 border-brand-tactical/20">
+            <div className="space-y-1.5">
+              <Users size={22} className="text-brand-tactical" />
+              <h3 className="text-xl md:text-2xl font-heading font-black text-theme-text uppercase italic tracking-tighter">Minha Rede</h3>
               <p className="text-[10px] text-theme-muted font-black leading-relaxed uppercase tracking-tight">
                 Indique fotógrafos e expanda sua capilaridade regional.
               </p>
@@ -425,7 +427,7 @@ const FranchiseDashboard: React.FC = () => {
                 <button 
                   onClick={handleSaveBranding}
                   disabled={savingBranding}
-                  className="w-full py-4 bg-brand-tactical/10 text-brand-tactical hover:bg-brand-tactical hover:text-zinc-950 transition-all text-[9px] font-black uppercase tracking-[0.3em] disabled:opacity-50"
+                  className="w-full py-2.5 md:py-4 bg-brand-tactical/10 text-brand-tactical hover:bg-brand-tactical hover:text-zinc-950 transition-all text-[9px] font-black uppercase tracking-[0.3em] disabled:opacity-50"
                 >
                   {savingBranding ? 'Salvando...' : 'Salvar Customização'}
                 </button>
@@ -434,7 +436,7 @@ const FranchiseDashboard: React.FC = () => {
           </div>
 
           {/* PASSIVE INCOME LIST & COHORT INTEL */}
-          <div className="bg-theme-bg-muted border border-theme-border p-8 space-y-8">
+          <div className="bg-theme-bg-muted border border-theme-border p-4 md:p-8 space-y-4 md:space-y-8">
             <div className="flex items-center justify-between">
               <h3 className="text-sm font-black text-theme-text uppercase tracking-widest italic">Comissões & Fechamento</h3>
               <button 

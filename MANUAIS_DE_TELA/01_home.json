@@ -1,0 +1,23 @@
+{
+  "title": "Acesso — Foto Segundo",
+  "headings": [
+    "ACESSAR CONTA"
+  ],
+  "buttons": [
+    "ENTRAR NO SISTEMA"
+  ],
+  "links": [
+    {
+      "text": "ESQUECI A SENHA →",
+      "href": "/forgot-password"
+    },
+    {
+      "text": "SOLICITAR CADASTRO",
+      "href": "/registro"
+    },
+    {
+      "text": "← VOLTAR PARA A VITRINE",
+      "href": "/"
+    }
+  ]
+}

@@ -1,0 +1,39 @@
+{
+  "title": "Foto Segundo | Negócios | Foto Segundo",
+  "headings": [
+    "A MAIOR REDE DE\nAUDIOVISUAL DO BRASIL",
+    "O PROBLEMA QUE RESOLVEMOS",
+    "O QUE OFERECEMOS",
+    "MODALIDADES DE ATUAÇÃO",
+    "FOTÓGRAFO / CAPTADOR",
+    "EDITOR",
+    "PONTO FIXO (FLASH EVENT)",
+    "COMO FUNCIONA O CREDENCIAMENTO",
+    "INTERESSE",
+    "AVALIAÇÃO",
+    "ONBOARDING",
+    "PRIMEIRO JOB",
+    "REMUNERAÇÃO",
+    "REQUISITOS MÍNIMOS",
+    "QUERO FAZER PARTE"
+  ],
+  "buttons": [
+    "LOGIN",
+    "AGENDAR",
+    "Home",
+    "Buscar",
+    "Opções",
+    "Entrar",
+    "Vitrine de Eventos"
+  ],
+  "links": [
+    {
+      "text": "VOLTAR PARA O INÍCIO",
+      "href": "/"
+    },
+    {
+      "text": "ACESSAR CONTATO",
+      "href": "/contato"
+    }
+  ]
+}

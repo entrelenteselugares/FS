@@ -214,7 +214,7 @@ export default function PortfolioManage({ isTab = false }: PortfolioManageProps)
             </div>
             <button
               onClick={() => setIsCreating(true)}
-              className="px-6 py-3 bg-brand-tactical text-black text-[10px] font-black uppercase tracking-widest flex items-center gap-2 hover:brightness-110 transition-all"
+              className="self-start px-4 md:px-6 py-2 md:py-3 bg-brand-tactical text-black text-[10px] font-black uppercase tracking-widest flex items-center gap-2 hover:brightness-110 transition-all"
             >
               <Plus size={14} /> Novo Álbum
             </button>
@@ -232,7 +232,7 @@ export default function PortfolioManage({ isTab = false }: PortfolioManageProps)
           </div>
           <button
             onClick={() => setIsCreating(true)}
-            className="px-6 py-3 bg-brand-tactical text-black text-[10px] font-black uppercase tracking-widest flex items-center gap-2 hover:brightness-110 transition-all rounded-xl"
+            className="self-start px-4 md:px-6 py-2 md:py-3 bg-brand-tactical text-black text-[10px] font-black uppercase tracking-widest flex items-center gap-2 hover:brightness-110 transition-all rounded-xl"
           >
             <Plus size={14} /> Novo Álbum
           </button>
