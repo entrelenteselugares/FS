@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 interface OptimizedImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
   src: string;
@@ -26,11 +26,17 @@ export function OptimizedImage({
 }: OptimizedImageProps) {
   const [isLoaded, setIsLoaded] = useState(false);
   const [error, setError] = useState(false);
+  const imgRef = useRef<HTMLImageElement>(null);
 
   // Reseta estado se o src mudar
   useEffect(() => {
     setIsLoaded(false);
     setError(false);
+    
+    // Check if already loaded from cache
+    if (imgRef.current?.complete) {
+      setIsLoaded(true);
+    }
   }, [src]);
 
   return (
@@ -54,6 +60,7 @@ export function OptimizedImage({
       {/* Imagem Real */}
       {!error && (
         <img
+          ref={imgRef}
           src={src}
           alt={alt}
           loading={priority ? undefined : "lazy"}
