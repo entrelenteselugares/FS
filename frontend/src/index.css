@@ -7,14 +7,14 @@
 /* ── TEMA ESCURO (padrão) ─────────────────────── */
 :root,
 [data-theme="dark"] {
-  /* Cores Base (Dark Navy) */
-  --bg:           #0B1120;
-  --bg-card:      #1E293B;
-  --bg-field:     #0F172A;
+  /* Cores Base (Charcoal Neutral) */
+  --bg:           #121212;
+  --bg-card:      #1A1A1A;
+  --bg-field:     #171717;
   
   /* Bordas */
-  --border:       #334155;
-  --border-hover: #475569;
+  --border:       #2A2A2A;
+  --border-hover: #3A3A3A;
   
   /* Tipografia */
   --text:         #F8FAFC;
