@@ -84,7 +84,7 @@ export default function ProfissionaisPage() {
       <Navbar />
 
       {/* Header com Dark Glassmorphism */}
-      <div className="relative overflow-hidden border-b border-theme-border bg-black min-h-[350px] flex flex-col justify-center">
+      <div className="relative overflow-hidden border-b border-theme-border bg-black min-h-[220px] md:min-h-[350px] flex flex-col justify-center">
         <div 
           className="absolute inset-0 w-full h-full object-cover z-0"
           style={{ 
@@ -96,7 +96,7 @@ export default function ProfissionaisPage() {
         />
         <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/40 to-[var(--bg)] z-0 pointer-events-none" />
 
-        <div className="max-w-6xl mx-auto px-6 py-20 relative z-10 w-full">
+        <div className="max-w-6xl mx-auto px-6 py-12 md:py-20 relative z-10 w-full">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -216,7 +216,7 @@ export default function ProfissionaisPage() {
               <p className="text-[10px] text-brand-tactical uppercase tracking-widest font-black italic">Ordenados por Pontuação</p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 md:gap-6">
               {profs.map((prof, i) => {
                 const location = cityFromAddress(prof.address);
                 return (
@@ -229,7 +229,7 @@ export default function ProfissionaisPage() {
                     <Link to={`/pro/${prof.id}`} className="group block">
                       <div className="bg-theme-bg-muted border-2 border-theme-border group-hover:border-brand-tactical/50 transition-all duration-300 overflow-hidden shadow-sm group-hover:shadow-[0_0_20px_rgba(133,185,172,0.15)] rounded-2xl">
                         {/* Avatar Banner */}
-                        <div className="relative h-40 bg-theme-surface flex items-end overflow-hidden group-hover:border-brand-tactical/40 transition-all border-b-2 border-theme-border">
+                        <div className="relative h-20 md:h-32 bg-theme-surface flex items-end overflow-hidden group-hover:border-brand-tactical/40 transition-all border-b-2 border-theme-border">
                           {/* Banner Image */}
                           <div className="absolute inset-0">
                             {prof.coverImageUrl ? (
@@ -240,15 +240,15 @@ export default function ProfissionaisPage() {
                               />
                             ) : (
                               <div className="w-full h-full bg-theme-bg-muted flex items-center justify-center opacity-30">
-                                <Camera size={48} />
+                                <Camera className="w-8 h-8 md:w-12 md:h-12" />
                               </div>
                             )}
                             <div className="absolute inset-0 bg-gradient-to-t from-theme-surface via-theme-surface/40 to-transparent" />
                           </div>
 
                           {/* Profile Image & Badges */}
-                          <div className="relative z-10 w-full px-5 pb-4 flex justify-between items-end">
-                            <div className="w-16 h-16 rounded-full border-2 border-theme-surface bg-theme-bg overflow-hidden flex items-center justify-center text-xl font-black text-theme-text shadow-lg">
+                          <div className="relative z-10 w-full px-3 pb-3 md:px-5 md:pb-4 flex justify-between items-end">
+                            <div className="w-10 h-10 md:w-16 md:h-16 rounded-full border-2 border-theme-surface bg-theme-bg overflow-hidden flex items-center justify-center text-sm md:text-xl font-black text-theme-text shadow-lg">
                               {prof.profileImageUrl ? (
                                 <img
                                   src={prof.profileImageUrl}
@@ -261,49 +261,52 @@ export default function ProfissionaisPage() {
                             </div>
                             
                             {prof.isVerified && (
-                              <div className="flex items-center gap-1.5 bg-brand-tactical/20 border border-brand-tactical/30 backdrop-blur-sm px-2.5 py-1 mb-2 rounded shadow-lg">
-                                <ShieldCheck size={10} className="text-brand-tactical" />
-                                <span className="text-[8px] font-black text-brand-tactical uppercase tracking-widest">PRO</span>
+                              <div className="flex items-center gap-1 bg-brand-tactical/20 border border-brand-tactical/30 backdrop-blur-sm px-1.5 md:px-2.5 py-0.5 md:py-1 mb-1 md:mb-2 rounded shadow-lg">
+                                <ShieldCheck size={8} className="text-brand-tactical md:w-2.5 md:h-2.5" />
+                                <span className="text-[7px] md:text-[8px] font-black text-brand-tactical uppercase tracking-widest">PRO</span>
                               </div>
                             )}
                           </div>
                         </div>
 
                         {/* Info */}
-                        <div className="p-5 space-y-4">
+                        <div className="p-3 md:p-5 space-y-3 md:space-y-4">
                           <div>
-                            <h3 className="text-base font-heading font-black text-theme-text uppercase italic tracking-tight group-hover:text-brand-tactical transition-colors">
+                            <h3 className="text-[11px] md:text-base font-heading font-black text-theme-text uppercase italic tracking-tight group-hover:text-brand-tactical transition-colors line-clamp-1">
                               {prof.nome}
                             </h3>
                             {location && (
-                              <p className="text-[10px] text-theme-text/60 flex items-center gap-1 mt-1 font-bold uppercase">
-                                <MapPin size={10} /> {location}
+                              <p className="text-[8px] md:text-[10px] text-theme-text/60 flex items-center gap-1 mt-0.5 md:mt-1 font-bold uppercase truncate">
+                                <MapPin size={8} className="md:w-2.5 md:h-2.5" /> {location}
                               </p>
                             )}
                           </div>
 
                           {/* Services */}
-                          <div className="flex flex-wrap gap-1.5">
-                            {prof.services.slice(0, 4).map(s => (
-                              <span key={s} className="px-2 py-0.5 bg-theme-surface-hover border border-theme-border text-[8px] font-black text-theme-text/70 uppercase tracking-widest">
-                                {s}
+                          <div className="flex flex-wrap gap-1">
+                            {prof.services.slice(0, 3).map(s => (
+                              <span key={s} className="px-1.5 py-0.5 bg-theme-surface-hover border border-theme-border text-[7px] md:text-[8px] font-black text-theme-text/70 uppercase tracking-widest">
+                                {s.length > 5 ? s.substring(0, 5) + '.' : s}
                               </span>
                             ))}
+                            {prof.services.length > 3 && (
+                              <span className="px-1.5 py-0.5 text-[7px] md:text-[8px] font-black text-theme-text/50 uppercase">+{prof.services.length - 3}</span>
+                            )}
                           </div>
 
                           {/* Stats */}
-                          <div className="grid grid-cols-3 gap-3 pt-2 border-t border-theme-border">
+                          <div className="grid grid-cols-3 gap-1 md:gap-3 pt-2 border-t border-theme-border">
                             <div className="text-center">
-                              <p className="text-base font-heading font-black text-theme-text italic">{prof.experienceYears || 0}</p>
-                              <p className="text-[7px] text-theme-text/50 uppercase tracking-widest font-black">Anos</p>
+                              <p className="text-xs md:text-base font-heading font-black text-theme-text italic">{prof.experienceYears || 0}</p>
+                              <p className="text-[6px] md:text-[7px] text-theme-text/50 uppercase tracking-widest font-black">Anos</p>
                             </div>
                             <div className="text-center border-x border-theme-border">
-                              <p className="text-base font-heading font-black text-theme-text italic">{prof.totalMissions}</p>
-                              <p className="text-[7px] text-theme-text/50 uppercase tracking-widest font-black">Missões</p>
+                              <p className="text-xs md:text-base font-heading font-black text-theme-text italic">{prof.totalMissions}</p>
+                              <p className="text-[6px] md:text-[7px] text-theme-text/50 uppercase tracking-widest font-black">Mis.</p>
                             </div>
                             <div className="text-center">
-                              <p className="text-base font-heading font-black text-brand-tactical italic">{prof.agilityPoints}</p>
-                              <p className="text-[7px] text-theme-text/50 uppercase tracking-widest font-black">Pontos</p>
+                              <p className="text-xs md:text-base font-heading font-black text-brand-tactical italic">{prof.agilityPoints}</p>
+                              <p className="text-[6px] md:text-[7px] text-theme-text/50 uppercase tracking-widest font-black">Pts</p>
                             </div>
                           </div>
                         </div>
