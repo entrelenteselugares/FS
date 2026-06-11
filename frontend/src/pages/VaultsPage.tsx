@@ -227,7 +227,7 @@ export default function VaultsPage() {
       { label: "Histórico de Compras", onClick: () => navigate("/minha-conta?s=files"), isActive: false, icon: <ShoppingBag size={18} /> },
       { label: "Meus Álbuns", onClick: () => {}, isActive: true, icon: <Lock size={18} /> },
       { label: "Indique e Ganhe", onClick: () => navigate("/minha-conta?s=affiliate"), isActive: false, icon: <Users size={18} /> },
-      { label: "Meus Dados", onClick: () => navigate("/minha-conta?s=menu"), isActive: false, icon: <User size={18} /> },
+      { label: "Meus Dados", onClick: () => navigate("/minha-conta?s=profile"), isActive: false, icon: <User size={18} /> },
     ];
 
     if ((user?.role === "PROFISSIONAL" || user?.role === "FRANCHISEE") && user?.verificationStatus === "APPROVED") {
@@ -238,10 +238,14 @@ export default function VaultsPage() {
         { label: "Serviços & Preços", onClick: () => navigate("/minha-conta?s=servicos"), isActive: false, icon: <Briefcase size={18} /> },
         { label: "Ficha Técnica & Pix", onClick: () => navigate("/minha-conta?s=perfil"), isActive: false, icon: <Settings size={18} /> },
         { label: "Vendas & Ganhos", onClick: () => navigate("/minha-conta?s=financeiro"), isActive: false, icon: <DollarSign size={18} /> }
-
       );
 
       if (user?.role === "FRANCHISEE" || user?.franchiseProfile) {
+        if (user?.role === "FRANCHISEE") {
+          items.push(
+            { label: "Gestão de Franquia", onClick: () => navigate("/franquia"), isActive: false, icon: <LayoutDashboard size={18} /> }
+          );
+        }
         items.push(
           { label: "Rede Técnica", onClick: () => navigate("/minha-conta?s=equipe"), isActive: false, icon: <Users size={18} /> },
           { label: "Franquia Print", onClick: () => navigate("/minha-conta?s=franquia"), isActive: false, icon: <Printer size={18} /> }

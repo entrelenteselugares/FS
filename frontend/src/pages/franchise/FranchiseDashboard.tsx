@@ -61,10 +61,10 @@ const FranchiseDashboard: React.FC = () => {
   const navigate = useNavigate();
   const navItems = useMemo<NavItem[]>(() => {
     const items: NavItem[] = [
-      { label: "Carrinho", onClick: () => navigate("/minha-conta?s=files"), isActive: false, icon: <ShoppingBag size={18} /> },
+      { label: "Histórico de Compras", onClick: () => navigate("/minha-conta?s=files"), isActive: false, icon: <ShoppingBag size={18} /> },
       { label: "Meus Álbuns", onClick: () => navigate("/meus-albuns"), isActive: false, icon: <Lock size={18} /> },
       { label: "Indique e Ganhe", onClick: () => navigate("/minha-conta?s=affiliate"), isActive: false, icon: <Users size={18} /> },
-      { label: "Meus Dados", onClick: () => navigate("/minha-conta?s=menu"), isActive: false, icon: <User size={18} /> },
+      { label: "Meus Dados", onClick: () => navigate("/minha-conta?s=profile"), isActive: false, icon: <User size={18} /> },
     ];
 
     const isProOrFranchise = (user?.role === "PROFISSIONAL" || user?.role === "FRANCHISEE" || !!user?.franchiseProfile) && user?.role !== "UNIDADE" && user?.role !== "CARTORIO";
@@ -74,7 +74,9 @@ const FranchiseDashboard: React.FC = () => {
       items.push(
         { label: "ÁREA PROFISSIONAL", isHeader: true },
         { label: "Minha Agenda", onClick: () => navigate("/minha-conta?s=agenda"), isActive: false, icon: <Play size={18} /> },
-        { label: "Portfólio & Serviços", onClick: () => navigate("/minha-conta?s=servicos"), isActive: false, icon: <Briefcase size={18} /> },
+        { label: "Meu Portfólio", onClick: () => navigate("/minha-conta?s=portfolio"), isActive: false, icon: <ImageIcon size={18} /> },
+        { label: "Serviços & Preços", onClick: () => navigate("/minha-conta?s=servicos"), isActive: false, icon: <Briefcase size={18} /> },
+        { label: "Ficha Técnica & Pix", onClick: () => navigate("/minha-conta?s=perfil"), isActive: false, icon: <Settings size={18} /> },
         { label: "Vendas & Ganhos", onClick: () => navigate("/minha-conta?s=financeiro"), isActive: false, icon: <DollarSign size={18} /> }
       );
 
