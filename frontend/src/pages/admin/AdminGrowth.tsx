@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { Plus, Tag, Phone, X, ArrowRight, BarChart3 } from "lucide-react";
+import { Plus, Tag, Phone, X, ArrowRight, BarChart3, Users } from "lucide-react";
 import { useSearchParams } from "react-router-dom";
 import { API } from "../../lib/api";
 import { toast } from "sonner";
@@ -30,9 +30,10 @@ interface AnalyticsData {
 
 export function AdminGrowth() {
   const [searchParams, setSearchParams] = useSearchParams();
-  const activeTab = (searchParams.get("tab") as "COUPONS" | "WHATSAPP" | "ANALYTICS") || "COUPONS";
-  const setActiveTab = (tab: "COUPONS" | "WHATSAPP" | "ANALYTICS") => setSearchParams(prev => { prev.set("tab", tab); return prev; }, { replace: true });
+  const activeTab = (searchParams.get("tab") as "COUPONS" | "WHATSAPP" | "ANALYTICS" | "AFFILIATES") || "COUPONS";
+  const setActiveTab = (tab: "COUPONS" | "WHATSAPP" | "ANALYTICS" | "AFFILIATES") => setSearchParams(prev => { prev.set("tab", tab); return prev; }, { replace: true });
   const [coupons, setCoupons] = useState<Coupon[]>([]);
+  const [affiliates, setAffiliates] = useState<any[]>([]);
   const [analyticsData, setAnalyticsData] = useState<AnalyticsData | null>(null);
   const [waStatus, setWaStatus] = useState<{connected?: boolean, qrCode?: string} | null>(null);
   const [loading, setLoading] = useState(true);
@@ -54,6 +55,9 @@ export function AdminGrowth() {
       if (activeTab === "COUPONS") {
         const { data } = await API.get("/admin/coupons");
         setCoupons(data.coupons || []);
+      } else if (activeTab === "AFFILIATES") {
+        const { data } = await API.get("/admin/ambassadors");
+        setAffiliates(data.ambassadors || []);
       } else if (activeTab === "WHATSAPP") {
         const { data } = await API.get("/admin/whatsapp/status");
         setWaStatus(data);
@@ -147,12 +151,13 @@ export function AdminGrowth() {
       <div className="grid grid-cols-2 md:flex border-b border-theme-border gap-1">
         {[
           { id: "COUPONS", icon: Tag, label: "Cupons Genéricos" },
+          { id: "AFFILIATES", icon: Users, label: "Afiliados" },
           { id: "WHATSAPP", icon: Phone, label: "Motor WhatsApp" },
           { id: "ANALYTICS", icon: BarChart3, label: "Relatórios & Analytics" },
         ].map((tab) => (
           <button
             key={tab.id}
-            onClick={() => setActiveTab(tab.id as "COUPONS" | "WHATSAPP" | "ANALYTICS")}
+            onClick={() => setActiveTab(tab.id as "COUPONS" | "WHATSAPP" | "ANALYTICS" | "AFFILIATES")}
             className={`flex items-center gap-2 px-3 md:px-6 py-4 text-[10px] font-black uppercase tracking-widest whitespace-nowrap transition-colors border-b-2 ${
               activeTab === tab.id ? "border-brand-tactical text-brand-tactical" : "border-transparent text-theme-text-muted hover:text-theme-text"
             }`}
@@ -255,6 +260,59 @@ export function AdminGrowth() {
               <div className="text-center space-y-4">
                 <p className="text-[10px] font-bold text-theme-text-muted uppercase tracking-widest">Motor de WhatsApp Offline</p>
                 <button onClick={fetchData} className="px-3 md:px-6 py-3 bg-brand-tactical text-brand-text text-[10px] font-bold uppercase tracking-widest">Tentar Iniciar Sessão</button>
+              </div>
+            )}
+          </div>
+        ) : activeTab === "AFFILIATES" ? (
+          <div className="space-y-4">
+            {affiliates.length === 0 ? (
+              <div className="p-3 md:p-6 md:p-12 text-center border border-theme-border rounded-xl">
+                <p className="text-[10px] font-bold text-theme-text-muted uppercase tracking-widest">Nenhum afiliado encontrado</p>
+              </div>
+            ) : (
+              <div className="bg-theme-bg-muted border border-theme-border rounded-2xl overflow-hidden">
+                <table className="w-full text-left text-sm text-theme-text">
+                  <thead className="bg-theme-bg/50 text-[10px] uppercase font-bold text-theme-text-muted tracking-widest">
+                    <tr>
+                      <th className="px-6 py-4">Nome / E-mail</th>
+                      <th className="px-6 py-4">Tipo de Pagamento</th>
+                      <th className="px-6 py-4">Ações</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {affiliates.map((aff: any) => (
+                      <tr key={aff.id} className="border-t border-theme-border/50">
+                        <td className="px-6 py-4">
+                          <p className="font-bold text-brand-tactical">{aff.nome}</p>
+                          <p className="text-[10px] text-theme-text-muted">{aff.email}</p>
+                        </td>
+                        <td className="px-6 py-4">
+                          <select 
+                            value={aff.affiliatePayoutType} 
+                            onChange={async (e) => {
+                              try {
+                                await API.patch(`/admin/users/${aff.id}`, { affiliatePayoutType: e.target.value });
+                                toast.success("Tipo de pagamento atualizado.");
+                                fetchData();
+                              } catch(err) {
+                                toast.error("Erro ao atualizar tipo de pagamento.");
+                              }
+                            }}
+                            className="bg-theme-bg border border-theme-border p-2 text-xs rounded outline-none"
+                          >
+                            <option value="CREDIT">Crédito na Plataforma</option>
+                            <option value="PIX">Transferência PIX</option>
+                          </select>
+                        </td>
+                        <td className="px-6 py-4">
+                          <button className="px-3 py-1.5 bg-theme-bg border border-theme-border text-xs font-bold uppercase tracking-widest rounded transition-colors hover:border-brand-tactical/50">
+                            Ver Detalhes
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
             )}
           </div>

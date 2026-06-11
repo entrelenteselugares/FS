@@ -424,8 +424,10 @@ export default function EventPage() {
     // 0. Persistir rastreamento de afiliado/embaixador (Fase 35)
     const ref = searchParams.get("ref");
     if (ref) {
-      document.cookie = `fs_referral=${ref}; max-age=${30 * 24 * 60 * 60}; path=/;`;
-      console.log("[Growth Engine] Afiliado rastreado:", ref);
+      const expirationDate = new Date();
+      expirationDate.setDate(expirationDate.getDate() + 30);
+      localStorage.setItem("fs_affiliate_id", JSON.stringify({ value: ref, expiresAt: expirationDate.toISOString() }));
+      console.log("[Growth Engine] Afiliado rastreado no localStorage:", ref);
     }
 
     // 1. Identificar o token (URL tem prioridade sobre LocalStorage)
