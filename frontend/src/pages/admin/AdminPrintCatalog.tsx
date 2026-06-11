@@ -134,7 +134,8 @@ export const AdminPrintCatalog: React.FC = () => {
       {/* HEADER MASTER */}
       <div className="flex flex-col lg:flex-row lg:items-center justify-between border-b border-theme-border pb-10 gap-3 md:gap-6">
         <div>
-                    <p className="text-theme-muted mt-2 text-sm">Mix de produtos, margens e custos de produção</p>
+          <h2 className="text-2xl md:text-4xl font-heading font-bold text-theme-text uppercase">Catálogo de Impressão</h2>
+          <p className="text-[10px] text-theme-muted uppercase tracking-[0.5em] mt-2 font-bold">Mix de produtos, margens e custos de produção</p>
         </div>
         
         <div className="flex gap-3">

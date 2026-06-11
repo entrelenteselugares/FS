@@ -239,7 +239,8 @@ export const AdminServices: React.FC = () => {
       {/* HEADER */}
       <div className="flex flex-col lg:flex-row lg:items-center justify-between border-b border-theme-border pb-10 gap-3 md:gap-6">
         <div>
-                    <p className="text-theme-muted mt-2 text-sm">Gestão de catálogo, portfólio de serviços e aprovações</p>
+          <h2 className="text-2xl md:text-4xl font-heading font-bold text-theme-text uppercase">Serviços</h2>
+          <p className="text-[10px] text-theme-muted uppercase tracking-[0.5em] mt-2 font-bold">Gestão de catálogo, portfólio de serviços e aprovações</p>
         </div>
         {activeTab === "PACOTES" ? (
           <button onClick={() => { setEditingPackage(null); setIsPackageModalOpen(true); }} className="px-4 md:px-8 py-4 bg-amber-500 text-black text-[9px] font-bold uppercase tracking-[0.4em] shadow-xl hover:brightness-110 transition-all flex items-center gap-3 ">

@@ -90,7 +90,8 @@ export const AdminLeadsPage: React.FC = () => {
         
         <div className="flex flex-col xl:flex-row justify-between items-start xl:items-end gap-3 md:gap-6 relative z-10">
           <div>
-                        <p className="text-theme-muted mt-2 text-sm">Gerenciamento de conversões e carrinhos abandonados</p>
+            <h2 className="text-2xl md:text-4xl font-heading font-bold text-theme-text uppercase">CRM & Leads</h2>
+            <p className="text-[10px] text-theme-muted uppercase tracking-[0.5em] mt-2 font-bold">Gerenciamento de conversões e carrinhos abandonados</p>
           </div>
         </div>
       </div>

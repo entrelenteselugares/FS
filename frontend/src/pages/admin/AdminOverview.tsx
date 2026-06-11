@@ -60,8 +60,8 @@ export const AdminOverview: React.FC<OverviewProps> = ({ stats, recentOrders = [
         
         <div className="flex flex-col xl:flex-row justify-between items-start xl:items-end gap-3 md:gap-6 relative z-10">
           <div>
-            <h1 className="text-2xl md:text-4xl font-heading font-bold uppercase text-theme-text">VISÃO GERAL</h1>
-            <p className="text-theme-muted mt-2 text-sm">Métricas e performance da plataforma</p>
+            <h2 className="text-2xl md:text-4xl font-heading font-bold text-theme-text uppercase">Visão Geral</h2>
+            <p className="text-[10px] text-theme-muted uppercase tracking-[0.5em] mt-2 font-bold">Métricas e performance da plataforma</p>
           </div>
         </div>
       </div>
