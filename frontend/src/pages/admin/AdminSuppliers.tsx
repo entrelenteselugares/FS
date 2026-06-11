@@ -189,6 +189,7 @@ export default function AdminSuppliers() {
           >
             Ativos / Hardware
           </button>
+          </div>
         </div>
       </div>
 
