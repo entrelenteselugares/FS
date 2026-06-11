@@ -62,6 +62,7 @@ export default function PhygitalCapture() {
   const autoCamera = searchParams.get('auto') === '1';
 
   const galleryInputRef = useRef<HTMLInputElement>(null);
+  const hasAutoOpened = useRef(false);
   const [showInAppCamera, setShowInAppCamera] = useState(false);
 
   const { user, logout } = useAuth();
@@ -98,9 +99,11 @@ export default function PhygitalCapture() {
 
   // Auto-abre câmera integrada se vier do botão flutuante (?auto=1) ou se for dispositivo móvel
   useEffect(() => {
+    if (hasAutoOpened.current) return;
     const isMobile = window.innerWidth <= 768;
     if (!autoCamera && !isMobile) return;
     
+    hasAutoOpened.current = true;
     const timer = setTimeout(() => {
       setShowInAppCamera(true);
     }, 300);
