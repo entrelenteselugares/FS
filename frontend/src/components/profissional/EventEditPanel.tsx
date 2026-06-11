@@ -3,7 +3,7 @@ import { createPortal } from "react-dom";
 import {
   Check, X, Share2, Settings, ArrowRight,
   Users, Search, UserMinus, CalendarDays,
-  FolderOpen, Layers, Link, Copy
+  FolderOpen, Layers, Link, Copy, Printer
 } from "lucide-react";
 import { T } from "../../lib/theme";
 import { API } from "../../lib/api";

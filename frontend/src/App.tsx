@@ -8,51 +8,54 @@ import { ProtectedRoute } from "./components/ProtectedRoute";
 import { BottomNav } from "./components/BottomNav";
 import { PushNotificationManager } from "./components/PushNotificationManager";
 
+import React, { Suspense } from "react";
 import EventPage from "./pages/EventPage";
 import { LoginPage } from "./pages/LoginPage";
 import { HomePage } from "./pages/HomePage";
-import ProfissionalDashboard from "./pages/ProfissionalDashboard";
-import PortfolioManage from "./pages/profissional/PortfolioManage";
-import CustomServiceForm from "./pages/profissional/CustomServiceForm";
-import { AdminDashboard } from "./pages/admin/AdminDashboard";
-import UnidadeFixaDashboard from "./pages/UnidadeFixaDashboard";
 import { AuthSelectionPage } from "./pages/AuthSelectionPage";
 import { RegisterPage } from "./pages/RegisterPage";
-import ClienteArea from "./pages/ClienteArea";
-import { QuotePage } from "./pages/QuotePage";
-import { PackageFlowPage } from "./pages/quote/PackageFlowPage";
-import { PartnerFlowPage } from "./pages/quote/PartnerFlowPage";
-import { CustomFlowPage } from "./pages/quote/CustomFlowPage";
-import { PartnerLP } from "./pages/PartnerLP";
-import { NotFoundPage } from "./pages/NotFoundPage";
-import { CheckoutPage } from "./pages/CheckoutPage";
-import ResetPasswordPage from "./pages/ResetPasswordPage";
-import ForgotPasswordPage from "./pages/ForgotPasswordPage";
-import LuxuryExperiencePage from "./pages/LuxuryExperiencePage";
-import PhygitalCapture from "./pages/PhygitalCapture";
-import PrintMonitor from "./pages/PrintMonitor";
-import FullMonitor from "./pages/FullMonitor";
-import { TermsPage } from "./pages/TermsPage";
-import FranchiseDashboard from "./pages/franchise/FranchiseDashboard";
-import VaultsPage from "./pages/VaultsPage";
-import VaultDetailPage from "./pages/VaultDetailPage";
-import AmbassadorPage from "./pages/AmbassadorPage";
-import InvitationPage from "./pages/InvitationPage";
-import ProfissionaisPage from "./pages/ProfissionaisPage";
-import ProfissionalProfilePage from "./pages/ProfissionalProfilePage";
-import { AboutPage } from "./pages/AboutPage";
-import { PrivacyPage } from "./pages/PrivacyPage";
-import { LgpdPage } from "./pages/LgpdPage";
-import { PartnershipsPage } from "./pages/PartnershipsPage";
-import { ContactPage } from "./pages/ContactPage";
-import { StatusPage } from "./pages/StatusPage";
-import { BusinessLanding } from "./pages/BusinessLanding";
-import FlashUnlockPage from "./pages/FlashUnlockPage";
-import { ClubLandingPage } from "./pages/ClubLandingPage";
-import HelpPage from "./pages/HelpPage";
-import { AlbumTorcidaPage } from "./pages/worldcup/AlbumTorcidaPage";
-import { MatchFolhaPage } from "./pages/worldcup/MatchFolhaPage";
 import { WorldCupLiveBanner } from "./components/worldcup/WorldCupLiveBanner";
+
+// ─── Lazy Loaded Routes ───
+const ProfissionalDashboard = React.lazy(() => import("./pages/ProfissionalDashboard"));
+const PortfolioManage = React.lazy(() => import("./pages/profissional/PortfolioManage"));
+const CustomServiceForm = React.lazy(() => import("./pages/profissional/CustomServiceForm"));
+const AdminDashboard = React.lazy(() => import("./pages/admin/AdminDashboard").then(m => ({ default: m.AdminDashboard })));
+const UnidadeFixaDashboard = React.lazy(() => import("./pages/UnidadeFixaDashboard"));
+const ClienteArea = React.lazy(() => import("./pages/ClienteArea"));
+const QuotePage = React.lazy(() => import("./pages/QuotePage").then(m => ({ default: m.QuotePage })));
+const PackageFlowPage = React.lazy(() => import("./pages/quote/PackageFlowPage").then(m => ({ default: m.PackageFlowPage })));
+const PartnerFlowPage = React.lazy(() => import("./pages/quote/PartnerFlowPage").then(m => ({ default: m.PartnerFlowPage })));
+const CustomFlowPage = React.lazy(() => import("./pages/quote/CustomFlowPage").then(m => ({ default: m.CustomFlowPage })));
+const PartnerLP = React.lazy(() => import("./pages/PartnerLP").then(m => ({ default: m.PartnerLP })));
+const NotFoundPage = React.lazy(() => import("./pages/NotFoundPage").then(m => ({ default: m.NotFoundPage })));
+const CheckoutPage = React.lazy(() => import("./pages/CheckoutPage").then(m => ({ default: m.CheckoutPage })));
+const ResetPasswordPage = React.lazy(() => import("./pages/ResetPasswordPage"));
+const ForgotPasswordPage = React.lazy(() => import("./pages/ForgotPasswordPage"));
+const LuxuryExperiencePage = React.lazy(() => import("./pages/LuxuryExperiencePage"));
+const PhygitalCapture = React.lazy(() => import("./pages/PhygitalCapture"));
+const PrintMonitor = React.lazy(() => import("./pages/PrintMonitor"));
+const FullMonitor = React.lazy(() => import("./pages/FullMonitor"));
+const TermsPage = React.lazy(() => import("./pages/TermsPage").then(m => ({ default: m.TermsPage })));
+const FranchiseDashboard = React.lazy(() => import("./pages/franchise/FranchiseDashboard"));
+const VaultsPage = React.lazy(() => import("./pages/VaultsPage"));
+const VaultDetailPage = React.lazy(() => import("./pages/VaultDetailPage"));
+const AmbassadorPage = React.lazy(() => import("./pages/AmbassadorPage"));
+const InvitationPage = React.lazy(() => import("./pages/InvitationPage"));
+const ProfissionaisPage = React.lazy(() => import("./pages/ProfissionaisPage"));
+const ProfissionalProfilePage = React.lazy(() => import("./pages/ProfissionalProfilePage"));
+const AboutPage = React.lazy(() => import("./pages/AboutPage").then(m => ({ default: m.AboutPage })));
+const PrivacyPage = React.lazy(() => import("./pages/PrivacyPage").then(m => ({ default: m.PrivacyPage })));
+const LgpdPage = React.lazy(() => import("./pages/LgpdPage").then(m => ({ default: m.LgpdPage })));
+const PartnershipsPage = React.lazy(() => import("./pages/PartnershipsPage").then(m => ({ default: m.PartnershipsPage })));
+const ContactPage = React.lazy(() => import("./pages/ContactPage").then(m => ({ default: m.ContactPage })));
+const StatusPage = React.lazy(() => import("./pages/StatusPage").then(m => ({ default: m.StatusPage })));
+const BusinessLanding = React.lazy(() => import("./pages/BusinessLanding").then(m => ({ default: m.BusinessLanding })));
+const FlashUnlockPage = React.lazy(() => import("./pages/FlashUnlockPage"));
+const ClubLandingPage = React.lazy(() => import("./pages/ClubLandingPage").then(m => ({ default: m.ClubLandingPage })));
+const HelpPage = React.lazy(() => import("./pages/HelpPage"));
+const AlbumTorcidaPage = React.lazy(() => import("./pages/worldcup/AlbumTorcidaPage").then(m => ({ default: m.AlbumTorcidaPage })));
+const MatchFolhaPage = React.lazy(() => import("./pages/worldcup/MatchFolhaPage").then(m => ({ default: m.MatchFolhaPage })));
 import { useState, useEffect } from "react";
 import { API as api } from "./lib/api";
 import { T } from "./lib/theme";
@@ -103,8 +106,9 @@ const AnimatedRoutes = () => {
         transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
         className="w-full h-full pb-20 md:pb-0"
       >
-        <Routes location={location}>
-          {/* Public / Whitelist Routes */}
+        <Suspense fallback={<div className="flex h-screen w-full items-center justify-center bg-theme-bg"><div className="w-6 h-6 border-2 border-brand-tactical border-t-transparent rounded-full animate-spin"></div></div>}>
+          <Routes location={location}>
+            {/* Public / Whitelist Routes */}
           <Route path="/login" element={<LoginPage />} />
           <Route path="/reset-password" element={<ResetPasswordPage />} />
           <Route path="/forgot-password" element={<ForgotPasswordPage />} />
@@ -148,6 +152,9 @@ const AnimatedRoutes = () => {
 
             {/* Redireciona para o painel correto */}
             <Route path="/dashboard" element={<DashboardRedirect />} />
+            
+            {/* 404 Catcher */}
+            <Route path="*" element={<NotFoundPage />} />
 
             {/* Painel do Admin */}
             <Route path="/admin/*" element={
