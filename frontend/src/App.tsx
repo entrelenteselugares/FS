@@ -59,8 +59,6 @@ const AlbumTorcidaPage = React.lazy(() => import("./pages/worldcup/AlbumTorcidaP
 const MatchFolhaPage = React.lazy(() => import("./pages/worldcup/MatchFolhaPage").then(m => ({ default: m.MatchFolhaPage })));
 import { useEffect } from "react";
 import { API as api } from "./lib/api";
-import { motion, AnimatePresence } from "framer-motion";
-
 /** Redireciona /dashboard para o painel correto baseado no role */
 const DashboardRedirect = () => {
   const { user } = useAuth();
@@ -97,15 +95,10 @@ const AnimatedRoutes = () => {
   };
 
   return (
-    <AnimatePresence mode="wait">
-      <motion.div
-        key={getAnimationKey(location.pathname)}
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: -10 }}
-        transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-        className="w-full h-full pb-20 md:pb-0"
-      >
+    <div
+      key={getAnimationKey(location.pathname)}
+      className="w-full h-full pb-20 md:pb-0"
+    >
         <Suspense fallback={<div className="flex h-screen w-full items-center justify-center bg-theme-bg"><div className="w-6 h-6 border-2 border-brand-tactical border-t-transparent rounded-full animate-spin"></div></div>}>
           <Routes location={location}>
             {/* Public / Whitelist Routes */}
@@ -227,8 +220,7 @@ const AnimatedRoutes = () => {
             <Route path="*" element={<Navigate to="/404" replace />} />
           </Routes>
         </Suspense>
-    </motion.div>
-    </AnimatePresence>
+    </div>
   );
 };
 
