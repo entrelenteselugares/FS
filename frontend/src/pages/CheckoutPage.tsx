@@ -10,6 +10,7 @@ import { fetchCepData } from "../hooks/useViaCep";
 
 
 import { QRCodeSVG } from "qrcode.react";
+import * as Sentry from "@sentry/react";
 
 import { API } from "../lib/api";
 
@@ -88,7 +89,7 @@ interface MPBrickSettings {
 
 
 
-export const CheckoutPage = () => {
+const CheckoutPageInner = () => {
   const { orderId } = useParams();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -566,6 +567,12 @@ export const CheckoutPage = () => {
         callbacks: {
           onReady: () => {},
           onSubmit: async ({ formData }) => {
+            Sentry.addBreadcrumb({
+              category: "checkout",
+              message: "Cliente submeteu form de pagamento no MP Brick",
+              level: "info",
+              data: { paymentMethodId: formData.payment_method_id, installments: formData.installments }
+            });
             try {
               const { data } = await API.post("/checkout/payment", {
                 eventId: order.event?.id || order.eventId,
@@ -597,11 +604,17 @@ export const CheckoutPage = () => {
                   orderId: data.orderId || order.id,
                 });
               }
-            } catch {
-              alert("Erro ao processar pagamento.");
+            } catch (err: unknown) {
+              const axiosErr = err as { response?: { data?: { error?: string } } };
+              Sentry.captureException(err, {
+                tags: { context: "checkout_submit_failure", orderId: order.id },
+                extra: { errorMessage: axiosErr.response?.data?.error }
+              });
+              alert("Erro ao processar pagamento. " + (axiosErr.response?.data?.error || ""));
             }
           },
           onError: (error: unknown) => {
+            Sentry.captureException(error, { tags: { context: "mp_brick_render_error", orderId: order.id } });
             console.error("[Payment Brick] Fatal Error:", error);
             initializationStarted.current = false;
           },
@@ -1243,3 +1256,20 @@ export const CheckoutPage = () => {
     </div>
   );
 };
+
+export const CheckoutPage = () => (
+  <Sentry.ErrorBoundary 
+    fallback={({ error, resetError }) => (
+      <div className="min-h-screen bg-theme-bg flex flex-col items-center justify-center p-8 text-center space-y-6">
+        <ShieldCheck size={48} className="text-red-500" />
+        <h2 className="text-2xl font-bold text-white uppercase tracking-widest">Falha Crítica Identificada</h2>
+        <p className="text-theme-text-muted text-xs uppercase tracking-widest max-w-sm">Nossos sistemas identificaram um erro ao tentar processar o ambiente seguro. A equipe de engenharia já foi notificada. Seu cartão não foi cobrado.</p>
+        <button onClick={resetError} className="px-6 py-3 bg-brand-tactical text-black uppercase tracking-widest text-xs font-bold hover:bg-white transition-all">
+          Tentar Novamente
+        </button>
+      </div>
+    )}
+  >
+    <CheckoutPageInner />
+  </Sentry.ErrorBoundary>
+);
