@@ -313,8 +313,8 @@ export function EventEditPanel({ event, onUpdated, onClose, onNotify, onOpenPrin
               <Settings className="text-brand-tactical" size={18} />
             </div>
             <div>
-              <p className="text-[9px] font-black uppercase tracking-[0.25em] opacity-35">Painel de Entrega</p>
-              <h2 className="text-lg font-black uppercase italic tracking-tight leading-none mt-0.5" style={{ color: T.text }}>
+              <p className="text-[9px] font-bold uppercase tracking-[0.25em] opacity-35">Painel de Entrega</p>
+              <h2 className="text-lg font-bold uppercase leading-none mt-0.5" style={{ color: T.text }}>
                 {event.title.length > 28 ? event.title.slice(0, 28) + "…" : event.title}
               </h2>
             </div>
@@ -358,15 +358,15 @@ export function EventEditPanel({ event, onUpdated, onClose, onNotify, onOpenPrin
                       <CalendarDays size={18} className="text-brand-tactical" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-[9px] font-black uppercase tracking-widest opacity-50 mb-1">Data do Evento</p>
+                      <p className="text-[9px] font-bold uppercase tracking-widest opacity-50 mb-1">Data do Evento</p>
                       <input
                         type="date"
                         value={date}
                         onChange={(e) => setDate(e.target.value)}
-                        className="w-full bg-transparent border-none outline-none text-sm font-black text-theme-text"
+                        className="w-full bg-transparent border-none outline-none text-sm font-bold text-theme-text"
                       />
                     </div>
-                    {date && <span className="text-[9px] font-black text-brand-tactical uppercase">✓</span>}
+                    {date && <span className="text-[9px] font-bold text-brand-tactical uppercase">✓</span>}
                   </div>
 
                   {/* ── Lightroom / Portfolio ── */}
@@ -377,11 +377,11 @@ export function EventEditPanel({ event, onUpdated, onClose, onNotify, onOpenPrin
                           <Layers size={18} className="text-blue-400" />
                         </div>
                         <div>
-                          <p className="text-[9px] font-black uppercase tracking-widest opacity-50">Lightroom / Portfolio</p>
+                          <p className="text-[9px] font-bold uppercase tracking-widest opacity-50">Lightroom / Portfolio</p>
                           {lrUrl && !editingLr ? (
                             <p className="text-xs font-bold text-theme-text truncate max-w-[180px]">{urlLabel(lrUrl)}</p>
                           ) : (
-                            <p className="text-[10px] text-theme-muted italic">Compartilhe o link de sincronização</p>
+                            <p className="text-[10px] text-theme-muted ">Compartilhe o link de sincronização</p>
                           )}
                         </div>
                       </div>
@@ -419,11 +419,11 @@ export function EventEditPanel({ event, onUpdated, onClose, onNotify, onOpenPrin
                           <FolderOpen size={18} className="text-green-400" />
                         </div>
                         <div>
-                          <p className="text-[9px] font-black uppercase tracking-widest opacity-50">Repositório Final</p>
+                          <p className="text-[9px] font-bold uppercase tracking-widest opacity-50">Repositório Final</p>
                           {drUrl && !editingDr ? (
                             <p className="text-xs font-bold text-theme-text truncate max-w-[180px]">{urlLabel(drUrl)}</p>
                           ) : (
-                            <p className="text-[10px] text-theme-muted italic">Drive, Dropbox, WeTransfer...</p>
+                            <p className="text-[10px] text-theme-muted ">Drive, Dropbox, WeTransfer...</p>
                           )}
                         </div>
                       </div>
@@ -460,8 +460,8 @@ export function EventEditPanel({ event, onUpdated, onClose, onNotify, onOpenPrin
                         <Layers size={18} className="text-purple-400" />
                       </div>
                       <div>
-                        <p className="text-[9px] font-black uppercase tracking-widest opacity-50">Foto de Capa</p>
-                        <p className="text-[10px] text-theme-muted italic">Imagem exibida no topo da galeria</p>
+                        <p className="text-[9px] font-bold uppercase tracking-widest opacity-50">Foto de Capa</p>
+                        <p className="text-[10px] text-theme-muted ">Imagem exibida no topo da galeria</p>
                       </div>
                     </div>
                     <CoverPhotoInput
@@ -482,8 +482,8 @@ export function EventEditPanel({ event, onUpdated, onClose, onNotify, onOpenPrin
                     <Check size={18} className={sellPhotos ? "text-green-400" : "text-red-400 opacity-50"} />
                   </div>
                   <div>
-                    <p className="text-[9px] font-black uppercase tracking-widest opacity-50">Venda de Fotos</p>
-                    <p className="text-[10px] text-theme-muted italic">
+                    <p className="text-[9px] font-bold uppercase tracking-widest opacity-50">Venda de Fotos</p>
+                    <p className="text-[10px] text-theme-muted ">
                       {sellPhotos ? "Fotos terão marca d'água e preço." : "Fotos gratuitas sem marca d'água."}
                     </p>
                   </div>
@@ -502,7 +502,7 @@ export function EventEditPanel({ event, onUpdated, onClose, onNotify, onOpenPrin
                   {/* Central de Votação do Preço */}
                   <div className="space-y-4">
                     <div>
-                      <h4 className="text-[10px] font-black uppercase tracking-widest text-brand-tactical mb-2">💰 Votação do Preço da Foto</h4>
+                      <h4 className="text-[10px] font-bold uppercase tracking-widest text-brand-tactical mb-2">💰 Votação do Preço da Foto</h4>
                       <p className="text-[10px] text-theme-muted leading-relaxed">
                         Definam juntos o preço ideal por foto. Em caso de empate, o valor adotado será a média recomendada.
                       </p>
@@ -511,7 +511,7 @@ export function EventEditPanel({ event, onUpdated, onClose, onNotify, onOpenPrin
                     {/* Sugestão de Preço do Usuário */}
                     <div className="flex gap-2">
                       <div className="flex-1 flex flex-col gap-1.5">
-                        <label className="text-[9px] font-black uppercase tracking-widest opacity-50 font-bold">Sua Sugestão de Preço (R$)</label>
+                        <label className="text-[9px] font-bold uppercase tracking-widest opacity-50 font-bold">Sua Sugestão de Preço (R$)</label>
                         <input
                           type="number"
                           value={mySuggestion}
@@ -523,7 +523,7 @@ export function EventEditPanel({ event, onUpdated, onClose, onNotify, onOpenPrin
                       </div>
                       <button
                         onClick={handleSuggest}
-                        className="px-5 self-end py-3 bg-brand-tactical text-black text-[10px] font-black uppercase tracking-widest rounded-xl hover:brightness-110 active:scale-[0.98] transition-all h-[44px]"
+                        className="px-5 self-end py-3 bg-brand-tactical text-black text-[10px] font-bold uppercase tracking-widest rounded-xl hover:brightness-110 active:scale-[0.98] transition-all h-[44px]"
                       >
                         Sugerir
                       </button>
@@ -532,7 +532,7 @@ export function EventEditPanel({ event, onUpdated, onClose, onNotify, onOpenPrin
                     {/* Comparação de Sugestões */}
                     {votingStatus && (
                       <div className="p-4 bg-theme-bg rounded-xl border border-theme-border space-y-2">
-                        <p className="text-[9px] font-black uppercase tracking-wider text-theme-muted">Sugestões Atuais</p>
+                        <p className="text-[9px] font-bold uppercase tracking-wider text-theme-muted">Sugestões Atuais</p>
                         <div className="grid grid-cols-3 gap-2 text-[10px] text-center">
                           <div className="bg-theme-bg-muted p-2 rounded-lg">
                             <span className="block text-[8px] uppercase tracking-wider text-theme-muted">Contratante</span>
@@ -559,16 +559,16 @@ export function EventEditPanel({ event, onUpdated, onClose, onNotify, onOpenPrin
                     {/* Projeção de Faturamento */}
                     {votingStatus && votingStatus.projections && (
                       <div className="space-y-2">
-                        <label className="text-[9px] font-black uppercase tracking-widest opacity-50 block font-bold">📈 Projeção de Faturamento ({votingStatus.guests} Convidados)</label>
+                        <label className="text-[9px] font-bold uppercase tracking-widest opacity-50 block font-bold">📈 Projeção de Faturamento ({votingStatus.guests} Convidados)</label>
                         <div className="overflow-hidden border border-theme-border rounded-xl">
                           <table className="w-full text-left border-collapse text-[9px]">
                             <thead>
                               <tr className="bg-theme-bg-muted border-b border-theme-border text-theme-muted uppercase tracking-wider">
-                                <th className="p-2.5 font-black">Conversão</th>
-                                <th className="p-2.5 font-black">Compradores</th>
-                                <th className="p-2.5 font-black">Contratante</th>
-                                <th className="p-2.5 font-black">Equipe</th>
-                                <th className="p-2.5 font-black">Recomendado</th>
+                                <th className="p-2.5 font-bold">Conversão</th>
+                                <th className="p-2.5 font-bold">Compradores</th>
+                                <th className="p-2.5 font-bold">Contratante</th>
+                                <th className="p-2.5 font-bold">Equipe</th>
+                                <th className="p-2.5 font-bold">Recomendado</th>
                               </tr>
                             </thead>
                             <tbody className="divide-y divide-theme-border/50 font-bold">
@@ -590,7 +590,7 @@ export function EventEditPanel({ event, onUpdated, onClose, onNotify, onOpenPrin
                     {/* Área de Voto */}
                     {votingStatus && (
                       <div className="space-y-2">
-                        <label className="text-[9px] font-black uppercase tracking-widest opacity-50 block font-bold">🗳 Escolha a melhor opção</label>
+                        <label className="text-[9px] font-bold uppercase tracking-widest opacity-50 block font-bold">🗳 Escolha a melhor opção</label>
                         <div className="grid grid-cols-3 gap-2">
                           <button
                             onClick={() => handleVote("OWNER")}
@@ -651,7 +651,7 @@ export function EventEditPanel({ event, onUpdated, onClose, onNotify, onOpenPrin
                           );
                         })}
                         {votingStatus.winner && (
-                          <div className="pt-2 border-t border-theme-border/30 mt-2 font-black text-brand-tactical flex justify-between uppercase tracking-wider text-[10px]">
+                          <div className="pt-2 border-t border-theme-border/30 mt-2 font-bold text-brand-tactical flex justify-between uppercase tracking-wider text-[10px]">
                             <span>Preço Definido:</span>
                             <span>R$ {event.pricePerPhoto} ({votingStatus.winner})</span>
                           </div>
@@ -671,12 +671,12 @@ export function EventEditPanel({ event, onUpdated, onClose, onNotify, onOpenPrin
                     <Link size={18} className="text-brand-tactical" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-[9px] font-black uppercase tracking-widest text-brand-tactical mb-0.5">Link do Cliente</p>
+                    <p className="text-[9px] font-bold uppercase tracking-widest text-brand-tactical mb-0.5">Link do Cliente</p>
                     <p className="text-[10px] font-mono text-theme-muted truncate">{luxuryUrl}</p>
                   </div>
                   <button
                     onClick={() => copyText(luxuryUrl, "luxury")}
-                    className="flex items-center gap-1.5 px-3 py-2 bg-brand-tactical text-black text-[9px] font-black uppercase rounded-xl hover:brightness-110 transition-all shrink-0"
+                    className="flex items-center gap-1.5 px-3 py-2 bg-brand-tactical text-black text-[9px] font-bold uppercase rounded-xl hover:brightness-110 transition-all shrink-0"
                   >
                     {copiedField === "luxury" ? <Check size={13} /> : <Share2 size={13} />}
                     {copiedField === "luxury" ? "Copiado!" : "Copiar"}
@@ -707,8 +707,8 @@ export function EventEditPanel({ event, onUpdated, onClose, onNotify, onOpenPrin
                       <Check size={18} className={showLogo ? "text-brand-tactical" : "text-theme-muted"} />
                     </div>
                     <div>
-                      <p className="text-[9px] font-black uppercase tracking-widest opacity-50">Logo Padrão</p>
-                      <p className="text-[10px] text-theme-muted italic">Exibir logo da Foto Segundo na base.</p>
+                      <p className="text-[9px] font-bold uppercase tracking-widest opacity-50">Logo Padrão</p>
+                      <p className="text-[10px] text-theme-muted ">Exibir logo da Foto Segundo na base.</p>
                     </div>
                   </div>
                   <button
@@ -725,8 +725,8 @@ export function EventEditPanel({ event, onUpdated, onClose, onNotify, onOpenPrin
                       <CalendarDays size={18} className={showTimestamp ? "text-brand-tactical" : "text-theme-muted"} />
                     </div>
                     <div>
-                      <p className="text-[9px] font-black uppercase tracking-widest opacity-50">Data e Hora</p>
-                      <p className="text-[10px] text-theme-muted italic">Imprimir a hora da captura.</p>
+                      <p className="text-[9px] font-bold uppercase tracking-widest opacity-50">Data e Hora</p>
+                      <p className="text-[10px] text-theme-muted ">Imprimir a hora da captura.</p>
                     </div>
                   </div>
                   <button
@@ -745,8 +745,8 @@ export function EventEditPanel({ event, onUpdated, onClose, onNotify, onOpenPrin
                     <Layers size={18} className="text-blue-400" />
                   </div>
                   <div>
-                    <p className="text-[9px] font-black uppercase tracking-widest opacity-50">Logo do Cliente / Patrocinador</p>
-                    <p className="text-[10px] text-theme-muted italic">Exibida no canto da impressão</p>
+                    <p className="text-[9px] font-bold uppercase tracking-widest opacity-50">Logo do Cliente / Patrocinador</p>
+                    <p className="text-[10px] text-theme-muted ">Exibida no canto da impressão</p>
                   </div>
                 </div>
                 <CoverPhotoInput
@@ -770,19 +770,19 @@ export function EventEditPanel({ event, onUpdated, onClose, onNotify, onOpenPrin
                   <Users size={18} className="text-brand-tactical" />
                 </div>
                 <div>
-                  <p className="text-[9px] font-black uppercase tracking-widest opacity-40">
+                  <p className="text-[9px] font-bold uppercase tracking-widest opacity-40">
                     {event.ownerId && event.captacaoId === event.ownerId ? "Fotógrafo Principal" : "Criador do Evento"}
                   </p>
-                  <p className="text-sm font-black text-theme-text">Você</p>
+                  <p className="text-sm font-bold text-theme-text">Você</p>
                 </div>
-                <span className="ml-auto text-[9px] font-black px-2 py-1 rounded-full bg-brand-tactical/15 text-brand-tactical uppercase">
+                <span className="ml-auto text-[9px] font-bold px-2 py-1 rounded-full bg-brand-tactical/15 text-brand-tactical uppercase">
                   {event.ownerId && event.captacaoId === event.ownerId ? "Principal" : "Dono"}
                 </span>
               </div>
 
               {/* Editor */}
               <div className="space-y-3">
-                <p className="text-[9px] font-black uppercase tracking-widest opacity-40 pl-1">Editor de Vídeo / Pós-Produção</p>
+                <p className="text-[9px] font-bold uppercase tracking-widest opacity-40 pl-1">Editor de Vídeo / Pós-Produção</p>
 
                 {edicaoId ? (
                   <div className="space-y-3 animate-in fade-in slide-in-from-top-2">
@@ -791,7 +791,7 @@ export function EventEditPanel({ event, onUpdated, onClose, onNotify, onOpenPrin
                         <Check size={16} className="text-black" />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="text-xs font-black text-theme-text uppercase">{editorName || "Editor"}</p>
+                        <p className="text-xs font-bold text-theme-text uppercase">{editorName || "Editor"}</p>
                         <p className="text-[10px] text-theme-muted">Editor atribuído · acesso ao material</p>
                       </div>
                       <button
@@ -805,24 +805,24 @@ export function EventEditPanel({ event, onUpdated, onClose, onNotify, onOpenPrin
 
                     {/* Editor Services */}
                     <div className="pt-2">
-                      <p className="text-[9px] font-black uppercase tracking-widest opacity-40 pl-1 mb-2">Serviços Oferecidos</p>
+                      <p className="text-[9px] font-bold uppercase tracking-widest opacity-40 pl-1 mb-2">Serviços Oferecidos</p>
                       {loadingServices ? (
-                        <p className="text-[10px] text-theme-muted italic pl-1">Carregando serviços...</p>
+                        <p className="text-[10px] text-theme-muted pl-1">Carregando serviços...</p>
                       ) : editorServices.length === 0 ? (
-                        <p className="text-[10px] text-theme-muted italic pl-1">Este editor não cadastrou serviços com preço fixo.</p>
+                        <p className="text-[10px] text-theme-muted pl-1">Este editor não cadastrou serviços com preço fixo.</p>
                       ) : (
                         <div className="space-y-2">
                           {editorServices.map((svc) => (
                             <div key={svc.id} className="p-3 bg-theme-bg-muted border border-theme-border rounded-xl flex items-center justify-between">
                               <div>
-                                <p className="text-[11px] font-black text-theme-text uppercase">{svc.name}</p>
+                                <p className="text-[11px] font-bold text-theme-text uppercase">{svc.name}</p>
                                 <p className="text-[10px] font-bold text-brand-tactical mt-0.5">
                                   R$ {Number(svc.price).toFixed(2)}
                                 </p>
                               </div>
                               <button
                                 onClick={() => setPaymentModalService(svc)}
-                                className="px-3 py-1.5 bg-brand-tactical text-black text-[9px] font-black uppercase tracking-wider rounded-lg hover:brightness-110 transition-all"
+                                className="px-3 py-1.5 bg-brand-tactical text-black text-[9px] font-bold uppercase tracking-wider rounded-lg hover:brightness-110 transition-all"
                               >
                                 Contratar
                               </button>
@@ -864,21 +864,21 @@ export function EventEditPanel({ event, onUpdated, onClose, onNotify, onOpenPrin
                             }}
                             className="w-full flex items-center gap-3 px-4 py-3.5 hover:bg-black/20 transition-colors text-left"
                           >
-                            <div className="w-8 h-8 rounded-full bg-theme-bg border border-theme-border flex items-center justify-center text-[11px] font-black text-theme-muted shrink-0">
+                            <div className="w-8 h-8 rounded-full bg-theme-bg border border-theme-border flex items-center justify-center text-[11px] font-bold text-theme-muted shrink-0">
                               {(pro.nome || "?")[0].toUpperCase()}
                             </div>
                             <div className="flex-1 min-w-0">
-                              <p className="text-xs font-black text-theme-text truncate">{pro.nome}</p>
+                              <p className="text-xs font-bold text-theme-text truncate">{pro.nome}</p>
                               <p className="text-[10px] text-theme-muted truncate">{pro.email}</p>
                             </div>
-                            <span className="text-[9px] font-black text-brand-tactical uppercase shrink-0">Atribuir →</span>
+                            <span className="text-[9px] font-bold text-brand-tactical uppercase shrink-0">Atribuir →</span>
                           </button>
                         ))}
                       </div>
                     )}
 
                     {searchResults.length === 0 && searchQuery.length >= 3 && !isSearching && (
-                      <p className="text-[10px] text-theme-muted pl-2 italic">Nenhum profissional encontrado.</p>
+                      <p className="text-[10px] text-theme-muted pl-2 ">Nenhum profissional encontrado.</p>
                     )}
                   </div>
                 )}
@@ -886,7 +886,7 @@ export function EventEditPanel({ event, onUpdated, onClose, onNotify, onOpenPrin
 
               {/* Outros Membros da Equipe */}
               <div className="space-y-4 pt-4 border-t border-theme-border/40">
-                <p className="text-[9px] font-black uppercase tracking-widest opacity-40 pl-1">Outros Membros da Equipe</p>
+                <p className="text-[9px] font-bold uppercase tracking-widest opacity-40 pl-1">Outros Membros da Equipe</p>
 
                 {/* Listagem de Membros */}
                 {teamMembers.length > 0 && (
@@ -901,7 +901,7 @@ export function EventEditPanel({ event, onUpdated, onClose, onNotify, onOpenPrin
                           )}
                         </div>
                         <div className="flex-1 min-w-0">
-                          <p className="text-xs font-black text-theme-text uppercase">{member.user?.nome}</p>
+                          <p className="text-xs font-bold text-theme-text uppercase">{member.user?.nome}</p>
                           <p className="text-[10px] text-theme-muted uppercase tracking-wider font-bold">
                             {member.role === "FOTOGRAFO_AUXILIAR" ? "Segundo Fotógrafo" :
                              member.role === "ASSISTENTE" ? "Assistente" :
@@ -922,11 +922,11 @@ export function EventEditPanel({ event, onUpdated, onClose, onNotify, onOpenPrin
 
                 {/* Formulário para Adicionar Membro */}
                 <div className="space-y-3 bg-theme-bg-muted/30 p-4 border border-theme-border/50 rounded-2xl">
-                  <p className="text-[9px] font-black uppercase tracking-widest opacity-40">Adicionar Membro à Equipe</p>
+                  <p className="text-[9px] font-bold uppercase tracking-widest opacity-40">Adicionar Membro à Equipe</p>
                   
                   {/* Select Role */}
                   <div className="flex flex-col gap-1.5">
-                    <label className="text-[8px] font-black uppercase tracking-widest opacity-50 font-bold">Função / Papel</label>
+                    <label className="text-[8px] font-bold uppercase tracking-widest opacity-50 font-bold">Função / Papel</label>
                     <select
                       value={selectedRole}
                       onChange={(e) => setSelectedRole(e.target.value)}
@@ -965,21 +965,21 @@ export function EventEditPanel({ event, onUpdated, onClose, onNotify, onOpenPrin
                           disabled={addingMember}
                           className="w-full flex items-center gap-3 px-4 py-3 hover:bg-white/[0.02] transition-colors text-left"
                         >
-                          <div className="w-7 h-7 rounded-full bg-theme-bg-muted border border-theme-border flex items-center justify-center text-[10px] font-black text-theme-muted shrink-0">
+                          <div className="w-7 h-7 rounded-full bg-theme-bg-muted border border-theme-border flex items-center justify-center text-[10px] font-bold text-theme-muted shrink-0">
                             {(pro.nome || "?")[0].toUpperCase()}
                           </div>
                           <div className="flex-1 min-w-0">
-                            <p className="text-xs font-black text-theme-text truncate">{pro.nome}</p>
+                            <p className="text-xs font-bold text-theme-text truncate">{pro.nome}</p>
                             <p className="text-[10px] text-theme-muted truncate">{pro.email}</p>
                           </div>
-                          <span className="text-[9px] font-black text-brand-tactical uppercase shrink-0">Adicionar +</span>
+                          <span className="text-[9px] font-bold text-brand-tactical uppercase shrink-0">Adicionar +</span>
                         </button>
                       ))}
                     </div>
                   )}
 
                   {memberSearchResults.length === 0 && memberSearchQuery.length >= 3 && !isSearchingMember && (
-                    <p className="text-[10px] text-theme-muted pl-2 italic">Nenhum profissional encontrado.</p>
+                    <p className="text-[10px] text-theme-muted pl-2 ">Nenhum profissional encontrado.</p>
                   )}
                 </div>
               </div>
@@ -995,7 +995,7 @@ export function EventEditPanel({ event, onUpdated, onClose, onNotify, onOpenPrin
                   <Printer size={28} className="text-brand-tactical" />
                 </div>
                 <div>
-                  <h3 className="text-sm font-black uppercase tracking-widest text-brand-tactical italic mb-2">Kit de Impressão Phygital</h3>
+                  <h3 className="text-sm font-bold uppercase tracking-widest text-brand-tactical mb-2">Kit de Impressão Phygital</h3>
                   <p className="text-[10px] text-theme-muted leading-relaxed max-w-sm">
                     Gere displays de mesa, cartões de visita e pôsteres com o QR Code do evento para engajar seus convidados.
                   </p>
@@ -1005,7 +1005,7 @@ export function EventEditPanel({ event, onUpdated, onClose, onNotify, onOpenPrin
                     onClose();
                     if (onOpenPrintKit) onOpenPrintKit();
                   }}
-                  className="w-full py-4 mt-2 bg-brand-tactical text-black text-[10px] font-black uppercase tracking-widest rounded-xl hover:brightness-110 transition-all italic flex items-center justify-center gap-2"
+                  className="w-full py-4 mt-2 bg-brand-tactical text-black text-[10px] font-bold uppercase tracking-widest rounded-xl hover:brightness-110 transition-all flex items-center justify-center gap-2"
                 >
                   <Printer size={16} /> Abrir Estúdio de Impressão
                 </button>
@@ -1017,13 +1017,13 @@ export function EventEditPanel({ event, onUpdated, onClose, onNotify, onOpenPrin
 
         {/* ─── Footer ─── */}
         <div className="px-7 py-5 border-t border-theme-border flex items-center gap-3 shrink-0 bg-theme-bg-muted/50">
-          <button onClick={onClose} className="px-6 py-3.5 text-theme-muted text-[10px] font-black uppercase tracking-widest hover:text-theme-text transition-all rounded-xl">
+          <button onClick={onClose} className="px-6 py-3.5 text-theme-muted text-[10px] font-bold uppercase tracking-widest hover:text-theme-text transition-all rounded-xl">
             Cancelar
           </button>
           <button
             onClick={handleSave}
             disabled={saving}
-            className="flex-1 py-3.5 bg-brand-tactical text-black text-[11px] font-black uppercase tracking-[0.2em] hover:brightness-110 active:scale-[0.98] transition-all flex items-center justify-center gap-3 shadow-lg shadow-brand-tactical/20 rounded-xl disabled:opacity-60"
+            className="flex-1 py-3.5 bg-brand-tactical text-black text-[11px] font-bold uppercase tracking-[0.2em] hover:brightness-110 active:scale-[0.98] transition-all flex items-center justify-center gap-3 shadow-lg shadow-brand-tactical/20 rounded-xl disabled:opacity-60"
           >
             {saving ? "Salvando…" : "Salvar Painel"}
             {!saving && <ArrowRight size={16} />}
@@ -1036,7 +1036,7 @@ export function EventEditPanel({ event, onUpdated, onClose, onNotify, onOpenPrin
         <div className="fixed inset-0 z-[10001] flex items-center justify-center p-4">
           <div className="fixed inset-0 bg-black/80 backdrop-blur-sm" onClick={() => setPaymentModalService(null)} />
           <div className="relative w-full max-w-sm bg-theme-card border border-theme-border rounded-[24px] p-6 shadow-2xl animate-in fade-in zoom-in-95 duration-200">
-            <h3 className="text-sm font-black uppercase italic tracking-tight text-theme-text mb-1">
+            <h3 className="text-sm font-bold uppercase text-theme-text mb-1">
               Contratar Serviço
             </h3>
             <p className="text-[11px] text-theme-muted mb-4 line-clamp-2">
@@ -1050,7 +1050,7 @@ export function EventEditPanel({ event, onUpdated, onClose, onNotify, onOpenPrin
                   {paymentMethod === "CREDITS" && <div className="w-2 h-2 rounded-full bg-brand-tactical" />}
                 </div>
                 <div>
-                  <p className="text-[11px] font-black uppercase text-theme-text">Usar Créditos</p>
+                  <p className="text-[11px] font-bold uppercase text-theme-text">Usar Créditos</p>
                   <p className="text-[9px] text-theme-muted">Pague com saldo da carteira</p>
                 </div>
               </label>
@@ -1061,7 +1061,7 @@ export function EventEditPanel({ event, onUpdated, onClose, onNotify, onOpenPrin
                   {paymentMethod === "MP" && <div className="w-2 h-2 rounded-full bg-brand-tactical" />}
                 </div>
                 <div>
-                  <p className="text-[11px] font-black uppercase text-theme-text">Mercado Pago</p>
+                  <p className="text-[11px] font-bold uppercase text-theme-text">Mercado Pago</p>
                   <p className="text-[9px] text-theme-muted">Pix ou Cartão de Crédito</p>
                 </div>
               </label>
@@ -1070,7 +1070,7 @@ export function EventEditPanel({ event, onUpdated, onClose, onNotify, onOpenPrin
             <div className="flex gap-2">
               <button
                 onClick={() => setPaymentModalService(null)}
-                className="flex-1 py-3 text-[10px] font-black uppercase tracking-widest text-theme-muted hover:text-theme-text bg-theme-bg-muted hover:bg-black/20 rounded-xl transition-all"
+                className="flex-1 py-3 text-[10px] font-bold uppercase tracking-widest text-theme-muted hover:text-theme-text bg-theme-bg-muted hover:bg-black/20 rounded-xl transition-all"
                 disabled={hiring}
               >
                 Cancelar
@@ -1078,7 +1078,7 @@ export function EventEditPanel({ event, onUpdated, onClose, onNotify, onOpenPrin
               <button
                 onClick={handleHireService}
                 disabled={hiring}
-                className="flex-1 py-3 bg-brand-tactical text-black text-[10px] font-black uppercase tracking-widest rounded-xl hover:brightness-110 transition-all disabled:opacity-50"
+                className="flex-1 py-3 bg-brand-tactical text-black text-[10px] font-bold uppercase tracking-widest rounded-xl hover:brightness-110 transition-all disabled:opacity-50"
               >
                 {hiring ? "Processando..." : "Confirmar"}
               </button>

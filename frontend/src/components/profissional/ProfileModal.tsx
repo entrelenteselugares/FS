@@ -67,10 +67,10 @@ export function ProfileModal({ profile, onClose, onUpdated }: ProfileModalProps)
         {/* Header */}
         <div className="flex justify-between items-center px-8 md:px-12 py-8 border-b border-theme-border relative z-10">
           <div className="space-y-1">
-            <h2 className="text-3xl font-heading font-black text-theme-text uppercase italic tracking-tighter leading-none">
+            <h2 className="text-3xl font-heading font-bold text-theme-text uppercase leading-none">
               Configuração de Perfil
             </h2>
-            <p className="text-[10px] text-theme-muted uppercase tracking-[0.4em] italic font-bold">
+            <p className="text-[10px] text-theme-muted uppercase tracking-[0.4em] font-bold">
               Gerenciamento de Identidade e Ativos Técnicos
             </p>
           </div>
@@ -88,12 +88,12 @@ export function ProfileModal({ profile, onClose, onUpdated }: ProfileModalProps)
               <div className="space-y-8">
                 <div className="flex items-center gap-4 text-brand-tactical">
                   <div className="w-8 h-[1px] bg-brand-tactical/30" />
-                  <span className="text-[11px] font-black uppercase tracking-[0.3em] italic">Credenciais Operacionais</span>
+                  <span className="text-[11px] font-bold uppercase tracking-[0.3em] ">Credenciais Operacionais</span>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
-                    <label className="text-[9px] font-black text-theme-muted uppercase tracking-widest italic opacity-60">Nome de Operação</label>
+                    <label className="text-[9px] font-bold text-theme-muted uppercase tracking-widest opacity-60">Nome de Operação</label>
                     <input
                       className="w-full bg-theme-bg-muted border border-theme-border p-4 text-theme-text focus:border-brand-tactical/50 outline-none transition-all font-medium"
                       value={formData.user?.nome || ""}
@@ -101,7 +101,7 @@ export function ProfileModal({ profile, onClose, onUpdated }: ProfileModalProps)
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[9px] font-black text-theme-muted uppercase tracking-widest italic opacity-60">Linha Segura (WhatsApp)</label>
+                    <label className="text-[9px] font-bold text-theme-muted uppercase tracking-widest opacity-60">Linha Segura (WhatsApp)</label>
                     <input
                       className="w-full bg-theme-bg-muted border border-theme-border p-4 text-theme-text focus:border-brand-tactical/50 outline-none transition-all font-medium"
                       value={formData.user?.whatsapp || ""}
@@ -109,7 +109,7 @@ export function ProfileModal({ profile, onClose, onUpdated }: ProfileModalProps)
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[9px] font-black text-theme-muted uppercase tracking-widest italic opacity-60">Chave de Liquidação (PIX)</label>
+                    <label className="text-[9px] font-bold text-theme-muted uppercase tracking-widest opacity-60">Chave de Liquidação (PIX)</label>
                     <input
                       className="w-full bg-theme-bg-muted border border-theme-border p-4 text-theme-text focus:border-brand-tactical/50 outline-none transition-all font-medium"
                       value={formData.pixKey || ""}
@@ -118,7 +118,7 @@ export function ProfileModal({ profile, onClose, onUpdated }: ProfileModalProps)
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[9px] font-black text-theme-muted uppercase tracking-widest italic opacity-60">Tempo de Atuação (Anos)</label>
+                    <label className="text-[9px] font-bold text-theme-muted uppercase tracking-widest opacity-60">Tempo de Atuação (Anos)</label>
                     <div className="relative">
                       <input
                         type="number"
@@ -127,12 +127,12 @@ export function ProfileModal({ profile, onClose, onUpdated }: ProfileModalProps)
                         value={formData.experienceYears}
                         onChange={(e) => setFormData({ ...formData, experienceYears: Number(e.target.value) })}
                       />
-                      <div className="absolute right-4 top-1/2 -translate-y-1/2 text-[10px] font-black text-brand-tactical/40 uppercase italic tracking-widest">Anos</div>
+                      <div className="absolute right-4 top-1/2 -translate-y-1/2 text-[10px] font-bold text-brand-tactical/40 uppercase tracking-widest">Anos</div>
                     </div>
                   </div>
 
                   <div className="space-y-2 md:col-span-2">
-                    <label className="text-[9px] font-black text-theme-muted uppercase tracking-widest italic opacity-60">Link do Primeiro Trabalho (Validação de Experiência)</label>
+                    <label className="text-[9px] font-bold text-theme-muted uppercase tracking-widest opacity-60">Link do Primeiro Trabalho (Validação de Experiência)</label>
                     <div className="relative">
                       <input
                         className={`w-full bg-theme-bg-muted border border-theme-border p-4 text-theme-text focus:border-brand-tactical/50 outline-none transition-all font-medium text-[11px] ${profile.firstJobUrl ? 'opacity-50 cursor-not-allowed' : ''}`}
@@ -154,7 +154,7 @@ export function ProfileModal({ profile, onClose, onUpdated }: ProfileModalProps)
                   </div>
 
                   <div className="space-y-2 md:col-span-2">
-                    <label className="text-[9px] font-black text-theme-muted uppercase tracking-widest italic opacity-60">Perfil de Entrega Técnica</label>
+                    <label className="text-[9px] font-bold text-theme-muted uppercase tracking-widest opacity-60">Perfil de Entrega Técnica</label>
                     <div className="grid grid-cols-2 gap-4">
                       {[
                         { id: "TRADICIONAL", label: "Elite Tradicional", icon: <Camera size={14} />, desc: "Câmera Pro + PC" },
@@ -199,7 +199,7 @@ export function ProfileModal({ profile, onClose, onUpdated }: ProfileModalProps)
               <div className="space-y-8">
                 <div className="flex items-center gap-4 text-brand-tactical">
                   <div className="w-8 h-[1px] bg-brand-tactical/30" />
-                  <span className="text-[11px] font-black uppercase tracking-[0.3em] italic">Matriz de Especialidades</span>
+                  <span className="text-[11px] font-bold uppercase tracking-[0.3em] ">Matriz de Especialidades</span>
                 </div>
                 <div className="flex flex-wrap gap-4">
                   {["FOTO", "VÍDEO", "EDIÇÃO"].map((s) => {
@@ -212,7 +212,7 @@ export function ProfileModal({ profile, onClose, onUpdated }: ProfileModalProps)
                           active ? "bg-brand-tactical border-brand-tactical text-brand-text" : "bg-theme-bg-muted border-theme-border text-theme-muted hover:border-brand-tactical/30"
                         }`}
                       >
-                        <span className="tracking-[0.4em] italic">{s}</span>
+                        <span className="tracking-[0.4em] ">{s}</span>
                         <div className={`w-4 h-[1px] ${active ? "bg-brand-text/40" : "bg-brand-tactical/20"}`} />
                       </button>
                     );
@@ -221,7 +221,7 @@ export function ProfileModal({ profile, onClose, onUpdated }: ProfileModalProps)
               </div>
 
               <div className="space-y-4">
-                <label className="text-[9px] font-black text-theme-muted uppercase tracking-widest italic opacity-60">Qualificações Complementares</label>
+                <label className="text-[9px] font-bold text-theme-muted uppercase tracking-widest opacity-60">Qualificações Complementares</label>
                 <textarea
                   className="w-full bg-theme-bg-muted border border-theme-border p-6 text-theme-text text-xs min-h-[120px] resize-none focus:border-brand-tactical/40 outline-none transition-all leading-relaxed"
                   value={formData.otherHabilities || ""}
@@ -236,12 +236,12 @@ export function ProfileModal({ profile, onClose, onUpdated }: ProfileModalProps)
               <div className="p-8 bg-theme-bg-muted border border-theme-border space-y-8">
                 <div className="flex justify-between items-center">
                   <div className="space-y-1">
-                    <p className="text-[11px] font-black text-brand-tactical uppercase tracking-[0.3em] italic">Inventário Técnico</p>
-                    <p className="text-[9px] text-theme-muted uppercase italic opacity-60 font-bold">Ativos usados para cálculo de multiplicador</p>
+                    <p className="text-[11px] font-bold text-brand-tactical uppercase tracking-[0.3em] ">Inventário Técnico</p>
+                    <p className="text-[9px] text-theme-muted uppercase opacity-60 font-bold">Ativos usados para cálculo de multiplicador</p>
                   </div>
                   <button
                     onClick={addEquipment}
-                    className="px-4 py-2 bg-brand-tactical/10 border border-brand-tactical/30 text-brand-tactical text-[9px] font-black uppercase tracking-widest hover:bg-brand-tactical hover:text-brand-text transition-all italic"
+                    className="px-4 py-2 bg-brand-tactical/10 border border-brand-tactical/30 text-brand-tactical text-[9px] font-bold uppercase tracking-widest hover:bg-brand-tactical hover:text-brand-text transition-all "
                   >
                     + Inserir Item
                   </button>
@@ -262,11 +262,11 @@ export function ProfileModal({ profile, onClose, onUpdated }: ProfileModalProps)
                         <input
                           type="number"
                           placeholder="Valor"
-                          className="w-full bg-theme-bg border border-theme-border p-4 text-[11px] text-brand-tactical font-black outline-none italic"
+                          className="w-full bg-theme-bg border border-theme-border p-4 text-[11px] text-brand-tactical font-bold outline-none "
                           value={eq.value}
                           onChange={(e) => updateEquipment(i, "value", Number(e.target.value))}
                         />
-                        <div className="absolute right-3 top-1/2 -translate-y-1/2 text-[8px] font-black text-theme-muted/40 uppercase">BRL</div>
+                        <div className="absolute right-3 top-1/2 -translate-y-1/2 text-[8px] font-bold text-theme-muted/40 uppercase">BRL</div>
                       </div>
                       <button onClick={() => removeEquipment(i)} className="p-4 bg-red-500/5 text-red-500/40 hover:text-red-500 hover:bg-red-500/10 transition-all">
                         <X size={16} />
@@ -276,14 +276,14 @@ export function ProfileModal({ profile, onClose, onUpdated }: ProfileModalProps)
                   {(formData.equipmentList || []).length === 0 && (
                     <div className="py-20 text-center space-y-4 border  border-theme-border">
                       <div className="flex justify-center text-theme-muted/20"><Briefcase size={48} /></div>
-                      <p className="text-[9px] text-theme-muted uppercase tracking-[0.2em] italic font-black">Nenhum ativo técnico registrado</p>
+                      <p className="text-[9px] text-theme-muted uppercase tracking-[0.2em] font-bold">Nenhum ativo técnico registrado</p>
                     </div>
                   )}
                 </div>
 
                 <div className="pt-8 border-t border-theme-border flex justify-between items-center">
-                  <span className="text-[9px] font-black text-theme-muted uppercase tracking-[0.2em] italic">Patrimônio Técnico Estimado</span>
-                  <span className="text-xl font-heading font-black text-theme-text italic">
+                  <span className="text-[9px] font-bold text-theme-muted uppercase tracking-[0.2em] ">Patrimônio Técnico Estimado</span>
+                  <span className="text-xl font-heading font-bold text-theme-text ">
                     R$ {totalPatrimony.toLocaleString("pt-BR")}
                   </span>
                 </div>
@@ -294,13 +294,13 @@ export function ProfileModal({ profile, onClose, onUpdated }: ProfileModalProps)
 
         {/* Footer */}
         <div className="p-8 md:p-12 border-t border-theme-border bg-theme-bg flex justify-end gap-6 relative z-10">
-          <button onClick={onClose} className="px-8 py-5 text-theme-muted text-[11px] font-black uppercase tracking-[0.3em] hover:text-theme-text transition-all italic">
+          <button onClick={onClose} className="px-8 py-5 text-theme-muted text-[11px] font-bold uppercase tracking-[0.3em] hover:text-theme-text transition-all ">
             Descartar
           </button>
           <button
             onClick={handleSave}
             disabled={saving}
-            className="px-16 py-5 bg-brand-tactical text-brand-text text-[11px] font-black uppercase tracking-[0.4em] hover:brightness-110 disabled:opacity-40 transition-all shadow-2xl shadow-brand-tactical/20 italic flex items-center gap-4"
+            className="px-16 py-5 bg-brand-tactical text-brand-text text-[11px] font-bold uppercase tracking-[0.4em] hover:brightness-110 disabled:opacity-40 transition-all shadow-2xl shadow-brand-tactical/20 flex items-center gap-4"
           >
             {saving ? "SINCRONIZANDO..." : <><Check size={20} /> EFETIVAR ATUALIZAÇÃO</>}
           </button>

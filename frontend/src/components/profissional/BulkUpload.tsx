@@ -120,8 +120,8 @@ export const BulkUpload: React.FC<BulkUploadProps> = ({ eventId, onComplete, onC
         <div className="w-16 h-16 bg-brand-tactical/10 rounded-2xl flex items-center justify-center mb-6">
           <Upload className="text-brand-tactical" size={32} />
         </div>
-        <h3 className="text-xl font-black uppercase italic tracking-tighter text-theme-text mb-2">Upload em Lote</h3>
-        <p className="text-[10px] font-black text-theme-muted uppercase tracking-widest text-center max-w-xs leading-relaxed italic opacity-60">
+        <h3 className="text-xl font-bold uppercase text-theme-text mb-2">Upload em Lote</h3>
+        <p className="text-[10px] font-bold text-theme-muted uppercase tracking-widest text-center max-w-xs leading-relaxed opacity-60">
           Arraste suas fotos aqui ou clique para selecionar. 
           <br/>Proteção automática ativada.
         </p>
@@ -131,12 +131,12 @@ export const BulkUpload: React.FC<BulkUploadProps> = ({ eventId, onComplete, onC
       {files.length > 0 && (
         <div className="px-6 pb-6">
           <div className="flex items-center justify-between mb-4 px-2">
-            <span className="text-[10px] font-black text-brand-tactical uppercase tracking-widest italic">{files.length} arquivos selecionados</span>
-            <button onClick={() => setFiles([])} className="text-[9px] font-black text-red-500 uppercase tracking-widest hover:underline italic">Limpar tudo</button>
+            <span className="text-[10px] font-bold text-brand-tactical uppercase tracking-widest ">{files.length} arquivos selecionados</span>
+            <button onClick={() => setFiles([])} className="text-[9px] font-bold text-red-500 uppercase tracking-widest hover:underline ">Limpar tudo</button>
           </div>
 
           <div className="mb-6 px-2">
-            <label className="text-[10px] font-black uppercase tracking-widest text-theme-text-muted italic mb-2 block">
+            <label className="text-[10px] font-bold uppercase tracking-widest text-theme-text-muted mb-2 block">
               Tag / Identificador Global (Número de Peito ou Aluno)
             </label>
             <input 
@@ -144,7 +144,7 @@ export const BulkUpload: React.FC<BulkUploadProps> = ({ eventId, onComplete, onC
               value={globalTag}
               onChange={(e) => setGlobalTag(e.target.value)}
               placeholder="Opcional: Ex. 104, João Silva"
-              className="w-full bg-theme-bg/50 border border-theme-border p-4 text-[10px] font-black uppercase text-theme-text outline-none focus:border-brand-tactical rounded-xl placeholder:text-theme-text-muted/40"
+              className="w-full bg-theme-bg/50 border border-theme-border p-4 text-[10px] font-bold uppercase text-theme-text outline-none focus:border-brand-tactical rounded-xl placeholder:text-theme-text-muted/40"
             />
           </div>
           
@@ -187,14 +187,14 @@ export const BulkUpload: React.FC<BulkUploadProps> = ({ eventId, onComplete, onC
                   {f.status === 'error' && (
                     <div className="absolute inset-0 bg-red-500/80 flex flex-col items-center justify-center p-2 text-center">
                       <AlertCircle className="text-white mb-1" size={20} />
-                      <span className="text-[8px] font-black text-white uppercase">{f.error}</span>
+                      <span className="text-[8px] font-bold text-white uppercase">{f.error}</span>
                     </div>
                   )}
 
                   {/* Watermark Tag */}
                   <div className="absolute bottom-2 left-2 px-2 py-1 bg-black/60 backdrop-blur-md rounded-md flex items-center gap-1 border border-white/10">
                     <ShieldCheck size={10} className="text-brand-tactical" />
-                    <span className="text-[8px] font-black text-white uppercase italic">Shield</span>
+                    <span className="text-[8px] font-bold text-white uppercase ">Shield</span>
                   </div>
                 </motion.div>
               ))}
@@ -205,14 +205,14 @@ export const BulkUpload: React.FC<BulkUploadProps> = ({ eventId, onComplete, onC
             <button 
               onClick={onCancel}
               disabled={isUploading}
-              className="flex-1 py-4 border border-theme-border text-theme-text-muted text-[10px] font-black uppercase tracking-widest hover:bg-theme-bg-muted transition-all italic rounded-2xl"
+              className="flex-1 py-4 border border-theme-border text-theme-text-muted text-[10px] font-bold uppercase tracking-widest hover:bg-theme-bg-muted transition-all rounded-2xl"
             >
               Cancelar
             </button>
             <button 
               onClick={startUpload}
               disabled={isUploading || files.every(f => f.status === 'success')}
-              className="flex-[2] py-4 bg-brand-tactical text-black text-[10px] font-black uppercase tracking-[0.3em] shadow-lg shadow-brand-tactical/20 hover:brightness-110 active:scale-[0.98] transition-all italic rounded-2xl disabled:opacity-40"
+              className="flex-[2] py-4 bg-brand-tactical text-black text-[10px] font-bold uppercase tracking-[0.3em] shadow-lg shadow-brand-tactical/20 hover:brightness-110 active:scale-[0.98] transition-all rounded-2xl disabled:opacity-40"
             >
               {isUploading ? 'ENVIANDO...' : 'INICIAR UPLOAD'}
             </button>

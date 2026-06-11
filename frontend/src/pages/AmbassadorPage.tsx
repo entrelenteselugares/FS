@@ -87,14 +87,14 @@ export default function AmbassadorPage() {
             className="inline-flex items-center gap-3 px-3 md:px-6 py-2.5 bg-brand-tactical/10 border border-brand-tactical/20 rounded-full text-brand-tactical"
           >
             <Users size={14} className="fill-brand-tactical" />
-            <span className="text-[10px] font-black uppercase tracking-[0.2em]">Acesso Exclusivo via Convite</span>
+            <span className="text-[10px] font-bold uppercase tracking-[0.2em]">Acesso Exclusivo via Convite</span>
           </motion.div>
 
           <motion.h1
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="text-3xl md:text-5xl md:text-8xl font-heading font-black uppercase italic tracking-tighter leading-[0.85] text-white"
+            className="text-3xl md:text-5xl md:text-8xl font-heading font-bold uppercase leading-[0.85] text-white"
           >
             Você foi convidado <br />
             <span className="text-brand-tactical">por {name}</span>
@@ -127,7 +127,7 @@ export default function AmbassadorPage() {
               <div className="text-brand-tactical p-3 bg-brand-tactical/10 rounded-2xl group-hover:bg-brand-tactical group-hover:text-black transition-all">
                 {f.icon}
               </div>
-              <h3 className="text-sm font-black uppercase tracking-widest text-white">{f.title}</h3>
+              <h3 className="text-sm font-bold uppercase tracking-widest text-white">{f.title}</h3>
               <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider">{f.desc}</p>
             </motion.div>
           ))}
@@ -142,13 +142,13 @@ export default function AmbassadorPage() {
         >
           <button
             onClick={handleStart}
-            className="w-full py-3 md:py-6 bg-brand-tactical text-black font-black uppercase tracking-[0.4em] text-[12px] hover:bg-white transition-all shadow-[0_0_60px_rgba(133,185,172,0.2)] active:scale-95 flex items-center justify-center gap-4 italic"
+            className="w-full py-3 md:py-6 bg-brand-tactical text-black font-bold uppercase tracking-[0.4em] text-[12px] hover:bg-white transition-all shadow-[0_0_60px_rgba(133,185,172,0.2)] active:scale-95 flex items-center justify-center gap-4 "
           >
             Aceitar Convite e Começar
             <ArrowRight size={18} />
           </button>
           
-          <p className="text-[10px] text-zinc-600 font-black uppercase tracking-[0.3em]">
+          <p className="text-[10px] text-zinc-600 font-bold uppercase tracking-[0.3em]">
             Já possui acesso? <button onClick={() => navigate('/login')} className="text-zinc-400 hover:text-brand-tactical">Fazer Login</button>
           </p>
         </motion.div>
@@ -158,7 +158,7 @@ export default function AmbassadorPage() {
       <footer className="py-3 md:py-6 md:py-12 border-t border-zinc-900/50 text-center opacity-30">
         <div className="flex items-center justify-center gap-3">
           <ShieldCheck size={14} className="text-brand-tactical" />
-          <span className="text-[9px] font-black uppercase tracking-[0.4em]">Protocolo de Rede Blindado</span>
+          <span className="text-[9px] font-bold uppercase tracking-[0.4em]">Protocolo de Rede Blindado</span>
         </div>
       </footer>
     </div>

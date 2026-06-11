@@ -123,7 +123,7 @@ function ReferenceCard({ item }: { item: RefItem }) {
   return (
     <div className="aspect-square bg-theme-bg-muted border border-theme-border overflow-hidden rounded-xl flex flex-col items-center justify-center p-4">
       <ExternalLink size={24} className="mb-3 opacity-50" />
-      <span className="text-[10px] font-black uppercase tracking-widest break-all line-clamp-3">{hostname}</span>
+      <span className="text-[10px] font-bold uppercase tracking-widest break-all line-clamp-3">{hostname}</span>
     </div>
   );
 }
@@ -135,7 +135,7 @@ function TacticalBenefit({ icon, title, desc }: { icon: React.ReactNode; title: 
         {icon}
       </div>
       <div className="space-y-1">
-        <p className="text-[10px] font-black text-theme-text uppercase tracking-widest">{title}</p>
+        <p className="text-[10px] font-bold text-theme-text uppercase tracking-widest">{title}</p>
         <p className="text-[10px] text-theme-text-muted font-medium leading-relaxed">{desc}</p>
       </div>
     </div>
@@ -267,8 +267,8 @@ function CountdownTimer({ targetDate }: { targetDate: string }) {
         { val: timeLeft.s, label: "SEG" },
       ].map((item) => (
         <div key={item.label} className="flex flex-col items-center bg-theme-bg p-4 border border-theme-border">
-          <span className="text-2xl md:text-4xl font-heading font-black text-theme-text tracking-tighter italic">{String(item.val).padStart(2, '0')}</span>
-          <span className="text-[8px] font-black text-brand-tactical uppercase tracking-[0.2em]">{item.label}</span>
+          <span className="text-2xl md:text-4xl font-heading font-bold text-theme-text ">{String(item.val).padStart(2, '0')}</span>
+          <span className="text-[8px] font-bold text-brand-tactical uppercase tracking-[0.2em]">{item.label}</span>
         </div>
       ))}
     </div>
@@ -723,7 +723,7 @@ return (
              className="absolute top-6 left-6 z-50 flex items-center gap-2 px-5 py-2.5 bg-theme-bg/60 backdrop-blur-md border border-theme-border rounded-full text-theme-text hover:bg-brand-tactical hover:text-black transition-all shadow-xl"
           >
              <ChevronLeft size={16} />
-             <span className="text-[10px] font-black uppercase tracking-widest hidden md:inline">Voltar</span>
+             <span className="text-[10px] font-bold uppercase tracking-widest hidden md:inline">Voltar</span>
           </button>
 
           <button 
@@ -731,7 +731,7 @@ return (
              className="absolute top-6 right-6 z-50 flex items-center gap-2 px-5 py-2.5 bg-brand-tactical text-black backdrop-blur-md border border-brand-tactical/50 rounded-full hover:brightness-110 transition-all shadow-[0_0_20px_rgba(16,185,129,0.3)]"
           >
              <Camera size={16} />
-             <span className="text-[10px] font-black uppercase tracking-widest">Câmera</span>
+             <span className="text-[10px] font-bold uppercase tracking-widest">Câmera</span>
           </button>
           {/* Header Visual Cinematográfico (Compacto) */}
           <div className="relative min-h-[35vh] lg:min-h-[45vh] shrink-0 overflow-hidden flex flex-col justify-end">
@@ -779,7 +779,7 @@ return (
             <div className="relative z-10 w-full px-3 md:px-6 pt-20 pb-6 lg:px-10 lg:pt-32 lg:pb-8 space-y-4">
               <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} className="flex items-center gap-3 mb-2">
                 <div className="h-px w-8 bg-brand-tactical" />
-                <span className="text-[9px] font-black text-brand-tactical uppercase tracking-[0.4em] italic">
+                <span className="text-[9px] font-bold text-brand-tactical uppercase tracking-[0.4em] ">
                   {step === 'countdown' ? "Contagem Regressiva" : (
                     event.type === 'FOTO_POINT' ? "Tactical Point Operation" : 
                     event.type === 'PHOTO_MARKETPLACE' ? "Live Print System" : 
@@ -790,7 +790,7 @@ return (
               
               <motion.h1 
                 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
-                className="text-3xl md:text-4xl lg:text-5xl font-heading font-black text-theme-text uppercase tracking-tighter leading-[0.9] italic max-w-2xl md:max-w-4xl"
+                className="text-3xl md:text-4xl lg:text-5xl font-heading font-bold text-theme-text uppercase leading-[0.9] max-w-2xl md:max-w-4xl"
               >
                 {event.title}
               </motion.h1>
@@ -799,21 +799,21 @@ return (
                 <div className="flex flex-wrap items-center gap-4 text-theme-text-muted">
                    <div className="flex items-center gap-1.5">
                      <Clock size={14} className="text-brand-tactical" />
-                     <span className="text-[10px] font-black uppercase tracking-[0.1em] text-theme-text-muted italic">{formatDate(event.dataEvento)}</span>
+                     <span className="text-[10px] font-bold uppercase tracking-[0.1em] text-theme-text-muted ">{formatDate(event.dataEvento)}</span>
                    </div>
                    <div className="flex items-center gap-1.5">
                      <MapPin size={14} className="text-brand-tactical" />
-                     <span className="text-[10px] font-black uppercase tracking-[0.1em] text-theme-text-muted italic">{event.city || (event.location?.startsWith("CEP:") ? null : event.location) || "Ponto Designado"}</span>
+                     <span className="text-[10px] font-bold uppercase tracking-[0.1em] text-theme-text-muted ">{event.city || (event.location?.startsWith("CEP:") ? null : event.location) || "Ponto Designado"}</span>
                    </div>
                    {event.photographer && (
                      <div className="flex items-center gap-1.5">
                        <Camera size={14} className="text-brand-tactical" />
-                       <span className="text-[10px] font-black uppercase tracking-[0.1em] text-brand-tactical italic">Profissional: {event.photographer.nome}</span>
+                       <span className="text-[10px] font-bold uppercase tracking-[0.1em] text-brand-tactical ">Profissional: {event.photographer.nome}</span>
                      </div>
                    )}
                    {event.category && (
                      <div className="flex items-center gap-1.5">
-                       <span className="text-[10px] font-black uppercase tracking-[0.1em] text-theme-text italic">{event.category}</span>
+                       <span className="text-[10px] font-bold uppercase tracking-[0.1em] text-theme-text ">{event.category}</span>
                      </div>
                    )}
                 </div>
@@ -849,7 +849,7 @@ return (
                   if (!text) return null;
 
                   return (
-                    <p className="text-base text-theme-text leading-relaxed font-medium italic whitespace-pre-line max-w-4xl mt-2 relative z-10">
+                    <p className="text-base text-theme-text leading-relaxed font-medium whitespace-pre-line max-w-4xl mt-2 relative z-10">
                       {text}
                     </p>
                   );
@@ -869,15 +869,15 @@ return (
                     <div className="absolute top-0 left-0 w-full h-[2px] bg-brand-tactical" />
                     <div className="flex justify-between items-start mb-6">
                       <div className="space-y-1">
-                        <p className="text-[10px] font-black text-brand-tactical uppercase tracking-widest italic">Captura Phygital</p>
-                        <h4 className="text-sm font-black text-white uppercase italic">Protocolo Ativo</h4>
+                        <p className="text-[10px] font-bold text-brand-tactical uppercase tracking-widest ">Captura Phygital</p>
+                        <h4 className="text-sm font-bold text-white uppercase ">Protocolo Ativo</h4>
                       </div>
                       <button onClick={() => setShowQrModal(false)} className="text-zinc-500 hover:text-white"><Check size={20} className="rotate-45" /></button>
                     </div>
                     <div className="bg-white p-4 rounded-xl mb-6">
                       <QRCodeCanvas value={`${window.location.origin}/phygital-capture?e=${event.id}`} size={240} level="H" />
                     </div>
-                    <p className="text-[9px] text-zinc-500 uppercase font-bold text-center italic leading-relaxed">
+                    <p className="text-[9px] text-zinc-500 uppercase font-bold text-center leading-relaxed">
                       Aponte a câmera para transmitir fotos em tempo real para este painel.
                     </p>
                 </motion.div>
@@ -890,7 +890,7 @@ return (
           {step === "countdown" ? (
             <div className="flex-1 flex flex-col items-center justify-center p-4 md:p-8 lg:p-12 space-y-16 text-center relative">
               <div className="space-y-6 max-w-3xl">
-                <p className="text-xl md:text-2xl text-theme-text-muted font-medium italic">
+                <p className="text-xl md:text-2xl text-theme-text-muted font-medium ">
                   {event.type === 'ALBUM_FULL' 
                     ? "Sua galeria premium está sendo preparada com curadoria técnica. Falta pouco para reviver esses momentos."
                     : "A transmissão tática de capturas começará em breve. Sincronize seus dispositivos para acesso instantâneo."
@@ -903,10 +903,10 @@ return (
               </motion.div>
               
               <div className="pt-8 flex items-center gap-4 flex-wrap">
-                <button onClick={handleShare} className="px-3 md:px-6 py-5 border border-brand-tactical/30 text-[10px] font-black text-brand-tactical uppercase tracking-[0.4em] hover:bg-brand-tactical hover:text-black transition-all italic flex items-center gap-3 hover-lift">
+                <button onClick={handleShare} className="px-3 md:px-6 py-5 border border-brand-tactical/30 text-[10px] font-bold text-brand-tactical uppercase tracking-[0.4em] hover:bg-brand-tactical hover:text-black transition-all flex items-center gap-3 hover-lift">
                   <Share2 size={16} /> CONVIDAR AMIGOS
                 </button>
-                <button onClick={() => setShowQrModal(true)} className="px-3 md:px-6 py-5 border border-brand-tactical/30 text-[10px] font-black text-brand-tactical uppercase tracking-[0.4em] hover:bg-brand-tactical hover:text-black transition-all italic flex items-center gap-3 hover-lift">
+                <button onClick={() => setShowQrModal(true)} className="px-3 md:px-6 py-5 border border-brand-tactical/30 text-[10px] font-bold text-brand-tactical uppercase tracking-[0.4em] hover:bg-brand-tactical hover:text-black transition-all flex items-center gap-3 hover-lift">
                   <QrCode size={16} /> QR CODE DE ACESSO
                 </button>
               </div>
@@ -924,11 +924,11 @@ return (
                       <div className="flex flex-wrap gap-5 pt-2">
                         <div className="flex items-center gap-2">
                           <ShieldCheck size={13} className="text-brand-tactical" />
-                          <span className="text-[9px] font-black text-zinc-500 uppercase tracking-widest">Proteção de Conteúdo</span>
+                          <span className="text-[9px] font-bold text-zinc-500 uppercase tracking-widest">Proteção de Conteúdo</span>
                         </div>
                         <div className="flex items-center gap-2">
                           <Clock size={13} className="text-brand-tactical" />
-                          <span className="text-[9px] font-black text-zinc-500 uppercase tracking-widest">Live Sync Canon</span>
+                          <span className="text-[9px] font-bold text-zinc-500 uppercase tracking-widest">Live Sync Canon</span>
                         </div>
                       </div>
                     )}
@@ -944,7 +944,7 @@ return (
                     if (filteredRefs.length === 0) return null;
                     return (
                       <div className="space-y-4">
-                        <p className="text-[10px] font-black text-theme-text-muted uppercase tracking-[0.4em]">Referências Técnicas</p>
+                        <p className="text-[10px] font-bold text-theme-text-muted uppercase tracking-[0.4em]">Referências Técnicas</p>
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                           {filteredRefs.map((r, i) => (
                             <ReferenceCard key={r.id ?? i} item={r} />
@@ -987,7 +987,7 @@ return (
                           href={`/phygital-capture?e=${event.id}&auto=1`}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="flex items-center gap-3 px-4 md:px-8 py-5 bg-brand-tactical text-black text-[10px] font-black uppercase tracking-widest hover:brightness-110 transition-all italic shadow-lg shadow-brand-tactical/20"
+                          className="flex items-center gap-3 px-4 md:px-8 py-5 bg-brand-tactical text-black text-[10px] font-bold uppercase tracking-widest hover:brightness-110 transition-all shadow-lg shadow-brand-tactical/20"
                         >
                           <Camera size={18} /> ABRIR CÂMERA
                         </a>
@@ -1004,8 +1004,8 @@ return (
                                 <Camera size={40} className="text-brand-tactical group-hover:scale-110 transition-transform duration-700" />
                               </div>
                             </div>
-                            <p className="text-[10px] font-black text-brand-tactical uppercase tracking-[0.6em] mb-4 italic">Transmissão Tática</p>
-                            <h3 className="text-3xl font-heading font-black text-theme-text uppercase italic tracking-tighter mb-4">
+                            <p className="text-[10px] font-bold text-brand-tactical uppercase tracking-[0.6em] mb-4 ">Transmissão Tática</p>
+                            <h3 className="text-3xl font-heading font-bold text-theme-text uppercase mb-4">
                               {isEventOver ? "Operação Encerrada" : "Galeria em Formação"}
                             </h3>
                             <p className="max-w-md text-xs text-theme-text-muted uppercase tracking-widest leading-relaxed mb-6">
@@ -1016,14 +1016,14 @@ return (
                             <div className="flex flex-col sm:flex-row gap-4">
                               <button 
                                 onClick={() => window.location.reload()}
-                                className="px-4 md:px-8 py-4 border border-theme-border text-[10px] font-black text-theme-text-muted uppercase tracking-widest hover:border-brand-tactical hover:text-theme-text hover:bg-brand-tactical/10 transition-all italic"
+                                className="px-4 md:px-8 py-4 border border-theme-border text-[10px] font-bold text-theme-text-muted uppercase tracking-widest hover:border-brand-tactical hover:text-theme-text hover:bg-brand-tactical/10 transition-all "
                               >
                                 Sincronizar Galeria
                               </button>
                               {(isMarketplace && qrOpen) && (
                                 <button 
                                   onClick={() => setShowQrModal(true)}
-                                  className="px-4 md:px-8 py-4 bg-brand-tactical text-black font-black uppercase tracking-widest text-[10px] italic shadow-[0_15px_30px_rgba(20,184,166,0.3)] flex items-center gap-3"
+                                  className="px-4 md:px-8 py-4 bg-brand-tactical text-black font-bold uppercase tracking-widest text-[10px] shadow-[0_15px_30px_rgba(20,184,166,0.3)] flex items-center gap-3"
                                 >
                                   <QrCode size={18} /> TRANSMITIR MINHAS FOTOS
                                 </button>
@@ -1036,7 +1036,7 @@ return (
                                       setStep("checkout");
                                     }
                                   }}
-                                  className="px-4 md:px-8 py-4 bg-white text-black font-black uppercase tracking-widest text-[10px] italic flex items-center gap-3 hover:bg-brand-tactical transition-colors"
+                                  className="px-4 md:px-8 py-4 bg-white text-black font-bold uppercase tracking-widest text-[10px] flex items-center gap-3 hover:bg-brand-tactical transition-colors"
                                 >
                                   <ShoppingCart size={18} /> COMPRAR PRÉ-VENDA (ALBUM COMPLETO)
                                 </button>
@@ -1065,7 +1065,7 @@ return (
                                   placeholder={event.type === 'SCHOOL' ? "BUSCAR POR RA OU ALUNO..." : "BUSCAR POR NÚMERO DE PEITO..."}
                                   value={searchQuery}
                                   onChange={(e) => setSearchQuery(e.target.value)}
-                                  className="w-full bg-theme-bg-muted border border-theme-border py-5 pl-12 pr-4 text-[10px] font-black uppercase tracking-[0.2em] text-theme-text focus:outline-none focus:border-brand-tactical focus:ring-1 focus:ring-brand-tactical/20 transition-all placeholder:text-theme-text-muted/40 italic"
+                                  className="w-full bg-theme-bg-muted border border-theme-border py-5 pl-12 pr-4 text-[10px] font-bold uppercase tracking-[0.2em] text-theme-text focus:outline-none focus:border-brand-tactical focus:ring-1 focus:ring-brand-tactical/20 transition-all placeholder:text-theme-text-muted/40 "
                                 />
                                 {searchQuery && (
                                   <button 
@@ -1080,7 +1080,7 @@ return (
 
                             {event.type === 'SCHOOL' && authenticatedStudent && (
                               <div className="flex justify-between items-center mb-6 bg-theme-bg-muted p-4 border border-theme-border rounded-xl">
-                                <span className="text-[10px] text-theme-muted uppercase tracking-widest font-black italic">
+                                <span className="text-[10px] text-theme-muted uppercase tracking-widest font-bold ">
                                   Visualizando álbum de: <span className="text-white">{authenticatedStudent}</span>
                                 </span>
                                 <button 
@@ -1088,7 +1088,7 @@ return (
                                     setAuthenticatedStudent(null);
                                     setSearchQuery("");
                                   }}
-                                  className="text-[10px] text-brand-tactical uppercase tracking-widest font-black hover:text-white transition-colors"
+                                  className="text-[10px] text-brand-tactical uppercase tracking-widest font-bold hover:text-white transition-colors"
                                 >
                                   Trocar Aluno
                                 </button>
@@ -1100,14 +1100,14 @@ return (
                               <div className="flex flex-wrap items-center justify-between gap-3 pb-4 mb-4 border-b border-theme-border">
                                 <div className="flex items-center gap-2">
                                   <Archive size={14} className="text-brand-tactical" />
-                                  <span className="text-[9px] font-black uppercase tracking-widest text-theme-muted italic">Download de Material</span>
+                                  <span className="text-[9px] font-bold uppercase tracking-widest text-theme-muted ">Download de Material</span>
                                 </div>
                                 <div className="flex gap-2">
                                   {eventCart.length > 0 && (
                                     <button
                                       onClick={handleDownloadSelected}
                                       disabled={isDownloading}
-                                      className="px-4 py-2.5 border border-brand-tactical/40 text-brand-tactical text-[9px] font-black uppercase tracking-widest hover:bg-brand-tactical/10 transition-all flex items-center gap-2 rounded-xl disabled:opacity-40"
+                                      className="px-4 py-2.5 border border-brand-tactical/40 text-brand-tactical text-[9px] font-bold uppercase tracking-widest hover:bg-brand-tactical/10 transition-all flex items-center gap-2 rounded-xl disabled:opacity-40"
                                     >
                                       <Download size={13} /> {eventCart.length} SELECIONADAS
                                     </button>
@@ -1115,7 +1115,7 @@ return (
                                   <button
                                     onClick={handleDownloadAll}
                                     disabled={isDownloading}
-                                    className="px-4 py-2.5 bg-brand-tactical text-black text-[9px] font-black uppercase tracking-widest hover:brightness-110 transition-all flex items-center gap-2 rounded-xl disabled:opacity-40"
+                                    className="px-4 py-2.5 bg-brand-tactical text-black text-[9px] font-bold uppercase tracking-widest hover:brightness-110 transition-all flex items-center gap-2 rounded-xl disabled:opacity-40"
                                   >
                                     <Archive size={13} /> ÁLBUM COMPLETO ({filteredMedias.length})
                                   </button>
@@ -1149,7 +1149,7 @@ return (
           <div className="relative z-10 flex-1 overflow-y-auto p-4 lg:p-8 space-y-8 lg:space-y-14 scrollbar-hide">
             <div className="flex items-center justify-between border-b border-theme-border pb-6 lg:pb-12">
               <div className="space-y-1">
-                <p className="text-[10px] text-theme-text-muted uppercase font-black tracking-[0.5em] italic">Membro Exclusive</p>
+                <p className="text-[10px] text-theme-text-muted uppercase font-bold tracking-[0.5em] ">Membro Exclusive</p>
                 <div className="h-0.5 w-12 bg-brand-tactical" />
               </div>
               <div className="flex items-center gap-3 px-4 py-2 bg-theme-bg border border-theme-border">
@@ -1157,7 +1157,7 @@ return (
                   className={`w-2 h-2 rounded-full ${eventStatus.dotClass}`}
                   title={eventStatus.label}
                 />
-                <span className="text-[10px] font-black text-theme-text uppercase tracking-widest italic">
+                <span className="text-[10px] font-bold text-theme-text uppercase tracking-widest ">
                   {eventStatus.label}
                 </span>
               </div>
@@ -1168,7 +1168,7 @@ return (
               <div className="p-4 lg:p-6 bg-brand-tactical/10 border border-brand-tactical/20 space-y-4">
                  <div className="flex items-center gap-2">
                     <ShieldCheck size={16} className="text-brand-tactical" />
-                    <span className="text-[10px] font-black text-brand-tactical uppercase tracking-widest italic">Gestão Tática do Evento</span>
+                    <span className="text-[10px] font-bold text-brand-tactical uppercase tracking-widest ">Gestão Tática do Evento</span>
                  </div>
                  <div className="grid grid-cols-2 gap-2">
                     <button 
@@ -1183,7 +1183,7 @@ return (
                         onClick={() => {
                           setIsEditingEvent(true);
                         }}
-                        className="w-full py-4 border border-theme-border text-theme-text-muted text-[9px] lg:text-[10px] font-black uppercase tracking-widest hover:text-theme-text hover:border-theme-border hover:bg-theme-bg-muted transition-all italic flex items-center justify-center gap-2"
+                        className="w-full py-4 border border-theme-border text-theme-text-muted text-[9px] lg:text-[10px] font-bold uppercase tracking-widest hover:text-theme-text hover:border-theme-border hover:bg-theme-bg-muted transition-all flex items-center justify-center gap-2"
                       >
                         <Camera size={16} /> CONFIGURAÇÕES
                       </button>
@@ -1197,9 +1197,9 @@ return (
               <div className="p-3 md:p-6 bg-theme-bg-muted border border-theme-border space-y-4">
                  <div className="flex items-center gap-2">
                     <QrCode size={16} className={!qrOpen ? "text-zinc-600" : "text-brand-tactical"} />
-                    <span className="text-[10px] font-black text-theme-text uppercase tracking-widest italic">Galeria Live</span>
+                    <span className="text-[10px] font-bold text-theme-text uppercase tracking-widest ">Galeria Live</span>
                  </div>
-                 <p className="text-[9px] text-theme-text-muted leading-relaxed uppercase tracking-wider italic">
+                 <p className="text-[9px] text-theme-text-muted leading-relaxed uppercase tracking-wider ">
                     {qrOpen 
                       ? "Envie suas fotos agora para o painel do evento e apareça na transmissão oficial!"
                       : (eventStatus.phase === "scheduled" || eventStatus.phase === "approaching")
@@ -1209,7 +1209,7 @@ return (
                  {qrOpen && (
                    <button 
                      onClick={() => setShowQrModal(true)}
-                     className="w-full py-4 bg-brand-tactical text-black text-[10px] font-black uppercase tracking-widest hover:brightness-110 transition-all italic flex items-center justify-center gap-3"
+                     className="w-full py-4 bg-brand-tactical text-black text-[10px] font-bold uppercase tracking-widest hover:brightness-110 transition-all flex items-center justify-center gap-3"
                    >
                      MOSTRAR QR CODE
                    </button>
@@ -1224,10 +1224,10 @@ return (
                     <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-red-500 via-amber-500 to-red-500" />
                     <div className="flex items-center gap-3">
                       <Lock size={18} className="text-amber-500 animate-pulse" />
-                      <span className="text-[10px] font-black text-amber-500 uppercase tracking-widest italic">Álbum Privado</span>
+                      <span className="text-[10px] font-bold text-amber-500 uppercase tracking-widest ">Álbum Privado</span>
                     </div>
                     <div className="space-y-4">
-                      <h4 className="text-md font-heading font-black text-white uppercase italic tracking-tight">Aguardando Liberação</h4>
+                      <h4 className="text-md font-heading font-bold text-white uppercase ">Aguardando Liberação</h4>
                       <p className="text-[11px] text-zinc-400 uppercase font-bold tracking-widest leading-relaxed">
                         Esta galeria premium está aguardando o pagamento do saldo residual ou a liberação oficial de acesso pelo contratante.
                       </p>
@@ -1238,7 +1238,7 @@ return (
                       </p>
                       <button 
                         onClick={() => navigate("/login")}
-                        className="w-full h-16 bg-brand-tactical text-black text-[10px] font-black uppercase tracking-widest text-center italic hover:brightness-110 transition-all flex items-center justify-center gap-3"
+                        className="w-full h-16 bg-brand-tactical text-black text-[10px] font-bold uppercase tracking-widest text-center hover:brightness-110 transition-all flex items-center justify-center gap-3"
                       >
                         FAZER LOGIN DO CONTRATANTE
                       </button>
@@ -1248,19 +1248,19 @@ return (
                   <>
                     {((isMarketplace || eventCart.length > 0 || eventPhysicalItems.length > 0) && !event.allowFreeDownload) && (
                       <div className="space-y-4">
-                        <p className="text-[10px] text-brand-tactical font-black uppercase tracking-[0.6em] italic">Investimento</p>
+                        <p className="text-[10px] text-brand-tactical font-bold uppercase tracking-[0.6em] ">Investimento</p>
                         <div className="flex items-baseline gap-2">
-                          <span className="text-3xl font-light text-theme-text-muted/60 tracking-tighter italic">R$</span>
-                          <h2 className="text-2xl md:text-4xl md:text-6xl lg:text-7xl font-black tracking-tighter font-heading italic leading-none text-theme-text">
+                          <span className="text-3xl font-normal text-theme-text-muted/60 ">R$</span>
+                          <h2 className="text-2xl md:text-4xl md:text-6xl lg:text-7xl font-bold font-heading leading-none text-theme-text">
                             {Number(searchParams.get("intent") === "upgrade" 
                               ? (serviceCatalog.filter(s => selectedServices.includes(s.id)).reduce((acc, s) => acc + Number(s.basePrice), 0) + (includeLivePrint ? 150 : 0))
                               : ((isMarketplace || eventCart.length > 0 || eventPhysicalItems.length > 0) ? cartTotal : event.priceBase)
                             ).toFixed(0)}
                           </h2>
-                          <span className="text-3xl font-black text-theme-text-muted/60 italic">,00</span>
+                          <span className="text-3xl font-bold text-theme-text-muted/60 ">,00</span>
                         </div>
                         <div className="p-4 bg-brand-tactical/10 border-l-2 border-brand-tactical">
-                          <p className="text-[10px] text-theme-text-muted font-black uppercase tracking-widest italic">
+                          <p className="text-[10px] text-theme-text-muted font-bold uppercase tracking-widest ">
                             {eventCart.length > 0 && `${eventCart.length} ${eventCart.length === 1 ? 'foto digital' : 'fotos digitais'}`}
                             {eventCart.length > 0 && eventPhysicalItems.length > 0 && ' + '}
                             {eventPhysicalItems.length > 0 && `${eventPhysicalItems.length} ${eventPhysicalItems.length === 1 ? 'produto físico' : 'produtos físicos'}`}
@@ -1271,16 +1271,16 @@ return (
 
                     {!isMarketplace && !event.hasAccess && !event.allowFreeDownload && (
                       <div className="space-y-4">
-                        <p className="text-[10px] text-brand-tactical font-black uppercase tracking-[0.6em] italic">Investimento do Álbum</p>
+                        <p className="text-[10px] text-brand-tactical font-bold uppercase tracking-[0.6em] ">Investimento do Álbum</p>
                         <div className="flex items-baseline gap-2">
-                          <span className="text-3xl font-light text-theme-text-muted/60 tracking-tighter italic">R$</span>
-                          <h2 className="text-2xl md:text-4xl md:text-6xl lg:text-7xl font-black tracking-tighter font-heading italic leading-none text-theme-text">
+                          <span className="text-3xl font-normal text-theme-text-muted/60 ">R$</span>
+                          <h2 className="text-2xl md:text-4xl md:text-6xl lg:text-7xl font-bold font-heading leading-none text-theme-text">
                             {Number(event.priceBase || 0).toFixed(0)}
                           </h2>
-                          <span className="text-3xl font-black text-theme-text-muted/60 italic">,00</span>
+                          <span className="text-3xl font-bold text-theme-text-muted/60 ">,00</span>
                         </div>
                         <div className="p-4 bg-brand-tactical/10 border-l-2 border-brand-tactical">
-                          <p className="text-[10px] text-theme-text-muted font-black uppercase tracking-widest italic">
+                          <p className="text-[10px] text-theme-text-muted font-bold uppercase tracking-widest ">
                             Liberação de todo o conteúdo da galeria digital.
                           </p>
                         </div>
@@ -1293,12 +1293,12 @@ return (
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-2">
                             <Printer size={16} className="text-brand-tactical animate-pulse" />
-                            <span className="text-[10px] font-black text-brand-tactical uppercase tracking-widest italic">Upgrade Phygital</span>
+                            <span className="text-[10px] font-bold text-brand-tactical uppercase tracking-widest ">Upgrade Phygital</span>
                           </div>
                           {!eventPhysicalItems.length ? (
                             <button 
                               onClick={() => setShowPrintStore(true)} 
-                              className="text-[9px] font-black uppercase text-zinc-950 bg-brand-tactical px-3 py-1.5 hover:bg-white transition-all rounded-md"
+                              className="text-[9px] font-bold uppercase text-zinc-950 bg-brand-tactical px-3 py-1.5 hover:bg-white transition-all rounded-md"
                             >
                               Adicionar
                             </button>
@@ -1307,17 +1307,17 @@ return (
                               onClick={() => {
                                 eventPhysicalItems.forEach(item => removePhysicalItem(item.productId));
                               }} 
-                              className="text-[9px] font-black uppercase text-red-500 hover:text-white transition-all"
+                              className="text-[9px] font-bold uppercase text-red-500 hover:text-white transition-all"
                             >
                               Remover
                             </button>
                           )}
                         </div>
                         <div className="space-y-1">
-                          <h4 className="text-xs font-black text-theme-text uppercase italic tracking-tight">
+                          <h4 className="text-xs font-bold text-theme-text uppercase ">
                             {!eventPhysicalItems.length ? "Fotos Reveladas Premium" : "Produto Físico Selecionado"}
                           </h4>
-                          <p className="text-[9px] text-theme-text-muted leading-relaxed uppercase tracking-wider italic">
+                          <p className="text-[9px] text-theme-text-muted leading-relaxed uppercase tracking-wider ">
                             {!eventPhysicalItems.length 
                               ? "Eternize suas memórias! Receba suas fotos impressas em papel fotográfico profissional premium."
                               : `${eventPhysicalItems[0]?.name || "Produto Impresso"} (x${eventPhysicalItems[0]?.quantity || 1}) - R$ ${((eventPhysicalItems[0]?.price || 0) * (eventPhysicalItems[0]?.quantity || 1)).toFixed(0)}`}
@@ -1330,7 +1330,7 @@ return (
                       {((isMarketplace || (!event.hasAccess && (event.isPrimaryClient || event.isOwner)) || eventCart.length > 0 || eventPhysicalItems.length > 0) && !event.allowFreeDownload) && (
                         <button 
                           onClick={handleUnlockClick} 
-                          className="group relative w-full h-16 lg:h-24 rounded-xl bg-brand-tactical text-black font-black uppercase tracking-[0.1em] lg:tracking-[0.4em] text-[9px] lg:text-xs flex items-center justify-center gap-2 lg:gap-5 overflow-hidden transition-all shadow-2xl shadow-brand-tactical/30 italic hover-lift"
+                          className="group relative w-full h-16 lg:h-24 rounded-xl bg-brand-tactical text-black font-bold uppercase tracking-[0.1em] lg:tracking-[0.4em] text-[9px] lg:text-xs flex items-center justify-center gap-2 lg:gap-5 overflow-hidden transition-all shadow-2xl shadow-brand-tactical/30 hover-lift"
                         >
                           <div className="absolute inset-0 bg-white translate-x-[-100%] group-hover:translate-x-0 transition-transform duration-700 opacity-20" />
                           <span className="relative z-10 text-center px-2 leading-tight">
@@ -1345,11 +1345,11 @@ return (
                       {(!isMarketplace && event.hasAccess && !event.allowFreeDownload && eventCart.length === 0 && eventPhysicalItems.length === 0) && (
                         <div className="w-full h-16 lg:h-24 mb-4 bg-brand-tactical/10 border border-brand-tactical/30 rounded-xl flex items-center justify-center gap-2">
                            <CheckCircle2 size={16} className="text-brand-tactical" />
-                           <span className="text-[9px] lg:text-xs font-black text-brand-tactical uppercase tracking-widest italic text-center leading-tight">Álbum Desbloqueado</span>
+                           <span className="text-[9px] lg:text-xs font-bold text-brand-tactical uppercase tracking-widest text-center leading-tight">Álbum Desbloqueado</span>
                         </div>
                       )}
 
-                      <button onClick={handleShare} className="w-full h-16 lg:h-24 border border-theme-border text-theme-text-muted font-black uppercase tracking-widest text-[9px] lg:text-[10px] flex items-center justify-center gap-2 hover:bg-theme-border/60 hover:text-theme-text transition-all italic rounded-xl px-2 text-center leading-tight">
+                      <button onClick={handleShare} className="w-full h-16 lg:h-24 border border-theme-border text-theme-text-muted font-bold uppercase tracking-widest text-[9px] lg:text-[10px] flex items-center justify-center gap-2 hover:bg-theme-border/60 hover:text-theme-text transition-all rounded-xl px-2 text-center leading-tight">
                         <Share2 size={16} className="lg:w-[18px] lg:h-[18px]" /> Compartilhar Galeria
                       </button>
                     </div>
@@ -1383,10 +1383,10 @@ return (
             ) : step === "countdown" ? (
                 <div className="space-y-14 animate-in fade-in slide-in-from-right-8 duration-1000">
                   <div className="space-y-6">
-                    <p className="text-[10px] text-brand-tactical font-black uppercase tracking-[0.6em] italic">
+                    <p className="text-[10px] text-brand-tactical font-bold uppercase tracking-[0.6em] ">
                       {event.type === 'ALBUM_FULL' ? "Antecipação" : "Galeria Ao Vivo"}
                     </p>
-                    <h3 className="text-2xl lg:text-3xl font-heading font-black uppercase tracking-tighter text-theme-text italic leading-[1.1] text-left">
+                    <h3 className="text-2xl lg:text-3xl font-heading font-bold uppercase text-theme-text leading-[1.1] text-left">
                       {event.type === 'ALBUM_FULL' ? "O grande dia está chegando" : 
                        event.type === 'PHOTO_MARKETPLACE' ? "Live Print em Processamento" : 
                        "Captura em Processamento"}
@@ -1400,13 +1400,13 @@ return (
                       <div className="p-3 bg-brand-tactical/10 text-brand-tactical">
                         <CheckCircle2 size={28} />
                       </div>
-                      <p className="text-xs font-black text-theme-text uppercase tracking-[0.2em] italic text-left">Reserva Confirmada</p>
+                      <p className="text-xs font-bold text-theme-text uppercase tracking-[0.2em] text-left">Reserva Confirmada</p>
                     </div>
                     <p className="text-[11px] text-theme-text-muted leading-relaxed font-bold uppercase tracking-widest">Equipe técnica em prontidão para o seu evento.</p>
                   </div>
                 </div>
 
-                <button onClick={handleShare} className="w-full h-20 border  border-theme-border text-theme-text-muted font-black uppercase tracking-widest text-[10px] flex items-center justify-center gap-4 hover:border-brand-tactical/40 hover:text-theme-text transition-all italic">
+                <button onClick={handleShare} className="w-full h-20 border border-theme-border text-theme-text-muted font-bold uppercase tracking-widest text-[10px] flex items-center justify-center gap-4 hover:border-brand-tactical/40 hover:text-theme-text transition-all ">
                   <Share2 size={20} /> CONVIDAR AMIGOS
                 </button>
               </div>
@@ -1419,14 +1419,14 @@ return (
       {isMarketplace && eventCart.length > 0 && (
         <motion.div initial={{ y: 120 }} animate={{ y: 0 }} className="lg:hidden fixed bottom-0 left-0 right-0 z-[100] bg-theme-bg/90 backdrop-blur-3xl border-t border-brand-tactical/40 p-4 md:p-8 pb-14 flex items-center justify-between shadow-2xl dark:bg-black/95">
           <div className="space-y-1">
-            <p className="text-[10px] font-black uppercase tracking-widest text-brand-tactical italic">{eventCart.length} selecionadas</p>
+            <p className="text-[10px] font-bold uppercase tracking-widest text-brand-tactical ">{eventCart.length} selecionadas</p>
             <div className="flex items-baseline gap-1">
-              <span className="text-sm font-light text-theme-text-muted/60 italic">R$</span>
-              <span className="text-2xl md:text-4xl font-black tracking-tighter text-theme-text italic">{cartTotal.toFixed(0)}</span>
-              <span className="text-sm font-bold text-theme-text-muted/60 italic">,00</span>
+              <span className="text-sm font-normal text-theme-text-muted/60 ">R$</span>
+              <span className="text-2xl md:text-4xl font-bold text-theme-text ">{cartTotal.toFixed(0)}</span>
+              <span className="text-sm font-bold text-theme-text-muted/60 ">,00</span>
             </div>
           </div>
-          <button onClick={handleUnlockClick} className="px-3 md:px-6 md:px-12 py-5 bg-brand-tactical text-black font-black uppercase tracking-widest text-[11px] italic shadow-[0_15px_30px_rgba(20,184,166,0.3)]">DESBLOQUEAR</button>
+          <button onClick={handleUnlockClick} className="px-3 md:px-6 md:px-12 py-5 bg-brand-tactical text-black font-bold uppercase tracking-widest text-[11px] shadow-[0_15px_30px_rgba(20,184,166,0.3)]">DESBLOQUEAR</button>
         </motion.div>
       )}
 
@@ -1439,14 +1439,14 @@ return (
                 <Lock size={32} />
               </div>
               <div className="space-y-4">
-                <p className="text-sm text-theme-text-muted italic leading-relaxed">
+                <p className="text-sm text-theme-text-muted leading-relaxed">
                   Você está logado como <span className="text-theme-text font-bold">{user.email}</span>, mas esta galeria é restrita aos noivos e convidados autorizados.
                 </p>
-                <p className="text-[10px] font-black text-brand-tactical uppercase tracking-widest italic">Protocolo de Segurança Ativo</p>
+                <p className="text-[10px] font-bold text-brand-tactical uppercase tracking-widest ">Protocolo de Segurança Ativo</p>
               </div>
               <div className="flex flex-col w-full gap-4 pt-6">
-                <a href="https://wa.me/5519981150440" target="_blank" rel="noreferrer" className="w-full py-4 bg-brand-tactical text-black text-[10px] font-black uppercase tracking-widest text-center italic shadow-lg shadow-brand-tactical/20">FALAR COM SUPORTE</a>
-                <button onClick={() => setStep("paywall")} className="w-full py-4 border border-theme-border text-theme-text-muted text-[10px] font-black uppercase tracking-widest italic">VOLTAR</button>
+                <a href="https://wa.me/5519981150440" target="_blank" rel="noreferrer" className="w-full py-4 bg-brand-tactical text-black text-[10px] font-bold uppercase tracking-widest text-center shadow-lg shadow-brand-tactical/20">FALAR COM SUPORTE</a>
+                <button onClick={() => setStep("paywall")} className="w-full py-4 border border-theme-border text-theme-text-muted text-[10px] font-bold uppercase tracking-widest ">VOLTAR</button>
               </div>
             </div>
           </Modal>
@@ -1477,14 +1477,14 @@ return (
       <Modal isOpen={showQrModal} onClose={() => setShowQrModal(false)} title="Protocolo de Captura Phygital">
         <div className="flex flex-col items-center gap-4 pt-2">
           <div className="space-y-1 text-center">
-            <p className="text-[9px] font-black uppercase tracking-[0.4em] text-brand-tactical italic">Captura Instantânea</p>
-            <p className="text-xs text-theme-text-muted max-w-[240px] mx-auto italic leading-relaxed">Escaneie para transmitir suas fotos em tempo real para a galeria exclusiva.</p>
+            <p className="text-[9px] font-bold uppercase tracking-[0.4em] text-brand-tactical ">Captura Instantânea</p>
+            <p className="text-xs text-theme-text-muted max-w-[240px] mx-auto leading-relaxed">Escaneie para transmitir suas fotos em tempo real para a galeria exclusiva.</p>
           </div>
           <div className="p-4 bg-white rounded-2xl shadow-[0_10px_30px_rgba(20,184,166,0.1)]">
             <QRCodeCanvas value={`${window.location.origin}/phygital-capture?e=${event.id}`} size={180} level="H" />
           </div>
           <div className="px-5 py-2.5 bg-theme-bg border border-theme-border rounded-full group max-w-full overflow-hidden w-full text-center">
-            <code className="text-[8px] font-black text-brand-tactical tracking-widest group-hover:text-theme-text transition-colors block truncate">{window.location.origin}/phygital-capture?e={event.id}</code>
+            <code className="text-[8px] font-bold text-brand-tactical tracking-widest group-hover:text-theme-text transition-colors block truncate">{window.location.origin}/phygital-capture?e={event.id}</code>
           </div>
         </div>
       </Modal>
@@ -1513,8 +1513,8 @@ return (
               </div>
             </div>
             <div className="space-y-2">
-              <p className="text-[10px] font-black uppercase tracking-[0.3em] text-brand-tactical italic">Preparando Download</p>
-              <p className="text-2xl font-black text-white">{downloadProgress}%</p>
+              <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-brand-tactical ">Preparando Download</p>
+              <p className="text-2xl font-bold text-white">{downloadProgress}%</p>
               <p className="text-[9px] text-zinc-500 uppercase tracking-widest">Compactando arquivos...</p>
             </div>
             <div className="w-full bg-zinc-800 rounded-full h-1.5 overflow-hidden">
@@ -1539,7 +1539,7 @@ const Modal = ({ isOpen, onClose, title, children }: { isOpen: boolean, onClose:
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={onClose} className="absolute inset-0 bg-theme-bg/80 backdrop-blur-md dark:bg-black/90" />
         <motion.div initial={{ opacity: 0, scale: 0.95, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 20 }} className="relative w-full max-w-sm bg-theme-card border border-theme-border p-3 md:p-6 shadow-2xl flex flex-col max-h-[90vh] overflow-y-auto">
           <div className="absolute top-0 right-0 p-4"><button onClick={onClose} className="text-theme-subtle hover:text-white transition-colors"><Check size={20} className="rotate-45" /></button></div>
-          <h3 className="font-display text-lg font-black uppercase tracking-tighter mb-2 pr-6 leading-tight">{title}</h3>
+          <h3 className="font-display text-lg font-bold uppercase mb-2 pr-6 leading-tight">{title}</h3>
           {children}
         </motion.div>
       </div>

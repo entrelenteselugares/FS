@@ -29,7 +29,7 @@ export function CashflowChart() {
   if (loading) {
     return (
       <div className="h-[300px] w-full bg-theme-bg-muted border border-theme-border flex items-center justify-center animate-pulse">
-        <span className="text-[10px] font-black text-theme-muted uppercase tracking-[0.4em] italic">Calculando Projeções...</span>
+        <span className="text-[10px] font-bold text-theme-muted uppercase tracking-[0.4em] ">Calculando Projeções...</span>
       </div>
     );
   }
@@ -38,7 +38,7 @@ export function CashflowChart() {
     return (
       <div className="h-[300px] w-full bg-theme-bg-muted border border-theme-border flex flex-col items-center justify-center gap-4">
         <AlertCircle size={24} className="text-theme-muted opacity-30" />
-        <span className="text-[10px] font-black text-theme-muted uppercase tracking-[0.4em] italic text-center px-12">
+        <span className="text-[10px] font-bold text-theme-muted uppercase tracking-[0.4em] text-center px-12">
           {error ? "Falha na sincronização de fluxo" : "Nenhuma projeção disponível para os próximos 30 dias"}
         </span>
       </div>
@@ -51,14 +51,14 @@ export function CashflowChart() {
     <div className="space-y-6">
       <div className="flex justify-between items-end">
         <div className="space-y-1">
-          <p className="text-[10px] font-black text-brand-tactical uppercase tracking-[0.3em] italic">Projeção de Caixa (30 dias)</p>
+          <p className="text-[10px] font-bold text-brand-tactical uppercase tracking-[0.3em] ">Projeção de Caixa (30 dias)</p>
           <div className="flex items-center gap-3">
-             <span className="text-3xl font-heading font-black text-theme-text italic">
+             <span className="text-3xl font-heading font-bold text-theme-text ">
                R$ {totalProjected.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
              </span>
              <div className="px-2 py-0.5 bg-brand-tactical/10 border border-brand-tactical/30 rounded-full flex items-center gap-1">
                 <TrendingUp size={10} className="text-brand-tactical" />
-                <span className="text-[8px] font-black text-brand-tactical uppercase">Estimado</span>
+                <span className="text-[8px] font-bold text-brand-tactical uppercase">Estimado</span>
              </div>
           </div>
         </div>

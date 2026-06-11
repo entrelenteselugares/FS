@@ -216,7 +216,7 @@ export default function PrintMonitor() {
     return (
       <div className="min-h-screen bg-theme-bg flex flex-col items-center justify-center gap-3 md:gap-6">
         <div className="w-12 h-12 border-2 border-brand-tactical border-t-transparent rounded-full animate-spin" />
-        <p className="text-[10px] font-black text-theme-muted uppercase tracking-[0.5em]">Sincronizando Radar...</p>
+        <p className="text-[10px] font-bold text-theme-muted uppercase tracking-[0.5em]">Sincronizando Radar...</p>
       </div>
     );
   }
@@ -231,7 +231,7 @@ export default function PrintMonitor() {
             <ArrowLeft size={20} />
           </button>
           <div>
-            <h1 className="text-sm font-black uppercase tracking-widest">{event?.title || 'Radar Phygital'}</h1>
+            <h1 className="text-sm font-bold uppercase tracking-widest">{event?.title || 'Radar Phygital'}</h1>
             <p className="text-[9px] text-zinc-500 font-bold uppercase tracking-widest mt-0.5">Central de Comando de Impressão</p>
           </div>
         </div>
@@ -267,18 +267,18 @@ export default function PrintMonitor() {
           />
           <button 
             onClick={() => document.getElementById('manual-upload')?.click()}
-            className="hidden md:flex items-center gap-2 px-3 md:px-6 py-2.5 rounded-full text-[9px] font-black uppercase tracking-widest bg-brand-tactical text-white border border-brand-tactical hover:brightness-110 transition-all"
+            className="hidden md:flex items-center gap-2 px-3 md:px-6 py-2.5 rounded-full text-[9px] font-bold uppercase tracking-widest bg-brand-tactical text-white border border-brand-tactical hover:brightness-110 transition-all"
           >
             <ExternalLink size={12} /> Enviar Fotos
           </button>
 
           <div className="hidden md:flex items-center gap-2 px-4 py-2 bg-theme-card border border-theme-border rounded-full">
             <div className={`w-1.5 h-1.5 rounded-full ${autoPrint ? 'bg-emerald-500 animate-pulse' : 'bg-zinc-600'}`} />
-            <span className="text-[9px] font-black uppercase tracking-widest">{autoPrint ? 'Auto-Print Ativo' : 'Manual'}</span>
+            <span className="text-[9px] font-bold uppercase tracking-widest">{autoPrint ? 'Auto-Print Ativo' : 'Manual'}</span>
           </div>
           <button 
             onClick={() => setShowQR(true)}
-            className="flex items-center gap-2 px-3 md:px-6 py-2.5 rounded-full text-[9px] font-black uppercase tracking-widest bg-white text-zinc-950 hover:bg-zinc-200 transition-all"
+            className="flex items-center gap-2 px-3 md:px-6 py-2.5 rounded-full text-[9px] font-bold uppercase tracking-widest bg-white text-zinc-950 hover:bg-zinc-200 transition-all"
           >
             <QrCode size={12} /> Mostrar QR Code
           </button>
@@ -297,14 +297,14 @@ export default function PrintMonitor() {
       </div>
       
       {/* Barra de Configurações de Impressão */}
-      <div className="print:hidden border-b border-theme-border bg-zinc-950/50 py-2 px-4 md:px-6 flex flex-wrap items-center gap-3 overflow-x-auto text-[9px] font-black uppercase tracking-widest">
+      <div className="print:hidden border-b border-theme-border bg-zinc-950/50 py-2 px-4 md:px-6 flex flex-wrap items-center gap-3 overflow-x-auto text-[9px] font-bold uppercase tracking-widest">
         <span className="text-zinc-500 mr-2 flex-shrink-0">Configurações de Impressão:</span>
         
         <div className="flex-shrink-0 flex items-center gap-2 bg-theme-bg border border-theme-border p-1 rounded-full">
             <select 
               value={photosPerPage}
               onChange={(e) => setPhotosPerPage(Number(e.target.value))}
-              className="bg-transparent text-[10px] font-black uppercase tracking-widest text-theme-text px-2 py-1 outline-none cursor-pointer"
+              className="bg-transparent text-[10px] font-bold uppercase tracking-widest text-theme-text px-2 py-1 outline-none cursor-pointer"
             >
               <option value={1} className="bg-theme-bg">1 / folha (A4)</option>
               <option value={2} className="bg-theme-bg">2 / folha (A5)</option>
@@ -349,12 +349,12 @@ export default function PrintMonitor() {
 
         <label className="flex-shrink-0 flex items-center gap-2 cursor-pointer border border-theme-border bg-theme-bg px-3 py-1.5 rounded-full hover:bg-zinc-800/50 transition-colors">
           <input type="checkbox" checked={showCropMarks} onChange={e => setShowCropMarks(e.target.checked)} className="accent-brand-tactical" />
-          <span className="text-[10px] font-black uppercase tracking-widest text-theme-text">Marcas de Corte</span>
+          <span className="text-[10px] font-bold uppercase tracking-widest text-theme-text">Marcas de Corte</span>
         </label>
 
 
 
-        <button onClick={() => navigate(`/profissional/monitor/${eventId}/full`)} className="flex-shrink-0 flex items-center justify-center gap-2 px-4 py-2 rounded-full text-[9px] font-black uppercase tracking-widest bg-brand-tactical text-zinc-950 hover:brightness-110 transition-all shadow-sm ml-auto">
+        <button onClick={() => navigate(`/profissional/monitor/${eventId}/full`)} className="flex-shrink-0 flex items-center justify-center gap-2 px-4 py-2 rounded-full text-[9px] font-bold uppercase tracking-widest bg-brand-tactical text-zinc-950 hover:brightness-110 transition-all shadow-sm ml-auto">
           <Expand size={12} /> Full Screen
         </button>
       </div>
@@ -363,25 +363,25 @@ export default function PrintMonitor() {
         {/* Status Bar */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-4">
           <div className="bg-theme-bg-muted border border-theme-border/50 p-3 md:p-4 rounded-xl flex flex-col justify-center">
-            <p className="text-[9px] font-black text-theme-muted uppercase tracking-widest mb-1">Fila de Espera</p>
-            <p className="text-2xl md:text-3xl font-black italic tracking-tighter text-brand-tactical leading-none">{pendingCount}</p>
+            <p className="text-[9px] font-bold text-theme-muted uppercase tracking-widest mb-1">Fila de Espera</p>
+            <p className="text-2xl md:text-3xl font-bold text-brand-tactical leading-none">{pendingCount}</p>
             <p className="text-[8px] text-theme-muted uppercase font-bold mt-1">fotos pendentes</p>
           </div>
           <div className="bg-theme-bg-muted border border-theme-border/50 p-3 md:p-4 rounded-xl flex flex-col justify-center">
-            <p className="text-[9px] font-black text-theme-muted uppercase tracking-widest mb-1">Sincronização</p>
-            <div className="flex items-center gap-1.5 text-xs md:text-sm font-black italic text-theme-text leading-none">
+            <p className="text-[9px] font-bold text-theme-muted uppercase tracking-widest mb-1">Sincronização</p>
+            <div className="flex items-center gap-1.5 text-xs md:text-sm font-bold text-theme-text leading-none">
               <Clock size={12} /> {lastSync.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
             </div>
             <p className="text-[8px] text-theme-muted uppercase font-bold mt-1">última verificação</p>
           </div>
           <div className="bg-theme-bg-muted border border-theme-border/50 p-3 md:p-4 rounded-xl flex flex-col justify-center">
-            <p className="text-[9px] font-black text-theme-muted uppercase tracking-widest mb-1">Créditos Unidade</p>
-            <p className="text-2xl md:text-3xl font-black italic tracking-tighter text-theme-text leading-none">{user?.franchiseProfile?.printCredits || 0}</p>
+            <p className="text-[9px] font-bold text-theme-muted uppercase tracking-widest mb-1">Créditos Unidade</p>
+            <p className="text-2xl md:text-3xl font-bold text-theme-text leading-none">{user?.franchiseProfile?.printCredits || 0}</p>
             <p className="text-[8px] text-theme-muted uppercase font-bold mt-1">fotos restantes</p>
           </div>
           <div className="bg-theme-bg-muted border border-theme-border/50 p-3 md:p-4 rounded-xl flex flex-col justify-center">
-            <p className="text-[9px] font-black text-theme-muted uppercase tracking-widest mb-1">Configuração</p>
-            <div className="flex items-center gap-1.5 text-xs md:text-sm font-black italic text-theme-text leading-none uppercase">
+            <p className="text-[9px] font-bold text-theme-muted uppercase tracking-widest mb-1">Configuração</p>
+            <div className="flex items-center gap-1.5 text-xs md:text-sm font-bold text-theme-text leading-none uppercase">
               <Printer size={12} /> {orientation}
             </div>
             <p className="text-[8px] text-theme-muted uppercase font-bold mt-1">layout base</p>
@@ -399,11 +399,11 @@ export default function PrintMonitor() {
         <div className="space-y-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
-              <h2 className="text-lg font-black uppercase tracking-tighter italic">Fila de Operação</h2>
+              <h2 className="text-lg font-bold uppercase ">Fila de Operação</h2>
               {selected.length > 0 && (
                 <button
                   onClick={handlePrintSelected}
-                  className="px-4 py-2 bg-brand-tactical text-zinc-950 text-[10px] font-black uppercase tracking-widest rounded-full hover:brightness-110 flex items-center gap-2"
+                  className="px-4 py-2 bg-brand-tactical text-zinc-950 text-[10px] font-bold uppercase tracking-widest rounded-full hover:brightness-110 flex items-center gap-2"
                 >
                   <Printer size={12} />
                   Imprimir Selecionadas ({selected.length})
@@ -418,7 +418,7 @@ export default function PrintMonitor() {
           {prints.length === 0 ? (
             <div className="py-20 border  border-theme-border rounded-2xl flex flex-col items-center justify-center gap-4">
               <Printer size={48} className="text-zinc-800" />
-              <p className="text-[10px] font-black text-zinc-600 uppercase tracking-[0.3em]">Aguardando Capturas Phygital...</p>
+              <p className="text-[10px] font-bold text-zinc-600 uppercase tracking-[0.3em]">Aguardando Capturas Phygital...</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6">
@@ -467,7 +467,7 @@ export default function PrintMonitor() {
                   <div className="p-5 space-y-4">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-[11px] font-black uppercase tracking-tight">{print.customerName || 'Convidado'}</p>
+                        <p className="text-[11px] font-bold uppercase ">{print.customerName || 'Convidado'}</p>
                         <p className="text-[8px] text-zinc-500 uppercase font-bold mt-0.5">{new Date(print.createdAt).toLocaleTimeString()}</p>
                       </div>
                       {print.status === 'PRINTED' ? (
@@ -475,7 +475,7 @@ export default function PrintMonitor() {
                       ) : (
                         <div className="flex items-center gap-2">
                            <div className="w-2 h-2 rounded-full bg-brand-tactical animate-pulse" />
-                           <span className="text-[8px] font-black text-brand-tactical uppercase">Pendente</span>
+                           <span className="text-[8px] font-bold text-brand-tactical uppercase">Pendente</span>
                         </div>
                       )}
                     </div>
@@ -509,7 +509,7 @@ export default function PrintMonitor() {
             <div className="space-y-3">
               <div className="flex items-center justify-center gap-3 mb-2">
                 <div className="w-2 h-2 rounded-full bg-brand-tactical animate-pulse" />
-                <h3 className="text-2xl font-black uppercase tracking-tighter" style={{ fontFamily: T.fontD, color: T.text }}>Captura ao Vivo</h3>
+                <h3 className="text-2xl font-bold uppercase " style={{ fontFamily: T.fontD, color: T.text }}>Captura ao Vivo</h3>
               </div>
               <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-[0.3em]">Aponte a câmera para enviar fotos</p>
             </div>
@@ -521,13 +521,13 @@ export default function PrintMonitor() {
             <div className="space-y-6 w-full">
               <button 
                 onClick={() => { navigator.clipboard.writeText(captureUrl); alert("Link de captura copiado!"); }}
-                className="w-full py-4 border border-brand-tactical/30 text-brand-tactical text-[10px] font-black uppercase tracking-[0.4em] hover:bg-brand-tactical/10 transition-all flex items-center justify-center gap-3"
+                className="w-full py-4 border border-brand-tactical/30 text-brand-tactical text-[10px] font-bold uppercase tracking-[0.4em] hover:bg-brand-tactical/10 transition-all flex items-center justify-center gap-3"
               >
                 <QrCode size={14} /> COPIAR LINK DE CAPTURA
               </button>
 
               <div className="space-y-3">
-                <p className="text-[9px] font-black text-zinc-600 uppercase tracking-[0.4em] italic">Sua Foto Impressa na Hora</p>
+                <p className="text-[9px] font-bold text-zinc-600 uppercase tracking-[0.4em] ">Sua Foto Impressa na Hora</p>
                 <p className="text-[11px] text-zinc-400 font-medium leading-relaxed">As fotos enviadas aparecem instantaneamente na nossa estação de comando.</p>
               </div>
             </div>

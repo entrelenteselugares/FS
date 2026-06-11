@@ -175,13 +175,13 @@ export const RegisterPage: React.FC = () => {
         <div className="flex items-center justify-between border-b border-theme-border pb-6">
           <button 
             onClick={() => navigate("/")} 
-            className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-theme-text-muted hover:text-theme-text transition-all"
+            className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-theme-text-muted hover:text-theme-text transition-all"
           >
             <span className="text-base">← </span> Vitrine
           </button>
           <div className="flex flex-col items-center">
             <Link to="/"><img src="/logo.png" alt="Foto Segundo" style={{ height: 38, objectFit: "contain", filter: "var(--logo-filter)" }} /></Link>
-            <span className="text-[8px] font-black tracking-[0.3em] text-zinc-600 uppercase italic">Solicitar Adesão</span>
+            <span className="text-[8px] font-bold tracking-[0.3em] text-zinc-600 uppercase ">Solicitar Adesão</span>
           </div>
           <div className="w-10" /> {/* Spacer */}
         </div>
@@ -189,14 +189,14 @@ export const RegisterPage: React.FC = () => {
         {/* Content */}
         <div className="space-y-10">
           <div className="text-center">
-             <h1 className="text-3xl md:text-5xl font-heading font-black text-theme-text uppercase italic leading-none tracking-tighter">
+             <h1 className="text-3xl md:text-5xl font-heading font-bold text-theme-text uppercase leading-none ">
               SOLICITAR <span className="opacity-20">REGISTRO</span>
             </h1>
             <p className="text-[9px] font-bold text-zinc-500 uppercase tracking-[0.3em] mt-3">Protocolo de Registro de Rede</p>
           </div>
 
           {error && (
-            <div className="bg-red-500/10 text-red-500 text-[9px] font-black uppercase tracking-[0.2em] p-5 text-center border border-red-500/20 rounded-2xl">
+            <div className="bg-red-500/10 text-red-500 text-[9px] font-bold uppercase tracking-[0.2em] p-5 text-center border border-red-500/20 rounded-2xl">
               {error}
             </div>
           )}
@@ -213,7 +213,7 @@ export const RegisterPage: React.FC = () => {
                 }`}
               >
                 <div className="mb-2">{r.icon}</div>
-                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-center">{r.label}</span>
+                <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-center">{r.label}</span>
               </button>
             ))}
           </div>
@@ -221,7 +221,7 @@ export const RegisterPage: React.FC = () => {
           <form onSubmit={handleRegister} className="space-y-8">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8">
                <div className="space-y-2 md:col-span-2">
-                 <label className="text-[10px] font-black uppercase tracking-[0.3em] text-zinc-500 ml-1">Entidade / Nome Completo</label>
+                 <label className="text-[10px] font-bold uppercase tracking-[0.3em] text-zinc-500 ml-1">Entidade / Nome Completo</label>
                  <div className="relative group">
                    <UserCircle className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-600 group-focus-within:text-brand-tactical transition-colors" size={14} />
                    <input
@@ -236,7 +236,7 @@ export const RegisterPage: React.FC = () => {
                </div>
 
                <div className="space-y-2">
-                 <label className="text-[10px] font-black uppercase tracking-[0.3em] text-zinc-500 ml-1">Comunicação (WhatsApp)</label>
+                 <label className="text-[10px] font-bold uppercase tracking-[0.3em] text-zinc-500 ml-1">Comunicação (WhatsApp)</label>
                  <div className="relative group">
                    <Phone className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-600 group-focus-within:text-brand-tactical transition-colors" size={14} />
                    <input
@@ -251,7 +251,7 @@ export const RegisterPage: React.FC = () => {
                </div>
 
                <div className="space-y-2">
-                 <label className="text-[10px] font-black uppercase tracking-[0.3em] text-zinc-500 ml-1">E-mail Cadastral</label>
+                 <label className="text-[10px] font-bold uppercase tracking-[0.3em] text-zinc-500 ml-1">E-mail Cadastral</label>
                  <div className="relative group">
                    <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-600 group-focus-within:text-brand-tactical transition-colors" size={14} />
                    <input
@@ -269,7 +269,7 @@ export const RegisterPage: React.FC = () => {
                {role === "PROFISSIONAL" && (
                  <div className="md:col-span-2 space-y-8 p-4 md:p-8 bg-theme-bg-muted border border-theme-border rounded-3xl animate-in fade-in duration-500">
                     <div className="space-y-4">
-                        <p className="text-[10px] font-black text-brand-tactical uppercase tracking-widest italic">Especialidades</p>
+                        <p className="text-[10px] font-bold text-brand-tactical uppercase tracking-widest ">Especialidades</p>
                        <div className="flex flex-wrap gap-3">
                          {["FOTO", "VÍDEO", "EDIÇÃO", "IMPRESSÃO"].map(skill => (
                            <button
@@ -291,7 +291,7 @@ export const RegisterPage: React.FC = () => {
                     </div>
 
                     <div className="space-y-4">
-                       <p className="text-[10px] font-black text-brand-tactical uppercase tracking-widest italic">Workflow</p>
+                       <p className="text-[10px] font-bold text-brand-tactical uppercase tracking-widest ">Workflow</p>
                        <div className="grid grid-cols-2 gap-4">
                           {[
                             { id: "TRADICIONAL", label: "Tradicional", icon: <Camera size={14} /> },
@@ -310,7 +310,7 @@ export const RegisterPage: React.FC = () => {
                               }`}
                             >
                               {type.icon}
-                              <span className="text-[10px] font-black uppercase tracking-widest">{type.label}</span>
+                              <span className="text-[10px] font-bold uppercase tracking-widest">{type.label}</span>
                             </button>
                           ))}
                        </div>
@@ -323,7 +323,7 @@ export const RegisterPage: React.FC = () => {
                  <div className="md:col-span-2 space-y-8 p-4 md:p-8 bg-theme-bg-muted border border-theme-border rounded-3xl animate-in fade-in duration-500">
                     <div className="grid grid-cols-2 gap-3 md:gap-6">
                        <div className="space-y-2 md:col-span-2">
-                          <label className="text-[9px] font-black uppercase tracking-[0.3em] text-zinc-500">Razão Social / Nome Unidade</label>
+                          <label className="text-[9px] font-bold uppercase tracking-[0.3em] text-zinc-500">Razão Social / Nome Unidade</label>
                           <input
                             type="text"
                             required
@@ -334,7 +334,7 @@ export const RegisterPage: React.FC = () => {
                           />
                        </div>
                        <div className="space-y-2">
-                          <label className="text-[9px] font-black uppercase tracking-[0.3em] text-zinc-500">CEP</label>
+                          <label className="text-[9px] font-bold uppercase tracking-[0.3em] text-zinc-500">CEP</label>
                           <input
                             type="text"
                             required
@@ -345,7 +345,7 @@ export const RegisterPage: React.FC = () => {
                           />
                        </div>
                        <div className="space-y-2">
-                          <label className="text-[9px] font-black uppercase tracking-[0.3em] text-zinc-500">Logradouro</label>
+                          <label className="text-[9px] font-bold uppercase tracking-[0.3em] text-zinc-500">Logradouro</label>
                           <input
                             type="text"
                             required
@@ -356,23 +356,23 @@ export const RegisterPage: React.FC = () => {
                           />
                        </div>
                         <div className="space-y-2">
-                           <label className="text-[9px] font-black uppercase tracking-[0.3em] text-zinc-500">Número</label>
+                           <label className="text-[9px] font-bold uppercase tracking-[0.3em] text-zinc-500">Número</label>
                            <input type="text" required value={formData.numero} onChange={(e) => setFormData({ ...formData, numero: e.target.value })} className="w-full bg-theme-bg-field border border-theme-border py-4 px-4 text-xs text-theme-text rounded-2xl focus:border-brand-tactical transition-all" placeholder="123" />
                         </div>
                         <div className="col-span-2 space-y-2">
-                           <label className="text-[9px] font-black uppercase tracking-[0.3em] text-zinc-500">Complemento</label>
+                           <label className="text-[9px] font-bold uppercase tracking-[0.3em] text-zinc-500">Complemento</label>
                            <input type="text" value={formData.referencia} onChange={(e) => setFormData({ ...formData, referencia: e.target.value })} className="w-full bg-theme-bg-field border border-theme-border py-4 px-4 text-xs text-theme-text rounded-2xl focus:border-brand-tactical transition-all" placeholder="SALA 01, FUNDOS..." />
                         </div>
                         <div className="space-y-2">
-                           <label className="text-[9px] font-black uppercase tracking-[0.3em] text-zinc-500">Bairro</label>
+                           <label className="text-[9px] font-bold uppercase tracking-[0.3em] text-zinc-500">Bairro</label>
                            <input type="text" required value={formData.bairro} onChange={(e) => setFormData({ ...formData, bairro: e.target.value })} className="w-full bg-theme-bg-field border border-theme-border py-4 px-4 text-xs text-theme-text rounded-2xl focus:border-brand-tactical transition-all" placeholder="PREENCHIDO VIA CEP" />
                         </div>
                         <div className="space-y-2">
-                           <label className="text-[9px] font-black uppercase tracking-[0.3em] text-zinc-500">Cidade</label>
+                           <label className="text-[9px] font-bold uppercase tracking-[0.3em] text-zinc-500">Cidade</label>
                            <input type="text" required value={formData.cidade} onChange={(e) => setFormData({ ...formData, cidade: e.target.value })} className="w-full bg-theme-bg-field border border-theme-border py-4 px-4 text-xs text-theme-text rounded-2xl focus:border-brand-tactical transition-all" placeholder="PREENCHIDA VIA CEP" />
                         </div>
                         <div className="space-y-2">
-                           <label className="text-[9px] font-black uppercase tracking-[0.3em] text-zinc-500">Estado (UF)</label>
+                           <label className="text-[9px] font-bold uppercase tracking-[0.3em] text-zinc-500">Estado (UF)</label>
                            <input type="text" required maxLength={2} value={formData.uf} onChange={(e) => setFormData({ ...formData, uf: e.target.value.toUpperCase() })} className="w-full bg-theme-bg-field border border-theme-border py-4 px-4 text-xs text-theme-text rounded-2xl focus:border-brand-tactical transition-all font-mono uppercase" placeholder="SP" />
                         </div>
                     </div>
@@ -380,7 +380,7 @@ export const RegisterPage: React.FC = () => {
                )}
 
                <div className="space-y-2 md:col-span-2">
-                 <label className="text-[10px] font-black uppercase tracking-[0.3em] text-zinc-500 ml-1">Senha de Acesso</label>
+                 <label className="text-[10px] font-bold uppercase tracking-[0.3em] text-zinc-500 ml-1">Senha de Acesso</label>
                  <div className="relative group flex items-center">
                    <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-600 group-focus-within:text-brand-tactical transition-colors" size={14} />
                    <input
@@ -412,7 +412,7 @@ export const RegisterPage: React.FC = () => {
                    <div className={`w-6 h-6 rounded-md border transition-all flex items-center justify-center shrink-0 ${formData[item.key as keyof typeof formData] ? "bg-brand-tactical border-brand-tactical" : "bg-theme-bg-field border-theme-border group-hover:border-brand-tactical/50"}`}>
                     {formData[item.key as keyof typeof formData] && <div className="w-2.5 h-2.5 bg-brand-text rounded-sm" />}
                   </div>
-                  <p className="text-[10px] text-theme-muted font-black uppercase tracking-[0.2em] italic leading-relaxed select-none">
+                  <p className="text-[10px] text-theme-muted font-bold uppercase tracking-[0.2em] leading-relaxed select-none">
                     Eu {item.label.toLowerCase()} do Foto Segundo.
                   </p>
                 </label>
@@ -422,7 +422,7 @@ export const RegisterPage: React.FC = () => {
             <button
               type="submit"
               disabled={loading || !formData.acceptedTerms || !formData.acceptedPrivacy}
-              className="w-full bg-brand-tactical text-black hover:bg-white font-black uppercase tracking-[0.5em] text-[10px] py-5 transition-all flex items-center justify-center gap-4 group disabled:opacity-30 rounded-2xl italic"
+              className="w-full bg-brand-tactical text-black hover:bg-white font-bold uppercase tracking-[0.5em] text-[10px] py-5 transition-all flex items-center justify-center gap-4 group disabled:opacity-30 rounded-2xl "
             >
               {loading ? "PROCESSANDO..." : "Confirmar Inscrição"}
             </button>
@@ -431,12 +431,12 @@ export const RegisterPage: React.FC = () => {
 
         {/* Footer */}
         <div className="pt-8 flex flex-col md:flex-row justify-between items-center gap-3 md:gap-6 border-t border-theme-border">
-           <p className="text-zinc-600 text-[9px] font-black uppercase tracking-[0.3em]">
+           <p className="text-zinc-600 text-[9px] font-bold uppercase tracking-[0.3em]">
             Já possui acesso? <Link to="/login" className="text-white hover:text-brand-tactical ml-2 transition-all">Fazer Login</Link>
           </p>
           <div className="flex items-center gap-4">
              <ShieldCheck size={16} className="text-brand-tactical opacity-50" />
-             <span className="text-[9px] font-black text-zinc-600 uppercase tracking-widest italic">Inscrição Criptografada</span>
+             <span className="text-[9px] font-bold text-zinc-600 uppercase tracking-widest ">Inscrição Criptografada</span>
           </div>
         </div>
       </div>

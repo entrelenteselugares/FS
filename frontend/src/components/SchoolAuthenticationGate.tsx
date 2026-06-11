@@ -40,8 +40,8 @@ export const SchoolAuthenticationGate: React.FC<SchoolAuthenticationGateProps> =
           <GraduationCap size={32} />
         </div>
         <div>
-          <h2 className="text-2xl font-black uppercase tracking-tighter italic text-theme-text mb-2">Acesso Restrito</h2>
-          <p className="text-[10px] uppercase tracking-widest font-black text-theme-text-muted">
+          <h2 className="text-2xl font-bold uppercase text-theme-text mb-2">Acesso Restrito</h2>
+          <p className="text-[10px] uppercase tracking-widest font-bold text-theme-text-muted">
             Por segurança, selecione o nome do aluno para acessar o material de <span className="text-brand-tactical">{eventTitle}</span>
           </p>
         </div>
@@ -49,7 +49,7 @@ export const SchoolAuthenticationGate: React.FC<SchoolAuthenticationGateProps> =
 
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="space-y-3">
-          <label className="text-[10px] font-black uppercase tracking-widest text-theme-text-muted italic flex items-center gap-2">
+          <label className="text-[10px] font-bold uppercase tracking-widest text-theme-text-muted flex items-center gap-2">
             <Lock size={12} className="text-brand-tactical" /> Nome do Aluno
           </label>
           <div className="relative">
@@ -57,7 +57,7 @@ export const SchoolAuthenticationGate: React.FC<SchoolAuthenticationGateProps> =
               value={selectedStudent}
               onChange={(e) => setSelectedStudent(e.target.value)}
               required
-              className="w-full bg-theme-bg/50 border border-theme-border py-4 px-5 text-sm font-black uppercase tracking-wide text-theme-text outline-none focus:border-brand-tactical rounded-xl appearance-none cursor-pointer"
+              className="w-full bg-theme-bg/50 border border-theme-border py-4 px-5 text-sm font-bold uppercase tracking-wide text-theme-text outline-none focus:border-brand-tactical rounded-xl appearance-none cursor-pointer"
             >
               <option value="" disabled>SELECIONE NA LISTA...</option>
               {students.map(student => (
@@ -70,7 +70,7 @@ export const SchoolAuthenticationGate: React.FC<SchoolAuthenticationGateProps> =
         <button
           type="submit"
           disabled={!selectedStudent}
-          className="w-full py-4 bg-brand-tactical text-black font-black uppercase tracking-[0.2em] text-[10px] rounded-xl hover:bg-white transition-all disabled:opacity-50 disabled:hover:bg-brand-tactical flex items-center justify-center gap-3 italic group"
+          className="w-full py-4 bg-brand-tactical text-black font-bold uppercase tracking-[0.2em] text-[10px] rounded-xl hover:bg-white transition-all disabled:opacity-50 disabled:hover:bg-brand-tactical flex items-center justify-center gap-3 group"
         >
           Acessar Galeria
           <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />

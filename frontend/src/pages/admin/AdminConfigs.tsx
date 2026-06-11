@@ -111,13 +111,13 @@ export const AdminConfigs: React.FC = () => {
       {/* HEADER */}
       <div className="flex flex-col lg:flex-row lg:items-center justify-between border-b border-theme-border pb-10 gap-3 md:gap-6">
         <div>
-          <h1 className="text-3xl md:text-4xl font-black uppercase tracking-tight text-theme-text">Configurações do Sistema</h1>
+          <h1 className="text-3xl md:text-4xl font-bold uppercase text-theme-text">Configurações do Sistema</h1>
           <p className="text-theme-muted mt-2 text-sm">Split de pagamentos, taxas, regras de negócio e infraestrutura</p>
         </div>
         <button
           onClick={() => setShowGenerateConfirm(true)}
           disabled={generating}
-          className="px-4 md:px-8 py-4 bg-brand-tactical text-zinc-950 text-[9px] font-black uppercase tracking-[0.4em] shadow-xl hover:brightness-110 transition-all flex items-center gap-3 italic"
+          className="px-4 md:px-8 py-4 bg-brand-tactical text-zinc-950 text-[9px] font-bold uppercase tracking-[0.4em] shadow-xl hover:brightness-110 transition-all flex items-center gap-3 "
         >
           {generating ? <RefreshCw className="animate-spin" size={14} /> : <Calculator size={14} />}
           {generating ? "SINCRONIZANDO..." : "FECHAMENTO SEMANAL"}
@@ -167,17 +167,17 @@ export const AdminConfigs: React.FC = () => {
                 <Calculator className="text-brand-tactical" size={32} strokeWidth={1.5} />
               </div>
               <div className="space-y-2">
-                <h3 className="text-2xl font-black uppercase tracking-tighter text-theme-text italic">Gerar Fechamento?</h3>
-                <p className="text-[9px] font-black text-brand-tactical uppercase tracking-[0.4em] italic">Consolidação de Provisões Semanal</p>
+                <h3 className="text-2xl font-bold uppercase text-theme-text ">Gerar Fechamento?</h3>
+                <p className="text-[9px] font-bold text-brand-tactical uppercase tracking-[0.4em] ">Consolidação de Provisões Semanal</p>
               </div>
-              <p className="text-[11px] uppercase tracking-[0.2em] leading-relaxed text-theme-muted italic">
+              <p className="text-[11px] uppercase tracking-[0.2em] leading-relaxed text-theme-muted ">
                 ESTA AÇÃO IRÁ CONSOLIDAR TODAS AS VENDAS DA SEMANA E GERAR AS ORDENS DE REPASSE PARA OS PARCEIROS.
               </p>
               <div className="grid grid-cols-1 gap-4 pt-4">
-                <button onClick={handleGeneratePayout} className="w-full py-5 bg-brand-tactical text-zinc-950 text-[11px] font-black uppercase tracking-[0.4em] rounded-[20px] italic flex items-center justify-center gap-4 hover:brightness-110 transition-all">
+                <button onClick={handleGeneratePayout} className="w-full py-5 bg-brand-tactical text-zinc-950 text-[11px] font-bold uppercase tracking-[0.4em] rounded-[20px] flex items-center justify-center gap-4 hover:brightness-110 transition-all">
                   GERAR AGORA <ArrowRight size={18} strokeWidth={1.5} />
                 </button>
-                <button onClick={() => setShowGenerateConfirm(false)} className="w-full py-5 border border-theme-border text-theme-muted text-[11px] font-black uppercase tracking-[0.4em] hover:text-white transition-all rounded-[20px] italic">
+                <button onClick={() => setShowGenerateConfirm(false)} className="w-full py-5 border border-theme-border text-theme-muted text-[11px] font-bold uppercase tracking-[0.4em] hover:text-white transition-all rounded-[20px] ">
                   CANCELAR
                 </button>
               </div>
@@ -197,8 +197,8 @@ export const AdminConfigs: React.FC = () => {
                   <DollarSign className="text-brand-tactical" size={24} strokeWidth={1.5} />
                 </div>
                 <div>
-                  <h2 className="text-2xl font-black uppercase italic tracking-tighter text-theme-text">Liquidação</h2>
-                  <p className="text-[10px] font-black uppercase tracking-[0.2em] opacity-40">Registro de Comprovante Pix</p>
+                  <h2 className="text-2xl font-bold uppercase text-theme-text">Liquidação</h2>
+                  <p className="text-[10px] font-bold uppercase tracking-[0.2em] opacity-40">Registro de Comprovante Pix</p>
                 </div>
               </div>
               <button onClick={() => setPayoutModal(null)} className="p-3 hover:bg-theme-bg-muted rounded-full transition-all text-theme-muted"><X size={24} /></button>
@@ -206,29 +206,29 @@ export const AdminConfigs: React.FC = () => {
             <div className="p-4 md:p-8 space-y-8">
               <div className="bg-theme-bg-muted border border-theme-border p-4 md:p-8 rounded-[30px] space-y-6">
                 <div className="flex justify-between items-center border-b border-theme-border pb-4">
-                  <span className="text-[8px] font-black text-theme-muted uppercase tracking-widest italic opacity-60">Favorecido</span>
-                  <span className="text-[12px] text-theme-text font-black uppercase italic">{payoutModal.name}</span>
+                  <span className="text-[8px] font-bold text-theme-muted uppercase tracking-widest opacity-60">Favorecido</span>
+                  <span className="text-[12px] text-theme-text font-bold uppercase ">{payoutModal.name}</span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-[8px] font-black text-theme-muted uppercase tracking-widest italic opacity-60">Valor do Repasse</span>
-                  <span className="text-3xl font-heading text-brand-tactical tracking-tighter font-black italic">{formatCurrency(payoutModal.amount)}</span>
+                  <span className="text-[8px] font-bold text-theme-muted uppercase tracking-widest opacity-60">Valor do Repasse</span>
+                  <span className="text-3xl font-heading text-brand-tactical font-bold ">{formatCurrency(payoutModal.amount)}</span>
                 </div>
               </div>
               <div className="space-y-4">
-                <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest block mb-2 opacity-60 italic">ID da Transação Pix (Auditoria)</label>
+                <label className="text-[8px] font-bold text-theme-muted uppercase tracking-widest block mb-2 opacity-60 ">ID da Transação Pix (Auditoria)</label>
                 <div className="relative">
                   <ArrowRight className="absolute left-4 top-1/2 -translate-y-1/2 text-brand-tactical" size={16} strokeWidth={1.5} />
                   <input
                     autoFocus value={pixTxId}
                     onChange={e => setPixTxId(e.target.value)}
                     placeholder="COLE O COMPROVANTE..."
-                    className="w-full bg-theme-bg-muted border border-theme-border p-5 pl-12 text-[11px] font-black text-theme-text placeholder:opacity-20 focus:border-brand-tactical outline-none transition-all uppercase rounded-xl"
+                    className="w-full bg-theme-bg-muted border border-theme-border p-5 pl-12 text-[11px] font-bold text-theme-text placeholder:opacity-20 focus:border-brand-tactical outline-none transition-all uppercase rounded-xl"
                   />
                 </div>
               </div>
               <div className="flex gap-4 pt-4">
-                <button onClick={() => setPayoutModal(null)} className="flex-1 py-5 border border-theme-border text-[11px] font-black uppercase tracking-[0.3em] text-theme-muted hover:text-white transition-all rounded-[20px] italic">Cancelar</button>
-                <button onClick={confirmPayout} className="flex-[2] py-5 bg-brand-tactical text-zinc-950 text-[11px] font-black uppercase tracking-[0.3em] rounded-[20px] italic flex items-center justify-center gap-4 hover:brightness-110 transition-all">
+                <button onClick={() => setPayoutModal(null)} className="flex-1 py-5 border border-theme-border text-[11px] font-bold uppercase tracking-[0.3em] text-theme-muted hover:text-white transition-all rounded-[20px] ">Cancelar</button>
+                <button onClick={confirmPayout} className="flex-[2] py-5 bg-brand-tactical text-zinc-950 text-[11px] font-bold uppercase tracking-[0.3em] rounded-[20px] flex items-center justify-center gap-4 hover:brightness-110 transition-all">
                   CONFIRMAR <ArrowRight size={18} strokeWidth={1.5} />
                 </button>
               </div>

@@ -127,7 +127,7 @@ const GalleryItem = React.memo(({
 
       {/* Status Info */}
       <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/80 to-transparent flex items-center justify-between">
-        <span className="text-[10px] font-black text-white italic opacity-80">#{m.shortId}</span>
+        <span className="text-[10px] font-bold text-white opacity-80">#{m.shortId}</span>
         {allowFreeDownload && (
           <button
             onClick={(e) => {
@@ -232,11 +232,11 @@ export const TouchSelectionGallery: React.FC<TouchSelectionGalleryProps> = ({
           >
             <div className="flex items-center gap-3">
               <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
-              <span className="text-[10px] font-black text-emerald-500 uppercase tracking-widest italic">Modo Seleção Ativo</span>
+              <span className="text-[10px] font-bold text-emerald-500 uppercase tracking-widest ">Modo Seleção Ativo</span>
             </div>
             <button 
               onClick={() => setIsSelectMode(false)}
-              className="text-[10px] font-black text-theme-text-muted uppercase tracking-widest hover:text-white transition-colors"
+              className="text-[10px] font-bold text-theme-text-muted uppercase tracking-widest hover:text-white transition-colors"
             >
               Cancelar
             </button>
@@ -281,8 +281,8 @@ export const TouchSelectionGallery: React.FC<TouchSelectionGalleryProps> = ({
             {/* Header */}
             <div className="p-6 flex items-center justify-between relative z-10">
               <div className="flex flex-col">
-                <span className="text-[10px] font-black text-brand-tactical uppercase tracking-widest italic">Visualização Tactical</span>
-                <span className="text-xl font-black text-white italic tracking-tighter">#{medias[fullscreenIndex]?.shortId}</span>
+                <span className="text-[10px] font-bold text-brand-tactical uppercase tracking-widest ">Visualização Tactical</span>
+                <span className="text-xl font-bold text-white ">#{medias[fullscreenIndex]?.shortId}</span>
               </div>
               <div className="flex items-center gap-4">
                 {allowFreeDownload && (
@@ -399,7 +399,7 @@ export const TouchSelectionGallery: React.FC<TouchSelectionGalleryProps> = ({
             <div className="p-8 border-t border-white/10 bg-zinc-950/50 backdrop-blur-xl">
               <div className="flex items-center justify-between max-w-lg mx-auto">
                 <div className="space-y-1">
-                  <p className="text-[10px] font-black text-white uppercase tracking-widest italic">Memória Premium</p>
+                  <p className="text-[10px] font-bold text-white uppercase tracking-widest ">Memória Premium</p>
                   <p className="text-xs text-white font-medium">Fotos entregues em alta resolução 300DPI.</p>
                 </div>
                 {allowFreeDownload ? (
@@ -414,7 +414,7 @@ export const TouchSelectionGallery: React.FC<TouchSelectionGalleryProps> = ({
                         a.click();
                       }
                     }}
-                    className="px-8 py-4 rounded-xl font-black uppercase tracking-widest text-[10px] italic transition-all bg-brand-tactical text-black hover:brightness-110 flex items-center gap-2"
+                    className="px-8 py-4 rounded-xl font-bold uppercase tracking-widest text-[10px] transition-all bg-brand-tactical text-black hover:brightness-110 flex items-center gap-2"
                   >
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
                     BAIXAR FOTO

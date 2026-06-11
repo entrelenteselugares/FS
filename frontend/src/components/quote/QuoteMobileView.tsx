@@ -38,10 +38,10 @@ export const QuoteMobileView = (props: any) => {
         <div className="w-16 h-16 bg-emerald-500/10 rounded-full flex items-center justify-center mb-6 border border-emerald-500/20">
           <CheckCircle2 size={32} className="text-emerald-500" />
         </div>
-        <h2 className="text-2xl font-black uppercase italic text-white tracking-tight mb-2">Orçamento Enviado!</h2>
+        <h2 className="text-2xl font-bold uppercase text-white mb-2">Orçamento Enviado!</h2>
         
         <div className="bg-zinc-900 border border-white/10 px-6 py-4 rounded-xl mb-6">
-          <span className="text-[9px] font-black text-emerald-500 uppercase tracking-widest block mb-1">Protocolo</span>
+          <span className="text-[9px] font-bold text-emerald-500 uppercase tracking-widest block mb-1">Protocolo</span>
           <span className="text-xl font-bold text-white tracking-widest">ORC-{props.createdQuoteId.slice(-6).toUpperCase()}</span>
         </div>
 
@@ -52,13 +52,13 @@ export const QuoteMobileView = (props: any) => {
         <div className="flex flex-col gap-3 w-full max-w-xs mt-8">
           <button
             onClick={() => window.open('https://wa.me/5519981150440', '_blank')}
-            className="w-full py-3.5 bg-emerald-500 text-black text-[11px] font-black uppercase tracking-widest rounded-full"
+            className="w-full py-3.5 bg-emerald-500 text-black text-[11px] font-bold uppercase tracking-widest rounded-full"
           >
             Falar no WhatsApp
           </button>
           <button
             onClick={() => window.location.href = "/"}
-            className="w-full py-3.5 border border-white/10 text-zinc-400 hover:text-white text-[11px] font-black uppercase tracking-widest rounded-full"
+            className="w-full py-3.5 border border-white/10 text-zinc-400 hover:text-white text-[11px] font-bold uppercase tracking-widest rounded-full"
           >
             Voltar ao Início
           </button>
@@ -77,7 +77,7 @@ export const QuoteMobileView = (props: any) => {
           </button>
         )}
         <div className="flex-1">
-          <div className="text-[11px] font-black uppercase tracking-[0.2em] text-emerald-500">Passo {step} de 4</div>
+          <div className="text-[11px] font-bold uppercase tracking-[0.2em] text-emerald-500">Passo {step} de 4</div>
           <div className="text-sm font-medium text-white/90">
             {step === 1 && "Local do Evento"}
             {step === 2 && "Servi�os Desejados"}
@@ -92,7 +92,7 @@ export const QuoteMobileView = (props: any) => {
           <div className="flex items-center gap-2">
             <span className="text-emerald-500 text-sm">⭐</span>
             <div>
-              <div className="text-[9px] font-black uppercase tracking-widest text-emerald-500">Jornada Selecionada</div>
+              <div className="text-[9px] font-bold uppercase tracking-widest text-emerald-500">Jornada Selecionada</div>
               <div className="text-xs font-bold text-white">
                 {flowType === "PACKAGE" && "Pacote Fechado: Essencial (R$ 1.900)"}
                 {flowType === "PARTNER" && "Unidade Fixa (Casas Parceiras)"}
@@ -332,7 +332,7 @@ export const QuoteMobileView = (props: any) => {
           {totalPrice > 0 && (
             <div className="flex-1">
               <div className="text-[10px] text-zinc-400 uppercase font-bold tracking-widest">Total Estimado</div>
-              <div className="text-lg font-black text-emerald-400">R$ {totalPrice.toFixed(2)}</div>
+              <div className="text-lg font-bold text-emerald-400">R$ {totalPrice.toFixed(2)}</div>
             </div>
           )}
           

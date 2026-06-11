@@ -74,8 +74,8 @@ export default function InvitationPage() {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center p-3 md:p-6 text-center" style={{ background: T.bg, color: T.text }}>
         <Shield size={48} className="text-red-500/30 mb-4" />
-        <h1 className="text-2xl font-black uppercase italic tracking-tighter">Ops! {error}</h1>
-        <button onClick={() => navigate("/")} className="mt-8 text-emerald-500 font-black uppercase tracking-widest text-[11px] border border-emerald-500/20 px-3 md:px-6 py-3 rounded-full hover:bg-emerald-500/5 transition-all">
+        <h1 className="text-2xl font-bold uppercase ">Ops! {error}</h1>
+        <button onClick={() => navigate("/")} className="mt-8 text-emerald-500 font-bold uppercase tracking-widest text-[11px] border border-emerald-500/20 px-3 md:px-6 py-3 rounded-full hover:bg-emerald-500/5 transition-all">
           Voltar para Início
         </button>
       </div>
@@ -94,20 +94,20 @@ export default function InvitationPage() {
           <Lock size={40} className="text-emerald-500" />
         </div>
 
-        <p className="text-[10px] font-black text-emerald-500 uppercase tracking-[0.4em] mb-4">Você foi convidado</p>
+        <p className="text-[10px] font-bold text-emerald-500 uppercase tracking-[0.4em] mb-4">Você foi convidado</p>
         
-        <h1 className="text-2xl md:text-4xl md:text-5xl font-black uppercase italic tracking-tighter leading-none mb-6">
+        <h1 className="text-2xl md:text-4xl md:text-5xl font-bold uppercase leading-none mb-6">
           {invitation?.album?.nome}
         </h1>
 
         <div className="flex items-center gap-3 md:gap-6 mb-12 py-4 px-4 md:px-8 bg-theme-bg-muted border border-white/10 rounded-2xl">
           <div className="flex flex-col items-center">
-             <span className="text-lg font-black text-white">{invitation?.album?._count?.media || 0}</span>
+             <span className="text-lg font-bold text-white">{invitation?.album?._count?.media || 0}</span>
              <span className="text-[9px] font-bold text-gray-500 uppercase tracking-widest">Fotos</span>
           </div>
           <div className="w-px h-8 bg-white/10" />
           <div className="flex flex-col items-center">
-             <span className="text-lg font-black text-white">{invitation?.album?._count?.members || 0}</span>
+             <span className="text-lg font-bold text-white">{invitation?.album?._count?.members || 0}</span>
              <span className="text-[9px] font-bold text-gray-500 uppercase tracking-widest">Membros</span>
           </div>
         </div>
@@ -119,7 +119,7 @@ export default function InvitationPage() {
         <button
           onClick={handleAccept}
           disabled={accepting}
-          className="w-full py-5 bg-emerald-500 hover:bg-emerald-400 text-black font-black uppercase tracking-[0.2em] rounded-2xl transition-all shadow-xl shadow-emerald-500/20 flex items-center justify-center gap-3 group"
+          className="w-full py-5 bg-emerald-500 hover:bg-emerald-400 text-black font-bold uppercase tracking-[0.2em] rounded-2xl transition-all shadow-xl shadow-emerald-500/20 flex items-center justify-center gap-3 group"
         >
           {accepting ? <Loader2 className="animate-spin" size={20} /> : (
             <>

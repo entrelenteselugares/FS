@@ -58,7 +58,7 @@ export const ClubLandingPage = () => {
       <main className="flex-1 max-w-7xl mx-auto px-3 md:px-6 py-3 md:py-6 md:py-12 md:py-24 w-full">
         <button 
           onClick={() => navigate(-1)} 
-          className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-zinc-500 hover:text-white transition-all mb-12"
+          className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-500 hover:text-white transition-all mb-12"
         >
           <ArrowLeft size={14} /> Voltar
         </button>
@@ -69,9 +69,9 @@ export const ClubLandingPage = () => {
           <div className="space-y-8 animate-in fade-in slide-in-from-left-8 duration-700">
             <div className="inline-flex items-center gap-2 px-4 py-2 bg-brand-tactical/10 border border-brand-tactical/20 rounded-full text-brand-tactical">
               <Star size={14} fill="currentColor" />
-              <span className="text-[9px] font-black uppercase tracking-widest">Assinatura Premium</span>
+              <span className="text-[9px] font-bold uppercase tracking-widest">Assinatura Premium</span>
             </div>
-                     <h1 className="text-3xl md:text-5xl md:text-8xl font-heading font-black uppercase tracking-tighter italic leading-none text-white">
+                     <h1 className="text-3xl md:text-5xl md:text-8xl font-heading font-bold uppercase leading-none text-white">
               Os Seus <span className="text-brand-tactical block">Meus Álbuns</span>
             </h1>
             
@@ -117,13 +117,13 @@ export const ClubLandingPage = () => {
               
               <div className="relative z-10 space-y-8">
                 <div>
-                  <h2 className="text-2xl font-black text-white uppercase italic tracking-tight">Plano TBT Mensal</h2>
+                  <h2 className="text-2xl font-bold text-white uppercase ">Plano TBT Mensal</h2>
                   <p className="text-[11px] text-zinc-500 font-bold uppercase tracking-widest mt-2">Acesso ilimitado ao sistema + Impressões</p>
                 </div>
 
                 <div className="flex items-baseline gap-2">
                   <span className="text-zinc-500 text-lg font-bold">R$</span>
-                  <span className="text-2xl md:text-4xl md:text-6xl font-heading font-black text-white tracking-tighter italic leading-none">49,90</span>
+                  <span className="text-2xl md:text-4xl md:text-6xl font-heading font-bold text-white leading-none">49,90</span>
                   <span className="text-zinc-500 text-sm font-bold uppercase tracking-widest">/ mês</span>
                 </div>
 
@@ -146,12 +146,12 @@ export const ClubLandingPage = () => {
                   <button 
                     onClick={handleSubscribe}
                     disabled={loading}
-                    className="w-full bg-brand-tactical hover:bg-brand-tactical/90 text-black font-black uppercase tracking-[0.2em] text-[12px] py-5 rounded-xl transition-all shadow-[0_0_40px_rgba(20,184,166,0.3)] hover:shadow-[0_0_60px_rgba(20,184,166,0.5)] active:scale-95 disabled:opacity-50 disabled:active:scale-100 flex items-center justify-center gap-2"
+                    className="w-full bg-brand-tactical hover:bg-brand-tactical/90 text-black font-bold uppercase tracking-[0.2em] text-[12px] py-5 rounded-xl transition-all shadow-[0_0_40px_rgba(20,184,166,0.3)] hover:shadow-[0_0_60px_rgba(20,184,166,0.5)] active:scale-95 disabled:opacity-50 disabled:active:scale-100 flex items-center justify-center gap-2"
                   >
                     {loading ? "Processando..." : "Assinar Agora"}
                     {!loading && <Zap size={16} fill="currentColor" />}
                   </button>
-                  <p className="text-center text-[10px] text-zinc-600 font-black uppercase tracking-widest mt-4">
+                  <p className="text-center text-[10px] text-zinc-600 font-bold uppercase tracking-widest mt-4">
                     Cancele quando quiser. Sem taxas escondidas.
                   </p>
                 </div>
@@ -167,9 +167,9 @@ export const ClubLandingPage = () => {
         <div className="max-w-7xl mx-auto px-3 md:px-6 flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-3 opacity-50">
             <img src="/logo.png" alt="Foto Segundo" style={{ height: 16, objectFit: "contain", filter: "var(--logo-filter)" }} />
-            <span className="text-[9px] font-black uppercase tracking-[0.3em] text-white">Advanced Phygital Engine</span>
+            <span className="text-[9px] font-bold uppercase tracking-[0.3em] text-white">Advanced Phygital Engine</span>
           </div>
-          <div className="flex items-center gap-2 text-zinc-600 text-[9px] font-black uppercase tracking-widest">
+          <div className="flex items-center gap-2 text-zinc-600 text-[9px] font-bold uppercase tracking-widest">
             <ShieldCheck size={14} /> Ambiente Blindado
           </div>
         </div>

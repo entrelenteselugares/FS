@@ -195,7 +195,7 @@ const SidebarContent: React.FC<SidebarContentProps & { currentPath: string }> = 
                           <Link key={subItem.label} to={subItem.to} className={className} onClick={handleClick}>
                             <span>{subItem.label}</span>
                             {subItem.badge !== undefined && subItem.badge !== 0 && (
-                              <span className="bg-brand-tactical text-black text-[9px] font-black px-1.5 py-0.5 rounded text-center">
+                              <span className="bg-brand-tactical text-black text-[9px] font-bold px-1.5 py-0.5 rounded text-center">
                                 {subItem.badge}
                               </span>
                             )}
@@ -207,7 +207,7 @@ const SidebarContent: React.FC<SidebarContentProps & { currentPath: string }> = 
                         <button key={subItem.label} className={className} onClick={handleClick}>
                           <span>{subItem.label}</span>
                           {subItem.badge !== undefined && subItem.badge !== 0 && (
-                            <span className="bg-brand-tactical text-black text-[9px] font-black px-1.5 py-0.5 rounded text-center">
+                            <span className="bg-brand-tactical text-black text-[9px] font-bold px-1.5 py-0.5 rounded text-center">
                               {subItem.badge}
                             </span>
                           )}
@@ -238,7 +238,7 @@ const SidebarContent: React.FC<SidebarContentProps & { currentPath: string }> = 
                 )}
                 <span className="flex-1">{item.label}</span>
                 {item.badge !== undefined && item.badge !== 0 && (
-                  <span className="bg-brand-tactical text-black text-[10px] font-black px-2 py-0.5 rounded-sm min-w-[16px] text-center">
+                  <span className="bg-brand-tactical text-black text-[10px] font-bold px-2 py-0.5 rounded-sm min-w-[16px] text-center">
                     {item.badge}
                   </span>
                 )}
@@ -255,7 +255,7 @@ const SidebarContent: React.FC<SidebarContentProps & { currentPath: string }> = 
               )}
               <span className="flex-1">{item.label}</span>
               {item.badge !== undefined && item.badge !== 0 && (
-                <span className="bg-brand-tactical text-black text-[9px] font-black px-1.5 py-0.5 rounded-sm min-w-[16px] text-center">
+                <span className="bg-brand-tactical text-black text-[9px] font-bold px-1.5 py-0.5 rounded-sm min-w-[16px] text-center">
                   {item.badge}
                 </span>
               )}
@@ -439,7 +439,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
             <div className="p-4 rounded-full border border-theme-border">
               <LogoutIcon /> 
             </div>
-            <span className="text-[10px] font-black uppercase tracking-[0.5em]">Tocar para fechar</span>
+            <span className="text-[10px] font-bold uppercase tracking-[0.5em]">Tocar para fechar</span>
           </div>
         </div>
       )}
@@ -475,14 +475,14 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
         {/* Mobile App Header (Super App Style) */}
         <nav className="flex lg:hidden items-center justify-between px-5 py-3 border-b shrink-0 sticky top-0 z-30" style={{ background: T.bg, borderColor: T.border }}>
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-full bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center font-display font-black text-emerald-500 italic shrink-0">
+            <div className="w-9 h-9 rounded-full bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center font-display font-bold text-emerald-500 shrink-0">
               {user?.nome ? user.nome.charAt(0).toUpperCase() : "A"}
             </div>
             <div className="flex flex-col min-w-0">
-              <span className="text-[10px] font-black uppercase tracking-widest text-emerald-500/60 leading-none mb-0.5">
+              <span className="text-[10px] font-bold uppercase tracking-widest text-emerald-500/60 leading-none mb-0.5">
                 {title || "Painel"}
               </span>
-              <span className="text-sm font-black italic tracking-tight text-theme-text leading-none truncate">
+              <span className="text-sm font-bold text-theme-text leading-none truncate">
                 Olá, {user?.nome ? user.nome.split(" ")[0] : "Usuário"}
               </span>
             </div>

@@ -71,12 +71,12 @@ export const GalleryView: React.FC<GalleryViewProps> = ({ event }) => {
   return (
     <div className="min-h-screen pt-24 pb-40" style={{ background: "var(--theme-bg)" }}>
       <header className="px-6 mb-16 text-center max-w-7xl mx-auto">
-        <h2 className="mb-2 text-[10px] font-black uppercase tracking-[0.6em] text-brand-indigo">Galeria Desbloqueada</h2>
-        <h1 className="text-4xl font-black tracking-tighter uppercase md:text-6xl" style={{ color: "var(--theme-text)" }}>
+        <h2 className="mb-2 text-[10px] font-bold uppercase tracking-[0.6em] text-brand-indigo">Galeria Desbloqueada</h2>
+        <h1 className="text-4xl font-bold uppercase md:text-6xl" style={{ color: "var(--theme-text)" }}>
           {event.title}
         </h1>
         <div className="flex items-center justify-center gap-4 mt-6">
-           <div className="flex items-center gap-2 px-4 py-2 text-[10px] font-black uppercase border rounded-xl" style={{ borderColor: "var(--theme-border)", background: "var(--theme-bg-muted)", color: "var(--theme-text)" }}>
+           <div className="flex items-center gap-2 px-4 py-2 text-[10px] font-bold uppercase border rounded-xl" style={{ borderColor: "var(--theme-border)", background: "var(--theme-bg-muted)", color: "var(--theme-text)" }}>
               <ImageIcon size={14} className="text-zinc-500" />
               {event.midias.length} Mídias Registradas
            </div>
@@ -129,7 +129,7 @@ export const GalleryView: React.FC<GalleryViewProps> = ({ event }) => {
             <button 
               onClick={handleDownloadAll}
               disabled={downloadingAll}
-              className="px-8 py-4 text-[10px] font-black flex items-center gap-2 uppercase tracking-widest bg-brand-indigo text-white rounded-full hover:bg-white hover:text-midnight transition-all disabled:opacity-50"
+              className="px-8 py-4 text-[10px] font-bold flex items-center gap-2 uppercase tracking-widest bg-brand-indigo text-white rounded-full hover:bg-white hover:text-midnight transition-all disabled:opacity-50"
             >
                {downloadingAll ? <Loader2 size={16} className="animate-spin" /> : <Download size={16} />}
                Baixar Tudo (.zip)

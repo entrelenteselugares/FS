@@ -36,9 +36,9 @@ export function FranquiaLanding() {
         
         <div className="relative z-20 h-full flex flex-col justify-center px-12 md:px-20 space-y-6">
           <div className="inline-flex items-center gap-4 bg-brand-tactical text-black px-4 py-1 self-start rounded-md">
-            <span className="text-[10px] font-black uppercase tracking-[0.3em]">Business Opportunity</span>
+            <span className="text-[10px] font-bold uppercase tracking-[0.3em]">Business Opportunity</span>
           </div>
-          <h1 className="text-6xl md:text-8xl font-display font-black text-white uppercase italic tracking-tighter leading-[0.8] max-w-2xl">
+          <h1 className="text-6xl md:text-8xl font-display font-bold text-white uppercase leading-[0.8] max-w-2xl">
             Franquia <br/><span className="text-brand-tactical">Print Hub</span>
           </h1>
           <p className="text-zinc-400 font-bold uppercase tracking-[0.2em] text-xs max-w-md leading-relaxed">
@@ -47,13 +47,13 @@ export function FranquiaLanding() {
           <div className="flex flex-wrap gap-4 pt-4">
             <button 
               onClick={() => safeOpen("https://wa.me/5519981150440?text=Ol%C3%A1! Tenho interesse em me tornar uma Franquia Print.")}
-              className="px-8 py-4 bg-brand-tactical text-black font-display font-black text-xs uppercase tracking-widest hover:brightness-110 transition-all flex items-center gap-3 shadow-xl shadow-brand-tactical/20 rounded-xl"
+              className="px-8 py-4 bg-brand-tactical text-black font-display font-bold text-xs uppercase tracking-widest hover:brightness-110 transition-all flex items-center gap-3 shadow-xl shadow-brand-tactical/20 rounded-xl"
             >
               QUERO SER FRANQUIA <Rocket size={16} />
             </button>
             <button 
               onClick={() => setShowCalc(!showCalc)}
-              className="px-8 py-4 border border-white/30 text-white font-display font-black text-xs uppercase tracking-widest hover:bg-theme-bg-muted transition-all flex items-center gap-3 rounded-xl"
+              className="px-8 py-4 border border-white/30 text-white font-display font-bold text-xs uppercase tracking-widest hover:bg-theme-bg-muted transition-all flex items-center gap-3 rounded-xl"
             >
               SIMULAR CAPEX <Calculator size={16} />
             </button>
@@ -88,7 +88,7 @@ export function FranquiaLanding() {
         ].map((benefit, idx) => (
           <div key={idx} className="bg-theme-bg border border-theme-border p-10 space-y-6 hover:border-brand-tactical/30 transition-all rounded-2xl shadow-xl hover:shadow-2xl">
             <div className="text-brand-tactical">{benefit.icon}</div>
-            <h3 className="text-xl font-display font-black text-white uppercase italic tracking-tight">{benefit.title}</h3>
+            <h3 className="text-xl font-display font-bold text-white uppercase ">{benefit.title}</h3>
             <p className="text-[10px] text-zinc-500 font-bold uppercase leading-relaxed tracking-wider">{benefit.desc}</p>
           </div>
         ))}
@@ -113,9 +113,9 @@ export function FranquiaLanding() {
                   <div className="space-y-3">
                     <div className="flex items-center gap-3 text-brand-tactical">
                       <Calculator size={18} />
-                      <h2 className="text-2xl font-display font-black uppercase italic tracking-tight">Calculadora de ROI</h2>
+                      <h2 className="text-2xl font-display font-bold uppercase ">Calculadora de ROI</h2>
                     </div>
-                    <p className="text-zinc-500 text-[10px] font-black uppercase tracking-widest">Ajuste os parâmetros para prever seu Payback</p>
+                    <p className="text-zinc-500 text-[10px] font-bold uppercase tracking-widest">Ajuste os parâmetros para prever seu Payback</p>
                   </div>
 
                   <div className="space-y-8">
@@ -143,7 +143,7 @@ export function FranquiaLanding() {
                       }
                     ].map((slider) => (
                       <div key={slider.label} className="space-y-3">
-                        <div className="flex justify-between text-[10px] font-black uppercase tracking-widest text-zinc-400">
+                        <div className="flex justify-between text-[10px] font-bold uppercase tracking-widest text-zinc-400">
                           <span>{slider.label}</span>
                           <span className="text-white">{slider.value}</span>
                         </div>
@@ -169,12 +169,12 @@ export function FranquiaLanding() {
                     </div>
 
                     <div className="text-center space-y-2">
-                      <p className="text-[10px] font-black uppercase tracking-[0.3em]">Payback Estimado</p>
-                      <div className="text-7xl font-display font-black italic tracking-tighter leading-none">
+                      <p className="text-[10px] font-bold uppercase tracking-[0.3em]">Payback Estimado</p>
+                      <div className="text-7xl font-display font-bold leading-none">
                         {roi.months === null ? (
                           <span className="text-3xl text-red-400">Inviável</span>
                         ) : (
-                          <>{roi.months}<span className="text-2xl uppercase not-italic tracking-normal ml-2">Meses</span></>
+                          <>{roi.months}<span className="text-2xl uppercase not- tracking-normal ml-2">Meses</span></>
                         )}
                       </div>
                     </div>
@@ -183,15 +183,15 @@ export function FranquiaLanding() {
                   <div className="space-y-6 border-t border-black/10 pt-8 mt-8">
                     <div className="flex justify-between items-end">
                       <div className="space-y-1">
-                        <p className="text-[9px] font-black uppercase opacity-60">Lucro Líquido Mensal</p>
-                        <p className="text-3xl font-display font-black italic tracking-tight">
+                        <p className="text-[9px] font-bold uppercase opacity-60">Lucro Líquido Mensal</p>
+                        <p className="text-3xl font-display font-bold ">
                           R$ {roi.profit.toLocaleString()}
                         </p>
                       </div>
                     </div>
                     <button 
                       onClick={() => safeOpen("https://wa.me/5519981150440?text=Ol%C3%A1! Gostaria de saber mais sobre como me tornar uma Franquia Print Hub.")}
-                      className="w-full bg-black text-white py-4 font-display font-black text-[10px] uppercase tracking-widest hover:brightness-125 transition-all flex items-center justify-center gap-3 rounded-xl"
+                      className="w-full bg-black text-white py-4 font-display font-bold text-[10px] uppercase tracking-widest hover:brightness-125 transition-all flex items-center justify-center gap-3 rounded-xl"
                     >
                       SOLICITAR PROPOSTA COMERCIAL <ArrowRight size={14} />
                     </button>
@@ -206,10 +206,10 @@ export function FranquiaLanding() {
       {/* CTA Final */}
       <div className="flex flex-col items-center text-center space-y-10 py-10 border-t border-theme-border rounded-b-2xl">
         <div className="space-y-4">
-          <h2 className="text-4xl font-display font-black text-white uppercase italic tracking-tighter">
+          <h2 className="text-4xl font-display font-bold text-white uppercase ">
             Pronto para o Próximo Nível?
           </h2>
-          <p className="text-zinc-500 text-[10px] font-black uppercase tracking-[0.4em] max-w-xl mx-auto leading-relaxed">
+          <p className="text-zinc-500 text-[10px] font-bold uppercase tracking-[0.4em] max-w-xl mx-auto leading-relaxed">
             Nossa equipe entrará em contato para realizar uma analysis de viabilidade na sua região.
           </p>
         </div>
@@ -217,13 +217,13 @@ export function FranquiaLanding() {
         <div className="flex flex-wrap justify-center gap-4">
           <button
             onClick={() => safeOpen("https://wa.me/5519981150440?text=Ol%C3%A1! Gostaria de receber o book da Franquia Print.")}
-            className="px-12 py-5 bg-brand-tactical text-black font-display font-black text-[11px] uppercase tracking-widest hover:brightness-110 transition-all shadow-xl shadow-brand-tactical/20 rounded-xl"
+            className="px-12 py-5 bg-brand-tactical text-black font-display font-bold text-[11px] uppercase tracking-widest hover:brightness-110 transition-all shadow-xl shadow-brand-tactical/20 rounded-xl"
           >
             BAIXAR BOOK DE FRANQUIA
           </button>
           <button
             onClick={() => safeOpen("https://wa.me/5519981150440?text=Ol%C3%A1! Gostaria de falar com um consultor sobre a franquia.")}
-            className="px-12 py-5 border border-theme-border text-zinc-400 font-display font-black text-[11px] uppercase tracking-widest hover:border-brand-tactical/40 hover:text-white transition-all flex items-center gap-3 rounded-xl"
+            className="px-12 py-5 border border-theme-border text-zinc-400 font-display font-bold text-[11px] uppercase tracking-widest hover:border-brand-tactical/40 hover:text-white transition-all flex items-center gap-3 rounded-xl"
           >
             <HelpCircle size={14} /> FALAR COM CONSULTOR
           </button>

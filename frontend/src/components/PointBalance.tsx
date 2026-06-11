@@ -58,7 +58,7 @@ export default function PointBalance() {
             Saldo de Recompensas
           </p>
           <div className="flex items-baseline gap-3">
-            <h2 className="text-5xl font-black uppercase tracking-tight text-theme-text font-sans">
+            <h2 className="text-5xl font-bold uppercase text-theme-text font-sans">
                 {data.available}
             </h2>
             <span className="text-[11px] font-bold uppercase tracking-widest text-brand-olive">Pontos</span>
@@ -107,7 +107,7 @@ export default function PointBalance() {
       <div className="bg-theme-bg-muted border border-theme-border p-4 flex gap-4">
         <Info size={18} className="text-brand-olive shrink-0" strokeWidth={1.5} />
         <p className="text-[10px] text-theme-muted font-bold uppercase leading-relaxed tracking-wider">
-          Ganhe <span className="text-brand-olive font-black">1 ponto</span> a cada curtida recebida em suas fotos públicas na vitrine do Coletivo. Use seus pontos para resgatar pacotes de mídia ou assinaturas.
+          Ganhe <span className="text-brand-olive font-bold">1 ponto</span> a cada curtida recebida em suas fotos públicas na vitrine do Coletivo. Use seus pontos para resgatar pacotes de mídia ou assinaturas.
         </p>
       </div>
 

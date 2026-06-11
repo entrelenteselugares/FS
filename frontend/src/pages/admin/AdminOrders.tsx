@@ -172,7 +172,7 @@ export const AdminOrders: React.FC = () => {
                 placeholder="BUSCAR EVENTO OU E-MAIL..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="w-full bg-theme-bg-muted border border-theme-border p-3.5 pl-10 text-[10px] text-theme-text uppercase tracking-widest outline-none focus:border-brand-tactical transition-all font-black rounded-lg"
+                className="w-full bg-theme-bg-muted border border-theme-border p-3.5 pl-10 text-[10px] text-theme-text uppercase tracking-widest outline-none focus:border-brand-tactical transition-all font-bold rounded-lg"
               />
             </div>
           </div>
@@ -183,10 +183,10 @@ export const AdminOrders: React.FC = () => {
       <div className="max-w-6xl mx-auto w-full grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-6">
         <div className="bg-theme-bg-muted border border-theme-border p-4 md:p-5 space-y-3 group hover:border-brand-tactical/50 transition-all rounded-2xl">
            <div className="flex justify-between items-start">
-              <span className="text-[9px] font-black text-theme-muted uppercase tracking-[0.3em]">Volume Bruto (Liquidado)</span>
+              <span className="text-[9px] font-bold text-theme-muted uppercase tracking-[0.3em]">Volume Bruto (Liquidado)</span>
               <DollarSign className="text-brand-tactical opacity-30" size={16} />
            </div>
-           <div className="text-3xl font-heading font-black text-theme-text tracking-tighter italic">{formatCurrency(stats.totalVolume)}</div>
+           <div className="text-3xl font-heading font-bold text-theme-text ">{formatCurrency(stats.totalVolume)}</div>
            <div className="absolute -bottom-2 -right-2 opacity-[0.03] group-hover:opacity-[0.05] transition-opacity">
               <TrendingUp size={100} />
            </div>
@@ -194,18 +194,18 @@ export const AdminOrders: React.FC = () => {
         
         <div className="bg-theme-bg-muted border border-theme-border p-3 md:p-6 space-y-4 relative overflow-hidden group hover:border-brand-tactical/50 transition-all rounded-2xl">
            <div className="flex justify-between items-start">
-              <span className="text-[9px] font-black text-theme-muted uppercase tracking-[0.3em]">Ticket Médio / Projeto</span>
+              <span className="text-[9px] font-bold text-theme-muted uppercase tracking-[0.3em]">Ticket Médio / Projeto</span>
               <Zap className="text-amber-500 opacity-30" size={16} />
            </div>
-           <div className="text-3xl font-heading font-black text-theme-text tracking-tighter italic">{formatCurrency(stats.ticketMedio)}</div>
+           <div className="text-3xl font-heading font-bold text-theme-text ">{formatCurrency(stats.ticketMedio)}</div>
         </div>
 
         <div className="bg-theme-bg-muted border border-theme-border p-4 space-y-3 relative overflow-hidden group hover:border-brand-tactical/50 transition-all rounded-2xl">
            <div className="flex justify-between items-start">
-              <span className="text-[9px] font-black text-theme-muted uppercase tracking-[0.3em]">Projetos Pendentes</span>
+              <span className="text-[9px] font-bold text-theme-muted uppercase tracking-[0.3em]">Projetos Pendentes</span>
               <Clock className="text-zinc-500 opacity-30" size={16} />
            </div>
-           <div className="text-2xl md:text-3xl font-heading font-black text-theme-text tracking-tighter italic">{stats.pendingCount}</div>
+           <div className="text-2xl md:text-3xl font-heading font-bold text-theme-text ">{stats.pendingCount}</div>
         </div>
       </div>
 
@@ -227,7 +227,7 @@ export const AdminOrders: React.FC = () => {
       <div className="space-y-4">
         {loading ? (
           <div className="py-24 text-center border border-theme-border bg-theme-bg rounded-2xl">
-            <div className="text-[10px] text-theme-muted animate-pulse uppercase tracking-[0.5em] font-black italic">Auditando Ledger Financeiro...</div>
+            <div className="text-[10px] text-theme-muted animate-pulse uppercase tracking-[0.5em] font-bold ">Auditando Ledger Financeiro...</div>
           </div>
         ) : groupedOrders.length > 0 ? (
           groupedOrders.map((group) => (
@@ -241,7 +241,7 @@ export const AdminOrders: React.FC = () => {
                         {expandedId === group.eventId ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
                      </div>
                      <div className="space-y-1">
-                        <div className="text-[12px] font-black text-theme-text uppercase tracking-widest">{group.eventTitle}</div>
+                        <div className="text-[12px] font-bold text-theme-text uppercase tracking-widest">{group.eventTitle}</div>
                         <p className="text-[9px] text-theme-muted font-bold uppercase tracking-wider opacity-60 flex gap-2 items-center truncate max-w-[400px]">
                           <span>{group.clientName}</span>
                           <span>·</span>
@@ -264,23 +264,23 @@ export const AdminOrders: React.FC = () => {
 
                   <div className="flex items-center gap-3 md:gap-6 md:gap-12 ml-auto md:ml-0">
                      <div className="text-right hidden sm:block">
-                        <span className="text-[8px] font-black text-theme-muted uppercase tracking-widest block opacity-50 mb-1">Total Bruto</span>
-                        <div className="text-md md:text-lg font-heading font-black text-theme-text italic">{formatCurrency(group.totalAmount)}</div>
+                        <span className="text-[8px] font-bold text-theme-muted uppercase tracking-widest block opacity-50 mb-1">Total Bruto</span>
+                        <div className="text-md md:text-lg font-heading font-bold text-theme-text ">{formatCurrency(group.totalAmount)}</div>
                      </div>
                      
                      <div className="text-center min-w-[120px]">
                         {group.status === "QUITADO" && (
-                          <div className="flex items-center justify-center gap-2 px-4 py-2 border border-brand-tactical text-brand-tactical bg-brand-tactical/10 text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest">
+                          <div className="flex items-center justify-center gap-2 px-4 py-2 border border-brand-tactical text-brand-tactical bg-brand-tactical/10 text-[8px] md:text-[9px] font-bold uppercase tracking-wider md:tracking-widest">
                              <CheckCircle2 size={12} /> {group.status}
                           </div>
                         )}
                         {group.status === "PARCIAL" && (
-                          <div className="flex items-center justify-center gap-2 px-4 py-2 border border-amber-500 text-amber-500 bg-amber-500/10 text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest">
+                          <div className="flex items-center justify-center gap-2 px-4 py-2 border border-amber-500 text-amber-500 bg-amber-500/10 text-[8px] md:text-[9px] font-bold uppercase tracking-wider md:tracking-widest">
                              <PieChart size={12} /> {group.status}
                           </div>
                         )}
                         {group.status === "PENDENTE" && (
-                          <div className="flex items-center justify-center gap-2 px-4 py-2 border border-theme-border text-theme-muted bg-theme-bg/30 text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest rounded-2xl">
+                          <div className="flex items-center justify-center gap-2 px-4 py-2 border border-theme-border text-theme-muted bg-theme-bg/30 text-[8px] md:text-[9px] font-bold uppercase tracking-wider md:tracking-widest rounded-2xl">
                              <Clock size={12} /> {group.status}
                           </div>
                         )}
@@ -310,7 +310,7 @@ export const AdminOrders: React.FC = () => {
                                   <div className="flex items-center gap-3">
                                      <CreditCard size={14} className="text-brand-tactical opacity-50" />
                                      <div>
-                                        <div className="text-[11px] font-black text-theme-text uppercase tracking-widest">{o.manualType || "PARCELA DIGITAL"}</div>
+                                        <div className="text-[11px] font-bold text-theme-text uppercase tracking-widest">{o.manualType || "PARCELA DIGITAL"}</div>
                                         <div className="text-[9px] text-theme-muted font-bold opacity-60 uppercase">{new Date(o.createdAt).toLocaleString("pt-BR")}</div>
                                       </div>
                                    </div>
@@ -318,33 +318,33 @@ export const AdminOrders: React.FC = () => {
                                 <td className="py-5 text-center">
                                    <div className="flex flex-wrap justify-center gap-1.5 max-w-[240px] mx-auto">
                                       {o.splitMatriz && (
-                                        <span className="px-2 py-0.5 bg-slate-900 text-[8px] text-slate-300 font-black rounded-sm border border-slate-700" title="Matriz (Plataforma)">
+                                        <span className="px-2 py-0.5 bg-slate-900 text-[8px] text-slate-300 font-bold rounded-sm border border-slate-700" title="Matriz (Plataforma)">
                                           MT: {formatCurrency(Number(o.splitMatriz))}
                                         </span>
                                       )}
                                       {o.splitCaptacao && (
-                                        <span className="px-2 py-0.5 bg-emerald-500/10 text-[8px] text-emerald-500 font-black rounded-sm border border-emerald-500/20" title="Captação">
+                                        <span className="px-2 py-0.5 bg-emerald-500/10 text-[8px] text-emerald-500 font-bold rounded-sm border border-emerald-500/20" title="Captação">
                                           CP: {formatCurrency(Number(o.splitCaptacao))}
                                         </span>
                                       )}
                                       {o.splitEdicao && (
-                                        <span className="px-2 py-0.5 bg-amber-500/10 text-[8px] text-amber-500 font-black rounded-sm border border-amber-500/20" title="Edição">
+                                        <span className="px-2 py-0.5 bg-amber-500/10 text-[8px] text-amber-500 font-bold rounded-sm border border-amber-500/20" title="Edição">
                                           ED: {formatCurrency(Number(o.splitEdicao))}
                                         </span>
                                       )}
                                       {o.splitCartorio && (
-                                        <span className="px-2 py-0.5 bg-indigo-500/10 text-[8px] text-indigo-400 font-black rounded-sm border border-indigo-500/20" title="Unidade Fixa">
+                                        <span className="px-2 py-0.5 bg-indigo-500/10 text-[8px] text-indigo-400 font-bold rounded-sm border border-indigo-500/20" title="Unidade Fixa">
                                           UF: {formatCurrency(Number(o.splitCartorio))}
                                         </span>
                                       )}
                                       {o.splitFranchisee && o.splitFranchisee > 0 && (
-                                        <span className="px-2 py-0.5 bg-cyan-500/10 text-[8px] text-cyan-400 font-black rounded-sm border border-cyan-500/20" title={`Franqueado: ${o.passiveFranchisee || 'N/A'}`}>
+                                        <span className="px-2 py-0.5 bg-cyan-500/10 text-[8px] text-cyan-400 font-bold rounded-sm border border-cyan-500/20" title={`Franqueado: ${o.passiveFranchisee || 'N/A'}`}>
                                           FR: {formatCurrency(Number(o.splitFranchisee))}
                                         </span>
                                       )}
                                    </div>
                                 </td>
-                               <td className="py-5 text-right font-heading font-black text-theme-text italic text-lg">{formatCurrency(o.amount)}</td>
+                               <td className="py-5 text-right font-heading font-bold text-theme-text text-lg">{formatCurrency(o.amount)}</td>
                                 <td className="py-5 text-center">
                                    <div className="flex flex-col items-center gap-2">
                                       <span className={`text-[8px] font-black uppercase tracking-[0.2em] px-3 py-1.5 border ${o.status === 'APROVADO' ? 'border-brand-tactical text-brand-tactical' : 'border-red-900 text-red-500'}`}>
@@ -407,7 +407,7 @@ export const AdminOrders: React.FC = () => {
                 <div className="absolute inset-0 bg-theme-border/20 rounded-full animate-ping" />
                 <ArrowUpRight size={48} className="text-theme-muted relative z-10" />
              </div>
-             <p className="text-[9px] sm:text-[11px] font-black text-brand-tactical uppercase tracking-[0.2em] sm:tracking-[0.4em] italic truncate max-w-[80vw]">Nenhum pedido localizado no ledger</p>
+             <p className="text-[9px] sm:text-[11px] font-bold text-brand-tactical uppercase tracking-[0.2em] sm:tracking-[0.4em] truncate max-w-[80vw]">Nenhum pedido localizado no ledger</p>
           </div>
         )}
       </div>
@@ -425,8 +425,8 @@ export const AdminOrders: React.FC = () => {
                   <Receipt className="text-brand-tactical" size={24} />
                 </div>
                 <div>
-                  <h2 className="text-2xl font-black uppercase italic tracking-tighter text-theme-text">Extrato de Pedido</h2>
-                  <p className="text-[10px] font-black uppercase tracking-[0.2em] opacity-40">Protocolo de Auditoria #{selectedOrderForDetails.id.toUpperCase()}</p>
+                  <h2 className="text-2xl font-bold uppercase text-theme-text">Extrato de Pedido</h2>
+                  <p className="text-[10px] font-bold uppercase tracking-[0.2em] opacity-40">Protocolo de Auditoria #{selectedOrderForDetails.id.toUpperCase()}</p>
                 </div>
               </div>
               <button onClick={() => setSelectedOrderForDetails(null)} className="p-3 hover:bg-theme-bg-muted rounded-full transition-all text-theme-muted"><X size={24} /></button>
@@ -436,14 +436,14 @@ export const AdminOrders: React.FC = () => {
             <div className="flex-1 overflow-y-auto p-4 md:p-8 md:p-10 space-y-10 custom-scrollbar bg-theme-card">
               <div className="grid grid-cols-2 gap-3 md:gap-6">
                 <div className="bg-theme-bg-muted p-3 md:p-6 rounded-[30px] border border-theme-border space-y-4 shadow-inner">
-                  <span className="block text-[8px] font-black text-theme-muted uppercase tracking-widest opacity-40 italic">Informações do Cliente</span>
+                  <span className="block text-[8px] font-bold text-theme-muted uppercase tracking-widest opacity-40 ">Informações do Cliente</span>
                   <div className="space-y-1">
-                    <div className="text-sm font-black text-theme-text uppercase italic tracking-tighter">{selectedOrderForDetails.user?.nome || "CONVIDADO"}</div>
+                    <div className="text-sm font-bold text-theme-text uppercase ">{selectedOrderForDetails.user?.nome || "CONVIDADO"}</div>
                     <div className="text-[10px] text-theme-muted font-bold lowercase opacity-60">{selectedOrderForDetails.buyerEmail || selectedOrderForDetails.user?.email}</div>
                   </div>
                 </div>
                 <div className="bg-theme-bg-muted p-3 md:p-6 rounded-[30px] border border-theme-border space-y-4 shadow-inner text-right">
-                  <span className="block text-[8px] font-black text-theme-muted uppercase tracking-widest opacity-40 italic">Temporalidade & Status</span>
+                  <span className="block text-[8px] font-bold text-theme-muted uppercase tracking-widest opacity-40 ">Temporalidade & Status</span>
                   <div className="space-y-1">
                     <div className={`text-xs font-black uppercase tracking-[0.2em] italic ${selectedOrderForDetails.status === 'APROVADO' ? 'text-brand-tactical' : 'text-amber-500'}`}>
                       {selectedOrderForDetails.status}
@@ -455,29 +455,29 @@ export const AdminOrders: React.FC = () => {
 
               <div className="space-y-6">
                 <div className="flex items-center justify-between border-b border-theme-border pb-4">
-                  <h4 className="text-[10px] font-black uppercase tracking-[0.4em] text-theme-text italic">Composição do Carrinho</h4>
-                  <span className="text-[9px] font-black text-theme-muted uppercase tracking-widest italic opacity-40">{selectedOrderForDetails.items?.length || 0} Itens Registrados</span>
+                  <h4 className="text-[10px] font-bold uppercase tracking-[0.4em] text-theme-text ">Composição do Carrinho</h4>
+                  <span className="text-[9px] font-bold text-theme-muted uppercase tracking-widest opacity-40">{selectedOrderForDetails.items?.length || 0} Itens Registrados</span>
                 </div>
 
                 {(!selectedOrderForDetails.items || selectedOrderForDetails.items.length === 0) ? (
                   <div className="p-5 md:p-10 text-center bg-theme-bg-muted border  border-theme-border rounded-[30px]">
-                    <p className="text-[9px] sm:text-[11px] font-black text-brand-tactical uppercase tracking-[0.2em] sm:tracking-[0.4em] italic truncate max-w-[80vw]">Nenhum item detalhado neste pedido</p>
+                    <p className="text-[9px] sm:text-[11px] font-bold text-brand-tactical uppercase tracking-[0.2em] sm:tracking-[0.4em] truncate max-w-[80vw]">Nenhum item detalhado neste pedido</p>
                   </div>
                 ) : (
                   <div className="space-y-4">
                     {selectedOrderForDetails.items.map(item => (
                       <div key={item.id} className="flex items-center justify-between p-3 md:p-6 bg-theme-bg-muted border border-theme-border rounded-[24px] group hover:border-brand-tactical transition-all shadow-sm">
                         <div className="flex-1 space-y-1">
-                          <div className="text-[11px] font-black text-theme-text uppercase tracking-widest italic">
+                          <div className="text-[11px] font-bold text-theme-text uppercase tracking-widest ">
                             {item.quantity}x {item.service?.name || item.printProduct?.title || (item.mediaId ? `Foto (Digital)` : "Item de Inventário")}
                           </div>
                           {item.mediaId && <div className="text-[9px] font-mono text-theme-muted opacity-40">REF_UUID: {item.mediaId}</div>}
                         </div>
                         <div className="text-right">
-                          <div className="text-md font-black text-brand-tactical italic tracking-tighter">
+                          <div className="text-md font-bold text-brand-tactical ">
                             {formatCurrency(Number(item.price) * Number(item.quantity))}
                           </div>
-                          <span className="text-[8px] text-theme-muted uppercase tracking-widest font-black opacity-30 italic">Preço Unitário: {formatCurrency(Number(item.price))}</span>
+                          <span className="text-[8px] text-theme-muted uppercase tracking-widest font-bold opacity-30 ">Preço Unitário: {formatCurrency(Number(item.price))}</span>
                         </div>
                       </div>
                     ))}
@@ -489,12 +489,12 @@ export const AdminOrders: React.FC = () => {
             {/* Footer */}
             <div className="p-4 md:p-8 md:p-10 bg-theme-bg-muted border-t border-theme-border flex gap-3 md:gap-6 items-center shrink-0 rounded-2xl">
                <div className="flex-1 space-y-1">
-                  <span className="text-[8px] font-black text-theme-muted uppercase tracking-[0.4em] italic opacity-40">Liquidado no Ledger</span>
-                  <div className="text-3xl font-black italic tracking-tighter text-brand-tactical">{formatCurrency(selectedOrderForDetails.amount)}</div>
+                  <span className="text-[8px] font-bold text-theme-muted uppercase tracking-[0.4em] opacity-40">Liquidado no Ledger</span>
+                  <div className="text-3xl font-bold text-brand-tactical">{formatCurrency(selectedOrderForDetails.amount)}</div>
                </div>
                <button 
                 onClick={() => setSelectedOrderForDetails(null)} 
-                className="px-5 md:px-10 py-5 bg-brand-tactical text-zinc-950 text-[11px] font-black uppercase tracking-[0.3em] shadow-2xl shadow-brand-tactical/20 hover:brightness-110 transition-all rounded-[20px] italic flex items-center gap-4"
+                className="px-5 md:px-10 py-5 bg-brand-tactical text-zinc-950 text-[11px] font-bold uppercase tracking-[0.3em] shadow-2xl shadow-brand-tactical/20 hover:brightness-110 transition-all rounded-[20px] flex items-center gap-4"
                >
                  Fechar Auditoria
                  <ArrowRight size={18} strokeWidth={1.5} />

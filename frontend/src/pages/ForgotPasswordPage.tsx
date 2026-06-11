@@ -40,10 +40,10 @@ export default function ForgotPasswordPage() {
           <div className="inline-flex p-4 rounded-full bg-brand-tactical/10 text-brand-tactical mb-4">
             <ShieldCheck size={32} />
           </div>
-          <h1 className="text-2xl md:text-4xl font-heading font-black italic text-theme-text uppercase tracking-tighter">
+          <h1 className="text-2xl md:text-4xl font-heading font-bold text-theme-text uppercase ">
             Recuperar Acesso
           </h1>
-          <p className="text-[10px] font-black text-theme-muted uppercase tracking-[0.4em]">
+          <p className="text-[10px] font-bold text-theme-muted uppercase tracking-[0.4em]">
             Foto Segundo · Segurança de Conta
           </p>
         </div>
@@ -60,7 +60,7 @@ export default function ForgotPasswordPage() {
               </p>
               <button 
                 onClick={() => navigate("/login")}
-                className="w-full py-4 bg-brand-tactical text-brand-text text-[10px] font-black uppercase tracking-[0.4em] hover:brightness-110 transition-all"
+                className="w-full py-4 bg-brand-tactical text-brand-text text-[10px] font-bold uppercase tracking-[0.4em] hover:brightness-110 transition-all"
               >
                 Voltar ao Login
               </button>
@@ -68,13 +68,13 @@ export default function ForgotPasswordPage() {
           ) : (
             <>
               <div className="space-y-2">
-                <h2 className="text-xl font-heading font-black text-theme-text uppercase italic tracking-tight">Esqueceu sua senha?</h2>
-                <p className="text-[9px] font-black text-theme-muted uppercase tracking-[0.3em]">Informe seu e-mail para receber as instruções de recuperação</p>
+                <h2 className="text-xl font-heading font-bold text-theme-text uppercase ">Esqueceu sua senha?</h2>
+                <p className="text-[9px] font-bold text-theme-muted uppercase tracking-[0.3em]">Informe seu e-mail para receber as instruções de recuperação</p>
               </div>
 
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="space-y-2">
-                  <label className="text-[9px] font-black uppercase tracking-[0.3em] text-theme-muted block">E-mail Cadastrado</label>
+                  <label className="text-[9px] font-bold uppercase tracking-[0.3em] text-theme-muted block">E-mail Cadastrado</label>
                   <div className="relative group">
                     <Mail size={14} className="absolute left-4 top-1/2 -translate-y-1/2 text-theme-muted group-focus-within:text-brand-tactical transition-colors" />
                     <input 
@@ -91,14 +91,14 @@ export default function ForgotPasswordPage() {
                 {message.text && message.type === "error" && (
                   <div className="p-4 flex items-center gap-3 bg-red-400/10 border border-red-400/20 text-red-400 animate-in fade-in zoom-in-95 duration-300">
                     <AlertTriangle size={16} />
-                    <p className="text-[10px] font-black uppercase tracking-widest">{message.text}</p>
+                    <p className="text-[10px] font-bold uppercase tracking-widest">{message.text}</p>
                   </div>
                 )}
 
                 <button 
                   type="submit" 
                   disabled={loading}
-                  className="w-full py-5 bg-brand-tactical text-brand-text text-[10px] font-black uppercase tracking-[0.4em] hover:brightness-110 transition-all disabled:opacity-50 flex items-center justify-center gap-3 group shadow-xl shadow-brand-tactical/10"
+                  className="w-full py-5 bg-brand-tactical text-brand-text text-[10px] font-bold uppercase tracking-[0.4em] hover:brightness-110 transition-all disabled:opacity-50 flex items-center justify-center gap-3 group shadow-xl shadow-brand-tactical/10"
                 >
                   {loading ? "ENVIANDO..." : (
                     <>
@@ -110,7 +110,7 @@ export default function ForgotPasswordPage() {
                 <div className="text-center">
                   <Link 
                     to="/login" 
-                    className="inline-flex items-center gap-2 text-[8px] font-black uppercase tracking-[0.3em] text-theme-muted hover:text-theme-text transition-all"
+                    className="inline-flex items-center gap-2 text-[8px] font-bold uppercase tracking-[0.3em] text-theme-muted hover:text-theme-text transition-all"
                   >
                     <ArrowLeft size={10} /> Voltar ao Login
                   </Link>

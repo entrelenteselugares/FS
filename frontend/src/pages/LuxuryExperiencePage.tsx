@@ -96,7 +96,7 @@ export default function LuxuryExperiencePage() {
       <div className="absolute inset-0 bg-emerald-900/10 blur-[120px] rounded-full -m-64 opacity-30" />
       <div className="relative z-10 flex flex-col items-center gap-4 md:gap-8">
         <div className="w-px h-16 bg-gradient-to-b from-transparent via-emerald-500/50 to-transparent" />
-        <div className="text-[14px] font-display font-black uppercase tracking-[0.8em] text-zinc-300">FOTO SEGUNDO</div>
+        <div className="text-[14px] font-display font-bold uppercase tracking-[0.8em] text-zinc-300">FOTO SEGUNDO</div>
         <div className="text-[9px] font-medium uppercase tracking-[0.4em] text-emerald-500/80 animate-pulse">Iniciando Experiência</div>
         <div className="w-px h-16 bg-gradient-to-t from-transparent via-emerald-500/50 to-transparent" />
       </div>
@@ -106,7 +106,7 @@ export default function LuxuryExperiencePage() {
   if (!event) return (
     <div className="min-h-screen flex items-center justify-center p-3 md:p-6 text-center bg-[#050505]">
       <div className="space-y-6 max-w-sm">
-        <p className="text-2xl md:text-4xl font-display font-black uppercase text-zinc-100">404</p>
+        <p className="text-2xl md:text-4xl font-display font-bold uppercase text-zinc-100">404</p>
         <p className="text-[11px] font-medium text-zinc-500 uppercase tracking-[0.2em] leading-relaxed">A galeria solicitada encontra-se indisponível ou privada.</p>
       </div>
     </div>
@@ -195,7 +195,7 @@ export default function LuxuryExperiencePage() {
             className="space-y-8 w-full"
           >
             <p className="text-[10px] md:text-[12px] font-medium text-emerald-400 uppercase tracking-[0.5em] md:tracking-[1em]">Galeria Privada</p>
-            <h1 className="text-3xl md:text-5xl md:text-8xl lg:text-[120px] font-display font-medium uppercase tracking-tighter leading-[0.85] text-white drop-shadow-2xl">
+            <h1 className="text-3xl md:text-5xl md:text-8xl lg:text-[120px] font-display font-medium uppercase leading-[0.85] text-white drop-shadow-2xl">
               {event.title}
             </h1>
             <div className="flex flex-col md:flex-row justify-center items-center gap-4 md:gap-12 text-[10px] md:text-[11px] font-medium uppercase tracking-[0.3em] text-zinc-400 mt-12">
@@ -239,7 +239,7 @@ export default function LuxuryExperiencePage() {
                 className="flex flex-col md:flex-row items-center md:items-start gap-4 md:gap-8 md:gap-16"
               >
                 <div className="relative shrink-0 group">
-                  <div className="w-32 h-32 md:w-40 md:h-40 rounded-full border border-zinc-800/50 overflow-hidden bg-zinc-900/50 flex items-center justify-center text-2xl md:text-4xl md:text-5xl font-display font-light text-emerald-500/50 transition-all duration-700 group-hover:border-emerald-500/30 group-hover:text-emerald-400">
+                  <div className="w-32 h-32 md:w-40 md:h-40 rounded-full border border-zinc-800/50 overflow-hidden bg-zinc-900/50 flex items-center justify-center text-2xl md:text-4xl md:text-5xl font-display font-normal text-emerald-500/50 transition-all duration-700 group-hover:border-emerald-500/30 group-hover:text-emerald-400">
                     {prof.profileImageUrl ? (
                       <img src={prof.profileImageUrl} alt={prof.nome} className="w-full h-full object-cover grayscale opacity-80 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-700" />
                     ) : (
@@ -254,13 +254,13 @@ export default function LuxuryExperiencePage() {
                 <div className="space-y-6 text-center md:text-left flex-1 md:pt-4">
                   <div className="space-y-2">
                     <p className="text-[10px] font-medium text-emerald-500/80 uppercase tracking-[0.4em]">{prof.role}</p>
-                    <h2 className="text-3xl md:text-4xl font-display font-medium uppercase tracking-tight text-zinc-100">
+                    <h2 className="text-3xl md:text-4xl font-display font-medium uppercase text-zinc-100">
                       {prof.nome}
                     </h2>
                   </div>
                   
                   <div className="w-12 h-px bg-zinc-800 mx-auto md:mx-0 mt-6" />
-                  <p className="text-[11px] md:text-xs font-light tracking-[0.1em] text-zinc-400 max-w-2xl leading-loose mx-auto md:mx-0 whitespace-pre-wrap">
+                  <p className="text-[11px] md:text-xs font-normal tracking-[0.1em] text-zinc-400 max-w-2xl leading-loose mx-auto md:mx-0 whitespace-pre-wrap">
                     {prof.description || "Profissional dedicado a transformar momentos em legados visuais através de uma curadoria meticulosa e olhar apurado."}
                   </p>
                 </div>
@@ -407,8 +407,8 @@ export default function LuxuryExperiencePage() {
             <div className="space-y-20 pt-16">
               <div className="text-center space-y-6">
                 <p className="text-[10px] font-medium text-zinc-500 uppercase tracking-[0.5em]">Boutique</p>
-                <h3 className="text-2xl md:text-4xl md:text-5xl font-display font-medium uppercase tracking-tight text-zinc-100">Obras Físicas</h3>
-                <p className="text-[11px] uppercase font-light tracking-[0.2em] text-zinc-400 max-w-xl mx-auto leading-relaxed">
+                <h3 className="text-2xl md:text-4xl md:text-5xl font-display font-medium uppercase text-zinc-100">Obras Físicas</h3>
+                <p className="text-[11px] uppercase font-normal tracking-[0.2em] text-zinc-400 max-w-xl mx-auto leading-relaxed">
                   Materialize suas memórias com nossa seleção de fine art e álbuns premium.
                 </p>
               </div>
@@ -425,7 +425,7 @@ export default function LuxuryExperiencePage() {
                   >
                     <div className="aspect-[3/4] bg-zinc-900 border border-zinc-800/50 relative overflow-hidden mb-8 group-hover:border-zinc-700 transition-all duration-500">
                       <div className="absolute inset-0 flex items-center justify-center">
-                        <span className="font-display font-light text-8xl text-zinc-800/30 uppercase tracking-tighter mix-blend-overlay group-hover:scale-105 transition-transform duration-1000">
+                        <span className="font-display font-normal text-8xl text-zinc-800/30 uppercase mix-blend-overlay group-hover:scale-105 transition-transform duration-1000">
                           {p.category.slice(0, 3)}
                         </span>
                       </div>
@@ -442,10 +442,10 @@ export default function LuxuryExperiencePage() {
 
                     <div className="space-y-4 px-2">
                       <div className="flex justify-between items-baseline">
-                        <h4 className="text-lg font-display font-medium uppercase tracking-tight text-zinc-200 group-hover:text-white transition-colors">{p.name}</h4>
+                        <h4 className="text-lg font-display font-medium uppercase text-zinc-200 group-hover:text-white transition-colors">{p.name}</h4>
                         <span className="text-[9px] font-medium uppercase tracking-[0.2em] text-zinc-500">{p.category}</span>
                       </div>
-                      <p className="text-[11px] font-light tracking-[0.05em] leading-relaxed text-zinc-400 line-clamp-3">
+                      <p className="text-[11px] font-normal tracking-[0.05em] leading-relaxed text-zinc-400 line-clamp-3">
                         {p.description || "Acabamento premium artesanal."}
                       </p>
                       

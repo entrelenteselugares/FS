@@ -77,10 +77,10 @@ export function FotoPointEditModal({ event, onClose, onSuccess, onError, network
         <form onSubmit={handleSubmit} className="p-8 md:p-12 space-y-10 overflow-y-auto custom-scrollbar">
           <div className="flex justify-between items-start">
             <div className="space-y-1">
-              <div className="text-[10px] font-black text-cyan-400 uppercase tracking-[0.4em] italic mb-2">
+              <div className="text-[10px] font-bold text-cyan-400 uppercase tracking-[0.4em] mb-2">
                 Painel de Gestão • Foto Point
               </div>
-              <h3 className="text-3xl font-heading font-black text-theme-text uppercase italic leading-none tracking-tighter">
+              <h3 className="text-3xl font-heading font-bold text-theme-text uppercase leading-none ">
                 Editar {event.title}
               </h3>
             </div>
@@ -91,7 +91,7 @@ export function FotoPointEditModal({ event, onClose, onSuccess, onError, network
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div className="space-y-3">
-              <label className="text-[9px] font-black text-theme-muted uppercase tracking-widest italic opacity-60">Nome do Ponto / Evento</label>
+              <label className="text-[9px] font-bold text-theme-muted uppercase tracking-widest opacity-60">Nome do Ponto / Evento</label>
               <div className="relative group">
                 <Camera size={16} className="absolute left-5 top-1/2 -translate-y-1/2 text-cyan-400/50 group-focus-within:text-cyan-400 transition-colors" />
                 <input
@@ -105,7 +105,7 @@ export function FotoPointEditModal({ event, onClose, onSuccess, onError, network
             </div>
 
             <div className="space-y-3">
-              <label className="text-[9px] font-black text-theme-muted uppercase tracking-widest italic opacity-60">Valor por Click (Digital)</label>
+              <label className="text-[9px] font-bold text-theme-muted uppercase tracking-widest opacity-60">Valor por Click (Digital)</label>
               <div className="relative group">
                 <DollarSign size={16} className="absolute left-5 top-1/2 -translate-y-1/2 text-cyan-400/50 group-focus-within:text-cyan-400 transition-colors" />
                 <input
@@ -120,7 +120,7 @@ export function FotoPointEditModal({ event, onClose, onSuccess, onError, network
             </div>
 
             <div className="space-y-3">
-              <label className="text-[9px] font-black text-theme-muted uppercase tracking-widest italic opacity-60">Ponto de Encontro / Local</label>
+              <label className="text-[9px] font-bold text-theme-muted uppercase tracking-widest opacity-60">Ponto de Encontro / Local</label>
               <div className="relative group">
                 <MapPin size={16} className="absolute left-5 top-1/2 -translate-y-1/2 text-cyan-400/50 group-focus-within:text-cyan-400 transition-colors" />
                 <input
@@ -134,7 +134,7 @@ export function FotoPointEditModal({ event, onClose, onSuccess, onError, network
             </div>
 
             <div className="space-y-3">
-              <label className="text-[9px] font-black text-theme-muted uppercase tracking-widest italic opacity-60 flex items-center gap-2">
+              <label className="text-[9px] font-bold text-theme-muted uppercase tracking-widest opacity-60 flex items-center gap-2">
                 <Calendar size={12} /> Data da Operação
               </label>
               <input
@@ -147,7 +147,7 @@ export function FotoPointEditModal({ event, onClose, onSuccess, onError, network
             </div>
 
              <div className="space-y-3">
-              <label className="text-[9px] font-black text-theme-muted uppercase tracking-widest italic opacity-60">Visibilidade na Home</label>
+              <label className="text-[9px] font-bold text-theme-muted uppercase tracking-widest opacity-60">Visibilidade na Home</label>
               <div className="flex gap-2">
                 <button
                   type="button"
@@ -169,7 +169,7 @@ export function FotoPointEditModal({ event, onClose, onSuccess, onError, network
             </div>
 
             <div className="md:col-span-2 space-y-3">
-              <label className="text-[9px] font-black text-theme-muted uppercase tracking-widest italic opacity-60">Roteiro da Sessão (O que será entregue?)</label>
+              <label className="text-[9px] font-bold text-theme-muted uppercase tracking-widest opacity-60">Roteiro da Sessão (O que será entregue?)</label>
               <div className="relative group">
                 <ListChecks size={16} className="absolute left-5 top-6 text-cyan-400/50 group-focus-within:text-cyan-400 transition-colors" />
                 <textarea
@@ -183,7 +183,7 @@ export function FotoPointEditModal({ event, onClose, onSuccess, onError, network
             </div>
 
             <div className="md:col-span-2 space-y-4">
-              <label className="text-[9px] font-black text-theme-muted uppercase tracking-widest italic opacity-60">Referências de Estilo / Pose</label>
+              <label className="text-[9px] font-bold text-theme-muted uppercase tracking-widest opacity-60">Referências de Estilo / Pose</label>
               <div className="flex gap-2">
                 <input
                   value={newRef}
@@ -194,14 +194,14 @@ export function FotoPointEditModal({ event, onClose, onSuccess, onError, network
                 <button
                   type="button"
                   onClick={addRef}
-                  className="px-6 bg-white/10 text-theme-text text-[10px] font-black uppercase tracking-widest hover:bg-cyan-400 hover:text-black transition-all"
+                  className="px-6 bg-white/10 text-theme-text text-[10px] font-bold uppercase tracking-widest hover:bg-cyan-400 hover:text-black transition-all"
                 >
                   Adicionar
                 </button>
               </div>
               <div className="flex flex-wrap gap-2">
                 {formData.references.map((ref: string, i: number) => (
-                  <div key={i} className="flex items-center gap-2 bg-cyan-400/10 border border-cyan-400/20 px-3 py-2 text-[10px] font-bold text-cyan-400 uppercase tracking-tighter">
+                  <div key={i} className="flex items-center gap-2 bg-cyan-400/10 border border-cyan-400/20 px-3 py-2 text-[10px] font-bold text-cyan-400 uppercase ">
                     {ref}
                     <button type="button" onClick={() => removeRef(i)} className="hover:text-red-400 transition-colors"><Trash2 size={12} /></button>
                   </div>
@@ -234,14 +234,14 @@ export function FotoPointEditModal({ event, onClose, onSuccess, onError, network
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 py-5 bg-theme-bg-muted border border-white/10 text-theme-muted text-[11px] font-black uppercase tracking-widest hover:text-white transition-all italic"
+              className="flex-1 py-5 bg-theme-bg-muted border border-white/10 text-theme-muted text-[11px] font-bold uppercase tracking-widest hover:text-white transition-all "
             >
               Descartar
             </button>
             <button
               type="submit"
               disabled={loading}
-              className="flex-[2] py-5 bg-cyan-400 text-black text-[11px] font-black uppercase tracking-[0.3em] hover:brightness-110 disabled:opacity-40 transition-all shadow-xl shadow-cyan-400/20 italic"
+              className="flex-[2] py-5 bg-cyan-400 text-black text-[11px] font-bold uppercase tracking-[0.3em] hover:brightness-110 disabled:opacity-40 transition-all shadow-xl shadow-cyan-400/20 "
             >
               {loading ? "SALVANDO..." : "SALVAR ALTERAÇÕES"}
             </button>

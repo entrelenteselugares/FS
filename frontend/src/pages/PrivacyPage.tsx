@@ -9,7 +9,7 @@ export function PrivacyPage() {
       
       {/* Header Minimalista */}
       <header className="fixed top-0 left-0 right-0 h-16 bg-theme-bg/80 backdrop-blur-lg border-b border-theme-border z-50 flex items-center px-4 md:px-8">
-        <Link to="/" className="text-brand-tactical hover:brightness-110 transition-all flex items-center gap-2 text-xs font-black tracking-widest uppercase italic">
+        <Link to="/" className="text-brand-tactical hover:brightness-110 transition-all flex items-center gap-2 text-xs font-bold tracking-widest uppercase ">
           <ArrowLeft size={16} /> Voltar para o início
         </Link>
       </header>
@@ -18,9 +18,9 @@ export function PrivacyPage() {
         <div className="mb-16">
           <div className="flex items-center gap-4 mb-4">
             <div className="h-px w-12 bg-brand-tactical" />
-            <span className="text-[10px] font-black text-brand-tactical uppercase tracking-[0.5em] italic">Segurança Legal</span>
+            <span className="text-[10px] font-bold text-brand-tactical uppercase tracking-[0.5em] ">Segurança Legal</span>
           </div>
-          <h1 className="text-2xl md:text-4xl md:text-5xl font-heading font-black text-theme-text uppercase tracking-tighter mb-4 italic">
+          <h1 className="text-2xl md:text-4xl md:text-5xl font-heading font-bold text-theme-text uppercase mb-4 ">
             Política de <span className="text-brand-tactical">Privacidade</span>
           </h1>
           <p className="text-theme-text-muted font-medium text-sm">
@@ -28,8 +28,8 @@ export function PrivacyPage() {
           </p>
           <div className="mt-8 p-3 md:p-6 bg-brand-tactical/10 border border-brand-tactical/20 rounded-2xl flex items-start gap-4">
             <Shield className="text-brand-tactical shrink-0 mt-1" size={24} />
-            <p className="text-sm md:text-base text-theme-text font-light leading-relaxed">
-              Esta Política descreve como a Foto Segundo coleta, utiliza, armazena e protege seus dados pessoais, em total conformidade com a <strong className="text-brand-tactical font-black">Lei Geral de Proteção de Dados (LGPD — Lei nº 13.709/2018)</strong>.
+            <p className="text-sm md:text-base text-theme-text font-normal leading-relaxed">
+              Esta Política descreve como a Foto Segundo coleta, utiliza, armazena e protege seus dados pessoais, em total conformidade com a <strong className="text-brand-tactical font-bold">Lei Geral de Proteção de Dados (LGPD — Lei nº 13.709/2018)</strong>.
             </p>
           </div>
         </div>
@@ -37,7 +37,7 @@ export function PrivacyPage() {
         <div className="space-y-16">
           {/* Seção 1 */}
           <section>
-            <h2 className="text-xl font-black uppercase italic tracking-tight mb-6 flex items-center gap-3">
+            <h2 className="text-xl font-bold uppercase mb-6 flex items-center gap-3">
               <span className="text-brand-tactical">1.</span> Controlador dos Dados
             </h2>
             <div className="bg-theme-bg-muted border border-theme-border p-3 md:p-6 rounded-xl space-y-2">
@@ -52,13 +52,13 @@ export function PrivacyPage() {
 
           {/* Seção 2 */}
           <section>
-            <h2 className="text-xl font-black uppercase italic tracking-tight mb-8 flex items-center gap-3">
+            <h2 className="text-xl font-bold uppercase mb-8 flex items-center gap-3">
               <span className="text-brand-tactical">2.</span> Dados que Coletamos
             </h2>
             
             <div className="grid md:grid-cols-2 gap-3 md:gap-6">
               <div className="border border-theme-border p-3 md:p-6 rounded-xl hover:border-brand-tactical/30 transition-colors">
-                <h3 className="text-sm font-black text-brand-tactical uppercase tracking-widest mb-4 flex items-center gap-2">
+                <h3 className="text-sm font-bold text-brand-tactical uppercase tracking-widest mb-4 flex items-center gap-2">
                   <User size={16} /> Fornecidos por você
                 </h3>
                 <ul className="space-y-3">
@@ -72,7 +72,7 @@ export function PrivacyPage() {
               </div>
 
               <div className="border border-theme-border p-3 md:p-6 rounded-xl hover:border-brand-tactical/30 transition-colors">
-                <h3 className="text-sm font-black text-brand-tactical uppercase tracking-widest mb-4 flex items-center gap-2">
+                <h3 className="text-sm font-bold text-brand-tactical uppercase tracking-widest mb-4 flex items-center gap-2">
                   <Eye size={16} /> Coletados automaticamente
                 </h3>
                 <ul className="space-y-3">
@@ -89,15 +89,15 @@ export function PrivacyPage() {
 
           {/* Seção 3 */}
           <section>
-            <h2 className="text-xl font-black uppercase italic tracking-tight mb-6 flex items-center gap-3">
+            <h2 className="text-xl font-bold uppercase mb-6 flex items-center gap-3">
               <span className="text-brand-tactical">3.</span> Como Usamos seus Dados
             </h2>
             <div className="overflow-x-auto rounded-xl border border-theme-border">
               <table className="w-full text-left text-sm">
                 <thead className="bg-theme-bg-muted text-xs uppercase tracking-wider text-theme-text">
                   <tr>
-                    <th className="p-4 font-black">Finalidade</th>
-                    <th className="p-4 font-black">Base Legal (LGPD)</th>
+                    <th className="p-4 font-bold">Finalidade</th>
+                    <th className="p-4 font-bold">Base Legal (LGPD)</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-theme-border/40 text-theme-text-muted">
@@ -115,10 +115,10 @@ export function PrivacyPage() {
 
           {/* Seção 4 */}
           <section>
-            <h2 className="text-xl font-black uppercase italic tracking-tight mb-6 flex items-center gap-3">
+            <h2 className="text-xl font-bold uppercase mb-6 flex items-center gap-3">
               <span className="text-brand-tactical">4.</span> Armazenamento e Retenção
             </h2>
-            <div className="space-y-4 text-theme-text-muted text-sm md:text-base font-light leading-relaxed">
+            <div className="space-y-4 text-theme-text-muted text-sm md:text-base font-normal leading-relaxed">
               <p><strong className="text-theme-text">4.1</strong> Seus dados são armazenados em servidores seguros com acesso restrito.</p>
               <p><strong className="text-theme-text">4.2</strong> Fotos e mídias de eventos são armazenadas em serviços de nuvem (Adobe Lightroom e Google Drive) e na infraestrutura da Plataforma, com acesso controlado por sistema de Paywall.</p>
               <p><strong className="text-theme-text">4.3</strong> Dados de pedidos e transações financeiras são retidos por <strong className="text-brand-tactical">5 anos</strong> para fins contábeis e fiscais, mesmo após encerramento da conta.</p>
@@ -128,10 +128,10 @@ export function PrivacyPage() {
 
           {/* Seção 5 */}
           <section>
-            <h2 className="text-xl font-black uppercase italic tracking-tight mb-6 flex items-center gap-3">
+            <h2 className="text-xl font-bold uppercase mb-6 flex items-center gap-3">
               <span className="text-brand-tactical">5.</span> Compartilhamento de Dados
             </h2>
-            <p className="text-theme-text-muted text-sm md:text-base font-light mb-4">
+            <p className="text-theme-text-muted text-sm md:text-base font-normal mb-4">
               Seus dados <strong className="text-brand-tactical">não são vendidos</strong> a terceiros. Compartilhamos apenas com:
             </p>
             <ul className="grid md:grid-cols-2 gap-4">
@@ -152,10 +152,10 @@ export function PrivacyPage() {
 
           {/* Seção 6 */}
           <section>
-            <h2 className="text-xl font-black uppercase italic tracking-tight mb-6 flex items-center gap-3">
+            <h2 className="text-xl font-bold uppercase mb-6 flex items-center gap-3">
               <span className="text-brand-tactical">6.</span> Seus Direitos (LGPD)
             </h2>
-            <p className="text-theme-text-muted text-sm md:text-base font-light mb-6">Como titular dos dados, você tem direito a:</p>
+            <p className="text-theme-text-muted text-sm md:text-base font-normal mb-6">Como titular dos dados, você tem direito a:</p>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
               {[
                 { t: "Acesso", d: "saber quais dados temos sobre você" },
@@ -172,25 +172,25 @@ export function PrivacyPage() {
               ))}
             </div>
             <p className="text-sm text-theme-text bg-brand-tactical/10 p-4 rounded-lg border border-brand-tactical/20">
-              Para exercer seus direitos, acesse <strong className="font-black">Meus Dados</strong> no painel ou entre em contato pelo e-mail de privacidade.
+              Para exercer seus direitos, acesse <strong className="font-bold">Meus Dados</strong> no painel ou entre em contato pelo e-mail de privacidade.
             </p>
           </section>
 
           {/* Seções 7, 8, 9, 10 */}
           <div className="grid md:grid-cols-2 gap-3 md:gap-6 md:gap-12">
             <section>
-              <h2 className="text-lg font-black uppercase italic tracking-tight mb-4 flex items-center gap-2">
+              <h2 className="text-lg font-bold uppercase mb-4 flex items-center gap-2">
                 <span className="text-brand-tactical">7.</span> Cookies
               </h2>
-              <p className="text-theme-text-muted text-sm font-light leading-relaxed">
+              <p className="text-theme-text-muted text-sm font-normal leading-relaxed">
                 Utilizamos <strong>localStorage</strong> e <strong>Tokens JWT</strong> para manter sua sessão ativa com segurança. Não utilizamos cookies de rastreamento publicitário de terceiros.
               </p>
             </section>
             <section>
-              <h2 className="text-lg font-black uppercase italic tracking-tight mb-4 flex items-center gap-2">
+              <h2 className="text-lg font-bold uppercase mb-4 flex items-center gap-2">
                 <span className="text-brand-tactical">8.</span> Segurança
               </h2>
-              <ul className="text-theme-text-muted text-sm font-light space-y-2">
+              <ul className="text-theme-text-muted text-sm font-normal space-y-2">
                 <li>• Autenticação JWT com expiração</li>
                 <li>• Validação HMAC-SHA256 em webhooks</li>
                 <li>• Controle de acesso por roles (RBAC)</li>
@@ -199,18 +199,18 @@ export function PrivacyPage() {
               </ul>
             </section>
             <section>
-              <h2 className="text-lg font-black uppercase italic tracking-tight mb-4 flex items-center gap-2">
+              <h2 className="text-lg font-bold uppercase mb-4 flex items-center gap-2">
                 <span className="text-brand-tactical">9.</span> Menores de Idade
               </h2>
-              <p className="text-theme-text-muted text-sm font-light leading-relaxed">
+              <p className="text-theme-text-muted text-sm font-normal leading-relaxed">
                 Não destinada a menores de 18 anos sem consentimento. Dados identificados como de menores sem autorização são excluídos imediatamente.
               </p>
             </section>
             <section>
-              <h2 className="text-lg font-black uppercase italic tracking-tight mb-4 flex items-center gap-2">
+              <h2 className="text-lg font-bold uppercase mb-4 flex items-center gap-2">
                 <span className="text-brand-tactical">10.</span> Alterações
               </h2>
-              <p className="text-theme-text-muted text-sm font-light leading-relaxed">
+              <p className="text-theme-text-muted text-sm font-normal leading-relaxed">
                 Notificaremos alterações relevantes via e-mail ou notificação in-app com antecedência mínima de 15 dias.
               </p>
             </section>
@@ -220,7 +220,7 @@ export function PrivacyPage() {
 
       <footer className="py-4 md:py-8 text-center border-t border-theme-border">
         <p className="text-theme-text-muted text-xs font-bold uppercase tracking-widest mb-1">© 2026 Foto Segundo. Todos os direitos reservados.</p>
-        <p className="text-brand-tactical/50 text-[10px] font-black italic uppercase tracking-[0.3em]">Protocolo Editorial de Imagem e Cinema</p>
+        <p className="text-brand-tactical/50 text-[10px] font-bold uppercase tracking-[0.3em]">Protocolo Editorial de Imagem e Cinema</p>
       </footer>
     </div>
   );

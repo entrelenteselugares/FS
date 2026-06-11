@@ -316,7 +316,7 @@ export default function PhygitalCapture() {
       <div className="min-h-screen flex flex-col items-center justify-center p-3 md:p-6 text-center animate-reveal" style={{ background: T.bg }}>
         <button
           onClick={() => window.close()}
-          className="fixed top-6 left-6 flex items-center gap-2 text-[10px] font-black uppercase tracking-widest opacity-40 hover:opacity-100 transition-opacity"
+          className="fixed top-6 left-6 flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest opacity-40 hover:opacity-100 transition-opacity"
           style={{ color: T.text }}
         >
           <ArrowLeft size={16} /> Fechar
@@ -325,7 +325,7 @@ export default function PhygitalCapture() {
         <div className="w-20 h-20 bg-brand-tactical/20 rounded-full flex items-center justify-center mb-8 border border-brand-tactical/30">
           <CheckCircle2 size={40} className="text-brand-tactical" />
         </div>
-        <h1 className="text-3xl font-black uppercase tracking-[0.2em] mb-2" style={{ color: T.text }}>Arquivos Recebidos</h1>
+        <h1 className="text-3xl font-bold uppercase tracking-[0.2em] mb-2" style={{ color: T.text }}>Arquivos Recebidos</h1>
         <p className="text-[11px] uppercase tracking-widest opacity-50 mb-10">Sua lembrança já está na fila de impressão</p>
         
         <div className="w-full max-w-sm p-4 md:p-8 rounded-2xl border border-theme-border bg-white/[0.02] backdrop-blur-xl relative overflow-hidden">
@@ -335,7 +335,7 @@ export default function PhygitalCapture() {
             {referenceCodes.map((code, idx) => (
               <div key={idx} className="flex justify-between border-b border-white/5 pb-2 text-left">
                 <span className="text-[9px] text-theme-text-muted font-bold truncate max-w-[180px]">{files[idx]?.name || `Item ${idx + 1}`}</span>
-                <span className="text-xl font-black text-brand-tactical font-mono tracking-tight">{code}</span>
+                <span className="text-xl font-bold text-brand-tactical font-mono ">{code}</span>
               </div>
             ))}
           </div>
@@ -343,7 +343,7 @@ export default function PhygitalCapture() {
 
         <button 
           onClick={() => window.location.reload()}
-          className="mt-12 text-[10px] font-black uppercase tracking-[0.3em] py-4 px-4 md:px-8 border border-theme-border hover:bg-theme-bg-muted transition-all"
+          className="mt-12 text-[10px] font-bold uppercase tracking-[0.3em] py-4 px-4 md:px-8 border border-theme-border hover:bg-theme-bg-muted transition-all"
           style={{ color: T.text }}
         >
           Enviar Mais Arquivos
@@ -360,7 +360,7 @@ export default function PhygitalCapture() {
         <button
           type="button"
           onClick={() => window.history.length > 1 ? window.history.back() : window.close()}
-          className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest opacity-40 hover:opacity-100 transition-opacity mb-8"
+          className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest opacity-40 hover:opacity-100 transition-opacity mb-8"
           style={{ color: T.text }}
         >
           <ArrowLeft size={16} /> Voltar
@@ -373,7 +373,7 @@ export default function PhygitalCapture() {
               <div className="w-6 h-6 rounded-full bg-brand-tactical flex items-center justify-center">
                 <UserIcon size={12} className="text-zinc-950" />
               </div>
-              <span className="text-[10px] font-black uppercase tracking-widest text-brand-tactical">Olá, {user.nome.split(' ')[0]}</span>
+              <span className="text-[10px] font-bold uppercase tracking-widest text-brand-tactical">Olá, {user.nome.split(' ')[0]}</span>
               <button onClick={logout} className="text-theme-text-muted hover:text-red-500 transition-colors">
                 <LogOut size={14} />
               </button>
@@ -381,14 +381,14 @@ export default function PhygitalCapture() {
           ) : (
             <div className="flex items-center gap-3 px-4 py-2 bg-theme-bg-muted border border-white/10 rounded-full">
                <UserIcon size={12} className="opacity-40" />
-               <span className="text-[10px] font-black uppercase tracking-widest opacity-40">Modo Identificação Pendente</span>
+               <span className="text-[10px] font-bold uppercase tracking-widest opacity-40">Modo Identificação Pendente</span>
             </div>
           )}
         </div>
 
         {/* Header */}
         <div className="text-center mb-12">
-          <div className="text-[18px] font-black uppercase tracking-[0.8em] italic mb-2" style={{ color: T.text }}>FOTO SEGUNDO</div>
+          <div className="text-[18px] font-bold uppercase tracking-[0.8em] mb-2" style={{ color: T.text }}>FOTO SEGUNDO</div>
           <div className="h-px w-12 bg-brand-tactical mx-auto mb-4" />
           <p className="text-[11px] uppercase tracking-[0.3em] font-bold opacity-40">Experiência Phygital</p>
         </div>
@@ -397,7 +397,7 @@ export default function PhygitalCapture() {
         {currentUploadIndex !== null && (
           <div className="space-y-4 text-center py-3 md:py-6 bg-white/[0.02] border border-theme-border rounded-2xl p-3 md:p-6 mb-8 animate-reveal">
             <Loader2 className="animate-spin text-brand-tactical mx-auto" size={32} />
-            <h3 className="text-[11px] font-black uppercase tracking-widest text-white">Transmitindo capturas...</h3>
+            <h3 className="text-[11px] font-bold uppercase tracking-widest text-white">Transmitindo capturas...</h3>
             <p className="text-[9px] text-theme-text-muted uppercase tracking-wider">
               Enviando {currentUploadIndex + 1} de {files.length} ({files[currentUploadIndex].name})
             </p>
@@ -444,7 +444,7 @@ export default function PhygitalCapture() {
                     <button
                       type="button"
                       onClick={() => galleryInputRef.current?.click()}
-                      className="aspect-square rounded-xl border border-dashed border-white/20 hover:border-brand-tactical/50 transition-colors flex flex-col items-center justify-center gap-1 text-[8px] text-theme-text-muted font-black uppercase tracking-wider"
+                      className="aspect-square rounded-xl border border-dashed border-white/20 hover:border-brand-tactical/50 transition-colors flex flex-col items-center justify-center gap-1 text-[8px] text-theme-text-muted font-bold uppercase tracking-wider"
                     >
                       <ImageIcon size={18} className="opacity-40" />
                       Adicionar
@@ -455,7 +455,7 @@ export default function PhygitalCapture() {
                   <button 
                     type="button"
                     onClick={() => { setFiles([]); setPreviews([]); }}
-                    className="text-[9px] font-black uppercase tracking-widest text-red-500 hover:text-red-400 block ml-1"
+                    className="text-[9px] font-bold uppercase tracking-widest text-red-500 hover:text-red-400 block ml-1"
                   >
                     Remover Todos
                   </button>
@@ -470,7 +470,7 @@ export default function PhygitalCapture() {
                   className="flex flex-col items-center justify-center gap-4 p-4 md:p-8 bg-brand-tactical rounded-2xl text-zinc-950 hover:brightness-110 transition-all shadow-xl shadow-brand-tactical/20 active:scale-[0.98]"
                 >
                   <Camera size={32} strokeWidth={2.5} />
-                  <span className="text-xs font-black uppercase tracking-[0.2em]">Tirar Foto / Gravar Vídeo</span>
+                  <span className="text-xs font-bold uppercase tracking-[0.2em]">Tirar Foto / Gravar Vídeo</span>
                 </button>
 
                 <button
@@ -480,7 +480,7 @@ export default function PhygitalCapture() {
                   style={{ color: T.text }}
                 >
                   <ImageIcon size={32} className="opacity-40" />
-                  <span className="text-xs font-black uppercase tracking-[0.2em] opacity-60">Escolher da Galeria (Até 12)</span>
+                  <span className="text-xs font-bold uppercase tracking-[0.2em] opacity-60">Escolher da Galeria (Até 12)</span>
                 </button>
               </div>
             )}
@@ -562,7 +562,7 @@ export default function PhygitalCapture() {
                     style={{ color: T.text }}
                   />
                   {isNewUser && (
-                    <p className="text-[9px] text-brand-tactical font-black uppercase tracking-widest mt-2 ml-1">
+                    <p className="text-[9px] text-brand-tactical font-bold uppercase tracking-widest mt-2 ml-1">
                       ✨ Identificamos que você é novo! Sua conta será criada automaticamente.
                     </p>
                   )}

@@ -60,7 +60,7 @@ export const AdminOverview: React.FC<OverviewProps> = ({ stats, recentOrders = [
         
         <div className="flex flex-col xl:flex-row justify-between items-start xl:items-end gap-3 md:gap-6 relative z-10">
           <div>
-            <h1 className="text-2xl md:text-4xl font-heading font-black uppercase italic tracking-tighter text-theme-text">VISÃO GERAL</h1>
+            <h1 className="text-2xl md:text-4xl font-heading font-bold uppercase text-theme-text">VISÃO GERAL</h1>
             <p className="text-theme-muted mt-2 text-sm">Métricas e performance da plataforma</p>
           </div>
         </div>
@@ -78,7 +78,7 @@ export const AdminOverview: React.FC<OverviewProps> = ({ stats, recentOrders = [
             className="flex flex-col items-center justify-center p-3 md:p-6 bg-theme-bg border border-theme-border rounded-2xl gap-3 text-zinc-400 hover:text-emerald-500 hover:border-emerald-500/50 transition-all active:scale-95"
           >
             {action.icon}
-            <span className="text-[10px] font-black uppercase tracking-widest">{action.label}</span>
+            <span className="text-[10px] font-bold uppercase tracking-widest">{action.label}</span>
           </button>
         ))}
       </div>
@@ -121,7 +121,7 @@ export const AdminOverview: React.FC<OverviewProps> = ({ stats, recentOrders = [
         <div className="space-y-4">
           {pendingEvents.map((event) => (
             <div key={event.id} className="flex items-center justify-between p-4 border border-theme-border rounded-xl">
-              <span className="text-sm font-black text-theme-text">{event.title}</span>
+              <span className="text-sm font-bold text-theme-text">{event.title}</span>
               <button 
                 onClick={() => onEditEvent(event.id)}
                 className="px-4 py-2 text-xs font-bold border border-theme-border text-theme-text hover:bg-theme-bg-muted transition-colors rounded-xl uppercase tracking-widest"

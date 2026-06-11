@@ -20,14 +20,14 @@ export const IncompleteProfileBanner: React.FC = () => {
       >
         <div className="flex items-center gap-2">
           <AlertCircle size={16} className="shrink-0" />
-          <span className="text-[10px] md:text-xs font-black uppercase tracking-widest text-center">
+          <span className="text-[10px] md:text-xs font-bold uppercase tracking-widest text-center">
             Seu perfil está incompleto! Complete agora e ganhe um cupom de FRETE GRÁTIS.
           </span>
         </div>
         
         <button 
           onClick={() => navigate('/minha-conta?s=menu')}
-          className="bg-zinc-950 text-brand-tactical px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-tighter flex items-center gap-1 hover:scale-105 transition-transform"
+          className="bg-zinc-950 text-brand-tactical px-3 py-1 rounded-full text-[9px] font-bold uppercase flex items-center gap-1 hover:scale-105 transition-transform"
         >
           COMPLETAR <ArrowRight size={12} />
         </button>

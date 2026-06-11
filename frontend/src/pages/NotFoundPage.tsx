@@ -22,14 +22,14 @@ export function NotFoundPage() {
             transition={{ duration: 4, repeat: Infinity }}
             className="absolute inset-0 bg-brand-tactical/20 blur-[100px] rounded-full"
           />
-          <h1 className="text-[120px] font-black tracking-tighter leading-none opacity-10">404</h1>
+          <h1 className="text-[120px] font-bold leading-none opacity-10">404</h1>
           <div className="absolute inset-0 flex items-center justify-center">
              <Search size={48} className="text-brand-tactical" strokeWidth={1} />
           </div>
         </div>
 
         <div className="space-y-4">
-          <h2 className="text-3xl font-extrabold tracking-tight">Ops! Evento indisponível ou não encontrado.</h2>
+          <h2 className="text-3xl font-extrabold ">Ops! Evento indisponível ou não encontrado.</h2>
           <p className="text-theme-muted text-[11px] font-bold uppercase tracking-[0.3em] leading-relaxed">
             O registro solicitado não existe em nossa rede ou foi movido para um diretório privado.
           </p>

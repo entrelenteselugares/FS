@@ -77,7 +77,7 @@ export const AdminLeadsPage: React.FC = () => {
     return (
       <div className="py-20 flex flex-col items-center gap-3 md:gap-6">
         <div className="w-px h-8 bg-gradient-to-b from-transparent via-brand-tactical to-transparent" />
-        <div className="text-[10px] font-display font-black uppercase tracking-[0.3em] text-brand-tactical/40 animate-pulse">Sincronizando Leads...</div>
+        <div className="text-[10px] font-display font-bold uppercase tracking-[0.3em] text-brand-tactical/40 animate-pulse">Sincronizando Leads...</div>
       </div>
     );
   }
@@ -100,36 +100,36 @@ export const AdminLeadsPage: React.FC = () => {
         <div className="bg-theme-bg-muted border border-theme-border rounded-2xl p-4 md:p-8 space-y-4 shadow-sm">
           <div className="flex items-center gap-3 text-theme-text-muted">
             <Users size={16} />
-            <span className="text-[10px] font-black uppercase tracking-widest">Total Leads</span>
+            <span className="text-[10px] font-bold uppercase tracking-widest">Total Leads</span>
           </div>
-          <div className="text-2xl md:text-4xl font-heading font-black italic text-theme-text">{leads.length}</div>
+          <div className="text-2xl md:text-4xl font-heading font-bold text-theme-text">{leads.length}</div>
           <p className="text-[9px] text-theme-text-muted uppercase font-bold tracking-widest leading-relaxed">Capturados via formulário na galeria.</p>
         </div>
 
         <div className="bg-theme-bg-muted border border-theme-border rounded-2xl p-4 md:p-8 space-y-4 shadow-sm">
           <div className="flex items-center gap-3 text-orange-500">
             <ShoppingBag size={16} />
-            <span className="text-[10px] font-black uppercase tracking-widest">Abandono de Checkout</span>
+            <span className="text-[10px] font-bold uppercase tracking-widest">Abandono de Checkout</span>
           </div>
-          <div className="text-2xl md:text-4xl font-heading font-black italic text-theme-text">{abandoned.length}</div>
+          <div className="text-2xl md:text-4xl font-heading font-bold text-theme-text">{abandoned.length}</div>
           <p className="text-[9px] text-theme-text-muted uppercase font-bold tracking-widest leading-relaxed">Pedidos pendentes há mais de 1 hora.</p>
         </div>
 
         <div className="bg-brand-tactical/10 border border-brand-tactical/30 rounded-2xl p-4 md:p-8 space-y-4 shadow-sm">
           <div className="flex items-center gap-3 text-brand-tactical">
             <TrendingDown size={16} />
-            <span className="text-[10px] font-black uppercase tracking-widest">Receita Recuperada</span>
+            <span className="text-[10px] font-bold uppercase tracking-widest">Receita Recuperada</span>
           </div>
-          <div className="text-2xl md:text-4xl font-heading font-black italic text-brand-tactical">R$ {stats.recoveredRevenue.toFixed(2)}</div>
+          <div className="text-2xl md:text-4xl font-heading font-bold text-brand-tactical">R$ {stats.recoveredRevenue.toFixed(2)}</div>
           <p className="text-[9px] text-brand-tactical/60 uppercase font-bold tracking-widest leading-relaxed">Impacto real das automações de CRM.</p>
         </div>
 
         <div className="bg-theme-bg-muted border border-theme-border rounded-2xl p-4 md:p-8 space-y-4 shadow-sm">
           <div className="flex items-center gap-3 text-theme-text-muted">
             <TrendingDown size={16} />
-            <span className="text-[10px] font-black uppercase tracking-widest">Taxa de Conversão</span>
+            <span className="text-[10px] font-bold uppercase tracking-widest">Taxa de Conversão</span>
           </div>
-          <div className="text-2xl md:text-4xl font-heading font-black italic text-theme-text">
+          <div className="text-2xl md:text-4xl font-heading font-bold text-theme-text">
             {stats.totalSent > 0 ? ((stats.recoveredCount / stats.totalSent) * 100).toFixed(1) : 0}%
           </div>
           <p className="text-[9px] text-theme-text-muted uppercase font-bold tracking-widest leading-relaxed">Eficiência dos disparos automáticos.</p>
@@ -172,11 +172,11 @@ export const AdminLeadsPage: React.FC = () => {
                 <tr key={item.id} className="hover:bg-brand-tactical/10 transition-colors group">
                   <td className="p-3 md:p-6">
                     <div className="space-y-1">
-                      <div className="text-[10px] font-black text-theme-text uppercase italic">{item.cliente?.nome || 'Cliente não identificado'}</div>
+                      <div className="text-[10px] font-bold text-theme-text uppercase ">{item.cliente?.nome || 'Cliente não identificado'}</div>
                       <div className="text-[9px] font-bold text-theme-text-muted lowercase flex items-center gap-2">
                         {item.cliente?.email || item.buyerEmail}
                         {item.recoverySentAt && (
-                          <span className="px-2 py-0.5 bg-brand-tactical/10 text-brand-tactical border border-brand-tactical/20 rounded-full text-[7px] font-black uppercase">
+                          <span className="px-2 py-0.5 bg-brand-tactical/10 text-brand-tactical border border-brand-tactical/20 rounded-full text-[7px] font-bold uppercase">
                             Lembrete Enviado
                           </span>
                         )}
@@ -184,10 +184,10 @@ export const AdminLeadsPage: React.FC = () => {
                     </div>
                   </td>
                   <td className="p-3 md:p-6">
-                    <span className="text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest text-theme-text-muted">{item.event.title}</span>
+                    <span className="text-[8px] md:text-[9px] font-bold uppercase tracking-wider md:tracking-widest text-theme-text-muted">{item.event.title}</span>
                   </td>
                   <td className="p-3 md:p-6">
-                    <span className="text-xs font-heading font-black italic text-theme-text">R$ {Number(item.valor).toFixed(2)}</span>
+                    <span className="text-xs font-heading font-bold text-theme-text">R$ {Number(item.valor).toFixed(2)}</span>
                   </td>
                   <td className="p-3 md:p-6">
                     <div className="flex items-center gap-2 text-theme-text-muted">
@@ -217,7 +217,7 @@ export const AdminLeadsPage: React.FC = () => {
               ))}
               {abandoned.length === 0 && (
                 <tr>
-                  <td colSpan={5} className="p-20 text-center text-[10px] font-black text-zinc-600 uppercase tracking-widest">Nenhum abandono detectado na última hora.</td>
+                  <td colSpan={5} className="p-20 text-center text-[10px] font-bold text-zinc-600 uppercase tracking-widest">Nenhum abandono detectado na última hora.</td>
                 </tr>
               )}
             </tbody>
@@ -241,17 +241,17 @@ export const AdminLeadsPage: React.FC = () => {
                       <div className="w-8 h-8 bg-brand-tactical/10 flex items-center justify-center rounded-full text-brand-tactical">
                         <UserPlus size={14} />
                       </div>
-                      <span className="text-[10px] font-black text-theme-text lowercase">{lead.email}</span>
+                      <span className="text-[10px] font-bold text-theme-text lowercase">{lead.email}</span>
                     </div>
                   </td>
-                  <td className="p-3 md:p-6 text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest text-theme-text-muted">
+                  <td className="p-3 md:p-6 text-[8px] md:text-[9px] font-bold uppercase tracking-wider md:tracking-widest text-theme-text-muted">
                     {lead.event?.title || 'Captação Geral'}
                   </td>
                   <td className="p-3 md:p-6 text-[9px] font-bold text-theme-text-muted">
                     {new Date(lead.createdAt).toLocaleDateString('pt-BR')}
                   </td>
                   <td className="p-3 md:p-6">
-                    <span className="px-2 py-1 bg-theme-bg border border-theme-border text-[8px] font-black text-theme-text-muted uppercase tracking-widest rounded-full">{lead.source}</span>
+                    <span className="px-2 py-1 bg-theme-bg border border-theme-border text-[8px] font-bold text-theme-text-muted uppercase tracking-widest rounded-full">{lead.source}</span>
                   </td>
                   <td className="p-3 md:p-6 text-right">
                     <button 
@@ -265,7 +265,7 @@ export const AdminLeadsPage: React.FC = () => {
               ))}
               {leads.length === 0 && (
                 <tr>
-                  <td colSpan={5} className="p-20 text-center text-[10px] font-black text-zinc-600 uppercase tracking-widest">Nenhum lead capturado ainda.</td>
+                  <td colSpan={5} className="p-20 text-center text-[10px] font-bold text-zinc-600 uppercase tracking-widest">Nenhum lead capturado ainda.</td>
                 </tr>
               )}
             </tbody>

@@ -70,7 +70,7 @@ export function PrintCatalog({ selectedProductId, onAddToCart }: PrintCatalogPro
     <section className="w-full bg-[var(--bg)] text-[var(--text)] py-12 px-4 sm:px-6 lg:px-8 font-sans">
       <div className="max-w-7xl mx-auto">
         <div className="mb-10 text-center sm:text-left">
-          <h2 className="text-3xl md:text-4xl font-black tracking-tighter text-[var(--text)] uppercase italic leading-none">
+          <h2 className="text-3xl md:text-4xl font-bold text-[var(--text)] uppercase leading-none">
             ETERNIZE NO <span className="text-brand-tactical">PAPEL</span>
           </h2>
           <p className="mt-2 text-sm text-gray-400">
@@ -111,7 +111,7 @@ export function PrintCatalog({ selectedProductId, onAddToCart }: PrintCatalogPro
                   
                   {/* Badge Tático (Glassmorphism) */}
                   {item.badge && (
-                    <div className="absolute top-4 right-4 bg-black/60 backdrop-blur-md text-emerald-400 text-[9px] font-black px-3 py-1.5 rounded-full uppercase tracking-[0.2em] border border-emerald-500/30 z-20 shadow-xl">
+                    <div className="absolute top-4 right-4 bg-black/60 backdrop-blur-md text-emerald-400 text-[9px] font-bold px-3 py-1.5 rounded-full uppercase tracking-[0.2em] border border-emerald-500/30 z-20 shadow-xl">
                       {item.badge}
                     </div>
                   )}
@@ -126,7 +126,7 @@ export function PrintCatalog({ selectedProductId, onAddToCart }: PrintCatalogPro
                 </div>
 
                 <div className="flex-1 p-6 flex flex-col">
-                  <h3 className="text-xl font-black text-[var(--text)] uppercase tracking-wider italic mb-2">
+                  <h3 className="text-xl font-bold text-[var(--text)] uppercase tracking-wider mb-2">
                     {item.name}
                   </h3>
                   <p className="text-xs text-[var(--text-2)] leading-relaxed font-medium mb-6 flex-1">
@@ -135,9 +135,9 @@ export function PrintCatalog({ selectedProductId, onAddToCart }: PrintCatalogPro
 
                   <div className="flex items-center justify-between mt-auto">
                     <div className="flex flex-col">
-                      <span className="text-[10px] text-[var(--text-3)] uppercase tracking-widest font-black italic">Investimento</span>
-                      <span className="text-2xl font-black text-white italic">
-                        <span className="text-sm font-light text-[var(--text-2)] mr-1">R$</span>
+                      <span className="text-[10px] text-[var(--text-3)] uppercase tracking-widest font-bold ">Investimento</span>
+                      <span className="text-2xl font-bold text-white ">
+                        <span className="text-sm font-normal text-[var(--text-2)] mr-1">R$</span>
                         {Number(item.sellingPrice).toFixed(0)}
                         <span className="text-sm text-[var(--text-3)]">,00</span>
                       </span>

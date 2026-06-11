@@ -68,15 +68,15 @@ export default function CustomServiceForm() {
           className="absolute top-6 left-6 z-50 flex items-center gap-2 px-5 py-2.5 bg-theme-bg/60 backdrop-blur-md border border-theme-border rounded-full text-theme-text hover:bg-brand-tactical hover:text-black transition-all shadow-xl"
         >
           <ChevronLeft size={16} />
-          <span className="text-[10px] font-black uppercase tracking-widest">Voltar</span>
+          <span className="text-[10px] font-bold uppercase tracking-widest">Voltar</span>
         </button>
         <div className="absolute inset-0 bg-brand-tactical/10 blur-3xl rounded-full -m-64 opacity-30" />
         <div className="max-w-[1000px] mx-auto px-4 md:px-6 relative z-10">
           <div className="w-12 h-1 bg-brand-tactical mb-6" />
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-theme-text uppercase tracking-tighter whitespace-normal italic pr-6">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-theme-text uppercase whitespace-normal pr-6">
             Novo Serviço
           </h1>
-          <p className="text-[10px] text-theme-muted uppercase tracking-[0.4em] mt-4 font-black">
+          <p className="text-[10px] text-theme-muted uppercase tracking-[0.4em] mt-4 font-bold">
             Crie seus pacotes e precificação
           </p>
         </div>
@@ -87,7 +87,7 @@ export default function CustomServiceForm() {
           <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="mb-8 p-3 md:p-6 bg-green-500/10 border border-green-500/20 text-green-400 flex items-center gap-4">
             <Check size={24} />
             <div>
-              <h3 className="font-black uppercase tracking-widest text-sm">Serviço Enviado!</h3>
+              <h3 className="font-bold uppercase tracking-widest text-sm">Serviço Enviado!</h3>
               <p className="text-xs opacity-80 mt-1">Seu serviço foi enviado e está em análise pela Rede.</p>
             </div>
           </motion.div>
@@ -97,7 +97,7 @@ export default function CustomServiceForm() {
           <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="mb-8 p-3 md:p-6 bg-red-500/10 border border-red-500/20 text-red-400 flex items-center gap-4">
             <X size={24} />
             <div>
-              <h3 className="font-black uppercase tracking-widest text-sm">Erro ao enviar</h3>
+              <h3 className="font-bold uppercase tracking-widest text-sm">Erro ao enviar</h3>
               <p className="text-xs opacity-80 mt-1">{error}</p>
             </div>
           </motion.div>
@@ -107,17 +107,17 @@ export default function CustomServiceForm() {
           
           {/* IDENTIFICAÇÃO */}
           <section className="space-y-6">
-            <h2 className="text-sm font-black text-white uppercase tracking-widest border-b border-white/5 pb-2">1. Identificação</h2>
+            <h2 className="text-sm font-bold text-white uppercase tracking-widest border-b border-white/5 pb-2">1. Identificação</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-[10px] text-theme-muted uppercase tracking-widest font-black mb-2">Nome do Serviço *</label>
+                <label className="block text-[10px] text-theme-muted uppercase tracking-widest font-bold mb-2">Nome do Serviço *</label>
                 <input required type="text" placeholder="Ex: Cobertura de Casamento, Edição de Reels..."
                   value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})}
                   className="w-full bg-black border border-white/10 p-3 text-xs text-white outline-none focus:border-brand-tactical transition-colors"
                 />
               </div>
               <div>
-                <label className="block text-[10px] text-theme-muted uppercase tracking-widest font-black mb-2">Categoria</label>
+                <label className="block text-[10px] text-theme-muted uppercase tracking-widest font-bold mb-2">Categoria</label>
                 <input type="text" placeholder="Ex: Casamento, Corporativo, Pós-produção..."
                   value={formData.category} onChange={e => setFormData({...formData, category: e.target.value})}
                   className="w-full bg-black border border-white/10 p-3 text-xs text-white outline-none focus:border-brand-tactical transition-colors"
@@ -125,7 +125,7 @@ export default function CustomServiceForm() {
               </div>
             </div>
             <div>
-              <label className="block text-[10px] text-theme-muted uppercase tracking-widest font-black mb-2">Descrição / O que está incluso *</label>
+              <label className="block text-[10px] text-theme-muted uppercase tracking-widest font-bold mb-2">Descrição / O que está incluso *</label>
               <textarea required placeholder="Detalhe o que será entregue, quantas horas, formato final, etc."
                 value={formData.description} onChange={e => setFormData({...formData, description: e.target.value})}
                 className="w-full bg-black border border-white/10 p-3 text-xs text-white h-24 outline-none focus:border-brand-tactical transition-colors"
@@ -135,21 +135,21 @@ export default function CustomServiceForm() {
 
           {/* FORMATO DO TRABALHO */}
           <section className="space-y-6">
-            <h2 className="text-sm font-black text-white uppercase tracking-widest border-b border-white/5 pb-2">2. Formato de Trabalho</h2>
+            <h2 className="text-sm font-bold text-white uppercase tracking-widest border-b border-white/5 pb-2">2. Formato de Trabalho</h2>
             <div className="flex flex-wrap gap-4 mb-4">
             <label className={`cursor-pointer flex-1 border p-3 flex flex-col items-center justify-center gap-2 transition-colors ${!formData.isRemote ? 'bg-brand-tactical/10 border-brand-tactical text-brand-tactical' : 'bg-black border-white/10 text-theme-muted hover:border-white/30'}`}>
               <input type="radio" name="isRemote" className="hidden" checked={!formData.isRemote} onChange={() => setFormData({...formData, isRemote: false})} />
               <Camera size={20} />
-              <span className="text-[10px] font-black uppercase tracking-widest text-center">Presencial (Em Campo)</span>
+              <span className="text-[10px] font-bold uppercase tracking-widest text-center">Presencial (Em Campo)</span>
             </label>
             <label className={`cursor-pointer flex-1 border p-3 flex flex-col items-center justify-center gap-2 transition-colors ${formData.isRemote ? 'bg-brand-tactical/10 border-brand-tactical text-brand-tactical' : 'bg-black border-white/10 text-theme-muted hover:border-white/30'}`}>
               <input type="radio" name="isRemote" className="hidden" checked={formData.isRemote} onChange={() => setFormData({...formData, isRemote: true})} />
               <Laptop size={20} />
-              <span className="text-[10px] font-black uppercase tracking-widest text-center">Remoto (Edição/Design)</span>
+              <span className="text-[10px] font-bold uppercase tracking-widest text-center">Remoto (Edição/Design)</span>
             </label>
             </div>
             <div>
-              <label className="block text-[10px] text-theme-muted uppercase tracking-widest font-black mb-2">
+              <label className="block text-[10px] text-theme-muted uppercase tracking-widest font-bold mb-2">
                 {formData.isRemote ? 'Softwares Utilizados' : 'Equipamentos Necessários'}
               </label>
               <input type="text" placeholder={formData.isRemote ? "Ex: Premiere, Lightroom, Mac M1" : "Ex: Sony A7III, Lente 50mm, Flash, Drone"}
@@ -161,10 +161,10 @@ export default function CustomServiceForm() {
 
           {/* PRECIFICAÇÃO */}
           <section className="space-y-6">
-            <h2 className="text-sm font-black text-white uppercase tracking-widest border-b border-white/5 pb-2">3. Precificação</h2>
+            <h2 className="text-sm font-bold text-white uppercase tracking-widest border-b border-white/5 pb-2">3. Precificação</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-[10px] text-theme-muted uppercase tracking-widest font-black mb-2">Formato de Cobrança</label>
+                <label className="block text-[10px] text-theme-muted uppercase tracking-widest font-bold mb-2">Formato de Cobrança</label>
                 <select 
                   value={formData.pricingType} onChange={e => setFormData({...formData, pricingType: e.target.value})}
                   className="w-full bg-black border border-white/10 p-3 text-xs text-white outline-none focus:border-brand-tactical appearance-none"
@@ -175,7 +175,7 @@ export default function CustomServiceForm() {
                 </select>
               </div>
               <div>
-                <label className="block text-[10px] text-theme-muted uppercase tracking-widest font-black mb-2">Preço (R$) *</label>
+                <label className="block text-[10px] text-theme-muted uppercase tracking-widest font-bold mb-2">Preço (R$) *</label>
                 <input required type="number" step="0.01" min="0" placeholder="0.00"
                   value={formData.price} onChange={e => setFormData({...formData, price: e.target.value})}
                   className="w-full bg-black border border-white/10 p-3 text-xs text-white outline-none focus:border-brand-tactical transition-colors"
@@ -183,7 +183,7 @@ export default function CustomServiceForm() {
               </div>
               
               <div>
-                <label className="block text-[10px] text-theme-muted uppercase tracking-widest font-black mb-2">Mínimo de Contratação</label>
+                <label className="block text-[10px] text-theme-muted uppercase tracking-widest font-bold mb-2">Mínimo de Contratação</label>
                 <input type="number" min="0" placeholder={formData.pricingType === "HOURLY" ? "Horas mínimas" : formData.pricingType === "PER_UNIT" ? "Quantidade mínima" : "N/A"}
                   value={formData.minQuantity} onChange={e => setFormData({...formData, minQuantity: e.target.value})}
                   disabled={formData.pricingType === "FIXED"}
@@ -191,14 +191,14 @@ export default function CustomServiceForm() {
                 />
               </div>
               <div>
-                <label className="block text-[10px] text-theme-muted uppercase tracking-widest font-black mb-2">Prazo de Entrega (Dias)</label>
+                <label className="block text-[10px] text-theme-muted uppercase tracking-widest font-bold mb-2">Prazo de Entrega (Dias)</label>
                 <input type="number" min="0" placeholder="Dias úteis para entrega"
                   value={formData.deliveryDays} onChange={e => setFormData({...formData, deliveryDays: e.target.value})}
                   className="w-full bg-black border border-white/10 p-3 text-xs text-white outline-none focus:border-brand-tactical transition-colors"
                 />
               </div>
               <div>
-                <label className="block text-[10px] text-theme-muted uppercase tracking-widest font-black mb-2">Duração Estimada (Minutos)</label>
+                <label className="block text-[10px] text-theme-muted uppercase tracking-widest font-bold mb-2">Duração Estimada (Minutos)</label>
                 <input type="number" min="0" placeholder="Ex: 60, 120..."
                   value={formData.estimatedMinutes} onChange={e => setFormData({...formData, estimatedMinutes: e.target.value})}
                   className="w-full bg-black border border-white/10 p-3 text-xs text-white outline-none focus:border-brand-tactical transition-colors"
@@ -209,7 +209,7 @@ export default function CustomServiceForm() {
 
           {/* INFORMAÇÕES INTERNAS */}
           <section className="space-y-6">
-            <h2 className="text-sm font-black text-white uppercase tracking-widest border-b border-white/5 pb-2">4. Revisão</h2>
+            <h2 className="text-sm font-bold text-white uppercase tracking-widest border-b border-white/5 pb-2">4. Revisão</h2>
             <div className="bg-theme-bg p-4 border border-white/5 flex gap-4">
               <HelpCircle className="text-brand-tactical shrink-0" size={20} />
               <div>
@@ -217,7 +217,7 @@ export default function CustomServiceForm() {
                   Todos os serviços customizados passam por uma auditoria rápida da Rede FotoSegundo para garantir alinhamento de qualidade e preços com a tabela de franquias.
                 </p>
                 <div className="mt-4">
-                  <label className="block text-[10px] text-theme-muted uppercase tracking-widest font-black mb-2">Justificativa / Link de Portfólio (Opcional)</label>
+                  <label className="block text-[10px] text-theme-muted uppercase tracking-widest font-bold mb-2">Justificativa / Link de Portfólio (Opcional)</label>
                   <textarea placeholder="Deixe um recado para a curadoria, caso necessário."
                     value={formData.networkJustification} onChange={e => setFormData({...formData, networkJustification: e.target.value})}
                     className="w-full bg-black border border-white/10 p-3 text-xs text-white h-20 outline-none focus:border-brand-tactical transition-colors"
@@ -230,7 +230,7 @@ export default function CustomServiceForm() {
           <button 
             type="submit" 
             disabled={loading}
-            className="w-full py-2.5 md:py-4 bg-brand-tactical text-[var(--brand-text)] text-xs font-black uppercase tracking-widest hover:brightness-110 transition-all disabled:opacity-50 rounded-xl"
+            className="w-full py-2.5 md:py-4 bg-brand-tactical text-[var(--brand-text)] text-xs font-bold uppercase tracking-widest hover:brightness-110 transition-all disabled:opacity-50 rounded-xl"
           >
             {loading ? "Enviando..." : "Enviar Serviço para Aprovação"}
           </button>

@@ -80,10 +80,10 @@ const TimeUnit = ({ value, label }: { value: number; label: string }) => (
       key={value}
       initial={{ y: 10, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
-      className="text-2xl lg:text-4xl font-black font-display tracking-tighter"
+      className="text-2xl lg:text-4xl font-bold font-display "
     >
       {value.toString().padStart(2, '0')}
     </motion.div>
-    <span className="text-[8px] font-black uppercase tracking-[0.2em] text-theme-muted mt-1">{label}</span>
+    <span className="text-[8px] font-bold uppercase tracking-[0.2em] text-theme-muted mt-1">{label}</span>
   </div>
 );

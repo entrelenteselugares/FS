@@ -37,11 +37,11 @@ export const DeliveryView: React.FC<DeliveryViewProps> = ({ event }) => {
           <span className="text-[10px] font-bold uppercase tracking-[0.6em] text-brand-olive">Digital Archive Unlocked</span>
         </div>
 
-        <h1 className="text-5xl md:text-8xl tracking-tight mb-8">
+        <h1 className="text-5xl md:text-8xl mb-8">
           Arquivos <br /><span className="text-zinc-600">Disponíveis.</span>
         </h1>
         
-        <p className="text-zinc-600 text-sm md:text-base leading-relaxed mb-24 max-w-lg mx-auto uppercase tracking-[0.2em] font-light">
+        <p className="text-zinc-600 text-sm md:text-base leading-relaxed mb-24 max-w-lg mx-auto uppercase tracking-[0.2em] font-normal">
           A curadoria foi finalizada com sucesso. <br />
           Explore cada fragmento histórico desta celebração.
         </p>
@@ -57,7 +57,7 @@ export const DeliveryView: React.FC<DeliveryViewProps> = ({ event }) => {
             <div className="mb-10 text-zinc-700 group-hover:text-white transition-all">
               <PhotoIcon />
             </div>
-            <h3 className="text-xl text-white mb-4 tracking-tight">Professional Gallery</h3>
+            <h3 className="text-xl text-white mb-4 ">Professional Gallery</h3>
             <p className="text-zinc-600 text-[9px] font-bold uppercase tracking-[0.3em] mb-10">Adobe Cloud Experience</p>
             <div className="w-6 h-[1px] bg-zinc-800 group-hover:bg-brand-olive group-hover:w-16 transition-all" />
           </motion.a>
@@ -72,7 +72,7 @@ export const DeliveryView: React.FC<DeliveryViewProps> = ({ event }) => {
             <div className="mb-10 text-zinc-700 group-hover:text-white transition-all">
               <VideoIcon />
             </div>
-            <h3 className="text-xl text-white mb-4 tracking-tight">Master Repository</h3>
+            <h3 className="text-xl text-white mb-4 ">Master Repository</h3>
             <p className="text-zinc-600 text-[9px] font-bold uppercase tracking-[0.3em] mb-10">Google Cloud Master Assets</p>
             <div className="w-6 h-[1px] bg-zinc-800 group-hover:bg-brand-olive group-hover:w-16 transition-all" />
           </motion.a>

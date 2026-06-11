@@ -70,7 +70,7 @@ export const Navbar: React.FC<NavbarProps> = ({ tenantLogoUrl }) => {
           >
             <ShoppingBag size={18} strokeWidth={1.5} />
             {totalItems > 0 && (
-              <span className="absolute -top-1 -right-1 w-4 h-4 bg-brand-tactical text-black text-[9px] font-black flex items-center justify-center rounded-sm animate-pulse-soft">
+              <span className="absolute -top-1 -right-1 w-4 h-4 bg-brand-tactical text-black text-[9px] font-bold flex items-center justify-center rounded-sm animate-pulse-soft">
                 {totalItems}
               </span>
             )}
@@ -86,7 +86,7 @@ export const Navbar: React.FC<NavbarProps> = ({ tenantLogoUrl }) => {
                 {user.profileImageUrl ? (
                   <img src={user.profileImageUrl} alt="" className="w-6 h-6 rounded-full object-cover border border-theme-border" />
                 ) : (
-                  <div className="w-6 h-6 rounded-full bg-brand-tactical/20 flex items-center justify-center text-[8px] font-black border border-theme-border">
+                  <div className="w-6 h-6 rounded-full bg-brand-tactical/20 flex items-center justify-center text-[8px] font-bold border border-theme-border">
                     {user.nome?.[0] || "?"}
                   </div>
                 )}

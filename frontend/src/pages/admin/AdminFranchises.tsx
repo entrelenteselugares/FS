@@ -187,7 +187,7 @@ export default function AdminFranchises() {
             <div className="flex flex-wrap items-center gap-4 w-full xl:w-auto">
               <button 
                 onClick={() => setShowAddModal(true)}
-                className="flex-1 md:flex-none px-4 md:px-8 py-4 bg-brand-tactical text-zinc-950 text-[10px] font-black uppercase tracking-widest hover:brightness-110 transition-all flex items-center justify-center gap-3 shadow-xl italic whitespace-nowrap"
+                className="flex-1 md:flex-none px-4 md:px-8 py-4 bg-brand-tactical text-zinc-950 text-[10px] font-bold uppercase tracking-widest hover:brightness-110 transition-all flex items-center justify-center gap-3 shadow-xl whitespace-nowrap"
               >
                 <Plus size={16} /> NOVO FRANQUEADO
               </button>
@@ -199,24 +199,24 @@ export default function AdminFranchises() {
       {/* Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6">
         <div className="bg-theme-bg-muted p-3 md:p-6 border border-theme-border space-y-3 group hover:border-brand-tactical/50 transition-all rounded-2xl">
-          <label className="text-[9px] font-black text-theme-muted uppercase tracking-widest block italic">Total de Franqueados</label>
-          <div className="text-3xl font-heading font-black text-theme-text italic">{franchisees.length}</div>
+          <label className="text-[9px] font-bold text-theme-muted uppercase tracking-widest block ">Total de Franqueados</label>
+          <div className="text-3xl font-heading font-bold text-theme-text ">{franchisees.length}</div>
         </div>
         <div className="bg-theme-bg-muted p-3 md:p-6 border border-theme-border space-y-3 group hover:border-brand-tactical/50 transition-all rounded-2xl">
-          <label className="text-[9px] font-black text-theme-muted uppercase tracking-widest block italic">Créditos em Circulação</label>
-          <div className="text-3xl font-heading font-black text-brand-tactical italic">
+          <label className="text-[9px] font-bold text-theme-muted uppercase tracking-widest block ">Créditos em Circulação</label>
+          <div className="text-3xl font-heading font-bold text-brand-tactical ">
             {franchisees.reduce((acc, f) => acc + (f.franchiseProfile?.printCredits || 0), 0)}
           </div>
         </div>
         <div className="bg-theme-bg-muted p-3 md:p-6 border border-theme-border space-y-3 group hover:border-brand-tactical/50 transition-all rounded-2xl">
-          <label className="text-[9px] font-black text-theme-muted uppercase tracking-widest block italic">Eventos Cobertos</label>
-          <div className="text-3xl font-heading font-black text-theme-text italic">
+          <label className="text-[9px] font-bold text-theme-muted uppercase tracking-widest block ">Eventos Cobertos</label>
+          <div className="text-3xl font-heading font-bold text-theme-text ">
             {franchisees.reduce((acc, f) => acc + (f.franchiseProfile?.events?.length || 0), 0)}
           </div>
         </div>
         <div className="bg-theme-bg-muted p-3 md:p-6 border border-theme-border space-y-3 group hover:border-brand-tactical/50 transition-all rounded-2xl">
-          <label className="text-[9px] font-black text-theme-muted uppercase tracking-widest block italic">Status da Rede</label>
-          <div className="flex items-center gap-2 text-brand-tactical font-black text-[12px] font-heading uppercase tracking-widest italic leading-none">
+          <label className="text-[9px] font-bold text-theme-muted uppercase tracking-widest block ">Status da Rede</label>
+          <div className="flex items-center gap-2 text-brand-tactical font-bold text-[12px] font-heading uppercase tracking-widest leading-none">
             <Activity size={14} strokeWidth={1.5} /> 100% ONLINE
           </div>
         </div>
@@ -227,23 +227,23 @@ export default function AdminFranchises() {
         <table className="w-full text-left border-collapse">
           <thead>
             <tr className="bg-theme-bg-muted">
-              <th className="p-3 md:p-6 text-[10px] font-black text-theme-muted uppercase tracking-widest">Franqueado</th>
-              <th className="p-3 md:p-6 text-[10px] font-black text-theme-muted uppercase tracking-widest text-center">Status</th>
-              <th className="p-3 md:p-6 text-[10px] font-black text-theme-muted uppercase tracking-widest text-center">Saldo Créditos</th>
-              <th className="p-3 md:p-6 text-[10px] font-black text-theme-muted uppercase tracking-widest text-center">Eventos</th>
-              <th className="p-3 md:p-6 text-[10px] font-black text-theme-muted uppercase tracking-widest text-right">Ações</th>
+              <th className="p-3 md:p-6 text-[10px] font-bold text-theme-muted uppercase tracking-widest">Franqueado</th>
+              <th className="p-3 md:p-6 text-[10px] font-bold text-theme-muted uppercase tracking-widest text-center">Status</th>
+              <th className="p-3 md:p-6 text-[10px] font-bold text-theme-muted uppercase tracking-widest text-center">Saldo Créditos</th>
+              <th className="p-3 md:p-6 text-[10px] font-bold text-theme-muted uppercase tracking-widest text-center">Eventos</th>
+              <th className="p-3 md:p-6 text-[10px] font-bold text-theme-muted uppercase tracking-widest text-right">Ações</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-theme-border">
             {loading ? (
-              <tr><td colSpan={5} className="p-20 text-center text-theme-muted text-[10px] font-black uppercase tracking-[0.5em]">Sincronizando Rede...</td></tr>
+              <tr><td colSpan={5} className="p-20 text-center text-theme-muted text-[10px] font-bold uppercase tracking-[0.5em]">Sincronizando Rede...</td></tr>
             ) : franchisees.length === 0 ? (
-              <tr><td colSpan={5} className="p-20 text-center text-theme-muted text-[10px] font-black uppercase tracking-[0.5em]">Nenhum franqueado ativo.</td></tr>
+              <tr><td colSpan={5} className="p-20 text-center text-theme-muted text-[10px] font-bold uppercase tracking-[0.5em]">Nenhum franqueado ativo.</td></tr>
             ) : franchisees.map(f => (
               <tr key={f.id} className="hover:bg-theme-bg-muted transition-all">
                 <td className="p-3 md:p-6">
                   <div className="flex flex-col">
-                    <span className="text-sm font-black text-theme-text uppercase tracking-tight">{f.nome}</span>
+                    <span className="text-sm font-bold text-theme-text uppercase ">{f.nome}</span>
                     <span className="text-[10px] text-theme-muted font-bold">{f.email}</span>
                   </div>
                 </td>
@@ -257,10 +257,10 @@ export default function AdminFranchises() {
                     <span className={`text-xl font-black ${(f.franchiseProfile?.printCredits || 0) < 50 ? 'text-amber-500' : 'text-theme-text'}`}>
                       {f.franchiseProfile?.printCredits || 0}
                     </span>
-                    <span className="text-[8px] text-theme-muted font-black uppercase">Fotos Disponíveis</span>
+                    <span className="text-[8px] text-theme-muted font-bold uppercase">Fotos Disponíveis</span>
                   </div>
                 </td>
-                <td className="p-3 md:p-6 text-center text-sm font-black text-theme-muted">
+                <td className="p-3 md:p-6 text-center text-sm font-bold text-theme-muted">
                   {f.franchiseProfile?.events?.length || 0}
                 </td>
                 <td className="p-3 md:p-6 text-right">
@@ -290,7 +290,7 @@ export default function AdminFranchises() {
                         </button>
                       </>
                     ) : (
-                      <span className="text-[8px] font-black text-theme-muted uppercase tracking-widest bg-theme-bg-muted px-3 py-2 border border-theme-border rounded-2xl">Acesso Restrito</span>
+                      <span className="text-[8px] font-bold text-theme-muted uppercase tracking-widest bg-theme-bg-muted px-3 py-2 border border-theme-border rounded-2xl">Acesso Restrito</span>
                     )}
                   </div>
                 </td>
@@ -303,38 +303,38 @@ export default function AdminFranchises() {
       {/* Supply Orders Section */}
       <div className="space-y-6 pt-10 border-t border-theme-border">
         <div>
-          <h3 className="text-2xl font-black text-theme-text uppercase tracking-tighter">Pedidos de Suprimentos</h3>
-          <p className="text-[9px] sm:text-[11px] font-black text-brand-tactical uppercase tracking-[0.2em] sm:tracking-[0.4em] italic truncate max-w-[80vw]">Controle de Licenças e Royalties</p>
+          <h3 className="text-2xl font-bold text-theme-text uppercase ">Pedidos de Suprimentos</h3>
+          <p className="text-[9px] sm:text-[11px] font-bold text-brand-tactical uppercase tracking-[0.2em] sm:tracking-[0.4em] truncate max-w-[80vw]">Controle de Licenças e Royalties</p>
         </div>
 
         <div className="border border-theme-border bg-theme-bg-muted shadow-sm overflow-x-auto w-full rounded-2xl">
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="bg-theme-bg-muted">
-                <th className="p-4 text-[9px] font-black text-theme-muted uppercase tracking-widest">Pedido</th>
-                <th className="p-4 text-[9px] font-black text-theme-muted uppercase tracking-widest">Franqueado</th>
-                <th className="p-4 text-[9px] font-black text-theme-muted uppercase tracking-widest">Itens</th>
-                <th className="p-4 text-[9px] font-black text-theme-muted uppercase tracking-widest text-center">Total</th>
-                <th className="p-4 text-[9px] font-black text-theme-muted uppercase tracking-widest text-right">Status</th>
-                <th className="p-4 text-[9px] font-black text-theme-muted uppercase tracking-widest text-right">Ações</th>
+                <th className="p-4 text-[9px] font-bold text-theme-muted uppercase tracking-widest">Pedido</th>
+                <th className="p-4 text-[9px] font-bold text-theme-muted uppercase tracking-widest">Franqueado</th>
+                <th className="p-4 text-[9px] font-bold text-theme-muted uppercase tracking-widest">Itens</th>
+                <th className="p-4 text-[9px] font-bold text-theme-muted uppercase tracking-widest text-center">Total</th>
+                <th className="p-4 text-[9px] font-bold text-theme-muted uppercase tracking-widest text-right">Status</th>
+                <th className="p-4 text-[9px] font-bold text-theme-muted uppercase tracking-widest text-right">Ações</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-theme-border/50">
               {loadingOrders ? (
-                <tr><td colSpan={5} className="p-5 md:p-10 text-center text-theme-muted text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest">Carregando pedidos...</td></tr>
+                <tr><td colSpan={5} className="p-5 md:p-10 text-center text-theme-muted text-[8px] md:text-[9px] font-bold uppercase tracking-wider md:tracking-widest">Carregando pedidos...</td></tr>
               ) : supplyOrders.length === 0 ? (
-                <tr><td colSpan={5} className="p-5 md:p-10 text-center text-theme-muted text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest">Nenhum pedido registrado.</td></tr>
+                <tr><td colSpan={5} className="p-5 md:p-10 text-center text-theme-muted text-[8px] md:text-[9px] font-bold uppercase tracking-wider md:tracking-widest">Nenhum pedido registrado.</td></tr>
               ) : supplyOrders.map(order => (
                 <tr key={order.id} className="hover:bg-white/[0.02] transition-colors">
                   <td className="p-4">
                     <div className="flex flex-col">
-                      <span className="text-[10px] font-black text-theme-text font-mono">#{order.id.slice(-6).toUpperCase()}</span>
+                      <span className="text-[10px] font-bold text-theme-text font-mono">#{order.id.slice(-6).toUpperCase()}</span>
                       <span className="text-[8px] text-theme-muted">{new Date(order.createdAt).toLocaleDateString('pt-BR')}</span>
                     </div>
                   </td>
                   <td className="p-4">
                     <div className="flex flex-col">
-                      <span className="text-[10px] font-black text-theme-text uppercase">{order.franchisee?.nome}</span>
+                      <span className="text-[10px] font-bold text-theme-text uppercase">{order.franchisee?.nome}</span>
                       <span className="text-[8px] text-theme-muted">{order.franchisee?.email}</span>
                     </div>
                   </td>
@@ -344,7 +344,7 @@ export default function AdminFranchises() {
                     </p>
                   </td>
                   <td className="p-4 text-center">
-                    <span className="text-[10px] font-black text-emerald-500 italic">R$ {Number(order.total).toFixed(2)}</span>
+                    <span className="text-[10px] font-bold text-emerald-500 ">R$ {Number(order.total).toFixed(2)}</span>
                   </td>
                   <td className="p-4 text-right">
                     <span className={`text-[8px] font-black px-2 py-1 rounded-sm uppercase tracking-tighter ${
@@ -360,14 +360,14 @@ export default function AdminFranchises() {
                       <button
                         onClick={() => setFulfillModal({ orderId: order.id, franchisee: order.franchisee?.nome })}
                         disabled={fulfillingOrder === order.id}
-                        className="text-[8px] font-black uppercase tracking-widest px-3 py-1.5 bg-emerald-500 hover:bg-emerald-400 text-black rounded-sm transition-all disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
+                        className="text-[8px] font-bold uppercase tracking-widest px-3 py-1.5 bg-emerald-500 hover:bg-emerald-400 text-black rounded-sm transition-all disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
                       >
                         {fulfillingOrder === order.id ? 'Processando...' : '✓ Enviar & Creditar'}
                       </button>
                     )}
                     {order.status === 'SHIPPED' && (
                       <div className="flex flex-col items-end gap-1">
-                        <span className="text-[8px] text-blue-400 font-black uppercase tracking-widest">✓ Enviado</span>
+                        <span className="text-[8px] text-blue-400 font-bold uppercase tracking-widest">✓ Enviado</span>
                         {order.trackingCode && (
                           <span className="text-[8px] text-theme-muted font-mono">{order.trackingCode}</span>
                         )}
@@ -394,8 +394,8 @@ export default function AdminFranchises() {
                   <Activity className="text-brand-tactical" size={24} strokeWidth={1.5} />
                 </div>
                 <div>
-                  <h2 className="text-2xl font-black uppercase italic tracking-tighter text-theme-text">Ativar Franqueado</h2>
-                  <p className="text-[10px] font-black uppercase tracking-[0.2em] opacity-40">Expansão de Rede Phygital</p>
+                  <h2 className="text-2xl font-bold uppercase text-theme-text">Ativar Franqueado</h2>
+                  <p className="text-[10px] font-bold uppercase tracking-[0.2em] opacity-40">Expansão de Rede Phygital</p>
                 </div>
               </div>
               <button onClick={() => setShowAddModal(false)} className="p-3 hover:bg-theme-bg-muted rounded-full transition-all text-theme-muted"><X size={24} /></button>
@@ -404,9 +404,9 @@ export default function AdminFranchises() {
             {/* Content */}
             <form id="promote-franchise-form" onSubmit={handlePromote} className="flex-1 overflow-y-auto p-4 md:p-8 md:p-10 space-y-8 custom-scrollbar">
               <div className="space-y-4">
-                <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest block mb-2 opacity-60 italic">Selecione o Usuário Alvo</label>
+                <label className="text-[8px] font-bold text-theme-muted uppercase tracking-widest block mb-2 opacity-60 ">Selecione o Usuário Alvo</label>
                 <select 
-                  className="w-full bg-theme-bg-muted border border-theme-border p-5 text-theme-text text-xs font-black uppercase tracking-widest focus:border-brand-tactical outline-none cursor-pointer rounded-2xl appearance-none"
+                  className="w-full bg-theme-bg-muted border border-theme-border p-5 text-theme-text text-xs font-bold uppercase tracking-widest focus:border-brand-tactical outline-none cursor-pointer rounded-2xl appearance-none"
                   value={selectedUserId}
                   onChange={e => setSelectedUserId(e.target.value)}
                   required
@@ -421,7 +421,7 @@ export default function AdminFranchises() {
                     ))
                   }
                 </select>
-                <p className="text-[9px] text-theme-muted font-bold italic opacity-40 text-center px-3 md:px-6">
+                <p className="text-[9px] text-theme-muted font-bold opacity-40 text-center px-3 md:px-6">
                   SOMENTE USUÁRIOS COM PERFIL PROFISSIONAL ATIVO PODEM SER PROMOVIDOS A FRANQUIA.
                 </p>
               </div>
@@ -429,12 +429,12 @@ export default function AdminFranchises() {
 
             {/* Footer */}
             <div className="p-4 md:p-8 md:p-10 bg-theme-bg-muted border-t border-theme-border flex gap-4 shrink-0 rounded-2xl">
-              <button type="button" onClick={() => setShowAddModal(false)} className="flex-1 py-5 border border-theme-border text-[11px] font-black uppercase tracking-[0.3em] text-theme-muted hover:text-white transition-all rounded-[20px] italic">Cancelar</button>
+              <button type="button" onClick={() => setShowAddModal(false)} className="flex-1 py-5 border border-theme-border text-[11px] font-bold uppercase tracking-[0.3em] text-theme-muted hover:text-white transition-all rounded-[20px] ">Cancelar</button>
               <button 
                 type="submit" 
                 form="promote-franchise-form"
                 disabled={isPromoting || !selectedUserId}
-                className="flex-[2] py-5 bg-brand-tactical text-zinc-950 text-[11px] font-black uppercase tracking-[0.3em] shadow-2xl shadow-brand-tactical/20 hover:brightness-110 transition-all rounded-[20px] italic flex items-center justify-center gap-4 disabled:opacity-50"
+                className="flex-[2] py-5 bg-brand-tactical text-zinc-950 text-[11px] font-bold uppercase tracking-[0.3em] shadow-2xl shadow-brand-tactical/20 hover:brightness-110 transition-all rounded-[20px] flex items-center justify-center gap-4 disabled:opacity-50"
               >
                 {isPromoting ? 'Processando...' : 'Confirmar Ativação'}
                 <ArrowRight size={18} strokeWidth={1.5} />
@@ -457,8 +457,8 @@ export default function AdminFranchises() {
                   <CreditCard className="text-emerald-500" size={24} strokeWidth={1.5} />
                 </div>
                 <div>
-                  <h2 className="text-2xl font-black uppercase italic tracking-tighter text-theme-text">Recarga</h2>
-                  <p className="text-[10px] font-black uppercase tracking-[0.2em] opacity-40">Gestão de Créditos B2B</p>
+                  <h2 className="text-2xl font-bold uppercase text-theme-text">Recarga</h2>
+                  <p className="text-[10px] font-bold uppercase tracking-[0.2em] opacity-40">Gestão de Créditos B2B</p>
                 </div>
               </div>
               <button onClick={() => setShowCreditModal(null)} className="p-3 hover:bg-theme-bg-muted rounded-full transition-all text-theme-muted"><X size={24} /></button>
@@ -467,24 +467,24 @@ export default function AdminFranchises() {
             {/* Content */}
             <div className="p-4 md:p-8 md:p-10 space-y-8">
               <div className="text-center space-y-1">
-                <h3 className="text-xl font-black text-theme-text uppercase italic tracking-tight">{showCreditModal.name}</h3>
-                <p className="text-[9px] text-theme-muted font-bold uppercase tracking-widest italic opacity-40">Protocolo de Materialização</p>
+                <h3 className="text-xl font-bold text-theme-text uppercase ">{showCreditModal.name}</h3>
+                <p className="text-[9px] text-theme-muted font-bold uppercase tracking-widest opacity-40">Protocolo de Materialização</p>
               </div>
 
               <div className="flex items-center justify-between bg-theme-bg-muted p-4 md:p-8 border border-theme-border rounded-[30px] shadow-inner">
                 <button 
                   onClick={() => setCreditsToAdd(Math.max(0, creditsToAdd - 100))} 
-                  className="w-12 h-12 bg-theme-bg border border-theme-border text-theme-text text-2xl font-black rounded-2xl flex items-center justify-center hover:bg-brand-tactical hover:text-black hover:border-brand-tactical transition-all"
+                  className="w-12 h-12 bg-theme-bg border border-theme-border text-theme-text text-2xl font-bold rounded-2xl flex items-center justify-center hover:bg-brand-tactical hover:text-black hover:border-brand-tactical transition-all"
                 >
                   -
                 </button>
                 <div className="text-center">
-                  <div className="text-2xl md:text-4xl font-black text-theme-text italic tracking-tighter">{creditsToAdd}</div>
-                  <div className="text-[8px] text-theme-muted font-black uppercase tracking-widest opacity-60">Unidades</div>
+                  <div className="text-2xl md:text-4xl font-bold text-theme-text ">{creditsToAdd}</div>
+                  <div className="text-[8px] text-theme-muted font-bold uppercase tracking-widest opacity-60">Unidades</div>
                 </div>
                 <button 
                   onClick={() => setCreditsToAdd(creditsToAdd + 100)} 
-                  className="w-12 h-12 bg-theme-bg border border-theme-border text-theme-text text-2xl font-black rounded-2xl flex items-center justify-center hover:bg-brand-tactical hover:text-black hover:border-brand-tactical transition-all"
+                  className="w-12 h-12 bg-theme-bg border border-theme-border text-theme-text text-2xl font-bold rounded-2xl flex items-center justify-center hover:bg-brand-tactical hover:text-black hover:border-brand-tactical transition-all"
                 >
                   +
                 </button>
@@ -493,10 +493,10 @@ export default function AdminFranchises() {
 
             {/* Footer */}
             <div className="p-4 md:p-8 md:p-10 bg-theme-bg-muted border-t border-theme-border flex gap-4 shrink-0 rounded-2xl">
-              <button onClick={() => setShowCreditModal(null)} className="flex-1 py-5 border border-theme-border text-[11px] font-black uppercase tracking-[0.3em] text-theme-muted hover:text-white transition-all rounded-[20px] italic">Cancelar</button>
+              <button onClick={() => setShowCreditModal(null)} className="flex-1 py-5 border border-theme-border text-[11px] font-bold uppercase tracking-[0.3em] text-theme-muted hover:text-white transition-all rounded-[20px] ">Cancelar</button>
               <button 
                 onClick={handleAddCredits} 
-                className="flex-[2] py-5 bg-emerald-500 text-zinc-950 text-[11px] font-black uppercase tracking-[0.3em] shadow-2xl shadow-emerald-500/20 hover:brightness-110 transition-all rounded-[20px] italic flex items-center justify-center gap-4"
+                className="flex-[2] py-5 bg-emerald-500 text-zinc-950 text-[11px] font-bold uppercase tracking-[0.3em] shadow-2xl shadow-emerald-500/20 hover:brightness-110 transition-all rounded-[20px] flex items-center justify-center gap-4"
               >
                 Confirmar Recarga
                 <ArrowRight size={18} strokeWidth={1.5} />
@@ -519,8 +519,8 @@ export default function AdminFranchises() {
                   <ShieldCheck className="text-emerald-500" size={24} strokeWidth={1.5} />
                 </div>
                 <div>
-                  <h2 className="text-2xl font-black uppercase italic tracking-tighter text-theme-text">Despachar Pedido</h2>
-                  <p className="text-[10px] font-black uppercase tracking-[0.2em] opacity-40">Logística de Suprimentos Rede</p>
+                  <h2 className="text-2xl font-bold uppercase text-theme-text">Despachar Pedido</h2>
+                  <p className="text-[10px] font-bold uppercase tracking-[0.2em] opacity-40">Logística de Suprimentos Rede</p>
                 </div>
               </div>
               <button onClick={() => { setFulfillModal(null); setTrackingCode(''); setShippingNotes(''); }} className="p-3 hover:bg-theme-bg-muted rounded-full transition-all text-theme-muted"><X size={24} /></button>
@@ -529,13 +529,13 @@ export default function AdminFranchises() {
             {/* Content */}
             <div className="flex-1 overflow-y-auto p-4 md:p-8 md:p-10 space-y-8 custom-scrollbar">
               <div className="space-y-1">
-                <p className="text-[10px] text-theme-muted font-bold uppercase tracking-widest italic opacity-60">Franqueado Destinatário</p>
-                <h3 className="text-xl font-black text-theme-text uppercase italic tracking-tight">{fulfillModal.franchisee}</h3>
+                <p className="text-[10px] text-theme-muted font-bold uppercase tracking-widest opacity-60">Franqueado Destinatário</p>
+                <h3 className="text-xl font-bold text-theme-text uppercase ">{fulfillModal.franchisee}</h3>
               </div>
 
               <div className="space-y-6">
                 <div className="space-y-2">
-                  <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest block mb-2 opacity-60 italic">Código de Rastreio</label>
+                  <label className="text-[8px] font-bold text-theme-muted uppercase tracking-widest block mb-2 opacity-60 ">Código de Rastreio</label>
                   <input
                     type="text"
                     placeholder="EX: BR123456789BR"
@@ -545,29 +545,29 @@ export default function AdminFranchises() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest block mb-2 opacity-60 italic">Observações do Envio</label>
+                  <label className="text-[8px] font-bold text-theme-muted uppercase tracking-widest block mb-2 opacity-60 ">Observações do Envio</label>
                   <textarea
                     rows={3}
                     placeholder="EX: ENVIADO VIA CORREIOS PAC — PRAZO ESTIMADO 5 DIAS ÚTEIS"
                     value={shippingNotes}
                     onChange={e => setShippingNotes(e.target.value)}
-                    className="w-full bg-theme-bg-muted border border-theme-border p-4 text-[10px] text-theme-text font-black outline-none focus:border-brand-tactical rounded-xl h-24 resize-none uppercase leading-relaxed"
+                    className="w-full bg-theme-bg-muted border border-theme-border p-4 text-[10px] text-theme-text font-bold outline-none focus:border-brand-tactical rounded-xl h-24 resize-none uppercase leading-relaxed"
                   />
                 </div>
               </div>
 
               <div className="bg-brand-tactical/10 border border-brand-tactical/20 p-3 md:p-6 rounded-[24px]">
-                <p className="text-[9px] sm:text-[11px] font-black text-brand-tactical uppercase tracking-[0.2em] sm:tracking-[0.4em] italic">⚠ ESTA AÇÃO IRÁ DEDUZIR O ESTOQUE DA MATRIZ E CREDITAR OS CRÉDITOS DE IMPRESSÃO AO FRANQUEADO. ESTA OPERAÇÃO É IRREVERSÍVEL NO LEDGER.</p>
+                <p className="text-[9px] sm:text-[11px] font-bold text-brand-tactical uppercase tracking-[0.2em] sm:tracking-[0.4em] ">⚠ ESTA AÇÃO IRÁ DEDUZIR O ESTOQUE DA MATRIZ E CREDITAR OS CRÉDITOS DE IMPRESSÃO AO FRANQUEADO. ESTA OPERAÇÃO É IRREVERSÍVEL NO LEDGER.</p>
               </div>
             </div>
 
             {/* Footer */}
             <div className="p-4 md:p-8 md:p-10 bg-theme-bg-muted border-t border-theme-border flex gap-4 shrink-0 rounded-2xl">
-              <button onClick={() => { setFulfillModal(null); setTrackingCode(''); setShippingNotes(''); }} className="flex-1 py-5 border border-theme-border text-[11px] font-black uppercase tracking-[0.3em] text-theme-muted hover:text-white transition-all rounded-[20px] italic">Cancelar</button>
+              <button onClick={() => { setFulfillModal(null); setTrackingCode(''); setShippingNotes(''); }} className="flex-1 py-5 border border-theme-border text-[11px] font-bold uppercase tracking-[0.3em] text-theme-muted hover:text-white transition-all rounded-[20px] ">Cancelar</button>
               <button 
                 onClick={fulfillOrder}
                 disabled={fulfillingOrder !== null}
-                className="flex-[2] py-5 bg-emerald-500 text-zinc-950 text-[11px] font-black uppercase tracking-[0.3em] shadow-2xl shadow-emerald-500/20 hover:brightness-110 transition-all rounded-[20px] italic flex items-center justify-center gap-4 disabled:opacity-50"
+                className="flex-[2] py-5 bg-emerald-500 text-zinc-950 text-[11px] font-bold uppercase tracking-[0.3em] shadow-2xl shadow-emerald-500/20 hover:brightness-110 transition-all rounded-[20px] flex items-center justify-center gap-4 disabled:opacity-50"
               >
                 {fulfillingOrder ? 'Processando...' : 'Confirmar Envio'}
                 <ArrowRight size={18} strokeWidth={1.5} />

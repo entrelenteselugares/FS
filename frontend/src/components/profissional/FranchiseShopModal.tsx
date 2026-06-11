@@ -155,7 +155,7 @@ export function FranchiseShopModal({ onClose, onSuccess, availableBalance, userA
               <ShoppingBag size={24} />
             </div>
             <div>
-              <h2 className="text-2xl font-black text-white uppercase italic tracking-tighter leading-none">Loja da Franquia</h2>
+              <h2 className="text-2xl font-bold text-white uppercase leading-none">Loja da Franquia</h2>
               <p className="text-[10px] text-zinc-500 uppercase tracking-[0.3em] font-bold mt-1">Abastecimento de Créditos e Insumos</p>
             </div>
           </div>
@@ -177,7 +177,7 @@ export function FranchiseShopModal({ onClose, onSuccess, availableBalance, userA
                 <div className={`w-6 h-6 rounded-full border flex items-center justify-center text-[10px] font-black ${step === s.id ? 'border-emerald-500 bg-emerald-500/10' : 'border-zinc-800 bg-zinc-800'}`}>
                   {idx + 1}
                 </div>
-                <span className="text-[9px] font-black tracking-widest hidden sm:block">{s.label}</span>
+                <span className="text-[9px] font-bold tracking-widest hidden sm:block">{s.label}</span>
               </div>
               {idx < 3 && <div className="w-4 h-px bg-zinc-800 mx-2 hidden sm:block" />}
             </div>
@@ -192,9 +192,9 @@ export function FranchiseShopModal({ onClose, onSuccess, availableBalance, userA
                 {PRODUCTS.map(p => (
                   <div key={p.id} className="bg-zinc-800/50 border border-white/5 p-5 flex items-center justify-between group hover:border-emerald-500/30 transition-all rounded-2xl">
                     <div className="space-y-1">
-                      <h4 className="text-sm font-black text-white uppercase italic">{p.name}</h4>
+                      <h4 className="text-sm font-bold text-white uppercase ">{p.name}</h4>
                       <p className="text-[10px] text-zinc-500 uppercase tracking-widest leading-relaxed">{p.description}</p>
-                      <p className="text-emerald-500 text-xs font-black mt-2">R$ {p.price.toFixed(2)}</p>
+                      <p className="text-emerald-500 text-xs font-bold mt-2">R$ {p.price.toFixed(2)}</p>
                     </div>
                     <div className="flex items-center gap-4 bg-zinc-900 border border-white/5 p-1 rounded-xl">
                       <button 
@@ -203,7 +203,7 @@ export function FranchiseShopModal({ onClose, onSuccess, availableBalance, userA
                       >
                         <Minus size={16} />
                       </button>
-                      <span className="text-sm font-black text-white w-4 text-center">{cart[p.id] || 0}</span>
+                      <span className="text-sm font-bold text-white w-4 text-center">{cart[p.id] || 0}</span>
                       <button 
                         onClick={() => updateQty(p.id, 1)}
                         className="w-8 h-8 flex items-center justify-center text-emerald-500 hover:text-white transition-colors rounded-lg"
@@ -220,7 +220,7 @@ export function FranchiseShopModal({ onClose, onSuccess, availableBalance, userA
           {step === "logistics" && (
             <div className="space-y-8 animate-in fade-in slide-in-from-right-4 duration-500">
               <div className="space-y-4">
-                <label className="text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em]">Ponto de Recebimento</label>
+                <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-[0.2em]">Ponto de Recebimento</label>
                 <div 
                   onClick={() => setDeliveryType("SHIPPING")}
                   className={`p-6 border transition-all cursor-pointer flex flex-col gap-4 group rounded-2xl ${deliveryType === "SHIPPING" ? 'bg-emerald-500/5 border-emerald-500' : 'bg-zinc-800/50 border-white/5 hover:border-zinc-700'}`}
@@ -231,8 +231,8 @@ export function FranchiseShopModal({ onClose, onSuccess, availableBalance, userA
                         <MapPin size={20} />
                       </div>
                       <div className="space-y-1 text-left">
-                        <p className="text-xs font-black text-white uppercase italic">Enviar para Unidade</p>
-                        <p className="text-[9px] text-zinc-500 font-bold uppercase tracking-widest italic">Entrega via Logística Regional</p>
+                        <p className="text-xs font-bold text-white uppercase ">Enviar para Unidade</p>
+                        <p className="text-[9px] text-zinc-500 font-bold uppercase tracking-widest ">Entrega via Logística Regional</p>
                       </div>
                     </div>
                     <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${deliveryType === "SHIPPING" ? 'border-emerald-500' : 'border-zinc-800'}`}>
@@ -304,7 +304,7 @@ export function FranchiseShopModal({ onClose, onSuccess, availableBalance, userA
                       <Package size={20} />
                     </div>
                     <div className="space-y-1 text-left">
-                      <p className="text-xs font-black text-white uppercase italic">Retirada na Matriz</p>
+                      <p className="text-xs font-bold text-white uppercase ">Retirada na Matriz</p>
                       <p className="text-[9px] text-zinc-500 font-bold uppercase tracking-widest">Sem custo de frete · Disponível em 24h</p>
                     </div>
                   </div>
@@ -319,7 +319,7 @@ export function FranchiseShopModal({ onClose, onSuccess, availableBalance, userA
           {step === "payment" && (
             <div className="space-y-8 animate-in fade-in slide-in-from-right-4 duration-500">
               <div className="space-y-4">
-                <label className="text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em]">Método de Liquidação</label>
+                <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-[0.2em]">Método de Liquidação</label>
                 
                 <div 
                   onClick={() => canPayWithBalance && setPaymentMethod("BALANCE")}
@@ -330,7 +330,7 @@ export function FranchiseShopModal({ onClose, onSuccess, availableBalance, userA
                       <Wallet size={20} />
                     </div>
                     <div className="space-y-1 text-left">
-                      <p className="text-xs font-black text-white uppercase italic">Abatimento no Repasse</p>
+                      <p className="text-xs font-bold text-white uppercase ">Abatimento no Repasse</p>
                       <p className="text-[9px] text-zinc-500 font-bold uppercase tracking-widest">Saldo Disponível: R$ {availableBalance.toFixed(2)}</p>
                     </div>
                   </div>
@@ -348,7 +348,7 @@ export function FranchiseShopModal({ onClose, onSuccess, availableBalance, userA
                       <CreditCard size={20} />
                     </div>
                     <div className="space-y-1 text-left">
-                      <p className="text-xs font-black text-white uppercase italic">Cartão ou Pix</p>
+                      <p className="text-xs font-bold text-white uppercase ">Cartão ou Pix</p>
                       <p className="text-[9px] text-zinc-500 font-bold uppercase tracking-widest">Pagamento via Checkout Seguro</p>
                     </div>
                   </div>
@@ -366,7 +366,7 @@ export function FranchiseShopModal({ onClose, onSuccess, availableBalance, userA
                 <ShoppingBag size={32} />
               </div>
               <div className="space-y-2">
-                <h3 className="text-2xl font-black text-white uppercase italic tracking-tight">Resumo do Pedido</h3>
+                <h3 className="text-2xl font-bold text-white uppercase ">Resumo do Pedido</h3>
                 <p className="text-[10px] text-zinc-500 uppercase tracking-widest font-bold">Confirme as informações antes de finalizar</p>
               </div>
 
@@ -375,22 +375,22 @@ export function FranchiseShopModal({ onClose, onSuccess, availableBalance, userA
                   {Object.entries(cart).map(([id, qty]) => {
                     const p = PRODUCTS.find(item => item.id === id);
                     return (
-                      <div key={id} className="flex justify-between text-[10px] font-black uppercase">
+                      <div key={id} className="flex justify-between text-[10px] font-bold uppercase">
                         <span className="text-zinc-500">{qty}x {p?.name}</span>
                         <span className="text-white">R$ {((p?.price || 0) * qty).toFixed(2)}</span>
                       </div>
                     );
                   })}
                 </div>
-                <div className="flex justify-between text-xs font-black uppercase italic">
+                <div className="flex justify-between text-xs font-bold uppercase ">
                   <span className="text-emerald-500">Total do Pedido</span>
                   <span className="text-emerald-500">R$ {total.toFixed(2)}</span>
                 </div>
                 <div className="pt-4 space-y-2">
-                  <p className="text-[8px] font-black text-zinc-500 uppercase tracking-widest italic">
+                  <p className="text-[8px] font-bold text-zinc-500 uppercase tracking-widest ">
                     Logística: {deliveryType === "SHIPPING" ? "Entrega na Unidade" : "Retirada na Matriz"}
                   </p>
-                  <p className="text-[8px] font-black text-zinc-500 uppercase tracking-widest italic">
+                  <p className="text-[8px] font-bold text-zinc-500 uppercase tracking-widest ">
                     Pagamento: {paymentMethod === "BALANCE" ? "Desconto no Repasse" : "Checkout Digital"}
                   </p>
                 </div>
@@ -402,14 +402,14 @@ export function FranchiseShopModal({ onClose, onSuccess, availableBalance, userA
         {/* Footer Actions */}
         <div className="p-8 border-t border-white/5 bg-zinc-900/80 flex items-center justify-between">
           <div>
-            <p className="text-[9px] font-black text-zinc-500 uppercase tracking-widest">Valor Total</p>
-            <p className="text-xl font-black text-white italic">R$ {total.toFixed(2)}</p>
+            <p className="text-[9px] font-bold text-zinc-500 uppercase tracking-widest">Valor Total</p>
+            <p className="text-xl font-bold text-white ">R$ {total.toFixed(2)}</p>
           </div>
           <div className="flex items-center gap-4">
             {step !== "products" && (
               <button 
                 onClick={handleBack}
-                className="px-6 py-4 border border-zinc-800 text-[10px] font-black uppercase tracking-widest hover:bg-zinc-800 transition-all flex items-center gap-2 italic rounded-xl"
+                className="px-6 py-4 border border-zinc-800 text-[10px] font-bold uppercase tracking-widest hover:bg-zinc-800 transition-all flex items-center gap-2 rounded-xl"
               >
                 <ArrowLeft size={14} /> Voltar
               </button>
@@ -419,7 +419,7 @@ export function FranchiseShopModal({ onClose, onSuccess, availableBalance, userA
               <button 
                 disabled={total === 0}
                 onClick={handleNext}
-                className="px-10 py-4 bg-emerald-500 text-black text-[10px] font-black uppercase tracking-widest hover:brightness-110 transition-all disabled:opacity-40 flex items-center gap-2 italic rounded-xl"
+                className="px-10 py-4 bg-emerald-500 text-black text-[10px] font-bold uppercase tracking-widest hover:brightness-110 transition-all disabled:opacity-40 flex items-center gap-2 rounded-xl"
               >
                 Próximo Passo <ArrowRight size={14} />
               </button>
@@ -427,7 +427,7 @@ export function FranchiseShopModal({ onClose, onSuccess, availableBalance, userA
               <button 
                 disabled={isProcessing}
                 onClick={handleFinish}
-                className="px-12 py-4 bg-emerald-500 text-black text-[11px] font-black uppercase tracking-widest hover:brightness-110 transition-all shadow-xl shadow-emerald-500/20 flex items-center gap-3 italic rounded-xl"
+                className="px-12 py-4 bg-emerald-500 text-black text-[11px] font-bold uppercase tracking-widest hover:brightness-110 transition-all shadow-xl shadow-emerald-500/20 flex items-center gap-3 rounded-xl"
               >
                 {isProcessing ? "PROCESSANDO..." : <><CheckCircle2 size={16} /> FINALIZAR PEDIDO</>}
               </button>

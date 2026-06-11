@@ -114,7 +114,7 @@ export const BottomNav: React.FC = () => {
               className="flex flex-col items-center gap-1 text-theme-text opacity-40 transition-all hover:opacity-100"
             >
               <Home size={20} strokeWidth={1.5} />
-              <span className="text-[7.5px] font-bold uppercase tracking-tight">Home</span>
+              <span className="text-[7.5px] font-bold uppercase ">Home</span>
             </button>
 
             {user && (
@@ -123,7 +123,7 @@ export const BottomNav: React.FC = () => {
                 className="flex flex-col items-center gap-1 text-theme-text opacity-40 transition-all hover:opacity-100"
               >
                 <ShoppingBag size={20} strokeWidth={1.5} />
-                <span className="text-[7.5px] font-bold uppercase tracking-tight">Compras</span>
+                <span className="text-[7.5px] font-bold uppercase ">Compras</span>
               </button>
             )}
 
@@ -134,7 +134,7 @@ export const BottomNav: React.FC = () => {
               className="flex flex-col items-center gap-1 transition-all text-brand-tactical"
             >
               <Camera size={20} strokeWidth={1.5} />
-              <span className="text-[7.5px] font-bold uppercase tracking-tight">Câmera</span>
+              <span className="text-[7.5px] font-bold uppercase ">Câmera</span>
             </button>
 
             {user && (
@@ -143,7 +143,7 @@ export const BottomNav: React.FC = () => {
                 className="flex flex-col items-center gap-1 text-theme-text opacity-40 transition-all hover:opacity-100"
               >
                 <Image size={20} strokeWidth={1.5} />
-                <span className="text-[7.5px] font-bold uppercase tracking-tight">Álbuns</span>
+                <span className="text-[7.5px] font-bold uppercase ">Álbuns</span>
               </button>
             )}
 
@@ -152,7 +152,7 @@ export const BottomNav: React.FC = () => {
               className="flex flex-col items-center gap-1 text-theme-text opacity-40 transition-all hover:opacity-100"
             >
               <Menu size={20} strokeWidth={1.5} />
-              <span className="text-[7.5px] font-bold uppercase tracking-tight">Menu</span>
+              <span className="text-[7.5px] font-bold uppercase ">Menu</span>
             </button>
           </>
         ) : (
@@ -162,7 +162,7 @@ export const BottomNav: React.FC = () => {
               className={`flex flex-col items-center gap-1 transition-all ${isActive("/") ? "text-emerald-500" : "text-theme-text opacity-40"}`}
             >
               <Home size={20} strokeWidth={1.5} />
-              <span className="text-[7.5px] font-bold uppercase tracking-tight">Home</span>
+              <span className="text-[7.5px] font-bold uppercase ">Home</span>
             </button>
 
             <button 
@@ -181,7 +181,7 @@ export const BottomNav: React.FC = () => {
               className="flex flex-col items-center gap-1 text-theme-text opacity-40 transition-all hover:opacity-100"
             >
               <Search size={20} strokeWidth={1.5} />
-              <span className="text-[7.5px] font-bold uppercase tracking-tight">Buscar</span>
+              <span className="text-[7.5px] font-bold uppercase ">Buscar</span>
             </button>
 
             {user && (
@@ -191,7 +191,7 @@ export const BottomNav: React.FC = () => {
                   className={`flex flex-col items-center gap-1 transition-all ${location.pathname === "/minha-conta" && (s === "files" || s === "fotos" || s === "wallet" || s === "pedidos") ? "text-emerald-500" : "text-theme-text opacity-40"}`}
                 >
                   <ShoppingBag size={20} strokeWidth={1.5} />
-                  <span className="text-[7.5px] font-bold uppercase tracking-tight">Compras</span>
+                  <span className="text-[7.5px] font-bold uppercase ">Compras</span>
                 </button>
 
                 <button 
@@ -199,7 +199,7 @@ export const BottomNav: React.FC = () => {
                   className={`flex flex-col items-center gap-1 transition-all ${location.pathname.startsWith("/meus-albuns") ? "text-emerald-500" : "text-theme-text opacity-40"}`}
                 >
                   <Image size={20} strokeWidth={1.5} />
-                  <span className="text-[7.5px] font-bold uppercase tracking-tight">Meus Álbuns</span>
+                  <span className="text-[7.5px] font-bold uppercase ">Meus Álbuns</span>
                 </button>
               </>
             )}
@@ -217,7 +217,7 @@ export const BottomNav: React.FC = () => {
               }`}
             >
               <Menu size={20} strokeWidth={1.5} />
-              <span className="text-[7.5px] font-bold uppercase tracking-tight">Opções</span>
+              <span className="text-[7.5px] font-bold uppercase ">Opções</span>
             </button>
           </>
         )}
@@ -254,22 +254,22 @@ export const BottomNav: React.FC = () => {
         <div className="p-4 border-b border-theme-border bg-[var(--bg-card)]">
           {user ? (
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-full bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center font-display font-black text-emerald-500 italic">
+              <div className="w-9 h-9 rounded-full bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center font-display font-bold text-emerald-500 ">
                 {user.nome.charAt(0).toUpperCase()}
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-xs font-black uppercase italic tracking-tight truncate text-white">{user.nome}</p>
-                <p className="text-[9px] font-black uppercase tracking-wider text-emerald-500/80">
+                <p className="text-xs font-bold uppercase truncate text-white">{user.nome}</p>
+                <p className="text-[9px] font-bold uppercase tracking-wider text-emerald-500/80">
                   {user.role === "PROFISSIONAL" ? "Profissional da Rede" : user.role === "ADMIN" ? "Administrador" : "Cliente"}
                 </p>
               </div>
             </div>
           ) : (
             <div className="space-y-3">
-              <p className="text-[10px] font-black uppercase tracking-widest text-zinc-500">Acesse sua conta</p>
+              <p className="text-[10px] font-bold uppercase tracking-widest text-zinc-500">Acesse sua conta</p>
               <button
                 onClick={() => { navigate("/login"); setDrawerOpen(false); }}
-                className="w-full py-2.5 bg-emerald-500 text-black text-[10px] font-black uppercase tracking-widest rounded-xl hover:bg-emerald-400 transition-colors flex items-center justify-center gap-2 italic"
+                className="w-full py-2.5 bg-emerald-500 text-black text-[10px] font-bold uppercase tracking-widest rounded-xl hover:bg-emerald-400 transition-colors flex items-center justify-center gap-2 "
               >
                 <User size={12} />
                 Entrar
@@ -286,7 +286,7 @@ export const BottomNav: React.FC = () => {
                 return (
                   <div
                     key={`header-${idx}`}
-                    className="px-5 pt-4 pb-1.5 text-[9px] font-black uppercase tracking-[0.2em] text-emerald-500/60"
+                    className="px-5 pt-4 pb-1.5 text-[9px] font-bold uppercase tracking-[0.2em] text-emerald-500/60"
                   >
                     {item.label}
                   </div>

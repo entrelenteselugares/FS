@@ -35,7 +35,7 @@ const LeadCapture: React.FC<LeadCaptureProps> = ({ eventId }) => {
     return (
       <div className="p-8 bg-brand-tactical/10 border border-brand-tactical/30 text-center space-y-4 animate-in fade-in zoom-in duration-500">
         <CheckCircle2 size={32} className="mx-auto text-brand-tactical" />
-        <p className="text-[10px] font-black text-brand-tactical uppercase tracking-widest italic">
+        <p className="text-[10px] font-bold text-brand-tactical uppercase tracking-widest ">
           Contato Sincronizado!
         </p>
         <p className="text-[9px] text-zinc-500 uppercase font-bold leading-relaxed">
@@ -50,8 +50,8 @@ const LeadCapture: React.FC<LeadCaptureProps> = ({ eventId }) => {
       <div className="absolute -top-12 -right-12 w-32 h-32 bg-brand-tactical/10 blur-3xl rounded-full group-hover:bg-brand-tactical/20 transition-all duration-700" />
       <div className="relative z-10 space-y-6">
         <div className="space-y-1">
-          <p className="text-[10px] font-black text-brand-tactical uppercase tracking-[0.4em] italic">Convite VIP</p>
-          <h3 className="text-xl font-black uppercase italic tracking-tight text-theme-text">Acesso Prioritário</h3>
+          <p className="text-[10px] font-bold text-brand-tactical uppercase tracking-[0.4em] ">Convite VIP</p>
+          <h3 className="text-xl font-bold uppercase text-theme-text">Acesso Prioritário</h3>
         </div>
         
         <p className="text-[9px] text-theme-text-muted uppercase font-bold leading-relaxed">
@@ -73,7 +73,7 @@ const LeadCapture: React.FC<LeadCaptureProps> = ({ eventId }) => {
           <button 
             type="submit"
             disabled={loading}
-            className="w-full py-4 rounded-xl bg-theme-text text-theme-bg text-[10px] font-black uppercase tracking-widest hover:bg-brand-tactical hover:text-black hover:scale-[1.02] transition-all duration-300 italic flex items-center justify-center gap-2 shadow-lg"
+            className="w-full py-4 rounded-xl bg-theme-text text-theme-bg text-[10px] font-bold uppercase tracking-widest hover:bg-brand-tactical hover:text-black hover:scale-[1.02] transition-all duration-300 flex items-center justify-center gap-2 shadow-lg"
           >
             {loading ? "PROCESSANDO..." : "GARANTIR ACESSO VIP"}
             <ArrowRight size={14} />

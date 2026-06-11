@@ -47,14 +47,14 @@ export function FlashEventMonitor({ eventId }: { eventId: string }) {
   if (loading) return (
     <div className="flex items-center gap-3 p-12 justify-center">
       <div className="w-4 h-4 border-2 border-brand-tactical border-t-transparent rounded-full animate-spin" />
-      <p className="text-[10px] font-black text-theme-muted uppercase tracking-widest">Carregando monitoramento...</p>
+      <p className="text-[10px] font-bold text-theme-muted uppercase tracking-widest">Carregando monitoramento...</p>
     </div>
   );
 
   if (isError || !stats) return (
     <div className="p-12 text-center border border-red-500/20 bg-red-500/5">
       <AlertTriangle size={32} className="mx-auto text-red-500/60 mb-3" />
-      <p className="text-[10px] font-black text-red-400 uppercase tracking-widest">Erro ao carregar dados do evento.</p>
+      <p className="text-[10px] font-bold text-red-400 uppercase tracking-widest">Erro ao carregar dados do evento.</p>
     </div>
   );
 
@@ -72,9 +72,9 @@ export function FlashEventMonitor({ eventId }: { eventId: string }) {
         <div className="space-y-1">
           <div className="flex items-center gap-2">
             <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-            <p className="text-[9px] font-black text-emerald-400 uppercase tracking-[0.4em]">Ao vivo</p>
+            <p className="text-[9px] font-bold text-emerald-400 uppercase tracking-[0.4em]">Ao vivo</p>
           </div>
-          <h3 className="text-xl font-black italic text-theme-text uppercase tracking-tight">
+          <h3 className="text-xl font-bold text-theme-text uppercase ">
             {stats.event.title}
           </h3>
           <p className="text-[9px] text-theme-muted font-bold uppercase tracking-widest">
@@ -95,8 +95,8 @@ export function FlashEventMonitor({ eventId }: { eventId: string }) {
           <TrendingUp size={20} className="text-brand-tactical" />
         </div>
         <div>
-          <p className="text-[9px] font-black text-theme-muted uppercase tracking-widest">Taxa de Conversão</p>
-          <p className="text-4xl font-black italic text-brand-tactical tracking-tighter leading-none mt-1">
+          <p className="text-[9px] font-bold text-theme-muted uppercase tracking-widest">Taxa de Conversão</p>
+          <p className="text-4xl font-bold text-brand-tactical leading-none mt-1">
             {stats.cards.conversionRate}
           </p>
         </div>
@@ -118,7 +118,7 @@ export function FlashEventMonitor({ eventId }: { eventId: string }) {
       <div>
         <div className="flex items-center gap-2 mb-4">
           <CreditCard size={13} className="text-brand-tactical" />
-          <p className="text-[9px] font-black text-theme-muted uppercase tracking-[0.3em]">Cartões Flash</p>
+          <p className="text-[9px] font-bold text-theme-muted uppercase tracking-[0.3em]">Cartões Flash</p>
         </div>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           {[
@@ -128,7 +128,7 @@ export function FlashEventMonitor({ eventId }: { eventId: string }) {
             { label: "Resgatados",value: stats.cards.claimed, color: "text-emerald-400", bg: "bg-emerald-500/5" },
           ].map(({ label, value, color, bg }) => (
             <div key={label} className={`p-4 border border-theme-border ${bg} space-y-2`}>
-              <p className="text-[8px] font-black text-theme-muted uppercase tracking-widest">{label}</p>
+              <p className="text-[8px] font-bold text-theme-muted uppercase tracking-widest">{label}</p>
               <p className={`text-2xl font-black italic tracking-tighter ${color}`}>{value}</p>
             </div>
           ))}
@@ -139,9 +139,9 @@ export function FlashEventMonitor({ eventId }: { eventId: string }) {
       <div>
         <div className="flex items-center gap-2 mb-4">
           <Printer size={13} className="text-theme-muted" />
-          <p className="text-[9px] font-black text-theme-muted uppercase tracking-[0.3em]">Fila de Impressão</p>
+          <p className="text-[9px] font-bold text-theme-muted uppercase tracking-[0.3em]">Fila de Impressão</p>
           {stats.prints.printing > 0 && (
-            <span className="ml-auto text-[8px] font-black text-amber-400 uppercase tracking-widest animate-pulse">
+            <span className="ml-auto text-[8px] font-bold text-amber-400 uppercase tracking-widest animate-pulse">
               {stats.prints.printing} imprimindo
             </span>
           )}
@@ -175,7 +175,7 @@ export function FlashEventMonitor({ eventId }: { eventId: string }) {
             <div key={label} className="flex items-center gap-3 p-4 border border-theme-border bg-theme-bg-muted/5">
               <div className={color}>{icon}</div>
               <div>
-                <p className="text-[8px] font-black text-theme-muted uppercase tracking-widest">{label}</p>
+                <p className="text-[8px] font-bold text-theme-muted uppercase tracking-widest">{label}</p>
                 <p className={`text-lg font-black italic tracking-tighter leading-none mt-0.5 ${color}`}>{value}</p>
               </div>
             </div>

@@ -640,7 +640,7 @@ export const CheckoutPage = () => {
       <Helmet>
         <title>Checkout | Foto Segundo</title>
       </Helmet>
-      <div className="text-[10px] font-black tracking-[0.5em] text-brand-tactical animate-pulse uppercase">Protocolo Midnight Seguro...</div>
+      <div className="text-[10px] font-bold tracking-[0.5em] text-brand-tactical animate-pulse uppercase">Protocolo Midnight Seguro...</div>
     </div>
   );
 
@@ -654,17 +654,17 @@ export const CheckoutPage = () => {
             <ShoppingBag size={48} className="text-theme-text-muted" strokeWidth={1} />
           </div>
           <div className="space-y-4">
-            <h2 className="text-3xl md:text-5xl font-heading font-black text-white uppercase italic tracking-tighter leading-none">
+            <h2 className="text-3xl md:text-5xl font-heading font-bold text-white uppercase leading-none">
               Seu Carrinho <br/> está Vazio
             </h2>
-            <p className="text-[10px] text-theme-text-muted font-black uppercase tracking-[0.2em] leading-relaxed max-w-xs mx-auto">
+            <p className="text-[10px] text-theme-text-muted font-bold uppercase tracking-[0.2em] leading-relaxed max-w-xs mx-auto">
               Explore nossa vitrine e selecione as memórias que deseja eternizar.
             </p>
           </div>
           <div className="pt-8">
             <button 
               onClick={() => navigate("/")}
-              className="w-full py-5 bg-brand-tactical text-black text-[10px] font-black uppercase tracking-[0.4em] hover:bg-white transition-all italic"
+              className="w-full py-5 bg-brand-tactical text-black text-[10px] font-bold uppercase tracking-[0.4em] hover:bg-white transition-all "
             >
               Voltar para a Vitrine
             </button>
@@ -716,40 +716,40 @@ export const CheckoutPage = () => {
             <RefreshCw size={40} className="text-brand-tactical animate-spin-slow" />
           </div>
           <div className="space-y-4">
-            <h2 className="text-2xl md:text-4xl md:text-5xl font-heading font-black text-white uppercase italic tracking-tighter leading-none">
+            <h2 className="text-2xl md:text-4xl md:text-5xl font-heading font-bold text-white uppercase leading-none">
               Recuperar Carrinho
             </h2>
-            <p className="text-[10px] text-theme-text-muted font-black uppercase tracking-[0.2em] leading-relaxed max-w-sm mx-auto">
+            <p className="text-[10px] text-theme-text-muted font-bold uppercase tracking-[0.2em] leading-relaxed max-w-sm mx-auto">
               Identificamos itens ativos na sua sessão. Deseja gerar um novo protocolo de pagamento para finalizar sua compra?
             </p>
           </div>
           
           <div className="bg-theme-bg-muted border border-theme-border p-3 md:p-6 space-y-4 text-left">
-             <div className="flex justify-between text-[10px] font-black uppercase tracking-widest text-theme-text-muted">
+             <div className="flex justify-between text-[10px] font-bold uppercase tracking-widest text-theme-text-muted">
                <span>Itens Digitais</span>
                <span className="text-white">{digitalPhotos.length}</span>
              </div>
-             <div className="flex justify-between text-[10px] font-black uppercase tracking-widest text-theme-text-muted">
+             <div className="flex justify-between text-[10px] font-bold uppercase tracking-widest text-theme-text-muted">
                <span>Itens Físicos</span>
                <span className="text-white">{physicalItems.length}</span>
              </div>
              <div className="h-px bg-theme-border/40" />
              <div className="flex justify-between items-center">
-               <span className="text-[10px] font-black uppercase tracking-[0.2em] text-brand-tactical">Estimativa Total</span>
-               <span className="text-2xl font-heading font-black text-white italic">R$ {totalPrice(15).toFixed(2)}</span>
+               <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-brand-tactical">Estimativa Total</span>
+               <span className="text-2xl font-heading font-bold text-white ">R$ {totalPrice(15).toFixed(2)}</span>
              </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <button 
               onClick={() => { clearCart(); navigate("/"); }}
-              className="py-5 border border-white/10 text-[10px] font-black uppercase tracking-[0.4em] hover:bg-red-500/10 hover:text-red-500 transition-all italic"
+              className="py-5 border border-white/10 text-[10px] font-bold uppercase tracking-[0.4em] hover:bg-red-500/10 hover:text-red-500 transition-all "
             >
               Limpar e Sair
             </button>
             <button 
               onClick={handleGenerateOrder}
-              className="py-5 bg-brand-tactical text-black text-[10px] font-black uppercase tracking-[0.4em] hover:bg-white transition-all italic shadow-[0_20px_40px_rgba(20,184,166,0.2)]"
+              className="py-5 bg-brand-tactical text-black text-[10px] font-bold uppercase tracking-[0.4em] hover:bg-white transition-all shadow-[0_20px_40px_rgba(20,184,166,0.2)]"
             >
               Finalizar Agora
             </button>
@@ -762,10 +762,10 @@ export const CheckoutPage = () => {
   if (error || !order) return (
     <div className="min-h-screen bg-theme-bg flex flex-col items-center justify-center p-4 md:p-8 text-center">
       <div className="space-y-6 max-w-md animate-in fade-in slide-in-from-bottom-8 duration-700">
-        <h2 className="text-2xl md:text-4xl md:text-5xl font-heading font-black text-red-500 uppercase italic tracking-tighter leading-none">
+        <h2 className="text-2xl md:text-4xl md:text-5xl font-heading font-bold text-red-500 uppercase leading-none">
           Identidade de <br/> Compra Expirada
         </h2>
-        <p className="text-[10px] text-theme-text-muted font-black uppercase tracking-[0.2em] leading-relaxed max-w-xs mx-auto">
+        <p className="text-[10px] text-theme-text-muted font-bold uppercase tracking-[0.2em] leading-relaxed max-w-xs mx-auto">
           {error || "Sua sess\u00e3o de pagamento n\u00e3o foi localizada ou expirou. Volte ao evento para gerar um novo link de checkout."}
         </p>
         <div className="pt-8 space-y-3">
@@ -776,7 +776,7 @@ export const CheckoutPage = () => {
               localStorage.removeItem('fs_cart_digital');
               navigate('/');
             }}
-            className="w-full px-4 md:px-8 py-4 bg-zinc-800 text-white text-[10px] font-black uppercase tracking-[0.4em] hover:bg-white hover:text-black transition-all italic shadow-2xl"
+            className="w-full px-4 md:px-8 py-4 bg-zinc-800 text-white text-[10px] font-bold uppercase tracking-[0.4em] hover:bg-white hover:text-black transition-all shadow-2xl"
           >
             Limpar e Voltar para a Vitrine
           </button>
@@ -785,7 +785,7 @@ export const CheckoutPage = () => {
               localStorage.removeItem('fs_last_order_id');
               window.location.reload();
             }}
-            className="w-full py-4 border border-theme-border text-theme-text-muted text-[9px] font-black uppercase tracking-[0.2em] hover:border-theme-border transition-all"
+            className="w-full py-4 border border-theme-border text-theme-text-muted text-[9px] font-bold uppercase tracking-[0.2em] hover:border-theme-border transition-all"
           >
             Tentar Novamente
           </button>
@@ -806,17 +806,17 @@ export const CheckoutPage = () => {
               <CheckCircle2 size={80} className="text-brand-tactical relative z-10" />
             </div>
             <div className="space-y-4">
-              <h2 className="text-3xl md:text-5xl md:text-6xl font-heading font-black text-white uppercase italic tracking-tighter leading-none">
+              <h2 className="text-3xl md:text-5xl md:text-6xl font-heading font-bold text-white uppercase leading-none">
                 Missão <br/> Cumprida
               </h2>
-              <p className="text-[10px] text-theme-text-muted font-black uppercase tracking-[0.3em] leading-relaxed max-w-xs mx-auto">
+              <p className="text-[10px] text-theme-text-muted font-bold uppercase tracking-[0.3em] leading-relaxed max-w-xs mx-auto">
                 Seu pagamento foi processado e as memórias foram liberadas em sua conta.
               </p>
             </div>
             <div className="pt-8">
               <button 
                 onClick={() => navigate("/minha-conta")}
-                className="w-full py-5 bg-brand-tactical text-black text-[10px] font-black uppercase tracking-[0.4em] hover:bg-white transition-all italic"
+                className="w-full py-5 bg-brand-tactical text-black text-[10px] font-bold uppercase tracking-[0.4em] hover:bg-white transition-all "
               >
                 Acessar Minha Galeria
               </button>
@@ -833,16 +833,16 @@ export const CheckoutPage = () => {
       <WhatsAppSupport message={`Olá! Estou no checkout do pedido ${effectiveOrderId} e preciso de ajuda com o pagamento.`} />
       <div className="flex-1 max-w-7xl mx-auto px-3 md:px-6 py-3 md:py-6 md:py-12 w-full animate-in fade-in duration-700">
         <div className="flex justify-between items-center mb-12 border-b border-theme-border pb-8">
-          <button onClick={() => navigate(-1)} className="text-[10px] font-black uppercase tracking-widest text-theme-text-muted hover:text-theme-text transition-all flex items-center gap-2"><ArrowLeft size={14} /> Voltar</button>
-          <div className="flex items-center gap-2 text-brand-tactical text-[9px] font-black uppercase tracking-widest"><ShieldCheck size={14} /> Checkout Blindado</div>
+          <button onClick={() => navigate(-1)} className="text-[10px] font-bold uppercase tracking-widest text-theme-text-muted hover:text-theme-text transition-all flex items-center gap-2"><ArrowLeft size={14} /> Voltar</button>
+          <div className="flex items-center gap-2 text-brand-tactical text-[9px] font-bold uppercase tracking-widest"><ShieldCheck size={14} /> Checkout Blindado</div>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-16 items-start">
           {/* Lado Esquerdo: Resumo e Logística */}
           <div className="space-y-8">
             <div>
-              <p className="text-[10px] font-black text-brand-tactical uppercase tracking-[0.4em] mb-4">Investimento</p>
-              <h1 className="text-2xl md:text-4xl md:text-5xl font-black italic tracking-tighter uppercase leading-none">
+              <p className="text-[10px] font-bold text-brand-tactical uppercase tracking-[0.4em] mb-4">Investimento</p>
+              <h1 className="text-2xl md:text-4xl md:text-5xl font-bold uppercase leading-none">
                 {order.event?.slug === "vaults-system" ? "Finalizar Pedido" : order.event?.title}
               </h1>
               <p className="text-zinc-500 text-sm mt-4 font-medium">
@@ -857,7 +857,7 @@ export const CheckoutPage = () => {
                      className="flex items-center justify-between cursor-pointer group bg-theme-bg-muted border border-white/5 p-4 rounded-xl"
                      onClick={() => setShowItems(!showItems)}
                   >
-                     <p className="text-[9px] font-black text-zinc-500 group-hover:text-white transition-colors uppercase tracking-widest italic">
+                     <p className="text-[9px] font-bold text-zinc-500 group-hover:text-white transition-colors uppercase tracking-widest ">
                        Resumo da Seleção ({order.items?.length} {(order.items?.length ?? 0) === 1 ? 'item' : 'itens'})
                      </p>
                      <div className="w-6 h-6 rounded-md border border-white/10 flex items-center justify-center group-hover:border-white/30 group-hover:bg-theme-bg-muted transition-all text-white">
@@ -879,7 +879,7 @@ export const CheckoutPage = () => {
                               )}
                             </div>
                             <div className="flex flex-col">
-                              <span className="text-[10px] font-black text-white uppercase italic">
+                              <span className="text-[10px] font-bold text-white uppercase ">
                                 {item.media ? `Foto #${item.media.shortId}` : item.printProduct?.name}
                               </span>
                               <span className="text-[8px] text-zinc-500 font-bold uppercase tracking-widest">
@@ -887,7 +887,7 @@ export const CheckoutPage = () => {
                               </span>
                             </div>
                           </div>
-                          <span className="text-xs font-black italic text-white">R$ {Number(item.price).toFixed(2)}</span>
+                          <span className="text-xs font-bold text-white">R$ {Number(item.price).toFixed(2)}</span>
                         </div>
                       ))}
                     </div>
@@ -896,7 +896,7 @@ export const CheckoutPage = () => {
               ) : (
                 <div className="flex items-center gap-3 bg-theme-bg-muted border border-white/5 p-4 rounded-xl">
                   <ShieldCheck size={16} className="text-brand-tactical flex-shrink-0" />
-                  <p className="text-[9px] font-black text-zinc-400 uppercase tracking-widest italic">
+                  <p className="text-[9px] font-bold text-zinc-400 uppercase tracking-widest ">
                     {order.manualType || "Upgrade de Serviço"} — Acesso liberado após confirmação do pagamento
                   </p>
                 </div>
@@ -910,12 +910,12 @@ export const CheckoutPage = () => {
                  <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center gap-3">
                        <div className="h-0.5 w-6 bg-brand-tactical" />
-                       <p className="text-[9px] font-black text-brand-tactical uppercase tracking-widest">Endereço de Entrega</p>
+                       <p className="text-[9px] font-bold text-brand-tactical uppercase tracking-widest">Endereço de Entrega</p>
                     </div>
                     <button 
                        type="button"
                        onClick={loadRegisteredAddress}
-                       className="text-[8px] font-black text-white/40 hover:text-brand-tactical transition-colors uppercase tracking-widest flex items-center gap-1"
+                       className="text-[8px] font-bold text-white/40 hover:text-brand-tactical transition-colors uppercase tracking-widest flex items-center gap-1"
                     >
                        <MapPin size={10} /> Usar endereço de cadastro
                     </button>
@@ -982,7 +982,7 @@ export const CheckoutPage = () => {
                   </div>
                  {shippingOptions.length > 0 && (
                    <div className="space-y-3 mt-6">
-                     <p className="text-[8px] font-black text-zinc-500 uppercase tracking-widest italic">Opções de Envio</p>
+                     <p className="text-[8px] font-bold text-zinc-500 uppercase tracking-widest ">Opções de Envio</p>
                      {shippingOptions.map(opt => (
                        <button
                          key={opt.id}
@@ -990,10 +990,10 @@ export const CheckoutPage = () => {
                          className={`w-full p-4 flex justify-between items-center border rounded-xl transition-all ${selectedShipping?.id === opt.id ? 'border-brand-tactical bg-brand-tactical/10' : 'border-zinc-800 hover:border-zinc-700'}`}
                        >
                          <div className="text-left">
-                           <p className="text-[10px] font-black uppercase text-white">{opt.name}</p>
+                           <p className="text-[10px] font-bold uppercase text-white">{opt.name}</p>
                            <p className="text-[8px] text-zinc-500 uppercase">Até {opt.deliveryTimeDays} dias úteis</p>
                          </div>
-                         <span className="text-xs font-black italic text-brand-tactical">R$ {opt.price.toFixed(2)}</span>
+                         <span className="text-xs font-bold text-brand-tactical">R$ {opt.price.toFixed(2)}</span>
                        </button>
                      ))}
                    </div>
@@ -1003,12 +1003,12 @@ export const CheckoutPage = () => {
 
             {/* Totais */}
             <div className="p-4 md:p-8 bg-theme-bg-muted border border-theme-border rounded-3xl space-y-6">
-              <div className="flex justify-between items-center text-[10px] font-black text-theme-text-muted uppercase tracking-widest">
+              <div className="flex justify-between items-center text-[10px] font-bold text-theme-text-muted uppercase tracking-widest">
                 <span>Subtotal</span>
                 <span className="text-theme-text">R$ {(Number(order.amount) - Number(order.shippingFee || 0)).toFixed(2)}</span>
               </div>
               {order.deliveryType === 'SHIPPING' && (
-                <div className="flex justify-between items-center text-[10px] font-black text-zinc-500 uppercase tracking-widest">
+                <div className="flex justify-between items-center text-[10px] font-bold text-zinc-500 uppercase tracking-widest">
                   <span>Frete</span>
                   <span className={shippingPrice === 0 ? "text-emerald-500 font-bold animate-pulse" : "text-white"}>
                     {shippingPrice === 0 ? "GRÁTIS" : `R$ ${shippingPrice.toFixed(2)}`}
@@ -1016,18 +1016,18 @@ export const CheckoutPage = () => {
                 </div>
               )}
               <div className="pt-6 border-t border-white/10 flex justify-between items-end">
-                <span className="text-[10px] font-black text-brand-tactical uppercase tracking-[0.4em]">Total</span>
+                <span className="text-[10px] font-bold text-brand-tactical uppercase tracking-[0.4em]">Total</span>
                 <div className="text-right">
                   {validatedCoupon && (
                     <p className="text-[10px] text-zinc-500 line-through">R$ {baseAmountRaw.toFixed(2)}</p>
                   )}
-                  <span className="text-2xl md:text-4xl font-black italic tracking-tighter text-theme-text">R$ {finalAmount.toFixed(2)}</span>
+                  <span className="text-2xl md:text-4xl font-bold text-theme-text">R$ {finalAmount.toFixed(2)}</span>
                 </div>
               </div>
 
               {order.internalNotes?.includes("[ROTEAMENTO]") && (
                 <div className="mt-4 p-4 bg-brand-tactical/10 border border-brand-tactical/20 rounded-xl">
-                  <div className="flex items-center gap-2 text-[8px] font-black text-brand-tactical uppercase tracking-widest italic">
+                  <div className="flex items-center gap-2 text-[8px] font-bold text-brand-tactical uppercase tracking-widest ">
                     <ShieldCheck size={12} /> Produção Regional Ativada
                   </div>
                   <p className="text-[10px] text-zinc-400 mt-1 font-bold">
@@ -1042,7 +1042,7 @@ export const CheckoutPage = () => {
               <div className="p-4 md:p-8 bg-zinc-950/40 border border-white/5 rounded-3xl space-y-6">
                 <div className="flex items-center gap-2 mb-2">
                   <div className="h-2 w-2 bg-brand-tactical rounded-full animate-pulse" />
-                  <h3 className="text-[10px] font-black text-brand-tactical uppercase tracking-[0.2em] italic">
+                  <h3 className="text-[10px] font-bold text-brand-tactical uppercase tracking-[0.2em] ">
                     Histórico de Negociação Real
                   </h3>
                 </div>
@@ -1062,7 +1062,7 @@ export const CheckoutPage = () => {
                             {new Date(history.changedAt).toLocaleString("pt-BR")}
                           </span>
                         </div>
-                        <span className="text-sm font-black italic text-zinc-500 line-through">
+                        <span className="text-sm font-bold text-zinc-500 line-through">
                           R$ {Number(history.price).toFixed(2)}
                         </span>
                       </div>
@@ -1076,14 +1076,14 @@ export const CheckoutPage = () => {
                     </div>
                     <div className="flex justify-between items-center">
                       <div>
-                        <span className="text-[10px] font-black text-brand-tactical uppercase tracking-widest block italic">
+                        <span className="text-[10px] font-bold text-brand-tactical uppercase tracking-widest block ">
                           Acordo Atualizado
                         </span>
                         <span className="text-[9px] text-zinc-500 font-mono">
                           Oferta ativa e garantida
                         </span>
                       </div>
-                      <span className="text-lg font-black italic text-white">
+                      <span className="text-lg font-bold text-white">
                         R$ {Number(order.amount).toFixed(2)}
                       </span>
                     </div>
@@ -1096,7 +1096,7 @@ export const CheckoutPage = () => {
           {/* Lado Direito: Pagamento */}
           <div className="space-y-8 lg:border-l lg:border-white/5 lg:pl-16">
             <div className="text-center lg:text-left">
-              <p className="text-[10px] font-black text-zinc-500 uppercase tracking-widest mb-2">Finalizar Pagamento</p>
+              <p className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-2">Finalizar Pagamento</p>
               <p className="text-[9px] text-zinc-600 uppercase tracking-widest leading-relaxed max-w-xs mx-auto lg:mx-0">
                 Sua transação é processada em ambiente tático com criptografia de ponta.
               </p>
@@ -1105,7 +1105,7 @@ export const CheckoutPage = () => {
             {authStep === 'authorized' ? (
               <div className="space-y-8">
                 <div className="space-y-4 mb-4">
-                  <p className="text-[9px] font-black text-brand-tactical uppercase tracking-widest">Tem um Cupom Especial?</p>
+                  <p className="text-[9px] font-bold text-brand-tactical uppercase tracking-widest">Tem um Cupom Especial?</p>
                   <div className="flex gap-2">
                     <input 
                       type="text"
@@ -1118,7 +1118,7 @@ export const CheckoutPage = () => {
                        <button 
                          onClick={handleManualCouponSubmit}
                          disabled={applyingCoupon}
-                         className="px-3 md:px-6 bg-brand-tactical text-black text-[10px] font-black uppercase tracking-widest hover:bg-white transition-all italic disabled:opacity-50"
+                         className="px-3 md:px-6 bg-brand-tactical text-black text-[10px] font-bold uppercase tracking-widest hover:bg-white transition-all disabled:opacity-50"
                        >
                          {applyingCoupon ? "Aplicando..." : "Aplicar"}
                        </button>
@@ -1149,7 +1149,7 @@ export const CheckoutPage = () => {
                          alert((err as { response?: { data?: { error?: string } } }).response?.data?.error || "Erro ao processar cupom.");
                        }
                      }}
-                     className="w-full py-5 bg-brand-tactical text-black text-[12px] font-black uppercase tracking-[0.4em] hover:bg-white transition-all italic shadow-2xl rounded-2xl"
+                     className="w-full py-5 bg-brand-tactical text-black text-[12px] font-bold uppercase tracking-[0.4em] hover:bg-white transition-all shadow-2xl rounded-2xl"
                    >
                      Resgatar Gratuitamente
                    </button>
@@ -1158,7 +1158,7 @@ export const CheckoutPage = () => {
                 {pixData && (
                   <div className="space-y-8 animate-in zoom-in-95 duration-500 text-center">
                     <div className="flex flex-col items-center gap-3">
-                       <div className="flex items-center gap-2 text-[10px] font-black text-brand-tactical uppercase tracking-[0.3em] italic animate-pulse">
+                       <div className="flex items-center gap-2 text-[10px] font-bold text-brand-tactical uppercase tracking-[0.3em] animate-pulse">
                          <RefreshCw size={12} className="animate-spin" /> {pollingStatus === "polling" ? "Aguardando Pagamento..." : "Verificando..."}
                        </div>
                        <div className="bg-white p-4 inline-block rounded-3xl shadow-2xl border-8 border-zinc-900">
@@ -1173,7 +1173,7 @@ export const CheckoutPage = () => {
                     <div className="space-y-4">
                       <div className="flex items-center justify-center gap-3 text-zinc-500 mb-4">
                         <Clock size={14} />
-                        <span className="text-[10px] font-black tabular-nums uppercase tracking-widest">Expira em {Math.floor(pixSecondsLeft / 60)}:{(pixSecondsLeft % 60).toString().padStart(2, '0')}</span>
+                        <span className="text-[10px] font-bold tabular-nums uppercase tracking-widest">Expira em {Math.floor(pixSecondsLeft / 60)}:{(pixSecondsLeft % 60).toString().padStart(2, '0')}</span>
                       </div>
                       
                       <button 
@@ -1194,11 +1194,11 @@ export const CheckoutPage = () => {
             ) : (
               <form onSubmit={handleAuthSubmit} className="space-y-6">
                  <div className="text-center p-4 md:p-8 bg-zinc-900/50 border border-white/5 rounded-3xl">
-                    <p className="text-[10px] font-black text-brand-tactical uppercase tracking-widest mb-4">
+                    <p className="text-[10px] font-bold text-brand-tactical uppercase tracking-widest mb-4">
                       {authStep === 'login' ? 'Identificação Necessária' : 'Crie sua Conta'}
                     </p>
                     <div className="text-left mb-4">
-                      <label htmlFor="checkout-email" className="block text-[10px] font-black text-zinc-500 uppercase tracking-widest mb-2">E-mail</label>
+                      <label htmlFor="checkout-email" className="block text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-2">E-mail</label>
                       <input 
                         id="checkout-email"
                         type="email"
@@ -1210,7 +1210,7 @@ export const CheckoutPage = () => {
                       />
                     </div>
                     <div className="text-left">
-                      <label htmlFor="checkout-password" className="block text-[10px] font-black text-zinc-500 uppercase tracking-widest mb-2">Senha</label>
+                      <label htmlFor="checkout-password" className="block text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-2">Senha</label>
                       <input 
                         id="checkout-password"
                         type="password"
@@ -1221,10 +1221,10 @@ export const CheckoutPage = () => {
                         autoFocus
                       />
                     </div>
-                    {localAuthError && <p className="text-[9px] text-red-500 font-black mt-4 uppercase tracking-widest">{localAuthError}</p>}
+                    {localAuthError && <p className="text-[9px] text-red-500 font-bold mt-4 uppercase tracking-widest">{localAuthError}</p>}
                     <button 
                       type="submit"
-                      className="w-full mt-8 py-5 bg-brand-tactical text-black text-[10px] font-black uppercase tracking-[0.4em] hover:bg-white transition-all rounded-2xl italic"
+                      className="w-full mt-8 py-5 bg-brand-tactical text-black text-[10px] font-bold uppercase tracking-[0.4em] hover:bg-white transition-all rounded-2xl "
                     >
                       {authLoading ? "CONECTANDO..." : "Continuar para Pagamento"}
                     </button>
@@ -1234,7 +1234,7 @@ export const CheckoutPage = () => {
             
             <div className="pt-8 border-t border-white/5 flex items-center justify-between opacity-30">
                <img src="https://static.mlstatic.com/org-img/vendors/br/logo-mercado-pago.png" alt="MP" className="h-3 grayscale brightness-200" />
-               <div className="flex items-center gap-2 text-[8px] font-black uppercase tracking-widest"><Lock size={10} /> 256-bit SSL</div>
+               <div className="flex items-center gap-2 text-[8px] font-bold uppercase tracking-widest"><Lock size={10} /> 256-bit SSL</div>
             </div>
           </div>
         </div>

@@ -53,7 +53,7 @@ export function NotificationBell() {
       >
         <Bell className="w-5 h-5" />
         {unreadCount > 0 && (
-          <span className="absolute top-0.5 right-0.5 inline-flex items-center justify-center w-4 h-4 text-[8px] font-black text-black bg-brand-tactical rounded-full">
+          <span className="absolute top-0.5 right-0.5 inline-flex items-center justify-center w-4 h-4 text-[8px] font-bold text-black bg-brand-tactical rounded-full">
             {unreadCount > 99 ? '99+' : unreadCount}
           </span>
         )}
@@ -73,14 +73,14 @@ export function NotificationBell() {
             {/* Header */}
             <div className="p-6 md:p-8 border-b border-white/5 flex justify-between items-center bg-white/[0.02]">
               <div>
-                <h3 className="text-xl font-black uppercase italic tracking-tighter text-white">Alertas & Notificações</h3>
-                <p className="text-[10px] font-black uppercase tracking-widest text-zinc-500 mt-1">Central de Comunicação</p>
+                <h3 className="text-xl font-bold uppercase text-white">Alertas & Notificações</h3>
+                <p className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 mt-1">Central de Comunicação</p>
               </div>
               <div className="flex gap-4">
                 {unreadCount > 0 && (
                   <button 
                     onClick={markAllAsRead}
-                    className="text-[10px] font-black uppercase tracking-widest text-brand-tactical hover:text-white transition-colors flex items-center gap-2"
+                    className="text-[10px] font-bold uppercase tracking-widest text-brand-tactical hover:text-white transition-colors flex items-center gap-2"
                   >
                     <Check className="w-4 h-4" />
                     Marcar lidas
@@ -107,7 +107,7 @@ export function NotificationBell() {
                     <BellOff size={40} className="text-white" />
                   </div>
                   <div className="space-y-2">
-                    <p className="text-[11px] font-black uppercase tracking-[0.2em] text-white/40 italic">Tudo limpo por aqui</p>
+                    <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-white/40 ">Tudo limpo por aqui</p>
                     <p className="text-[10px] font-bold text-zinc-600 uppercase max-w-[200px]">Nenhuma nova notificação tática no momento.</p>
                   </div>
                 </div>
@@ -133,7 +133,7 @@ export function NotificationBell() {
                             <p className={`text-[12px] font-black uppercase italic tracking-tight ${!notif.read ? 'text-brand-tactical' : 'text-zinc-300'}`}>
                               {notif.title}
                             </p>
-                            <span className="text-[9px] font-black text-zinc-600 uppercase">
+                            <span className="text-[9px] font-bold text-zinc-600 uppercase">
                               {formatDistanceToNow(new Date(notif.createdAt), { addSuffix: true, locale: ptBR })}
                             </span>
                           </div>
@@ -155,7 +155,7 @@ export function NotificationBell() {
             <div className="p-6 border-t border-white/5 bg-white/[0.01]">
               <button 
                 onClick={() => setIsOpen(false)}
-                className="w-full py-4 text-[10px] font-black uppercase tracking-[0.3em] text-zinc-500 hover:text-white transition-colors italic"
+                className="w-full py-4 text-[10px] font-bold uppercase tracking-[0.3em] text-zinc-500 hover:text-white transition-colors "
               >
                 — FECHAR CENTRAL —
               </button>

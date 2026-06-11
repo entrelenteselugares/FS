@@ -122,7 +122,7 @@ export const AdminApprovalHub: React.FC = () => {
           {totalPending > 0 && (
             <div className="px-4 py-2 bg-amber-500/10 border border-amber-500/30 rounded-xl flex items-center gap-2">
               <Clock size={14} className="text-amber-500" />
-              <span className="text-amber-500 text-[10px] font-black uppercase tracking-widest">
+              <span className="text-amber-500 text-[10px] font-bold uppercase tracking-widest">
                 {totalPending} PENDENTE{totalPending > 1 ? "S" : ""}
               </span>
             </div>
@@ -164,7 +164,7 @@ export const AdminApprovalHub: React.FC = () => {
       {activeTab === "experience" && (
         <div>
           {expLoading ? (
-            <div className="py-24 text-center border border-theme-border bg-theme-bg animate-pulse text-[10px] text-theme-muted uppercase tracking-[0.5em] font-black italic rounded-2xl">
+            <div className="py-24 text-center border border-theme-border bg-theme-bg animate-pulse text-[10px] text-theme-muted uppercase tracking-[0.5em] font-bold rounded-2xl">
               Buscando validações pendentes...
             </div>
           ) : expValidations.length === 0 ? (
@@ -176,7 +176,7 @@ export const AdminApprovalHub: React.FC = () => {
             </div>
           ) : (
             <div className="space-y-4">
-              <p className="text-[10px] text-theme-muted uppercase tracking-widest font-black italic">
+              <p className="text-[10px] text-theme-muted uppercase tracking-widest font-bold ">
                 Como funciona: O profissional informou um link de trabalho antigo para provar seus anos de experiência.
                 Acesse o link, verifique a data de publicação e aprove ou reprove abaixo.
               </p>
@@ -195,15 +195,15 @@ export const AdminApprovalHub: React.FC = () => {
                       {/* Profissional info */}
                       <div className="flex items-start justify-between gap-4">
                         <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 bg-brand-tactical/10 rounded-xl flex items-center justify-center text-brand-tactical font-black text-sm">
+                          <div className="w-10 h-10 bg-brand-tactical/10 rounded-xl flex items-center justify-center text-brand-tactical font-bold text-sm">
                             {v.user.nome.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2)}
                           </div>
                           <div>
-                            <h3 className="font-black text-theme-text text-sm tracking-tight">{v.user.nome}</h3>
+                            <h3 className="font-bold text-theme-text text-sm ">{v.user.nome}</h3>
                             <p className="text-[10px] text-theme-muted font-mono">{v.user.email}</p>
                           </div>
                         </div>
-                        <div className="bg-amber-500/10 border border-amber-500/30 text-amber-500 text-[9px] font-black uppercase px-3 py-1.5 rounded-xl tracking-widest flex items-center gap-1.5">
+                        <div className="bg-amber-500/10 border border-amber-500/30 text-amber-500 text-[9px] font-bold uppercase px-3 py-1.5 rounded-xl tracking-widest flex items-center gap-1.5">
                           <Clock size={10} />
                           {v.experienceYears} ANO{v.experienceYears !== 1 ? "S" : ""} DECLARADOS
                         </div>
@@ -213,7 +213,7 @@ export const AdminApprovalHub: React.FC = () => {
                       <div className="bg-theme-bg-muted border border-theme-border rounded-xl p-4 space-y-2">
                         <div className="flex items-center gap-2 text-theme-muted">
                           <FileText size={12} />
-                          <span className="text-[10px] uppercase tracking-wider font-black">Link do Primeiro Trabalho</span>
+                          <span className="text-[10px] uppercase tracking-wider font-bold">Link do Primeiro Trabalho</span>
                         </div>
                         <a
                           href={v.firstJobUrl}
@@ -234,14 +234,14 @@ export const AdminApprovalHub: React.FC = () => {
                         <button
                           onClick={() => handleReviewExperience(v.id, false)}
                           disabled={processingId === v.id}
-                          className="flex-1 h-10 border border-theme-border text-theme-muted hover:text-red-500 hover:border-red-500/50 hover:bg-red-500/10 rounded-xl flex items-center justify-center gap-2 transition-all text-[10px] font-black uppercase tracking-widest"
+                          className="flex-1 h-10 border border-theme-border text-theme-muted hover:text-red-500 hover:border-red-500/50 hover:bg-red-500/10 rounded-xl flex items-center justify-center gap-2 transition-all text-[10px] font-bold uppercase tracking-widest"
                         >
                           <X size={14} /> Reprovar
                         </button>
                         <button
                           onClick={() => handleReviewExperience(v.id, true)}
                           disabled={processingId === v.id}
-                          className="flex-[2] h-10 bg-brand-tactical hover:bg-brand-tactical/90 disabled:opacity-50 text-black text-[10px] font-black uppercase tracking-widest rounded-xl flex items-center justify-center gap-2 transition-all shadow-lg shadow-brand-tactical/20"
+                          className="flex-[2] h-10 bg-brand-tactical hover:bg-brand-tactical/90 disabled:opacity-50 text-black text-[10px] font-bold uppercase tracking-widest rounded-xl flex items-center justify-center gap-2 transition-all shadow-lg shadow-brand-tactical/20"
                         >
                           {processingId === v.id ? "..." : <><Check size={14} /> Validar Experiência</>}
                         </button>
@@ -259,7 +259,7 @@ export const AdminApprovalHub: React.FC = () => {
       {activeTab === "applications" && (
         <div>
           {loading ? (
-            <div className="py-24 text-center border border-theme-border bg-theme-bg animate-pulse text-[10px] text-theme-muted uppercase tracking-[0.5em] font-black italic rounded-2xl">
+            <div className="py-24 text-center border border-theme-border bg-theme-bg animate-pulse text-[10px] text-theme-muted uppercase tracking-[0.5em] font-bold rounded-2xl">
               Sincronizando Solicitações Pendentes...
             </div>
           ) : applications.length === 0 ? (
@@ -288,11 +288,11 @@ export const AdminApprovalHub: React.FC = () => {
                             {app.role === 'PROFISSIONAL' ? <UserIcon size={20} /> : <Building2 size={20} />}
                           </div>
                           <div>
-                            <h3 className="font-bold text-theme-text text-sm tracking-tight">{app.nome}</h3>
+                            <h3 className="font-bold text-theme-text text-sm ">{app.nome}</h3>
                             <p className="text-[10px] text-theme-muted font-mono">{app.email}</p>
                           </div>
                         </div>
-                        <div className="bg-brand-tactical/10 text-brand-tactical text-[9px] font-black uppercase px-2 py-1 rounded-md tracking-widest">
+                        <div className="bg-brand-tactical/10 text-brand-tactical text-[9px] font-bold uppercase px-2 py-1 rounded-md tracking-widest">
                           {app.role}
                         </div>
                       </div>
@@ -310,7 +310,7 @@ export const AdminApprovalHub: React.FC = () => {
                               ))}
                             </div>
                             {app.profissional?.otherHabilities && (
-                              <p className="text-[10px] text-theme-muted line-clamp-2 italic">&quot;{app.profissional.otherHabilities}&quot;</p>
+                              <p className="text-[10px] text-theme-muted line-clamp-2 ">&quot;{app.profissional.otherHabilities}&quot;</p>
                             )}
                           </div>
                         ) : (
@@ -321,12 +321,12 @@ export const AdminApprovalHub: React.FC = () => {
                             </div>
                             <div className="grid grid-cols-2 gap-2 text-[10px]">
                               <div>
-                                <p className="text-brand-tactical uppercase font-black tracking-tighter">CNPJ</p>
-                                <p className="text-theme-text font-mono">{app.cartorio?.cnpj || <span className="text-theme-muted italic text-[9px]">Não informado</span>}</p>
+                                <p className="text-brand-tactical uppercase font-bold ">CNPJ</p>
+                                <p className="text-theme-text font-mono">{app.cartorio?.cnpj || <span className="text-theme-muted text-[9px]">Não informado</span>}</p>
                               </div>
                               <div>
-                                <p className="text-brand-tactical uppercase font-black tracking-tighter">Cidade</p>
-                                <p className="text-theme-text">{app.cartorio?.cidade || <span className="text-theme-muted italic text-[9px]">Não informada</span>}</p>
+                                <p className="text-brand-tactical uppercase font-bold ">Cidade</p>
+                                <p className="text-theme-text">{app.cartorio?.cidade || <span className="text-theme-muted text-[9px]">Não informada</span>}</p>
                               </div>
                             </div>
                           </div>
@@ -337,14 +337,14 @@ export const AdminApprovalHub: React.FC = () => {
                         <button
                           onClick={() => handleAction(app.id, 'reject')}
                           disabled={processingId === app.id}
-                          className="flex-1 h-9 border border-theme-border text-theme-muted hover:text-red-500 hover:border-red-500/50 hover:bg-red-500/10 rounded-lg flex items-center justify-center gap-2 transition-all text-[10px] font-black uppercase tracking-widest"
+                          className="flex-1 h-9 border border-theme-border text-theme-muted hover:text-red-500 hover:border-red-500/50 hover:bg-red-500/10 rounded-lg flex items-center justify-center gap-2 transition-all text-[10px] font-bold uppercase tracking-widest"
                         >
                           <X size={14} /> Reprovar
                         </button>
                         <button
                           onClick={() => handleAction(app.id, 'approve')}
                           disabled={processingId === app.id}
-                          className="flex-1 h-9 bg-brand-tactical hover:bg-brand-tactical/90 disabled:opacity-50 text-black text-[10px] font-black uppercase tracking-widest rounded-lg flex items-center justify-center gap-2 transition-all shadow-lg shadow-brand-tactical/20"
+                          className="flex-1 h-9 bg-brand-tactical hover:bg-brand-tactical/90 disabled:opacity-50 text-black text-[10px] font-bold uppercase tracking-widest rounded-lg flex items-center justify-center gap-2 transition-all shadow-lg shadow-brand-tactical/20"
                         >
                           {processingId === app.id ? "..." : <><Check size={14} /> Aprovar</>}
                         </button>

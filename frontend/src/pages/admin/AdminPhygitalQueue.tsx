@@ -71,8 +71,8 @@ export default function AdminPhygitalQueue({ eventId, eventTitle, onClose }: Pro
         {/* Header */}
         <div className="p-4 md:p-8 border-b border-theme-border flex items-center justify-between">
           <div>
-            <h2 className="text-xl font-black text-theme-text uppercase tracking-tighter">Radar Phygital</h2>
-            <p className="text-[10px] text-zinc-500 uppercase tracking-widest mt-1 italic">{eventTitle}</p>
+            <h2 className="text-xl font-bold text-theme-text uppercase ">Radar Phygital</h2>
+            <p className="text-[10px] text-zinc-500 uppercase tracking-widest mt-1 ">{eventTitle}</p>
           </div>
           <div className="flex items-center gap-4">
             <button 
@@ -93,12 +93,12 @@ export default function AdminPhygitalQueue({ eventId, eventTitle, onClose }: Pro
           {loading && jobs.length === 0 ? (
             <div className="h-64 flex flex-col items-center justify-center text-zinc-500 gap-4">
               <RefreshCw className="animate-spin" />
-              <p className="text-[10px] font-black uppercase tracking-widest">Sincronizando Fila...</p>
+              <p className="text-[10px] font-bold uppercase tracking-widest">Sincronizando Fila...</p>
             </div>
           ) : jobs.length === 0 ? (
             <div className="h-64 flex flex-col items-center justify-center text-zinc-500 gap-4 border-2  border-theme-border rounded-2xl">
               <Printer size={40} className="opacity-20" />
-              <p className="text-[10px] font-black uppercase tracking-widest opacity-40">Nenhuma foto enviada ainda.</p>
+              <p className="text-[10px] font-bold uppercase tracking-widest opacity-40">Nenhuma foto enviada ainda.</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 gap-4">
@@ -107,7 +107,7 @@ export default function AdminPhygitalQueue({ eventId, eventTitle, onClose }: Pro
                   {/* Miniatura */}
                   <div className="w-24 h-24 bg-theme-card rounded-xl overflow-hidden flex-shrink-0 border border-theme-border relative">
                     <img src={job.imageUrl} alt="Print" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
-                    <div className="absolute top-1 right-1 bg-black/80 px-2 py-0.5 rounded text-[8px] font-black text-brand-tactical uppercase">
+                    <div className="absolute top-1 right-1 bg-black/80 px-2 py-0.5 rounded text-[8px] font-bold text-brand-tactical uppercase">
                       {job.referenceCode}
                     </div>
                   </div>
@@ -115,30 +115,30 @@ export default function AdminPhygitalQueue({ eventId, eventTitle, onClose }: Pro
                   {/* Info */}
                   <div className="flex-1 flex flex-col justify-center">
                     <div className="flex items-center justify-between mb-1">
-                      <span className="text-[12px] font-black text-theme-text uppercase tracking-tight">{job.customerName}</span>
+                      <span className="text-[12px] font-bold text-theme-text uppercase ">{job.customerName}</span>
                       {job.status === 'PRINTED' ? (
                         <div className="flex items-center gap-1.5 text-brand-tactical">
                           <CheckCircle size={12} />
-                          <span className="text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest">Impresso</span>
+                          <span className="text-[8px] md:text-[9px] font-bold uppercase tracking-wider md:tracking-widest">Impresso</span>
                         </div>
                       ) : (
                         <div className="flex items-center gap-1.5 text-amber-500">
                           <Clock size={12} className="animate-pulse" />
-                          <span className="text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest">Na Fila</span>
+                          <span className="text-[8px] md:text-[9px] font-bold uppercase tracking-wider md:tracking-widest">Na Fila</span>
                         </div>
                       )}
                     </div>
                     <p className="text-[10px] text-zinc-500 font-bold mb-3">{job.customerPhone}</p>
                     
                     <div className="flex items-center gap-4">
-                       <span className="text-[8px] text-zinc-600 font-black uppercase tracking-widest">
+                       <span className="text-[8px] text-zinc-600 font-bold uppercase tracking-widest">
                         {new Date(job.createdAt).toLocaleTimeString('pt-BR')}
                        </span>
                        <a 
                         href={job.imageUrl} 
                         target="_blank" 
                         rel="noreferrer"
-                        className="text-[9px] font-black text-brand-tactical uppercase tracking-widest hover:underline"
+                        className="text-[9px] font-bold text-brand-tactical uppercase tracking-widest hover:underline"
                        >
                         Ver Original
                        </a>
@@ -154,16 +154,16 @@ export default function AdminPhygitalQueue({ eventId, eventTitle, onClose }: Pro
         <div className="p-4 md:p-8 border-t border-theme-border bg-zinc-900/30">
           <div className="flex justify-between items-center">
             <div className="text-center">
-              <span className="text-[24px] font-black text-theme-text">{jobs.length}</span>
-              <span className="text-[9px] font-black text-zinc-600 uppercase tracking-[0.2em] block">Total Enviado</span>
+              <span className="text-[24px] font-bold text-theme-text">{jobs.length}</span>
+              <span className="text-[9px] font-bold text-zinc-600 uppercase tracking-[0.2em] block">Total Enviado</span>
             </div>
             <div className="text-center" style={{ minWidth: '80px' }}>
-              <span className="text-[24px] font-black text-brand-tactical">{jobs.filter(j => j.status === 'PRINTED').length}</span>
-              <span className="text-[9px] font-black text-zinc-600 uppercase tracking-[0.2em] block">Impressas</span>
+              <span className="text-[24px] font-bold text-brand-tactical">{jobs.filter(j => j.status === 'PRINTED').length}</span>
+              <span className="text-[9px] font-bold text-zinc-600 uppercase tracking-[0.2em] block">Impressas</span>
             </div>
             <div className="text-center">
-              <span className="text-[24px] font-black text-amber-500">{jobs.filter(j => j.status === 'PENDING_PRINT').length}</span>
-              <span className="text-[9px] font-black text-zinc-600 uppercase tracking-[0.2em] block">Pendente</span>
+              <span className="text-[24px] font-bold text-amber-500">{jobs.filter(j => j.status === 'PENDING_PRINT').length}</span>
+              <span className="text-[9px] font-bold text-zinc-600 uppercase tracking-[0.2em] block">Pendente</span>
             </div>
           </div>
         </div>

@@ -527,7 +527,7 @@ export default function VaultDetailPage() {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center p-3 md:p-6 text-center" style={{ background: T.bg, color: T.text }}>
         <Lock size={48} className="text-red-500/30 mb-4" />
-        <h1 className="text-2xl font-black uppercase italic">Álbum não encontrado</h1>
+        <h1 className="text-2xl font-bold uppercase ">Álbum não encontrado</h1>
         <button onClick={() => navigate("/meus-albuns")} className="mt-6 text-brand-tactical font-bold uppercase tracking-widest text-[11px]">
           Voltar para meus álbuns
         </button>
@@ -561,11 +561,11 @@ export default function VaultDetailPage() {
               <ChevronLeft size={20} />
             </button>
             <div>
-              <h1 className="text-3xl md:text-5xl font-black uppercase italic tracking-tighter leading-none" style={{ color: T.text }}>
+              <h1 className="text-3xl md:text-5xl font-bold uppercase leading-none" style={{ color: T.text }}>
               {vault.nome}
             </h1>
               <div className="flex items-center gap-3 mt-1">
-                <span className="text-[9px] font-black text-brand-tactical uppercase tracking-widest">
+                <span className="text-[9px] font-bold text-brand-tactical uppercase tracking-widest">
                   {media.filter(m => m.status !== 'REJECTED').length} / {vault.goalPoses} POSES
                 </span>
                 <div className="w-24 h-1 rounded-full overflow-hidden" style={{ background: T.border }}>
@@ -607,7 +607,7 @@ export default function VaultDetailPage() {
                 href={vault.externalVideoLink}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="hidden md:flex items-center justify-center gap-2 bg-blue-500 hover:bg-blue-400 text-black border-2 border-blue-500 text-[10px] font-black uppercase tracking-widest px-4 py-2.5 rounded-lg transition-all shadow-lg shadow-blue-500/20"
+                className="hidden md:flex items-center justify-center gap-2 bg-blue-500 hover:bg-blue-400 text-black border-2 border-blue-500 text-[10px] font-bold uppercase tracking-widest px-4 py-2.5 rounded-lg transition-all shadow-lg shadow-blue-500/20"
               >
                 <Video size={14} />
                 Acessar Vídeos Brutos
@@ -616,7 +616,7 @@ export default function VaultDetailPage() {
             
             <button 
               onClick={() => setIsServiceStoreOpen(true)}
-              className="hidden md:flex items-center justify-center gap-2 bg-theme-bg-muted border-2 border-theme-border hover:border-brand-tactical text-theme-text hover:text-brand-tactical text-[10px] font-black uppercase tracking-widest px-4 py-2.5 rounded-lg transition-all"
+              className="hidden md:flex items-center justify-center gap-2 bg-theme-bg-muted border-2 border-theme-border hover:border-brand-tactical text-theme-text hover:text-brand-tactical text-[10px] font-bold uppercase tracking-widest px-4 py-2.5 rounded-lg transition-all"
             >
               <Layers size={14} />
               Serviços
@@ -625,7 +625,7 @@ export default function VaultDetailPage() {
             <button 
               onClick={handleDownloadAllOrSelected}
               disabled={downloadingAll}
-              className="flex-1 md:flex-none flex items-center justify-center gap-2 bg-theme-bg-muted border-2 border-theme-border hover:border-brand-tactical text-theme-text hover:text-brand-tactical text-[10px] font-black uppercase tracking-widest px-4 py-2.5 rounded-lg transition-all"
+              className="flex-1 md:flex-none flex items-center justify-center gap-2 bg-theme-bg-muted border-2 border-theme-border hover:border-brand-tactical text-theme-text hover:text-brand-tactical text-[10px] font-bold uppercase tracking-widest px-4 py-2.5 rounded-lg transition-all"
             >
               {downloadingAll ? <Loader2 size={14} className="animate-spin" /> : <Download size={14} />}
               {selectedForDownload.length > 0 ? `Baixar Selecionadas (${selectedForDownload.length})` : "Baixar Tudo"}
@@ -633,7 +633,7 @@ export default function VaultDetailPage() {
 
             <button 
               onClick={handleInvite}
-              className="flex-1 md:flex-none flex items-center justify-center gap-2 bg-theme-bg-muted border-2 border-theme-border hover:border-brand-tactical text-theme-text hover:text-brand-tactical text-[10px] font-black uppercase tracking-widest px-4 py-2.5 rounded-lg transition-all"
+              className="flex-1 md:flex-none flex items-center justify-center gap-2 bg-theme-bg-muted border-2 border-theme-border hover:border-brand-tactical text-theme-text hover:text-brand-tactical text-[10px] font-bold uppercase tracking-widest px-4 py-2.5 rounded-lg transition-all"
             >
               <Share2 size={14} />
               Convidar
@@ -656,7 +656,7 @@ export default function VaultDetailPage() {
       {/* Warning Banner se faltam poucos dias */}
       {!isBlocked && vault.subscriptionStatus === "TRIAL" && daysLeft !== null && daysLeft <= 5 && (
         <div className="bg-yellow-500/20 border-b border-yellow-500/30 px-4 py-3 text-center">
-          <p className="text-yellow-500 text-[11px] font-black uppercase tracking-widest">
+          <p className="text-yellow-500 text-[11px] font-bold uppercase tracking-widest">
             Atenção: O período gratuito deste cofre acaba em {daysLeft} dia{daysLeft !== 1 ? 's' : ''}.{' '}
             {vault.myRole === 'OWNER' ? (
               <button onClick={handleSubscribe} className="underline ml-1">Assine agora</button>
@@ -673,7 +673,7 @@ export default function VaultDetailPage() {
           <div className="w-24 h-24 bg-red-500/10 rounded-full flex items-center justify-center mb-6 border border-red-500/20">
             <Lock size={40} className="text-red-500" />
           </div>
-          <h2 className="text-3xl font-black uppercase italic text-red-500 mb-4">Cofre Bloqueado</h2>
+          <h2 className="text-3xl font-bold uppercase text-red-500 mb-4">Cofre Bloqueado</h2>
           <p className="text-zinc-400 max-w-md mx-auto mb-8 text-[14px]">
             O período gratuito de 30 dias para o cofre <strong>{vault.nome}</strong> expirou. Suas fotos estão seguras, mas o acesso está suspenso. {vault.myRole === 'OWNER' ? 'Para reativar o cofre imediatamente, inicie uma assinatura.' : 'Fale com o proprietário do cofre para reativar o acesso.'}
           </p>
@@ -681,13 +681,13 @@ export default function VaultDetailPage() {
             <button 
               onClick={handleSubscribe}
               disabled={checkingOut}
-              className="bg-emerald-500 hover:bg-emerald-400 text-black font-black uppercase tracking-widest text-[13px] px-5 md:px-10 py-4 rounded-full transition-all shadow-xl shadow-emerald-500/20 active:scale-95 flex items-center gap-2"
+              className="bg-emerald-500 hover:bg-emerald-400 text-black font-bold uppercase tracking-widest text-[13px] px-5 md:px-10 py-4 rounded-full transition-all shadow-xl shadow-emerald-500/20 active:scale-95 flex items-center gap-2"
             >
               {checkingOut ? <Loader2 size={18} className="animate-spin" /> : <Zap size={18} fill="currentColor" />}
               Reativar Cofre Agora
             </button>
           ) : (
-            <div className="px-3 md:px-6 py-3 bg-red-500/10 border border-red-500/20 text-red-500 text-[11px] font-black uppercase tracking-widest">
+            <div className="px-3 md:px-6 py-3 bg-red-500/10 border border-red-500/20 text-red-500 text-[11px] font-bold uppercase tracking-widest">
               Apenas o proprietário pode reativar o cofre.
             </div>
           )}
@@ -704,7 +704,7 @@ export default function VaultDetailPage() {
                       <Printer className="text-black" size={24} />
                     </div>
                     <div>
-                      <h3 className="text-lg font-black uppercase italic tracking-tight">Imprimir Álbum</h3>
+                      <h3 className="text-lg font-bold uppercase ">Imprimir Álbum</h3>
                       <p className="text-[11px] text-zinc-400 uppercase tracking-widest leading-relaxed max-w-md">
                         Materialize este álbum com as <span className="text-white font-bold">{vault.goalPoses} poses</span> selecionadas. Garanta a impressão em alta qualidade.
                       </p>
@@ -712,7 +712,7 @@ export default function VaultDetailPage() {
                   </div>
                   <button 
                     onClick={() => setIsPrintStoreOpen(true)}
-                    className="w-full md:w-auto bg-emerald-500 hover:bg-emerald-400 text-black font-black uppercase tracking-widest text-[11px] px-4 md:px-8 py-3.5 rounded-full transition-all shadow-xl shadow-emerald-500/20 active:scale-95 flex items-center justify-center gap-2"
+                    className="w-full md:w-auto bg-emerald-500 hover:bg-emerald-400 text-black font-bold uppercase tracking-widest text-[11px] px-4 md:px-8 py-3.5 rounded-full transition-all shadow-xl shadow-emerald-500/20 active:scale-95 flex items-center justify-center gap-2"
                   >
                     <Printer size={16} />
                     Materializar Álbum
@@ -729,8 +729,8 @@ export default function VaultDetailPage() {
                   </div>
                   <div>
                     <div className="flex items-center gap-2">
-                      <span className="text-[10px] font-black uppercase tracking-tight">Assinatura Ativa</span>
-                      <span className="px-2 py-0.5 bg-emerald-500 text-black text-[8px] font-black rounded-full uppercase">Premium</span>
+                      <span className="text-[10px] font-bold uppercase ">Assinatura Ativa</span>
+                      <span className="px-2 py-0.5 bg-emerald-500 text-black text-[8px] font-bold rounded-full uppercase">Premium</span>
                     </div>
                     <p className="text-[9px] text-zinc-500 uppercase tracking-widest">
                       Próximo ciclo: {vault.subscription.nextBillingDate ? new Date(vault.subscription.nextBillingDate).toLocaleDateString() : '—'}
@@ -738,7 +738,7 @@ export default function VaultDetailPage() {
                   </div>
                 </div>
                 <div className="text-right">
-                  <span className="block text-[10px] font-black text-brand-tactical uppercase">36 POSES / MÊS</span>
+                  <span className="block text-[10px] font-bold text-brand-tactical uppercase">36 POSES / MÊS</span>
                 </div>
               </div>
             </div>
@@ -747,7 +747,7 @@ export default function VaultDetailPage() {
           <div className="mb-6 p-3 md:p-6 bg-emerald-500/10 border border-emerald-500/20 rounded-xl flex items-center gap-3 md:gap-6 animate-pulse">
             <Loader2 className="animate-spin text-brand-tactical" size={24} />
             <div className="flex-1">
-              <div className="flex justify-between text-[10px] font-black uppercase tracking-widest mb-1">
+              <div className="flex justify-between text-[10px] font-bold uppercase tracking-widest mb-1">
                 <span>Enviando Memória para o Drive...</span>
                 <span>{uploadProgress}%</span>
               </div>
@@ -764,7 +764,7 @@ export default function VaultDetailPage() {
               <Camera size={32} className="text-brand-tactical/50" />
               <input type="file" className="hidden" onChange={handleFileUpload} accept={vault.subscriptionStatus === "ACTIVE" ? "image/*,video/mp4,video/quicktime,video/webm" : "image/*"} multiple />
             </label>
-            <h2 className="text-xl font-black uppercase italic text-gray-500">O álbum está vazio</h2>
+            <h2 className="text-xl font-bold uppercase text-gray-500">O álbum está vazio</h2>
             <p className="text-[11px] text-gray-600 uppercase tracking-widest mt-2 max-w-[280px]">
               Seja o primeiro a eternizar um momento neste álbum. Clique na câmera acima para enviar.
             </p>
@@ -800,7 +800,7 @@ export default function VaultDetailPage() {
 
                   {/* Pending badge (visible only to owner) */}
                   {item.status === 'PENDING' && vault.myRole === 'OWNER' && (
-                    <div className="absolute top-2 left-2 z-20 px-2 py-0.5 bg-yellow-500 text-black text-[8px] font-black uppercase tracking-widest rounded-full">
+                    <div className="absolute top-2 left-2 z-20 px-2 py-0.5 bg-yellow-500 text-black text-[8px] font-bold uppercase tracking-widest rounded-full">
                       Pendente
                     </div>
                   )}
@@ -828,7 +828,7 @@ export default function VaultDetailPage() {
                     <div className="flex items-center gap-2">
                       <div className={`flex items-center gap-1.5 transition-all ${ item.votedByMe ? 'text-brand-tactical' : 'text-white/80'}`}>
                         <Heart size={16} fill={item.votedByMe ? "currentColor" : "none"} />
-                        <span className="text-[12px] font-black">{item._count.votes}</span>
+                        <span className="text-[12px] font-bold">{item._count.votes}</span>
                       </div>
                     </div>
                   </div>
@@ -845,7 +845,7 @@ export default function VaultDetailPage() {
         <div className="flex items-center justify-between px-4 py-3">
           <button onClick={() => navigate("/meus-albuns")} className="flex flex-col items-center gap-1 text-zinc-400 hover:text-brand-tactical transition-colors">
             <ChevronLeft size={20} />
-            <span className="text-[9px] font-black uppercase tracking-widest">Voltar</span>
+            <span className="text-[9px] font-bold uppercase tracking-widest">Voltar</span>
           </button>
 
           <button 
@@ -853,7 +853,7 @@ export default function VaultDetailPage() {
             className="flex flex-col items-center gap-1 text-zinc-400 hover:text-brand-tactical transition-colors ml-2"
           >
             <Layers size={20} />
-            <span className="text-[9px] font-black uppercase tracking-widest text-center">Serviços</span>
+            <span className="text-[9px] font-bold uppercase tracking-widest text-center">Serviços</span>
           </button>
           
           <button 
@@ -871,7 +871,7 @@ export default function VaultDetailPage() {
             ) : (
               <Printer size={18} />
             )}
-            <span className="text-[10px] font-black uppercase tracking-widest whitespace-nowrap">
+            <span className="text-[10px] font-bold uppercase tracking-widest whitespace-nowrap">
               {media.filter(m => m.votedByMe).length > 0 
                 ? `${media.filter(m => m.votedByMe).length} Escolhida${media.filter(m => m.votedByMe).length > 1 ? 's' : ''}` 
                 : media.length >= vault.goalPoses 
@@ -888,13 +888,13 @@ export default function VaultDetailPage() {
               className="flex flex-col items-center gap-1 text-blue-400 hover:text-blue-300 transition-colors mr-4"
             >
               <Video size={20} />
-              <span className="text-[9px] font-black uppercase tracking-widest text-center">Vídeos<br/>Brutos</span>
+              <span className="text-[9px] font-bold uppercase tracking-widest text-center">Vídeos<br/>Brutos</span>
             </a>
           )}
 
           <label className="flex flex-col items-center gap-1 text-zinc-400 hover:text-brand-tactical transition-colors cursor-pointer">
             <Upload size={20} />
-            <span className="text-[9px] font-black uppercase tracking-widest">Enviar</span>
+            <span className="text-[9px] font-bold uppercase tracking-widest">Enviar</span>
             <input type="file" className="hidden" onChange={handleFileUpload} accept={vault.subscriptionStatus === "ACTIVE" ? "image/*,video/mp4,video/quicktime,video/webm" : "image/*"} multiple />
           </label>
         </div>
@@ -970,14 +970,14 @@ export default function VaultDetailPage() {
                   className="text-white/60 hover:text-white transition-colors flex items-center gap-2"
                 >
                   {downloadingSingle ? <Loader2 size={20} className="animate-spin" /> : <Download size={20} />}
-                  <span className="text-[10px] font-black uppercase tracking-widest hidden md:inline">Baixar</span>
+                  <span className="text-[10px] font-bold uppercase tracking-widest hidden md:inline">Baixar</span>
                 </button>
                 <button 
                   onClick={() => setSelectedPhoto(null)}
                   className="text-white/60 hover:text-white transition-colors flex items-center gap-2"
                 >
                   <Share2 size={20} className="rotate-45" />
-                  <span className="text-[10px] font-black uppercase tracking-widest hidden md:inline">Fechar</span>
+                  <span className="text-[10px] font-bold uppercase tracking-widest hidden md:inline">Fechar</span>
                 </button>
               </div>
 
@@ -1053,7 +1053,7 @@ export default function VaultDetailPage() {
                     </button>
                     <button
                       onClick={() => handleDeleteMedia(selectedPhoto.id)}
-                      className="flex items-center gap-2 px-5 py-2.5 rounded-full font-black uppercase tracking-wider text-[11px] bg-red-500/80 hover:bg-red-500 text-white transition-all whitespace-nowrap"
+                      className="flex items-center gap-2 px-5 py-2.5 rounded-full font-bold uppercase tracking-wider text-[11px] bg-red-500/80 hover:bg-red-500 text-white transition-all whitespace-nowrap"
                     >
                       🗑 Excluir
                     </button>
@@ -1063,7 +1063,7 @@ export default function VaultDetailPage() {
 
               {/* ── Info: enviada por ── */}
               <div className="text-center shrink-0 pt-2 pb-1">
-                <p className="text-white/40 text-[10px] font-black uppercase tracking-[0.2em]">Enviada por {selectedPhoto.uploadedBy.nome}</p>
+                <p className="text-white/40 text-[10px] font-bold uppercase tracking-[0.2em]">Enviada por {selectedPhoto.uploadedBy.nome}</p>
                 <p className="text-white/20 text-[9px] uppercase mt-0.5">{new Date(selectedPhoto.createdAt).toLocaleDateString()}</p>
               </div>
             </motion.div>

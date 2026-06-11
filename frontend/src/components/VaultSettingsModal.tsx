@@ -108,7 +108,7 @@ export function VaultSettingsModal({ isOpen, onClose, vault, onUpdate, sortConfi
                   <Settings size={16} className="text-emerald-500" />
                 </div>
                 <div>
-                  <h2 className="text-sm font-black uppercase tracking-widest text-white">Configurações</h2>
+                  <h2 className="text-sm font-bold uppercase tracking-widest text-white">Configurações</h2>
                   <p className="text-[10px] text-zinc-500 font-medium">{vault.nome}</p>
                 </div>
               </div>
@@ -138,7 +138,7 @@ export function VaultSettingsModal({ isOpen, onClose, vault, onUpdate, sortConfi
                 <div className="space-y-6">
                   {/* Nome */}
                   <div>
-                    <label className="block text-[10px] font-black uppercase tracking-widest text-zinc-400 mb-2">Nome do Cofre</label>
+                    <label className="block text-[10px] font-bold uppercase tracking-widest text-zinc-400 mb-2">Nome do Cofre</label>
                     <input 
                       type="text" 
                       value={nome}
@@ -150,7 +150,7 @@ export function VaultSettingsModal({ isOpen, onClose, vault, onUpdate, sortConfi
 
                   {/* External Video Link */}
                   <div>
-                    <label className="block text-[10px] font-black uppercase tracking-widest text-zinc-400 mb-2">Link da Pasta de Vídeos (Drive/Dropbox)</label>
+                    <label className="block text-[10px] font-bold uppercase tracking-widest text-zinc-400 mb-2">Link da Pasta de Vídeos (Drive/Dropbox)</label>
                     <input 
                       type="url" 
                       value={externalVideoLink}
@@ -165,7 +165,7 @@ export function VaultSettingsModal({ isOpen, onClose, vault, onUpdate, sortConfi
 
                   {/* Quantidade de Fotos */}
                   <div>
-                    <label className="block text-[10px] font-black uppercase tracking-widest text-zinc-400 mb-3">
+                    <label className="block text-[10px] font-bold uppercase tracking-widest text-zinc-400 mb-3">
                       Quantidade de Fotos para Impressão
                     </label>
                     <div className="grid grid-cols-2 gap-2">
@@ -200,7 +200,7 @@ export function VaultSettingsModal({ isOpen, onClose, vault, onUpdate, sortConfi
                     {selectedPreset && (
                       <div className="mt-3 p-3 bg-zinc-900/60 rounded-lg border border-white/5 flex items-center justify-between">
                         <span className="text-[10px] text-zinc-400 uppercase tracking-widest">Total estimado</span>
-                        <span className="text-[13px] font-black text-emerald-400">
+                        <span className="text-[13px] font-bold text-emerald-400">
                           R$ {selectedPreset.price.toFixed(2).replace(".", ",")}
                         </span>
                       </div>
@@ -219,7 +219,7 @@ export function VaultSettingsModal({ isOpen, onClose, vault, onUpdate, sortConfi
                   <button 
                     onClick={handleSave}
                     disabled={loading || !hasChanges || !nome.trim()}
-                    className="w-full h-12 bg-emerald-500 hover:bg-emerald-400 text-black text-[11px] font-black uppercase tracking-widest rounded-lg transition-colors flex items-center justify-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed shadow-lg shadow-emerald-500/20"
+                    className="w-full h-12 bg-emerald-500 hover:bg-emerald-400 text-black text-[11px] font-bold uppercase tracking-widest rounded-lg transition-colors flex items-center justify-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed shadow-lg shadow-emerald-500/20"
                   >
                     {loading ? <Loader2 size={16} className="animate-spin" /> : "Salvar Alterações"}
                   </button>
@@ -284,7 +284,7 @@ export function VaultSettingsModal({ isOpen, onClose, vault, onUpdate, sortConfi
                           </button>
                         )}
                         {member.role === "OWNER" && (
-                          <div className="px-3 py-1 bg-emerald-500/20 text-emerald-500 text-[9px] font-black uppercase tracking-widest rounded-full">
+                          <div className="px-3 py-1 bg-emerald-500/20 text-emerald-500 text-[9px] font-bold uppercase tracking-widest rounded-full">
                             Dono
                           </div>
                         )}

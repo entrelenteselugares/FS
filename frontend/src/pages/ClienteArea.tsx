@@ -499,7 +499,7 @@ export default function ClienteArea() {
  return (
  <div className="flex items-center gap-4 px-3 md:px-6 py-4 bg-amber-500/10 border border-amber-500/30 text-amber-400">
  <AlertTriangle size={16} />
- <p className="text-[10px] font-black uppercase tracking-widest">Atenção: {exp.length} álbum(ns) expiram em menos de 7 dias. Faça o download agora.</p>
+ <p className="text-[10px] font-bold uppercase tracking-widest">Atenção: {exp.length} álbum(ns) expiram em menos de 7 dias. Faça o download agora.</p>
  </div>
  );
  })()}
@@ -509,7 +509,7 @@ export default function ClienteArea() {
  {user?.nome && (
  <div className="flex items-center gap-2 px-3 py-1.5 bg-brand-tactical/10 rounded-xl border border-brand-tactical/20 self-start md:shrink-0">
  <ShieldCheck size={12} className="text-brand-tactical" />
- <p className="text-[9px] font-black text-brand-tactical uppercase tracking-widest">{user.nome}</p>
+ <p className="text-[9px] font-bold text-brand-tactical uppercase tracking-widest">{user.nome}</p>
  </div>
  )}
  </div>
@@ -536,7 +536,7 @@ export default function ClienteArea() {
  <div className={`p-1.5 sm:p-2 rounded-lg ${m.highlight ? 'bg-brand-tactical text-black shadow-lg shadow-brand-tactical/20' : 'bg-theme-bg-muted text-theme-text-muted border border-white/5'}`}>
  {m.icon}
  </div>
- <p className="text-[8px] sm:text-[9px] font-black text-theme-text-muted uppercase tracking-widest">{m.label}</p>
+ <p className="text-[8px] sm:text-[9px] font-bold text-theme-text-muted uppercase tracking-widest">{m.label}</p>
  </div>
  <p className={`text-xl sm:text-3xl md:text-4xl font-heading font-black tracking-tight leading-none ${
  m.highlight || m.isCash ? 'text-brand-tactical drop-shadow-[0_0_15px_rgba(133,185,172,0.3)]' : 'text-theme-text'
@@ -565,8 +565,8 @@ export default function ClienteArea() {
   <div className="relative overflow-hidden bg-theme-bg border-2 border-theme-border p-3 sm:p-5 md:p-8 rounded-2xl transition-all duration-500 hover:border-brand-tactical hover:shadow-[0_0_20px_rgba(133,185,172,0.3)] hover:border-brand-tactical group">
   <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-white/5 to-transparent rotate-45 translate-x-12 -translate-y-12 pointer-events-none" />
   <div className="relative z-10 space-y-2 sm:space-y-4">
-  <label className="text-[8px] sm:text-[9px] font-black text-theme-text-muted uppercase tracking-[0.2em] block">Saldo Disponível</label>
-  <div className="text-2xl md:text-4xl font-heading font-black uppercase italic tracking-tighter text-theme-text">
+  <label className="text-[8px] sm:text-[9px] font-bold text-theme-text-muted uppercase tracking-[0.2em] block">Saldo Disponível</label>
+  <div className="text-2xl md:text-4xl font-heading font-bold uppercase text-theme-text">
   {formatCurrency(user?.rewardCredits || 0)}
   </div>
   <p className="text-[8px] sm:text-[10px] text-theme-text-muted font-bold leading-normal sm:leading-relaxed uppercase tracking-widest max-w-xs ">
@@ -577,7 +577,7 @@ export default function ClienteArea() {
   <div className="relative overflow-hidden bg-theme-bg border-2 border-theme-border p-3 sm:p-5 md:p-8 rounded-2xl transition-all duration-500 hover:border-brand-tactical hover:shadow-[0_0_20px_rgba(133,185,172,0.3)] hover:border-brand-tactical flex flex-col justify-between gap-3 sm:gap-6 group">
   <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-white/5 to-transparent rotate-45 translate-x-12 -translate-y-12 pointer-events-none" />
   <div className="relative z-10 space-y-2 sm:space-y-4">
-  <p className="text-[8px] sm:text-[10px] font-black text-theme-text uppercase tracking-widest flex items-center gap-1.5 sm:gap-2">
+  <p className="text-[8px] sm:text-[10px] font-bold text-theme-text uppercase tracking-widest flex items-center gap-1.5 sm:gap-2">
   <Zap size={10} className="text-brand-tactical animate-pulse sm:w-3 sm:h-3" /> Como ganhar mais?
   </p>
   <p className="text-[8px] sm:text-[10px] text-theme-text-muted font-bold leading-relaxed uppercase tracking-widest max-w-[280px]">
@@ -586,7 +586,7 @@ export default function ClienteArea() {
   </div>
   <button 
   onClick={() => handleTabChange("affiliate")}
-  className="relative z-10 self-start text-[8px] sm:text-[9px] font-black uppercase tracking-[0.2em] text-brand-tactical border border-brand-tactical/30 px-3 sm:px-6 py-2 sm:py-3 hover:bg-brand-tactical hover:text-black transition-all duration-300"
+  className="relative z-10 self-start text-[8px] sm:text-[9px] font-bold uppercase tracking-[0.2em] text-brand-tactical border border-brand-tactical/30 px-3 sm:px-6 py-2 sm:py-3 hover:bg-brand-tactical hover:text-black transition-all duration-300"
   >
   Pegar meu Link →
   </button>
@@ -597,7 +597,7 @@ export default function ClienteArea() {
  <div className="space-y-6">
  <div className="flex items-center gap-3">
  <div className="h-0.5 w-6 bg-brand-tactical" />
- <p className="text-[9px] font-black text-theme-muted uppercase tracking-[0.4em]">Extrato de Recompensas</p>
+ <p className="text-[9px] font-bold text-theme-muted uppercase tracking-[0.4em]">Extrato de Recompensas</p>
  </div>
 
  <div className="bg-theme-bg/60 backdrop-blur-xl border border-white/5 rounded-2xl overflow-hidden shadow-[0_8px_30px_rgb(0,0,0,0.12)]">
@@ -608,7 +608,7 @@ export default function ClienteArea() {
  <div className="space-y-1">
  <div className="flex items-center gap-2">
  <div className="w-1.5 h-1.5 rounded-full bg-brand-tactical shadow-[0_0_8px_rgba(133,185,172,0.8)]" />
- <p className="text-[11px] font-black text-theme-text uppercase tracking-tight">
+ <p className="text-[11px] font-bold text-theme-text uppercase ">
  {item.description}
  </p>
  </div>
@@ -618,12 +618,12 @@ export default function ClienteArea() {
  </div>
  <div className="text-right">
  {(item.amount && Number(item.amount) > 0) ? (
- <p className="text-[14px] font-black tracking-tight text-brand-tactical">
+ <p className="text-[14px] font-bold text-brand-tactical">
  +{formatCurrency(item.amount)}
  </p>
  ) : null}
  {item.points && (
- <p className="text-[8px] font-black text-theme-text-muted uppercase tracking-widest mt-0.5">
+ <p className="text-[8px] font-bold text-theme-text-muted uppercase tracking-widest mt-0.5">
  +{item.points} pts
  </p>
  )}
@@ -670,17 +670,17 @@ export default function ClienteArea() {
                       </div>
                       
                       <div className="relative space-y-2">
-                        <h3 className="text-xl md:text-2xl font-heading font-black uppercase tracking-tight text-theme-text">Histórico Vazio</h3>
+                        <h3 className="text-xl md:text-2xl font-heading font-bold uppercase text-theme-text">Histórico Vazio</h3>
                         <p className="text-[10px] md:text-[11px] font-bold text-theme-muted uppercase tracking-widest max-w-sm mx-auto leading-relaxed px-4">
                           Você ainda não realizou nenhuma compra. Explore a vitrine ou solicite uma cobertura.
                         </p>
                       </div>
                       
                       <div className="relative flex items-center justify-center gap-4 flex-wrap pt-2">
-                        <button onClick={() => navigate("/vitrine")} className="px-3 md:px-6 py-3 bg-brand-tactical text-brand-text font-black text-[10px] uppercase tracking-widest flex items-center gap-3 hover:brightness-110 transition-all shadow-lg shadow-brand-tactical/20">
+                        <button onClick={() => navigate("/vitrine")} className="px-3 md:px-6 py-3 bg-brand-tactical text-brand-text font-bold text-[10px] uppercase tracking-widest flex items-center gap-3 hover:brightness-110 transition-all shadow-lg shadow-brand-tactical/20">
                           Explorar Vitrine <ArrowRight size={14} />
                         </button>
-                        <button onClick={() => navigate("/cotacao")} className="px-3 md:px-6 py-3 border border-theme-border text-theme-text font-black text-[10px] uppercase tracking-widest hover:bg-theme-bg-muted transition-all flex items-center gap-3">
+                        <button onClick={() => navigate("/cotacao")} className="px-3 md:px-6 py-3 border border-theme-border text-theme-text font-bold text-[10px] uppercase tracking-widest hover:bg-theme-bg-muted transition-all flex items-center gap-3">
                           Solicitar Cobertura <ArrowRight size={14} />
                         </button>
                       </div>
@@ -705,7 +705,7 @@ export default function ClienteArea() {
  <div className="space-y-6">
  <div className="flex items-center gap-3">
  <div className="h-0.5 w-6 bg-brand-tactical" />
- <p className="text-[9px] font-black text-theme-muted uppercase tracking-[0.4em]">Extrato de Recompensas</p>
+ <p className="text-[9px] font-bold text-theme-muted uppercase tracking-[0.4em]">Extrato de Recompensas</p>
  </div>
 
  <div className="bg-theme-bg/60 backdrop-blur-xl border border-white/5 rounded-2xl overflow-hidden shadow-[0_8px_30px_rgb(0,0,0,0.12)]">
@@ -716,7 +716,7 @@ export default function ClienteArea() {
  <div className="space-y-1">
  <div className="flex items-center gap-2">
  <div className="w-1.5 h-1.5 rounded-full bg-brand-tactical shadow-[0_0_8px_rgba(133,185,172,0.8)]" />
- <p className="text-[11px] font-black text-theme-text uppercase tracking-tight">
+ <p className="text-[11px] font-bold text-theme-text uppercase ">
  {item.description}
  </p>
  </div>
@@ -726,12 +726,12 @@ export default function ClienteArea() {
  </div>
  <div className="text-right">
  {(item.amount && Number(item.amount) > 0) ? (
- <p className="text-[14px] font-black tracking-tight text-brand-tactical">
+ <p className="text-[14px] font-bold text-brand-tactical">
  +{formatCurrency(item.amount)}
  </p>
  ) : null}
  {item.points && (
- <p className="text-[8px] font-black text-theme-text-muted uppercase tracking-widest mt-0.5">
+ <p className="text-[8px] font-bold text-theme-text-muted uppercase tracking-widest mt-0.5">
  +{item.points} pts
  </p>
  )}
@@ -760,22 +760,22 @@ export default function ClienteArea() {
     onProfileUpdated={() => window.location.reload()} 
   />
  <div className="space-y-2 text-center md:text-left">
- <h2 className="text-xl md:text-2xl font-heading font-black uppercase tracking-tight text-theme-text">Meus Dados</h2>
- <p className="text-[11px] font-black text-theme-muted uppercase tracking-[0.4em] ">Gerencie suas informações de contato e entrega</p>
+ <h2 className="text-xl md:text-2xl font-heading font-bold uppercase text-theme-text">Meus Dados</h2>
+ <p className="text-[11px] font-bold text-theme-muted uppercase tracking-[0.4em] ">Gerencie suas informações de contato e entrega</p>
  </div>
  </div>
  <form onSubmit={handleUpdateProfile} className="space-y-4 md:space-y-6">
  <div className="space-y-1.5 md:space-y-2">
- <label className="text-[8px] md:text-[9px] font-black uppercase tracking-widest text-theme-muted block ">E-mail (Não editável)</label>
+ <label className="text-[8px] md:text-[9px] font-bold uppercase tracking-widest text-theme-muted block ">E-mail (Não editável)</label>
  <input type="text" disabled value={user?.email || ""} className="fs-input opacity-60" />
  </div>
  <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-6">
  <div className="space-y-1.5 md:space-y-2">
- <label className="text-[8px] md:text-[9px] font-black uppercase tracking-widest text-theme-muted block ">Nome Completo</label>
+ <label className="text-[8px] md:text-[9px] font-bold uppercase tracking-widest text-theme-muted block ">Nome Completo</label>
  <input type="text" value={profileData.nome} onChange={e => setProfileData(p => ({ ...p, nome: e.target.value }))} className="fs-input" placeholder="Como quer ser chamado" />
  </div>
  <div className="space-y-1.5 md:space-y-2">
- <label className="text-[8px] md:text-[9px] font-black uppercase tracking-widest text-theme-muted block ">WhatsApp</label>
+ <label className="text-[8px] md:text-[9px] font-bold uppercase tracking-widest text-theme-muted block ">WhatsApp</label>
  <input type="text" value={profileData.whatsapp} onChange={e => setProfileData(p => ({ ...p, whatsapp: e.target.value }))} className="fs-input" placeholder="(00) 00000-0000" />
  </div>
  </div>
@@ -783,38 +783,38 @@ export default function ClienteArea() {
  <div className="pt-2 md:pt-4 space-y-4 md:space-y-6">
  <div className="flex items-center gap-3">
  <div className="h-px w-6 bg-brand-tactical" />
- <p className="text-[8px] md:text-[9px] font-black text-theme-muted uppercase tracking-[0.4em]">Endereço de Entrega</p>
+ <p className="text-[8px] md:text-[9px] font-bold text-theme-muted uppercase tracking-[0.4em]">Endereço de Entrega</p>
  </div>
 
  <div className="grid grid-cols-6 gap-2.5 md:gap-4">
  <div className="col-span-2 sm:col-span-2 space-y-1 md:space-y-2">
- <label className="text-[8px] md:text-[9px] font-black uppercase tracking-[0.3em] text-theme-muted block ">CEP</label>
+ <label className="text-[8px] md:text-[9px] font-bold uppercase tracking-[0.3em] text-theme-muted block ">CEP</label>
  <input type="text" value={profileData.cep} onChange={e => handleCepChange(e.target.value)} className="fs-input p-2.5 text-xs" placeholder="00000-000" />
  </div>
  <div className="col-span-4 sm:col-span-4 space-y-1 md:space-y-2">
- <label className="text-[8px] md:text-[9px] font-black uppercase tracking-[0.3em] text-theme-muted block ">Endereço</label>
+ <label className="text-[8px] md:text-[9px] font-bold uppercase tracking-[0.3em] text-theme-muted block ">Endereço</label>
  <input type="text" value={profileData.endereco} onChange={e => setProfileData(p => ({ ...p, endereco: e.target.value }))} className="fs-input p-2.5 text-xs" placeholder="Nome da rua" />
  </div>
 
  <div className="col-span-2 sm:col-span-1 space-y-1 md:space-y-2">
- <label className="text-[8px] md:text-[9px] font-black uppercase tracking-[0.3em] text-theme-muted block ">Nº</label>
+ <label className="text-[8px] md:text-[9px] font-bold uppercase tracking-[0.3em] text-theme-muted block ">Nº</label>
  <input type="text" value={profileData.numero} onChange={e => setProfileData(p => ({ ...p, numero: e.target.value }))} className="fs-input p-2.5 text-xs" placeholder="123" />
  </div>
  <div className="col-span-4 sm:col-span-2 space-y-1 md:space-y-2">
- <label className="text-[8px] md:text-[9px] font-black uppercase tracking-[0.3em] text-theme-muted block ">Complemento</label>
+ <label className="text-[8px] md:text-[9px] font-bold uppercase tracking-[0.3em] text-theme-muted block ">Complemento</label>
  <input type="text" value={profileData.complemento} onChange={e => setProfileData(p => ({ ...p, complemento: e.target.value }))} className="fs-input p-2.5 text-xs" placeholder="Apto, Bloco, etc" />
  </div>
 
  <div className="col-span-6 sm:col-span-3 space-y-1 md:space-y-2">
- <label className="text-[8px] md:text-[9px] font-black uppercase tracking-[0.3em] text-theme-muted block ">Bairro</label>
+ <label className="text-[8px] md:text-[9px] font-bold uppercase tracking-[0.3em] text-theme-muted block ">Bairro</label>
  <input type="text" value={profileData.bairro} onChange={e => setProfileData(p => ({ ...p, bairro: e.target.value }))} className="fs-input p-2.5 text-xs" placeholder="Nome do bairro" />
  </div>
  <div className="col-span-4 sm:col-span-4 space-y-1 md:space-y-2">
- <label className="text-[8px] md:text-[9px] font-black uppercase tracking-[0.3em] text-theme-muted block ">Cidade</label>
+ <label className="text-[8px] md:text-[9px] font-bold uppercase tracking-[0.3em] text-theme-muted block ">Cidade</label>
  <input type="text" value={profileData.cidade} onChange={e => setProfileData(p => ({ ...p, cidade: e.target.value }))} className="fs-input p-2.5 text-xs" placeholder="Sua cidade" />
  </div>
  <div className="col-span-2 sm:col-span-2 space-y-1 md:space-y-2">
- <label className="text-[8px] md:text-[9px] font-black uppercase tracking-[0.3em] text-theme-muted block ">UF</label>
+ <label className="text-[8px] md:text-[9px] font-bold uppercase tracking-[0.3em] text-theme-muted block ">UF</label>
  <input type="text" value={profileData.estado} onChange={e => setProfileData(p => ({ ...p, estado: e.target.value }))} className="fs-input p-2.5 text-xs" placeholder="SP" maxLength={2} />
  </div>
  </div>
@@ -823,13 +823,13 @@ export default function ClienteArea() {
  <button type="submit" disabled={isSaving} className="fs-btn bg-brand-tactical text-brand-text hover:bg-brand-tactical/90 hover:scale-[1.02] hover:shadow-lg hover:shadow-brand-tactical/20 transition-all disabled:opacity-50 disabled:hover:scale-100 disabled:hover:shadow-none ">
  {isSaving ? "Salvando..." : "Salvar Alterações"}
  </button>
- {saveSuccess && <span className="text-brand-tactical text-[10px] font-black uppercase tracking-widest">✓ Atualizado</span>}
+ {saveSuccess && <span className="text-brand-tactical text-[10px] font-bold uppercase tracking-widest">✓ Atualizado</span>}
  </div>
  </form>
  <div className="pt-4 md:pt-6 border-t border-theme-border space-y-3 md:space-y-4">
- <h3 className="text-[8px] md:text-[9px] font-black text-red-400 uppercase tracking-[0.3em]">Zona de Suporte</h3>
+ <h3 className="text-[8px] md:text-[9px] font-bold text-red-400 uppercase tracking-[0.3em]">Zona de Suporte</h3>
  <p className="text-[10px] md:text-[11px] text-theme-muted">Para redefinir sua senha ou solicitar exclusão de dados, entre em contato com nosso suporte.</p>
- <a href="https://wa.me/5519981150440" target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 text-[10px] font-black text-theme-text uppercase tracking-widest hover:text-brand-tactical transition-colors">
+ <a href="https://wa.me/5519981150440" target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 text-[10px] font-bold text-theme-text uppercase tracking-widest hover:text-brand-tactical transition-colors">
  Falar com Suporte <ArrowRight size={12} />
  </a>
  </div>
@@ -844,8 +844,8 @@ export default function ClienteArea() {
  <Briefcase size={24} />
  </div>
  <div className="space-y-1">
- <h3 className="text-xl md:text-2xl font-heading font-black uppercase tracking-tight text-theme-text">Seja um Parceiro</h3>
- <p className="text-[9px] md:text-[10px] font-black text-emerald-500 uppercase tracking-[0.4em] ">Transforme sua paixão em faturamento</p>
+ <h3 className="text-xl md:text-2xl font-heading font-bold uppercase text-theme-text">Seja um Parceiro</h3>
+ <p className="text-[9px] md:text-[10px] font-bold text-emerald-500 uppercase tracking-[0.4em] ">Transforme sua paixão em faturamento</p>
  </div>
  </div>
 
@@ -853,7 +853,7 @@ export default function ClienteArea() {
  <div className="p-3 md:p-6 bg-amber-500/10 border border-amber-500/20 space-y-3">
  <div className="flex items-center gap-3 text-amber-500">
  <Clock size={16} className="animate-pulse" />
- <p className="text-[10px] font-black uppercase tracking-widest">Perfil em Análise Técnica</p>
+ <p className="text-[10px] font-bold uppercase tracking-widest">Perfil em Análise Técnica</p>
  </div>
  <p className="text-xs text-theme-text-muted leading-relaxed">
  Recebemos sua solicitação! Nossa equipe está validando seu perfil e portfólio. 
@@ -884,7 +884,7 @@ export default function ClienteArea() {
  >
  <Camera size={20} className="text-theme-muted group-hover:text-emerald-500 transition-colors" />
  <div className="space-y-1">
- <p className="text-[11px] font-black text-theme-text uppercase tracking-widest ">Fotógrafo Freelancer</p>
+ <p className="text-[11px] font-bold text-theme-text uppercase tracking-widest ">Fotógrafo Freelancer</p>
  <p className="text-[9px] text-theme-muted uppercase leading-tight tracking-widest">Atue em eventos e receba por diária + splits de vendas.</p>
  </div>
  </button>
@@ -906,7 +906,7 @@ export default function ClienteArea() {
  >
  <Building2 size={20} className="text-theme-muted group-hover:text-emerald-500 transition-colors" />
  <div className="space-y-1">
- <p className="text-[11px] font-black text-theme-text uppercase tracking-widest ">Unidade Fixa (Local)</p>
+ <p className="text-[11px] font-bold text-theme-text uppercase tracking-widest ">Unidade Fixa (Local)</p>
  <p className="text-[9px] text-theme-muted uppercase leading-tight tracking-widest">Transforme seu estabelecimento em um ponto Foto Segundo.</p>
  </div>
  </button>
@@ -1030,7 +1030,7 @@ group: EventGroup;
   return (
     <div className="mb-6 space-y-3">
       {/* Date Header like ML */}
-      <h3 className="text-xs font-black text-theme-text uppercase tracking-widest pl-2">
+      <h3 className="text-xs font-bold text-theme-text uppercase tracking-widest pl-2">
         {purchaseDate}
       </h3>
 
@@ -1055,8 +1055,8 @@ group: EventGroup;
               const clientNotes = idx >= 0 ? desc.slice(idx + marker.length).trim() : '';
               if (!clientNotes || clientNotes === 'undefined') return null;
               return (
-                <p className="text-[10px] text-theme-text-muted mt-1 italic">
-                  <span className="font-black text-theme-text not-italic">Obs:</span> {clientNotes}
+                <p className="text-[10px] text-theme-text-muted mt-1 ">
+                  <span className="font-bold text-theme-text not-">Obs:</span> {clientNotes}
                 </p>
               );
             })()}
@@ -1087,7 +1087,7 @@ group: EventGroup;
 
           {/* Details */}
           <div className="flex-1 min-w-0 flex flex-col justify-center">
-            <h4 className="text-sm md:text-base font-black tracking-tight text-theme-text mb-1">
+            <h4 className="text-sm md:text-base font-bold text-theme-text mb-1">
               {displayTitle}
             </h4>
             <p className="text-[10px] text-theme-text-muted mb-3 flex items-center gap-1.5">
@@ -1263,13 +1263,13 @@ function PedidoDetalhe({ pedido, loading, onGoToEvent, onChangePrivacy, onRefres
  <div className="absolute bottom-0 left-0 right-0 p-3 md:p-6 space-y-1">
  <div className="flex items-center gap-2 mb-1">
  <div className="h-0.5 w-6 bg-brand-tactical" />
- <p className="text-[9px] font-black text-brand-tactical uppercase tracking-[0.4em]">Meu Álbum</p>
+ <p className="text-[9px] font-bold text-brand-tactical uppercase tracking-[0.4em]">Meu Álbum</p>
  </div>
  
  {!isEditing && (
  <div className="flex items-end justify-between">
  <div className="min-w-0 flex-1">
- <h3 className="text-xl md:text-2xl font-heading font-black uppercase tracking-tight text-theme-text">
+ <h3 className="text-xl md:text-2xl font-heading font-bold uppercase text-theme-text">
  {pedido.event.type === 'ALBUM_FULL' ? `Álbum: ${pedido.event.title}` : pedido.event.title}
  </h3>
  <p className="text-[9px] font-bold text-theme-muted uppercase tracking-widest mt-1 whitespace-pre-line">
@@ -1278,7 +1278,7 @@ function PedidoDetalhe({ pedido, loading, onGoToEvent, onChangePrivacy, onRefres
  </p>
  </div>
  {pedido.event.type === 'ALBUM_FULL' && (
- <button onClick={() => setIsEditing(true)} className="flex-shrink-0 ml-4 text-[9px] font-black uppercase tracking-widest border border-theme-border/50 text-zinc-400 px-3 py-1.5 hover:text-brand-tactical hover:border-brand-tactical transition-colors rounded">
+ <button onClick={() => setIsEditing(true)} className="flex-shrink-0 ml-4 text-[9px] font-bold uppercase tracking-widest border border-theme-border/50 text-zinc-400 px-3 py-1.5 hover:text-brand-tactical hover:border-brand-tactical transition-colors rounded">
  Personalizar
  </button>
  )}
@@ -1288,7 +1288,7 @@ function PedidoDetalhe({ pedido, loading, onGoToEvent, onChangePrivacy, onRefres
  {isEditing && (
  <div className="flex items-center gap-2">
  <Zap size={12} className="text-brand-tactical animate-pulse" />
- <p className="text-[9px] font-black text-white uppercase tracking-widest ">Modo de Edição Ativo</p>
+ <p className="text-[9px] font-bold text-white uppercase tracking-widest ">Modo de Edição Ativo</p>
  </div>
  )}
  </div>
@@ -1299,7 +1299,7 @@ function PedidoDetalhe({ pedido, loading, onGoToEvent, onChangePrivacy, onRefres
  <div className="space-y-6 animate-in fade-in slide-in-from-top-4 duration-500">
  <div className="flex flex-col gap-5 bg-theme-bg p-3 md:p-6 border-2 border-theme-border rounded-lg">
  <div className="space-y-1.5">
- <label className="text-[8px] font-black text-brand-tactical uppercase tracking-[0.2em]">Identidade do Álbum</label>
+ <label className="text-[8px] font-bold text-brand-tactical uppercase tracking-[0.2em]">Identidade do Álbum</label>
  <input 
  value={nome} 
  onChange={(e) => setNome(e.target.value)}
@@ -1309,7 +1309,7 @@ function PedidoDetalhe({ pedido, loading, onGoToEvent, onChangePrivacy, onRefres
  </div>
 
  <div className="space-y-2">
- <label className="text-[8px] font-black text-brand-tactical uppercase tracking-[0.2em]">Capa do Álbum</label>
+ <label className="text-[8px] font-bold text-brand-tactical uppercase tracking-[0.2em]">Capa do Álbum</label>
  <div className="flex items-center gap-3">
  <div className="flex-1 relative">
  <input 
@@ -1341,7 +1341,7 @@ function PedidoDetalhe({ pedido, loading, onGoToEvent, onChangePrivacy, onRefres
 
  <div className="grid grid-cols-2 gap-4">
  <div className="space-y-1.5">
- <label className="text-[8px] font-black text-theme-muted uppercase tracking-[0.2em]">Enquadramento</label>
+ <label className="text-[8px] font-bold text-theme-muted uppercase tracking-[0.2em]">Enquadramento</label>
  <select 
  value={coverPos} 
  onChange={(e) => setCoverPos(e.target.value)}
@@ -1355,7 +1355,7 @@ function PedidoDetalhe({ pedido, loading, onGoToEvent, onChangePrivacy, onRefres
  </select>
  </div>
  <div className="space-y-1.5">
- <label className="text-[8px] font-black text-theme-muted uppercase tracking-[0.2em]">Cidade <span className="opacity-40">(Opcional)</span></label>
+ <label className="text-[8px] font-bold text-theme-muted uppercase tracking-[0.2em]">Cidade <span className="opacity-40">(Opcional)</span></label>
  <input 
  value={city} 
  onChange={(e) => setCity(e.target.value)}
@@ -1366,7 +1366,7 @@ function PedidoDetalhe({ pedido, loading, onGoToEvent, onChangePrivacy, onRefres
  </div>
  
  <div className="space-y-1.5">
- <label className="text-[8px] font-black text-theme-muted uppercase tracking-[0.2em]">Endereço Completo / Localização</label>
+ <label className="text-[8px] font-bold text-theme-muted uppercase tracking-[0.2em]">Endereço Completo / Localização</label>
  <textarea 
  value={loc} 
  onChange={(e) => setLoc(e.target.value)}
@@ -1398,7 +1398,7 @@ function PedidoDetalhe({ pedido, loading, onGoToEvent, onChangePrivacy, onRefres
  <div className="flex items-center gap-3">
  <ShieldCheck size={16} className="text-brand-tactical" />
  <div>
- <p className="text-[10px] font-black text-brand-tactical uppercase tracking-widest ">Acesso</p>
+ <p className="text-[10px] font-bold text-brand-tactical uppercase tracking-widest ">Acesso</p>
  <p className="text-[11px] text-theme-muted font-bold">
  {pedido.hasPaid ? (pedido.accessType === 'PRIVATE' ? 'PRIVADO' : 'PÚBLICO') : 'Pendente'}
  </p>
@@ -1412,8 +1412,8 @@ function PedidoDetalhe({ pedido, loading, onGoToEvent, onChangePrivacy, onRefres
  {pedido.hasPaid && pedido.accessExpiresAt && (
  <div className="flex items-center justify-between p-4 border-2 border-theme-border bg-theme-bg md:w-64">
  <div>
- <p className="text-[10px] font-black text-theme-muted uppercase tracking-widest">Válido Até</p>
- <p className="text-sm font-black text-theme-text ">{formatDate(pedido.accessExpiresAt)}</p>
+ <p className="text-[10px] font-bold text-theme-muted uppercase tracking-widest">Válido Até</p>
+ <p className="text-sm font-bold text-theme-text ">{formatDate(pedido.accessExpiresAt)}</p>
  </div>
  <Clock size={16} className="text-theme-muted opacity-50" />
  </div>
@@ -1423,13 +1423,13 @@ function PedidoDetalhe({ pedido, loading, onGoToEvent, onChangePrivacy, onRefres
  <div className="space-y-4">
  <div className="flex items-center gap-2">
  <div className="w-1.5 h-1.5 rounded-full bg-brand-tactical" />
- <p className="text-[9px] font-black text-theme-text uppercase tracking-[0.3em]">Serviços Contratados</p>
+ <p className="text-[9px] font-bold text-theme-text uppercase tracking-[0.3em]">Serviços Contratados</p>
  </div>
  
  {loading ? (
  <div className="py-5 md:py-10 flex flex-col items-center gap-3">
  <div className="w-6 h-6 border-2 border-brand-tactical border-t-transparent rounded-full animate-spin" />
- <p className="text-[9px] font-black text-brand-tactical uppercase tracking-widest animate-pulse">Sincronizando...</p>
+ <p className="text-[9px] font-bold text-brand-tactical uppercase tracking-widest animate-pulse">Sincronizando...</p>
  </div>
  ) : pedido.hasPaid ? (
  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -1505,12 +1505,12 @@ function PedidoDetalhe({ pedido, loading, onGoToEvent, onChangePrivacy, onRefres
  ) : (
  <div className="p-3 md:p-6 text-center border border-theme-border bg-brand-tactical/10 flex items-center justify-between gap-4">
  <div className="text-left space-y-1">
- <p className="text-[10px] font-black text-theme-text uppercase tracking-widest ">Acesso Restrito</p>
+ <p className="text-[10px] font-bold text-theme-text uppercase tracking-widest ">Acesso Restrito</p>
  <p className="text-[9px] text-theme-muted uppercase font-bold tracking-widest">Aguardando pagamento</p>
  </div>
  <button 
  onClick={() => navigate(`/checkout?orderId=${pedido.id}`)}
- className="px-3 md:px-6 py-3 bg-brand-tactical text-black text-[10px] font-black uppercase tracking-[0.2em] shadow-lg hover:scale-105 transition-all"
+ className="px-3 md:px-6 py-3 bg-brand-tactical text-black text-[10px] font-bold uppercase tracking-[0.2em] shadow-lg hover:scale-105 transition-all"
  >
  Pagar
  </button>
@@ -1524,7 +1524,7 @@ function PedidoDetalhe({ pedido, loading, onGoToEvent, onChangePrivacy, onRefres
    {pedido.hasPaid && (
      <button
        onClick={onGoToEvent}
-       className="w-full py-3.5 bg-brand-tactical text-black text-[10px] font-black uppercase tracking-[0.2em] hover:bg-brand-tactical/90 transition-all active:scale-95 flex items-center justify-center gap-2"
+       className="w-full py-3.5 bg-brand-tactical text-black text-[10px] font-bold uppercase tracking-[0.2em] hover:bg-brand-tactical/90 transition-all active:scale-95 flex items-center justify-center gap-2"
      >
        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
        Ver Álbum com Fotos Compradas
@@ -1533,14 +1533,14 @@ function PedidoDetalhe({ pedido, loading, onGoToEvent, onChangePrivacy, onRefres
    <div className="flex gap-3">
      <button
        onClick={onGoToEvent}
-       className="flex-1 py-3 border border-theme-border text-[9px] font-black uppercase tracking-[0.2em] text-theme-text hover:border-brand-tactical hover:text-brand-tactical transition-colors"
+       className="flex-1 py-3 border border-theme-border text-[9px] font-bold uppercase tracking-[0.2em] text-theme-text hover:border-brand-tactical hover:text-brand-tactical transition-colors"
      >
        Acessar Mural
      </button>
      <button
        onClick={onChangePrivacy}
        disabled={!pedido.hasPaid}
-       className="flex-1 py-3 border border-theme-border text-[9px] font-black uppercase tracking-[0.2em] text-theme-text hover:border-amber-500 hover:text-amber-500 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+       className="flex-1 py-3 border border-theme-border text-[9px] font-bold uppercase tracking-[0.2em] text-theme-text hover:border-amber-500 hover:text-amber-500 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
      >
        Privacidade
      </button>
@@ -1571,7 +1571,7 @@ function MediaActionCard({ icon, title, subtitle, url, disabled, bgImage }: {
     <div className="flex items-center gap-3 mb-2">
      <div className="p-2 bg-theme-bg-muted border border-theme-border opacity-40 rounded-lg text-theme-muted">{icon}</div>
      <div>
-      <p className="text-[12px] font-black uppercase tracking-widest text-theme-muted">{title}</p>
+      <p className="text-[12px] font-bold uppercase tracking-widest text-theme-muted">{title}</p>
       <p className="text-[9px] font-bold opacity-60 text-theme-muted uppercase">Aguardando Publicação</p>
      </div>
     </div>
@@ -1598,7 +1598,7 @@ function MediaActionCard({ icon, title, subtitle, url, disabled, bgImage }: {
     {icon}
     </div>
     <div>
-    <p className="text-[14px] font-black text-white uppercase tracking-widest drop-shadow-lg">{title}</p>
+    <p className="text-[14px] font-bold text-white uppercase tracking-widest drop-shadow-lg">{title}</p>
     <p className="text-[10px] text-zinc-300 uppercase font-bold tracking-[0.2em]">{subtitle}</p>
     </div>
    </div>

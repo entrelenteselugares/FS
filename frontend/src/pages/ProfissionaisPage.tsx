@@ -102,12 +102,12 @@ export default function ProfissionaisPage() {
             animate={{ opacity: 1, y: 0 }}
             className="space-y-6 text-center"
           >
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-brand-tactical/10 border border-brand-tactical text-brand-tactical text-[10px] font-black uppercase tracking-widest italic shadow-[0_0_15px_rgba(133,185,172,0.2)]">
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-brand-tactical/10 border border-brand-tactical text-brand-tactical text-[10px] font-bold uppercase tracking-widest shadow-[0_0_15px_rgba(133,185,172,0.2)]">
               <Star size={10} fill="currentColor" />
               Fotógrafos Verificados
             </div>
             
-            <h1 className="text-3xl md:text-5xl md:text-7xl font-heading font-black text-white uppercase italic tracking-tighter leading-none drop-shadow-2xl">
+            <h1 className="text-3xl md:text-5xl md:text-7xl font-heading font-bold text-white uppercase leading-none drop-shadow-2xl">
               Diretório de<br />
               <span className="text-brand-tactical" style={{ textShadow: "0 0 30px var(--brand)" }}>Profissionais</span>
             </h1>
@@ -127,7 +127,7 @@ export default function ProfissionaisPage() {
             <div className="col-span-2 md:flex-1 relative flex items-center group border-b md:border-b-0 border-theme-border pb-1 md:pb-0 mb-1 md:mb-0">
               <Search size={14} className="absolute left-3 text-theme-text-muted group-focus-within:text-brand-tactical transition-colors" />
               <input
-                className="w-full bg-transparent pl-9 pr-8 py-1.5 md:py-2 text-[10px] md:text-[11px] font-black uppercase tracking-widest text-theme-text placeholder-theme-text-muted outline-none"
+                className="w-full bg-transparent pl-9 pr-8 py-1.5 md:py-2 text-[10px] md:text-[11px] font-bold uppercase tracking-widest text-theme-text placeholder-theme-text-muted outline-none"
                 placeholder="Buscar profissional por nome..."
                 value={search}
                 onChange={e => setSearch(e.target.value)}
@@ -146,7 +146,7 @@ export default function ProfissionaisPage() {
             <div className="col-span-1 md:w-40 relative flex items-center group border-r border-theme-border md:border-r-0">
               <MapPin size={13} className="absolute left-2 md:left-3 text-theme-text-muted group-focus-within:text-brand-tactical transition-colors" />
               <input
-                className="w-full bg-transparent pl-7 md:pl-8 pr-8 py-1.5 md:py-2 text-[10px] md:text-[11px] font-black uppercase tracking-widest text-theme-text placeholder-theme-text-muted outline-none"
+                className="w-full bg-transparent pl-7 md:pl-8 pr-8 py-1.5 md:py-2 text-[10px] md:text-[11px] font-bold uppercase tracking-widest text-theme-text placeholder-theme-text-muted outline-none"
                 placeholder="Cidade..."
                 value={city}
                 onChange={e => setCity(e.target.value)}
@@ -171,7 +171,7 @@ export default function ProfissionaisPage() {
             <div className="col-span-1 md:w-40 relative flex items-center group">
               <Filter size={12} className="absolute left-3 md:left-3 text-theme-text-muted group-focus-within:text-brand-tactical pointer-events-none transition-colors" />
               <select
-                className="w-full bg-transparent pl-8 md:pl-8 pr-6 md:pr-8 py-1.5 md:py-2 text-[10px] md:text-[11px] font-black uppercase tracking-widest text-theme-text outline-none appearance-none cursor-pointer"
+                className="w-full bg-transparent pl-8 md:pl-8 pr-6 md:pr-8 py-1.5 md:py-2 text-[10px] md:text-[11px] font-bold uppercase tracking-widest text-theme-text outline-none appearance-none cursor-pointer"
                 value={service}
                 onChange={e => setService(e.target.value)}
               >
@@ -197,7 +197,7 @@ export default function ProfissionaisPage() {
         ) : profs.length === 0 ? (
           <div className="text-center py-32 space-y-4">
             <div className="text-theme-text/40 flex justify-center"><Camera size={64} /></div>
-            <p className="text-theme-text/60 text-sm uppercase tracking-widest font-black">
+            <p className="text-theme-text/60 text-sm uppercase tracking-widest font-bold">
               Nenhum profissional encontrado
             </p>
             <p className="text-theme-text/50 text-xs">
@@ -209,11 +209,11 @@ export default function ProfissionaisPage() {
         ) : (
           <>
             <div className="flex items-center justify-between mb-8">
-              <p className="text-[10px] text-theme-text/60 uppercase tracking-widest font-black">
+              <p className="text-[10px] text-theme-text/60 uppercase tracking-widest font-bold">
                 {profs.length} profissional{profs.length !== 1 ? "is" : ""} disponível{profs.length !== 1 ? "is" : ""}
               </p>
               <div className="h-px flex-1 bg-theme-border/40 mx-6" />
-              <p className="text-[10px] text-brand-tactical uppercase tracking-widest font-black italic">Ordenados por Pontuação</p>
+              <p className="text-[10px] text-brand-tactical uppercase tracking-widest font-bold ">Ordenados por Pontuação</p>
             </div>
 
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 md:gap-4">
@@ -248,7 +248,7 @@ export default function ProfissionaisPage() {
 
                           {/* Profile Image & Badges */}
                           <div className="relative z-10 w-full px-3 pb-3 md:px-5 md:pb-4 flex justify-between items-end">
-                            <div className="w-10 h-10 md:w-16 md:h-16 rounded-full border-2 border-theme-surface bg-theme-bg overflow-hidden flex items-center justify-center text-sm md:text-xl font-black text-theme-text shadow-lg">
+                            <div className="w-10 h-10 md:w-16 md:h-16 rounded-full border-2 border-theme-surface bg-theme-bg overflow-hidden flex items-center justify-center text-sm md:text-xl font-bold text-theme-text shadow-lg">
                               {prof.profileImageUrl ? (
                                 <img
                                   src={prof.profileImageUrl}
@@ -263,7 +263,7 @@ export default function ProfissionaisPage() {
                             {prof.isVerified && (
                               <div className="flex items-center gap-1 bg-brand-tactical/20 border border-brand-tactical/30 backdrop-blur-sm px-1.5 md:px-2.5 py-0.5 md:py-1 mb-1 md:mb-2 rounded shadow-lg">
                                 <ShieldCheck size={8} className="text-brand-tactical md:w-2.5 md:h-2.5" />
-                                <span className="text-[7px] md:text-[8px] font-black text-brand-tactical uppercase tracking-widest">PRO</span>
+                                <span className="text-[7px] md:text-[8px] font-bold text-brand-tactical uppercase tracking-widest">PRO</span>
                               </div>
                             )}
                           </div>
@@ -272,7 +272,7 @@ export default function ProfissionaisPage() {
                         {/* Info */}
                         <div className="p-2 md:p-4 space-y-2 md:space-y-3">
                           <div>
-                            <h3 className="text-[11px] md:text-base font-heading font-black text-theme-text uppercase italic tracking-tight group-hover:text-brand-tactical transition-colors line-clamp-1">
+                            <h3 className="text-[11px] md:text-base font-heading font-bold text-theme-text uppercase group-hover:text-brand-tactical transition-colors line-clamp-1">
                               {prof.nome}
                             </h3>
                             {location && (
@@ -285,28 +285,28 @@ export default function ProfissionaisPage() {
                           {/* Services */}
                           <div className="flex flex-wrap gap-1">
                             {prof.services.slice(0, 3).map(s => (
-                              <span key={s} className="px-1.5 py-0.5 bg-theme-surface-hover border border-theme-border text-[7px] md:text-[8px] font-black text-theme-text/70 uppercase tracking-widest">
+                              <span key={s} className="px-1.5 py-0.5 bg-theme-surface-hover border border-theme-border text-[7px] md:text-[8px] font-bold text-theme-text/70 uppercase tracking-widest">
                                 {s.length > 5 ? s.substring(0, 5) + '.' : s}
                               </span>
                             ))}
                             {prof.services.length > 3 && (
-                              <span className="px-1.5 py-0.5 text-[7px] md:text-[8px] font-black text-theme-text/50 uppercase">+{prof.services.length - 3}</span>
+                              <span className="px-1.5 py-0.5 text-[7px] md:text-[8px] font-bold text-theme-text/50 uppercase">+{prof.services.length - 3}</span>
                             )}
                           </div>
 
                           {/* Stats */}
                           <div className="grid grid-cols-3 gap-1 md:gap-3 pt-2 border-t border-theme-border">
                             <div className="text-center">
-                              <p className="text-xs md:text-base font-heading font-black text-theme-text italic">{prof.experienceYears || 0}</p>
-                              <p className="text-[6px] md:text-[7px] text-theme-text/50 uppercase tracking-widest font-black">Anos</p>
+                              <p className="text-xs md:text-base font-heading font-bold text-theme-text ">{prof.experienceYears || 0}</p>
+                              <p className="text-[6px] md:text-[7px] text-theme-text/50 uppercase tracking-widest font-bold">Anos</p>
                             </div>
                             <div className="text-center border-x border-theme-border">
-                              <p className="text-xs md:text-base font-heading font-black text-theme-text italic">{prof.totalMissions}</p>
-                              <p className="text-[6px] md:text-[7px] text-theme-text/50 uppercase tracking-widest font-black">Mis.</p>
+                              <p className="text-xs md:text-base font-heading font-bold text-theme-text ">{prof.totalMissions}</p>
+                              <p className="text-[6px] md:text-[7px] text-theme-text/50 uppercase tracking-widest font-bold">Mis.</p>
                             </div>
                             <div className="text-center">
-                              <p className="text-xs md:text-base font-heading font-black text-brand-tactical italic">{prof.agilityPoints}</p>
-                              <p className="text-[6px] md:text-[7px] text-theme-text/50 uppercase tracking-widest font-black">Pts</p>
+                              <p className="text-xs md:text-base font-heading font-bold text-brand-tactical ">{prof.agilityPoints}</p>
+                              <p className="text-[6px] md:text-[7px] text-theme-text/50 uppercase tracking-widest font-bold">Pts</p>
                             </div>
                           </div>
                         </div>

@@ -491,7 +491,7 @@ export default function ProfissionalDashboard({
  <div className="bg-theme-bg-muted border border-theme-border p-3 md:p-6 flex items-center justify-center text-center opacity-40 grayscale group hover:grayscale-0 transition-all">
  <div className="space-y-2">
  <Printer size={24} className="mx-auto mb-2 opacity-20 group-hover:opacity-100 transition-opacity" />
- <p className="text-[9px] font-black uppercase tracking-widest leading-relaxed max-w-[140px] mx-auto ">Recurso exclusivo para franqueados ativos</p>
+ <p className="text-[9px] font-bold uppercase tracking-widest leading-relaxed max-w-[140px] mx-auto ">Recurso exclusivo para franqueados ativos</p>
  </div>
  </div>
  )}
@@ -567,27 +567,27 @@ export default function ProfissionalDashboard({
  <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-6">
  <div className="bg-theme-bg border-2 border-theme-border p-5 md:p-10 relative overflow-hidden group rounded-2xl shadow-sm hover:shadow-md transition-all duration-300">
  <div className="absolute top-0 left-0 w-full h-1 bg-brand-tactical/20 group-hover:bg-brand-tactical transition-colors" />
- <label className="text-[9px] font-black text-theme-muted uppercase tracking-widest block mb-4">Saldo Disponível</label>
+ <label className="text-[9px] font-bold text-theme-muted uppercase tracking-widest block mb-4">Saldo Disponível</label>
  <div className={`text-7xl font-display font-black tracking-tighter ${user.franchiseProfile.printCredits < 50 ? 'text-amber-500' : 'text-brand-tactical'}`}>
  {user.franchiseProfile.printCredits}
  </div>
- <p className="text-[10px] text-theme-muted font-black uppercase tracking-[0.2em] mt-2 ">Fotos para Impressão</p>
+ <p className="text-[10px] text-theme-muted font-bold uppercase tracking-[0.2em] mt-2 ">Fotos para Impressão</p>
  </div>
  
  <div className="bg-theme-bg border border-theme-border p-5 md:p-10 relative group rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300">
- <label className="text-[9px] font-black text-theme-muted uppercase tracking-widest block mb-4">Status do Terminal</label>
+ <label className="text-[9px] font-bold text-theme-muted uppercase tracking-widest block mb-4">Status do Terminal</label>
  <div className={`text-xl font-display font-black uppercase tracking-widest ${user.franchiseProfile.active ? 'text-brand-tactical' : 'text-red-500'}`}>
  {user.franchiseProfile.active ? 'Terminal Ativo' : 'Terminal Inativo'}
  </div>
  <div className="mt-4 flex items-center gap-2">
  <div className={`w-2 h-2 rounded-full ${user.franchiseProfile.active ? 'bg-brand-tactical animate-pulse' : 'bg-red-500'}`} />
- <span className="text-[9px] text-theme-muted font-black uppercase tracking-widest">Sincronizado com a Nuvem</span>
+ <span className="text-[9px] text-theme-muted font-bold uppercase tracking-widest">Sincronizado com a Nuvem</span>
  </div>
  </div>
 
  <div className="bg-theme-bg border border-theme-border p-5 md:p-10 flex flex-col justify-between rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300">
  <div>
- <label className="text-[9px] font-black text-theme-muted uppercase tracking-widest block mb-2">Abastecimento & Loja</label>
+ <label className="text-[9px] font-bold text-theme-muted uppercase tracking-widest block mb-2">Abastecimento & Loja</label>
  <p className="text-[10px] text-theme-muted font-bold leading-relaxed uppercase tracking-wider">
  Adquira créditos de impressão ou insumos (papel/ribbon) com entrega direta ou abatimento no repasse.
  </p>
@@ -595,13 +595,13 @@ export default function ProfissionalDashboard({
  <div className="space-y-4 mt-6">
  <button 
  onClick={() => setIsShopModalOpen(true)}
- className="w-full py-4 bg-brand-tactical text-black font-display font-black text-[10px] uppercase tracking-widest hover:bg-brand-tactical/90 hover:scale-[1.02] hover:shadow-xl hover:shadow-brand-tactical/20 transition-all shadow-lg shadow-brand-tactical/10 rounded-xl cursor-pointer"
+ className="w-full py-4 bg-brand-tactical text-black font-display font-bold text-[10px] uppercase tracking-widest hover:bg-brand-tactical/90 hover:scale-[1.02] hover:shadow-xl hover:shadow-brand-tactical/20 transition-all shadow-lg shadow-brand-tactical/10 rounded-xl cursor-pointer"
  >
  LOJA DA FRANQUIA
  </button>
  <button 
  onClick={() => { const w = window.open("https://wa.me/5519981150440?text=Olá! Preciso de assistência técnica para minha unidade Foto Segundo.", "_blank"); if (w) w.opener = null; }}
- className="w-full py-3 border border-theme-border text-theme-muted font-black text-[9px] uppercase tracking-widest hover:border-brand-tactical/30 hover:bg-theme-bg-muted hover:text-brand-tactical hover:scale-[1.02] transition-all rounded-xl cursor-pointer"
+ className="w-full py-3 border border-theme-border text-theme-muted font-bold text-[9px] uppercase tracking-widest hover:border-brand-tactical/30 hover:bg-theme-bg-muted hover:text-brand-tactical hover:scale-[1.02] transition-all rounded-xl cursor-pointer"
  >
  ASSISTÊNCIA TÉCNICA
  </button>
@@ -612,19 +612,19 @@ export default function ProfissionalDashboard({
  {/* Histórico de Pedidos B2B */}
  <div className="bg-theme-bg border border-theme-border p-4 md:p-8 space-y-6 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300">
  <div className="flex items-center justify-between">
- <h3 className="text-xl md:text-2xl font-heading font-black uppercase tracking-tight text-theme-text">Histórico de Pedidos</h3>
+ <h3 className="text-xl md:text-2xl font-heading font-bold uppercase text-theme-text">Histórico de Pedidos</h3>
  <div className="h-px flex-1 bg-theme-border/20 mx-6" />
  </div>
  
  {supplyOrders.length === 0 ? (
  <div className="py-3 md:py-6 md:py-12 text-center border border-theme-border bg-theme-bg-muted rounded-xl">
- <p className="text-[10px] text-theme-muted font-black uppercase tracking-widest">Nenhum pedido realizado</p>
+ <p className="text-[10px] text-theme-muted font-bold uppercase tracking-widest">Nenhum pedido realizado</p>
  </div>
  ) : (
  <div className="overflow-x-auto">
  <table className="w-full text-left border-collapse">
  <thead>
- <tr className="border-b border-theme-border text-[9px] font-black text-theme-text uppercase tracking-widest">
+ <tr className="border-b border-theme-border text-[9px] font-bold text-theme-text uppercase tracking-widest">
  <th className="py-4 px-2">Data</th>
  <th className="py-4 px-2">Itens</th>
  <th className="py-4 px-2">Total</th>
@@ -638,11 +638,11 @@ export default function ProfissionalDashboard({
  {new Date(order.createdAt).toLocaleDateString('pt-BR')}
  </td>
  <td className="py-4 px-2">
- <p className="text-[10px] text-theme-text font-black uppercase ">
+ <p className="text-[10px] text-theme-text font-bold uppercase ">
  {order.items?.map((it) => `${it.quantity}x ${it.name}`).join(", ") || "N/A"}
  </p>
  </td>
- <td className="py-4 px-2 text-[10px] text-brand-tactical font-black">
+ <td className="py-4 px-2 text-[10px] text-brand-tactical font-bold">
  R$ {Number(order.total).toFixed(2)}
  </td>
  <td className="py-4 px-2">
@@ -664,7 +664,7 @@ export default function ProfissionalDashboard({
  <div className="border border-amber-500/30 bg-amber-500/5 p-3 md:p-6 flex items-start gap-4 rounded-2xl shadow-lg">
  <div className="text-amber-500 text-2xl">⚠</div>
  <div>
- <p className="text-xs font-black text-amber-500 uppercase tracking-widest">Saldo Baixo</p>
+ <p className="text-xs font-bold text-amber-500 uppercase tracking-widest">Saldo Baixo</p>
  <p className="text-[10px] text-theme-muted font-bold mt-1">Seu saldo está abaixo de 50 fotos. Solicite recarga ao administrador para não interromper a operação.</p>
  </div>
  </div>
@@ -673,16 +673,16 @@ export default function ProfissionalDashboard({
  {/* Histórico de Consumo (Insumos) */}
  <div className="space-y-6">
  <div className="flex items-center justify-between">
- <h3 className="text-xl md:text-2xl font-heading font-black uppercase tracking-tight text-theme-text">Histórico de Consumo</h3>
+ <h3 className="text-xl md:text-2xl font-heading font-bold uppercase text-theme-text">Histórico de Consumo</h3>
  <div className="h-px flex-1 bg-theme-border/20 mx-6" />
  </div>
  <div className="bg-theme-bg border border-theme-border overflow-hidden rounded-2xl shadow-xl">
  <table className="w-full text-left border-collapse">
  <thead>
  <tr className="bg-theme-bg-muted border-b border-theme-border">
- <th className="p-4 text-[9px] font-black text-theme-muted uppercase tracking-widest">Data</th>
- <th className="p-4 text-[9px] font-black text-theme-muted uppercase tracking-widest">Operação</th>
- <th className="p-4 text-[9px] font-black text-theme-muted uppercase tracking-widest text-right">Qtd</th>
+ <th className="p-4 text-[9px] font-bold text-theme-muted uppercase tracking-widest">Data</th>
+ <th className="p-4 text-[9px] font-bold text-theme-muted uppercase tracking-widest">Operação</th>
+ <th className="p-4 text-[9px] font-bold text-theme-muted uppercase tracking-widest text-right">Qtd</th>
  </tr>
  </thead>
  <tbody className="divide-y divide-theme-border">
@@ -690,14 +690,14 @@ export default function ProfissionalDashboard({
  <tr key={tx.id} className="hover:bg-white/[0.02] transition-colors">
  <td className="p-4 text-[10px] text-theme-muted font-mono">{new Date(tx.createdAt).toLocaleDateString('pt-BR')}</td>
  <td className="p-4">
- <span className="text-[10px] font-black text-theme-text uppercase">{tx.description || "Consumo Phygital"}</span>
+ <span className="text-[10px] font-bold text-theme-text uppercase">{tx.description || "Consumo Phygital"}</span>
  </td>
  <td className="p-4 text-right">
- <span className="text-[10px] font-black text-red-500">{tx.amount}</span>
+ <span className="text-[10px] font-bold text-red-500">{tx.amount}</span>
  </td>
  </tr>
  )) || (
- <tr><td colSpan={3} className="p-5 md:p-10 text-center text-[9px] text-theme-muted uppercase font-black tracking-widest">Nenhum consumo registrado.</td></tr>
+ <tr><td colSpan={3} className="p-5 md:p-10 text-center text-[9px] text-theme-muted uppercase font-bold tracking-widest">Nenhum consumo registrado.</td></tr>
  )}
  </tbody>
  </table>
@@ -708,7 +708,7 @@ export default function ProfissionalDashboard({
  <div className="space-y-6">
  <div className="flex items-center gap-3">
  <div className="h-0.5 w-6 bg-brand-tactical" />
- <p className="text-[9px] font-black text-theme-muted uppercase tracking-[0.4em]">Operações em Campo</p>
+ <p className="text-[9px] font-bold text-theme-muted uppercase tracking-[0.4em]">Operações em Campo</p>
  </div>
  
  <div className="grid grid-cols-1 gap-4">
@@ -720,13 +720,13 @@ export default function ProfissionalDashboard({
  <Printer size={20} />
  </div>
  <div>
- <p className="text-sm font-black text-theme-text uppercase tracking-tight">{ev.title}</p>
+ <p className="text-sm font-bold text-theme-text uppercase ">{ev.title}</p>
  <p className="text-[9px] text-theme-muted font-bold uppercase tracking-widest mt-1">{new Date(ev.dataEvento).toLocaleDateString('pt-BR')} · {ev.city || (ev.location?.startsWith("CEP:") ? null : ev.location) || "—"}</p>
  </div>
  </div>
  <button 
  onClick={() => navigate(`/profissional/monitor/${ev.id}`)}
- className="px-4 md:px-8 py-3 bg-brand-tactical text-zinc-950 text-[10px] font-black uppercase tracking-widest hover:brightness-110 transition-all flex items-center gap-3 shadow-lg shadow-brand-tactical/10 rounded-xl"
+ className="px-4 md:px-8 py-3 bg-brand-tactical text-zinc-950 text-[10px] font-bold uppercase tracking-widest hover:brightness-110 transition-all flex items-center gap-3 shadow-lg shadow-brand-tactical/10 rounded-xl"
  >
  <Play size={12} /> ABRIR MONITOR
  </button>
@@ -734,7 +734,7 @@ export default function ProfissionalDashboard({
  ))
  ) : (
  <div className="p-5 md:p-10 border border-theme-border text-center space-y-4 rounded-2xl">
- <p className="text-[10px] text-theme-muted uppercase font-black tracking-widest">Nenhum evento designado para você neste momento.</p>
+ <p className="text-[10px] text-theme-muted uppercase font-bold tracking-widest">Nenhum evento designado para você neste momento.</p>
  <p className="text-[8px] text-theme-muted/60 uppercase font-bold max-w-xs mx-auto leading-relaxed">Fique atento à sua agenda. Quando um admin vincular sua franquia a um evento, ele aparecerá aqui para impressão.</p>
  </div>
  ); })()}
@@ -745,7 +745,7 @@ export default function ProfissionalDashboard({
  <div className="space-y-6">
  <div className="flex items-center gap-4">
  <div className="h-px w-8 bg-brand-tactical" />
- <p className="text-[10px] font-black text-theme-muted uppercase tracking-[0.5em] ">Registro de Atividades</p>
+ <p className="text-[10px] font-bold text-theme-muted uppercase tracking-[0.5em] ">Registro de Atividades</p>
  </div>
  
  <div className="bg-theme-bg border border-theme-border overflow-hidden rounded-2xl shadow-xl">
@@ -754,15 +754,15 @@ export default function ProfissionalDashboard({
  {user.franchiseProfile.transactions.map(tx => (
  <div key={tx.id} className="p-3 md:p-6 flex items-center justify-between hover:bg-white/[0.02] transition-all group">
  <div className="space-y-1">
- <p className="text-[11px] font-black text-theme-text uppercase tracking-widest ">
+ <p className="text-[11px] font-bold text-theme-text uppercase tracking-widest ">
  {tx.description || (tx.type === 'PRINT_CONSUMPTION' ? 'Impressão Phygital' : 'Recarga de Créditos')}
  </p>
  <div className="flex items-center gap-3">
- <p className="text-[8px] text-theme-subtle font-black uppercase tracking-widest">
+ <p className="text-[8px] text-theme-subtle font-bold uppercase tracking-widest">
  {new Date(tx.createdAt).toLocaleString('pt-BR')}
  </p>
  <div className="w-1 h-1 rounded-full bg-white/10" />
- <p className="text-[8px] text-theme-subtle font-black uppercase tracking-widest">
+ <p className="text-[8px] text-theme-subtle font-bold uppercase tracking-widest">
  Hash: {tx.id.slice(-8).toUpperCase()}
  </p>
  </div>
@@ -774,7 +774,7 @@ export default function ProfissionalDashboard({
  ))}
  </div>
  ) : (
- <div className="p-20 text-center text-[10px] text-theme-muted uppercase font-black tracking-widest">
+ <div className="p-20 text-center text-[10px] text-theme-muted uppercase font-bold tracking-widest">
  Nenhuma atividade registrada no ledger.
  </div>
  )}

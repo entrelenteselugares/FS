@@ -31,7 +31,7 @@ const WhatsAppSupport: React.FC<WhatsAppSupportProps> = ({
         className="flex items-center gap-3 bg-brand-tactical text-black px-6 py-4 rounded-full shadow-[0_10px_30px_rgba(20,184,166,0.3)] hover:bg-white hover:text-black transition-all group"
       >
         <MessageCircle size={24} className="text-black" strokeWidth={2.5} />
-        <span className="text-[10px] font-black uppercase tracking-widest hidden md:inline">
+        <span className="text-[10px] font-bold uppercase tracking-widest hidden md:inline">
           Dúvidas no Pagamento?
         </span>
         

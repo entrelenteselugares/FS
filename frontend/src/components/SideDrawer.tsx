@@ -47,7 +47,7 @@ export const SideDrawer: React.FC<SideDrawerProps> = ({
           {/* Header */}
           <div className="flex items-center justify-between p-6 border-b border-theme-border">
             {title && (
-              <h2 className="text-xl font-heading font-black italic uppercase tracking-tighter text-theme-text">
+              <h2 className="text-xl font-heading font-bold uppercase text-theme-text">
                 {title}
               </h2>
             )}

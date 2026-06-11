@@ -39,7 +39,7 @@ export const ShareCollage = ({ slots, onClose }: Props) => {
 
       <div className="w-full max-w-sm aspect-[9/16] bg-theme-surface rounded-2xl overflow-hidden shadow-2xl border border-emerald-500 flex flex-col relative">
         <div className="bg-emerald-600 p-4 text-center">
-          <h2 className="text-xl font-black italic text-white uppercase tracking-wider">Álbum da Torcida</h2>
+          <h2 className="text-xl font-bold text-white uppercase tracking-wider">Álbum da Torcida</h2>
           <p className="text-emerald-100 text-xs">Brasil vs Sérvia</p>
         </div>
         

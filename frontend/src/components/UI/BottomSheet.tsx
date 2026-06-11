@@ -47,7 +47,7 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({ isOpen, onClose, title
             <div className="shrink-0 flex flex-col items-center pt-3 pb-4 border-b border-theme-border relative">
               <div className="w-12 h-1.5 bg-theme-border/50 rounded-full mb-4" />
               {title && (
-                <h3 className="text-sm font-black uppercase tracking-widest text-theme-text italic">
+                <h3 className="text-sm font-bold uppercase tracking-widest text-theme-text ">
                   {title}
                 </h3>
               )}

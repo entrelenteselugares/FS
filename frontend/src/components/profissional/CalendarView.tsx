@@ -36,21 +36,21 @@ export function CalendarView({ events, currentMonth, setCurrentMonth, onSelect, 
       <div className="absolute top-0 right-0 w-32 h-32 bg-brand-tactical/10 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none" />
       <div className="flex items-center justify-between border-b border-theme-border pb-8 relative z-10">
         <div className="flex flex-col md:flex-row gap-6 items-start md:items-center relative z-10">
-          <h3 className="text-2xl font-heading font-black text-theme-text uppercase tracking-widest italic">
+          <h3 className="text-2xl font-heading font-bold text-theme-text uppercase tracking-widest ">
             {monthNames[month]} {year}
           </h3>
           <div className="flex gap-4">
             <div className="flex items-center gap-1.5">
               <div className="w-2 h-2 bg-brand-tactical" />
-              <span className="text-[8px] font-black text-theme-muted uppercase tracking-widest">Confirmado</span>
+              <span className="text-[8px] font-bold text-theme-muted uppercase tracking-widest">Confirmado</span>
             </div>
             <div className="flex items-center gap-1.5">
               <div className="w-2 h-2 bg-amber-500" />
-              <span className="text-[8px] font-black text-theme-muted uppercase tracking-widest">Pendente</span>
+              <span className="text-[8px] font-bold text-theme-muted uppercase tracking-widest">Pendente</span>
             </div>
             <div className="flex items-center gap-1.5">
               <div className="w-2 h-2 bg-blue-500" />
-              <span className="text-[8px] font-black text-theme-muted uppercase tracking-widest">Chamada Aberta</span>
+              <span className="text-[8px] font-bold text-theme-muted uppercase tracking-widest">Chamada Aberta</span>
             </div>
           </div>
         </div>
@@ -74,7 +74,7 @@ export function CalendarView({ events, currentMonth, setCurrentMonth, onSelect, 
         {["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sab"].map((d) => (
           <div
             key={d}
-            className="text-center py-5 border-r border-b border-theme-border bg-theme-bg-muted text-[10px] font-black text-theme-muted uppercase italic tracking-widest"
+            className="text-center py-5 border-r border-b border-theme-border bg-theme-bg-muted text-[10px] font-bold text-theme-muted uppercase tracking-widest"
           >
             {d}
           </div>
@@ -86,7 +86,7 @@ export function CalendarView({ events, currentMonth, setCurrentMonth, onSelect, 
           >
             {d && (
               <>
-                <span className="text-[11px] font-black text-theme-muted/40">{d}</span>
+                <span className="text-[11px] font-bold text-theme-muted/40">{d}</span>
                 <div className="mt-3 space-y-2">
                   {getEventsOnDay(d).map((ev) => {
                     const isAccepted = (ev.captacaoId === userId && ev.captacaoStatus === 'ACCEPTED') || 

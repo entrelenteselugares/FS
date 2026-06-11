@@ -25,30 +25,30 @@ export function OpportunitiesModal({
           </div>
         </div>
         <div className="space-y-4">
-          <h2 className="text-3xl font-heading font-black text-theme-text uppercase tracking-tighter italic leading-tight">Oportunidades Disponíveis</h2>
-          <p className="text-[10px] text-theme-muted uppercase tracking-[0.4em] italic font-bold">A matriz detectou novos chamados compatíveis com seu perfil</p>
+          <h2 className="text-3xl font-heading font-bold text-theme-text uppercase leading-tight">Oportunidades Disponíveis</h2>
+          <p className="text-[10px] text-theme-muted uppercase tracking-[0.4em] font-bold">A matriz detectou novos chamados compatíveis com seu perfil</p>
         </div>
         <div className="grid grid-cols-1 gap-4">
           {unitInvitesCount > 0 && (
             <div className="bg-brand-tactical/10 p-6 border border-brand-tactical/20 hover:border-brand-tactical transition-all">
-              <div className="text-[9px] font-black text-brand-tactical uppercase tracking-[0.2em] mb-2 italic">Expansão de Rede</div>
-              <div className="text-xl font-heading font-black text-theme-text italic leading-none">
+              <div className="text-[9px] font-bold text-brand-tactical uppercase tracking-[0.2em] mb-2 ">Expansão de Rede</div>
+              <div className="text-xl font-heading font-bold text-theme-text leading-none">
                 {unitInvitesCount} {unitInvitesCount === 1 ? "CONVITE DE UNIDADE" : "CONVITES DE UNIDADE"}
               </div>
             </div>
           )}
           {pendingEventsCount > 0 && (
             <div className="bg-theme-bg-muted p-6 border border-theme-border hover:border-brand-tactical/40 transition-all">
-              <div className="text-[9px] font-black text-theme-muted uppercase tracking-[0.2em] mb-2 italic">Chamados de Campo</div>
-              <div className="text-xl font-heading font-black text-theme-text italic leading-none">
+              <div className="text-[9px] font-bold text-theme-muted uppercase tracking-[0.2em] mb-2 ">Chamados de Campo</div>
+              <div className="text-xl font-heading font-bold text-theme-text leading-none">
                 {pendingEventsCount} {pendingEventsCount === 1 ? "TRABALHO DISPONÍVEL" : "TRABALHOS DISPONÍVEIS"}
               </div>
             </div>
           )}
           {opportunitiesCount > 0 && (
             <div className="bg-yellow-400/5 p-6 border border-yellow-400/20 hover:border-yellow-400/40 transition-all">
-              <div className="text-[9px] font-black text-yellow-400 uppercase tracking-[0.2em] mb-2 italic">Chamada Aberta</div>
-              <div className="text-xl font-heading font-black text-theme-text italic leading-none">
+              <div className="text-[9px] font-bold text-yellow-400 uppercase tracking-[0.2em] mb-2 ">Chamada Aberta</div>
+              <div className="text-xl font-heading font-bold text-theme-text leading-none">
                 {opportunitiesCount} {opportunitiesCount === 1 ? "OPORTUNIDADE DISPONÍVEL" : "OPORTUNIDADES DISPONÍVEIS"}
               </div>
             </div>
@@ -60,13 +60,13 @@ export function OpportunitiesModal({
               onClose(); 
               onAction(unitInvitesCount > 0 ? "convites" : "agenda"); 
             }}
-            className="w-full py-6 bg-brand-tactical text-brand-text text-[11px] font-black uppercase tracking-[0.3em] hover:brightness-110 shadow-2xl shadow-brand-tactical/20 transition-all italic flex items-center justify-center gap-3"
+            className="w-full py-6 bg-brand-tactical text-brand-text text-[11px] font-bold uppercase tracking-[0.3em] hover:brightness-110 shadow-2xl shadow-brand-tactical/20 transition-all flex items-center justify-center gap-3"
           >
             ACESSAR CENTRAL DE CONVITES <ArrowRight size={16} />
           </button>
           <button
             onClick={onClose}
-            className="text-[9px] font-black text-theme-muted uppercase tracking-[0.3em] hover:text-brand-tactical transition-colors italic"
+            className="text-[9px] font-bold text-theme-muted uppercase tracking-[0.3em] hover:text-brand-tactical transition-colors "
           >
             IGNORAR POR ENQUANTO
           </button>

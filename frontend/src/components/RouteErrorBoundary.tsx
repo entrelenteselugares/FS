@@ -43,7 +43,7 @@ export class RouteErrorBoundary extends Component<Props, State> {
             <AlertTriangle className="w-8 h-8 text-red-500" />
           </div>
           <div className="max-w-sm">
-            <h2 className="text-lg font-black uppercase tracking-widest text-theme-text mb-2">
+            <h2 className="text-lg font-bold uppercase tracking-widest text-theme-text mb-2">
               Falha no Componente
             </h2>
             <p className="text-sm text-theme-muted leading-relaxed mb-4">

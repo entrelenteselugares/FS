@@ -109,7 +109,7 @@ export default function FullMonitor() {
           >
             <ArrowLeft size={20} />
           </button>
-          <h1 className="text-lg font-black uppercase tracking-widest text-theme-text">
+          <h1 className="text-lg font-bold uppercase tracking-widest text-theme-text">
             Monitor Externo
           </h1>
 
@@ -117,10 +117,10 @@ export default function FullMonitor() {
           {selected.length > 0 && (
             <div className="flex items-center gap-2 px-3 py-1 bg-brand-tactical/10 border border-brand-tactical/30 rounded-full">
               <Check size={12} className="text-brand-tactical" />
-              <span className="text-xs font-black text-brand-tactical uppercase tracking-widest hidden md:inline">
+              <span className="text-xs font-bold text-brand-tactical uppercase tracking-widest hidden md:inline">
                 {selected.length} selecionada{selected.length !== 1 ? "s" : ""}
               </span>
-              <span className="text-xs font-black text-brand-tactical uppercase tracking-widest md:hidden">
+              <span className="text-xs font-bold text-brand-tactical uppercase tracking-widest md:hidden">
                 {selected.length}
               </span>
             </div>
@@ -172,7 +172,7 @@ export default function FullMonitor() {
                 <select 
                   value={photosPerPage}
                   onChange={(e) => setPhotosPerPage(Number(e.target.value))}
-                  className="bg-transparent text-[10px] font-black uppercase tracking-widest text-theme-text px-2 py-1 outline-none cursor-pointer"
+                  className="bg-transparent text-[10px] font-bold uppercase tracking-widest text-theme-text px-2 py-1 outline-none cursor-pointer"
                 >
                   <option value={1} className="bg-theme-bg">1 / folha</option>
                   <option value={2} className="bg-theme-bg">2 / folha</option>
@@ -215,21 +215,21 @@ export default function FullMonitor() {
 
               <label className="flex items-center gap-1 cursor-pointer bg-theme-bg-muted border border-theme-border px-3 py-1.5 rounded-full hover:bg-zinc-800/50 transition-colors">
                 <input type="checkbox" checked={showLogo} onChange={e => setShowLogo(e.target.checked)} className="accent-brand-tactical" />
-                <span className="text-[10px] font-black uppercase tracking-widest text-theme-text ml-1">Logo</span>
+                <span className="text-[10px] font-bold uppercase tracking-widest text-theme-text ml-1">Logo</span>
               </label>
 
               <label className="flex items-center gap-1 cursor-pointer bg-theme-bg-muted border border-theme-border px-3 py-1.5 rounded-full hover:bg-zinc-800/50 transition-colors">
                 <input type="checkbox" checked={showTimestamp} onChange={e => setShowTimestamp(e.target.checked)} className="accent-brand-tactical" />
-                <span className="text-[10px] font-black uppercase tracking-widest text-theme-text ml-1">Data/Hora</span>
+                <span className="text-[10px] font-bold uppercase tracking-widest text-theme-text ml-1">Data/Hora</span>
               </label>
 
               <label className="flex items-center gap-1 cursor-pointer bg-theme-bg-muted border border-theme-border px-3 py-1.5 rounded-full hover:bg-zinc-800/50 transition-colors">
                 <input type="checkbox" checked={showCropMarks} onChange={e => setShowCropMarks(e.target.checked)} className="accent-brand-tactical" />
-                <span className="text-[10px] font-black uppercase tracking-widest text-theme-text ml-1">Marcas Corte</span>
+                <span className="text-[10px] font-bold uppercase tracking-widest text-theme-text ml-1">Marcas Corte</span>
               </label>
 
               <label className="flex items-center gap-1 cursor-pointer border border-brand-tactical bg-brand-tactical/10 px-3 py-1.5 rounded-full hover:bg-brand-tactical/20 transition-colors">
-                <span className="text-[10px] font-black uppercase tracking-widest text-brand-tactical">{clientLogoUrl ? 'Logo ✓' : '+ Cliente'}</span>
+                <span className="text-[10px] font-bold uppercase tracking-widest text-brand-tactical">{clientLogoUrl ? 'Logo ✓' : '+ Cliente'}</span>
                 <input 
                   type="file" 
                   accept="image/*" 
@@ -246,7 +246,7 @@ export default function FullMonitor() {
 
             <button
               onClick={() => setShowQR(true)}
-              className="flex items-center gap-2 text-xs font-black uppercase tracking-widest bg-theme-bg border border-theme-border text-theme-text hover:border-brand-tactical/50 hover:text-brand-tactical transition-all rounded-full px-4 py-2"
+              className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest bg-theme-bg border border-theme-border text-theme-text hover:border-brand-tactical/50 hover:text-brand-tactical transition-all rounded-full px-4 py-2"
             >
               <QrCode size={14} /> QR
             </button>
@@ -255,7 +255,7 @@ export default function FullMonitor() {
             <button
               onClick={handlePrint}
               disabled={selected.length === 0}
-              className="flex items-center gap-2 text-xs font-black uppercase tracking-widest bg-brand-tactical text-white hover:bg-brand-tactical/80 disabled:opacity-40 disabled:cursor-not-allowed transition-all rounded-full px-4 py-2 shadow-lg shadow-brand-tactical/20"
+              className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest bg-brand-tactical text-white hover:bg-brand-tactical/80 disabled:opacity-40 disabled:cursor-not-allowed transition-all rounded-full px-4 py-2 shadow-lg shadow-brand-tactical/20"
             >
               <Printer size={14} />
               Imprimir ({selected.length})
@@ -330,7 +330,7 @@ export default function FullMonitor() {
 
                       {/* ── Card Footer ────────────────────── */}
                       <div className="px-3.5 py-3 flex justify-between items-center flex-shrink-0 bg-theme-card border-t border-theme-border">
-                        <p className="text-sm font-black text-theme-text truncate leading-tight">
+                        <p className="text-sm font-bold text-theme-text truncate leading-tight">
                           {print.customerName || "Convidado"}
                         </p>
                         <span className="text-[10px] font-semibold text-theme-muted shrink-0 bg-theme-bg/60 px-2 py-0.5 rounded font-mono">
@@ -356,10 +356,10 @@ export default function FullMonitor() {
             <div className="relative z-10 w-full max-w-[200px] flex flex-col items-center text-center gap-4 md:gap-8">
               <div className="space-y-2">
                 <div className="w-12 h-1 bg-brand-tactical mx-auto rounded-full mb-4 shadow-[0_0_10px_rgba(20,184,166,0.5)]" />
-                <h3 className="text-2xl font-black uppercase tracking-tighter text-theme-text leading-none">
+                <h3 className="text-2xl font-bold uppercase text-theme-text leading-none">
                   FOTOGRAFE
                 </h3>
-                <h3 className="text-2xl font-black uppercase tracking-tighter text-theme-text leading-none text-brand-tactical">
+                <h3 className="text-2xl font-bold uppercase text-theme-text leading-none text-brand-tactical">
                   E IMPRIMA
                 </h3>
               </div>
@@ -370,7 +370,7 @@ export default function FullMonitor() {
               
               <div className="space-y-3 bg-theme-bg/60 p-4 rounded-2xl border border-theme-border w-full">
                 <div className="flex justify-center mb-1"><QrCode size={20} className="text-brand-tactical" /></div>
-                <p className="text-[9px] font-black text-theme-muted uppercase tracking-[0.2em] leading-relaxed">
+                <p className="text-[9px] font-bold text-theme-muted uppercase tracking-[0.2em] leading-relaxed">
                   Aponte a câmera do seu celular para o QR Code acima
                 </p>
               </div>
@@ -388,7 +388,7 @@ export default function FullMonitor() {
               >
                 <X size={18} />
               </button>
-              <h2 className="text-center text-xl font-black uppercase tracking-widest mb-2">Captura ao Vivo</h2>
+              <h2 className="text-center text-xl font-bold uppercase tracking-widest mb-2">Captura ao Vivo</h2>
               <p className="text-center text-xs text-theme-muted mb-6 uppercase tracking-widest">
                 Aponte a câmera para enviar fotos
               </p>
@@ -397,7 +397,7 @@ export default function FullMonitor() {
               </div>
               <button
                 onClick={() => { navigator.clipboard.writeText(captureUrl); }}
-                className="w-full mt-4 py-2.5 bg-brand-tactical text-white text-xs font-black uppercase tracking-widest rounded-xl hover:bg-brand-tactical/80 transition-colors"
+                className="w-full mt-4 py-2.5 bg-brand-tactical text-white text-xs font-bold uppercase tracking-widest rounded-xl hover:bg-brand-tactical/80 transition-colors"
               >
                 Copiar Link
               </button>

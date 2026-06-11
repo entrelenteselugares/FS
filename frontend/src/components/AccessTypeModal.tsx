@@ -66,11 +66,11 @@ export default function AccessTypeModal({ orderId, eventTitle, isPrimaryClient, 
              <Shield size={12} strokeWidth={2} />
              <span>Configurações de Privacidade</span>
           </div>
-          <h2 className="text-2xl font-black uppercase tracking-tighter text-theme-text mb-3" style={{ fontFamily: "'Outfit', sans-serif" }}>
+          <h2 className="text-2xl font-bold uppercase text-theme-text mb-3" style={{ fontFamily: "'Outfit', sans-serif" }}>
             {eventTitle}
           </h2>
           <p className="text-[11px] text-theme-muted font-bold uppercase tracking-wider leading-relaxed border-b border-theme-border pb-5">
-            Escolha como seus arquivos serão armazenados. <span className="text-theme-text font-black underline">Esta escolha é definitiva.</span>
+            Escolha como seus arquivos serão armazenados. <span className="text-theme-text font-bold underline">Esta escolha é definitiva.</span>
           </p>
         </div>
 
@@ -100,7 +100,7 @@ export default function AccessTypeModal({ orderId, eventTitle, isPrimaryClient, 
                 90 DIAS
               </span>
             </div>
-            <p className="text-[11px] text-theme-muted font-bold uppercase tracking-tight ml-7 leading-relaxed">
+            <p className="text-[11px] text-theme-muted font-bold uppercase ml-7 leading-relaxed">
               {isMarketplace 
                 ? "Galeria aberta na vitrine para que visitantes possam adquirir fotos."
                 : "Álbum listado na vitrine. Download ilimitado por 3 meses."}
@@ -138,7 +138,7 @@ export default function AccessTypeModal({ orderId, eventTitle, isPrimaryClient, 
                 15 DIAS
               </span>
             </div>
-            <p className="text-[11px] text-theme-muted font-bold uppercase tracking-tight ml-7 leading-relaxed">
+            <p className="text-[11px] text-theme-muted font-bold uppercase ml-7 leading-relaxed">
                {isMarketplace
                  ? "Galeria oculta da vitrine. Apenas você (com login) pode acessar e comprar."
                  : "Restrito ao seu login. Arquivos excluídos após 15 dias."}
@@ -187,7 +187,7 @@ export default function AccessTypeModal({ orderId, eventTitle, isPrimaryClient, 
                 </>
               )}
             </button>
-            <p className="text-center text-[8px] font-black uppercase tracking-[0.2em] text-theme-muted mt-3">
+            <p className="text-center text-[8px] font-bold uppercase tracking-[0.2em] text-theme-muted mt-3">
               * Escolha definitiva e irreversível.
             </p>
           </div>

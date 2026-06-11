@@ -70,8 +70,8 @@ export const PartnerLP: React.FC = () => {
       <div className="absolute inset-0 bg-emerald-500/5 blur-[120px] rounded-full -m-64 opacity-20" />
       <div className="relative z-10 flex flex-col items-center gap-4 md:gap-8">
         <div className="w-px h-16 bg-gradient-to-b from-transparent via-emerald-500 to-transparent" />
-        <div className="text-[18px] font-display font-black uppercase tracking-[0.8em] italic text-theme-text">FOTO SEGUNDO</div>
-        <div className="text-[9px] font-black uppercase tracking-[0.4em] text-emerald-500 animate-pulse">Sincronizando Localização...</div>
+        <div className="text-[18px] font-display font-bold uppercase tracking-[0.8em] text-theme-text">FOTO SEGUNDO</div>
+        <div className="text-[9px] font-bold uppercase tracking-[0.4em] text-emerald-500 animate-pulse">Sincronizando Localização...</div>
         <div className="w-px h-16 bg-gradient-to-t from-transparent via-emerald-500 to-transparent" />
       </div>
     </div>
@@ -94,7 +94,7 @@ export const PartnerLP: React.FC = () => {
       <nav className="fixed top-0 left-0 w-full z-50 p-3 md:p-6 flex justify-between items-center pointer-events-none">
         <button
           onClick={() => navigate("/")}
-          className="pointer-events-auto flex items-center gap-3 text-[10px] font-black uppercase tracking-[0.3em] text-theme-muted hover:text-white transition-all bg-black/80 backdrop-blur-xl px-3 md:px-6 py-3 border border-theme-border"
+          className="pointer-events-auto flex items-center gap-3 text-[10px] font-bold uppercase tracking-[0.3em] text-theme-muted hover:text-white transition-all bg-black/80 backdrop-blur-xl px-3 md:px-6 py-3 border border-theme-border"
         >
           <ArrowLeft size={14} /> Vitrine
         </button>
@@ -124,11 +124,11 @@ export const PartnerLP: React.FC = () => {
 
         <div className="relative z-10 text-center px-4 max-w-5xl">
           <motion.div initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}>
-            <div className="text-[10px] font-black text-emerald-500 mb-6 uppercase tracking-[0.5em] italic">Unidade Fixa Autorizada</div>
-            <h1 className="text-2xl md:text-4xl sm:text-5xl md:text-9xl font-display font-black mb-10 text-theme-text uppercase tracking-tighter leading-[0.85]">
+            <div className="text-[10px] font-bold text-emerald-500 mb-6 uppercase tracking-[0.5em] ">Unidade Fixa Autorizada</div>
+            <h1 className="text-2xl md:text-4xl sm:text-5xl md:text-9xl font-display font-bold mb-10 text-theme-text uppercase leading-[0.85]">
               {partner.razaoSocial}
             </h1>
-            <div className="flex flex-wrap justify-center gap-4 sm:gap-8 text-[11px] font-black uppercase tracking-widest text-theme-muted">
+            <div className="flex flex-wrap justify-center gap-4 sm:gap-8 text-[11px] font-bold uppercase tracking-widest text-theme-muted">
               <div className="flex items-center gap-2 sm:gap-3"><MapPin size={14} className="text-emerald-500" /> {partner.address || "Campinas, SP"}</div>
               <div className="flex items-center gap-2 sm:gap-3"><Phone size={14} className="text-emerald-500" /> {partner.phone || "(19) 98765-4321"}</div>
             </div>
@@ -139,7 +139,7 @@ export const PartnerLP: React.FC = () => {
       {/* Info + CTA */}
       <section className="max-w-7xl mx-auto px-3 md:px-6 grid grid-cols-1 lg:grid-cols-2 gap-3 md:gap-6 md:gap-12 lg:gap-20 py-3 md:py-6 md:py-12 md:py-24 border-b border-theme-border">
         <div>
-          <h2 className="text-2xl sm:text-3xl md:text-5xl font-display font-black tracking-tighter mb-10 uppercase leading-none text-theme-text">Sobre a Unidade</h2>
+          <h2 className="text-2xl sm:text-3xl md:text-5xl font-display font-bold mb-10 uppercase leading-none text-theme-text">Sobre a Unidade</h2>
           <p className="text-theme-muted leading-relaxed tracking-widest text-[12px] font-bold mb-12 uppercase">
             {partner.description || "Esta unidade é um parceiro estratégico da plataforma Foto Segundo, oferecendo infraestrutura otimizada para capturas profissionais de alto padrão."}
           </p>
@@ -151,7 +151,7 @@ export const PartnerLP: React.FC = () => {
               "Área privativa para fotos e cinema familiar",
               "Sincronização imediata de álbuns digitais"
             ].map(feat => (
-              <div key={feat} className="flex items-center gap-5 text-[10px] font-black uppercase tracking-[0.25em] text-theme-muted group">
+              <div key={feat} className="flex items-center gap-5 text-[10px] font-bold uppercase tracking-[0.25em] text-theme-muted group">
                 <div className="w-2 h-[1px] bg-emerald-500 transition-all group-hover:w-8" />
                 {feat}
               </div>
@@ -164,9 +164,9 @@ export const PartnerLP: React.FC = () => {
              <Calendar size={180} className="text-emerald-500" />
           </div>
           <Calendar className="text-emerald-500 mb-10 relative z-10" size={56} strokeWidth={1} />
-          <h3 className="text-2xl md:text-4xl font-display font-black tracking-tighter mb-6 uppercase leading-none text-theme-text relative z-10">Agende seu Protocolo</h3>
+          <h3 className="text-2xl md:text-4xl font-display font-bold mb-6 uppercase leading-none text-theme-text relative z-10">Agende seu Protocolo</h3>
           {partner.fixedDuration && (
-            <p className="text-emerald-500 text-[10px] font-black uppercase tracking-[0.3em] mb-4 relative z-10">
+            <p className="text-emerald-500 text-[10px] font-bold uppercase tracking-[0.3em] mb-4 relative z-10">
               Sessão de {partner.fixedDuration}h
             </p>
           )}
@@ -175,7 +175,7 @@ export const PartnerLP: React.FC = () => {
           </p>
           <button
             onClick={() => navigate(`/cotacao?partner=${partner.slug}`)}
-            className="w-full py-3 md:py-6 bg-white text-theme-text text-[11px] font-black uppercase tracking-[0.4em] hover:bg-emerald-500 transition-all relative z-10"
+            className="w-full py-3 md:py-6 bg-white text-theme-text text-[11px] font-bold uppercase tracking-[0.4em] hover:bg-emerald-500 transition-all relative z-10"
           >
             INICIAR ORÇAMENTO EXPRESS
           </button>
@@ -187,8 +187,8 @@ export const PartnerLP: React.FC = () => {
         <section className="max-w-7xl mx-auto px-3 md:px-6 py-24 md:py-32 border-b border-theme-border space-y-16">
           <div className="flex flex-col md:flex-row items-start md:items-end justify-between gap-3 md:gap-6">
             <div className="space-y-3">
-              <p className="text-[9px] font-black text-emerald-500 uppercase tracking-[0.5em]">Serviços Disponíveis</p>
-              <h2 className="text-2xl md:text-4xl md:text-5xl font-display font-black tracking-tighter uppercase leading-none text-theme-text">Catálogo desta Unidade</h2>
+              <p className="text-[9px] font-bold text-emerald-500 uppercase tracking-[0.5em]">Serviços Disponíveis</p>
+              <h2 className="text-2xl md:text-4xl md:text-5xl font-display font-bold uppercase leading-none text-theme-text">Catálogo desta Unidade</h2>
             </div>
             <p className="text-[10px] text-theme-muted font-bold uppercase tracking-[0.3em] max-w-xs">
               Preços configurados especificamente para {partner.razaoSocial}.
@@ -210,16 +210,16 @@ export const PartnerLP: React.FC = () => {
                 >
                   <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-2 sm:gap-6 mb-6">
                     <div className="space-y-2">
-                      <h3 className="text-lg font-display font-black uppercase tracking-tight italic text-theme-text group-hover:text-emerald-500 transition-colors">
+                      <h3 className="text-lg font-display font-bold uppercase text-theme-text group-hover:text-emerald-500 transition-colors">
                         {svc.name}
                       </h3>
                       {localPrice && localPrice !== svc.basePrice && (
-                        <span className="text-[8px] font-black text-theme-subtle uppercase tracking-widest line-through">
+                        <span className="text-[8px] font-bold text-theme-subtle uppercase tracking-widest line-through">
                           Rede: {formatCurrency(svc.basePrice)}
                         </span>
                       )}
                     </div>
-                    <span className="text-xl sm:text-2xl font-display font-black italic text-emerald-500">
+                    <span className="text-xl sm:text-2xl font-display font-bold text-emerald-500">
                       {formatCurrency(displayPrice)}
                     </span>
                   </div>
@@ -237,8 +237,8 @@ export const PartnerLP: React.FC = () => {
       {hasSchedule && (
         <section className="max-w-7xl mx-auto px-3 md:px-6 py-16 md:py-32 border-b border-theme-border space-y-12 sm:space-y-16">
           <div className="space-y-3">
-            <p className="text-[9px] font-black text-brand-tactical uppercase tracking-[0.5em]">Disponibilidade</p>
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tighter uppercase leading-none">Horários de Funcionamento</h2>
+            <p className="text-[9px] font-bold text-brand-tactical uppercase tracking-[0.5em]">Disponibilidade</p>
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold uppercase leading-none">Horários de Funcionamento</h2>
           </div>
 
           <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-3">
@@ -254,18 +254,18 @@ export const PartnerLP: React.FC = () => {
                       : "border-brand-tactical/20 bg-brand-tactical/10 hover:bg-brand-tactical/10"
                   }`}
                 >
-                  <p className="text-[9px] font-black uppercase tracking-widest text-theme-muted mb-3 sm:mb-4">
+                  <p className="text-[9px] font-bold uppercase tracking-widest text-theme-muted mb-3 sm:mb-4">
                     {DAY_NAMES[day]}
                   </p>
                   {config.closed ? (
                     <div className="flex flex-col items-center gap-2">
                       <XCircle size={20} className="text-theme-muted/40" />
-                      <span className="text-[9px] font-black text-theme-muted uppercase tracking-wider">Fechado</span>
+                      <span className="text-[9px] font-bold text-theme-muted uppercase tracking-wider">Fechado</span>
                     </div>
                   ) : (
                     <div className="flex flex-col items-center gap-2">
                       <CheckCircle2 size={20} className="text-brand-tactical" />
-                      <div className="flex items-center gap-1 text-[10px] font-black text-theme-text">
+                      <div className="flex items-center gap-1 text-[10px] font-bold text-theme-text">
                         <Clock size={10} className="text-brand-tactical" />
                         {config.open}
                       </div>
@@ -283,8 +283,8 @@ export const PartnerLP: React.FC = () => {
       <section className="py-16 md:py-40 px-3 md:px-6 max-w-7xl mx-auto mobile-py">
         <div className="flex flex-col md:flex-row items-center justify-between mb-10 md:mb-24 mobile-center">
           <div>
-            <h2 className="text-3xl sm:text-5xl font-display font-black tracking-tighter uppercase text-theme-text">Registros Recentes</h2>
-            <p className="text-[10px] sm:text-[11px] text-theme-muted font-black uppercase tracking-[0.2em] sm:tracking-[0.35em] mt-3">Curadoria Editorial neste Local</p>
+            <h2 className="text-3xl sm:text-5xl font-display font-bold uppercase text-theme-text">Registros Recentes</h2>
+            <p className="text-[10px] sm:text-[11px] text-theme-muted font-bold uppercase tracking-[0.2em] sm:tracking-[0.35em] mt-3">Curadoria Editorial neste Local</p>
           </div>
           <div className="hidden md:flex items-center gap-3 text-theme-muted opacity-30">
             <Star size={18} fill="currentColor" />
@@ -313,10 +313,10 @@ export const PartnerLP: React.FC = () => {
                   style={{ objectPosition: evt.coverPosition || 'center' }}
                 />
                 <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                  <span className="text-theme-text text-[10px] font-black uppercase tracking-[0.5em] border border-theme-border-2 px-3 md:px-6 py-3 backdrop-blur-md">Ver Galeria</span>
+                  <span className="text-theme-text text-[10px] font-bold uppercase tracking-[0.5em] border border-theme-border-2 px-3 md:px-6 py-3 backdrop-blur-md">Ver Galeria</span>
                 </div>
               </div>
-              <h4 className="text-2xl font-black uppercase tracking-tighter mb-1 leading-none">{evt.title}</h4>
+              <h4 className="text-2xl font-bold uppercase mb-1 leading-none">{evt.title}</h4>
               <div className="text-[10px] text-theme-muted font-bold uppercase tracking-[0.3em]">{new Date(evt.dataEvento).toLocaleDateString('pt-BR', { year: 'numeric', month: 'short', day: '2-digit' })}</div>
             </motion.div>
           ))}
@@ -327,11 +327,11 @@ export const PartnerLP: React.FC = () => {
       <footer className="py-16 md:py-40 bg-theme-bg-muted text-theme-text text-center border-t border-theme-border mobile-py">
         <div className="max-w-xl mx-auto px-3 md:px-6">
           <MessageSquare className="mx-auto mb-10 text-emerald-500" size={40} />
-          <h2 className="text-3xl sm:text-4xl md:text-6xl font-display font-black tracking-tighter mb-10 leading-none uppercase text-theme-text">Dúvidas sobre o Local?</h2>
+          <h2 className="text-3xl sm:text-4xl md:text-6xl font-display font-bold mb-10 leading-none uppercase text-theme-text">Dúvidas sobre o Local?</h2>
           <p className="text-theme-muted text-[11px] font-bold uppercase tracking-[0.2em] sm:tracking-[0.3em] leading-relaxed mb-12">Entre em contato direto com a administração da unidade para suporte logístico e agendamento de visitas técnicas.</p>
           <div className="flex flex-col gap-4">
-            <button className="px-3 md:px-6 md:px-12 py-3 md:py-6 bg-emerald-500 text-white text-[11px] font-black uppercase tracking-[0.4em] hover:bg-white transition-all">WhatsApp Unidade</button>
-            <button onClick={() => navigate("/")} className="text-[10px] font-black uppercase tracking-[0.8em] text-theme-subtle hover:text-white transition-colors mt-8">Voltar para Vitrine Global</button>
+            <button className="px-3 md:px-6 md:px-12 py-3 md:py-6 bg-emerald-500 text-white text-[11px] font-bold uppercase tracking-[0.4em] hover:bg-white transition-all">WhatsApp Unidade</button>
+            <button onClick={() => navigate("/")} className="text-[10px] font-bold uppercase tracking-[0.8em] text-theme-subtle hover:text-white transition-colors mt-8">Voltar para Vitrine Global</button>
           </div>
         </div>
       </footer>

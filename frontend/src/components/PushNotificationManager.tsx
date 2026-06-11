@@ -106,14 +106,14 @@ export const PushNotificationManager: React.FC = () => {
               <Bell size={24} />
             </div>
             <div>
-              <h4 className="text-sm font-bold text-white uppercase tracking-tighter italic">Notificações</h4>
+              <h4 className="text-sm font-bold text-white uppercase ">Notificações</h4>
               <p className="text-[10px] text-zinc-400 uppercase tracking-widest">Ative alertas de entrega e vendas</p>
             </div>
           </div>
 
           <button
             onClick={subscribe}
-            className="w-full bg-brand-tactical text-black font-black uppercase tracking-[0.2em] text-[10px] py-3 rounded-xl hover:bg-white transition-all italic"
+            className="w-full bg-brand-tactical text-black font-bold uppercase tracking-[0.2em] text-[10px] py-3 rounded-xl hover:bg-white transition-all "
           >
             Ativar Agora
           </button>

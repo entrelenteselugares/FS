@@ -41,7 +41,7 @@ export function TeamSelector({ label, onSelect, network }: TeamSelectorProps) {
 
   return (
     <div className="space-y-4">
-      <label className="text-[10px] font-black text-theme-muted uppercase tracking-widest italic flex items-center gap-2">
+      <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest flex items-center gap-2">
         <Users size={12} /> {label}
       </label>
 
@@ -52,7 +52,7 @@ export function TeamSelector({ label, onSelect, network }: TeamSelectorProps) {
           className={`p-3 border text-center transition-all flex flex-col items-center justify-center gap-1 ${mode === "me" ? "border-brand-tactical bg-brand-tactical/10 text-brand-tactical shadow-[0_0_15px_rgba(133,185,172,0.1)]" : "border-theme-border bg-theme-bg-muted text-theme-muted"}`}
         >
           <Check size={14} />
-          <span className="text-[8px] font-black uppercase tracking-widest leading-none">Eu Mesmo</span>
+          <span className="text-[8px] font-bold uppercase tracking-widest leading-none">Eu Mesmo</span>
         </button>
         <button
           type="button"
@@ -60,7 +60,7 @@ export function TeamSelector({ label, onSelect, network }: TeamSelectorProps) {
           className={`p-3 border text-center transition-all flex flex-col items-center justify-center gap-1 ${mode === "direct" ? "border-cyan-400 bg-cyan-400/10 text-cyan-400" : "border-theme-border bg-theme-bg-muted text-theme-muted"}`}
         >
           <UserPlus size={14} />
-          <span className="text-[8px] font-black uppercase tracking-widest leading-none">Minha Rede</span>
+          <span className="text-[8px] font-bold uppercase tracking-widest leading-none">Minha Rede</span>
         </button>
         <button
           type="button"
@@ -68,7 +68,7 @@ export function TeamSelector({ label, onSelect, network }: TeamSelectorProps) {
           className={`p-3 border text-center transition-all flex flex-col items-center justify-center gap-1 ${mode === "public" ? "border-yellow-400 bg-yellow-400/10 text-yellow-400" : "border-theme-border bg-theme-bg-muted text-theme-muted"}`}
         >
           <Globe size={14} />
-          <span className="text-[8px] font-black uppercase tracking-widest leading-none">Solicitar</span>
+          <span className="text-[8px] font-bold uppercase tracking-widest leading-none">Solicitar</span>
         </button>
         <button
           type="button"
@@ -76,7 +76,7 @@ export function TeamSelector({ label, onSelect, network }: TeamSelectorProps) {
           className={`p-3 border text-center transition-all flex flex-col items-center justify-center gap-1 ${mode === "none" ? "border-red-500 bg-red-500/10 text-red-500 shadow-[0_0_15px_rgba(239,68,68,0.1)]" : "border-theme-border bg-theme-bg-muted text-theme-muted"}`}
         >
           <X size={14} />
-          <span className="text-[8px] font-black uppercase tracking-widest leading-none">Nenhum</span>
+          <span className="text-[8px] font-bold uppercase tracking-widest leading-none">Nenhum</span>
         </button>
       </div>
 
@@ -102,14 +102,14 @@ export function TeamSelector({ label, onSelect, network }: TeamSelectorProps) {
                   className={`flex items-center justify-between p-3 border transition-all ${selectedPartnerId === p.id ? "border-cyan-400 bg-cyan-400/5" : "border-theme-border hover:border-cyan-400/30"}`}
                 >
                   <div className="text-left">
-                    <p className="text-[10px] font-black text-theme-text uppercase tracking-tight">{p.nome}</p>
+                    <p className="text-[10px] font-bold text-theme-text uppercase ">{p.nome}</p>
                     <p className="text-[8px] text-theme-muted uppercase font-bold tracking-widest">{p.email}</p>
                   </div>
                   {selectedPartnerId === p.id && <ShieldCheck size={14} className="text-cyan-400" />}
                 </button>
               ))
             ) : (
-              <p className="text-[9px] text-center text-theme-muted py-4 italic uppercase">Nenhum parceiro favorito encontrado.</p>
+              <p className="text-[9px] text-center text-theme-muted py-4 uppercase">Nenhum parceiro favorito encontrado.</p>
             )}
           </div>
         </div>
@@ -117,7 +117,7 @@ export function TeamSelector({ label, onSelect, network }: TeamSelectorProps) {
 
       {mode === "public" && (
         <div className="p-4 bg-yellow-400/5 border border-yellow-400/20 space-y-2 animate-in slide-in-from-top-2 duration-300">
-          <p className="text-[9px] font-black text-yellow-400 uppercase tracking-widest flex items-center gap-2">
+          <p className="text-[9px] font-bold text-yellow-400 uppercase tracking-widest flex items-center gap-2">
              <Globe size={12} /> Chamada Aberta na Plataforma
           </p>
           <p className="text-[8px] text-theme-muted uppercase font-bold leading-relaxed">

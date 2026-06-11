@@ -65,14 +65,14 @@ export const ProfessionalBadgesShowcase: React.FC<ProfessionalBadgesShowcaseProp
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-theme-border pb-6">
         <div className="space-y-1">
           <div className="flex items-center gap-2.5">
-            <h3 className="text-2xl font-heading font-black text-theme-text uppercase italic tracking-tight">
+            <h3 className="text-2xl font-heading font-bold text-theme-text uppercase ">
               Galeria de Conquistas
             </h3>
-            <span className="px-2 py-0.5 text-[9px] font-black uppercase bg-theme-bg border border-theme-border text-theme-muted tracking-widest rounded">
+            <span className="px-2 py-0.5 text-[9px] font-bold uppercase bg-theme-bg border border-theme-border text-theme-muted tracking-widest rounded">
               FASE 2
             </span>
           </div>
-          <p className="text-[10px] text-theme-muted uppercase tracking-[0.25em] italic font-black">
+          <p className="text-[10px] text-theme-muted uppercase tracking-[0.25em] font-bold">
             Seu portfólio de alta fidelidade e sinais de confiança na vitrine
           </p>
         </div>
@@ -80,10 +80,10 @@ export const ProfessionalBadgesShowcase: React.FC<ProfessionalBadgesShowcaseProp
         {/* Progress Display */}
         <div className="flex items-center gap-4 bg-theme-bg-muted border border-theme-border px-5 py-3 rounded-xl shadow-inner">
           <div className="space-y-0.5 text-right">
-            <p className="text-[9px] font-black text-theme-muted uppercase tracking-widest">
+            <p className="text-[9px] font-bold text-theme-muted uppercase tracking-widest">
               Medalhas Ativas
             </p>
-            <p className="text-base font-heading font-black text-theme-text italic">
+            <p className="text-base font-heading font-bold text-theme-text ">
               {unlockedCount} de {badges.length} Desbloqueadas
             </p>
           </div>
@@ -92,7 +92,7 @@ export const ProfessionalBadgesShowcase: React.FC<ProfessionalBadgesShowcaseProp
               className="absolute inset-0 bg-brand-tactical/20 transition-all duration-700" 
               style={{ height: `${(unlockedCount / badges.length) * 100}%`, bottom: 0, top: 'auto' }}
             />
-            <span className="relative z-10 text-xs font-heading font-black text-brand-tactical drop-shadow-md">
+            <span className="relative z-10 text-xs font-heading font-bold text-brand-tactical drop-shadow-md">
               {Math.round((unlockedCount / badges.length) * 100)}%
             </span>
           </div>

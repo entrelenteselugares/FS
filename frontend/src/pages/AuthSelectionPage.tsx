@@ -42,7 +42,7 @@ export const AuthSelectionPage: React.FC = () => {
       </div>
       <div className="text-center mb-6 md:mb-16 relative z-10">
         <img src="/logo.png" alt="Foto Segundo" style={{ height: 28, objectFit: "contain", filter: "var(--logo-filter)" }} className="mb-6 mx-auto opacity-80" />
-        <h1 className="font-sans tracking-tighter text-theme-text mb-4 uppercase font-black" style={{ fontSize: 'clamp(32px, 10vw, 96px)' }}>
+        <h1 className="font-sans text-theme-text mb-4 uppercase font-bold" style={{ fontSize: 'clamp(32px, 10vw, 96px)' }}>
           GATE<span className="text-brand-tactical">KEEPER</span>
         </h1>
         <div className="flex items-center justify-center gap-3 md:gap-6">
@@ -62,7 +62,7 @@ export const AuthSelectionPage: React.FC = () => {
             <div className="mb-4 p-3 bg-theme-bg rounded-xl border border-theme-border shadow-inner opacity-60 group-hover:opacity-100 group-hover:text-brand-tactical transition-all transform group-hover:scale-110 duration-500">
               {opt.icon}
             </div>
-            <h3 className="text-xl md:text-3xl font-display text-theme-text mb-2 md:mb-4 tracking-tighter transition-all duration-500 font-black uppercase italic">
+            <h3 className="text-xl md:text-3xl font-display text-theme-text mb-2 md:mb-4 transition-all duration-500 font-bold uppercase ">
               {opt.title}
             </h3>
             <p className="text-theme-muted text-[10px] leading-[1.7] mb-5 md:mb-10 font-bold uppercase tracking-[0.2em]">
@@ -70,7 +70,7 @@ export const AuthSelectionPage: React.FC = () => {
             </p>
             
             <button 
-              className="lux-button-ghost w-full py-5 text-[10px] font-black uppercase tracking-[0.5em] group-hover:bg-brand-tactical group-hover:text-black group-hover:border-brand-tactical transition-all duration-500"
+              className="lux-button-ghost w-full py-5 text-[10px] font-bold uppercase tracking-[0.5em] group-hover:bg-brand-tactical group-hover:text-black group-hover:border-brand-tactical transition-all duration-500"
             >
               {opt.label}
             </button>

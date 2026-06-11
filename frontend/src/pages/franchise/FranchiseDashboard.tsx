@@ -209,7 +209,7 @@ const FranchiseDashboard: React.FC = () => {
     <DashboardLayout title="Gestão de Franquia" navItems={navItems}>
       {loading ? (
         <div className="flex items-center justify-center min-h-[60vh]">
-          <div className="text-[10px] font-black text-theme-muted uppercase tracking-[0.5em] animate-pulse">
+          <div className="text-[10px] font-bold text-theme-muted uppercase tracking-[0.5em] animate-pulse">
             Sincronizando Hub B2B...
           </div>
         </div>
@@ -219,8 +219,8 @@ const FranchiseDashboard: React.FC = () => {
       {/* HEADER OPERACIONAL */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-3 md:gap-6">
         <div className="space-y-2">
-          <span className="text-[11px] font-black text-brand-tactical uppercase tracking-[0.4em] italic">Gestão de Franquia</span>
-          <h1 className="text-2xl md:text-4xl font-heading font-black uppercase italic tracking-tighter text-theme-text">
+          <span className="text-[11px] font-bold text-brand-tactical uppercase tracking-[0.4em] ">Gestão de Franquia</span>
+          <h1 className="text-2xl md:text-4xl font-heading font-bold uppercase text-theme-text">
             Command <span className="text-brand-tactical">Center</span>
           </h1>
         </div>
@@ -233,7 +233,7 @@ const FranchiseDashboard: React.FC = () => {
               <div className={`absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full animate-ping ${printerStatus === 'ONLINE' ? 'bg-brand-tactical' : 'bg-red-500'}`} />
             </div>
             <div className="space-y-0.5">
-              <span className="text-[8px] font-black text-theme-muted uppercase tracking-widest block opacity-60">Status Agent</span>
+              <span className="text-[8px] font-bold text-theme-muted uppercase tracking-widest block opacity-60">Status Agent</span>
               <span className={`text-xs sm:text-sm font-black uppercase italic ${printerStatus === 'ONLINE' ? 'text-brand-tactical' : 'text-red-500'}`}>
                 {printerStatus}
               </span>
@@ -247,8 +247,8 @@ const FranchiseDashboard: React.FC = () => {
               <div className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-blue-500 animate-pulse" />
             </div>
             <div className="space-y-0.5">
-              <span className="text-[8px] font-black text-theme-muted uppercase tracking-widest block opacity-60">Renda Passiva</span>
-              <span className="text-xs sm:text-sm font-black uppercase italic text-blue-400">
+              <span className="text-[8px] font-bold text-theme-muted uppercase tracking-widest block opacity-60">Renda Passiva</span>
+              <span className="text-xs sm:text-sm font-bold uppercase text-blue-400">
                 {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(finance.totalEarned)}
               </span>
             </div>
@@ -267,7 +267,7 @@ const FranchiseDashboard: React.FC = () => {
             
             <div className="relative z-10 space-y-4 md:space-y-8">
               <div className="flex items-center justify-between">
-                <h3 className="text-xl md:text-2xl font-heading font-black uppercase tracking-tight text-theme-text">Monitor de Insumos</h3>
+                <h3 className="text-xl md:text-2xl font-heading font-bold uppercase text-theme-text">Monitor de Insumos</h3>
                 <ShieldCheck size={18} className="text-brand-tactical opacity-50" />
               </div>
 
@@ -275,7 +275,7 @@ const FranchiseDashboard: React.FC = () => {
                 {/* CRÉDITOS DE IMPRESSÃO */}
                 <div className="space-y-4">
                   <div className="flex justify-between items-end">
-                    <span className="text-[11px] font-black text-theme-muted uppercase tracking-widest">Créditos de Foto</span>
+                    <span className="text-[11px] font-bold text-theme-muted uppercase tracking-widest">Créditos de Foto</span>
                     <span className={`text-lg font-black italic ${inventory.isLow ? 'text-red-500' : 'text-theme-text'}`}>
                       {inventory.available} <span className="text-xs opacity-40">disponíveis</span>
                     </span>
@@ -289,7 +289,7 @@ const FranchiseDashboard: React.FC = () => {
                   {inventory.isLow && (
                     <div className="flex items-center gap-2 text-red-500 animate-pulse">
                       <AlertTriangle size={14} />
-                      <span className="text-[9px] font-black uppercase tracking-widest">Nível Crítico: Reposição Necessária</span>
+                      <span className="text-[9px] font-bold uppercase tracking-widest">Nível Crítico: Reposição Necessária</span>
                     </div>
                   )}
                 </div>
@@ -297,8 +297,8 @@ const FranchiseDashboard: React.FC = () => {
                 {/* STATUS DO PAPEL (RFID SIMULATION) */}
                 <div className="space-y-4">
                   <div className="flex justify-between items-end">
-                    <span className="text-[11px] font-black text-theme-muted uppercase tracking-widest">Papel & Ribbon</span>
-                    <span className="text-lg font-black text-theme-text italic">ESTÁVEL</span>
+                    <span className="text-[11px] font-bold text-theme-muted uppercase tracking-widest">Papel & Ribbon</span>
+                    <span className="text-lg font-bold text-theme-text ">ESTÁVEL</span>
                   </div>
                   <div className="h-1.5 w-full bg-theme-border/20 rounded-full overflow-hidden">
                     <div 
@@ -306,7 +306,7 @@ const FranchiseDashboard: React.FC = () => {
                       style={{ width: '85%' }}
                     />
                   </div>
-                  <div className="flex justify-between text-[9px] font-black text-theme-muted uppercase tracking-widest opacity-50">
+                  <div className="flex justify-between text-[9px] font-bold text-theme-muted uppercase tracking-widest opacity-50">
                     <span>Vencimento Estimado: 4 dias</span>
                     <span>Consumo Médio: 12p/dia</span>
                   </div>
@@ -317,13 +317,13 @@ const FranchiseDashboard: React.FC = () => {
               <div className="pt-3 md:pt-6 border-t border-theme-border/10 flex flex-col sm:flex-row gap-3">
                 <button 
                   onClick={() => handleReorder('CREDITS_500')}
-                  className="flex-1 bg-brand-tactical text-zinc-950 py-2.5 md:py-5 text-[10px] md:text-[11px] font-black uppercase tracking-[0.2em] shadow-xl hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-2"
+                  className="flex-1 bg-brand-tactical text-zinc-950 py-2.5 md:py-5 text-[10px] md:text-[11px] font-bold uppercase tracking-[0.2em] shadow-xl hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-2"
                 >
                   <ShoppingBag size={14} /> Reabastecer Créditos (Pix)
                 </button>
                 <button 
                   onClick={() => handleReorder('PHYSICAL_KIT')}
-                  className="flex-1 bg-transparent border border-theme-border text-theme-text py-2.5 md:py-5 text-[10px] md:text-[11px] font-black uppercase tracking-[0.2em] hover:bg-theme-bg-muted transition-all flex items-center justify-center gap-2"
+                  className="flex-1 bg-transparent border border-theme-border text-theme-text py-2.5 md:py-5 text-[10px] md:text-[11px] font-bold uppercase tracking-[0.2em] hover:bg-theme-bg-muted transition-all flex items-center justify-center gap-2"
                 >
                   <Zap size={14} /> Solicitar Kit Físico
                 </button>
@@ -336,9 +336,9 @@ const FranchiseDashboard: React.FC = () => {
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                  <History size={18} className="text-theme-muted" />
-                 <h3 className="text-sm font-black text-theme-text uppercase tracking-widest italic">Logs de Operação</h3>
+                 <h3 className="text-sm font-bold text-theme-text uppercase tracking-widest ">Logs de Operação</h3>
               </div>
-              <button className="text-[9px] font-black text-theme-muted hover:text-brand-tactical uppercase tracking-widest transition-colors flex items-center gap-1">
+              <button className="text-[9px] font-bold text-theme-muted hover:text-brand-tactical uppercase tracking-widest transition-colors flex items-center gap-1">
                 Ver Tudo <ExternalLink size={10} />
               </button>
             </div>
@@ -347,10 +347,10 @@ const FranchiseDashboard: React.FC = () => {
                {[1, 2, 3].map(i => (
                  <div key={i} className="flex items-center justify-between py-3 border-b border-theme-border/5 last:border-0 group cursor-default">
                     <div className="flex items-center gap-4">
-                       <span className="text-[9px] font-black text-theme-muted tabular-nums opacity-40">14:3{i}</span>
-                       <p className="text-[11px] font-black text-theme-text uppercase tracking-tight group-hover:text-brand-tactical transition-colors">Impressão realizada: Hub B2B Automático</p>
+                       <span className="text-[9px] font-bold text-theme-muted tabular-nums opacity-40">14:3{i}</span>
+                       <p className="text-[11px] font-bold text-theme-text uppercase group-hover:text-brand-tactical transition-colors">Impressão realizada: Hub B2B Automático</p>
                     </div>
-                    <span className="text-[9px] font-black text-brand-tactical italic">-1 CRÉDITO</span>
+                    <span className="text-[9px] font-bold text-brand-tactical ">-1 CRÉDITO</span>
                  </div>
                ))}
             </div>
@@ -362,21 +362,21 @@ const FranchiseDashboard: React.FC = () => {
           <div className="bg-theme-bg-muted border border-theme-border p-4 md:p-8 space-y-4 md:space-y-8 border-brand-tactical/20">
             <div className="space-y-1.5">
               <Users size={22} className="text-brand-tactical" />
-              <h3 className="text-xl md:text-2xl font-heading font-black uppercase tracking-tight text-theme-text">Minha Rede</h3>
-              <p className="text-[10px] text-theme-muted font-black leading-relaxed uppercase tracking-tight">
+              <h3 className="text-xl md:text-2xl font-heading font-bold uppercase text-theme-text">Minha Rede</h3>
+              <p className="text-[10px] text-theme-muted font-bold leading-relaxed uppercase ">
                 Indique fotógrafos e expanda sua capilaridade regional.
               </p>
             </div>
 
             {/* REFERRAL TOOL */}
             <div className="space-y-4">
-              <span className="text-[10px] font-black text-theme-muted uppercase tracking-widest opacity-60">Seu Link de Indicação</span>
+              <span className="text-[10px] font-bold text-theme-muted uppercase tracking-widest opacity-60">Seu Link de Indicação</span>
               <div className="flex bg-black/40 border border-theme-border p-1">
                 <input 
                   type="text" 
                   readOnly 
                   value={referralCode ? `${window.location.host}/register?ref=${referralCode}` : "Gerando..."}
-                  className="bg-transparent border-0 flex-1 px-4 text-[10px] font-black text-theme-text focus:ring-0 truncate"
+                  className="bg-transparent border-0 flex-1 px-4 text-[10px] font-bold text-theme-text focus:ring-0 truncate"
                 />
                 <button onClick={copyReferral} className="bg-brand-tactical p-3 text-zinc-950 hover:bg-white transition-colors">
                   <Copy size={16} />
@@ -386,7 +386,7 @@ const FranchiseDashboard: React.FC = () => {
 
             {/* PARTNER LIST (CARDS) */}
             <div className="space-y-4 pt-4">
-              <span className="text-[10px] font-black text-theme-muted uppercase tracking-widest opacity-60">Parceiros Vinculados ({partners.length})</span>
+              <span className="text-[10px] font-bold text-theme-muted uppercase tracking-widest opacity-60">Parceiros Vinculados ({partners.length})</span>
               <div className="space-y-3">
                 {partners.length === 0 ? (
                   <p className="text-[9px] text-theme-muted uppercase tracking-widest opacity-40 py-4 text-center border  border-theme-border">
@@ -395,14 +395,14 @@ const FranchiseDashboard: React.FC = () => {
                 ) : partners.map(p => (
                   <div key={p.id} className="p-4 border border-theme-border hover:border-brand-tactical/30 transition-all group">
                     <div className="flex justify-between items-center mb-2">
-                      <span className="text-xs font-black text-theme-text uppercase tracking-tight">{p.user.nome}</span>
+                      <span className="text-xs font-bold text-theme-text uppercase ">{p.user.nome}</span>
                       <span className={`text-[8px] font-black px-2 py-0.5 ${p.user.isVerified ? 'bg-brand-tactical text-zinc-950' : 'bg-zinc-800 text-zinc-400'} uppercase`}>
                         {p.user.isVerified ? 'VERIFIED' : 'PENDING'}
                       </span>
                     </div>
                     <div className="flex justify-between items-end">
-                      <span className="text-[9px] font-black text-theme-muted uppercase tracking-widest opacity-40">Experiência</span>
-                      <span className="text-[11px] font-black text-theme-text italic">{p.user.profissional?.experienceYears || 0} Anos</span>
+                      <span className="text-[9px] font-bold text-theme-muted uppercase tracking-widest opacity-40">Experiência</span>
+                      <span className="text-[11px] font-bold text-theme-text ">{p.user.profissional?.experienceYears || 0} Anos</span>
                     </div>
                   </div>
                 ))}
@@ -413,21 +413,21 @@ const FranchiseDashboard: React.FC = () => {
             <div className="space-y-4 pt-4 border-t border-theme-border">
               <div className="flex items-center gap-2 mb-4">
                 <Palette size={16} className="text-brand-tactical" />
-                <span className="text-[10px] font-black text-theme-muted uppercase tracking-widest opacity-80">White-Label (B2B)</span>
+                <span className="text-[10px] font-bold text-theme-muted uppercase tracking-widest opacity-80">White-Label (B2B)</span>
               </div>
               <div className="space-y-3">
                 <div>
-                  <label className="text-[9px] font-black uppercase tracking-widest text-theme-muted block mb-2">URL da Logo</label>
+                  <label className="text-[9px] font-bold uppercase tracking-widest text-theme-muted block mb-2">URL da Logo</label>
                   <input 
                     type="url" 
                     value={branding.logoUrl}
                     onChange={(e) => setBranding(prev => ({...prev, logoUrl: e.target.value}))}
                     placeholder="https://sua-logo.com/img.png"
-                    className="w-full bg-black/40 border border-theme-border p-3 text-[10px] font-black text-theme-text focus:border-brand-tactical transition-colors outline-none"
+                    className="w-full bg-black/40 border border-theme-border p-3 text-[10px] font-bold text-theme-text focus:border-brand-tactical transition-colors outline-none"
                   />
                 </div>
                 <div>
-                  <label className="text-[9px] font-black uppercase tracking-widest text-theme-muted block mb-2">Cor da Marca (Hex)</label>
+                  <label className="text-[9px] font-bold uppercase tracking-widest text-theme-muted block mb-2">Cor da Marca (Hex)</label>
                   <div className="flex gap-2">
                     <input 
                       type="color" 
@@ -439,14 +439,14 @@ const FranchiseDashboard: React.FC = () => {
                       type="text" 
                       value={branding.brandColor}
                       onChange={(e) => setBranding(prev => ({...prev, brandColor: e.target.value}))}
-                      className="flex-1 bg-black/40 border border-theme-border p-3 text-[10px] font-black text-theme-text focus:border-brand-tactical transition-colors outline-none"
+                      className="flex-1 bg-black/40 border border-theme-border p-3 text-[10px] font-bold text-theme-text focus:border-brand-tactical transition-colors outline-none"
                     />
                   </div>
                 </div>
                 <button 
                   onClick={handleSaveBranding}
                   disabled={savingBranding}
-                  className="w-full py-2.5 md:py-4 bg-brand-tactical/10 text-brand-tactical hover:bg-brand-tactical hover:text-zinc-950 transition-all text-[9px] font-black uppercase tracking-[0.3em] disabled:opacity-50"
+                  className="w-full py-2.5 md:py-4 bg-brand-tactical/10 text-brand-tactical hover:bg-brand-tactical hover:text-zinc-950 transition-all text-[9px] font-bold uppercase tracking-[0.3em] disabled:opacity-50"
                 >
                   {savingBranding ? 'Salvando...' : 'Salvar Customização'}
                 </button>
@@ -457,10 +457,10 @@ const FranchiseDashboard: React.FC = () => {
           {/* PASSIVE INCOME LIST & COHORT INTEL */}
           <div className="bg-theme-bg-muted border border-theme-border p-4 md:p-8 space-y-4 md:space-y-8">
             <div className="flex items-center justify-between">
-              <h3 className="text-sm font-black text-theme-text uppercase tracking-widest italic">Comissões & Fechamento</h3>
+              <h3 className="text-sm font-bold text-theme-text uppercase tracking-widest ">Comissões & Fechamento</h3>
               <button 
                 onClick={handleExportCSV}
-                className="text-[9px] font-black text-brand-tactical border border-brand-tactical/30 px-3 py-1.5 uppercase tracking-widest hover:bg-brand-tactical hover:text-black transition-colors"
+                className="text-[9px] font-bold text-brand-tactical border border-brand-tactical/30 px-3 py-1.5 uppercase tracking-widest hover:bg-brand-tactical hover:text-black transition-colors"
               >
                 Exportar CSV
               </button>
@@ -470,16 +470,16 @@ const FranchiseDashboard: React.FC = () => {
             {finance.intel && (
               <div className="grid grid-cols-3 gap-4 pb-6 border-b border-theme-border">
                 <div>
-                  <span className="block text-[8px] font-black text-theme-muted uppercase tracking-widest">Eventos da Rede</span>
-                  <span className="text-lg font-black text-white">{finance.intel.networkEvents}</span>
+                  <span className="block text-[8px] font-bold text-theme-muted uppercase tracking-widest">Eventos da Rede</span>
+                  <span className="text-lg font-bold text-white">{finance.intel.networkEvents}</span>
                 </div>
                 <div>
-                  <span className="block text-[8px] font-black text-theme-muted uppercase tracking-widest">Pedidos (Vendas)</span>
-                  <span className="text-lg font-black text-white">{finance.intel.networkOrders}</span>
+                  <span className="block text-[8px] font-bold text-theme-muted uppercase tracking-widest">Pedidos (Vendas)</span>
+                  <span className="text-lg font-bold text-white">{finance.intel.networkOrders}</span>
                 </div>
                 <div>
-                  <span className="block text-[8px] font-black text-theme-muted uppercase tracking-widest">Conv. (Orders/Event)</span>
-                  <span className="text-lg font-black text-brand-tactical">{finance.intel.avgOrdersPerEvent}</span>
+                  <span className="block text-[8px] font-bold text-theme-muted uppercase tracking-widest">Conv. (Orders/Event)</span>
+                  <span className="text-lg font-bold text-brand-tactical">{finance.intel.avgOrdersPerEvent}</span>
                 </div>
               </div>
             )}
@@ -492,10 +492,10 @@ const FranchiseDashboard: React.FC = () => {
               ) : finance.recentCommissions.map(c => (
                 <div key={c.id} className="flex flex-col gap-1 py-3 border-b border-theme-border/10 last:border-0">
                   <div className="flex justify-between items-start">
-                    <span className="text-[10px] font-black text-theme-text uppercase truncate max-w-[140px]">{c.eventTitle}</span>
-                    <span className="text-[11px] font-black text-blue-400">+{new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(c.amount)}</span>
+                    <span className="text-[10px] font-bold text-theme-text uppercase truncate max-w-[140px]">{c.eventTitle}</span>
+                    <span className="text-[11px] font-bold text-blue-400">+{new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(c.amount)}</span>
                   </div>
-                  <span className="text-[8px] font-black text-theme-muted uppercase tracking-tighter opacity-40">{new Date(c.date).toLocaleDateString('pt-BR')}</span>
+                  <span className="text-[8px] font-bold text-theme-muted uppercase opacity-40">{new Date(c.date).toLocaleDateString('pt-BR')}</span>
                 </div>
               ))}
             </div>

@@ -31,7 +31,7 @@ function DeadlineTimer({ event, type }: { event: EventItem; type: "FOTO" | "VIDE
 
   if (isDelivered) {
     return (
-      <div className="flex items-center gap-1.5 text-brand-tactical text-[9px] font-black uppercase tracking-widest italic bg-brand-tactical/10 px-2 py-1 rounded-xl border border-brand-tactical/10">
+      <div className="flex items-center gap-1.5 text-brand-tactical text-[9px] font-bold uppercase tracking-widest bg-brand-tactical/10 px-2 py-1 rounded-xl border border-brand-tactical/10">
         <Check size={10} /> {type === "FOTO" ? "FOTOS OK" : "VÍDEO OK"}
       </div>
     );
@@ -109,11 +109,11 @@ export function AgendaTab({
       {viewTab === "lista" ? (
         <div className="space-y-4">
           {loading ? (
-            <div className="py-24 text-center text-theme-muted text-[10px] font-black uppercase tracking-[0.4em]">
+            <div className="py-24 text-center text-theme-muted text-[10px] font-bold uppercase tracking-[0.4em]">
               Sincronizando Dados de Campo...
             </div>
           ) : (displayEvents.length === 0 && unitInvites.length === 0) ? (
-            <div className="py-24 text-center bg-theme-bg border  border-theme-border rounded-2xl text-theme-muted text-[10px] font-black uppercase tracking-[0.2em]">
+            <div className="py-24 text-center bg-theme-bg border border-theme-border rounded-2xl text-theme-muted text-[10px] font-bold uppercase tracking-[0.2em]">
               Nenhum registro encontrado para esta visualização.
             </div>
           ) : (
@@ -129,8 +129,8 @@ export function AgendaTab({
                   
                   {/* DATA COL */}
                   <div className="min-w-[60px] flex flex-row md:flex-col items-center md:items-start border-b md:border-b-0 md:border-r border-theme-border pb-2 md:pb-0 md:pr-4 gap-2 md:gap-0 w-full md:w-auto">
-                    <div className="text-[9px] font-black text-theme-muted uppercase tracking-widest hidden md:block mb-1">DATA</div>
-                    <div className="text-xl md:text-2xl font-heading font-black text-theme-text italic leading-none uppercase tracking-tighter">
+                    <div className="text-[9px] font-bold text-theme-muted uppercase tracking-widest hidden md:block mb-1">DATA</div>
+                    <div className="text-xl md:text-2xl font-heading font-bold text-theme-text leading-none uppercase ">
                       {parseDateSafe(ev.dataEvento).toLocaleDateString("pt-BR", { day: "2-digit" })}
                     </div>
                     <div className="text-[9px] md:text-[10px] font-bold text-brand-tactical uppercase tracking-widest mt-0 md:mt-1">
@@ -141,8 +141,8 @@ export function AgendaTab({
                   {/* INFO COL */}
                   <div className="flex-grow space-y-3">
                     <div className="flex flex-wrap items-center gap-2 md:gap-4">
-                      <h3 className="text-lg md:text-xl font-heading font-black text-theme-text uppercase italic tracking-tight leading-none">{ev.title}</h3>
-                      <div className="px-1.5 py-0.5 text-[8px] font-black border rounded-md bg-brand-tactical/10 text-brand-tactical border-brand-tactical/20">
+                      <h3 className="text-lg md:text-xl font-heading font-bold text-theme-text uppercase leading-none">{ev.title}</h3>
+                      <div className="px-1.5 py-0.5 text-[8px] font-bold border rounded-md bg-brand-tactical/10 text-brand-tactical border-brand-tactical/20">
                         OPORTUNIDADE
                       </div>
                     </div>
@@ -167,7 +167,7 @@ export function AgendaTab({
                       
                       <div className="h-4 w-[1px] bg-theme-border/20 hidden md:block" />
                       
-                      <div className="flex gap-4 text-[9px] text-theme-muted font-black uppercase tracking-widest">
+                      <div className="flex gap-4 text-[9px] text-theme-muted font-bold uppercase tracking-widest">
                         <span className="flex items-center gap-1.5"><MapPin size={11} className="text-brand-tactical opacity-50" /> {ev.location || "Campo"}</span>
                         <span className="flex items-center gap-1.5"><Briefcase size={11} className="text-brand-tactical opacity-50" /> {ev.captacaoId === userId ? "CAPTAÇÃO" : "EDIÇÃO"}</span>
                         {ev.eventHours && <span className="flex items-center gap-1.5"><Clock size={11} className="text-brand-tactical opacity-50" /> {ev.eventHours}H</span>}
@@ -183,7 +183,7 @@ export function AgendaTab({
                     </div>
                     
                     <div className="flex gap-2 w-full md:w-auto mt-2">
-                      <button onClick={(e) => { e.stopPropagation(); onRespond(ev.id, "ACCEPTED"); }} className="px-3 py-2 bg-brand-tactical text-brand-text text-[8px] font-black uppercase tracking-widest rounded-lg hover:bg-brand-tactical/90 transition-all flex-1 md:flex-none flex items-center justify-center gap-1">
+                      <button onClick={(e) => { e.stopPropagation(); onRespond(ev.id, "ACCEPTED"); }} className="px-3 py-2 bg-brand-tactical text-brand-text text-[8px] font-bold uppercase tracking-widest rounded-lg hover:bg-brand-tactical/90 transition-all flex-1 md:flex-none flex items-center justify-center gap-1">
                         <Check size={12} /> ACEITAR OPORTUNIDADE
                       </button>
                     </div>
@@ -200,23 +200,23 @@ export function AgendaTab({
                   <div className="absolute left-0 top-0 h-full w-1.5 bg-amber-500" />
                   
                   <div className="min-w-[60px] flex flex-row md:flex-col items-center md:items-start border-b md:border-b-0 md:border-r border-theme-border pb-2 md:pb-0 md:pr-4 gap-2 md:gap-0 w-full md:w-auto">
-                    <div className="text-[9px] font-black text-amber-500 uppercase tracking-widest hidden md:block mb-1">DATA</div>
-                    <div className="text-xl md:text-2xl font-heading font-black text-amber-500 italic leading-none uppercase tracking-tighter">
+                    <div className="text-[9px] font-bold text-amber-500 uppercase tracking-widest hidden md:block mb-1">DATA</div>
+                    <div className="text-xl md:text-2xl font-heading font-bold text-amber-500 leading-none uppercase ">
                       {parseDateSafe(invite.createdAt || new Date().toISOString()).toLocaleDateString("pt-BR", { day: "2-digit" })}
                     </div>
                   </div>
 
                   <div className="flex-grow space-y-3">
                     <div className="flex flex-wrap items-center gap-2 md:gap-4">
-                      <h3 className="text-lg md:text-xl font-heading font-black text-theme-text uppercase italic tracking-tight leading-none">Convite para Residência</h3>
-                      <div className="px-1.5 py-0.5 text-[8px] font-black border rounded-md bg-amber-500/10 text-amber-500 border-amber-500/20">
+                      <h3 className="text-lg md:text-xl font-heading font-bold text-theme-text uppercase leading-none">Convite para Residência</h3>
+                      <div className="px-1.5 py-0.5 text-[8px] font-bold border rounded-md bg-amber-500/10 text-amber-500 border-amber-500/20">
                         CONVITE
                       </div>
                     </div>
                     <p className="text-xs text-theme-text/80 leading-relaxed max-w-lg">
                       A unidade <strong>{invite.cartorio.razaoSocial}</strong> te convidou para fazer parte da equipe.
                     </p>
-                    <div className="flex gap-4 text-[9px] text-theme-muted font-black uppercase tracking-widest">
+                    <div className="flex gap-4 text-[9px] text-theme-muted font-bold uppercase tracking-widest">
                       <span className="flex items-center gap-1.5"><MapPin size={11} className="text-amber-500 opacity-50" /> {invite.cartorio.cidade || "N/A"}</span>
                     </div>
                   </div>
@@ -226,7 +226,7 @@ export function AgendaTab({
                       <button onClick={() => onRespondUnit(invite.id, "REJECTED")} className="p-2 border border-red-500/30 text-red-500 rounded-lg hover:bg-red-500/10 transition-all flex-1 md:flex-none flex items-center justify-center" title="Recusar">
                         <X size={14} />
                       </button>
-                      <button onClick={() => onRespondUnit(invite.id, "ACCEPTED")} className="px-3 py-2 bg-amber-500 text-amber-950 text-[8px] font-black uppercase tracking-widest rounded-lg hover:bg-amber-400 transition-all flex-1 md:flex-none flex items-center justify-center gap-1">
+                      <button onClick={() => onRespondUnit(invite.id, "ACCEPTED")} className="px-3 py-2 bg-amber-500 text-amber-950 text-[8px] font-bold uppercase tracking-widest rounded-lg hover:bg-amber-400 transition-all flex-1 md:flex-none flex items-center justify-center gap-1">
                         <Check size={12} /> ACEITAR
                       </button>
                     </div>
@@ -250,8 +250,8 @@ export function AgendaTab({
                     
                     {/* DATA COL */}
                     <div className="min-w-[60px] flex flex-row md:flex-col items-center md:items-start border-b md:border-b-0 md:border-r border-theme-border pb-2 md:pb-0 md:pr-4 gap-2 md:gap-0 w-full md:w-auto">
-                      <div className="text-[9px] font-black text-theme-muted uppercase tracking-widest hidden md:block mb-1">DATA</div>
-                      <div className="text-xl md:text-2xl font-heading font-black text-theme-text italic leading-none uppercase tracking-tighter">
+                      <div className="text-[9px] font-bold text-theme-muted uppercase tracking-widest hidden md:block mb-1">DATA</div>
+                      <div className="text-xl md:text-2xl font-heading font-bold text-theme-text leading-none uppercase ">
                         {parseDateSafe(ev.dataEvento).toLocaleDateString("pt-BR", { day: "2-digit" })}
                       </div>
                       <div className="text-[9px] md:text-[10px] font-bold text-brand-tactical uppercase tracking-widest mt-0 md:mt-1">
@@ -262,7 +262,7 @@ export function AgendaTab({
                     {/* INFO COL */}
                     <div className="flex-grow space-y-3">
                       <div className="flex flex-wrap items-center gap-2 md:gap-4">
-                        <h3 className="text-lg md:text-xl font-heading font-black text-theme-text uppercase italic tracking-tight leading-none">{ev.title}</h3>
+                        <h3 className="text-lg md:text-xl font-heading font-bold text-theme-text uppercase leading-none">{ev.title}</h3>
                         <div className={`px-1.5 py-0.5 text-[8px] font-black border rounded-md ${ev.captacaoStatus === "ACCEPTED" ? "bg-brand-tactical/10 text-brand-tactical border-brand-tactical/20" : "bg-amber-500/10 text-amber-500 border-amber-500/20"}`}>
                           {ev.captacaoStatus === "ACCEPTED" ? "CONFIRMADO" : "PENDENTE"}
                         </div>
@@ -288,7 +288,7 @@ export function AgendaTab({
                         
                         <div className="h-4 w-[1px] bg-theme-border/20 hidden md:block" />
                         
-                        <div className="flex gap-4 text-[9px] text-theme-muted font-black uppercase tracking-widest">
+                        <div className="flex gap-4 text-[9px] text-theme-muted font-bold uppercase tracking-widest">
                           <span className="flex items-center gap-1.5"><MapPin size={11} className="text-brand-tactical opacity-50" /> {ev.location || "Campo"}</span>
                           <span className="flex items-center gap-1.5"><Briefcase size={11} className="text-brand-tactical opacity-50" /> {ev.captacaoId === userId ? "CAPTAÇÃO" : "EDIÇÃO"}</span>
                           {ev.eventHours && <span className="flex items-center gap-1.5"><Clock size={11} className="text-brand-tactical opacity-50" /> {ev.eventHours}H</span>}
@@ -308,13 +308,13 @@ export function AgendaTab({
                           <button onClick={(e) => { e.stopPropagation(); onRespond(ev.id, "REJECTED"); }} className="p-2 border border-red-500/30 text-red-500 rounded-lg hover:bg-red-500/10 transition-all flex-1 md:flex-none flex items-center justify-center" title="Recusar">
                             <X size={14} />
                           </button>
-                          <button onClick={(e) => { e.stopPropagation(); onRespond(ev.id, "ACCEPTED"); }} className="px-3 py-2 bg-brand-tactical text-brand-text text-[8px] font-black uppercase tracking-widest rounded-lg hover:bg-brand-tactical/90 transition-all flex-1 md:flex-none flex items-center justify-center gap-1">
+                          <button onClick={(e) => { e.stopPropagation(); onRespond(ev.id, "ACCEPTED"); }} className="px-3 py-2 bg-brand-tactical text-brand-text text-[8px] font-bold uppercase tracking-widest rounded-lg hover:bg-brand-tactical/90 transition-all flex-1 md:flex-none flex items-center justify-center gap-1">
                             <Check size={12} /> ACEITAR
                           </button>
                         </div>
                       ) : (
                         <div className="flex items-center gap-2 w-full md:w-auto justify-end">
-                          <div className="text-[9px] font-black text-brand-tactical uppercase tracking-[0.2em] opacity-80 md:opacity-0 md:group-hover:opacity-100 transition-opacity">GERENCIAR</div>
+                          <div className="text-[9px] font-bold text-brand-tactical uppercase tracking-[0.2em] opacity-80 md:opacity-0 md:group-hover:opacity-100 transition-opacity">GERENCIAR</div>
                           <ChevronRight size={16} className="text-brand-tactical transition-all" />
                         </div>
                       )}
@@ -330,7 +330,7 @@ export function AgendaTab({
             <div className="mt-12 space-y-6 pt-12 border-t border-theme-border">
               <div className="flex items-center gap-4 mb-6">
                 <div className="h-px w-8 bg-brand-tactical" />
-                <p className="text-[10px] font-black text-theme-muted uppercase tracking-[0.5em]">Sincronização Externa</p>
+                <p className="text-[10px] font-bold text-theme-muted uppercase tracking-[0.5em]">Sincronização Externa</p>
               </div>
 
               {!calendarStatus?.connected ? (
@@ -339,14 +339,14 @@ export function AgendaTab({
                     <Calendar size={24} />
                   </div>
                   <div className="space-y-1">
-                    <h3 className="text-lg font-black text-theme-text uppercase">Conecte sua Agenda</h3>
+                    <h3 className="text-lg font-bold text-theme-text uppercase">Conecte sua Agenda</h3>
                     <p className="text-[10px] text-theme-muted uppercase tracking-widest max-w-sm mx-auto">
                       Sincronize seu Google Calendar para que o sistema bloqueie automaticamente sua vitrine.
                     </p>
                   </div>
                   <button 
                     onClick={onConnectCalendar}
-                    className="px-6 py-3 mt-4 bg-brand-tactical text-zinc-950 text-[10px] font-black uppercase tracking-[0.2em] rounded-xl hover:bg-brand-tactical/90 hover:scale-[1.02] transition-all cursor-pointer"
+                    className="px-6 py-3 mt-4 bg-brand-tactical text-zinc-950 text-[10px] font-bold uppercase tracking-[0.2em] rounded-xl hover:bg-brand-tactical/90 hover:scale-[1.02] transition-all cursor-pointer"
                   >
                     CONECTAR GOOGLE CALENDAR
                   </button>
@@ -359,7 +359,7 @@ export function AgendaTab({
                         <CheckCircle size={20} />
                       </div>
                       <div>
-                        <p className="text-[11px] font-black text-brand-tactical uppercase tracking-widest">Status: Conectado</p>
+                        <p className="text-[11px] font-bold text-brand-tactical uppercase tracking-widest">Status: Conectado</p>
                         <p className="text-[9px] text-theme-muted font-bold uppercase tracking-widest mt-1">
                           ID da Agenda: <span className="opacity-70">{calendarStatus.credential?.calendarId || 'N/A'}</span>
                         </p>
@@ -370,7 +370,7 @@ export function AgendaTab({
                       <button 
                         onClick={onManualSync}
                         disabled={isSyncing}
-                        className="flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-2 bg-theme-bg-muted border border-theme-border rounded-xl text-[9px] font-black text-theme-text uppercase tracking-widest hover:bg-theme-border/50 transition-all disabled:opacity-50 cursor-pointer"
+                        className="flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-2 bg-theme-bg-muted border border-theme-border rounded-xl text-[9px] font-bold text-theme-text uppercase tracking-widest hover:bg-theme-border/50 transition-all disabled:opacity-50 cursor-pointer"
                       >
                         <RefreshCw size={12} className={isSyncing ? "animate-spin" : ""} />
                         {isSyncing ? "Sinc..." : "Sincronizar"}
@@ -385,7 +385,7 @@ export function AgendaTab({
                     </div>
                   </div>
                   <div className="text-center">
-                    <p className="text-[8px] text-theme-muted font-black uppercase tracking-widest">
+                    <p className="text-[8px] text-theme-muted font-bold uppercase tracking-widest">
                       Última sinc.: {calendarStatus.credential?.updatedAt ? new Date(calendarStatus.credential.updatedAt).toLocaleString('pt-BR') : "Nenhuma"}
                     </p>
                   </div>

@@ -136,12 +136,12 @@ export function AdminGrowth() {
       <div className="relative border-b border-theme-border pb-8 md:pb-12 space-y-4 md:space-y-6">
         <div className="absolute -top-10 -left-10 w-40 h-40 bg-brand-tactical/10 blur-3xl rounded-full" />
         <div className="space-y-4 relative z-10">
-          <h1 className="text-2xl sm:text-4xl md:text-5xl xl:text-6xl font-heading font-black text-theme-text uppercase tracking-tighter italic leading-none truncate whitespace-nowrap">
+          <h1 className="text-2xl sm:text-4xl md:text-5xl xl:text-6xl font-heading font-bold text-theme-text uppercase leading-none truncate whitespace-nowrap">
             Motor de <span className="text-brand-tactical">Growth</span>
           </h1>
           <div className="flex items-center gap-4">
             <div className="h-1 w-12 bg-brand-tactical" />
-            <p className="text-[9px] sm:text-[11px] font-black text-brand-tactical uppercase tracking-[0.2em] sm:tracking-[0.4em] italic truncate max-w-[80vw]">Expansão e Inteligência de Mercado</p>
+            <p className="text-[9px] sm:text-[11px] font-bold text-brand-tactical uppercase tracking-[0.2em] sm:tracking-[0.4em] truncate max-w-[80vw]">Expansão e Inteligência de Mercado</p>
           </div>
         </div>
       </div>
@@ -169,28 +169,28 @@ export function AdminGrowth() {
       {/* Content */}
       <div className="pt-4">
         {loading ? (
-          <div className="py-24 text-center border border-theme-border bg-theme-bg animate-pulse text-[10px] text-theme-muted uppercase tracking-[0.5em] font-black italic rounded-2xl">Sincronizando Dados de Crescimento...</div>
+          <div className="py-24 text-center border border-theme-border bg-theme-bg animate-pulse text-[10px] text-theme-muted uppercase tracking-[0.5em] font-bold rounded-2xl">Sincronizando Dados de Crescimento...</div>
         ) : activeTab === "COUPONS" ? (
           <div className="space-y-4">
             <div className="flex justify-end">
               <button
                 id="btn-novo-cupom"
                 onClick={openModal}
-                className="flex items-center gap-2 px-4 py-2 bg-brand-tactical text-black text-[10px] font-black uppercase tracking-widest hover:bg-white transition-colors"
+                className="flex items-center gap-2 px-4 py-2 bg-brand-tactical text-black text-[10px] font-bold uppercase tracking-widest hover:bg-white transition-colors"
               >
                 <Plus size={14} /> Novo Cupom
               </button>
             </div>
             {coupons.length === 0 ? (
               <div className="p-3 md:p-6 md:p-12 text-center border  border-theme-border rounded-xl">
-                <p className="text-[10px] font-black text-theme-text-muted uppercase tracking-widest">Nenhum cupom ativo</p>
+                <p className="text-[10px] font-bold text-theme-text-muted uppercase tracking-widest">Nenhum cupom ativo</p>
               </div>
             ) : (
               <div className="grid md:grid-cols-2 gap-4">
                 {coupons.map(c => (
                   <div key={c.id} className="p-3 md:p-6 bg-theme-bg-muted border border-theme-border rounded-2xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4 shadow-sm group hover:border-brand-tactical/30 transition-all">
                     <div>
-                      <h4 className="text-xl font-black italic text-brand-tactical uppercase tracking-widest">{c.code}</h4>
+                      <h4 className="text-xl font-bold text-brand-tactical uppercase tracking-widest">{c.code}</h4>
                       <p className="text-[10px] font-bold text-theme-text-muted mt-1">
                         {c.isFreeShipping ? "FRETE GRÁTIS" : c.discountPct ? `${c.discountPct}% OFF` : `R$ ${Number(c.discountAbs).toFixed(2)} OFF`}
                         {" • "}{c.usedCount} usos
@@ -216,7 +216,7 @@ export function AdminGrowth() {
                         <button
                           type="button"
                           onClick={() => handleDeleteCoupon(c.id)}
-                          className="px-3 py-1.5 bg-red-500/10 border border-red-500/30 text-red-400 hover:bg-red-500/20 text-[8px] font-black uppercase tracking-widest rounded transition-colors cursor-pointer"
+                          className="px-3 py-1.5 bg-red-500/10 border border-red-500/30 text-red-400 hover:bg-red-500/20 text-[8px] font-bold uppercase tracking-widest rounded transition-colors cursor-pointer"
                         >
                           Excluir
                         </button>
@@ -235,15 +235,15 @@ export function AdminGrowth() {
                   <Phone size={40} className="text-emerald-500" />
                 </div>
                 <div>
-                  <h3 className="text-2xl font-black italic text-theme-text uppercase">WhatsApp Conectado</h3>
-                  <p className="text-[10px] font-black text-emerald-500 tracking-widest uppercase mt-2">Motor de notificações ativo</p>
+                  <h3 className="text-2xl font-bold text-theme-text uppercase">WhatsApp Conectado</h3>
+                  <p className="text-[10px] font-bold text-emerald-500 tracking-widest uppercase mt-2">Motor de notificações ativo</p>
                 </div>
               </div>
             ) : waStatus?.qrCode ? (
               <div className="text-center space-y-6">
                 <div>
-                  <h3 className="text-2xl font-black italic text-theme-text uppercase">Conectar Aparelho</h3>
-                  <p className="text-[10px] font-black text-theme-text-muted tracking-widest uppercase mt-2">Leia o QR Code com seu WhatsApp</p>
+                  <h3 className="text-2xl font-bold text-theme-text uppercase">Conectar Aparelho</h3>
+                  <p className="text-[10px] font-bold text-theme-text-muted tracking-widest uppercase mt-2">Leia o QR Code com seu WhatsApp</p>
                 </div>
                 <div className="p-4 bg-white inline-block rounded-2xl mx-auto shadow-2xl">
                   {waStatus.qrCode.startsWith("data:") || waStatus.qrCode.startsWith("http") ? (
@@ -252,12 +252,12 @@ export function AdminGrowth() {
                     <QRCodeSVG value={waStatus.qrCode} size={256} />
                   )}
                 </div>
-                <button onClick={fetchData} className="text-[10px] font-black uppercase text-brand-tactical hover:underline">Atualizar QR Code</button>
+                <button onClick={fetchData} className="text-[10px] font-bold uppercase text-brand-tactical hover:underline">Atualizar QR Code</button>
               </div>
             ) : (
               <div className="text-center space-y-4">
-                <p className="text-[10px] font-black text-theme-text-muted uppercase tracking-widest">Motor de WhatsApp Offline</p>
-                <button onClick={fetchData} className="px-3 md:px-6 py-3 bg-brand-tactical text-brand-text text-[10px] font-black uppercase tracking-widest">Tentar Iniciar Sessão</button>
+                <p className="text-[10px] font-bold text-theme-text-muted uppercase tracking-widest">Motor de WhatsApp Offline</p>
+                <button onClick={fetchData} className="px-3 md:px-6 py-3 bg-brand-tactical text-brand-text text-[10px] font-bold uppercase tracking-widest">Tentar Iniciar Sessão</button>
               </div>
             )}
           </div>
@@ -273,8 +273,8 @@ export function AdminGrowth() {
                   { label: "Total Orders", value: analyticsData.marketplace.funnel.orders },
                 ].map((stat, i) => (
                   <div key={i} className="p-3 md:p-6 bg-theme-bg-muted border border-theme-border rounded-2xl">
-                    <p className="text-[10px] font-black uppercase text-theme-text-muted tracking-widest">{stat.label}</p>
-                    <p className="text-3xl font-black text-brand-tactical mt-2">{stat.value}</p>
+                    <p className="text-[10px] font-bold uppercase text-theme-text-muted tracking-widest">{stat.label}</p>
+                    <p className="text-3xl font-bold text-brand-tactical mt-2">{stat.value}</p>
                   </div>
                 ))}
               </div>
@@ -283,7 +283,7 @@ export function AdminGrowth() {
             {/* Top Professionals */}
             {analyticsData?.marketplace?.topProfessionals && (
               <div className="bg-theme-bg-muted border border-theme-border rounded-2xl p-3 md:p-6">
-                <h3 className="text-sm font-black uppercase tracking-widest text-theme-text mb-4">Top Profissionais (Conversão)</h3>
+                <h3 className="text-sm font-bold uppercase tracking-widest text-theme-text mb-4">Top Profissionais (Conversão)</h3>
                 <div className="space-y-4">
                   {analyticsData.marketplace.topProfessionals.map((pro, idx: number) => (
                     <div key={pro.id} className="flex justify-between items-center text-sm">
@@ -298,12 +298,12 @@ export function AdminGrowth() {
             {/* Coupons Efficiency */}
             {analyticsData?.coupons && (
               <div className="bg-theme-bg-muted border border-theme-border rounded-2xl p-3 md:p-6">
-                <h3 className="text-sm font-black uppercase tracking-widest text-theme-text mb-4">Eficiência de Cupons</h3>
+                <h3 className="text-sm font-bold uppercase tracking-widest text-theme-text mb-4">Eficiência de Cupons</h3>
                 <div className="space-y-4">
                   {analyticsData.coupons.map((c) => (
                     <div key={c.id} className="flex justify-between items-center text-sm border-b border-theme-border/50 pb-2">
                       <div>
-                        <span className="font-black text-brand-tactical">{c.code}</span>
+                        <span className="font-bold text-brand-tactical">{c.code}</span>
                         <span className="text-xs text-theme-text-muted ml-2">({c.usedCount} usos)</span>
                       </div>
                       <div className="text-right">
@@ -331,8 +331,8 @@ export function AdminGrowth() {
                   <Tag className="text-brand-tactical" size={20} />
                 </div>
                 <div>
-                  <h2 className="text-xl font-black uppercase italic tracking-tighter text-theme-text">Novo Cupom</h2>
-                  <p className="text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest opacity-40">Criar cupom de desconto</p>
+                  <h2 className="text-xl font-bold uppercase text-theme-text">Novo Cupom</h2>
+                  <p className="text-[8px] md:text-[9px] font-bold uppercase tracking-wider md:tracking-widest opacity-40">Criar cupom de desconto</p>
                 </div>
               </div>
               <button onClick={() => setIsModalOpen(false)} className="p-2 hover:bg-theme-bg-muted rounded-full transition-all text-theme-muted">
@@ -344,25 +344,25 @@ export function AdminGrowth() {
             <form onSubmit={handleCreate} className="p-4 md:p-8 space-y-6">
               {/* Código */}
               <div className="space-y-2">
-                <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest block opacity-60">Código do Cupom</label>
+                <label className="text-[8px] font-bold text-theme-muted uppercase tracking-widest block opacity-60">Código do Cupom</label>
                 <input
                   type="text"
                   required
                   value={form.code}
                   onChange={e => setForm({ ...form, code: e.target.value.toUpperCase() })}
                   placeholder="Ex: VERAO10"
-                  className="w-full bg-theme-bg border border-theme-border p-4 text-sm text-theme-text font-black uppercase outline-none focus:border-brand-tactical rounded-xl tracking-widest"
+                  className="w-full bg-theme-bg border border-theme-border p-4 text-sm text-theme-text font-bold uppercase outline-none focus:border-brand-tactical rounded-xl tracking-widest"
                 />
               </div>
 
               {/* Tipo de Desconto */}
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest block opacity-60">Tipo</label>
+                  <label className="text-[8px] font-bold text-theme-muted uppercase tracking-widest block opacity-60">Tipo</label>
                   <select
                     value={form.discountType}
                     onChange={e => setForm({ ...form, discountType: e.target.value as "PCT" | "ABS" | "FREE_SHIPPING" })}
-                    className="w-full bg-theme-bg border border-theme-border p-4 text-[10px] text-theme-text font-black outline-none focus:border-brand-tactical rounded-xl cursor-pointer"
+                    className="w-full bg-theme-bg border border-theme-border p-4 text-[10px] text-theme-text font-bold outline-none focus:border-brand-tactical rounded-xl cursor-pointer"
                   >
                     <option value="PCT">Percentual (%)</option>
                     <option value="ABS">Valor fixo (R$)</option>
@@ -370,7 +370,7 @@ export function AdminGrowth() {
                   </select>
                 </div>
                 <div className="space-y-2">
-                  <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest block opacity-60">
+                  <label className="text-[8px] font-bold text-theme-muted uppercase tracking-widest block opacity-60">
                     {form.discountType === "FREE_SHIPPING" ? "Desconto" : form.discountType === "PCT" ? "Desconto (%)" : "Desconto (R$)"}
                   </label>
                   <input
@@ -382,7 +382,7 @@ export function AdminGrowth() {
                     value={form.discountType === "FREE_SHIPPING" ? "" : form.discountValue}
                     onChange={e => setForm({ ...form, discountValue: e.target.value })}
                     placeholder={form.discountType === "FREE_SHIPPING" ? "Grátis" : form.discountType === "PCT" ? "10" : "15.00"}
-                    className="w-full bg-theme-bg border border-theme-border p-4 text-sm text-brand-tactical font-black outline-none focus:border-brand-tactical rounded-xl disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full bg-theme-bg border border-theme-border p-4 text-sm text-brand-tactical font-bold outline-none focus:border-brand-tactical rounded-xl disabled:opacity-50 disabled:cursor-not-allowed"
                   />
                 </div>
               </div>
@@ -390,29 +390,29 @@ export function AdminGrowth() {
               {/* Usos máximos e validade */}
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest block opacity-60">Máx. Usos (opcional)</label>
+                  <label className="text-[8px] font-bold text-theme-muted uppercase tracking-widest block opacity-60">Máx. Usos (opcional)</label>
                   <input
                     type="number"
                     min="1"
                     value={form.maxUses}
                     onChange={e => setForm({ ...form, maxUses: e.target.value })}
                     placeholder="Ilimitado"
-                    className="w-full bg-theme-bg border border-theme-border p-4 text-sm text-theme-text font-black outline-none focus:border-brand-tactical rounded-xl"
+                    className="w-full bg-theme-bg border border-theme-border p-4 text-sm text-theme-text font-bold outline-none focus:border-brand-tactical rounded-xl"
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest block opacity-60">Validade (opcional)</label>
+                  <label className="text-[8px] font-bold text-theme-muted uppercase tracking-widest block opacity-60">Validade (opcional)</label>
                   <input
                     type="date"
                     value={form.expiresAt}
                     onChange={e => setForm({ ...form, expiresAt: e.target.value })}
-                    className="w-full bg-theme-bg border border-theme-border p-4 text-sm text-theme-text font-black outline-none focus:border-brand-tactical rounded-xl"
+                    className="w-full bg-theme-bg border border-theme-border p-4 text-sm text-theme-text font-bold outline-none focus:border-brand-tactical rounded-xl"
                   />
                 </div>
               </div>
 
               {formError && (
-                <p className="text-[10px] text-red-500 font-black uppercase tracking-widest">{formError}</p>
+                <p className="text-[10px] text-red-500 font-bold uppercase tracking-widest">{formError}</p>
               )}
 
               {/* Footer */}
@@ -420,14 +420,14 @@ export function AdminGrowth() {
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="flex-1 py-4 border border-theme-border text-[10px] font-black uppercase tracking-widest text-theme-muted hover:text-white transition-all rounded-[16px]"
+                  className="flex-1 py-4 border border-theme-border text-[10px] font-bold uppercase tracking-widest text-theme-muted hover:text-white transition-all rounded-[16px]"
                 >
                   Cancelar
                 </button>
                 <button
                   type="submit"
                   disabled={creating}
-                  className="flex-[2] py-4 bg-brand-tactical text-black text-[10px] font-black uppercase tracking-widest shadow-2xl shadow-brand-tactical/20 hover:brightness-110 transition-all rounded-[16px] flex items-center justify-center gap-3 disabled:opacity-50"
+                  className="flex-[2] py-4 bg-brand-tactical text-black text-[10px] font-bold uppercase tracking-widest shadow-2xl shadow-brand-tactical/20 hover:brightness-110 transition-all rounded-[16px] flex items-center justify-center gap-3 disabled:opacity-50"
                 >
                   {creating ? "Criando..." : "Criar Cupom"}
                   {!creating && <ArrowRight size={16} />}

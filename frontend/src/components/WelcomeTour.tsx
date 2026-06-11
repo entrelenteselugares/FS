@@ -85,20 +85,20 @@ export const WelcomeTour: React.FC<WelcomeTourProps> = ({ role, onComplete }) =>
           <div className="p-8 space-y-6">
             <div className="flex justify-between items-start">
               <div className="space-y-1">
-                <p className="text-[10px] font-black text-brand-tactical uppercase tracking-[0.3em]">Passo {currentStep + 1} de {steps.length}</p>
-                <h3 className="text-2xl font-heading font-black text-white uppercase italic tracking-tighter">{step.title}</h3>
+                <p className="text-[10px] font-bold text-brand-tactical uppercase tracking-[0.3em]">Passo {currentStep + 1} de {steps.length}</p>
+                <h3 className="text-2xl font-heading font-bold text-white uppercase ">{step.title}</h3>
               </div>
               <button onClick={handleComplete} className="text-zinc-500 hover:text-white transition-colors">
                 <X size={20} />
               </button>
             </div>
             
-            <p className="text-zinc-400 text-sm leading-relaxed italic">
+            <p className="text-zinc-400 text-sm leading-relaxed ">
               {step.description}
             </p>
             
             <div className="pt-4 flex items-center justify-between">
-              <button onClick={handleComplete} className="text-[10px] font-black text-zinc-500 uppercase tracking-widest hover:text-white transition-colors">
+              <button onClick={handleComplete} className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest hover:text-white transition-colors">
                 Pular Tour
               </button>
               

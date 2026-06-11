@@ -45,13 +45,13 @@ export const PackageMobileView = (props: any) => {
         <div className="w-16 h-16 bg-emerald-500/10 rounded-full flex items-center justify-center mb-6 border border-emerald-500/20">
           <CheckCircle2 size={32} className="text-emerald-500" />
         </div>
-        <h2 className="text-2xl font-black uppercase italic text-white tracking-tight mb-2">Orçamento Enviado!</h2>
+        <h2 className="text-2xl font-bold uppercase text-white mb-2">Orçamento Enviado!</h2>
         <p className="text-sm text-zinc-400 leading-relaxed max-w-xs">
           Recebemos sua solicitação. Nossa equipe entrará em contato via WhatsApp em até <strong className="text-white">2h</strong>.
         </p>
         <button
           onClick={() => window.location.href = "/"}
-          className="mt-8 px-8 py-3.5 bg-emerald-500 text-black text-[11px] font-black uppercase tracking-widest rounded-full"
+          className="mt-8 px-8 py-3.5 bg-emerald-500 text-black text-[11px] font-bold uppercase tracking-widest rounded-full"
         >
           Voltar ao Início
         </button>
@@ -70,7 +70,7 @@ export const PackageMobileView = (props: any) => {
           </button>
         )}
         <div className="flex-1">
-          <p className="text-[10px] font-black text-emerald-500 uppercase tracking-widest">
+          <p className="text-[10px] font-bold text-emerald-500 uppercase tracking-widest">
             Passo {currentStepIndex + 1} de {totalSteps}
           </p>
           <p className="text-sm font-bold text-white/90">{STEPS[currentStepIndex].label}</p>
@@ -103,7 +103,7 @@ export const PackageMobileView = (props: any) => {
               <>
                 {/* Package cards */}
                 <div className="space-y-3">
-                  <p className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">Escolha seu pacote</p>
+                  <p className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Escolha seu pacote</p>
                   <div className="grid grid-cols-1 gap-3">
                     {packages.map((pkg: any) => {
                       const isSelected = pkg.id === selectedPackageId;
@@ -157,7 +157,7 @@ export const PackageMobileView = (props: any) => {
 
                 {/* CEP */}
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black text-zinc-500 uppercase tracking-widest flex items-center gap-1.5">
+                  <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest flex items-center gap-1.5">
                     <MapPin size={11} className="text-emerald-500" /> CEP do Local
                   </label>
                   <div className="relative">
@@ -182,7 +182,7 @@ export const PackageMobileView = (props: any) => {
 
                 {/* Data */}
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black text-zinc-500 uppercase tracking-widest flex items-center gap-1.5">
+                  <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest flex items-center gap-1.5">
                     <Calendar size={11} className="text-emerald-500" /> Data do Evento
                   </label>
                   <input
@@ -204,10 +204,10 @@ export const PackageMobileView = (props: any) => {
                     {PACKAGE_ICONS[selectedPackageId] || <Camera size={18} />}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-[10px] font-black text-emerald-500 uppercase tracking-widest">Pacote Selecionado</p>
-                    <p className="text-sm font-black text-white uppercase italic">{selectedPkg?.name}</p>
+                    <p className="text-[10px] font-bold text-emerald-500 uppercase tracking-widest">Pacote Selecionado</p>
+                    <p className="text-sm font-bold text-white uppercase ">{selectedPkg?.name}</p>
                   </div>
-                  <p className="text-base font-black text-emerald-400 italic flex-shrink-0">
+                  <p className="text-base font-bold text-emerald-400 flex-shrink-0">
                     R$ {selectedPkg?.price.toLocaleString("pt-BR")}
                   </p>
                 </div>
@@ -219,7 +219,7 @@ export const PackageMobileView = (props: any) => {
                     { label: "WhatsApp", value: whatsapp, setter: setWhatsapp, type: "tel", icon: <Phone size={12} />, placeholder: "(11) 99999-9999" },
                   ].map((field) => (
                     <div key={field.label} className="space-y-1.5">
-                      <label className="text-[10px] font-black text-zinc-500 uppercase tracking-widest flex items-center gap-1.5">
+                      <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest flex items-center gap-1.5">
                         <span className="text-emerald-500">{field.icon}</span> {field.label}
                       </label>
                       <input
@@ -233,7 +233,7 @@ export const PackageMobileView = (props: any) => {
                   ))}
 
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">Observações (Opcional)</label>
+                    <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Observações (Opcional)</label>
                     <textarea
                       value={description}
                       onChange={(e) => setDescription(e.target.value)}
@@ -243,7 +243,7 @@ export const PackageMobileView = (props: any) => {
                     />
                   </div>
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">Link de Venda de Ingressos (Opcional)</label>
+                    <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Link de Venda de Ingressos (Opcional)</label>
                     <input
                       type="url"
                       placeholder="https://sympla.com/..."
@@ -253,7 +253,7 @@ export const PackageMobileView = (props: any) => {
                     />
                   </div>
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">Seu Cupom Promocional (Opcional)</label>
+                    <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Seu Cupom Promocional (Opcional)</label>
                     <input
                       type="text"
                       placeholder="EX: FOTOSEGUNDO10"
@@ -265,7 +265,7 @@ export const PackageMobileView = (props: any) => {
                 </div>
 
                 {submitError && (
-                  <div className="px-4 py-3 bg-red-500/10 border border-red-500/20 rounded-xl text-[10px] font-black text-red-400 uppercase tracking-wider">
+                  <div className="px-4 py-3 bg-red-500/10 border border-red-500/20 rounded-xl text-[10px] font-bold text-red-400 uppercase tracking-wider">
                     {submitError}
                   </div>
                 )}
@@ -280,8 +280,8 @@ export const PackageMobileView = (props: any) => {
         <div className="flex items-center gap-3">
           {selectedPkg && step === 1 && (
             <div className="flex-1">
-              <p className="text-[9px] text-zinc-500 font-black uppercase tracking-widest">Pacote {selectedPkg.name}</p>
-              <p className="text-lg font-black text-emerald-400 italic leading-none">
+              <p className="text-[9px] text-zinc-500 font-bold uppercase tracking-widest">Pacote {selectedPkg.name}</p>
+              <p className="text-lg font-bold text-emerald-400 leading-none">
                 R$ {selectedPkg.price.toLocaleString("pt-BR")}
               </p>
             </div>

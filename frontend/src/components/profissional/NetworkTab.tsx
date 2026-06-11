@@ -15,10 +15,10 @@ export function NetworkTab({ network, networkSearch, searchResults, residentUnit
     <div className="space-y-12">
       <div className="bg-theme-bg border border-theme-border rounded-xl p-3 md:p-5 space-y-4 md:space-y-6">
         <div className="space-y-4">
-          <h3 className="text-2xl sm:text-3xl font-heading font-black text-theme-text uppercase tracking-tighter italic leading-none">
+          <h3 className="text-2xl sm:text-3xl font-heading font-bold text-theme-text uppercase leading-none">
             Minha Rede e <span className="text-brand-tactical">Alianças</span>
           </h3>
-          <p className="text-[9px] sm:text-[10px] text-theme-muted uppercase tracking-[0.15em] sm:tracking-[0.4em] italic font-bold leading-relaxed">
+          <p className="text-[9px] sm:text-[10px] text-theme-muted uppercase tracking-[0.15em] sm:tracking-[0.4em] font-bold leading-relaxed">
             Gestão de parcerias oficiais com unidades e conexões com outros profissionais
           </p>
         </div>
@@ -28,7 +28,7 @@ export function NetworkTab({ network, networkSearch, searchResults, residentUnit
           <div className="space-y-6 animate-in slide-in-from-left-4 duration-500">
             <div className="flex items-center gap-4">
               <div className="h-1 w-12 bg-cyan-400" />
-              <h4 className="text-sm font-black text-theme-text uppercase tracking-widest italic">Unidades que Sou Residente</h4>
+              <h4 className="text-sm font-bold text-theme-text uppercase tracking-widest ">Unidades que Sou Residente</h4>
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -37,7 +37,7 @@ export function NetworkTab({ network, networkSearch, searchResults, residentUnit
                   <div className="absolute top-0 left-0 w-full h-[1px] bg-cyan-400/30" />
                   <div className="space-y-4">
                     <div className="flex justify-between items-start">
-                      <div className="px-3 py-1 bg-cyan-400/10 border border-cyan-400/30 rounded-xl text-[8px] font-black text-cyan-400 uppercase tracking-widest italic">
+                      <div className="px-3 py-1 bg-cyan-400/10 border border-cyan-400/30 rounded-xl text-[8px] font-bold text-cyan-400 uppercase tracking-widest ">
                         Parceria Ativa
                       </div>
                       <div className="text-cyan-400/20 group-hover:text-cyan-400/50 transition-colors">
@@ -45,7 +45,7 @@ export function NetworkTab({ network, networkSearch, searchResults, residentUnit
                       </div>
                     </div>
                     <div className="space-y-1">
-                      <h5 className="text-base font-heading font-black text-theme-text uppercase italic leading-tight tracking-tight">
+                      <h5 className="text-base font-heading font-bold text-theme-text uppercase leading-tight ">
                         {u.cartorio.razaoSocial}
                       </h5>
                       <p className="text-[10px] text-theme-muted uppercase font-bold tracking-widest">
@@ -55,7 +55,7 @@ export function NetworkTab({ network, networkSearch, searchResults, residentUnit
                     <div className="pt-4 border-t border-theme-border">
                       <div className="flex items-center gap-2">
                         <div className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
-                        <span className="text-[10px] font-black text-theme-muted uppercase tracking-widest block">Sincronizado com Vitrine Oficial</span>
+                        <span className="text-[10px] font-bold text-theme-muted uppercase tracking-widest block">Sincronizado com Vitrine Oficial</span>
                       </div>
                     </div>
                   </div>
@@ -75,7 +75,7 @@ export function NetworkTab({ network, networkSearch, searchResults, residentUnit
           <input
             type="text"
             placeholder="BUSCAR PROFISSIONAL PELO NOME OU E-MAIL..."
-            className="w-full bg-theme-bg-muted border border-theme-border rounded-xl p-5 pl-14 text-[11px] font-black uppercase tracking-[0.2em] text-theme-text outline-none focus:border-brand-tactical transition-all"
+            className="w-full bg-theme-bg-muted border border-theme-border rounded-xl p-5 pl-14 text-[11px] font-bold uppercase tracking-[0.2em] text-theme-text outline-none focus:border-brand-tactical transition-all"
             value={networkSearch}
             onChange={(e) => onSearch(e.target.value)}
           />
@@ -84,18 +84,18 @@ export function NetworkTab({ network, networkSearch, searchResults, residentUnit
         {/* Search Results */}
         {searchResults.length > 0 && (
           <div className="grid grid-cols-1 gap-4 animate-in slide-in-from-top-4 duration-300">
-            <p className="text-[9px] font-black text-brand-tactical uppercase tracking-widest italic mb-2">
+            <p className="text-[9px] font-bold text-brand-tactical uppercase tracking-widest mb-2">
               Resultados da Busca
             </p>
             {searchResults.map((p) => (
               <div key={p.id} className="flex justify-between items-center rounded-xl p-4 bg-brand-tactical/10 border border-brand-tactical/20">
                 <div className="space-y-1">
-                  <p className="text-sm font-black text-theme-text uppercase tracking-tight italic">{p.nome}</p>
+                  <p className="text-sm font-bold text-theme-text uppercase ">{p.nome}</p>
                   <p className="text-[9px] text-theme-muted uppercase font-bold">{p.email}</p>
                 </div>
                 <button
                   onClick={() => onToggleFavorite(p.id)}
-                  className="px-6 py-3 bg-brand-tactical text-zinc-950 text-[9px] font-black uppercase tracking-widest rounded-xl hover:brightness-110 transition-all"
+                  className="px-6 py-3 bg-brand-tactical text-zinc-950 text-[9px] font-bold uppercase tracking-widest rounded-xl hover:brightness-110 transition-all"
                 >
                   ADICIONAR À REDE
                 </button>
@@ -108,7 +108,7 @@ export function NetworkTab({ network, networkSearch, searchResults, residentUnit
         <div className="space-y-6 pt-8 border-t border-theme-border">
           <div className="flex items-center gap-4">
             <div className="h-1 w-12 bg-brand-tactical" />
-            <h4 className="text-lg sm:text-xl font-heading font-black text-theme-text uppercase italic tracking-tighter">
+            <h4 className="text-lg sm:text-xl font-heading font-bold text-theme-text uppercase ">
               Meus Parceiros Favoritos
             </h4>
           </div>
@@ -126,11 +126,11 @@ export function NetworkTab({ network, networkSearch, searchResults, residentUnit
                         <div className="p-2 bg-brand-tactical/10 text-brand-tactical rounded-xl">
                           <Users size={16} />
                         </div>
-                        <p className="text-base font-black text-theme-text uppercase italic tracking-tight">{p.nome}</p>
+                        <p className="text-base font-bold text-theme-text uppercase ">{p.nome}</p>
                       </div>
                       <p className="text-[10px] text-theme-muted uppercase font-bold tracking-widest">{p.email}</p>
                       {p.whatsapp && (
-                        <p className="text-[10px] text-brand-tactical font-black uppercase tracking-widest flex items-center gap-2 mt-2">
+                        <p className="text-[10px] text-brand-tactical font-bold uppercase tracking-widest flex items-center gap-2 mt-2">
                           <MessageCircle size={12} /> {p.whatsapp}
                         </p>
                       )}
@@ -152,7 +152,7 @@ export function NetworkTab({ network, networkSearch, searchResults, residentUnit
                 <Users size={64} />
               </div>
               <div className="space-y-2">
-                <p className="text-[11px] font-black text-theme-muted uppercase tracking-[0.4em] italic">Sua rede está vazia</p>
+                <p className="text-[11px] font-bold text-theme-muted uppercase tracking-[0.4em] ">Sua rede está vazia</p>
                 <p className="text-[9px] text-theme-muted/60 uppercase font-bold tracking-widest">
                   Busque profissionais acima para começar sua rede tática de conexões
                 </p>

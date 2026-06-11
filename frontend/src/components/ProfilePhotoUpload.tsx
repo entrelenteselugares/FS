@@ -82,7 +82,7 @@ export const ProfilePhotoUpload: React.FC<ProfilePhotoUploadProps> = ({ currentP
         <div className="relative group shrink-0">
           <div 
             onClick={triggerUpload}
-            className="w-24 h-24 rounded-full border-2 border-brand-tactical overflow-hidden bg-theme-bg flex items-center justify-center text-3xl font-black text-theme-text tracking-tighter cursor-pointer relative"
+            className="w-24 h-24 rounded-full border-2 border-brand-tactical overflow-hidden bg-theme-bg flex items-center justify-center text-3xl font-bold text-theme-text cursor-pointer relative"
           >
             {preview ? (
               <img src={preview} alt="Foto de Perfil" className="w-full h-full object-cover" />
@@ -108,14 +108,14 @@ export const ProfilePhotoUpload: React.FC<ProfilePhotoUploadProps> = ({ currentP
         </div>
         
         <div className="space-y-2 text-center md:text-left">
-          <h4 className="text-[12px] font-black text-theme-text uppercase tracking-wider italic">Foto de Identificação (Avatar)</h4>
+          <h4 className="text-[12px] font-bold text-theme-text uppercase tracking-wider ">Foto de Identificação (Avatar)</h4>
           <p className="text-[9px] text-theme-muted uppercase font-bold tracking-widest leading-relaxed">
             Aparecerá nos cards menores e comentários.
           </p>
           <button
             onClick={triggerUpload}
             disabled={uploading}
-            className="inline-block mt-2 fs-btn bg-brand-tactical/10 border border-brand-tactical/30 text-brand-tactical text-[9px] font-black uppercase tracking-widest hover:bg-brand-tactical hover:text-brand-text transition-all italic cursor-pointer py-2 px-4 rounded"
+            className="inline-block mt-2 fs-btn bg-brand-tactical/10 border border-brand-tactical/30 text-brand-tactical text-[9px] font-bold uppercase tracking-widest hover:bg-brand-tactical hover:text-brand-text transition-all cursor-pointer py-2 px-4 rounded"
           >
             {uploading ? "ENVIANDO..." : "CARREGAR FOTO"}
           </button>
@@ -127,7 +127,7 @@ export const ProfilePhotoUpload: React.FC<ProfilePhotoUploadProps> = ({ currentP
         <div className="fixed inset-0 z-[100] bg-black/90 flex flex-col items-center justify-center p-4">
           <div className="w-full max-w-md bg-theme-surface rounded-2xl overflow-hidden shadow-2xl flex flex-col">
             <div className="flex justify-between items-center p-4 border-b border-theme-border">
-              <h3 className="font-heading font-black italic text-theme-text uppercase">Ajustar Foto</h3>
+              <h3 className="font-heading font-bold text-theme-text uppercase">Ajustar Foto</h3>
               <button onClick={() => setImageToCrop(null)} className="text-theme-text/50 hover:text-theme-text">
                 <X size={20} />
               </button>

@@ -85,7 +85,7 @@ export const CoverPhotoUpload: React.FC<CoverPhotoUploadProps> = ({ currentCover
           ) : (
             <div className="w-full h-full flex flex-col items-center justify-center text-theme-muted gap-2">
               <ImageIcon className="w-8 h-8 opacity-50" />
-              <span className="text-[10px] font-black uppercase tracking-widest italic">Adicionar Capa (Panorâmica)</span>
+              <span className="text-[10px] font-bold uppercase tracking-widest ">Adicionar Capa (Panorâmica)</span>
             </div>
           )}
           
@@ -97,7 +97,7 @@ export const CoverPhotoUpload: React.FC<CoverPhotoUploadProps> = ({ currentCover
           
           <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center text-white gap-2">
             <Upload className="w-6 h-6" />
-            <span className="text-[10px] font-black uppercase tracking-widest italic">Alterar Foto de Capa</span>
+            <span className="text-[10px] font-bold uppercase tracking-widest ">Alterar Foto de Capa</span>
           </div>
           
           <input 
@@ -115,7 +115,7 @@ export const CoverPhotoUpload: React.FC<CoverPhotoUploadProps> = ({ currentCover
         <div className="fixed inset-0 z-[100] bg-black/90 flex flex-col items-center justify-center p-4">
           <div className="w-full max-w-3xl bg-theme-surface rounded-2xl overflow-hidden shadow-2xl flex flex-col">
             <div className="flex justify-between items-center p-4 border-b border-theme-border">
-              <h3 className="font-heading font-black italic text-theme-text uppercase">Ajustar Foto de Capa</h3>
+              <h3 className="font-heading font-bold text-theme-text uppercase">Ajustar Foto de Capa</h3>
               <button onClick={() => setImageToCrop(null)} className="text-theme-text/50 hover:text-theme-text">
                 <X size={20} />
               </button>

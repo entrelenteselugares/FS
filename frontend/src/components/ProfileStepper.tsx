@@ -34,12 +34,12 @@ export const ProfileStepper: React.FC<ProfileStepperProps> = ({ user, profile })
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
         <div className="space-y-1">
           <div className="flex items-center gap-3">
-             <h3 className="text-xl font-heading font-black text-theme-text uppercase italic tracking-tight">Status do Perfil</h3>
+             <h3 className="text-xl font-heading font-bold text-theme-text uppercase ">Status do Perfil</h3>
              <span className={`px-2 py-0.5 text-[8px] font-black uppercase tracking-widest ${percentage === 100 ? 'bg-brand-tactical text-black' : 'bg-amber-500/10 text-amber-500 border border-amber-500/20'}`}>
                {percentage === 100 ? "PRONTO PARA MISSÕES" : "PERFIL INCOMPLETO"}
              </span>
           </div>
-          <p className="text-[10px] text-theme-muted uppercase tracking-[0.3em] italic font-black">Ganhe visibilidade completando seus dados técnicos</p>
+          <p className="text-[10px] text-theme-muted uppercase tracking-[0.3em] font-bold">Ganhe visibilidade completando seus dados técnicos</p>
         </div>
 
         <div className="flex items-center gap-6">
@@ -68,7 +68,7 @@ export const ProfileStepper: React.FC<ProfileStepperProps> = ({ user, profile })
                 />
               </svg>
               <div className="absolute inset-0 flex items-center justify-center">
-                 <span className="text-xl font-heading font-black italic text-theme-text">{percentage}%</span>
+                 <span className="text-xl font-heading font-bold text-theme-text">{percentage}%</span>
               </div>
            </div>
 
@@ -76,18 +76,18 @@ export const ProfileStepper: React.FC<ProfileStepperProps> = ({ user, profile })
 
            {nextStep ? (
              <div className="space-y-1">
-                <p className="text-[8px] font-black text-theme-muted uppercase tracking-widest">Próximo Passo:</p>
+                <p className="text-[8px] font-bold text-theme-muted uppercase tracking-widest">Próximo Passo:</p>
                 <div className="flex items-center gap-2 text-brand-tactical">
                    <AlertCircle size={14} />
-                   <p className="text-[11px] font-black uppercase italic tracking-tight">{nextStep.label}</p>
+                   <p className="text-[11px] font-bold uppercase ">{nextStep.label}</p>
                 </div>
              </div>
            ) : (
              <div className="space-y-1">
-                <p className="text-[8px] font-black text-theme-muted uppercase tracking-widest">Recompensa Ativa:</p>
+                <p className="text-[8px] font-bold text-theme-muted uppercase tracking-widest">Recompensa Ativa:</p>
                 <div className="flex items-center gap-2 text-brand-tactical">
                    <Star size={14} fill="currentColor" />
-                   <p className="text-[11px] font-black uppercase italic tracking-tight">Prioridade na Vitrine</p>
+                   <p className="text-[11px] font-bold uppercase ">Prioridade na Vitrine</p>
                 </div>
              </div>
            )}

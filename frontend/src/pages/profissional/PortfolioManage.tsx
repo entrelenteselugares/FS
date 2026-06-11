@@ -48,13 +48,13 @@ function ConfirmModal({
         <div className="flex gap-3">
           <button
             onClick={onCancel}
-            className="flex-1 py-3 border border-theme-border rounded-xl text-[10px] font-black uppercase tracking-widest text-theme-muted hover:text-theme-text transition-all"
+            className="flex-1 py-3 border border-theme-border rounded-xl text-[10px] font-bold uppercase tracking-widest text-theme-muted hover:text-theme-text transition-all"
           >
             Cancelar
           </button>
           <button
             onClick={onConfirm}
-            className="flex-1 py-3 bg-red-500 rounded-xl text-[10px] font-black uppercase tracking-widest text-white hover:bg-red-600 transition-all"
+            className="flex-1 py-3 bg-red-500 rounded-xl text-[10px] font-bold uppercase tracking-widest text-white hover:bg-red-600 transition-all"
           >
             Confirmar
           </button>
@@ -205,16 +205,16 @@ export default function PortfolioManage({ isTab = false }: PortfolioManageProps)
           <div className="max-w-[1600px] mx-auto px-4 md:px-6 relative z-10 flex flex-col md:flex-row md:items-end justify-between gap-3 md:gap-6">
             <div>
               <div className="w-12 h-1 bg-brand-tactical mb-6" />
-              <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-theme-text uppercase tracking-tighter whitespace-normal md:whitespace-nowrap italic pr-6">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-theme-text uppercase whitespace-normal md:whitespace-nowrap pr-6">
                 Gerenciar Portfólio
               </h1>
-              <p className="text-[10px] text-theme-muted uppercase tracking-[0.4em] mt-4 font-black">
+              <p className="text-[10px] text-theme-muted uppercase tracking-[0.4em] mt-4 font-bold">
                 Organize seus melhores trabalhos
               </p>
             </div>
             <button
               onClick={() => setIsCreating(true)}
-              className="self-start px-4 md:px-6 py-2 md:py-3 bg-brand-tactical text-black text-[10px] font-black uppercase tracking-widest flex items-center gap-2 hover:brightness-110 transition-all"
+              className="self-start px-4 md:px-6 py-2 md:py-3 bg-brand-tactical text-black text-[10px] font-bold uppercase tracking-widest flex items-center gap-2 hover:brightness-110 transition-all"
             >
               <Plus size={14} /> Novo Álbum
             </button>
@@ -223,16 +223,16 @@ export default function PortfolioManage({ isTab = false }: PortfolioManageProps)
       ) : (
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-3 md:gap-6 mb-8 border-b border-theme-border pb-6">
           <div>
-            <h2 className="text-2xl font-heading font-black text-theme-text uppercase tracking-widest italic leading-none">
+            <h2 className="text-2xl font-heading font-bold text-theme-text uppercase tracking-widest leading-none">
               Gerenciar <span className="text-brand-tactical">Portfólio</span>
             </h2>
-            <p className="text-[9px] text-theme-muted uppercase tracking-[0.2em] sm:tracking-[0.4em] italic mt-2">
+            <p className="text-[9px] text-theme-muted uppercase tracking-[0.2em] sm:tracking-[0.4em] mt-2">
               Organize seus melhores trabalhos para a vitrine pública
             </p>
           </div>
           <button
             onClick={() => setIsCreating(true)}
-            className="self-start px-4 md:px-6 py-2 md:py-3 bg-brand-tactical text-black text-[10px] font-black uppercase tracking-widest flex items-center gap-2 hover:brightness-110 transition-all rounded-xl"
+            className="self-start px-4 md:px-6 py-2 md:py-3 bg-brand-tactical text-black text-[10px] font-bold uppercase tracking-widest flex items-center gap-2 hover:brightness-110 transition-all rounded-xl"
           >
             <Plus size={14} /> Novo Álbum
           </button>
@@ -251,7 +251,7 @@ export default function PortfolioManage({ isTab = false }: PortfolioManageProps)
               className="bg-theme-bg border border-theme-border rounded-2xl p-3 md:p-6 mb-8 space-y-4"
             >
               <div className="flex items-center justify-between">
-                <h2 className="text-sm font-black text-white uppercase tracking-widest">Criar Álbum</h2>
+                <h2 className="text-sm font-bold text-white uppercase tracking-widest">Criar Álbum</h2>
                 <button type="button" onClick={() => setIsCreating(false)} className="text-theme-muted hover:text-white transition-colors">
                   <X size={18} />
                 </button>
@@ -280,10 +280,10 @@ export default function PortfolioManage({ isTab = false }: PortfolioManageProps)
                 className="w-full bg-black border border-white/10 rounded-xl p-3 text-xs text-white h-24 outline-none focus:border-brand-tactical"
               />
               <div className="flex gap-4">
-                <button type="submit" className="px-3 md:px-6 py-2 bg-brand-tactical text-black text-xs font-black uppercase tracking-widest rounded-xl">
+                <button type="submit" className="px-3 md:px-6 py-2 bg-brand-tactical text-black text-xs font-bold uppercase tracking-widest rounded-xl">
                   Salvar
                 </button>
-                <button type="button" onClick={() => setIsCreating(false)} className="px-3 md:px-6 py-2 border border-white/10 text-white text-xs font-black uppercase tracking-widest rounded-xl">
+                <button type="button" onClick={() => setIsCreating(false)} className="px-3 md:px-6 py-2 border border-white/10 text-white text-xs font-bold uppercase tracking-widest rounded-xl">
                   Cancelar
                 </button>
               </div>
@@ -315,14 +315,14 @@ export default function PortfolioManage({ isTab = false }: PortfolioManageProps)
 
                   {/* Info */}
                   <div className="flex-1 min-w-0">
-                    <h3 className="text-sm font-black text-white uppercase italic tracking-tight truncate">{album.title}</h3>
+                    <h3 className="text-sm font-bold text-white uppercase truncate">{album.title}</h3>
                     <div className="flex items-center gap-3 mt-1 flex-wrap">
                       <span className="text-[9px] text-theme-muted uppercase tracking-widest">
                         {album.category || "Sem categoria"}
                       </span>
-                      <span className="text-[9px] text-brand-tactical font-black uppercase">{visibleCount} visíveis</span>
+                      <span className="text-[9px] text-brand-tactical font-bold uppercase">{visibleCount} visíveis</span>
                       {hiddenCount > 0 && (
-                        <span className="text-[9px] text-amber-500 font-black uppercase">{hiddenCount} ocultas</span>
+                        <span className="text-[9px] text-amber-500 font-bold uppercase">{hiddenCount} ocultas</span>
                       )}
                     </div>
                   </div>
@@ -330,7 +330,7 @@ export default function PortfolioManage({ isTab = false }: PortfolioManageProps)
                   {/* Actions */}
                   <div className="flex items-center gap-2 flex-shrink-0">
                     {/* Upload button */}
-                    <label className="cursor-pointer px-3 py-2 bg-brand-tactical/10 border border-brand-tactical/30 text-brand-tactical text-[9px] font-black uppercase tracking-widest rounded-lg flex items-center gap-1.5 hover:bg-brand-tactical hover:text-black transition-all">
+                    <label className="cursor-pointer px-3 py-2 bg-brand-tactical/10 border border-brand-tactical/30 text-brand-tactical text-[9px] font-bold uppercase tracking-widest rounded-lg flex items-center gap-1.5 hover:bg-brand-tactical hover:text-black transition-all">
                       {uploading === album.id ? (
                         <Loader2 size={12} className="animate-spin" />
                       ) : (
@@ -394,7 +394,7 @@ export default function PortfolioManage({ isTab = false }: PortfolioManageProps)
 
                                 {/* Hidden badge */}
                                 {img.isHidden && (
-                                  <div className="absolute top-1.5 left-1.5 bg-amber-500/90 text-black text-[7px] font-black uppercase px-1.5 py-0.5 rounded tracking-widest flex items-center gap-1">
+                                  <div className="absolute top-1.5 left-1.5 bg-amber-500/90 text-black text-[7px] font-bold uppercase px-1.5 py-0.5 rounded tracking-widest flex items-center gap-1">
                                     <EyeOff size={8} /> Oculta
                                   </div>
                                 )}
@@ -438,7 +438,7 @@ export default function PortfolioManage({ isTab = false }: PortfolioManageProps)
           })}
 
           {albums.length === 0 && !isCreating && (
-            <div className="py-20 text-center border  border-white/10 rounded-2xl text-theme-muted text-xs font-black uppercase tracking-widest">
+            <div className="py-20 text-center border border-white/10 rounded-2xl text-theme-muted text-xs font-bold uppercase tracking-widest">
               Nenhum álbum criado. Adicione seu primeiro trabalho ao portfólio.
             </div>
           )}

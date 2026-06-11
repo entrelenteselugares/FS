@@ -33,7 +33,7 @@ export function EventStatusDot({
         title={status.label}
       />
       {showLabel && (
-        <span className="text-[9px] font-black uppercase tracking-widest"
+        <span className="text-[9px] font-bold uppercase tracking-widest"
           style={{ color: status.color }}>
           {status.label}
         </span>

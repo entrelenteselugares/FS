@@ -107,8 +107,8 @@ export function ExpressSaleModal({ network, onClose, onSuccess, onError }: Expre
                 <ShoppingBag className="text-brand-tactical" size={24} />
               </div>
               <div>
-                <div className="text-[9px] font-black text-brand-tactical uppercase tracking-[0.4em] italic opacity-60">Unidade de Venda Direta</div>
-                <h2 className="text-2xl font-black uppercase italic tracking-tighter text-theme-text leading-none">
+                <div className="text-[9px] font-bold text-brand-tactical uppercase tracking-[0.4em] opacity-60">Unidade de Venda Direta</div>
+                <h2 className="text-2xl font-bold uppercase text-theme-text leading-none">
                   {stepLabel[step]}
                 </h2>
               </div>
@@ -138,7 +138,7 @@ export function ExpressSaleModal({ network, onClose, onSuccess, onError }: Expre
             <div className="space-y-6 animate-in slide-in-from-right-4">
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black text-theme-muted uppercase tracking-widest italic opacity-60">E-mail do Cliente *</label>
+                  <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest opacity-60">E-mail do Cliente *</label>
                   <input
                     type="email"
                     autoFocus
@@ -158,7 +158,7 @@ export function ExpressSaleModal({ network, onClose, onSuccess, onError }: Expre
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black text-theme-muted uppercase tracking-widest italic opacity-60">Nome Completo</label>
+                  <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest opacity-60">Nome Completo</label>
                   <input
                     type="text"
                     placeholder="Ex: João Silva"
@@ -168,7 +168,7 @@ export function ExpressSaleModal({ network, onClose, onSuccess, onError }: Expre
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black text-theme-muted uppercase tracking-widest italic opacity-60">WhatsApp</label>
+                  <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest opacity-60">WhatsApp</label>
                   <input
                     type="tel"
                     placeholder="(00) 00000-0000"
@@ -186,7 +186,7 @@ export function ExpressSaleModal({ network, onClose, onSuccess, onError }: Expre
             <div className="space-y-6 animate-in slide-in-from-right-4">
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black text-theme-muted uppercase tracking-widest italic opacity-60">Seleção de Itens (Atalhos)</label>
+                  <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest opacity-60">Seleção de Itens (Atalhos)</label>
                   <div className="grid grid-cols-2 gap-2">
                     {/* Grade de 6-8 Serviços Principais */}
                     {professionalServices
@@ -201,8 +201,8 @@ export function ExpressSaleModal({ network, onClose, onSuccess, onError }: Expre
                             onClick={() => addToCart(name, price)}
                             className="p-3 text-center border border-theme-border bg-theme-bg-muted hover:border-brand-tactical hover:bg-brand-tactical/10 transition-all group"
                           >
-                            <div className="text-[10px] font-black text-theme-text uppercase truncate mb-1">{name}</div>
-                            <div className="text-[11px] font-black text-brand-tactical italic">R$ {price}</div>
+                            <div className="text-[10px] font-bold text-theme-text uppercase truncate mb-1">{name}</div>
+                            <div className="text-[11px] font-bold text-brand-tactical ">R$ {price}</div>
                           </button>
                         );
                       })}
@@ -232,7 +232,7 @@ export function ExpressSaleModal({ network, onClose, onSuccess, onError }: Expre
                             setServiceSearch(e.target.value.toUpperCase());
                             setCustomProductName(e.target.value.toUpperCase());
                           }}
-                          className="w-full bg-theme-bg border border-theme-border p-3 pl-10 text-[11px] font-black text-theme-text outline-none focus:border-brand-tactical rounded-xl uppercase transition-all"
+                          className="w-full bg-theme-bg border border-theme-border p-3 pl-10 text-[11px] font-bold text-theme-text outline-none focus:border-brand-tactical rounded-xl uppercase transition-all"
                         />
                       </div>
 
@@ -258,8 +258,8 @@ export function ExpressSaleModal({ network, onClose, onSuccess, onError }: Expre
                               }}
                               className="w-full p-3 text-left border border-theme-border bg-theme-bg hover:border-brand-tactical/50 hover:bg-brand-tactical/10 transition-all flex justify-between items-center group rounded-lg"
                             >
-                              <span className="text-[10px] font-black text-theme-text uppercase tracking-tight group-hover:text-brand-tactical">{name}</span>
-                              <span className="text-[10px] font-black text-brand-tactical italic">R$ {price}</span>
+                              <span className="text-[10px] font-bold text-theme-text uppercase group-hover:text-brand-tactical">{name}</span>
+                              <span className="text-[10px] font-bold text-brand-tactical ">R$ {price}</span>
                             </button>
                           );
                         })}
@@ -270,28 +270,28 @@ export function ExpressSaleModal({ network, onClose, onSuccess, onError }: Expre
 
                       <div className="pt-2 border-t border-theme-border space-y-4">
                         <div className="flex items-center justify-between">
-                          <span className="text-[9px] font-black text-theme-muted uppercase tracking-widest italic opacity-60">Item Personalizado</span>
+                          <span className="text-[9px] font-bold text-theme-muted uppercase tracking-widest opacity-60">Item Personalizado</span>
                           <span className="h-px flex-1 bg-theme-border/10 mx-4" />
                         </div>
                         
                         <div className="grid grid-cols-2 gap-4">
                           <div className="space-y-1.5">
-                            <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest block opacity-40">Nome do Produto</label>
+                            <label className="text-[8px] font-bold text-theme-muted uppercase tracking-widest block opacity-40">Nome do Produto</label>
                             <input 
                               placeholder="EX: QUADRO LUXO"
                               value={customProductName}
                               onChange={(e) => setCustomProductName(e.target.value.toUpperCase())}
-                              className="w-full bg-theme-bg border border-theme-border p-3 text-[10px] font-black text-theme-text outline-none focus:border-brand-tactical rounded-lg uppercase"
+                              className="w-full bg-theme-bg border border-theme-border p-3 text-[10px] font-bold text-theme-text outline-none focus:border-brand-tactical rounded-lg uppercase"
                             />
                           </div>
                           <div className="space-y-1.5">
-                            <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest block opacity-40">Valor (R$)</label>
+                            <label className="text-[8px] font-bold text-theme-muted uppercase tracking-widest block opacity-40">Valor (R$)</label>
                             <input 
                               type="number"
                               placeholder="0,00"
                               value={customPrice}
                               onChange={(e) => setCustomPrice(Number(e.target.value))}
-                              className="w-full bg-theme-bg border border-theme-border p-3 text-[10px] font-black text-brand-tactical outline-none focus:border-brand-tactical rounded-lg"
+                              className="w-full bg-theme-bg border border-theme-border p-3 text-[10px] font-bold text-brand-tactical outline-none focus:border-brand-tactical rounded-lg"
                             />
                           </div>
                         </div>
@@ -303,7 +303,7 @@ export function ExpressSaleModal({ network, onClose, onSuccess, onError }: Expre
                             setServiceSearch("");
                             setShowCustomForm(false);
                           }}
-                          className="w-full py-4 bg-brand-tactical text-zinc-950 text-[10px] font-black uppercase tracking-[0.3em] shadow-lg hover:brightness-110 active:scale-[0.98] transition-all italic rounded-xl"
+                          className="w-full py-4 bg-brand-tactical text-zinc-950 text-[10px] font-bold uppercase tracking-[0.3em] shadow-lg hover:brightness-110 active:scale-[0.98] transition-all rounded-xl"
                         >
                           ADICIONAR AO CUPOM
                         </button>
@@ -315,19 +315,19 @@ export function ExpressSaleModal({ network, onClose, onSuccess, onError }: Expre
                 {/* Cupom de Compras (Cart) */}
                 <div className="space-y-3 pt-4 border-t border-theme-border">
                   <div className="flex justify-between items-center">
-                    <label className="text-[10px] font-black text-theme-muted uppercase tracking-widest italic opacity-60">Resumo do Cupom</label>
-                    <span className="text-[9px] font-black text-brand-tactical uppercase tracking-widest bg-brand-tactical/10 px-2 py-0.5">{cartItems.length} ITENS</span>
+                    <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest opacity-60">Resumo do Cupom</label>
+                    <span className="text-[9px] font-bold text-brand-tactical uppercase tracking-widest bg-brand-tactical/10 px-2 py-0.5">{cartItems.length} ITENS</span>
                   </div>
                   
                   <div className="space-y-2 max-h-[150px] overflow-y-auto no-scrollbar pr-1">
                     {cartItems.length === 0 ? (
-                      <div className="py-8 text-center border  border-theme-border text-[9px] text-theme-muted uppercase tracking-[0.2em] font-black italic">Aguardando seleção de itens...</div>
+                      <div className="py-8 text-center border border-theme-border text-[9px] text-theme-muted uppercase tracking-[0.2em] font-bold ">Aguardando seleção de itens...</div>
                     ) : (
                       cartItems.map(item => (
                         <div key={item.id} className="flex justify-between items-center p-3 bg-theme-bg-muted border border-theme-border group">
                           <div className="flex flex-col">
-                            <span className="text-[10px] font-black text-theme-text uppercase tracking-tight">{item.name}</span>
-                            <span className="text-[11px] font-black text-brand-tactical italic">R$ {Number(item.price).toFixed(2)}</span>
+                            <span className="text-[10px] font-bold text-theme-text uppercase ">{item.name}</span>
+                            <span className="text-[11px] font-bold text-brand-tactical ">R$ {Number(item.price).toFixed(2)}</span>
                           </div>
                           <button onClick={() => removeFromCart(item.id, item.price)} className="text-theme-muted hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100 p-2">
                             <X size={14} />
@@ -339,11 +339,11 @@ export function ExpressSaleModal({ network, onClose, onSuccess, onError }: Expre
 
                   <div className="pt-4 flex justify-between items-end border-t border-theme-border">
                     <div className="space-y-1">
-                      <span className="text-[9px] font-black text-theme-muted uppercase tracking-widest block opacity-40">Total do Cupom</span>
-                      <div className="text-3xl font-heading font-black text-brand-tactical italic leading-none">R$ {Number(form.amount).toFixed(2).replace(".", ",")}</div>
+                      <span className="text-[9px] font-bold text-theme-muted uppercase tracking-widest block opacity-40">Total do Cupom</span>
+                      <div className="text-3xl font-heading font-bold text-brand-tactical leading-none">R$ {Number(form.amount).toFixed(2).replace(".", ",")}</div>
                     </div>
                     {cartItems.length > 0 && (
-                      <button onClick={() => setStep(3)} className="bg-brand-tactical text-zinc-950 px-6 py-3 text-[10px] font-black uppercase tracking-[0.2em] shadow-lg active:scale-95 transition-all">AVANÇAR</button>
+                      <button onClick={() => setStep(3)} className="bg-brand-tactical text-zinc-950 px-6 py-3 text-[10px] font-bold uppercase tracking-[0.2em] shadow-lg active:scale-95 transition-all">AVANÇAR</button>
                     )}
                   </div>
                 </div>
@@ -357,11 +357,11 @@ export function ExpressSaleModal({ network, onClose, onSuccess, onError }: Expre
               <div className="space-y-4">
                 {(form.productType === "FOTOS" || form.productType === "REELS") && (
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black text-theme-muted uppercase tracking-widest italic opacity-60">Delegar Edição (Split de 40%)</label>
+                    <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest opacity-60">Delegar Edição (Split de 40%)</label>
                     <select
                       value={form.editorId}
                       onChange={(e) => setForm((p) => ({ ...p, editorId: e.target.value }))}
-                      className="w-full bg-theme-bg-muted border border-brand-tactical/30 p-4 text-theme-text font-black text-[11px] uppercase outline-none focus:border-brand-tactical appearance-none cursor-pointer"
+                      className="w-full bg-theme-bg-muted border border-brand-tactical/30 p-4 text-theme-text font-bold text-[11px] uppercase outline-none focus:border-brand-tactical appearance-none cursor-pointer"
                     >
                       <option value="">EU MESMO (RECEBER 90%)</option>
                       {network.map((p) => (
@@ -371,7 +371,7 @@ export function ExpressSaleModal({ network, onClose, onSuccess, onError }: Expre
                   </div>
                 )}
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black text-theme-muted uppercase tracking-widest italic opacity-60">Metodologia de Liquidação</label>
+                  <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest opacity-60">Metodologia de Liquidação</label>
                   <div className="grid grid-cols-1 gap-2">
                     {([
                       { id: "MONEY", label: "💵 DINHEIRO (ABATER COMISSÃO)" },
@@ -401,26 +401,26 @@ export function ExpressSaleModal({ network, onClose, onSuccess, onError }: Expre
             <div className="space-y-6 animate-in zoom-in-95 duration-300">
               <div className="p-6 bg-brand-tactical/10 border border-brand-tactical/20 space-y-4">
                 <div className="flex justify-between items-center border-b border-brand-tactical/10 pb-3">
-                  <span className="text-[11px] font-black text-brand-tactical uppercase tracking-widest italic">Borderô de Transação</span>
+                  <span className="text-[11px] font-bold text-brand-tactical uppercase tracking-widest ">Borderô de Transação</span>
                   <div className="w-2 h-2 rounded-full bg-brand-tactical animate-pulse" />
                 </div>
                 <div className="space-y-3">
                   <div className="flex justify-between items-center">
                     <span className="text-[10px] font-bold text-theme-muted uppercase tracking-widest">Cliente</span>
-                    <span className="text-[11px] font-black text-theme-text uppercase">{form.customerEmail}</span>
+                    <span className="text-[11px] font-bold text-theme-text uppercase">{form.customerEmail}</span>
                   </div>
                   <div className="flex justify-between items-start">
                     <span className="text-[10px] font-bold text-theme-muted uppercase tracking-widest">Itens</span>
                     <div className="text-right flex flex-col gap-1">
                       {cartItems.map(item => (
-                        <span key={item.id} className="text-[10px] font-black text-theme-text uppercase italic">{item.name} (R$ {item.price})</span>
+                        <span key={item.id} className="text-[10px] font-bold text-theme-text uppercase ">{item.name} (R$ {item.price})</span>
                       ))}
                     </div>
                   </div>
                   <div className="pt-4 border-t border-brand-tactical/10">
                     <div className="flex justify-between items-end">
-                      <span className="text-[11px] font-black text-brand-tactical uppercase italic">Total Líquido</span>
-                      <span className="text-3xl font-heading font-black text-brand-tactical italic">
+                      <span className="text-[11px] font-bold text-brand-tactical uppercase ">Total Líquido</span>
+                      <span className="text-3xl font-heading font-bold text-brand-tactical ">
                         R$ {form.amount.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
                       </span>
                     </div>
@@ -436,8 +436,8 @@ export function ExpressSaleModal({ network, onClose, onSuccess, onError }: Expre
                 <ShoppingBag className="text-emerald-500" size={32} />
               </div>
               <div className="space-y-2">
-                <h3 className="text-2xl font-black uppercase italic tracking-tighter text-theme-text">{successData.msg}</h3>
-                <p className="text-[10px] font-black text-theme-muted uppercase tracking-widest opacity-60 font-bold">
+                <h3 className="text-2xl font-bold uppercase text-theme-text">{successData.msg}</h3>
+                <p className="text-[10px] font-bold text-theme-muted uppercase tracking-widest opacity-60 font-bold">
                   {successData.checkoutUrl ? "Apresente o link de cobrança abaixo para o cliente pagar." : "O cliente recebeu as instruções de acesso por e-mail."}
                 </p>
               </div>
@@ -449,7 +449,7 @@ export function ExpressSaleModal({ network, onClose, onSuccess, onError }: Expre
                   </div>
 
                   <div className="w-full p-6 bg-brand-tactical/10 border border-brand-tactical/30 rounded-[20px] space-y-4 text-left">
-                    <label className="text-[9px] font-black text-brand-tactical uppercase tracking-widest italic block">Link de Pagamento (Pix / Cartão)</label>
+                    <label className="text-[9px] font-bold text-brand-tactical uppercase tracking-widest block">Link de Pagamento (Pix / Cartão)</label>
                   <div className="flex gap-2">
                     <input 
                       readOnly
@@ -463,7 +463,7 @@ export function ExpressSaleModal({ network, onClose, onSuccess, onError }: Expre
                         onClose();
                         navigate(successData.checkoutUrl!.replace(window.location.origin, '') || successData.checkoutUrl!);
                       }}
-                      className="px-6 bg-brand-tactical text-zinc-950 text-[10px] font-black uppercase tracking-widest rounded-xl hover:brightness-110 active:scale-95 transition-all"
+                      className="px-6 bg-brand-tactical text-zinc-950 text-[10px] font-bold uppercase tracking-widest rounded-xl hover:brightness-110 active:scale-95 transition-all"
                     >
                       ABRIR CHECKOUT
                     </button>
@@ -474,7 +474,7 @@ export function ExpressSaleModal({ network, onClose, onSuccess, onError }: Expre
                       navigator.clipboard.writeText(successData.checkoutUrl || "");
                       onSuccess("Link de pagamento copiado com sucesso!");
                     }}
-                    className="w-full py-3 bg-theme-bg-muted border border-white/10 text-theme-text text-[9px] font-black uppercase tracking-widest rounded-xl hover:bg-white/10 transition-all text-center font-bold"
+                    className="w-full py-3 bg-theme-bg-muted border border-white/10 text-theme-text text-[9px] font-bold uppercase tracking-widest rounded-xl hover:bg-white/10 transition-all text-center font-bold"
                   >
                     COPIAR LINK DE PAGAMENTO
                   </button>
@@ -484,7 +484,7 @@ export function ExpressSaleModal({ network, onClose, onSuccess, onError }: Expre
 
               {successData.magicLink && (
                 <div className="p-6 bg-theme-bg-muted border border-theme-border rounded-[20px] space-y-4 text-left">
-                  <label className="text-[9px] font-black text-brand-tactical uppercase tracking-widest italic block">Link de Acesso Rápido do Cliente</label>
+                  <label className="text-[9px] font-bold text-brand-tactical uppercase tracking-widest block">Link de Acesso Rápido do Cliente</label>
                   <div className="flex gap-2">
                     <input 
                       readOnly
@@ -496,7 +496,7 @@ export function ExpressSaleModal({ network, onClose, onSuccess, onError }: Expre
                         navigator.clipboard.writeText(successData.magicLink || "");
                         onSuccess("Link copiado para a área de transferência!");
                       }}
-                      className="px-6 bg-brand-tactical text-zinc-950 text-[10px] font-black uppercase tracking-widest rounded-xl hover:brightness-110 active:scale-95 transition-all"
+                      className="px-6 bg-brand-tactical text-zinc-950 text-[10px] font-bold uppercase tracking-widest rounded-xl hover:brightness-110 active:scale-95 transition-all"
                     >
                       Copiar
                     </button>
@@ -506,7 +506,7 @@ export function ExpressSaleModal({ network, onClose, onSuccess, onError }: Expre
 
               <button 
                 onClick={onClose}
-                className="w-full py-5 bg-theme-bg-muted border border-white/10 text-theme-text text-[11px] font-black uppercase tracking-[0.3em] hover:bg-white/10 transition-all italic rounded-xl"
+                className="w-full py-5 bg-theme-bg-muted border border-white/10 text-theme-text text-[11px] font-bold uppercase tracking-[0.3em] hover:bg-white/10 transition-all rounded-xl"
               >
                 FECHAR UNIDADE DE VENDA
               </button>
@@ -521,7 +521,7 @@ export function ExpressSaleModal({ network, onClose, onSuccess, onError }: Expre
               <button
                 disabled={!form.customerEmail}
                 onClick={() => setStep(2)}
-                className="w-full py-5 bg-brand-tactical text-black text-[11px] font-black uppercase tracking-[0.3em] hover:bg-white hover:scale-[1.01] active:scale-[0.98] transition-all italic flex items-center justify-center gap-4 shadow-2xl shadow-brand-tactical/20 disabled:opacity-40"
+                className="w-full py-5 bg-brand-tactical text-black text-[11px] font-bold uppercase tracking-[0.3em] hover:bg-white hover:scale-[1.01] active:scale-[0.98] transition-all flex items-center justify-center gap-4 shadow-2xl shadow-brand-tactical/20 disabled:opacity-40"
               >
                 CONTINUAR OPERAÇÃO
               </button>
@@ -529,14 +529,14 @@ export function ExpressSaleModal({ network, onClose, onSuccess, onError }: Expre
               <div className="flex gap-4 w-full">
                 <button
                   onClick={() => setStep((step - 1) as 1 | 2 | 3 | 4 | 5)}
-                  className="flex-1 py-5 bg-theme-bg-muted border border-white/10 rounded-2xl text-theme-text text-[10px] font-black uppercase tracking-widest italic hover:bg-white/10 transition-all"
+                  className="flex-1 py-5 bg-theme-bg-muted border border-white/10 rounded-2xl text-theme-text text-[10px] font-bold uppercase tracking-widest hover:bg-white/10 transition-all"
                 >
                   Voltar
                 </button>
                 <button
                   onClick={() => (step === 4 ? handleSubmit() : setStep((step + 1) as 1 | 2 | 3 | 4 | 5))}
                   disabled={loading}
-                  className="flex-[2] py-5 bg-brand-tactical text-black text-[11px] font-black uppercase tracking-[0.3em] hover:bg-white hover:scale-[1.01] active:scale-[0.98] transition-all italic flex items-center justify-center gap-4 shadow-2xl shadow-brand-tactical/20"
+                  className="flex-[2] py-5 bg-brand-tactical text-black text-[11px] font-bold uppercase tracking-[0.3em] hover:bg-white hover:scale-[1.01] active:scale-[0.98] transition-all flex items-center justify-center gap-4 shadow-2xl shadow-brand-tactical/20"
                 >
                   {loading
                     ? "PROCESSANDO..."

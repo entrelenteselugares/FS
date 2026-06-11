@@ -432,7 +432,7 @@ export const MatchFolhaPage = () => {
                   </label>
                   <div className="max-h-32 overflow-y-auto flex flex-col gap-2 bg-theme-surface/30 p-2 rounded-xl border border-theme-border">
                     {comments.length === 0 ? (
-                      <p className="text-xs text-gray-500 italic p-2">Nenhum comentário ainda. Seja o primeiro!</p>
+                      <p className="text-xs text-gray-500 p-2">Nenhum comentário ainda. Seja o primeiro!</p>
                     ) : (
                       comments.map((c: any) => (
                         <div key={c.id} className="text-xs bg-theme-surface/55 p-2 rounded-lg">

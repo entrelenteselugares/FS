@@ -82,7 +82,7 @@ const FlashUnlockPage: React.FC = () => {
               </div>
             </div>
 
-            <h1 className="text-3xl font-bold mb-2 tracking-tight uppercase italic">
+            <h1 className="text-3xl font-bold mb-2 uppercase ">
               Sua foto está segura
             </h1>
             <p className="text-gray-400 mb-8 px-4">
@@ -147,7 +147,7 @@ const FlashUnlockPage: React.FC = () => {
                 />
                 {/* Watermark Placeholder Overlay */}
                 <div className="absolute inset-0 bg-black/20 pointer-events-none flex items-center justify-center overflow-hidden">
-                   <div className="rotate-[-30deg] opacity-20 text-2xl md:text-4xl md:text-6xl font-black whitespace-nowrap select-none">
+                   <div className="rotate-[-30deg] opacity-20 text-2xl md:text-4xl md:text-6xl font-bold whitespace-nowrap select-none">
                       FOTO SEGUNDO • FOTO SEGUNDO • FOTO SEGUNDO
                    </div>
                 </div>
@@ -164,7 +164,7 @@ const FlashUnlockPage: React.FC = () => {
             <div className="w-full mt-8 space-y-4">
               <button 
                 onClick={() => navigate("/register?claim=" + shortId)}
-                className="w-full py-4 bg-emerald-500 hover:bg-emerald-400 text-black font-black rounded-xl transition-all transform active:scale-[0.98] flex items-center justify-center gap-3 shadow-[0_0_20px_rgba(16,185,129,0.3)]"
+                className="w-full py-4 bg-emerald-500 hover:bg-emerald-400 text-black font-bold rounded-xl transition-all transform active:scale-[0.98] flex items-center justify-center gap-3 shadow-[0_0_20px_rgba(16,185,129,0.3)]"
               >
                 <Download className="w-6 h-6" />
                 REMOVER MARCA D&apos;ÁGUA E SALVAR

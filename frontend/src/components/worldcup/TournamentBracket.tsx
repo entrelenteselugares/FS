@@ -91,7 +91,7 @@ const RoundColumn = ({
 }) => (
   <div className="flex flex-col gap-3 items-center">
     <div
-      className="text-center mb-2 uppercase font-black italic tracking-widest"
+      className="text-center mb-2 uppercase font-bold tracking-widest"
       style={{ fontSize: 9, color: "#10b981" }}
     >
       {title}

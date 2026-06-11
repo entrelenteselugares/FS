@@ -58,13 +58,13 @@ export const AdminSettings: React.FC = () => {
     <div className="space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
       <div className="flex items-center justify-between border-b border-theme-border pb-8">
         <div>
-          <h2 className="text-2xl md:text-4xl font-heading text-theme-text tracking-tighter uppercase">Configurações do Sistema</h2>
-          <p className="text-[10px] text-theme-muted uppercase tracking-[0.5em] mt-2 font-bold italic">Infraestrutura e Parâmetros de Protocolo</p>
+          <h2 className="text-2xl md:text-4xl font-heading text-theme-text uppercase">Configurações do Sistema</h2>
+          <p className="text-[10px] text-theme-muted uppercase tracking-[0.5em] mt-2 font-bold ">Infraestrutura e Parâmetros de Protocolo</p>
         </div>
         <button 
           onClick={handleSave}
           disabled={saving}
-          className="bg-brand-tactical text-brand-text text-[10px] font-black uppercase tracking-[0.4em] px-5 md:px-10 py-5 hover:brightness-110 transition-all rounded-none flex items-center gap-2 disabled:opacity-50 italic"
+          className="bg-brand-tactical text-brand-text text-[10px] font-bold uppercase tracking-[0.4em] px-5 md:px-10 py-5 hover:brightness-110 transition-all rounded-none flex items-center gap-2 disabled:opacity-50 "
         >
           {saving ? "SINCRONIZANDO..." : <><Save size={14} strokeWidth={1.5} /> SALVAR ALTERAÇÕES</>}
         </button>

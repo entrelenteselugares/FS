@@ -133,8 +133,8 @@ export function FotoPointModal({ onClose, onSuccess, onError, network }: FotoPoi
               <Camera className="text-cyan-400" size={24} />
             </div>
             <div>
-              <div className="text-[9px] font-black text-cyan-400 uppercase tracking-[0.4em] italic opacity-60">Nova Categoria: Foto Point</div>
-              <h2 className="text-2xl font-black uppercase italic tracking-tighter text-theme-text leading-none">Configurar Ponto de Venda</h2>
+              <div className="text-[9px] font-bold text-cyan-400 uppercase tracking-[0.4em] opacity-60">Nova Categoria: Foto Point</div>
+              <h2 className="text-2xl font-bold uppercase text-theme-text leading-none">Configurar Ponto de Venda</h2>
             </div>
           </div>
           <button onClick={onClose} className="p-3 hover:bg-theme-bg-muted rounded-full transition-all active:scale-90 text-theme-text/40">
@@ -147,7 +147,7 @@ export function FotoPointModal({ onClose, onSuccess, onError, network }: FotoPoi
           <form onSubmit={handleSubmit} className="space-y-8">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                    <label className="text-[10px] font-black text-theme-muted uppercase tracking-widest italic">Título do Ponto</label>
+                    <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest ">Título do Ponto</label>
                     <input
                         required
                         autoFocus
@@ -159,15 +159,15 @@ export function FotoPointModal({ onClose, onSuccess, onError, network }: FotoPoi
                 </div>
 
                 <div className="space-y-2">
-                    <label className="text-[10px] font-black text-theme-muted uppercase tracking-widest italic">Valor por Click (R$)</label>
+                    <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest ">Valor por Click (R$)</label>
                     <div className="relative">
-                        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-cyan-400 font-black text-sm">R$</span>
+                        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-cyan-400 font-bold text-sm">R$</span>
                         <input
                             type="number"
                             required
                             value={price}
                             onChange={e => setPrice(e.target.value)}
-                            className="w-full bg-theme-bg-muted border border-theme-border p-4 pl-12 text-theme-text outline-none focus:border-cyan-400/50 transition-all font-black text-xl italic"
+                            className="w-full bg-theme-bg-muted border border-theme-border p-4 pl-12 text-theme-text outline-none focus:border-cyan-400/50 transition-all font-bold text-xl "
                         />
                     </div>
                 </div>
@@ -175,7 +175,7 @@ export function FotoPointModal({ onClose, onSuccess, onError, network }: FotoPoi
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div className="space-y-2">
-                    <label className="text-[10px] font-black text-theme-muted uppercase tracking-widest italic flex items-center gap-2">
+                    <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest flex items-center gap-2">
                         <Calendar size={12} /> Data da Operação
                     </label>
                     <input
@@ -188,7 +188,7 @@ export function FotoPointModal({ onClose, onSuccess, onError, network }: FotoPoi
                 </div>
                 
                 <div className="space-y-2">
-                    <label className="text-[10px] font-black text-theme-muted uppercase tracking-widest italic flex items-center gap-2">
+                    <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest flex items-center gap-2">
                         Início
                     </label>
                     <input
@@ -201,7 +201,7 @@ export function FotoPointModal({ onClose, onSuccess, onError, network }: FotoPoi
                 </div>
 
                 <div className="space-y-2">
-                    <label className="text-[10px] font-black text-theme-muted uppercase tracking-widest italic flex items-center gap-2">
+                    <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest flex items-center gap-2">
                         Fim
                     </label>
                     <input
@@ -217,7 +217,7 @@ export function FotoPointModal({ onClose, onSuccess, onError, network }: FotoPoi
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="flex gap-4">
                     <div className="space-y-2 w-[100px]">
-                        <label className="text-[10px] font-black text-theme-muted uppercase tracking-widest italic flex items-center gap-2">
+                        <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest flex items-center gap-2">
                             <MapPin size={12} /> Estado
                         </label>
                         <select
@@ -236,7 +236,7 @@ export function FotoPointModal({ onClose, onSuccess, onError, network }: FotoPoi
                         </select>
                     </div>
                     <div className="space-y-2 flex-1">
-                        <label className="text-[10px] font-black text-theme-muted uppercase tracking-widest italic flex items-center gap-2">
+                        <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest flex items-center gap-2">
                             Cidade
                         </label>
                         <select
@@ -254,7 +254,7 @@ export function FotoPointModal({ onClose, onSuccess, onError, network }: FotoPoi
                     </div>
                 </div>
                 <div className="space-y-2">
-                    <label className="text-[10px] font-black text-theme-muted uppercase tracking-widest italic flex items-center gap-2">
+                    <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest flex items-center gap-2">
                         <MapPin size={12} /> Localização (Google Maps ou Ponto Ref.)
                     </label>
                     <input
@@ -267,7 +267,7 @@ export function FotoPointModal({ onClose, onSuccess, onError, network }: FotoPoi
             </div>
 
             <div className="space-y-2">
-                <label className="text-[10px] font-black text-theme-muted uppercase tracking-widest italic flex items-center gap-2">
+                <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest flex items-center gap-2">
                     <ListChecks size={12} /> Roteiro / O que será entregue
                 </label>
                 <textarea
@@ -280,7 +280,7 @@ export function FotoPointModal({ onClose, onSuccess, onError, network }: FotoPoi
             </div>
 
             <div className="space-y-2">
-                <label className="text-[10px] font-black text-theme-muted uppercase tracking-widest italic flex items-center gap-2">
+                <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest flex items-center gap-2">
                     <LinkIcon size={12} /> Referências (Links ou Descrição)
                 </label>
                 <textarea
@@ -311,7 +311,7 @@ export function FotoPointModal({ onClose, onSuccess, onError, network }: FotoPoi
 
             <div className="flex items-center justify-between p-4 bg-theme-bg-muted border border-theme-border">
               <div className="space-y-1">
-                <p className="text-[10px] font-black text-theme-text uppercase tracking-widest italic">Visibilidade no Marketplace</p>
+                <p className="text-[10px] font-bold text-theme-text uppercase tracking-widest ">Visibilidade no Marketplace</p>
                 <p className="text-[8px] text-theme-muted uppercase font-bold tracking-widest">
                   {isPrivate ? 'Privado (Apenas via QR Code/Link)' : 'Público (Aparece na Homepage do Foto Point)'}
                 </p>
@@ -328,7 +328,7 @@ export function FotoPointModal({ onClose, onSuccess, onError, network }: FotoPoi
             <button
               type="submit"
               disabled={loading || !name}
-              className="w-full py-5 bg-cyan-400 text-black text-[11px] font-black uppercase tracking-[0.3em] hover:bg-white hover:scale-[1.01] active:scale-[0.98] transition-all italic flex items-center justify-center gap-4 shadow-2xl shadow-cyan-400/20 disabled:opacity-40"
+              className="w-full py-5 bg-cyan-400 text-black text-[11px] font-bold uppercase tracking-[0.3em] hover:bg-white hover:scale-[1.01] active:scale-[0.98] transition-all flex items-center justify-center gap-4 shadow-2xl shadow-cyan-400/20 disabled:opacity-40"
             >
               {loading ? (
                 "PUBLICANDO PONTO..."

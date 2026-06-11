@@ -45,7 +45,7 @@ export const AdminAnalytics: React.FC = () => {
         <div>
           <div className="flex items-center gap-3 mb-2">
             <div className="w-1.5 h-6 bg-brand-tactical rounded-full" />
-            <h2 className="text-xl md:text-2xl font-heading font-black italic tracking-tighter uppercase leading-none" style={{ color: T.text }}>
+            <h2 className="text-xl md:text-2xl font-heading font-bold uppercase leading-none" style={{ color: T.text }}>
               Advanced Analytics
             </h2>
           </div>
@@ -60,12 +60,12 @@ export const AdminAnalytics: React.FC = () => {
           style={{ borderColor: T.border, color: T.text }}
         >
           <RefreshCw size={14} className={loading ? "animate-spin" : ""} />
-          <span className="text-[9px] font-black tracking-widest uppercase">Atualizar</span>
+          <span className="text-[9px] font-bold tracking-widest uppercase">Atualizar</span>
         </button>
       </div>
 
       {loading ? (
-        <div className="flex items-center justify-center p-3 md:p-6 md:p-12 text-[10px] uppercase font-black tracking-widest" style={{ color: T.text3 }}>
+        <div className="flex items-center justify-center p-3 md:p-6 md:p-12 text-[10px] uppercase font-bold tracking-widest" style={{ color: T.text3 }}>
           Carregando Metadados...
         </div>
       ) : (
@@ -73,38 +73,38 @@ export const AdminAnalytics: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
              <div className="p-3 md:p-6 rounded-2xl border" style={{ background: T.bgCard, borderColor: T.border }}>
                 <div className="flex items-center justify-between mb-4">
-                  <h4 className="text-[10px] font-black uppercase tracking-widest" style={{ color: T.text3 }}>Total Gerado via Cupons</h4>
+                  <h4 className="text-[10px] font-bold uppercase tracking-widest" style={{ color: T.text3 }}>Total Gerado via Cupons</h4>
                   <BarChart3 size={16} color={T.brand} />
                 </div>
-                <div className="text-3xl font-heading font-black italic tracking-tighter text-theme-text">
+                <div className="text-3xl font-heading font-bold text-theme-text">
                   {formatCurrency(coupons.reduce((acc, c) => acc + c.totalRevenueGenerated, 0))}
                 </div>
              </div>
              <div className="p-3 md:p-6 rounded-2xl border" style={{ background: T.bgCard, borderColor: T.border }}>
                 <div className="flex items-center justify-between mb-4">
-                  <h4 className="text-[10px] font-black uppercase tracking-widest" style={{ color: T.text3 }}>Uso de Cupons Convertidos</h4>
+                  <h4 className="text-[10px] font-bold uppercase tracking-widest" style={{ color: T.text3 }}>Uso de Cupons Convertidos</h4>
                   <TrendingUp size={16} color={T.brand} />
                 </div>
-                <div className="text-3xl font-heading font-black italic tracking-tighter text-theme-text">
+                <div className="text-3xl font-heading font-bold text-theme-text">
                   {coupons.reduce((acc, c) => acc + c.actualPaidUses, 0)} <span className="text-sm">usos</span>
                 </div>
              </div>
           </div>
 
           <div className="p-3 md:p-6 rounded-2xl border" style={{ background: T.bgCard, borderColor: T.border }}>
-            <h3 className="text-xs font-black uppercase tracking-widest mb-6 flex items-center gap-2" style={{ color: T.text }}>
+            <h3 className="text-xs font-bold uppercase tracking-widest mb-6 flex items-center gap-2" style={{ color: T.text }}>
               <Users size={14} /> Relatório de Eficiência de Cupons
             </h3>
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse">
                 <thead>
                   <tr className="border-b" style={{ borderColor: T.border }}>
-                    <th className="py-3 px-4 text-[9px] font-black uppercase tracking-widest" style={{ color: T.text3 }}>Cupom</th>
-                    <th className="py-3 px-4 text-[9px] font-black uppercase tracking-widest" style={{ color: T.text3 }}>Status</th>
-                    <th className="py-3 px-4 text-[9px] font-black uppercase tracking-widest" style={{ color: T.text3 }}>Desconto</th>
-                    <th className="py-3 px-4 text-[9px] font-black uppercase tracking-widest" style={{ color: T.text3 }}>Tentativas de Uso</th>
-                    <th className="py-3 px-4 text-[9px] font-black uppercase tracking-widest" style={{ color: T.text3 }}>Vendas Pagas</th>
-                    <th className="py-3 px-4 text-[9px] font-black uppercase tracking-widest" style={{ color: T.text3 }}>Receita Gerada</th>
+                    <th className="py-3 px-4 text-[9px] font-bold uppercase tracking-widest" style={{ color: T.text3 }}>Cupom</th>
+                    <th className="py-3 px-4 text-[9px] font-bold uppercase tracking-widest" style={{ color: T.text3 }}>Status</th>
+                    <th className="py-3 px-4 text-[9px] font-bold uppercase tracking-widest" style={{ color: T.text3 }}>Desconto</th>
+                    <th className="py-3 px-4 text-[9px] font-bold uppercase tracking-widest" style={{ color: T.text3 }}>Tentativas de Uso</th>
+                    <th className="py-3 px-4 text-[9px] font-bold uppercase tracking-widest" style={{ color: T.text3 }}>Vendas Pagas</th>
+                    <th className="py-3 px-4 text-[9px] font-bold uppercase tracking-widest" style={{ color: T.text3 }}>Receita Gerada</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -126,7 +126,7 @@ export const AdminAnalytics: React.FC = () => {
                   ))}
                   {coupons.length === 0 && (
                     <tr>
-                      <td colSpan={6} className="py-4 md:py-8 text-center text-[10px] font-black uppercase tracking-widest" style={{ color: T.text3 }}>
+                      <td colSpan={6} className="py-4 md:py-8 text-center text-[10px] font-bold uppercase tracking-widest" style={{ color: T.text3 }}>
                         Nenhum dado disponível.
                       </td>
                     </tr>

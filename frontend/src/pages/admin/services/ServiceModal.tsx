@@ -52,10 +52,10 @@ export const ServiceModal: React.FC<Props> = ({ onClose, onSave, initialData, sa
               <Briefcase className="text-brand-tactical" size={24} strokeWidth={1.5} />
             </div>
             <div>
-              <h2 className="text-2xl font-black uppercase italic tracking-tighter text-theme-text">
+              <h2 className="text-2xl font-bold uppercase text-theme-text">
                 {initialData ? "Ajustar Ativo" : "Novo Ativo de Serviço"}
               </h2>
-              <p className="text-[10px] font-black uppercase tracking-[0.2em] opacity-40">Configuração de Tabela e Valor de Entrega</p>
+              <p className="text-[10px] font-bold uppercase tracking-[0.2em] opacity-40">Configuração de Tabela e Valor de Entrega</p>
             </div>
           </div>
           <button onClick={onClose} className="p-3 hover:bg-theme-bg-muted rounded-full transition-all text-theme-muted">
@@ -116,7 +116,7 @@ export const ServiceModal: React.FC<Props> = ({ onClose, onSave, initialData, sa
                       }}
                       className="w-3.5 h-3.5 text-brand-tactical border-theme-border bg-theme-bg-muted rounded" 
                     />
-                    <span className="text-[9px] font-black uppercase tracking-widest text-theme-text">{type.label}</span>
+                    <span className="text-[9px] font-bold uppercase tracking-widest text-theme-text">{type.label}</span>
                   </label>
                 ))}
               </div>
@@ -136,7 +136,7 @@ export const ServiceModal: React.FC<Props> = ({ onClose, onSave, initialData, sa
                 </div>
               </div>
               <div className="flex items-center">
-                <p className="text-[9px] sm:text-[11px] font-black text-brand-tactical uppercase tracking-[0.4em] italic">
+                <p className="text-[9px] sm:text-[11px] font-bold text-brand-tactical uppercase tracking-[0.4em] ">
                   Este valor será utilizado como base fallback no gerador de orçamentos automático da rede.
                 </p>
               </div>
@@ -150,7 +150,7 @@ export const ServiceModal: React.FC<Props> = ({ onClose, onSave, initialData, sa
                 <div className={`p-3 md:p-6 border rounded-2xl transition-all ${form.allowProfessional ? "border-brand-tactical/40 bg-brand-tactical/10" : "border-theme-border bg-theme-bg"}`}>
                   <label className="flex items-center gap-3 cursor-pointer select-none mb-4">
                     <input type="checkbox" checked={form.allowProfessional} onChange={e => update({ allowProfessional: e.target.checked })} className="w-4 h-4 text-brand-tactical border-theme-border bg-theme-bg-muted rounded" />
-                    <span className="text-[10px] font-black uppercase tracking-widest text-theme-text">Profissional</span>
+                    <span className="text-[10px] font-bold uppercase tracking-widest text-theme-text">Profissional</span>
                   </label>
                   {form.allowProfessional && (
                     <div className="space-y-2 animate-in fade-in slide-in-from-top-2 duration-300">
@@ -166,7 +166,7 @@ export const ServiceModal: React.FC<Props> = ({ onClose, onSave, initialData, sa
                 <div className={`p-3 md:p-6 border rounded-2xl transition-all ${form.allowMobile ? "border-amber-500/40 bg-amber-500/5" : "border-theme-border bg-theme-bg"}`}>
                   <label className="flex items-center gap-3 cursor-pointer select-none mb-4">
                     <input type="checkbox" checked={form.allowMobile} onChange={e => update({ allowMobile: e.target.checked })} className="w-4 h-4 text-amber-500 border-theme-border bg-theme-bg-muted rounded" />
-                    <span className="text-[10px] font-black uppercase tracking-widest text-theme-text">Mobile</span>
+                    <span className="text-[10px] font-bold uppercase tracking-widest text-theme-text">Mobile</span>
                   </label>
                   {form.allowMobile && (
                     <div className="space-y-2 animate-in fade-in slide-in-from-top-2 duration-300">
@@ -184,10 +184,10 @@ export const ServiceModal: React.FC<Props> = ({ onClose, onSave, initialData, sa
 
           {/* Footer */}
           <div className="p-4 md:p-8 md:p-10 bg-theme-bg-muted border-t border-theme-border flex gap-4 shrink-0 rounded-2xl">
-            <button type="button" onClick={onClose} className="flex-1 py-5 border border-theme-border text-[11px] font-black uppercase tracking-[0.3em] text-theme-muted hover:text-white transition-all rounded-2xl italic">
+            <button type="button" onClick={onClose} className="flex-1 py-5 border border-theme-border text-[11px] font-bold uppercase tracking-[0.3em] text-theme-muted hover:text-white transition-all rounded-2xl ">
               Cancelar
             </button>
-            <button type="submit" disabled={saving} className="flex-[2] py-5 bg-brand-tactical text-[var(--brand-text)] text-[11px] font-black uppercase tracking-[0.3em] shadow-2xl hover:brightness-110 transition-all rounded-2xl italic flex items-center justify-center gap-4">
+            <button type="submit" disabled={saving} className="flex-[2] py-5 bg-brand-tactical text-[var(--brand-text)] text-[11px] font-bold uppercase tracking-[0.3em] shadow-2xl hover:brightness-110 transition-all rounded-2xl flex items-center justify-center gap-4">
               {saving ? "SINCRONIZANDO..." : initialData ? "SALVAR ALTERAÇÕES" : "CONFIRMAR ATIVO"}
               <ArrowRight size={18} strokeWidth={1.5} />
             </button>

@@ -47,13 +47,13 @@ function VaultCard({ vault, onClick }: { vault: Vault; onClick: () => void }) {
 
       {/* Info Area */}
       <div className="w-full space-y-1.5 md:space-y-2 flex-1 flex flex-col">
-        <h3 className="text-[11px] md:text-lg font-black text-theme-text uppercase italic tracking-tight line-clamp-2 leading-tight">
+        <h3 className="text-[11px] md:text-lg font-bold text-theme-text uppercase line-clamp-2 leading-tight">
           {vault.nome}
         </h3>
         
         <div className="h-4 md:h-6 flex items-center">
           {isOwner && (
-            <span className="inline-block text-[6px] md:text-[8px] font-black text-brand-tactical uppercase tracking-widest bg-brand-tactical/10 border border-brand-tactical/20 px-1.5 md:px-2 py-0.5 rounded-full">
+            <span className="inline-block text-[6px] md:text-[8px] font-bold text-brand-tactical uppercase tracking-widest bg-brand-tactical/10 border border-brand-tactical/20 px-1.5 md:px-2 py-0.5 rounded-full">
               Proprietário
             </span>
           )}
@@ -76,7 +76,7 @@ function VaultCard({ vault, onClick }: { vault: Vault; onClick: () => void }) {
       <div className="w-full flex flex-col justify-center mt-auto pt-2 md:pt-4 border-t border-theme-border/50">
         <div className="flex justify-between items-center mb-1 md:mb-2 px-0 md:px-1">
           <span className="text-[6px] md:text-[9px] text-theme-muted uppercase tracking-widest font-bold max-w-[60%] truncate">Progresso da Meta</span>
-          <span className="text-[8px] md:text-[10px] font-black text-brand-tactical shrink-0">{vault._count.media} / {vault.goalPoses}</span>
+          <span className="text-[8px] md:text-[10px] font-bold text-brand-tactical shrink-0">{vault._count.media} / {vault.goalPoses}</span>
         </div>
         <div className="w-full h-1 md:h-1.5 bg-theme-bg-muted rounded-full overflow-hidden">
           <div
@@ -133,14 +133,14 @@ function NewVaultModal({ onClose, onCreated }: { onClose: () => void; onCreated:
             <Lock size={18} className="text-brand-tactical" />
           </div>
           <div>
-            <h2 className="text-lg font-black text-theme-text uppercase italic tracking-tight">Novo Álbum</h2>
+            <h2 className="text-lg font-bold text-theme-text uppercase ">Novo Álbum</h2>
             <p className="text-[10px] text-gray-500 uppercase tracking-widest">Memórias privadas compartilhadas</p>
           </div>
         </div>
 
         <form onSubmit={e => { e.preventDefault(); handleCreate(); }} className="space-y-6 flex-1">
           <div>
-            <label className="block text-[10px] font-black uppercase tracking-widest text-gray-500 mb-2">Nome do Álbum</label>
+            <label className="block text-[10px] font-bold uppercase tracking-widest text-gray-500 mb-2">Nome do Álbum</label>
             <input
               id="input-nome-album"
               required
@@ -153,7 +153,7 @@ function NewVaultModal({ onClose, onCreated }: { onClose: () => void; onCreated:
           </div>
 
           <div>
-            <label className="block text-[10px] font-black uppercase tracking-widest text-gray-500 mb-2">
+            <label className="block text-[10px] font-bold uppercase tracking-widest text-gray-500 mb-2">
               Meta de fotos do ciclo: <span className="text-brand-tactical">{goalPoses}</span>
             </label>
             <input
@@ -175,7 +175,7 @@ function NewVaultModal({ onClose, onCreated }: { onClose: () => void; onCreated:
               id="btn-cancelar-criar-album"
               type="button"
               onClick={onClose}
-              className="flex-1 py-3 border border-[#2a2a2a] text-gray-400 text-[11px] font-black uppercase tracking-widest rounded-xl hover:border-gray-600 transition-colors"
+              className="flex-1 py-3 border border-[#2a2a2a] text-gray-400 text-[11px] font-bold uppercase tracking-widest rounded-xl hover:border-gray-600 transition-colors"
             >
               Cancelar
             </button>
@@ -183,7 +183,7 @@ function NewVaultModal({ onClose, onCreated }: { onClose: () => void; onCreated:
               id="btn-confirmar-criar-album"
               type="submit"
               disabled={loading}
-              className="flex-1 py-3 bg-brand-tactical hover:bg-brand-tactical/90 disabled:opacity-50 text-black text-[11px] font-black uppercase tracking-widest rounded-xl transition-colors flex items-center justify-center gap-2"
+              className="flex-1 py-3 bg-brand-tactical hover:bg-brand-tactical/90 disabled:opacity-50 text-black text-[11px] font-bold uppercase tracking-widest rounded-xl transition-colors flex items-center justify-center gap-2"
             >
               {loading ? <Loader2 size={14} className="animate-spin" /> : <Plus size={14} />}
               Criar Álbum
@@ -318,7 +318,7 @@ export default function VaultsPage() {
           <button
             id="btn-novo-album"
             onClick={() => setShowModal(true)}
-            className="flex items-center gap-2 bg-brand-tactical hover:bg-brand-tactical/90 text-black text-[11px] font-black uppercase tracking-widest px-4 md:px-6 py-2.5 md:py-4 rounded-xl transition-all active:scale-95 shadow-lg shadow-brand-tactical/20 italic"
+            className="flex items-center gap-2 bg-brand-tactical hover:bg-brand-tactical/90 text-black text-[11px] font-bold uppercase tracking-widest px-4 md:px-6 py-2.5 md:py-4 rounded-xl transition-all active:scale-95 shadow-lg shadow-brand-tactical/20 "
           >
             <Plus size={14} />
             NOVO ÁLBUM
@@ -352,14 +352,14 @@ export default function VaultsPage() {
               <Lock size={48} className="text-brand-tactical/40" />
             </div>
             <div className="space-y-2">
-              <p className="text-2xl font-black uppercase italic text-gray-400">NENHUM ÁLBUM AINDA</p>
+              <p className="text-2xl font-bold uppercase text-gray-400">NENHUM ÁLBUM AINDA</p>
               <p className="text-[10px] text-gray-600 uppercase tracking-widest max-w-xs mx-auto font-bold">
                 Crie seu primeiro álbum privado e convide pessoas para compartilhar memórias.
               </p>
             </div>
             <button
               onClick={() => setShowModal(true)}
-              className="mt-4 flex items-center gap-2 border border-brand-tactical/30 text-brand-tactical hover:bg-brand-tactical/10 text-[10px] font-black uppercase tracking-widest px-3 md:px-6 md:px-8 py-2.5 md:py-4 rounded-xl transition-all italic"
+              className="mt-4 flex items-center gap-2 border border-brand-tactical/30 text-brand-tactical hover:bg-brand-tactical/10 text-[10px] font-bold uppercase tracking-widest px-3 md:px-6 md:px-8 py-2.5 md:py-4 rounded-xl transition-all "
             >
               <Plus size={14} />
               CRIAR PRIMEIRO ÁLBUM

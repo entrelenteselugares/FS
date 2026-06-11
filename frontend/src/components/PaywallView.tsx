@@ -53,13 +53,13 @@ export const PaywallView: React.FC<PaywallViewProps> = ({ event, onCheckout, isP
         </div>
 
         <h1 
-          className="mb-8 text-6xl md:text-9xl tracking-tight text-white leading-tight"
+          className="mb-8 text-6xl md:text-9xl text-white leading-tight"
         >
           {event?.title || "Evento Premium"}
         </h1>
         
         <p 
-          className="max-w-xl mb-20 text-zinc-500 text-sm md:text-base font-light uppercase tracking-[0.3em] leading-relaxed"
+          className="max-w-xl mb-20 text-zinc-500 text-sm md:text-base font-normal uppercase tracking-[0.3em] leading-relaxed"
         >
           Acesso exclusivo às memórias digitais <br />
           Processadas e curadas pela equipe Foto Segundo.
@@ -76,12 +76,12 @@ export const PaywallView: React.FC<PaywallViewProps> = ({ event, onCheckout, isP
             <div className="flex items-center gap-4 mb-4">
               <span className="text-[10px] font-bold uppercase tracking-[0.4em] text-zinc-600">Full Access License</span>
               {isAdvancePurchase && (
-                <span className="text-[8px] font-black uppercase tracking-widest text-brand-olive">Early Access Discount</span>
+                <span className="text-[8px] font-bold uppercase tracking-widest text-brand-olive">Early Access Discount</span>
               )}
             </div>
             <div className="flex items-baseline gap-4">
                <span className="text-4xl text-white">R$ {Number(preco).toFixed(2)}</span>
-               {!isAdvancePurchase && <span className="text-xs text-zinc-700 line-through tracking-wider font-light">R$ 250.00</span>}
+               {!isAdvancePurchase && <span className="text-xs text-zinc-700 line-through tracking-wider font-normal">R$ 250.00</span>}
             </div>
           </div>
 

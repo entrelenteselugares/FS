@@ -103,7 +103,7 @@ export const LoginPage: React.FC = () => {
 
         {/* Tagline bottom-left */}
         <div className="absolute bottom-8 left-8 z-20 hidden lg:block">
-          <p className="text-[9px] font-black uppercase tracking-[0.4em] text-white/30 italic">
+          <p className="text-[9px] font-bold uppercase tracking-[0.4em] text-white/30 ">
             Cada segundo conta.
           </p>
         </div>
@@ -142,7 +142,7 @@ export const LoginPage: React.FC = () => {
 
           {/* Error */}
           {error && (
-            <div className="bg-red-500/10 text-red-400 text-[9px] font-black uppercase tracking-[0.2em] p-4 text-center border border-red-500/20 rounded-xl">
+            <div className="bg-red-500/10 text-red-400 text-[9px] font-bold uppercase tracking-[0.2em] p-4 text-center border border-red-500/20 rounded-xl">
               {error}
             </div>
           )}
@@ -208,7 +208,7 @@ export const LoginPage: React.FC = () => {
 
         {/* Bottom: Footer */}
         <div className="px-5 md:px-10 xl:px-14 pb-8 pt-6 border-t border-theme-border flex flex-col gap-4 text-center">
-          <p className="text-[8px] font-black uppercase tracking-[0.3em] text-theme-muted">
+          <p className="text-[8px] font-bold uppercase tracking-[0.3em] text-theme-muted">
             Novo por aqui?{" "}
             <Link
               to="/registro"
@@ -219,7 +219,7 @@ export const LoginPage: React.FC = () => {
           </p>
           <Link
             to="/"
-            className="text-[8px] font-black uppercase tracking-[0.4em] transition-all italic text-theme-muted opacity-50 hover:opacity-100"
+            className="text-[8px] font-bold uppercase tracking-[0.4em] transition-all text-theme-muted opacity-50 hover:opacity-100"
           >
             ← Voltar para a Vitrine
           </Link>

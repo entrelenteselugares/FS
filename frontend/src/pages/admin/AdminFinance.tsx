@@ -158,7 +158,7 @@ export const AdminFinance: React.FC = () => {
         
         <div className="flex flex-col xl:flex-row justify-between items-start xl:items-end gap-3 md:gap-6 relative z-10">
           <div>
-            <h1 className="text-3xl md:text-4xl font-heading font-black uppercase italic tracking-tighter text-theme-text">FINANCEIRO</h1>
+            <h1 className="text-3xl md:text-4xl font-heading font-bold uppercase text-theme-text">FINANCEIRO</h1>
             <p className="text-theme-muted mt-2 text-sm">Controle financeiro, repasses e DRE</p>
           </div>
           
@@ -174,20 +174,20 @@ export const AdminFinance: React.FC = () => {
       {/* DASHBOARD DE LIQUIDEZ E MARGEM */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <div className="bg-theme-bg-muted border border-theme-border p-5 space-y-3 group hover:border-brand-tactical/50 transition-all rounded-2xl">
-           <div className="flex justify-between items-start"><span className="text-[10px] font-black text-theme-muted uppercase tracking-widest">Receita Bruta (Matriz)</span><ArrowUpCircle className="text-brand-tactical" size={14} strokeWidth={1.5} /></div>
-           <div className="text-2xl md:text-3xl font-heading font-black text-theme-text italic">{formatCurrency(financialData.grossRevenue)}</div>
+           <div className="flex justify-between items-start"><span className="text-[10px] font-bold text-theme-muted uppercase tracking-widest">Receita Bruta (Matriz)</span><ArrowUpCircle className="text-brand-tactical" size={14} strokeWidth={1.5} /></div>
+           <div className="text-2xl md:text-3xl font-heading font-bold text-theme-text ">{formatCurrency(financialData.grossRevenue)}</div>
         </div>
         <div className="bg-theme-bg-muted border border-theme-border p-5 space-y-3 group hover:border-red-500/50 transition-all rounded-2xl">
-           <div className="flex justify-between items-start"><span className="text-[10px] font-black text-theme-muted uppercase tracking-widest">Custo Operacional</span><ArrowDownCircle className="text-red-500" size={14} strokeWidth={1.5} /></div>
-           <div className="text-2xl md:text-3xl font-heading font-black text-theme-text italic">{formatCurrency(financialData.totalExpenses)}</div>
+           <div className="flex justify-between items-start"><span className="text-[10px] font-bold text-theme-muted uppercase tracking-widest">Custo Operacional</span><ArrowDownCircle className="text-red-500" size={14} strokeWidth={1.5} /></div>
+           <div className="text-2xl md:text-3xl font-heading font-bold text-theme-text ">{formatCurrency(financialData.totalExpenses)}</div>
         </div>
         <div className="bg-theme-bg-muted border border-theme-border p-5 space-y-3 group hover:border-brand-tactical transition-all rounded-2xl">
-           <div className="flex justify-between items-start"><span className="text-[10px] font-black text-brand-tactical uppercase tracking-widest">Lucro Líquido Real</span><DollarSign className="text-brand-tactical" size={14} strokeWidth={1.5} /></div>
-           <div className="text-2xl md:text-3xl font-heading font-black text-brand-tactical italic">{formatCurrency(financialData.netProfit)}</div>
+           <div className="flex justify-between items-start"><span className="text-[10px] font-bold text-brand-tactical uppercase tracking-widest">Lucro Líquido Real</span><DollarSign className="text-brand-tactical" size={14} strokeWidth={1.5} /></div>
+           <div className="text-2xl md:text-3xl font-heading font-bold text-brand-tactical ">{formatCurrency(financialData.netProfit)}</div>
         </div>
         <div className="bg-theme-bg-muted border border-theme-border p-5 space-y-3 group transition-all rounded-2xl">
-           <div className="flex justify-between items-start"><span className="text-[10px] font-black text-theme-muted uppercase tracking-widest">Margem Operacional</span><BarChart3 className="text-amber-500" size={14} strokeWidth={1.5} /></div>
-           <div className="text-2xl md:text-3xl font-heading font-black text-theme-text italic">{financialData.margin.toFixed(1)}%</div>
+           <div className="flex justify-between items-start"><span className="text-[10px] font-bold text-theme-muted uppercase tracking-widest">Margem Operacional</span><BarChart3 className="text-amber-500" size={14} strokeWidth={1.5} /></div>
+           <div className="text-2xl md:text-3xl font-heading font-bold text-theme-text ">{financialData.margin.toFixed(1)}%</div>
         </div>
       </div>
 
@@ -201,11 +201,11 @@ export const AdminFinance: React.FC = () => {
           
           <div className="space-y-4">
             {loading ? (
-              <div className="py-20 text-center border border-theme-border bg-theme-bg text-[10px] text-theme-muted animate-pulse uppercase tracking-widest font-black italic rounded-2xl">Auditando Fluxo...</div>
+              <div className="py-20 text-center border border-theme-border bg-theme-bg text-[10px] text-theme-muted animate-pulse uppercase tracking-widest font-bold rounded-2xl">Auditando Fluxo...</div>
             ) : orders.length === 0 ? (
               <div className="py-24 text-center border  border-theme-border bg-theme-bg-muted/5 space-y-4 rounded-2xl">
                  <ShieldCheck size={32} strokeWidth={1.5} className="mx-auto text-theme-muted opacity-30" />
-                 <p className="text-[9px] sm:text-[11px] font-black text-brand-tactical uppercase tracking-[0.2em] sm:tracking-[0.4em] italic truncate max-w-[80vw]">Fluxo de Caixa e Liquidações</p>
+                 <p className="text-[9px] sm:text-[11px] font-bold text-brand-tactical uppercase tracking-[0.2em] sm:tracking-[0.4em] truncate max-w-[80vw]">Fluxo de Caixa e Liquidações</p>
               </div>
             ) : (
               <div className="grid grid-cols-1 gap-4">
@@ -215,21 +215,21 @@ export const AdminFinance: React.FC = () => {
                     <div className="hidden md:flex bg-theme-bg-muted border border-theme-border p-4 md:p-5 justify-between gap-4 md:gap-6 hover:border-brand-tactical/30 transition-all group rounded-2xl">
                        <div className="space-y-4 flex-1">
                           <div className="flex items-center gap-3">
-                             <span className="text-[10px] font-black px-2 py-1 bg-brand-tactical text-zinc-950 uppercase tracking-widest">#{order.id.slice(-4).toUpperCase()}</span>
-                             <h4 className="text-lg font-bold text-theme-text uppercase tracking-tight">{order.event.title}</h4>
+                             <span className="text-[10px] font-bold px-2 py-1 bg-brand-tactical text-zinc-950 uppercase tracking-widest">#{order.id.slice(-4).toUpperCase()}</span>
+                             <h4 className="text-lg font-bold text-theme-text uppercase ">{order.event.title}</h4>
                           </div>
                           <div className="grid grid-cols-4 gap-3 md:gap-6 pt-5 border-t border-theme-border/10">
-                             <div className="space-y-1.5"><span className="text-[10px] font-black text-theme-muted uppercase tracking-widest opacity-60">Matriz</span><p className="text-base font-black text-theme-text italic">{formatCurrency(Number(order.splitMatriz) || 0)}</p></div>
-                             {order.event.partners.captacao && <div className="space-y-1.5"><span className="text-[10px] font-black text-brand-tactical uppercase tracking-widest opacity-60">Captação</span><p className="text-base font-black text-brand-tactical italic">{formatCurrency(Number(order.splitCaptacao) || 0)}</p></div>}
-                             {order.event.partners.edicao && <div className="space-y-1.5"><span className="text-[10px] font-black text-brand-tactical uppercase tracking-widest opacity-60">Edição</span><p className="text-base font-black text-brand-tactical italic">{formatCurrency(Number(order.splitEdicao) || 0)}</p></div>}
-                             {order.event.partners.cartorio && <div className="space-y-1.5"><span className="text-[10px] font-black text-theme-muted uppercase tracking-widest opacity-60">Unidade</span><p className="text-base font-black text-theme-text italic">{formatCurrency(Number(order.splitCartorio) || 0)}</p></div>}
+                             <div className="space-y-1.5"><span className="text-[10px] font-bold text-theme-muted uppercase tracking-widest opacity-60">Matriz</span><p className="text-base font-bold text-theme-text ">{formatCurrency(Number(order.splitMatriz) || 0)}</p></div>
+                             {order.event.partners.captacao && <div className="space-y-1.5"><span className="text-[10px] font-bold text-brand-tactical uppercase tracking-widest opacity-60">Captação</span><p className="text-base font-bold text-brand-tactical ">{formatCurrency(Number(order.splitCaptacao) || 0)}</p></div>}
+                             {order.event.partners.edicao && <div className="space-y-1.5"><span className="text-[10px] font-bold text-brand-tactical uppercase tracking-widest opacity-60">Edição</span><p className="text-base font-bold text-brand-tactical ">{formatCurrency(Number(order.splitEdicao) || 0)}</p></div>}
+                             {order.event.partners.cartorio && <div className="space-y-1.5"><span className="text-[10px] font-bold text-theme-muted uppercase tracking-widest opacity-60">Unidade</span><p className="text-base font-bold text-theme-text ">{formatCurrency(Number(order.splitCartorio) || 0)}</p></div>}
                           </div>
                        </div>
                        <div className="flex items-center justify-center">
                           {payoutTab === 'pending' ? (
                             <button onClick={() => setConfirmModal(order.id)} className="border border-brand-tactical bg-brand-tactical/10 text-brand-tactical px-3 md:px-6 py-3 rounded-lg text-[10px] font-bold uppercase tracking-widest hover:bg-brand-tactical hover:text-zinc-950 transition-all flex items-center gap-2"><Zap size={14} strokeWidth={1.5} /> LIQUIDAR REPASSE</button>
                           ) : (
-                            <div className="text-right border-l border-theme-border pl-8"><span className="text-[10px] font-black text-theme-muted uppercase tracking-widest block mb-2">Pago em</span><span className="text-[12px] font-black text-brand-tactical uppercase tracking-tighter">{fmtDate(order.payoutPaidAt)}</span></div>
+                            <div className="text-right border-l border-theme-border pl-8"><span className="text-[10px] font-bold text-theme-muted uppercase tracking-widest block mb-2">Pago em</span><span className="text-[12px] font-bold text-brand-tactical uppercase ">{fmtDate(order.payoutPaidAt)}</span></div>
                           )}
                        </div>
                     </div>
@@ -238,22 +238,22 @@ export const AdminFinance: React.FC = () => {
                     <div className="md:hidden bg-theme-bg-muted border border-theme-border p-5 space-y-6 hover:border-brand-tactical/30 transition-all rounded-2xl">
                        <div className="flex justify-between items-start">
                           <div className="space-y-2">
-                             <span className="text-[9px] font-black px-2 py-0.5 bg-brand-tactical text-zinc-950 uppercase tracking-widest">#{order.id.slice(-4).toUpperCase()}</span>
-                             <h4 className="text-base font-bold text-theme-text uppercase tracking-tight">{order.event.title}</h4>
+                             <span className="text-[9px] font-bold px-2 py-0.5 bg-brand-tactical text-zinc-950 uppercase tracking-widest">#{order.id.slice(-4).toUpperCase()}</span>
+                             <h4 className="text-base font-bold text-theme-text uppercase ">{order.event.title}</h4>
                           </div>
                           {payoutTab === 'history' && (
                              <div className="text-right">
-                                <span className="text-[8px] font-black text-theme-muted uppercase tracking-widest block">Pago em</span>
-                                <span className="text-[10px] font-black text-brand-tactical uppercase tracking-tighter">{fmtDate(order.payoutPaidAt)}</span>
+                                <span className="text-[8px] font-bold text-theme-muted uppercase tracking-widest block">Pago em</span>
+                                <span className="text-[10px] font-bold text-brand-tactical uppercase ">{fmtDate(order.payoutPaidAt)}</span>
                              </div>
                           )}
                        </div>
 
                        <div className="grid grid-cols-2 gap-y-4 gap-x-2 pt-4 border-t border-theme-border/10">
-                          <div className="space-y-1"><span className="text-[8px] font-black text-theme-muted uppercase tracking-widest opacity-60">Matriz</span><p className="text-sm font-black text-theme-text italic">{formatCurrency(Number(order.splitMatriz) || 0)}</p></div>
-                          {order.event.partners.captacao && <div className="space-y-1"><span className="text-[8px] font-black text-brand-tactical uppercase tracking-widest opacity-60">Captação</span><p className="text-sm font-black text-theme-text italic">{formatCurrency(Number(order.splitCaptacao) || 0)}</p></div>}
-                          {order.event.partners.edicao && <div className="space-y-1"><span className="text-[8px] font-black text-brand-tactical uppercase tracking-widest opacity-60">Edição</span><p className="text-sm font-black text-theme-text italic">{formatCurrency(Number(order.splitEdicao) || 0)}</p></div>}
-                          {order.event.partners.cartorio && <div className="space-y-1"><span className="text-[8px] font-black text-theme-muted uppercase tracking-widest opacity-60">Unidade</span><p className="text-sm font-black text-theme-text italic">{formatCurrency(Number(order.splitCartorio) || 0)}</p></div>}
+                          <div className="space-y-1"><span className="text-[8px] font-bold text-theme-muted uppercase tracking-widest opacity-60">Matriz</span><p className="text-sm font-bold text-theme-text ">{formatCurrency(Number(order.splitMatriz) || 0)}</p></div>
+                          {order.event.partners.captacao && <div className="space-y-1"><span className="text-[8px] font-bold text-brand-tactical uppercase tracking-widest opacity-60">Captação</span><p className="text-sm font-bold text-theme-text ">{formatCurrency(Number(order.splitCaptacao) || 0)}</p></div>}
+                          {order.event.partners.edicao && <div className="space-y-1"><span className="text-[8px] font-bold text-brand-tactical uppercase tracking-widest opacity-60">Edição</span><p className="text-sm font-bold text-theme-text ">{formatCurrency(Number(order.splitEdicao) || 0)}</p></div>}
+                          {order.event.partners.cartorio && <div className="space-y-1"><span className="text-[8px] font-bold text-theme-muted uppercase tracking-widest opacity-60">Unidade</span><p className="text-sm font-bold text-theme-text ">{formatCurrency(Number(order.splitCartorio) || 0)}</p></div>}
                        </div>
 
                        {payoutTab === 'pending' && (
@@ -276,29 +276,29 @@ export const AdminFinance: React.FC = () => {
              <table className="w-full text-left border-collapse">
                 <thead>
                    <tr className="border-b border-theme-border bg-black/10">
-                      <th className="p-4 text-[10px] font-black text-theme-muted uppercase tracking-widest">Profissional</th>
-                      <th className="p-4 text-[10px] font-black text-theme-muted uppercase tracking-widest text-center">Pedidos</th>
-                      <th className="p-4 text-[10px] font-black text-theme-muted uppercase tracking-widest text-right">Pendente</th>
-                      <th className="p-4 text-[10px] font-black text-brand-tactical uppercase tracking-widest text-right">Disponível</th>
+                      <th className="p-4 text-[10px] font-bold text-theme-muted uppercase tracking-widest">Profissional</th>
+                      <th className="p-4 text-[10px] font-bold text-theme-muted uppercase tracking-widest text-center">Pedidos</th>
+                      <th className="p-4 text-[10px] font-bold text-theme-muted uppercase tracking-widest text-right">Pendente</th>
+                      <th className="p-4 text-[10px] font-bold text-brand-tactical uppercase tracking-widest text-right">Disponível</th>
                       <th className="p-4 w-40"></th>
                    </tr>
                 </thead>
                 <tbody className="divide-y divide-theme-border/10">
                    {balances.length === 0 ? (
                      <tr>
-                       <td colSpan={5} className="py-24 text-center text-[11px] text-theme-muted uppercase tracking-[0.4em] italic font-black">Nenhum saldo pendente na rede.</td>
+                       <td colSpan={5} className="py-24 text-center text-[11px] text-theme-muted uppercase tracking-[0.4em] font-bold">Nenhum saldo pendente na rede.</td>
                      </tr>
                    ) : balances.map(b => (
                      <tr key={b.userId} className="group hover:bg-theme-bg-muted transition-all">
                         <td className="p-4">
                            <div className="flex flex-col">
-                              <span className="text-[12px] font-black text-theme-text uppercase italic">{b.nome}</span>
-                              <span className="text-[9px] font-bold text-theme-muted uppercase tracking-tight">{b.email}</span>
+                              <span className="text-[12px] font-bold text-theme-text uppercase ">{b.nome}</span>
+                              <span className="text-[9px] font-bold text-theme-muted uppercase ">{b.email}</span>
                            </div>
                         </td>
-                        <td className="p-4 text-center text-[11px] font-black text-theme-muted italic">{b.orderCount} vds</td>
-                        <td className="p-4 text-right text-[12px] font-black text-theme-muted italic">{formatCurrency(b.pendingBalance)}</td>
-                        <td className="p-4 text-right text-[14px] font-black text-brand-tactical italic">{formatCurrency(b.availableBalance)}</td>
+                        <td className="p-4 text-center text-[11px] font-bold text-theme-muted ">{b.orderCount} vds</td>
+                        <td className="p-4 text-right text-[12px] font-bold text-theme-muted ">{formatCurrency(b.pendingBalance)}</td>
+                        <td className="p-4 text-right text-[14px] font-bold text-brand-tactical ">{formatCurrency(b.availableBalance)}</td>
                         <td className="p-4 text-right">
                            {b.availableBalance > 0 ? (
                               <button 
@@ -309,7 +309,7 @@ export const AdminFinance: React.FC = () => {
                                 {settleLoading === b.userId ? "LIQUIDANDO..." : "GERAR REPASSE"}
                               </button>
                            ) : (
-                              <span className="text-[9px] font-black text-theme-muted uppercase italic opacity-40">AGUARDANDO ESCROW</span>
+                              <span className="text-[9px] font-bold text-theme-muted uppercase opacity-40">AGUARDANDO ESCROW</span>
                            )}
                         </td>
                      </tr>
@@ -321,27 +321,27 @@ export const AdminFinance: React.FC = () => {
            {/* MOBILE CARDS */}
            <div className="md:hidden space-y-4">
               {balances.length === 0 ? (
-                <div className="py-24 text-center text-[11px] text-theme-muted uppercase tracking-[0.4em] italic font-black">Nenhum saldo pendente na rede.</div>
+                <div className="py-24 text-center text-[11px] text-theme-muted uppercase tracking-[0.4em] font-bold">Nenhum saldo pendente na rede.</div>
               ) : balances.map(b => (
                 <div key={b.userId} className="bg-theme-bg border border-theme-border p-4 rounded-xl space-y-3 shadow-sm">
                   <div className="flex justify-between items-start">
                     <div>
-                      <div className="text-sm font-black text-theme-text uppercase italic">{b.nome}</div>
-                      <div className="text-[10px] font-bold text-theme-muted uppercase tracking-tight">{b.email}</div>
+                      <div className="text-sm font-bold text-theme-text uppercase ">{b.nome}</div>
+                      <div className="text-[10px] font-bold text-theme-muted uppercase ">{b.email}</div>
                     </div>
                     <div className="text-right">
-                      <div className="text-[10px] font-black text-theme-muted uppercase tracking-widest">Pedidos</div>
-                      <div className="text-xs font-black text-theme-text italic">{b.orderCount} vds</div>
+                      <div className="text-[10px] font-bold text-theme-muted uppercase tracking-widest">Pedidos</div>
+                      <div className="text-xs font-bold text-theme-text ">{b.orderCount} vds</div>
                     </div>
                   </div>
                   <div className="flex justify-between items-center bg-theme-bg-muted p-3 rounded-lg border border-theme-border/50">
                     <div>
-                      <div className="text-[9px] font-black text-theme-muted uppercase tracking-widest">Pendente</div>
-                      <div className="text-sm font-black text-theme-muted italic">{formatCurrency(b.pendingBalance)}</div>
+                      <div className="text-[9px] font-bold text-theme-muted uppercase tracking-widest">Pendente</div>
+                      <div className="text-sm font-bold text-theme-muted ">{formatCurrency(b.pendingBalance)}</div>
                     </div>
                     <div className="text-right">
-                      <div className="text-[9px] font-black text-brand-tactical uppercase tracking-widest">Disponível</div>
-                      <div className="text-sm font-black text-brand-tactical italic">{formatCurrency(b.availableBalance)}</div>
+                      <div className="text-[9px] font-bold text-brand-tactical uppercase tracking-widest">Disponível</div>
+                      <div className="text-sm font-bold text-brand-tactical ">{formatCurrency(b.availableBalance)}</div>
                     </div>
                   </div>
                   {b.availableBalance > 0 ? (
@@ -353,7 +353,7 @@ export const AdminFinance: React.FC = () => {
                       {settleLoading === b.userId ? "LIQUIDANDO..." : "GERAR REPASSE"}
                     </button>
                   ) : (
-                    <div className="w-full py-3 text-center text-[10px] font-black text-theme-muted uppercase italic opacity-40 border border-dashed border-theme-border rounded-lg">AGUARDANDO ESCROW</div>
+                    <div className="w-full py-3 text-center text-[10px] font-bold text-theme-muted uppercase opacity-40 border border-dashed border-theme-border rounded-lg">AGUARDANDO ESCROW</div>
                   )}
                 </div>
               ))}
@@ -368,29 +368,29 @@ export const AdminFinance: React.FC = () => {
            <div className="lg:col-span-4 space-y-4">
               <div className="bg-theme-bg-muted border border-theme-border p-4 md:p-6 space-y-4 rounded-2xl">
                  <div className="space-y-0.5">
-                    <span className="text-[10px] font-black text-brand-tactical uppercase tracking-[0.5em]">Lançamento Tático</span>
-                    <h3 className="text-lg font-heading text-theme-text uppercase tracking-tighter">Registrar Custo</h3>
+                    <span className="text-[10px] font-bold text-brand-tactical uppercase tracking-[0.5em]">Lançamento Tático</span>
+                    <h3 className="text-lg font-heading text-theme-text uppercase ">Registrar Custo</h3>
                  </div>
 
                  <form onSubmit={handleAddExpense} className="space-y-3">
                     <div className="space-y-1">
-                       <label className="text-[10px] font-black text-theme-muted uppercase tracking-widest">Descrição</label>
-                       <input required value={newExpense.description} onChange={e => setNewExpense({...newExpense, description: e.target.value.toUpperCase()})} placeholder="EX: CARTÃO MICRO SD 32GB" className="w-full bg-theme-bg border border-theme-border p-3 text-sm text-theme-text font-black outline-none focus:border-brand-tactical uppercase rounded-2xl" />
+                       <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest">Descrição</label>
+                       <input required value={newExpense.description} onChange={e => setNewExpense({...newExpense, description: e.target.value.toUpperCase()})} placeholder="EX: CARTÃO MICRO SD 32GB" className="w-full bg-theme-bg border border-theme-border p-3 text-sm text-theme-text font-bold outline-none focus:border-brand-tactical uppercase rounded-2xl" />
                     </div>
                     
                     <div className="grid grid-cols-2 gap-2">
                        <div className="space-y-1">
-                          <label className="text-[10px] font-black text-theme-muted uppercase tracking-widest">Valor (R$)</label>
-                          <input required type="number" step="0.01" value={newExpense.amount} onChange={e => setNewExpense({...newExpense, amount: Number(e.target.value)})} className="w-full bg-theme-bg border border-theme-border p-3 text-sm text-brand-tactical font-black outline-none focus:border-brand-tactical rounded-2xl" />
+                          <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest">Valor (R$)</label>
+                          <input required type="number" step="0.01" value={newExpense.amount} onChange={e => setNewExpense({...newExpense, amount: Number(e.target.value)})} className="w-full bg-theme-bg border border-theme-border p-3 text-sm text-brand-tactical font-bold outline-none focus:border-brand-tactical rounded-2xl" />
                        </div>
                        <div className="space-y-1">
-                          <label className="text-[10px] font-black text-theme-muted uppercase tracking-widest">Data</label>
-                          <input required type="date" value={newExpense.date} onChange={e => setNewExpense({...newExpense, date: e.target.value})} className="w-full bg-theme-bg border border-theme-border p-3 text-sm text-theme-text font-black outline-none focus:border-brand-tactical rounded-2xl" />
+                          <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest">Data</label>
+                          <input required type="date" value={newExpense.date} onChange={e => setNewExpense({...newExpense, date: e.target.value})} className="w-full bg-theme-bg border border-theme-border p-3 text-sm text-theme-text font-bold outline-none focus:border-brand-tactical rounded-2xl" />
                        </div>
                     </div>
 
                     <div className="space-y-1">
-                       <label className="text-[10px] font-black text-theme-muted uppercase tracking-widest">Categoria</label>
+                       <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest">Categoria</label>
                        <div className="grid grid-cols-2 gap-1.5">
                           {(['OPERACIONAL', 'LOGISTICA', 'INSUMO', 'FIXO', 'INSUMOS FRANQUIA', 'ASSINATURAS'] as const).map(c => (
                             <button key={c} type="button" onClick={() => setNewExpense({...newExpense, category: c})} className={`py-2 text-[10px] font-black uppercase tracking-widest border transition-all ${newExpense.category === c ? 'border-brand-tactical bg-brand-tactical text-zinc-950 shadow-md' : 'border-theme-border text-theme-muted hover:border-zinc-500'}`}>{c}</button>
@@ -400,15 +400,15 @@ export const AdminFinance: React.FC = () => {
 
                     {/* Presets Rápidos */}
                     <div className="pt-3 border-t border-theme-border space-y-2">
-                       <span className="text-[10px] font-black text-theme-muted uppercase tracking-widest block opacity-50 italic">Presets de Engenharia</span>
+                       <span className="text-[10px] font-bold text-theme-muted uppercase tracking-widest block opacity-50 ">Presets de Engenharia</span>
                        <div className="flex flex-wrap gap-1.5">
-                          <button type="button" onClick={() => setNewExpense({ description: "CARTÃO MICRO SD (Venda Bruta)", amount: 25, category: "INSUMO", date: new Date().toISOString().split('T')[0] })} className="px-2 py-1 bg-theme-bg border border-theme-border text-[10px] font-black text-theme-muted hover:border-brand-tactical hover:text-theme-text transition-all uppercase rounded-2xl">+ CARTÃO SD (R$ 25)</button>
-                          <button type="button" onClick={() => setNewExpense({ description: "TRANSPORTE / UBER OPERAÇÃO", amount: 15, category: "LOGISTICA", date: new Date().toISOString().split('T')[0] })} className="px-2 py-1 bg-theme-bg border border-theme-border text-[10px] font-black text-theme-muted hover:border-brand-tactical hover:text-theme-text transition-all uppercase rounded-2xl">+ UBER (R$ 15)</button>
-                          <button type="button" onClick={() => setNewExpense({ description: "CARTÕES DE VISITA (Lote)", amount: 120, category: "MARKETING", date: new Date().toISOString().split('T')[0] })} className="px-2 py-1 bg-theme-bg border border-theme-border text-[10px] font-black text-theme-muted hover:border-brand-tactical hover:text-theme-text transition-all uppercase rounded-2xl">+ MARKETING</button>
+                          <button type="button" onClick={() => setNewExpense({ description: "CARTÃO MICRO SD (Venda Bruta)", amount: 25, category: "INSUMO", date: new Date().toISOString().split('T')[0] })} className="px-2 py-1 bg-theme-bg border border-theme-border text-[10px] font-bold text-theme-muted hover:border-brand-tactical hover:text-theme-text transition-all uppercase rounded-2xl">+ CARTÃO SD (R$ 25)</button>
+                          <button type="button" onClick={() => setNewExpense({ description: "TRANSPORTE / UBER OPERAÇÃO", amount: 15, category: "LOGISTICA", date: new Date().toISOString().split('T')[0] })} className="px-2 py-1 bg-theme-bg border border-theme-border text-[10px] font-bold text-theme-muted hover:border-brand-tactical hover:text-theme-text transition-all uppercase rounded-2xl">+ UBER (R$ 15)</button>
+                          <button type="button" onClick={() => setNewExpense({ description: "CARTÕES DE VISITA (Lote)", amount: 120, category: "MARKETING", date: new Date().toISOString().split('T')[0] })} className="px-2 py-1 bg-theme-bg border border-theme-border text-[10px] font-bold text-theme-muted hover:border-brand-tactical hover:text-theme-text transition-all uppercase rounded-2xl">+ MARKETING</button>
                        </div>
                     </div>
 
-                    <button type="submit" className="w-full bg-brand-tactical text-zinc-950 py-3.5 text-[11px] font-black uppercase tracking-[0.4em] shadow-xl hover:brightness-110 active:scale-95 transition-all">LANÇAR DESPESA</button>
+                    <button type="submit" className="w-full bg-brand-tactical text-zinc-950 py-3.5 text-[11px] font-bold uppercase tracking-[0.4em] shadow-xl hover:brightness-110 active:scale-95 transition-all">LANÇAR DESPESA</button>
                  </form>
               </div>
            </div>
@@ -420,26 +420,26 @@ export const AdminFinance: React.FC = () => {
                  <table className="w-full text-left border-collapse">
                     <thead>
                        <tr className="border-b border-theme-border bg-black/10">
-                          <th className="p-4 text-[10px] font-black text-theme-muted uppercase tracking-widest">Data</th>
-                          <th className="p-4 text-[10px] font-black text-theme-muted uppercase tracking-widest">Descrição</th>
-                          <th className="p-4 text-[10px] font-black text-theme-muted uppercase tracking-widest text-center">Categoria</th>
-                          <th className="p-4 text-[10px] font-black text-theme-muted uppercase tracking-widest text-right">Valor</th>
+                          <th className="p-4 text-[10px] font-bold text-theme-muted uppercase tracking-widest">Data</th>
+                          <th className="p-4 text-[10px] font-bold text-theme-muted uppercase tracking-widest">Descrição</th>
+                          <th className="p-4 text-[10px] font-bold text-theme-muted uppercase tracking-widest text-center">Categoria</th>
+                          <th className="p-4 text-[10px] font-bold text-theme-muted uppercase tracking-widest text-right">Valor</th>
                           <th className="p-4 w-10"></th>
                        </tr>
                     </thead>
                     <tbody className="divide-y divide-theme-border/10">
                        {expenses.length === 0 ? (
                          <tr>
-                           <td colSpan={5} className="py-16 text-center text-[11px] text-theme-muted uppercase tracking-[0.4em] italic font-black">Nenhuma despesa operacional lançada.</td>
+                           <td colSpan={5} className="py-16 text-center text-[11px] text-theme-muted uppercase tracking-[0.4em] font-bold">Nenhuma despesa operacional lançada.</td>
                          </tr>
                        ) : expenses.map(exp => (
                          <tr key={exp.id} className="group hover:bg-theme-bg-muted transition-all">
-                             <td className="p-4 text-[11px] text-theme-muted font-black">{fmtDate(exp.date)}</td>
-                            <td className="p-4 text-[11px] text-theme-text font-black uppercase tracking-tight">{exp.description}</td>
+                             <td className="p-4 text-[11px] text-theme-muted font-bold">{fmtDate(exp.date)}</td>
+                            <td className="p-4 text-[11px] text-theme-text font-bold uppercase ">{exp.description}</td>
                             <td className="p-4 text-center">
-                               <span className="text-[10px] font-black px-2 py-1 border border-theme-border text-theme-muted uppercase group-hover:border-zinc-500">{exp.category}</span>
+                               <span className="text-[10px] font-bold px-2 py-1 border border-theme-border text-theme-muted uppercase group-hover:border-zinc-500">{exp.category}</span>
                             </td>
-                            <td className="p-4 text-right text-[12px] font-black text-red-500 italic">{formatCurrency(exp.amount)}</td>
+                            <td className="p-4 text-right text-[12px] font-bold text-red-500 ">{formatCurrency(exp.amount)}</td>
                             <td className="p-4 text-right">
                                <button onClick={() => deleteExpense(exp.id)} className="text-zinc-600 hover:text-red-500 p-0.5 transition-all"><Trash2 size={14} /></button>
                             </td>
@@ -452,16 +452,16 @@ export const AdminFinance: React.FC = () => {
                {/* MOBILE CARDS */}
                <div className="md:hidden space-y-4">
                   {expenses.length === 0 ? (
-                    <div className="py-16 text-center text-[11px] text-theme-muted uppercase tracking-[0.4em] italic font-black">Nenhuma despesa operacional lançada.</div>
+                    <div className="py-16 text-center text-[11px] text-theme-muted uppercase tracking-[0.4em] font-bold">Nenhuma despesa operacional lançada.</div>
                   ) : expenses.map(exp => (
                     <div key={exp.id} className="bg-theme-bg border border-theme-border p-4 rounded-xl flex items-center justify-between gap-4 shadow-sm">
                       <div className="flex-1 min-w-0">
                         <div className="flex justify-between items-center mb-1">
-                          <span className="text-[9px] font-black text-theme-muted uppercase tracking-widest">{fmtDate(exp.date)}</span>
-                          <span className="text-[8px] font-black px-2 py-0.5 border border-theme-border rounded-md text-theme-muted uppercase">{exp.category}</span>
+                          <span className="text-[9px] font-bold text-theme-muted uppercase tracking-widest">{fmtDate(exp.date)}</span>
+                          <span className="text-[8px] font-bold px-2 py-0.5 border border-theme-border rounded-md text-theme-muted uppercase">{exp.category}</span>
                         </div>
-                        <div className="text-sm font-black text-theme-text uppercase tracking-tight truncate">{exp.description}</div>
-                        <div className="text-sm font-black text-red-500 italic mt-1">{formatCurrency(exp.amount)}</div>
+                        <div className="text-sm font-bold text-theme-text uppercase truncate">{exp.description}</div>
+                        <div className="text-sm font-bold text-red-500 mt-1">{formatCurrency(exp.amount)}</div>
                       </div>
                       <button onClick={() => deleteExpense(exp.id)} className="p-3 text-zinc-600 hover:text-red-500 hover:bg-red-500/10 rounded-xl transition-all"><Trash2 size={16} /></button>
                     </div>
@@ -476,26 +476,26 @@ export const AdminFinance: React.FC = () => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 md:gap-6 md:gap-10 animate-in fade-in duration-500">
            <div className="bg-theme-bg-muted border border-theme-border p-3 md:p-6 md:p-10 space-y-8 md:space-y-10 rounded-2xl">
               <div className="space-y-1">
-                 <span className="text-[10px] font-black text-brand-tactical uppercase tracking-[0.5em]">Análise de Performance</span>
-                 <h3 className="text-xl font-heading text-theme-text uppercase tracking-tighter italic">DRE Simplificado</h3>
+                 <span className="text-[10px] font-bold text-brand-tactical uppercase tracking-[0.5em]">Análise de Performance</span>
+                 <h3 className="text-xl font-heading text-theme-text uppercase ">DRE Simplificado</h3>
               </div>
               
               <div className="space-y-6">
                  <div className="flex justify-between items-center border-b border-theme-border pb-4">
-                    <span className="text-[11px] font-black text-theme-muted uppercase tracking-widest">Receita Bruta (Matriz)</span>
-                    <span className="text-xl font-heading font-black text-theme-text italic">{formatCurrency(financialData.grossRevenue)}</span>
+                    <span className="text-[11px] font-bold text-theme-muted uppercase tracking-widest">Receita Bruta (Matriz)</span>
+                    <span className="text-xl font-heading font-bold text-theme-text ">{formatCurrency(financialData.grossRevenue)}</span>
                  </div>
                  <div className="flex justify-between items-center border-b border-theme-border pb-4 text-red-500">
-                    <span className="text-[11px] font-black uppercase tracking-widest">(-) Despesas Totais</span>
-                    <span className="text-xl font-heading font-black italic">{formatCurrency(financialData.totalExpenses)}</span>
+                    <span className="text-[11px] font-bold uppercase tracking-widest">(-) Despesas Totais</span>
+                    <span className="text-xl font-heading font-bold ">{formatCurrency(financialData.totalExpenses)}</span>
                  </div>
                  <div className="flex justify-between items-center pt-5">
-                    <span className="text-[12px] font-black text-brand-tactical uppercase tracking-[0.3em]">Lucro Líquido (EBITDA)</span>
-                    <span className="text-3xl font-heading font-black text-brand-tactical italic">{formatCurrency(financialData.netProfit)}</span>
+                    <span className="text-[12px] font-bold text-brand-tactical uppercase tracking-[0.3em]">Lucro Líquido (EBITDA)</span>
+                    <span className="text-3xl font-heading font-bold text-brand-tactical ">{formatCurrency(financialData.netProfit)}</span>
                  </div>
               </div>
 
-              <div className="bg-zinc-950/20 p-4 border border-theme-border italic text-[11px] text-theme-muted leading-relaxed uppercase tracking-widest font-bold">
+              <div className="bg-zinc-950/20 p-4 border border-theme-border text-[11px] text-theme-muted leading-relaxed uppercase tracking-widest font-bold">
                 &quot;O faturamento é vaidade, o lucro é sanidade, e o caixa é rei.&quot; — Foque em manter a margem acima de 30% para sustentar a escala da Foto Segundo.
               </div>
            </div>
@@ -509,12 +509,12 @@ export const AdminFinance: React.FC = () => {
               </div>
               <div className="grid grid-cols-2 gap-4 md:gap-8 w-full border-t border-theme-border pt-10">
                  <div className="text-center space-y-2">
-                    <span className="text-[9px] font-black text-theme-muted uppercase tracking-widest">Ponto de Equilíbrio</span>
-                    <p className="text-lg font-heading font-black text-theme-text italic">ALCANÇADO</p>
+                    <span className="text-[9px] font-bold text-theme-muted uppercase tracking-widest">Ponto de Equilíbrio</span>
+                    <p className="text-lg font-heading font-bold text-theme-text ">ALCANÇADO</p>
                  </div>
                  <div className="text-center space-y-2">
-                    <span className="text-[9px] font-black text-theme-muted uppercase tracking-widest">Saúde de Caixa</span>
-                    <p className="text-lg font-heading font-black text-brand-tactical italic">ESTÁVEL</p>
+                    <span className="text-[9px] font-bold text-theme-muted uppercase tracking-widest">Saúde de Caixa</span>
+                    <p className="text-lg font-heading font-bold text-brand-tactical ">ESTÁVEL</p>
                  </div>
               </div>
            </div>
@@ -533,26 +533,26 @@ export const AdminFinance: React.FC = () => {
                     <ShieldCheck className="text-brand-tactical" size={24} strokeWidth={1.5} />
                   </div>
                   <div>
-                    <h2 className="text-xl font-black uppercase italic tracking-tighter text-theme-text">Protocolo Financeiro</h2>
-                    <p className="text-[10px] font-black uppercase tracking-[0.2em] opacity-40">Confirmação de Liquidez</p>
+                    <h2 className="text-xl font-bold uppercase text-theme-text">Protocolo Financeiro</h2>
+                    <p className="text-[10px] font-bold uppercase tracking-[0.2em] opacity-40">Confirmação de Liquidez</p>
                   </div>
                 </div>
                 <button onClick={() => setConfirmModal(null)} className="p-3 hover:bg-theme-bg-muted rounded-full transition-all text-theme-muted"><X size={24} /></button>
               </div>
 
               <div className="p-4 md:p-8 md:p-10 space-y-6 text-center">
-                 <h3 className="text-2xl font-black text-theme-text uppercase italic tracking-tighter leading-tight">Confirmar Repasse?</h3>
-                 <p className="text-[11px] text-theme-muted font-bold uppercase tracking-widest leading-relaxed italic border-y border-theme-border/10 py-3 md:py-6">
+                 <h3 className="text-2xl font-bold text-theme-text uppercase leading-tight">Confirmar Repasse?</h3>
+                 <p className="text-[11px] text-theme-muted font-bold uppercase tracking-widest leading-relaxed border-y border-theme-border/10 py-3 md:py-6">
                     VOCÊ CONFIRMA QUE JÁ EXECUTOU OS REPASSES PIX PARA TODOS OS PARCEIROS DESTE EVENTO? ESTA AÇÃO É IRREVERSÍVEL NO LEDGER.
                  </p>
               </div>
 
               {/* Footer */}
               <div className="p-4 md:p-8 md:p-10 bg-theme-bg-muted border-t border-theme-border flex gap-4 shrink-0 rounded-2xl">
-                <button onClick={() => setConfirmModal(null)} className="flex-1 py-5 border border-theme-border text-[11px] font-black uppercase tracking-[0.3em] text-theme-muted hover:text-white transition-all rounded-[20px] italic">Cancelar</button>
+                <button onClick={() => setConfirmModal(null)} className="flex-1 py-5 border border-theme-border text-[11px] font-bold uppercase tracking-[0.3em] text-theme-muted hover:text-white transition-all rounded-[20px] ">Cancelar</button>
                 <button 
                   onClick={() => handleMarkAsPaid()} 
-                  className="flex-[2] py-5 bg-brand-tactical text-zinc-950 text-[11px] font-black uppercase tracking-[0.3em] shadow-2xl shadow-brand-tactical/20 hover:brightness-110 transition-all rounded-[20px] italic flex items-center justify-center gap-4"
+                  className="flex-[2] py-5 bg-brand-tactical text-zinc-950 text-[11px] font-bold uppercase tracking-[0.3em] shadow-2xl shadow-brand-tactical/20 hover:brightness-110 transition-all rounded-[20px] flex items-center justify-center gap-4"
                 >
                   Confirmar Repasse
                   <ArrowRight size={18} strokeWidth={1.5} />

@@ -52,7 +52,7 @@ function KpiCard({ label, value, sub, icon, accent = false }: {
           <div className={`p-1.5 ${accent ? "bg-brand-tactical text-black" : "bg-theme-bg-muted text-theme-text-muted"}`}>
             {icon}
           </div>
-          <p className="text-[9px] font-black text-theme-text-muted uppercase tracking-widest">{label}</p>
+          <p className="text-[9px] font-bold text-theme-text-muted uppercase tracking-widest">{label}</p>
         </div>
         <p className={`text-3xl font-black italic tracking-tighter leading-none ${accent ? "text-brand-tactical" : "text-theme-text"}`}>
           {value}
@@ -68,8 +68,8 @@ function FunnelBar({ label, value, max, color }: { label: string; value: number;
   return (
     <div className="space-y-1.5">
       <div className="flex items-center justify-between">
-        <p className="text-[9px] font-black text-theme-muted uppercase tracking-widest">{label}</p>
-        <p className="text-[10px] font-black text-theme-text">{value.toLocaleString("pt-BR")}</p>
+        <p className="text-[9px] font-bold text-theme-muted uppercase tracking-widest">{label}</p>
+        <p className="text-[10px] font-bold text-theme-text">{value.toLocaleString("pt-BR")}</p>
       </div>
       <div className="h-1.5 bg-theme-bg-muted w-full overflow-hidden">
         <motion.div
@@ -155,7 +155,7 @@ export const AmbassadorDashboard = () => {
     <div className="flex items-center justify-center p-20">
       <div className="flex items-center gap-3">
         <div className="w-4 h-4 border-2 border-brand-tactical border-t-transparent rounded-full animate-spin" />
-        <p className="text-[10px] font-black text-theme-muted uppercase tracking-[0.4em]">Sincronizando Rede...</p>
+        <p className="text-[10px] font-bold text-theme-muted uppercase tracking-[0.4em]">Sincronizando Rede...</p>
       </div>
     </div>
   );
@@ -210,7 +210,7 @@ export const AmbassadorDashboard = () => {
         <div className="border border-theme-border bg-theme-bg-muted/5 p-8 space-y-5">
           <div className="flex items-center gap-3 mb-2">
             <BarChart3 size={14} className="text-brand-tactical" />
-            <p className="text-[9px] font-black text-theme-muted uppercase tracking-[0.4em]">Funil de Conversão</p>
+            <p className="text-[9px] font-bold text-theme-muted uppercase tracking-[0.4em]">Funil de Conversão</p>
           </div>
           <FunnelBar label="Visitas ao Link" value={t.visits} max={t.visits} color="bg-blue-500/60" />
           <FunnelBar label="Conversões" value={t.conversions} max={t.visits} color="bg-brand-tactical" />
@@ -249,7 +249,7 @@ export const AmbassadorDashboard = () => {
               {(network?.campaigns ?? []).length === 0 ? (
                 <div className="border  border-theme-border p-20 text-center space-y-4">
                   <Users size={36} className="mx-auto text-theme-border/20" />
-                  <p className="text-[10px] font-black text-theme-muted uppercase tracking-widest italic">Nenhuma campanha ativa.</p>
+                  <p className="text-[10px] font-bold text-theme-muted uppercase tracking-widest ">Nenhuma campanha ativa.</p>
                   <p className="text-[9px] text-zinc-600 font-bold max-w-xs mx-auto">Clique em &quot;Gerar Meu Link&quot; para começar a ganhar com indicações.</p>
                 </div>
               ) : (
@@ -257,7 +257,7 @@ export const AmbassadorDashboard = () => {
                   <div key={c.id} className="border border-theme-border bg-theme-bg-muted/5 p-6 space-y-4 hover:border-theme-border transition-all">
                     <div className="flex items-start justify-between gap-4">
                       <div>
-                        <h3 className="text-sm font-black text-theme-text uppercase italic">{c.name}</h3>
+                        <h3 className="text-sm font-bold text-theme-text uppercase ">{c.name}</h3>
                         <p className="text-[9px] text-theme-muted font-bold uppercase tracking-widest mt-1">
                           {c.rewardType === "CREDIT" ? "Crédito" : "Dinheiro"} • {fmt(c.rewardValue)} por conversão
                         </p>
@@ -280,8 +280,8 @@ export const AmbassadorDashboard = () => {
                         { label: "Taxa", val: c.conversionRate + "%" },
                       ].map(m => (
                         <div key={m.label} className="space-y-1">
-                          <p className="text-[8px] font-black text-theme-muted uppercase tracking-widest">{m.label}</p>
-                          <p className="text-base font-black italic text-theme-text">{m.val}</p>
+                          <p className="text-[8px] font-bold text-theme-muted uppercase tracking-widest">{m.label}</p>
+                          <p className="text-base font-bold text-theme-text">{m.val}</p>
                         </div>
                       ))}
                     </div>
@@ -309,7 +309,7 @@ export const AmbassadorDashboard = () => {
               {(network?.campaigns ?? []).map(c => (
                 <div key={c.id} className={`border p-6 space-y-4 transition-all ${c.active ? "border-theme-border" : "border-theme-border/10 opacity-60"}`}>
                   <div className="flex items-center justify-between">
-                    <p className="text-[10px] font-black text-theme-text uppercase italic">{c.name}</p>
+                    <p className="text-[10px] font-bold text-theme-text uppercase ">{c.name}</p>
                     <button onClick={() => toggleCampaign(c.id)} disabled={toggling === c.id} className="text-theme-muted hover:text-brand-tactical transition-colors">
                       {c.active ? <ToggleRight size={16} className="text-brand-tactical" /> : <ToggleLeft size={16} />}
                     </button>
@@ -318,7 +318,7 @@ export const AmbassadorDashboard = () => {
                     <FunnelBar label="Pagos" value={Math.round(c.earnedPaid)} max={Math.round(c.earnedPaid + c.earnedPending + 1)} color="bg-emerald-500" />
                     <FunnelBar label="Pendente" value={Math.round(c.earnedPending)} max={Math.round(c.earnedPaid + c.earnedPending + 1)} color="bg-amber-500" />
                   </div>
-                  <div className="flex items-center justify-between text-[9px] font-black uppercase tracking-widest">
+                  <div className="flex items-center justify-between text-[9px] font-bold uppercase tracking-widest">
                     <span className="text-theme-muted">{c.visits} cliques • {c.conversions} conv.</span>
                     <span className="text-brand-tactical">{fmt(c.earnedPaid + c.earnedPending)}</span>
                   </div>
@@ -336,7 +336,7 @@ export const AmbassadorDashboard = () => {
                 </div>
               ) : history.conversions.length === 0 ? (
                 <div className="border  border-theme-border p-16 text-center">
-                  <p className="text-[10px] font-black text-theme-muted uppercase tracking-widest italic">Nenhuma conversão ainda.</p>
+                  <p className="text-[10px] font-bold text-theme-muted uppercase tracking-widest ">Nenhuma conversão ainda.</p>
                 </div>
               ) : (
                 <>
@@ -348,7 +348,7 @@ export const AmbassadorDashboard = () => {
                             {cv.status === "PAID" ? <CheckCircle2 size={14} /> : <Clock size={14} />}
                           </div>
                           <div>
-                            <p className="text-[10px] font-black text-theme-text uppercase italic">{cv.campaignName}</p>
+                            <p className="text-[10px] font-bold text-theme-text uppercase ">{cv.campaignName}</p>
                             <p className="text-[8px] font-bold text-theme-muted uppercase tracking-widest mt-0.5">
                               {cv.hasOrder ? "Compra" : cv.hasNewUser ? "Cadastro" : "Evento"} • {relDate(cv.createdAt)}
                             </p>
@@ -376,7 +376,7 @@ export const AmbassadorDashboard = () => {
                       >
                         <ChevronLeft size={14} /> Anterior
                       </button>
-                      <p className="text-[9px] font-black text-theme-muted uppercase tracking-widest">
+                      <p className="text-[9px] font-bold text-theme-muted uppercase tracking-widest">
                         Pág. {history.page} / {history.totalPages}
                       </p>
                       <button
@@ -397,7 +397,7 @@ export const AmbassadorDashboard = () => {
 
       {/* ── Rules Footer ── */}
       <div className="p-8 bg-brand-tactical/10 border border-brand-tactical/10 space-y-4">
-        <h4 className="text-[9px] font-black text-brand-tactical uppercase tracking-[0.3em] italic">Regras de Ouro</h4>
+        <h4 className="text-[9px] font-bold text-brand-tactical uppercase tracking-[0.3em] ">Regras de Ouro</h4>
         <ul className="grid grid-cols-1 md:grid-cols-2 gap-3">
           {[
             "Recompensas creditadas após aprovação do pedido (até 7 dias).",
@@ -405,7 +405,7 @@ export const AmbassadorDashboard = () => {
             "Créditos podem comprar fotos ou produtos físicos.",
             "Uso indevido de links pode suspender a conta.",
           ].map((rule, i) => (
-            <li key={i} className="flex items-start gap-2 text-[9px] text-theme-muted font-bold uppercase tracking-tight">
+            <li key={i} className="flex items-start gap-2 text-[9px] text-theme-muted font-bold uppercase ">
               <div className="mt-1.5 w-1 h-1 bg-brand-tactical rounded-full flex-shrink-0" />
               {rule}
             </li>

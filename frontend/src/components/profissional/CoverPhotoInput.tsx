@@ -110,7 +110,7 @@ export function CoverPhotoInput({ currentUrl, currentPosition, onChange, onPosit
 
   return (
     <div className="space-y-4">
-      <label className="text-[9px] font-black text-theme-muted uppercase tracking-[0.4em] italic flex items-center gap-2 opacity-60">
+      <label className="text-[9px] font-bold text-theme-muted uppercase tracking-[0.4em] flex items-center gap-2 opacity-60">
         <ImageIcon size={14} /> Capa do Evento (Marketplace)
       </label>
 
@@ -165,14 +165,14 @@ export function CoverPhotoInput({ currentUrl, currentPosition, onChange, onPosit
           <button
             type="button"
             onClick={() => setMode("url")}
-            className="flex-1 h-20 border  border-theme-border text-theme-muted hover:border-brand-tactical/50 hover:text-brand-tactical transition-all flex flex-col items-center justify-center gap-2 text-[10px] font-black uppercase tracking-widest bg-theme-bg-muted rounded-[30px]"
+            className="flex-1 h-20 border border-theme-border text-theme-muted hover:border-brand-tactical/50 hover:text-brand-tactical transition-all flex flex-col items-center justify-center gap-2 text-[10px] font-bold uppercase tracking-widest bg-theme-bg-muted rounded-[30px]"
           >
             <LinkIcon size={18} /> Link / Drive
           </button>
           <button
             type="button"
             onClick={() => fileRef.current?.click()}
-            className="flex-1 h-20 border  border-theme-border text-theme-muted hover:border-brand-tactical/50 hover:text-brand-tactical transition-all flex flex-col items-center justify-center gap-2 text-[10px] font-black uppercase tracking-widest bg-theme-bg-muted rounded-[30px]"
+            className="flex-1 h-20 border border-theme-border text-theme-muted hover:border-brand-tactical/50 hover:text-brand-tactical transition-all flex flex-col items-center justify-center gap-2 text-[10px] font-bold uppercase tracking-widest bg-theme-bg-muted rounded-[30px]"
           >
             <Upload size={18} /> Upload
           </button>
@@ -189,12 +189,12 @@ export function CoverPhotoInput({ currentUrl, currentPosition, onChange, onPosit
             value={urlInput}
             onChange={(e) => setUrlInput(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && handleUrlConfirm()}
-            className="flex-1 bg-theme-bg-muted border border-brand-tactical/40 p-5 text-theme-text text-[11px] font-black uppercase outline-none focus:border-brand-tactical rounded-2xl"
+            className="flex-1 bg-theme-bg-muted border border-brand-tactical/40 p-5 text-theme-text text-[11px] font-bold uppercase outline-none focus:border-brand-tactical rounded-2xl"
           />
           <button
             type="button"
             onClick={handleUrlConfirm}
-            className="px-8 bg-brand-tactical text-zinc-950 text-[10px] font-black uppercase tracking-widest hover:brightness-110 transition-all rounded-2xl"
+            className="px-8 bg-brand-tactical text-zinc-950 text-[10px] font-bold uppercase tracking-widest hover:brightness-110 transition-all rounded-2xl"
           >
             OK
           </button>
@@ -214,14 +214,14 @@ export function CoverPhotoInput({ currentUrl, currentPosition, onChange, onPosit
           <button
             type="button"
             onClick={() => setMode("url")}
-            className="flex-1 py-4 border border-theme-border text-theme-muted hover:border-brand-tactical/50 hover:text-brand-tactical transition-all text-[9px] font-black uppercase tracking-widest flex items-center justify-center gap-2 italic rounded-xl"
+            className="flex-1 py-4 border border-theme-border text-theme-muted hover:border-brand-tactical/50 hover:text-brand-tactical transition-all text-[9px] font-bold uppercase tracking-widest flex items-center justify-center gap-2 rounded-xl"
           >
             <LinkIcon size={14} /> TROCAR LINK
           </button>
           <button
             type="button"
             onClick={() => fileRef.current?.click()}
-            className="flex-1 py-4 border border-theme-border text-theme-muted hover:border-brand-tactical/50 hover:text-brand-tactical transition-all text-[9px] font-black uppercase tracking-widest flex items-center justify-center gap-2 italic rounded-xl"
+            className="flex-1 py-4 border border-theme-border text-theme-muted hover:border-brand-tactical/50 hover:text-brand-tactical transition-all text-[9px] font-bold uppercase tracking-widest flex items-center justify-center gap-2 rounded-xl"
           >
             <Upload size={14} /> TROCAR ARQUIVO
           </button>
@@ -237,7 +237,7 @@ export function CoverPhotoInput({ currentUrl, currentPosition, onChange, onPosit
         onChange={handleFileChange}
       />
 
-      <p className="text-[8px] text-theme-muted uppercase font-bold tracking-[0.2em] opacity-40 italic text-center leading-relaxed">
+      <p className="text-[8px] text-theme-muted uppercase font-bold tracking-[0.2em] opacity-40 text-center leading-relaxed">
         ACEITA LINK DO GOOGLE DRIVE, DROPBOX OU IMAGEM DIRETA · JPG, PNG, WEBP
       </p>
     </div>

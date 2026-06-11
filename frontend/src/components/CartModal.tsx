@@ -47,8 +47,8 @@ export const CartModal: React.FC<{ isOpen: boolean, onClose: () => void }> = ({ 
               <ShoppingBag className="text-brand-tactical" size={24} />
             </div>
             <div>
-              <h2 className="text-2xl font-black uppercase italic tracking-tighter" style={{ color: T.text }}>Minha Seleção</h2>
-              <p className="text-[10px] font-black uppercase tracking-[0.2em] opacity-40">Resumo de Memórias</p>
+              <h2 className="text-2xl font-bold uppercase " style={{ color: T.text }}>Minha Seleção</h2>
+              <p className="text-[10px] font-bold uppercase tracking-[0.2em] opacity-40">Resumo de Memórias</p>
             </div>
           </div>
           <button onClick={onClose} className="p-3 hover:bg-theme-bg-muted rounded-full transition-all active:scale-90" style={{ color: T.text2 }}>
@@ -63,7 +63,7 @@ export const CartModal: React.FC<{ isOpen: boolean, onClose: () => void }> = ({ 
               <div className="w-24 h-24 bg-theme-bg-muted rounded-full flex items-center justify-center border border-white/10">
                 <ShoppingBag size={48} strokeWidth={1} style={{ color: T.text }} />
               </div>
-              <p className="text-xs font-black uppercase tracking-[0.3em]" style={{ color: T.text }}>Sua sacola está vazia</p>
+              <p className="text-xs font-bold uppercase tracking-[0.3em]" style={{ color: T.text }}>Sua sacola está vazia</p>
             </div>
           ) : (
             <div className="grid md:grid-cols-2 gap-8">
@@ -71,8 +71,8 @@ export const CartModal: React.FC<{ isOpen: boolean, onClose: () => void }> = ({ 
               {digitalPhotos.length > 0 && (
                 <div className="space-y-4">
                   <div className="flex items-center justify-between border-b border-white/5 pb-2">
-                    <h3 className="text-[10px] font-black uppercase tracking-widest text-zinc-500">Fotos Digitais</h3>
-                    <span className="px-2 py-0.5 bg-brand-tactical/10 text-brand-tactical text-[9px] font-black rounded-full">{digitalPhotos.length}</span>
+                    <h3 className="text-[10px] font-bold uppercase tracking-widest text-zinc-500">Fotos Digitais</h3>
+                    <span className="px-2 py-0.5 bg-brand-tactical/10 text-brand-tactical text-[9px] font-bold rounded-full">{digitalPhotos.length}</span>
                   </div>
                   <div className="space-y-2">
                     {digitalPhotos.map((item) => (
@@ -82,12 +82,12 @@ export const CartModal: React.FC<{ isOpen: boolean, onClose: () => void }> = ({ 
                             {item.url ? (
                               <img src={item.url} alt={item.shortId} className="w-full h-full object-cover" />
                             ) : (
-                              <span className="text-[8px] font-black text-brand-tactical">PRO</span>
+                              <span className="text-[8px] font-bold text-brand-tactical">PRO</span>
                             )}
                           </div>
                           <div>
-                            <p className="text-[10px] font-black uppercase italic" style={{ color: T.text }}>ID: {item.shortId}</p>
-                            <p className="text-[8px] font-black text-zinc-500 uppercase">Download HD</p>
+                            <p className="text-[10px] font-bold uppercase " style={{ color: T.text }}>ID: {item.shortId}</p>
+                            <p className="text-[8px] font-bold text-zinc-500 uppercase">Download HD</p>
                           </div>
                         </div>
                         <button 
@@ -106,8 +106,8 @@ export const CartModal: React.FC<{ isOpen: boolean, onClose: () => void }> = ({ 
               {physicalItems.length > 0 && (
                 <div className="space-y-4">
                   <div className="flex items-center justify-between border-b border-white/5 pb-2">
-                    <h3 className="text-[10px] font-black uppercase tracking-widest text-zinc-500">Impressos</h3>
-                    <span className="px-2 py-0.5 bg-emerald-500/10 text-emerald-500 text-[9px] font-black rounded-full">{physicalItems.length}</span>
+                    <h3 className="text-[10px] font-bold uppercase tracking-widest text-zinc-500">Impressos</h3>
+                    <span className="px-2 py-0.5 bg-emerald-500/10 text-emerald-500 text-[9px] font-bold rounded-full">{physicalItems.length}</span>
                   </div>
                   <div className="space-y-2">
                     {physicalItems.map((item) => (
@@ -117,8 +117,8 @@ export const CartModal: React.FC<{ isOpen: boolean, onClose: () => void }> = ({ 
                             <span className="text-lg">📦</span>
                           </div>
                           <div>
-                            <p className="text-[10px] font-black uppercase italic" style={{ color: T.text }}>{item.name}</p>
-                            <p className="text-[8px] font-black text-brand-tactical uppercase">
+                            <p className="text-[10px] font-bold uppercase " style={{ color: T.text }}>{item.name}</p>
+                            <p className="text-[8px] font-bold text-brand-tactical uppercase">
                               {item.quantity} un • R$ {item.price.toFixed(2)}
                             </p>
                           </div>
@@ -142,15 +142,15 @@ export const CartModal: React.FC<{ isOpen: boolean, onClose: () => void }> = ({ 
         {totalItems > 0 && (
           <div className="p-8 md:p-10 bg-theme-bg-muted border-t flex flex-col md:flex-row items-center justify-between gap-6 shrink-0" style={{ borderColor: T.border }}>
             <div className="text-center md:text-left">
-              <span className="block text-[10px] font-black uppercase tracking-widest text-theme-text-muted mb-1">Total da Seleção</span>
-              <span className="text-4xl font-black italic tracking-tighter" style={{ color: T.text }}>R$ {currentTotal.toFixed(2)}</span>
+              <span className="block text-[10px] font-bold uppercase tracking-widest text-theme-text-muted mb-1">Total da Seleção</span>
+              <span className="text-4xl font-bold " style={{ color: T.text }}>R$ {currentTotal.toFixed(2)}</span>
             </div>
             <button 
               onClick={() => {
                 onClose();
                 navigate("/checkout");
               }}
-              className="w-full md:w-auto px-10 py-5 bg-brand-tactical text-black text-[11px] font-black uppercase tracking-[0.3em] hover:bg-white hover:scale-[1.02] active:scale-[0.98] transition-all italic flex items-center justify-center gap-4 shadow-2xl shadow-brand-tactical/20"
+              className="w-full md:w-auto px-10 py-5 bg-brand-tactical text-black text-[11px] font-bold uppercase tracking-[0.3em] hover:bg-white hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-4 shadow-2xl shadow-brand-tactical/20"
             >
               Confirmar e Pagar
               <ArrowRight size={18} />

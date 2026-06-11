@@ -67,29 +67,29 @@ export function FinanceTab({
       {/* HEADER / QUICK ACTIONS */}
       <div className="flex flex-col md:flex-row items-center justify-between gap-4">
         <div>
-          <h3 className="text-xl sm:text-2xl font-heading font-black text-theme-text uppercase tracking-widest italic leading-none">Inteligência Financeira</h3>
-          <p className="text-[9px] text-theme-muted uppercase tracking-[0.3em] italic font-black mt-1">Visão consolidada de repasses e conversões</p>
+          <h3 className="text-xl sm:text-2xl font-heading font-bold text-theme-text uppercase tracking-widest leading-none">Inteligência Financeira</h3>
+          <p className="text-[9px] text-theme-muted uppercase tracking-[0.3em] font-bold mt-1">Visão consolidada de repasses e conversões</p>
         </div>
         <div className="flex w-full md:w-auto gap-2">
           <button
             onClick={onEditGoal}
-            className="flex-1 md:flex-none px-4 py-2 border border-theme-border hover:border-brand-tactical/50 text-theme-text text-[9px] font-black uppercase tracking-widest rounded-lg italic transition-all shadow-sm"
+            className="flex-1 md:flex-none px-4 py-2 border border-theme-border hover:border-brand-tactical/50 text-theme-text text-[9px] font-bold uppercase tracking-widest rounded-lg transition-all shadow-sm"
           >
             Ajustar Meta
           </button>
           <div className="relative group flex-1 md:flex-none">
             <button
               onClick={onDownloadTaxReport}
-              className="w-full flex justify-center items-center gap-1.5 px-3 md:px-4 py-2 bg-brand-tactical/10 text-brand-tactical border border-brand-tactical/30 hover:bg-brand-tactical hover:text-black rounded-lg text-[9px] font-black uppercase tracking-widest italic transition-all shadow-sm whitespace-nowrap"
+              className="w-full flex justify-center items-center gap-1.5 px-3 md:px-4 py-2 bg-brand-tactical/10 text-brand-tactical border border-brand-tactical/30 hover:bg-brand-tactical hover:text-black rounded-lg text-[9px] font-bold uppercase tracking-widest transition-all shadow-sm whitespace-nowrap"
             >
               <Download size={12} />
               <span className="hidden sm:inline">Relatório de </span>Tributos
             </button>
             <div className="absolute top-full right-0 mt-1 hidden group-hover:flex flex-col bg-theme-bg border border-theme-border shadow-2xl rounded-lg overflow-hidden z-50 min-w-[160px]">
-              <button onClick={() => window.open(`${API.defaults.baseURL}/profissional/finance/tax-report?format=pdf`, '_blank')} className="px-4 py-3 text-[9px] font-black uppercase text-theme-text hover:bg-brand-tactical/10 flex items-center gap-2 border-b border-theme-border transition-colors">
+              <button onClick={() => window.open(`${API.defaults.baseURL}/profissional/finance/tax-report?format=pdf`, '_blank')} className="px-4 py-3 text-[9px] font-bold uppercase text-theme-text hover:bg-brand-tactical/10 flex items-center gap-2 border-b border-theme-border transition-colors">
                 <FileText size={12} className="text-brand-tactical" /> PDF (MEI)
               </button>
-              <button onClick={() => window.open(`${API.defaults.baseURL}/profissional/finance/tax-report?format=csv`, '_blank')} className="px-4 py-3 text-[9px] font-black uppercase text-theme-text hover:bg-brand-tactical/10 flex items-center gap-2 transition-colors">
+              <button onClick={() => window.open(`${API.defaults.baseURL}/profissional/finance/tax-report?format=csv`, '_blank')} className="px-4 py-3 text-[9px] font-bold uppercase text-theme-text hover:bg-brand-tactical/10 flex items-center gap-2 transition-colors">
                 <Table size={12} className="text-brand-tactical" /> CSV Excel
               </button>
             </div>
@@ -101,29 +101,29 @@ export function FinanceTab({
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
         <div className="bg-theme-bg-muted border border-theme-border rounded-xl p-4 flex flex-col shadow-sm relative overflow-hidden group hover:border-brand-tactical/30 transition-all">
           <div className="absolute top-0 right-0 p-3 opacity-10"><Wallet size={40} /></div>
-          <span className="text-[8px] font-black text-theme-muted uppercase tracking-widest z-10">Saldo Disponível</span>
-          <p className="text-xl md:text-2xl font-heading font-black text-brand-tactical italic mt-1 z-10">
+          <span className="text-[8px] font-bold text-theme-muted uppercase tracking-widest z-10">Saldo Disponível</span>
+          <p className="text-xl md:text-2xl font-heading font-bold text-brand-tactical mt-1 z-10">
             {summary ? formatCurrency(summary.available) : "---"}
           </p>
         </div>
         <div className="bg-theme-bg-muted border border-theme-border rounded-xl p-4 flex flex-col shadow-sm relative overflow-hidden group hover:border-amber-500/30 transition-all">
           <div className="absolute top-0 right-0 p-3 opacity-10"><Clock size={40} /></div>
-          <span className="text-[8px] font-black text-theme-muted uppercase tracking-widest z-10">A Receber (Garantia)</span>
-          <p className="text-xl md:text-2xl font-heading font-black text-amber-500 italic mt-1 z-10">
+          <span className="text-[8px] font-bold text-theme-muted uppercase tracking-widest z-10">A Receber (Garantia)</span>
+          <p className="text-xl md:text-2xl font-heading font-bold text-amber-500 mt-1 z-10">
             {summary ? formatCurrency(summary.pending) : "---"}
           </p>
         </div>
         <div className="bg-theme-bg-muted border border-theme-border rounded-xl p-4 flex flex-col shadow-sm relative overflow-hidden group hover:border-theme-muted transition-all">
           <div className="absolute top-0 right-0 p-3 opacity-10"><BarChart2 size={40} /></div>
-          <span className="text-[8px] font-black text-theme-muted uppercase tracking-widest z-10">Taxa de Conversão</span>
-          <p className="text-xl md:text-2xl font-heading font-black text-theme-text italic mt-1 z-10">
+          <span className="text-[8px] font-bold text-theme-muted uppercase tracking-widest z-10">Taxa de Conversão</span>
+          <p className="text-xl md:text-2xl font-heading font-bold text-theme-text mt-1 z-10">
             {conversionData ? `${conversionData.conversionRate}%` : "---"}
           </p>
         </div>
         <div className="bg-theme-bg-muted border border-theme-border rounded-xl p-4 flex flex-col shadow-sm relative overflow-hidden group hover:border-theme-muted transition-all">
           <div className="absolute top-0 right-0 p-3 opacity-10"><TrendingUp size={40} /></div>
-          <span className="text-[8px] font-black text-theme-muted uppercase tracking-widest z-10">Ticket Médio</span>
-          <p className="text-xl md:text-2xl font-heading font-black text-theme-text italic mt-1 z-10">
+          <span className="text-[8px] font-bold text-theme-muted uppercase tracking-widest z-10">Ticket Médio</span>
+          <p className="text-xl md:text-2xl font-heading font-bold text-theme-text mt-1 z-10">
             {conversionData ? formatCurrency(conversionData.ticketMedio) : "---"}
           </p>
         </div>
@@ -134,8 +134,8 @@ export function FinanceTab({
         <div className="lg:col-span-2 space-y-4">
           <div className="bg-theme-bg border border-theme-border rounded-xl p-4 md:p-5 shadow-sm relative">
             <div className="flex justify-between items-center mb-4">
-              <h4 className="text-[10px] font-black text-brand-tactical uppercase tracking-[0.2em] italic">Fluxo de Caixa Operacional</h4>
-              <span className="text-[7px] font-black bg-brand-tactical/10 text-brand-tactical px-2 py-1 rounded border border-brand-tactical/20 uppercase tracking-widest">Tempo Real</span>
+              <h4 className="text-[10px] font-bold text-brand-tactical uppercase tracking-[0.2em] ">Fluxo de Caixa Operacional</h4>
+              <span className="text-[7px] font-bold bg-brand-tactical/10 text-brand-tactical px-2 py-1 rounded border border-brand-tactical/20 uppercase tracking-widest">Tempo Real</span>
             </div>
             <div className="h-[200px] w-full">
               <CashflowChart />
@@ -145,8 +145,8 @@ export function FinanceTab({
           <div className="bg-theme-bg border border-theme-border rounded-xl p-4 md:p-5 flex flex-col md:flex-row gap-5 items-center shadow-sm">
               <div className="flex-1 w-full space-y-3">
                 <div className="flex justify-between items-end">
-                  <p className="text-[9px] font-black text-theme-muted uppercase tracking-widest italic">Progresso da Meta Mensal</p>
-                  <p className="text-sm font-heading font-black text-theme-text italic">{Math.round(progressPct)}%</p>
+                  <p className="text-[9px] font-bold text-theme-muted uppercase tracking-widest ">Progresso da Meta Mensal</p>
+                  <p className="text-sm font-heading font-bold text-theme-text ">{Math.round(progressPct)}%</p>
                 </div>
                 <div className="h-2 bg-theme-bg-muted border border-theme-border rounded-full overflow-hidden">
                   <div className="h-full bg-brand-tactical transition-all duration-1000" style={{ width: `${progressPct}%` }} />
@@ -173,7 +173,7 @@ export function FinanceTab({
         {/* SIDEBAR: HISTORY */}
         <div className="bg-theme-bg border border-theme-border rounded-xl p-4 flex flex-col shadow-sm">
           <div className="flex items-center justify-between border-b border-theme-border pb-3 mb-3">
-            <h4 className="text-[10px] font-black text-theme-text uppercase tracking-widest italic">Movimentações</h4>
+            <h4 className="text-[10px] font-bold text-theme-text uppercase tracking-widest ">Movimentações</h4>
             <span className="text-[8px] bg-theme-bg-muted border border-theme-border px-2 py-0.5 rounded text-theme-muted font-bold uppercase">{profile?.payoutHistory?.length || 0} Registros</span>
           </div>
           
@@ -186,7 +186,7 @@ export function FinanceTab({
                       {p.status === "PAID" ? <Check size={10} /> : <Clock size={10} />}
                     </div>
                     <div>
-                      <p className="text-[9px] font-black text-theme-text uppercase italic leading-none">
+                      <p className="text-[9px] font-bold text-theme-text uppercase leading-none">
                         {p.payout?.weekStart ? formatDate(p.payout.weekStart) : "REPASSE"}
                       </p>
                       <span className={`text-[7px] font-black uppercase tracking-widest ${p.status === "PAID" ? "text-brand-tactical" : "text-amber-500"}`}>
@@ -194,14 +194,14 @@ export function FinanceTab({
                       </span>
                     </div>
                   </div>
-                  <p className="text-xs font-heading font-black text-theme-text italic">
+                  <p className="text-xs font-heading font-bold text-theme-text ">
                     R$ {Number(p.amount).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
                   </p>
                 </div>
                 {p.status === "PAID" && (
                   <button 
                     onClick={() => window.open(`${API.defaults.baseURL}/profissional/finance/receipt/${p.id}`, '_blank')}
-                    className="w-full py-1.5 border border-theme-border/50 bg-theme-bg text-[8px] font-black uppercase tracking-widest text-theme-muted hover:text-brand-tactical hover:border-brand-tactical/30 rounded flex items-center justify-center gap-1 transition-all"
+                    className="w-full py-1.5 border border-theme-border/50 bg-theme-bg text-[8px] font-bold uppercase tracking-widest text-theme-muted hover:text-brand-tactical hover:border-brand-tactical/30 rounded flex items-center justify-center gap-1 transition-all"
                   >
                     <Download size={10} /> Recibo PDF
                   </button>
@@ -211,7 +211,7 @@ export function FinanceTab({
             {!profile?.payoutHistory?.length && (
               <div className="py-10 flex flex-col items-center justify-center gap-2 text-theme-muted opacity-40">
                 <DollarSign size={20} />
-                <p className="text-[8px] font-black uppercase tracking-[0.2em]">Sem Histórico</p>
+                <p className="text-[8px] font-bold uppercase tracking-[0.2em]">Sem Histórico</p>
               </div>
             )}
           </div>
@@ -222,7 +222,7 @@ export function FinanceTab({
       {isEditingGoal && (
         <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
           <div className="w-full max-w-sm bg-theme-card border border-theme-border rounded-2xl p-6 shadow-2xl animate-in zoom-in-95">
-            <h4 className="text-lg font-heading font-black text-theme-text uppercase italic mb-1">Ajustar Target</h4>
+            <h4 className="text-lg font-heading font-bold text-theme-text uppercase mb-1">Ajustar Target</h4>
             <p className="text-[9px] text-theme-muted uppercase tracking-widest mb-6">Faturamento líquido mensal esperado</p>
             
             <div className="relative mb-6">
@@ -230,16 +230,16 @@ export function FinanceTab({
                 type="number"
                 value={tempGoal}
                 onChange={(e) => onTempGoalChange(e.target.value)}
-                className="w-full bg-theme-bg border border-theme-border p-4 text-brand-tactical font-heading font-black italic text-2xl rounded-xl outline-none focus:border-brand-tactical/50"
+                className="w-full bg-theme-bg border border-theme-border p-4 text-brand-tactical font-heading font-bold text-2xl rounded-xl outline-none focus:border-brand-tactical/50"
               />
-              <div className="absolute right-4 top-1/2 -translate-y-1/2 text-[10px] font-black text-theme-muted uppercase">BRL</div>
+              <div className="absolute right-4 top-1/2 -translate-y-1/2 text-[10px] font-bold text-theme-muted uppercase">BRL</div>
             </div>
             
             <div className="flex gap-2">
-              <button onClick={onCancelGoal} className="flex-1 py-3 border border-theme-border text-[9px] font-black text-theme-muted uppercase tracking-widest rounded-xl hover:bg-theme-bg-muted transition-all">
+              <button onClick={onCancelGoal} className="flex-1 py-3 border border-theme-border text-[9px] font-bold text-theme-muted uppercase tracking-widest rounded-xl hover:bg-theme-bg-muted transition-all">
                 Cancelar
               </button>
-              <button onClick={onSaveGoal} className="flex-[2] py-3 bg-brand-tactical text-brand-text text-[10px] font-black uppercase tracking-[0.2em] hover:brightness-110 rounded-xl shadow-lg transition-all">
+              <button onClick={onSaveGoal} className="flex-[2] py-3 bg-brand-tactical text-brand-text text-[10px] font-bold uppercase tracking-[0.2em] hover:brightness-110 rounded-xl shadow-lg transition-all">
                 Confirmar
               </button>
             </div>

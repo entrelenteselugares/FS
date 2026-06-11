@@ -100,7 +100,7 @@ export const AdminAmbassadors: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="py-24 text-center border border-theme-border bg-theme-bg animate-pulse text-[10px] text-theme-muted uppercase tracking-[0.5em] font-black italic rounded-2xl">
+      <div className="py-24 text-center border border-theme-border bg-theme-bg animate-pulse text-[10px] text-theme-muted uppercase tracking-[0.5em] font-bold rounded-2xl">
         Sincronizando Engine de Afiliados...
 
 
@@ -122,7 +122,7 @@ export const AdminAmbassadors: React.FC = () => {
           </div>
           <button 
             onClick={() => setIsModalOpen(true)}
-            className="px-4 md:px-8 py-4 bg-brand-tactical text-black text-[10px] font-black uppercase tracking-widest flex items-center gap-3 hover:bg-white transition-all italic shadow-2xl whitespace-nowrap"
+            className="px-4 md:px-8 py-4 bg-brand-tactical text-black text-[10px] font-bold uppercase tracking-widest flex items-center gap-3 hover:bg-white transition-all shadow-2xl whitespace-nowrap"
           >
             <Plus size={16} /> Nova Campanha
           </button>
@@ -140,9 +140,9 @@ export const AdminAmbassadors: React.FC = () => {
           <div key={i} className="bg-theme-card border border-theme-border p-3 md:p-6 space-y-2 rounded-2xl">
             <div className="flex items-center gap-2 text-theme-subtle">
               {s.icon}
-              <span className="text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest">{s.label}</span>
+              <span className="text-[8px] md:text-[9px] font-bold uppercase tracking-wider md:tracking-widest">{s.label}</span>
             </div>
-            <p className="text-3xl font-black italic tracking-tighter text-theme-text">{s.value}</p>
+            <p className="text-3xl font-bold text-theme-text">{s.value}</p>
           </div>
         ))}
       </div>
@@ -163,7 +163,7 @@ export const AdminAmbassadors: React.FC = () => {
       <div className="bg-theme-bg-muted border border-theme-border overflow-x-auto w-full rounded-2xl">
         <table className="w-full text-left">
           <thead>
-            <tr className="border-b border-theme-border text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest text-theme-subtle">
+            <tr className="border-b border-theme-border text-[8px] md:text-[9px] font-bold uppercase tracking-wider md:tracking-widest text-theme-subtle">
               <th className="p-3 md:p-6">Campanha / Slug</th>
               <th className="p-3 md:p-6">Embaixador</th>
               <th className="p-3 md:p-6">Recompensa</th>
@@ -178,7 +178,7 @@ export const AdminAmbassadors: React.FC = () => {
               <tr key={c.id} className="hover:bg-theme-border/20 transition-colors group">
                 <td className="p-3 md:p-6">
                   <div className="flex flex-col">
-                    <span className="text-sm font-black text-theme-text uppercase italic">{c.name}</span>
+                    <span className="text-sm font-bold text-theme-text uppercase ">{c.name}</span>
                     <span className="text-[10px] font-mono text-theme-subtle">/embaixador/{c.slug}</span>
                   </div>
                 </td>
@@ -189,15 +189,15 @@ export const AdminAmbassadors: React.FC = () => {
                   </div>
                 </td>
                 <td className="p-3 md:p-6">
-                  <span className="text-xs font-black text-brand-tactical italic">
+                  <span className="text-xs font-bold text-brand-tactical ">
                     R$ {Number(c.rewardValue).toFixed(2)} ({c.rewardType})
                   </span>
                 </td>
                 <td className="p-3 md:p-6 text-center">
-                  <span className="text-sm font-black text-theme-muted">{c._count.visits}</span>
+                  <span className="text-sm font-bold text-theme-muted">{c._count.visits}</span>
                 </td>
                 <td className="p-3 md:p-6 text-center">
-                  <span className="text-sm font-black text-emerald-500">{c._count.conversions}</span>
+                  <span className="text-sm font-bold text-emerald-500">{c._count.conversions}</span>
                 </td>
                 <td className="p-3 md:p-6">
                   <span className={`px-2 py-1 text-[8px] font-black uppercase tracking-widest ${c.active ? 'bg-emerald-500/10 text-emerald-500' : 'bg-red-500/10 text-red-500'}`}>
@@ -245,8 +245,8 @@ export const AdminAmbassadors: React.FC = () => {
                   <Award className="text-brand-tactical" size={24} strokeWidth={1.5} />
                 </div>
                 <div>
-                  <h2 className="text-2xl font-black uppercase italic tracking-tighter text-theme-text">Nova Campanha</h2>
-                  <p className="text-[10px] font-black uppercase tracking-[0.2em] opacity-40">Engenharia de Escala e Referral</p>
+                  <h2 className="text-2xl font-bold uppercase text-theme-text">Nova Campanha</h2>
+                  <p className="text-[10px] font-bold uppercase tracking-[0.2em] opacity-40">Engenharia de Escala e Referral</p>
                 </div>
               </div>
               <button onClick={() => setIsModalOpen(false)} className="p-3 hover:bg-theme-bg-muted rounded-full transition-all text-theme-muted"><X size={24} /></button>
@@ -255,18 +255,18 @@ export const AdminAmbassadors: React.FC = () => {
             {/* Content */}
             <form id="campaign-form" onSubmit={handleCreate} className="flex-1 overflow-y-auto p-4 md:p-8 md:p-10 space-y-8 custom-scrollbar">
               <div className="space-y-2">
-                <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest block mb-2 opacity-60 italic">Nome da Campanha</label>
+                <label className="text-[8px] font-bold text-theme-muted uppercase tracking-widest block mb-2 opacity-60 ">Nome da Campanha</label>
                 <input 
                   type="text" required
                   value={formData.name}
                   onChange={e => setFormData({...formData, name: e.target.value})}
-                  className="w-full bg-theme-bg-muted border border-theme-border p-4 text-[10px] text-theme-text font-black outline-none focus:border-brand-tactical rounded-xl uppercase"
+                  className="w-full bg-theme-bg-muted border border-theme-border p-4 text-[10px] text-theme-text font-bold outline-none focus:border-brand-tactical rounded-xl uppercase"
                   placeholder="Ex: Verão 2026"
                 />
               </div>
 
               <div className="space-y-2">
-                <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest block mb-2 opacity-60 italic">Slug URL</label>
+                <label className="text-[8px] font-bold text-theme-muted uppercase tracking-widest block mb-2 opacity-60 ">Slug URL</label>
                 <input 
                   type="text" required
                   value={formData.slug}
@@ -277,12 +277,12 @@ export const AdminAmbassadors: React.FC = () => {
               </div>
 
               <div className="space-y-2">
-                <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest block mb-2 opacity-60 italic">Embaixador Responsável</label>
+                <label className="text-[8px] font-bold text-theme-muted uppercase tracking-widest block mb-2 opacity-60 ">Embaixador Responsável</label>
                 <select 
                   required
                   value={formData.ownerId}
                   onChange={e => setFormData({...formData, ownerId: e.target.value})}
-                  className="w-full bg-theme-bg-muted border border-theme-border p-4 text-[10px] text-theme-text font-black outline-none focus:border-brand-tactical rounded-xl cursor-pointer"
+                  className="w-full bg-theme-bg-muted border border-theme-border p-4 text-[10px] text-theme-text font-bold outline-none focus:border-brand-tactical rounded-xl cursor-pointer"
                 >
                   <option value="">Selecione um usuário...</option>
                   {users.map(u => (
@@ -293,23 +293,23 @@ export const AdminAmbassadors: React.FC = () => {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-6">
                 <div className="space-y-2">
-                  <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest block mb-2 opacity-60 italic">Tipo de Recompensa</label>
+                  <label className="text-[8px] font-bold text-theme-muted uppercase tracking-widest block mb-2 opacity-60 ">Tipo de Recompensa</label>
                   <select 
                     value={formData.rewardType}
                     onChange={e => setFormData({...formData, rewardType: e.target.value})}
-                    className="w-full bg-theme-bg-muted border border-theme-border p-4 text-[10px] text-theme-text font-black outline-none focus:border-brand-tactical rounded-xl cursor-pointer"
+                    className="w-full bg-theme-bg-muted border border-theme-border p-4 text-[10px] text-theme-text font-bold outline-none focus:border-brand-tactical rounded-xl cursor-pointer"
                   >
                     <option value="CREDIT">Crédito (Loja)</option>
                     <option value="CASH">Dinheiro (PIX)</option>
                   </select>
                 </div>
                 <div className="space-y-2">
-                  <label className="text-[8px] font-black text-theme-muted uppercase tracking-widest block mb-2 opacity-60 italic">Valor (R$)</label>
+                  <label className="text-[8px] font-bold text-theme-muted uppercase tracking-widest block mb-2 opacity-60 ">Valor (R$)</label>
                   <input 
                     type="number" required
                     value={formData.rewardValue}
                     onChange={e => setFormData({...formData, rewardValue: Number(e.target.value)})}
-                    className="w-full bg-theme-bg-muted border border-theme-border p-4 text-[10px] text-brand-tactical font-black outline-none focus:border-brand-tactical rounded-xl"
+                    className="w-full bg-theme-bg-muted border border-theme-border p-4 text-[10px] text-brand-tactical font-bold outline-none focus:border-brand-tactical rounded-xl"
                   />
                 </div>
               </div>
@@ -317,7 +317,7 @@ export const AdminAmbassadors: React.FC = () => {
               {/* Seleção de Categorias/Serviços */}
               <div className="space-y-6 pt-4 border-t border-theme-border">
                 <div>
-                  <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-theme-text mb-4">Escopo da Campanha</h3>
+                  <h3 className="text-[10px] font-bold uppercase tracking-[0.2em] text-theme-text mb-4">Escopo da Campanha</h3>
                   <p className="text-[9px] text-theme-muted uppercase tracking-wider mb-6 opacity-60">Selecione as categorias ou serviços que ativam a recompensa</p>
                 </div>
 
@@ -352,7 +352,7 @@ export const AdminAmbassadors: React.FC = () => {
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
                           <div className={`w-2 h-2 rounded-full ${isCategorySelected ? 'bg-brand-tactical' : 'bg-zinc-800'}`} />
-                          <span className="text-[10px] font-black uppercase tracking-widest text-theme-text italic">{category}</span>
+                          <span className="text-[10px] font-bold uppercase tracking-widest text-theme-text ">{category}</span>
                         </div>
                         <button 
                           type="button"
@@ -418,11 +418,11 @@ export const AdminAmbassadors: React.FC = () => {
 
             {/* Footer */}
             <div className="p-4 md:p-8 md:p-10 bg-theme-bg-muted border-t border-theme-border flex gap-4 shrink-0 rounded-2xl">
-              <button type="button" onClick={() => setIsModalOpen(false)} className="flex-1 py-5 border border-theme-border text-[11px] font-black uppercase tracking-[0.3em] text-theme-muted hover:text-white transition-all rounded-[20px] italic">Cancelar</button>
+              <button type="button" onClick={() => setIsModalOpen(false)} className="flex-1 py-5 border border-theme-border text-[11px] font-bold uppercase tracking-[0.3em] text-theme-muted hover:text-white transition-all rounded-[20px] ">Cancelar</button>
               <button 
                 type="submit"
                 form="campaign-form"
-                className="flex-[2] py-5 bg-brand-tactical text-zinc-950 text-[11px] font-black uppercase tracking-[0.3em] shadow-2xl shadow-brand-tactical/20 hover:brightness-110 transition-all rounded-[20px] italic flex items-center justify-center gap-4"
+                className="flex-[2] py-5 bg-brand-tactical text-zinc-950 text-[11px] font-bold uppercase tracking-[0.3em] shadow-2xl shadow-brand-tactical/20 hover:brightness-110 transition-all rounded-[20px] flex items-center justify-center gap-4"
               >
                 Ativar Campanha
                 <ArrowRight size={18} strokeWidth={1.5} />

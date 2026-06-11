@@ -255,8 +255,8 @@ function App() {
           <div className="absolute inset-0 bg-brand-tactical/5 blur-[120px] rounded-full -m-64 opacity-20" />
           <div className="relative z-10 flex flex-col items-center gap-8">
             <div className="w-px h-16 bg-gradient-to-b from-transparent via-brand-tactical to-transparent" />
-            <div className="text-[18px] font-black uppercase tracking-[0.8em] italic" style={{ color: T.text }}>FOTO SEGUNDO</div>
-            <div className="text-[9px] font-black uppercase tracking-[0.4em] text-brand-tactical animate-pulse-soft">Sincronizando Rede Global</div>
+            <div className="text-[18px] font-bold uppercase tracking-[0.8em] " style={{ color: T.text }}>FOTO SEGUNDO</div>
+            <div className="text-[9px] font-bold uppercase tracking-[0.4em] text-brand-tactical animate-pulse-soft">Sincronizando Rede Global</div>
             <div className="w-px h-16 bg-gradient-to-t from-transparent via-brand-tactical to-transparent" />
           </div>
         </div>
