@@ -26,7 +26,7 @@ export interface EventItem {
   city?: string | null;
   ownerId?: string | null;
   isPublicCall?: boolean;
-  type: "ALBUM_FULL" | "PHOTO_MARKETPLACE" | "FOTO_POINT";
+  type: "ALBUM_FULL" | "PHOTO_MARKETPLACE" | "FOTO_POINT" | "WORLD_CUP";
   priceUnit: number | null;
   pricePerPhoto?: number | null;
   splitOwnerPct?: number | null;

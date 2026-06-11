@@ -168,7 +168,7 @@ interface EventData {
   isComingSoon?: boolean;
   priceUnit?: number;
   pendingOrderId?: string | null;
-  type?: 'ALBUM_FULL' | 'PHOTO_MARKETPLACE' | 'FOTO_POINT' | 'FLASH_EVENT' | 'SCHOOL' | 'SPORTS';
+  type?: 'ALBUM_FULL' | 'PHOTO_MARKETPLACE' | 'FOTO_POINT' | 'FLASH_EVENT' | 'SCHOOL' | 'SPORTS' | 'WORLD_CUP';
   category?: string;
   pricePerPhoto?: number;
   isUnitSale?: boolean;
@@ -360,7 +360,7 @@ export default function EventPage() {
       return;
     }
 
-    const isMarketplace = event?.type === 'PHOTO_MARKETPLACE' || event?.type === 'FOTO_POINT';
+    const isMarketplace = event?.type === 'PHOTO_MARKETPLACE' || event?.type === 'FOTO_POINT' || event?.type === 'WORLD_CUP';
     const deliveryUrl = isMarketplace 
       ? `${window.location.origin}/e/${event?.slug || event?.id}`
       : `${window.location.origin}/delivery/${event?.id}`;
@@ -476,13 +476,13 @@ export default function EventPage() {
           setStep("countdown");
         } else if (eventData.isPrivate && !hasAccess) {
           setStep("denied");
-        } else if ((eventData.paywall && !eventData.paywall.active) || hasAccess || eventData.type === 'PHOTO_MARKETPLACE' || eventData.type === 'FOTO_POINT' || eventData.type === 'FLASH_EVENT') {
+        } else if ((eventData.paywall && !eventData.paywall.active) || hasAccess || eventData.type === 'PHOTO_MARKETPLACE' || eventData.type === 'FOTO_POINT' || eventData.type === 'FLASH_EVENT' || eventData.type === 'WORLD_CUP') {
           setStep("success"); 
         } else {
           setStep("paywall");
         }
 
-        if (eventData.type === 'PHOTO_MARKETPLACE' || eventData.type === 'FOTO_POINT' || eventData.type === 'FLASH_EVENT' || eventData.type === 'ALBUM_FULL') {
+        if (eventData.type === 'PHOTO_MARKETPLACE' || eventData.type === 'FOTO_POINT' || eventData.type === 'FLASH_EVENT' || eventData.type === 'ALBUM_FULL' || eventData.type === 'WORLD_CUP') {
           const mOid = localStorage.getItem(`fs_order_${slug}`);
           const mParams = { ...params, ...(mOid ? { orderId: mOid } : {}) };
           api.get(`/marketplace/events/${eventData.id}/media`, { params: mParams })
@@ -676,7 +676,7 @@ export default function EventPage() {
   if (!event) return null;
 
   const paid = step === "success";
-  const isMarketplace = event.type === 'PHOTO_MARKETPLACE' || event.type === 'FOTO_POINT' || event.type === 'FLASH_EVENT';
+  const isMarketplace = event.type === 'PHOTO_MARKETPLACE' || event.type === 'FOTO_POINT' || event.type === 'FLASH_EVENT' || event.type === 'WORLD_CUP';
 
   const isEventOver = eventStatus.phase === 'ended' || eventStatus.phase === 'archived';
   const qrOpen = eventStatus.qrOpen;
@@ -782,6 +782,7 @@ return (
                 <span className="text-[9px] font-bold text-brand-tactical uppercase tracking-[0.4em] ">
                   {step === 'countdown' ? "Contagem Regressiva" : (
                     event.type === 'FOTO_POINT' ? "Tactical Point Operation" : 
+                    event.type === 'WORLD_CUP' ? "Jogos da Copa - Moments" :
                     event.type === 'PHOTO_MARKETPLACE' ? "Live Print System" : 
                     "Premium Event Delivery"
                   )}
@@ -842,7 +843,7 @@ return (
                     }
                   }
                   
-                  if (!text && event.type === 'FOTO_POINT') {
+                  if (!text && (event.type === 'FOTO_POINT' || event.type === 'WORLD_CUP')) {
                     text = "Participe deste ensaio aberto. Capture memórias profissionais em um cenário exclusivo.";
                   }
 
@@ -915,12 +916,12 @@ return (
             <div className="flex-1 px-4 md:px-8 lg:px-12 pb-40 pt-2 space-y-8">
               
               {/* Bloco de Informações / Roteiro (Prioridade) */}
-              {(event.itinerary || event.type === 'FOTO_POINT') && (
+              {(event.itinerary || event.type === 'FOTO_POINT' || event.type === 'WORLD_CUP') && (
                 <div className="max-w-4xl animate-in fade-in slide-in-from-bottom-8 duration-1000 space-y-8">
 
                   {/* Descrição movida para o header */}
                   <div className="space-y-3">
-                    {event.type === 'FOTO_POINT' && (
+                    {(event.type === 'FOTO_POINT' || event.type === 'WORLD_CUP') && (
                       <div className="flex flex-wrap gap-5 pt-2">
                         <div className="flex items-center gap-2">
                           <ShieldCheck size={13} className="text-brand-tactical" />

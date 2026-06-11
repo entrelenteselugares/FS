@@ -171,11 +171,17 @@ export const HomePage = () => {
   const [sortBy, setSortBy]             = useState(() => searchParams.get('sort') || sessionStorage.getItem('hp_sort') || "");
   const [availableCities, setAvailableCities] = useState<string[]>([]);
   const [showMobileFilters, setShowMobileFilters] = useState(false);
+  const [worldCupEvents, setWorldCupEvents] = useState<Event[]>([]);
 
   useEffect(() => {
     API.get("/public/events/cities")
       .then(res => setAvailableCities(res.data.cities || []))
       .catch(console.error);
+
+    // Busca os eventos fixos da Copa do Mundo
+    API.get("/public/events", { params: { type: "WORLD_CUP", page: 1 } })
+      .then(res => setWorldCupEvents(res.data.events || []))
+      .catch(() => {});
   }, []);
 
   useEffect(() => {
@@ -350,6 +356,7 @@ export const HomePage = () => {
                     >
                       <option value="" className="bg-theme-bg">🏷️ Categorias</option>
                       <option value="ALBUM_FULL" className="bg-theme-bg">Álbuns</option>
+                      <option value="WORLD_CUP" className="bg-theme-bg">Copa do Mundo</option>
                       <option value="PHOTO_MARKETPLACE" className="bg-theme-bg">Live Print</option>
                       <option value="FOTO_POINT" className="bg-theme-bg">Foto Point</option>
                       <option value="FLASH_EVENT" className="bg-theme-bg">Flash</option>
@@ -420,6 +427,7 @@ export const HomePage = () => {
                 >
                   <option value="" className="bg-theme-bg text-theme-text">Todas as Categorias</option>
                   <option value="ALBUM_FULL" className="bg-theme-bg text-theme-text">Álbum Completo</option>
+                  <option value="WORLD_CUP" className="bg-theme-bg text-theme-text">Copa do Mundo</option>
                   <option value="PHOTO_MARKETPLACE" className="bg-theme-bg text-theme-text">Live Print</option>
                   <option value="FOTO_POINT" className="bg-theme-bg text-theme-text">Foto Point</option>
                   <option value="FLASH_EVENT" className="bg-theme-bg text-theme-text">Flash Event / Venda Direta</option>
@@ -440,6 +448,26 @@ export const HomePage = () => {
               </div>
             </div>
           </div>
+
+          {/* SESSÃO FIXA DA COPA DO MUNDO (Se houver jogos configurados) */}
+          {worldCupEvents.length > 0 && (
+            <div className="mb-12 px-4 md:px-8 pt-4">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-8 h-8 rounded-full bg-brand-tactical/10 border border-brand-tactical flex items-center justify-center shadow-[0_0_15px_rgba(133,185,172,0.3)]">
+                  <span className="text-brand-tactical text-xs">⚽</span>
+                </div>
+                <div>
+                  <h2 className="text-xl md:text-2xl font-black font-heading text-white uppercase m-0 leading-tight">Copa do Mundo</h2>
+                  <p className="text-[10px] md:text-xs font-bold text-brand-tactical uppercase tracking-widest mt-1">Compartilhe os momentos do jogo!</p>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                {worldCupEvents.map(ev => (
+                  <EventCard key={ev.id} event={ev} onClick={() => navigate(`/e/${ev.slug || ev.id}`)} />
+                ))}
+              </div>
+            </div>
+          )}
 
           {loading ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-1">

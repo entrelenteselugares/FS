@@ -37,7 +37,7 @@ interface Event {
   captacao?: { nome: string } | null;
   edicao?: { nome: string } | null;
   isPrivate: boolean;
-  type: 'ALBUM_FULL' | 'PHOTO_MARKETPLACE' | 'SCHOOL' | 'SPORTS';
+  type: 'ALBUM_FULL' | 'PHOTO_MARKETPLACE' | 'SCHOOL' | 'SPORTS' | 'WORLD_CUP';
   preSaleEnabled?: boolean;
   postSaleEnabled?: boolean;
   pricePerPhoto?: number;
@@ -179,7 +179,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
     isUnitSale: boolean;
     allowFreeDownload: boolean;
     priceUnit: number;
-    type: 'ALBUM_FULL' | 'PHOTO_MARKETPLACE' | 'SCHOOL' | 'SPORTS';
+    type: 'ALBUM_FULL' | 'PHOTO_MARKETPLACE' | 'SCHOOL' | 'SPORTS' | 'WORLD_CUP';
     preSaleEnabled: boolean;
     postSaleEnabled: boolean;
     pricePerPhoto: number;
@@ -860,6 +860,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
                         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                           <button type="button" onClick={() => setFormData({ ...formData, type: 'ALBUM_FULL' })} className={`py-4 border text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest transition-all rounded-xl italic ${formData.type === 'ALBUM_FULL' ? 'bg-brand-tactical border-brand-tactical text-zinc-950 shadow-lg shadow-brand-tactical/20' : 'bg-theme-bg-muted border-theme-border text-theme-muted hover:border-theme-text'}`}>Social</button>
                           <button type="button" onClick={() => setFormData({ ...formData, type: 'PHOTO_MARKETPLACE' })} className={`py-4 border text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest transition-all rounded-xl italic ${formData.type === 'PHOTO_MARKETPLACE' ? 'bg-brand-tactical border-brand-tactical text-zinc-950 shadow-lg shadow-brand-tactical/20' : 'bg-theme-bg-muted border-theme-border text-theme-muted hover:border-theme-text'}`}>Marketplace</button>
+                          <button type="button" onClick={() => setFormData({ ...formData, type: 'WORLD_CUP' })} className={`py-4 border text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest transition-all rounded-xl italic ${formData.type === 'WORLD_CUP' ? 'bg-brand-tactical border-brand-tactical text-zinc-950 shadow-lg shadow-brand-tactical/20' : 'bg-theme-bg-muted border-theme-border text-theme-muted hover:border-theme-text'}`}>Copa do Mundo</button>
                           <button type="button" onClick={() => setFormData({ ...formData, type: 'SCHOOL' })} className={`py-4 border text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest transition-all rounded-xl italic ${formData.type === 'SCHOOL' ? 'bg-brand-tactical border-brand-tactical text-zinc-950 shadow-lg shadow-brand-tactical/20' : 'bg-theme-bg-muted border-theme-border text-theme-muted hover:border-theme-text'}`}>Escolar</button>
                           <button type="button" onClick={() => setFormData({ ...formData, type: 'SPORTS' })} className={`py-4 border text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest transition-all rounded-xl italic ${formData.type === 'SPORTS' ? 'bg-brand-tactical border-brand-tactical text-zinc-950 shadow-lg shadow-brand-tactical/20' : 'bg-theme-bg-muted border-theme-border text-theme-muted hover:border-theme-text'}`}>Esportes</button>
                         </div>
