@@ -374,9 +374,6 @@ export const AlbumTorcidaPage = () => {
 
   return (
     <div style={{ background: "#050e08", minHeight: "100vh", color: "white", fontFamily: "sans-serif", paddingBottom: 120 }}>
-      {/* ── BANNER AO VIVO ─────────────────────────────────────────────────── */}
-      <WorldCupLiveBanner alwaysShow />
-
       {/* ── HERO / HEADER ──────────────────────────────────────────────────── */}
       <div
         style={{
