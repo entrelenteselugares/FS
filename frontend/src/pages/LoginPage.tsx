@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { isAxiosError } from "axios";
 import { useNavigate, Link, useSearchParams } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
@@ -24,10 +24,27 @@ export const LoginPage: React.FC = () => {
   const [error,     setError]     = useState("");
   const [loading,   setLoading]   = useState(false);
 
-  const { login, loginWithGoogle } = useAuth();
+  const { user, login, loginWithGoogle } = useAuth();
   const navigate        = useNavigate();
   const [searchParams]  = useSearchParams();
   const { toggle, isDark } = useTheme();
+
+  useEffect(() => {
+    if (user) {
+      const returnUrl = searchParams.get("returnUrl");
+      if (returnUrl) {
+        navigate(returnUrl);
+        return;
+      }
+      const pending = localStorage.getItem("pending_purchase_event_id");
+      if (pending) {
+        localStorage.removeItem("pending_purchase_event_id");
+        navigate(`/e/${pending}`);
+        return;
+      }
+      navigate(ROLE_DESTINATIONS[user.role] ?? "/");
+    }
+  }, [user, navigate, searchParams]);
 
 
   const handleSubmit = async (e: React.FormEvent) => {
