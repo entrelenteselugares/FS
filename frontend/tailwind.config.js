@@ -39,9 +39,9 @@ export default {
         }
       },
       fontFamily: {
-        sans:    ['Inter', 'sans-serif'],
-        display: ['Poppins', 'sans-serif'],
-        heading: ['Poppins', 'sans-serif'],
+        sans:    ['"Helvetica Neue"', 'Helvetica', 'Arial', 'sans-serif'],
+        display: ['"Helvetica Neue"', 'Helvetica', 'Arial', 'sans-serif'],
+        heading: ['"Helvetica Neue"', 'Helvetica', 'Arial', 'sans-serif'],
       },
       animation: {
         'fade-in': 'fadeIn 0.5s ease-out',
