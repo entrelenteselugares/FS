@@ -149,3 +149,37 @@
 **Goal:** Depurar o código, remover arquivos e dependências desnecessárias, aplicar code-splitting (lazy loading) e reduzir o peso geral da aplicação para máxima velocidade de carregamento.
 **Depends on:** Phase 66
 **Status:** Completed
+
+---
+
+## Milestone v15.0: Native Mobile Experience & App Store Prep
+
+### Phase 68: Guest Mode & Auth Wall Deferral
+**Goal:** Permitir que convidados visualizem galerias de eventos livremente, exibindo o Auth Wall apenas no momento da adição ao carrinho ou cofre.
+**Requirements:** AUTH-01
+**Depends on:** None
+**Status:** Not Started
+
+### Phase 69: Social Logins (Google & Apple)
+**Goal:** Implementar o Google Sign-In e Apple Sign-In integrados ao Supabase Auth para login instantâneo.
+**Requirements:** AUTH-02, AUTH-03
+**Depends on:** Phase 68
+**Status:** Not Started
+
+### Phase 70: Checkout Frictionless
+**Goal:** Melhorar a experiência de pagamento com carrinho persistente, empty states inteligentes e integração com carteiras digitais (Google Pay/Apple Pay).
+**Requirements:** CHECK-01, CHECK-02, CHECK-03
+**Depends on:** None
+**Status:** Not Started
+
+### Phase 71: App-Like Mobile Navigation
+**Goal:** Substituir o menu lateral/hambúrguer por uma Bottom Navigation Bar fixa e implementar transições de tela suaves para criar a sensação de aplicativo nativo.
+**Requirements:** NAV-01, NAV-02
+**Depends on:** None
+**Status:** Not Started
+
+### Phase 72: Push Notifications Integration
+**Goal:** Adicionar permissões nativas e infraestrutura (Firebase/Capacitor Push) para receber alertas da plataforma (ex: Álbum da Torcida).
+**Requirements:** PUSH-01, PUSH-02
+**Depends on:** None
+**Status:** Not Started

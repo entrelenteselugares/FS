@@ -24,3 +24,13 @@
 
 | Requirement | Phase | Goal |
 |---|---|---|
+| AUTH-01 | Phase 68 | Visualização de galerias sem login forçado (Guest Mode) |
+| AUTH-02 | Phase 69 | Login via Google Sign-In |
+| AUTH-03 | Phase 69 | Login via Apple Sign-In |
+| CHECK-01 | Phase 70 | Carrinho persistente |
+| CHECK-02 | Phase 70 | Empty states com recomendações |
+| CHECK-03 | Phase 70 | Integração com Google Pay e Apple Pay |
+| NAV-01 | Phase 71 | Bottom Navigation Bar para mobile |
+| NAV-02 | Phase 71 | Transições fluidas (sliding) estilo app nativo |
+| PUSH-01 | Phase 72 | Permissão de Push Notifications nativas |
+| PUSH-02 | Phase 72 | Recepção de alertas Firebase/Capacitor Push |
