@@ -25,7 +25,7 @@ A plataforma Foto Segundo é um ecossistema **Enterprise** estruturado em 9 cama
 - **Core API (Backend):** Hono + Express (Transição Híbrida) + TypeScript.
 - **Client App (Frontend):** React + Vite (PWA com Service Worker) e Motor UI Multi-Vertical.
 - **IoT Agent (Printer):** Agente Node.js local.
-- **Notification Engine:** WhatsApp (Baileys), E-mail (SMTP/Resend).
+- **Notification Engine:** WhatsApp (Baileys), E-mail (SMTP/Resend), e Firebase Cloud Messaging (Web Push).
 
 ---
 
@@ -93,7 +93,7 @@ O crescimento exigiu adaptações críticas à infraestrutura serverless origina
 
 ### 📸 Client-Side Photo Compositing & Printing Engine
 
-Composição vetorial em iframe invisível no navegador para impressão de molduras nativas em papel fotográfico (ex: Epson L5290).
+Composição vetorial em iframe invisível no navegador para impressão de molduras nativas em papel fotográfico (ex: Epson L5290). Integração via PWA (`capture="environment"`) permite acesso direto à câmera nativa do device, transformando a web-app em uma experiência sem fricção.
 
 ### 💰 Growth Engine — Cupom & Afiliado
 

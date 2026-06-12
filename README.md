@@ -8,7 +8,7 @@
 
 **Foto Segundo** é uma plataforma phygital de elite que redefine a entrega de fotografia profissional. Unindo a estética _Midnight Luxury_ com automação industrial de impressão e um motor completo de Growth & Retention, transformamos pixels em memórias físicas tangíveis — e conversões em receita recorrente.
 
-A arquitetura do sistema agora também suporta múltiplos verticais de negócios (Gastronomia, Náutico, Varejo) orquestrados por um robusto Painel de Controle 4-Tier (Master, Partner, Consumer, Ambassador).
+A arquitetura do sistema agora suporta múltiplos verticais de negócios (Gastronomia, Náutico, Varejo) orquestrados por um robusto Painel de Controle 4-Tier. A plataforma também funciona como um Progressive Web App (PWA) Mobile-First, com navegação app-like, acesso nativo à câmera e notificações Push.
 
 ## Installation
 
