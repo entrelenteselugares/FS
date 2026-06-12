@@ -31,7 +31,7 @@ export const BottomNav: React.FC = () => {
     "/meus-albuns/",
     "/admin",
     "/profissional",
-    "/franquia",
+    // "/franquia",
     "/unidade-fixa",
     // "/minha-conta",
   ];
@@ -215,6 +215,7 @@ export const BottomNav: React.FC = () => {
                 location.pathname.startsWith("/profissional") || 
                 location.pathname.startsWith("/unidade-fixa") || 
                 location.pathname.startsWith("/admin") || 
+                location.pathname.startsWith("/franquia") || 
                 (location.pathname === "/minha-conta" && s !== "wallet" && s !== "pedidos")
                   ? "text-emerald-500" 
                   : "text-theme-text opacity-40"
@@ -267,7 +268,7 @@ export const BottomNav: React.FC = () => {
               <div className="flex-1 min-w-0">
                 <p className="text-xs font-bold uppercase truncate text-white">{user.nome}</p>
                 <p className="text-[9px] font-bold uppercase tracking-wider text-emerald-500/80">
-                  {user.role === "PROFISSIONAL" ? "Profissional da Rede" : user.role === "ADMIN" ? "Administrador" : "Cliente"}
+                  {user.role === "PROFISSIONAL" ? "Profissional da Rede" : user.role === "ADMIN" ? "Administrador" : user.role === "FRANCHISEE" ? "Franqueado" : user.role === "UNIDADE" ? "Unidade Fixa" : user.role === "CARTORIO" ? "Cartório" : "Cliente"}
                 </p>
               </div>
             </div>

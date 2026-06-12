@@ -27,6 +27,7 @@ interface DashboardLayoutProps {
   children: React.ReactNode;
   navItems: NavItem[];
   title?: string;
+  hideMobileNav?: boolean;
   /** @deprecated variante única: sempre "tactical" (brand teal). Ignorado. */
   variant?: string;
 }
@@ -376,6 +377,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   children,
   navItems,
   title,
+  hideMobileNav,
 }) => {
   // useAuth() was used for the top nav user info, now removed.
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -475,11 +477,12 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
         {/* Mobile App Header Removido - Agora na parte inferior */}
 
         {/* Scrollable page content */}
-        <main style={{ flex: 1, overflowY: "auto", background: T.bg }} className="pb-28 lg:pb-0 relative">
+        <main style={{ flex: 1, overflowY: "auto", background: T.bg }} className={`${hideMobileNav ? 'pb-20' : 'pb-28 lg:pb-0'} relative`}>
           {children}
         </main>
 
         {/* ── Mobile Bottom Nav (Super App Style) ── */}
+        {!hideMobileNav && (
         <nav className="flex lg:hidden fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md bg-[var(--bg)]/90 backdrop-blur-xl border-t border-theme-border/10 z-[100] px-3 py-3 items-center justify-around pb-safe">
           {/* Render isPrimaryMobile items */}
           {navItems.filter(item => item.isPrimaryMobile).map((item, idx) => {
@@ -505,6 +508,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
             <span className="text-[7.5px] font-bold uppercase truncate max-w-[60px]">Menu</span>
           </button>
         </nav>
+        )}
       </div>
 
       {/* ── Responsive CSS via <style> ── */}

@@ -24,7 +24,7 @@ export const LoginPage: React.FC = () => {
   const [error,     setError]     = useState("");
   const [loading,   setLoading]   = useState(false);
 
-  const { login, loginWithGoogle, loginWithApple } = useAuth();
+  const { login, loginWithGoogle } = useAuth();
   const navigate        = useNavigate();
   const [searchParams]  = useSearchParams();
   const { toggle, isDark } = useTheme();
@@ -153,7 +153,7 @@ export const LoginPage: React.FC = () => {
               <Button 
                 type="button" 
                 onClick={loginWithGoogle}
-                variant="outline"
+                variant="secondary"
                 fullWidth
                 className="bg-white text-black hover:bg-gray-100 border-gray-300 h-12 flex items-center justify-center relative"
               >
@@ -164,19 +164,6 @@ export const LoginPage: React.FC = () => {
                   <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
                 </svg>
                 <span className="font-bold text-xs uppercase tracking-wider">Entrar com Google</span>
-              </Button>
-              
-              <Button 
-                type="button" 
-                onClick={loginWithApple}
-                variant="outline"
-                fullWidth
-                className="bg-black text-white hover:bg-gray-900 border-black h-12 flex items-center justify-center relative"
-              >
-                <svg viewBox="0 0 24 24" width="18" height="18" xmlns="http://www.w3.org/2000/svg" className="absolute left-4">
-                  <path d="M16.36 10.15c-.04-2.81 2.3-4.17 2.4-4.23-1.31-1.92-3.34-2.18-4.06-2.21-1.74-.18-3.41 1.03-4.3 1.03-.9 0-2.26-1-3.7-1-1.9 0-3.66 1.1-4.63 2.8C-.06 10.08 1.11 14.54 3.01 17.27c.92 1.33 2 2.82 3.44 2.76 1.4-.06 1.93-.9 3.63-.9 1.68 0 2.18.9 3.63.88 1.5-.02 2.44-1.34 3.35-2.67 1.06-1.55 1.5-3.05 1.53-3.13-.03-.02-2.68-1.03-2.73-4.06zM13.23 3.33c.77-.93 1.28-2.22 1.14-3.5-.12.01-.25.02-.38.02-1.36 0-2.76-.74-3.57-1.73-.7-.85-1.3-2.16-1.12-3.46.15-.01.29-.02.44-.02 1.41 0 2.74.78 3.49 1.76z" fill="currentColor"/>
-                </svg>
-                <span className="font-bold text-xs uppercase tracking-wider">Entrar com Apple</span>
               </Button>
             </div>
 

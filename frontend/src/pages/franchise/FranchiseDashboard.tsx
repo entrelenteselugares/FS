@@ -206,7 +206,7 @@ const FranchiseDashboard: React.FC = () => {
   };
 
   return (
-    <DashboardLayout title="Gestão de Franquia" navItems={navItems}>
+    <DashboardLayout title="Gestão de Franquia" navItems={navItems} hideMobileNav={true}>
       {loading ? (
         <div className="flex items-center justify-center min-h-[60vh]">
           <div className="text-[10px] font-bold text-theme-muted uppercase tracking-[0.5em] animate-pulse">

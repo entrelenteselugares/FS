@@ -216,7 +216,7 @@ p {
 /* ─── FORMS E INPUTS (Consistência Absoluta) ────────────────────────────── */
 .fs-input {
   width: 100%;
-  height: 3rem; /* 48px consistente */
+  height: 2.75rem; /* 44px (antes era 48px) */
   background-color: var(--bg-field);
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
@@ -231,7 +231,7 @@ p {
 @media (max-width: 768px) {
   .fs-input {
     font-size: 16px;
-    height: 3.5rem; /* Maior área de toque no mobile */
+    height: 3rem; /* Maior área de toque no mobile (antes era 3.5rem) */
   }
 }
 
