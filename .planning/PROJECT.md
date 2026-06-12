@@ -34,7 +34,15 @@ To be the national standard for phygital (physical + digital) photography experi
 
 Shipped **v13.0 Scale & Optimization**. The platform has undergone optimization and scale preparation, including bidirectional WhatsApp AI attendant integration, advanced professional service customization, vault configuration features, and system-wide UI polish. The platform is stable and fully validated in production.
 
-## Current Milestone: None (All planned milestones completed)
+## Current Milestone: v15.0 Native Mobile Experience & App Store Prep
+
+**Goal:** Transformar a interface e os fluxos do Foto Segundo para entregar uma experiência premium de aplicativo nativo no celular, preparando o terreno para o empacotamento com Capacitor e publicação na Google Play Store.
+
+**Target features:**
+- Autenticação Nativa & Guest Mode
+- Checkout Frictionless (Persistent Cart, GPay/Apple Pay, Empty States)
+- Navegação App-Like (Bottom Bar, Transitions)
+- Engajamento via Push Notifications
 
 <details>
 <summary>Archived Milestones</summary>

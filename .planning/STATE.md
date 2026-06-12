@@ -1,16 +1,16 @@
 ---
 gsd_state_version: 1.0
-milestone: v14.x
-milestone_name: Post-Launch Optimization
-status: between_phases
-last_updated: "2026-06-12T00:48:00Z"
+milestone: v15.0
+milestone_name: Native Mobile Experience & App Store Prep
+status: planning
+last_updated: "2026-06-12T01:21:28.845Z"
 last_activity: 2026-06-12
 progress:
-  total_phases: 25
-  completed_phases: 25
-  total_plans: 13
-  completed_plans: 13
-  percent: 100
+  total_phases: 0
+  completed_phases: 0
+  total_plans: 0
+  completed_plans: 0
+  percent: 0
 ---
 
 # Project State: Foto Segundo (Stable / Launch Ready)
@@ -75,9 +75,10 @@ Milestone v13.0-SCALE (Scale & Optimization) is fully shipped and validated. All
 
 ## Current Position
 
-Phase: 67 (bundle-optimization) — COMPLETED ✅
-Status: Between phases — ready for next milestone
-Last activity: 2026-06-12
+Phase: Not started (defining requirements)
+Plan: —
+Status: Defining requirements
+Last activity: 2026-06-12 — Milestone v15.0 started
 
 ## Backlog (Post-Launch)
 
