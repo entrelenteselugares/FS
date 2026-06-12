@@ -545,6 +545,36 @@ export default function ClienteArea() {
  </div>
  )}
 
+  {/* ── MOBILE HUB NAVIGATION (Fase 70) ── */}
+  <div className="lg:hidden mb-6 -mx-4 px-4 overflow-x-auto hide-scrollbar">
+    <div className="flex gap-2 min-w-max pb-2">
+      {NAV_ITEMS.map((item, idx) => {
+        if (item.subItems) {
+          return item.subItems.map((sub, sIdx) => (
+            <button
+              key={`${idx}-${sIdx}`}
+              onClick={sub.onClick}
+              className={`flex items-center gap-2 px-4 py-2.5 rounded-full border text-[10px] font-bold uppercase tracking-widest transition-all ${sub.isActive ? "bg-brand-tactical text-black border-brand-tactical" : "bg-theme-bg-muted text-theme-muted border-theme-border hover:border-brand-tactical"}`}
+            >
+              {sub.icon}
+              <span>{sub.label}</span>
+            </button>
+          ));
+        }
+        return (
+          <button
+            key={idx}
+            onClick={item.onClick}
+            className={`flex items-center gap-2 px-4 py-2.5 rounded-full border text-[10px] font-bold uppercase tracking-widest transition-all ${item.isActive ? "bg-brand-tactical text-black border-brand-tactical" : "bg-theme-bg-muted text-theme-muted border-theme-border hover:border-brand-tactical"}`}
+          >
+            {item.icon}
+            <span>{item.label}</span>
+          </button>
+        );
+      })}
+    </div>
+  </div>
+
  <AnimatePresence mode="wait">
  <motion.div
  key={activeTab}

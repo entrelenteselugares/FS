@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
-import { T, BtnGhost } from "../lib/theme";
+import { T } from "../lib/theme";
 import { ThemeToggle } from "./ThemeToggle";
 import { NotificationBell } from "./notifications/NotificationBell";
-import { ShieldCheck, Menu } from "lucide-react";
+import { ShieldCheck } from "lucide-react";
 import '../styles/mobile-fix.css';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -34,12 +34,6 @@ interface DashboardLayoutProps {
 
 // ─── Icons ────────────────────────────────────────────────────────────────────
 
-const CloseIcon = () => (
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-    <line x1="18" y1="6" x2="6" y2="18" />
-    <line x1="6" y1="6" x2="18" y2="18" />
-  </svg>
-);
 
 const LogoutIcon = () => (
   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
@@ -379,29 +373,14 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   title,
   hideMobileNav,
 }) => {
-  // useAuth() was used for the top nav user info, now removed.
-  const [drawerOpen, setDrawerOpen] = useState(false);
   const location = useLocation();
 
   const sidebarProps: SidebarContentProps & { currentPath: string } = {
     title,
     navItems,
-    onNavigate: () => setDrawerOpen(false),
+    onNavigate: () => {},
     currentPath: location.pathname,
   };
-
-
-
-
-  // Force close drawer on desktop
-  useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth >= 1024) setDrawerOpen(false);
-    };
-    handleResize(); // Check on mount
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
 
   return (
     <div style={{
@@ -420,56 +399,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
         <SidebarContent {...sidebarProps} />
       </aside>
 
-      {/* ── Mobile Drawer Backdrop ── */}
-      {drawerOpen && (
-        <div
-          onClick={() => setDrawerOpen(false)}
-          className="dashboard-drawer-backdrop lg:hidden"
-          style={{
-            position:   "fixed",
-            inset:      0,
-            background: "rgba(0,0,0,0.6)",
-            backdropFilter: "blur(4px)",
-            zIndex:     40,
-            display:    "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            cursor:     "pointer",
-          }}
-        >
-          <div className="flex flex-col items-center gap-4 text-theme-text opacity-40 animate-pulse md:hidden">
-            <div className="p-4 rounded-full border border-theme-border">
-              <LogoutIcon /> 
-            </div>
-            <span className="text-[10px] font-bold uppercase tracking-[0.5em]">Tocar para fechar</span>
-          </div>
-        </div>
-      )}
-
-      {/* ── Mobile Drawer ── */}
-      <aside style={{
-        position:   "fixed",
-        insetBlock:  0,
-        left:        0,
-        zIndex:      100,
-        width:       "100%",
-        height:      "calc(100% - 64px)", // leave space for bottom nav
-        top:         drawerOpen ? 0 : "100%",
-        bottom:      drawerOpen ? 0 : "auto",
-        transform:   "none",
-        transition:  "top 0.35s cubic-bezier(0.16,1,0.3,1), bottom 0.35s",
-      }} className="dashboard-drawer">
-        <div style={{ position: "absolute", top: 16, right: 16, zIndex: 1 }}>
-          <button
-            onClick={() => setDrawerOpen(false)}
-            style={{ ...BtnGhost, padding: "6px 8px" }}
-            aria-label="Fechar menu"
-          >
-            <CloseIcon />
-          </button>
-        </div>
-        <SidebarContent {...sidebarProps} />
-      </aside>
+      {/* Mobile Drawer Removido em favor da nova BottomNav App-Like e Hub do Cliente (Fase 70) */}
 
       {/* ── Main Content ── */}
       <div style={{ flex: 1, display: "flex", flexDirection: "column", minWidth: 0, overflow: "hidden" }}>
@@ -481,34 +411,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
           {children}
         </main>
 
-        {/* ── Mobile Bottom Nav (Super App Style) ── */}
-        {!hideMobileNav && (
-        <nav className="flex lg:hidden fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md bg-[var(--bg)]/90 backdrop-blur-xl border-t border-theme-border/10 z-[100] px-3 py-3 items-center justify-around pb-safe">
-          {/* Render isPrimaryMobile items */}
-          {navItems.filter(item => item.isPrimaryMobile).map((item, idx) => {
-             const active = item.isActive;
-             return (
-               <button
-                 key={idx}
-                 onClick={() => { item.onClick?.(); if (item.to) { /* We don't have navigate here directly, but DashboardLayout is inside Router, wait, useLocation but not useNavigate. Let's rely on onClick and Link if to exists */ } }}
-                 className={`flex flex-col items-center gap-1 transition-all ${active ? "text-brand-tactical" : "text-theme-text opacity-40 hover:opacity-100"}`}
-               >
-                 {item.icon}
-                 <span className="text-[7.5px] font-bold uppercase truncate max-w-[60px]">{item.label}</span>
-               </button>
-             );
-          })}
-          
-          {/* Menu Toggle Button */}
-          <button
-            onClick={() => setDrawerOpen(true)}
-            className={`flex flex-col items-center gap-1 transition-all ${drawerOpen ? "text-brand-tactical" : "text-theme-text opacity-40 hover:opacity-100"}`}
-          >
-            <Menu size={20} strokeWidth={1.5} />
-            <span className="text-[7.5px] font-bold uppercase truncate max-w-[60px]">Menu</span>
-          </button>
-        </nav>
-        )}
+        {/* Mobile Bottom Nav Removido em favor da BottomNav Global */}
       </div>
 
       {/* ── Responsive CSS via <style> ── */}
