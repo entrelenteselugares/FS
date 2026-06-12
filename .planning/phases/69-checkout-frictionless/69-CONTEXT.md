@@ -20,7 +20,8 @@
 - **Rationale:** The cart items will be stored in `localStorage` and managed by a React Context/Store. A backend PENDING order is ONLY created when the user actually navigates to the Checkout page. This is faster for the user and prevents filling the database with abandoned draft orders.
 
 ### Digital Wallets (CHECK-02)
-- **Decision:** Integrate Mercado Pago Wallet Bricks (or equivalent supported Apple/Google Pay element) since the platform already uses Mercado Pago for PIX.
+- **Decision:** Integrate Mercado Pago Wallet Bricks exclusively for **Google Pay**.
+- **Rationale:** Apple Pay requires an Apple Developer account, which the user does not have yet. We will only implement the Google Pay button via Mercado Pago.
 
 ### Empty State Tracking (CHECK-03)
 - **Decision:** Use `localStorage` to track the 3 most recently visited album IDs. This ensures the empty state suggestions work instantly, even for unauthenticated users (guests) before they login.
