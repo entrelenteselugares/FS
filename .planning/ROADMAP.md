@@ -77,33 +77,28 @@
 
 ## Backlog (v15.0 Native Mobile Experience)
 
-### Phase 68: Autenticação Expressa (Auth Wall Rápido)
+### Phase 68: Autenticação Expressa (Google Auth)
 
-**Goal:** Implementar Social Login de 1-click (Apple e Google) com redesign do modal de Auth Wall para reduzir ao máximo a fricção de entrada dos usuários no app.
-**Requirements:** AUTH-01, AUTH-02, AUTH-03
+**Goal:** Implementar Social Login de 1-click apenas com o Google, finalizando a configuração do OAuth2 para reduzir a fricção de entrada dos usuários no app.
+**Requirements:** AUTH-01
 **Depends on:** None
-**Status:** Planned
+**Status:** In Progress (Aguardando Configuração do Google Cloud Console)
 
-### Phase 69: Checkout Frictionless
-
-**Goal:** Integrar persistência robusta de carrinho e estados vazios sugeridos, finalizando com integração de 1-click payment (Google Pay / Apple Pay).
-**Requirements:** CHECK-01, CHECK-02, CHECK-03
-**Depends on:** Phase 68
-**Status:** Planned
+~~### Phase 69: Checkout Frictionless~~ (CANCELADA)
 
 ### Phase 70: Navegação App-Like (Mobile-First UI)
 
 **Goal:** Substituir menus genéricos por uma Bottom Navigation Bar, aplicar smooth view transitions e bloquear eventos clássicos de navegador (pull-to-refresh) para uma sensação 100% nativa.
 **Requirements:** NAV-01, NAV-02, NAV-03
 **Depends on:** Phase 68
-**Status:** Planned
+**Status:** Parcialmente Concluída (Componentes de Nav e Transition já existem, requer homologação final).
 
 ### Phase 71: Engajamento via Push e Câmera Nativa
 
 **Goal:** Preparar os hooks para Firebase Cloud Messaging (Push Notifications) e inputs que acionam diretamente a câmera no device mobile.
 **Requirements:** ENGAGE-01, ENGAGE-02
 **Depends on:** Phase 70
-**Status:** Planned
+**Status:** Em Espera (Aguardando criação da conta no Firebase).
 
 ### Phase 58: Álbum da Torcida (Promoção Copa do Mundo)
 

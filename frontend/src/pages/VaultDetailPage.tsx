@@ -83,7 +83,7 @@ export default function VaultDetailPage() {
         api.get(`/vaults/${vaultId}/media`),
       ]);
       
-      if (vaultRes.data) setVault({ ...vaultRes.data, myRole: vaultRes.data.myRole || vaultRes.data.members?.find((m: any) => m.userId === vaultRes.data.ownerId) ? 'OWNER' : 'GUEST' });
+      if (vaultRes.data) setVault({ ...vaultRes.data, myRole: vaultRes.data.myRole || vaultRes.data.members?.find((m: { userId: string }) => m.userId === vaultRes.data.ownerId) ? 'OWNER' : 'GUEST' });
       setMedia(mediaRes.data || []);
     } catch (err) {
       console.error("[VaultDetail] Erro:", err);

@@ -185,7 +185,7 @@ const CountdownBox = ({ val, label }: { val: number; label: string }) => (
 );
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
-type Tab = "jogos" | "grupos" | "album" | "missoes" | "ranking" | "chaveamento" | "nostalgia" | "bolao";
+type Tab = "jogos" | "aovivo" | "grupos" | "album" | "missoes" | "ranking" | "chaveamento" | "nostalgia" | "bolao";
 
 const ALL_PAST_COPAS = [
   { year: 2022, name: "Catar 2022" },
@@ -222,6 +222,7 @@ export const AlbumTorcidaPage = () => {
 
   // Bets state
   const [bets, setBets] = useState<Record<string, { homeScore: number; awayScore: number; settled: boolean; pointsAwarded: number; creditsAwarded: number }>>({});
+  const [matchScores, setMatchScores] = useState<Record<string, { homeScore: number; awayScore: number }>>({});
   const [isSubmittingBet, setIsSubmittingBet] = useState(false);
   const [betSummary, setBetSummary] = useState<{
     availableCredits: number;
@@ -236,9 +237,10 @@ export const AlbumTorcidaPage = () => {
   useEffect(() => {
     const init = async () => {
       try {
-        const [betsRes, betSummaryRes] = await Promise.all([
+        const [betsRes, betSummaryRes, scoresRes] = await Promise.all([
           api.get("/worldcup/bets").catch(() => ({ data: { bets: [] } })),
           api.get("/worldcup/bets/summary").catch(() => null),
+          api.get("/worldcup/scores").catch(() => ({ data: { scores: {} } }))
         ]);
 
         if (betsRes.data?.bets) {
@@ -251,6 +253,9 @@ export const AlbumTorcidaPage = () => {
         
         if (betSummaryRes?.data) {
           setBetSummary(betSummaryRes.data);
+        }
+        if (scoresRes?.data?.scores) {
+          setMatchScores(scoresRes.data.scores);
         }
       } catch (err) {
         console.error(err);
@@ -499,6 +504,7 @@ export const AlbumTorcidaPage = () => {
         <div style={{ maxWidth: 800, margin: "0 auto", display: "flex", overflowX: "auto", scrollbarWidth: "none", msOverflowStyle: "none", WebkitOverflowScrolling: "touch", overscrollBehaviorX: "contain" }}>
           {[
             { id: "jogos" as Tab, icon: <Clock size={12} />, label: "Jogos" },
+            { id: "aovivo" as Tab, icon: <Zap size={12} />, label: "News" },
             { id: "bolao" as Tab, icon: <Trophy size={12} />, label: "Bolão" },
             { id: "grupos" as Tab, icon: <Star size={12} />, label: "Grupos" },
             { id: "album" as Tab, icon: <Camera size={12} />, label: "Meu Álbum" },
@@ -556,6 +562,61 @@ export const AlbumTorcidaPage = () => {
               <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
                 {upcomingAll.map((f) => <MatchCard key={f.id} f={f} now={now} />)}
               </div>
+            </div>
+          </div>
+        )}
+
+        {/* ── TAB: AO VIVO & NOTÍCIAS ───────────────────────────────────────────────────── */}
+        {tab === "aovivo" && (
+          <div>
+            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 16 }}>
+              <Zap size={14} color="#f59e0b" />
+              <span style={{ fontSize: 11, fontWeight: 900, color: "#f59e0b", letterSpacing: "0.12em", textTransform: "uppercase" }}>
+                Transmissões CazéTV
+              </span>
+            </div>
+            
+            <div style={{ marginBottom: 32 }}>
+              <div style={{ background: "rgba(0,0,0,0.5)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 8, overflow: "hidden", aspectRatio: "16/9", marginBottom: 16 }}>
+                {/* O YouTube não permite embed listType=user_uploads direto no iframe sem credenciais adequadas em alguns casos, mas usaremos uma playlist ou canal. A busca oficial é o link */}
+                <iframe
+                  width="100%"
+                  height="100%"
+                  src="https://www.youtube.com/embed/videoseries?list=UU78XNwZ0y48F1xEN2Rk-L_g"
+                  title="CazéTV"
+                  frameBorder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                ></iframe>
+              </div>
+              <a href="https://www.youtube.com/@CazeTV/videos" target="_blank" rel="noreferrer" style={{ display: "inline-block", fontSize: 12, color: "#85b9ac", textDecoration: "none", fontWeight: 700 }}>
+                Ver todos os vídeos na CazéTV →
+              </a>
+            </div>
+
+            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 16 }}>
+              <span style={{ fontSize: 14 }}>📰</span>
+              <span style={{ fontSize: 11, fontWeight: 900, color: "#4b5563", letterSpacing: "0.12em", textTransform: "uppercase" }}>
+                Últimas Notícias FIFA
+              </span>
+            </div>
+
+            <div style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.07)", borderRadius: 8, padding: 20 }}>
+              <h3 style={{ margin: "0 0 12px 0", fontSize: 16, color: "white" }}>Acompanhe a cobertura oficial</h3>
+              <p style={{ margin: "0 0 16px 0", fontSize: 13, color: "#9ca3af", lineHeight: 1.5 }}>
+                Fique por dentro das escalações, coletivas de imprensa e atualizações direto das sedes da Copa do Mundo 2026.
+              </p>
+              <a 
+                href="https://www.fifa.com/pt/tournaments/mens/worldcup/canadamexicousa2026/news"
+                target="_blank"
+                rel="noreferrer"
+                style={{
+                  display: "inline-block", background: "#0ea5e9", color: "white", padding: "8px 16px",
+                  borderRadius: 4, fontSize: 12, fontWeight: 700, textDecoration: "none"
+                }}
+              >
+                Ler Notícias na FIFA.com
+              </a>
             </div>
           </div>
         )}
@@ -638,10 +699,18 @@ export const AlbumTorcidaPage = () => {
                             padding: "10px 16px", display: "flex", alignItems: "center", justifyContent: "space-between"
                           }}>
                             {isPast && !myBet ? (
-                              <span style={{ fontSize: 10, color: "#374151", fontStyle: "italic" }}>Jogo já iniciado — palpite encerrado</span>
+                              <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                                <span style={{ fontSize: 10, color: "#374151", fontStyle: "italic" }}>Palpite encerrado</span>
+                                {matchScores[f.id] && (
+                                  <span style={{ fontSize: 11, color: "white", fontWeight: 900 }}>Placar final: {matchScores[f.id].homeScore} × {matchScores[f.id].awayScore}</span>
+                                )}
+                              </div>
                             ) : myBet?.settled ? (
                               <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
                                 <span style={{ fontSize: 11, color: "#9ca3af" }}>Seu palpite: <strong style={{ color: "white" }}>{myBet.homeScore} × {myBet.awayScore}</strong></span>
+                                {matchScores[f.id] && (
+                                  <span style={{ fontSize: 11, color: "white", fontWeight: 900 }}>Placar oficial: {matchScores[f.id].homeScore} × {matchScores[f.id].awayScore}</span>
+                                )}
                                 {myBet.pointsAwarded > 0
                                   ? <span style={{ fontSize: 10, color: "#85b9ac", fontWeight: 900 }}>+{myBet.pointsAwarded}pts · +{myBet.creditsAwarded}💎</span>
                                   : <span style={{ fontSize: 10, color: "#ef4444" }}>Errou 😅</span>

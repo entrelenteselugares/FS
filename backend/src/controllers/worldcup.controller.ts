@@ -1,8 +1,9 @@
 import { Request, Response } from "express";
 import { prisma } from "../lib/prisma";
 import { WorldCupGamificationService } from "../services/worldcup_gamification.service";
-import { sportsApiService } from "../services/sports_api.service";
+import { sportsApiService, setManualScore } from "../services/sports_api.service";
 import { supabaseAdmin as supabase } from "../lib/supabase";
+
 
 const gamificationService = new WorldCupGamificationService(prisma);
 
@@ -137,6 +138,19 @@ export async function getLiveScoreboard(req: Request, res: Response) {
 /**
  * Retorna o chaveamento oficial da Copa a partir da API de esportes
  */
+/**
+ * Retorna os placares reais (salvos manualmente ou da API) para o Bolão
+ */
+export async function getScores(req: Request, res: Response) {
+  try {
+    const scores = await sportsApiService.getAllManualScores();
+    return res.json({ scores });
+  } catch (error) {
+    console.error("Error fetching all scores:", error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+}
+
 export async function getTournamentBracket(req: Request, res: Response) {
   try {
     const bracket = await sportsApiService.getTournamentBracket();
@@ -737,10 +751,30 @@ export async function getUserBetSummary(req: Request, res: Response) {
 export async function getNostalgia(req: Request, res: Response) {
   try {
     const year = req.query.year ? Number(req.query.year) : 2022;
-    // Mock data for nostalgia posts
+    void year; // used for future real data
     return res.json({ posts: [] });
   } catch (error) {
     console.error("Error fetching nostalgia posts:", error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+}
+
+/**
+ * POST /worldcup/admin/score — Admin only
+ * Sets the live score for a fixture in Redis so the banner reflects real results
+ * Body: { fixtureId, home, away }
+ */
+export async function setLiveScore(req: Request, res: Response) {
+  try {
+    const { fixtureId, home, away } = req.body;
+    if (!fixtureId || typeof home !== 'number' || typeof away !== 'number') {
+      return res.status(400).json({ error: "fixtureId, home and away (numbers) are required" });
+    }
+    await setManualScore(fixtureId, home, away);
+    console.log(`[WorldCup] Admin set score ${fixtureId}: ${home}x${away}`);
+    return res.json({ success: true, fixtureId, home, away });
+  } catch (error) {
+    console.error("Error setting live score:", error);
     return res.status(500).json({ error: "Internal Server Error" });
   }
 }

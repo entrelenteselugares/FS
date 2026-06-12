@@ -997,25 +997,14 @@ interface EventGroup {
 }
 
 function EventGroupRow({ group, now, onSelectPedido }: {
-group: EventGroup;
+  group: EventGroup;
   now: number;
   onSelectPedido: (p: Pedido) => void;
 }) {
   const navigate = useNavigate();
   const { event, pedidos, hasAprovado, hasPendente, latestAprovado, firstPendente } = group;
 
-  const handleAddServices = (e?: React.MouseEvent) => {
-    e?.stopPropagation();
-    const dt = new Date(event.dataEvento);
-    const diffDays = Math.ceil((dt.getTime() - now) / (864e5));
 
-    if (diffDays > 10) {
-      navigate(`/e/${event.id}?intent=upgrade`);
-    } else {
-      const msg = `Olá! Gostaria de adicionar mais serviços ao meu evento "${event.title}". Vi que para pedidos com menos de 7 dias úteis da data, a inclusão está sujeita à disponibilidade da agenda dos profissionais.`;
-      window.open(`https://wa.me/5519981150440?text=${encodeURIComponent(msg)}`, "_blank");
-    }
-  };
 
   const purchaseDate = new Date(pedidos[0].createdAt).toLocaleDateString("pt-BR", { day: 'numeric', month: 'long' });
   const eventDateFmt = formatDate(event.dataEvento);
@@ -1024,84 +1013,79 @@ group: EventGroup;
   const displayTitle = isCofre ? `Ordem de Cofre: ${event.title}` : event.title;
 
   return (
-    <div className="mb-6 space-y-3">
-      {/* Date Header like ML */}
-      <h3 className="text-xs font-bold text-theme-text uppercase tracking-widest pl-2">
+    <div className="mb-6 space-y-2">
+      {/* Date Header */}
+      <h3 className="text-[10px] font-bold text-theme-text uppercase tracking-widest pl-1">
         {purchaseDate}
       </h3>
 
-      <div className={`relative bg-theme-bg border transition-all duration-300 rounded-lg shadow-sm ${
+      <div className={`relative bg-[var(--bg-card)] border transition-all duration-300 rounded-xl overflow-hidden shadow-sm ${
         hasPendente ? 'border-amber-500/40' : 'border-theme-border'
       }`}>
-        {/* ML Style Status Header */}
-        <div className="flex items-center gap-3 border-b border-theme-border/50 px-4 py-3 sm:px-6">
-          <div className="flex-1">
-            <span className={`text-[11px] font-black uppercase tracking-widest ${hasAprovado ? 'text-emerald-500' : 'text-amber-500'}`}>
+        {/* Status Header */}
+        <div className="px-4 py-3 border-b border-theme-border/50 bg-black/10">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
+            <span className={`text-[10px] font-black uppercase tracking-widest ${hasAprovado ? 'text-emerald-500' : 'text-amber-500'}`}>
               {hasAprovado ? 'Acesso Liberado' : 'Pagamento Pendente'}
             </span>
-            <p className="text-[10px] text-theme-text-muted font-medium mt-1">
-              Data do evento: <strong className="text-theme-text">{eventDateFmt} às {timeFmt}</strong>
-              {event.eventHours ? <span className="ml-2 text-theme-muted">• {event.eventHours}h de cobertura</span> : null}
+            <p className="text-[10px] text-theme-text-muted">
+              Evento: <strong className="text-theme-text">{eventDateFmt} às {timeFmt}</strong>
+              {event.eventHours ? <span className="ml-1">• {event.eventHours}h</span> : null}
             </p>
-            {(() => {
-              // Extrai observações do cliente do campo description
-              const desc = event.description || '';
-              const marker = 'Descrição do Cliente:';
-              const idx = desc.indexOf(marker);
-              const clientNotes = idx >= 0 ? desc.slice(idx + marker.length).trim() : '';
-              if (!clientNotes || clientNotes === 'undefined') return null;
-              return (
-                <p className="text-[10px] text-theme-text-muted mt-1 ">
-                  <span className="font-bold text-theme-text not-">Obs:</span> {clientNotes}
-                </p>
-              );
-            })()}
           </div>
+          {(() => {
+            const desc = event.description || '';
+            const marker = 'Descrição do Cliente:';
+            const idx = desc.indexOf(marker);
+            const clientNotes = idx >= 0 ? desc.slice(idx + marker.length).trim() : '';
+            if (!clientNotes || clientNotes === 'undefined') return null;
+            return (
+              <p className="text-[10px] text-theme-text-muted mt-2 border-t border-white/5 pt-2">
+                <strong className="text-theme-text">Obs:</strong> {clientNotes}
+              </p>
+            );
+          })()}
         </div>
 
-        {/* ML Style Body */}
-        <div className="flex flex-col sm:flex-row gap-4 p-4 sm:p-6">
+        {/* Body */}
+        <div className="p-3 sm:p-4 flex flex-row gap-3 items-center">
           {/* Thumbnail */}
-          <div className="w-20 h-20 sm:w-24 sm:h-24 bg-zinc-900 border border-theme-border rounded-md overflow-hidden shrink-0">
+          <div className="w-16 h-16 sm:w-20 sm:h-20 bg-zinc-900 border border-theme-border rounded-lg overflow-hidden shrink-0">
             {event.coverPhotoUrl ? (
               <img 
                 src={event.coverPhotoUrl.toString().trim().replace(/\s/g, '')} 
                 alt="" 
                 className={`w-full h-full object-cover ${hasAprovado ? '' : 'grayscale brightness-50'}`} 
                 style={{ objectPosition: event.coverPosition || 'center' }}
-                onError={(e) => {
-                  const target = e.target as HTMLImageElement;
-                  target.style.display = 'none';
-                }}
+                onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
               />
             ) : (
-              <div className="w-full h-full flex items-center justify-center">
-                <ImageIcon size={24} className="text-zinc-800" />
+              <div className="w-full h-full flex items-center justify-center bg-black/20">
+                <ImageIcon size={20} className="text-white/20" />
               </div>
             )}
           </div>
 
           {/* Details */}
           <div className="flex-1 min-w-0 flex flex-col justify-center">
-            <h4 className="text-sm md:text-base font-bold text-theme-text mb-1">
+            <h4 className="text-sm font-bold text-theme-text mb-1 truncate">
               {displayTitle}
             </h4>
-            <p className="text-[10px] text-theme-text-muted mb-3 flex items-center gap-1.5">
-              <MapPin size={10} /> {event.city || event.location || "Digital"}
+            <p className="text-[10px] text-theme-text-muted flex items-center gap-1 mb-2">
+              <MapPin size={10} /> <span className="truncate">{event.city || event.location || "Digital"}</span>
             </p>
             
-            {/* Items Bought */}
-            <div className="space-y-1">
-              <p className="text-[10px] font-medium text-theme-text-muted">
-                {pedidos.length} {pedidos.length === 1 ? 'item' : 'itens'} • Vendido por <strong className="text-brand-tactical">Foto Segundo</strong>
+            <div className="space-y-0.5">
+              <p className="text-[9px] font-medium text-theme-text-muted">
+                {pedidos.length} {pedidos.length === 1 ? 'item' : 'itens'}
               </p>
               {pedidos.slice(0, 2).map(p => (
                 <p key={p.id} className="text-[10px] text-theme-text-muted truncate">
-                  - {p.manualType || "Pacote de Serviços"} ({formatCurrency(p.amount)})
+                  • {p.manualType || "Pacote de Serviços"}
                 </p>
               ))}
               {pedidos.length > 2 && (
-                <p className="text-[10px] text-theme-text-muted">
+                <p className="text-[9px] text-brand-tactical/70 italic">
                   + {pedidos.length - 2} outros itens
                 </p>
               )}
@@ -1109,39 +1093,29 @@ group: EventGroup;
           </div>
 
           {/* Action Buttons */}
-          <div className="shrink-0 flex flex-col items-center justify-center gap-2 w-full sm:w-40 border-t sm:border-t-0 sm:border-l border-theme-border/50 pt-4 sm:pt-0 sm:pl-6">
+          <div className="flex flex-col justify-center gap-2 shrink-0 border-l border-white/5 pl-3 min-w-[90px] sm:min-w-[120px]">
             {hasAprovado ? (
               <>
                 <button 
                   onClick={() => onSelectPedido(latestAprovado!)} 
-                  className="w-full fs-btn bg-brand-tactical text-black !px-4 !py-2 text-[10px]"
+                  className="w-full px-2 py-2 bg-brand-tactical text-black rounded-lg text-[9px] sm:text-[10px] font-bold uppercase tracking-wider hover:brightness-110 transition-all text-center"
                 >
                   Ver Compra
                 </button>
                 <button 
                   onClick={() => navigate(getEventUrl(pedidos[0]))} 
-                  className="w-full fs-btn bg-theme-bg border border-theme-border text-theme-text !px-4 !py-2 text-[10px] hover:border-brand-tactical hover:text-brand-tactical"
+                  className="w-full px-2 py-2 bg-[var(--bg-card)] border border-theme-border text-theme-text rounded-lg text-[9px] sm:text-[10px] font-bold uppercase tracking-wider hover:border-brand-tactical transition-all text-center"
                 >
                   Acessar
                 </button>
-                {new Date(event.dataEvento).getTime() > now && (
-                  <button 
-                    onClick={handleAddServices} 
-                    className="w-full text-brand-tactical text-[10px] font-bold hover:underline"
-                  >
-                    Comprar Novamente
-                  </button>
-                )}
               </>
             ) : (
-              <>
-                <button 
-                  onClick={() => firstPendente && navigate(`/checkout?orderId=${firstPendente.id}`)} 
-                  className="w-full fs-btn bg-amber-500 text-black !px-4 !py-2 text-[10px]"
-                >
-                  Ver Compra
-                </button>
-              </>
+              <button 
+                onClick={() => firstPendente && navigate(`/checkout?orderId=${firstPendente.id}`)} 
+                className="w-full px-2 py-2 bg-amber-500 text-black rounded-lg text-[9px] sm:text-[10px] font-bold uppercase tracking-wider hover:brightness-110 transition-all text-center"
+              >
+                Pagar Agora
+              </button>
             )}
           </div>
         </div>

@@ -6,6 +6,7 @@ import {
   getBadges, 
   getLiveScoreboard, 
   getTournamentBracket,
+  getScores,
   getLeaderboard,
   toggleLikeSlot,
   addCommentToSlot,
@@ -18,7 +19,8 @@ import {
   placeBet,
   settleBets,
   getUserBetSummary,
-  getNostalgia
+  getNostalgia,
+  setLiveScore
 } from "../controllers/worldcup.controller";
 import { requireAuth } from "../lib/auth";
 import { requireRole } from "../lib/auth";
@@ -28,6 +30,7 @@ const router = Router();
 // Public routes — no auth needed (banner shows for everyone)
 router.get("/live", getLiveScoreboard);
 router.get("/bracket", getTournamentBracket);
+router.get("/scores", getScores);
 
 // Protected routes
 router.use(requireAuth);
@@ -55,6 +58,9 @@ router.post("/bets/settle", requireRole("ADMIN"), settleBets);
 
 // Nostalgia Mock
 router.get("/nostalgia", getNostalgia);
+
+// Admin: manual score override (for when SPORTS_API_KEY is not configured)
+router.post("/admin/score", requireRole("ADMIN"), setLiveScore);
 
 
 export default router;

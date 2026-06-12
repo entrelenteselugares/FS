@@ -142,7 +142,7 @@ export class PhygitalController {
       const masterKey = req.headers["x-master-key"];
       const isMaster = masterKey === "FOTO_SEGUNDO_STRESS_2026";
 
-      if (!isMaster && (!req.user || (req.user as any).role !== 'ADMIN')) {
+      if (!isMaster && (!(req as any).user || (req as any).user.role !== 'ADMIN')) {
         return res.status(401).json({ error: "Token inválido ou Chave Mestra ausente." });
       }
 
