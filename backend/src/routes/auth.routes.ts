@@ -19,6 +19,7 @@ router.patch("/me", requireAuth, AuthController.updateMe);
 router.patch("/me/tenant-branding", requireAuth, AuthController.updateTenantBranding);
 router.post("/refresh", AuthController.refresh);
 router.post("/logout", AuthController.logout);
+router.post("/oauth-callback", AuthController.oauthCallback);
 
 // ── Mercado Pago OAuth
 router.get("/mercadopago/connect", requireAuth, MercadoPagoController.connect);

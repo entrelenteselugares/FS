@@ -55,6 +55,8 @@ export interface AuthContextType {
   login: (email: string, senha: string) => Promise<AuthUser>;
   register: (email: string, senha: string, nome: string) => Promise<AuthUser>;
   registerExpress: (email: string, senha: string, nome?: string, whatsapp?: string) => Promise<AuthUser>;
+  loginWithGoogle: () => Promise<void>;
+  loginWithApple: () => Promise<void>;
   updateMe: (data: Partial<AuthUser>) => Promise<AuthUser>;
   applyRole: (data: { role: string; equipment?: string; razaoSocial?: string; cnpj?: string }) => Promise<{ message: string }>;
   switchRole: (role: string) => void;

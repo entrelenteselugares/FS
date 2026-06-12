@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { API } from "../lib/api";
+import { supabase } from "../lib/supabase";
 import { AuthContext, type AuthUser } from "./AuthContextBase";
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -26,16 +27,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   useEffect(() => {
     const initAuth = async () => {
       try {
-        // Tenta buscar o usuário atual (os cookies serão enviados automaticamente)
         const r = await API.get("/auth/me");
         if (r.data && r.data.nome) {
           setUser(r.data);
-          // O token exato não está mais disponível no frontend (HttpOnly), 
-          // usaremos um valor "dummy" apenas para manter a tipagem do Context feliz
           setToken("cookie-session");
         }
       } catch (err: unknown) {
-        // Se falhar (ex: 401), não está logado
         setUser(null);
         setToken(null);
       } finally {
@@ -44,6 +41,27 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     };
     
     initAuth();
+
+    const { data: authListener } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (event === "SIGNED_IN" && session?.access_token) {
+        try {
+          // Sync with backend to get the HttpOnly cookie
+          const r = await API.post("/auth/oauth-callback", { access_token: session.access_token });
+          if (r.data && r.data.user) {
+            setUser(r.data.user);
+            setToken("cookie-session");
+          }
+        } catch (e) {
+          console.error("Failed to sync OAuth with backend", e);
+        }
+      } else if (event === "SIGNED_OUT") {
+        // Backend logout handles the rest
+      }
+    });
+
+    return () => {
+      authListener.subscription.unsubscribe();
+    };
   }, []);
 
 
@@ -92,6 +110,26 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return fullUser as AuthUser;
   };
 
+  const loginWithGoogle = async () => {
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: window.location.origin,
+      },
+    });
+    if (error) throw error;
+  };
+
+  const loginWithApple = async () => {
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: "apple",
+      options: {
+        redirectTo: window.location.origin,
+      },
+    });
+    if (error) throw error;
+  };
+
   const updateMe = async (data: Partial<AuthUser>) => {
     const r = await API.patch("/auth/me", data);
     setUser(r.data);
@@ -108,7 +146,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const effectiveRole = activeRole || user?.role || null;
 
   return (
-    <AuthContext.Provider value={{ user, token, login, register, registerExpress, updateMe, applyRole, switchRole, logout, loading, activeRole: effectiveRole }}>
+    <AuthContext.Provider value={{ user, token, login, register, registerExpress, loginWithGoogle, loginWithApple, updateMe, applyRole, switchRole, logout, loading, activeRole: effectiveRole }}>
       {children}
     </AuthContext.Provider>
   );

@@ -335,6 +335,61 @@ export class AuthController {
     }
   }
 
+  static async oauthCallback(req: Request, res: Response) {
+    try {
+      const { access_token } = req.body;
+      if (!access_token) return res.status(400).json({ error: "Token ausente" });
+
+      const { data, error } = await supabaseAdmin.auth.getUser(access_token);
+      if (error || !data.user) {
+        console.error("[OAUTH ERROR]:", error);
+        return res.status(401).json({ error: "Token inválido ou expirado" });
+      }
+
+      const sbUser = data.user;
+      const email = sbUser.email?.toLowerCase().trim();
+      if (!email) return res.status(400).json({ error: "Email não fornecido pelo provedor" });
+
+      const result = await prisma.$transaction(async (tx) => {
+        let user = await tx.user.findUnique({ where: { email } });
+        if (!user) {
+          const newReferralCode = Array.from({length: 8}, () => 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'[Math.floor(Math.random()*36)]).join('');
+          const dummyPassword = crypto.randomBytes(16).toString("hex"); // Temporary random password for OAuth users
+          user = await tx.user.create({
+            data: {
+              id: sbUser.id,
+              email,
+              senha: dummyPassword,
+              nome: sbUser.user_metadata?.name || sbUser.user_metadata?.full_name || email.split("@")[0],
+              role: "CLIENTE",
+              referralCode: newReferralCode
+            }
+          });
+        }
+        return user;
+      });
+
+      const payload = { userId: result.id, role: result.role, nome: result.nome, email: result.email };
+      const token = generateToken(payload);
+      const refreshToken = generateRefreshToken(payload);
+
+      const cookieOptions = {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax' as const,
+        maxAge: 7 * 24 * 60 * 60 * 1000
+      };
+
+      res.cookie('token', token, cookieOptions);
+      res.cookie('refreshToken', refreshToken, { ...cookieOptions, maxAge: 30 * 24 * 60 * 60 * 1000 });
+
+      return res.json({ token, refreshToken, user: result });
+    } catch (e: unknown) {
+      console.error("[OAUTH CALLBACK ERROR]:", e);
+      return res.status(500).json({ error: "Erro interno no callback OAuth" });
+    }
+  }
+
   static async refresh(req: Request, res: Response) {
     const { refreshToken } = req.body;
     try {
