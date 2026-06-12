@@ -352,13 +352,8 @@ p {
 }
 
 /* ─── UTILITÁRIOS GERAIS ────────────────────────────────────────────────── */
-.pb-safe { padding-bottom: calc(64px + env(safe-area-inset-bottom)) !important; }
+.pb-safe { padding-bottom: calc(12px + env(safe-area-inset-bottom)) !important; }
 .pt-safe { padding-top: calc(12px + env(safe-area-inset-top)) !important; }
-
-/* Hide scrollbar while keeping scroll functionality (mobile pill navs) */
-.hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-.hide-scrollbar::-webkit-scrollbar { display: none; }
-
 
 .glass-panel {
   background: var(--glass);
