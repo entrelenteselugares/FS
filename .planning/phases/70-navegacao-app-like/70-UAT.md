@@ -1,5 +1,5 @@
 ---
-status: testing
+status: complete
 phase: 70-navegacao-app-like
 source: []
 started: 2026-06-12T11:38:00Z
@@ -8,11 +8,7 @@ updated: 2026-06-12T11:38:00Z
 
 ## Current Test
 
-number: 3
-name: Smooth View Transitions
-expected: |
-  Ao clicar em links de navegação para outras páginas internas, a tela deve realizar um cross-fade rápido (esmaecer e surgir) ao invés de piscar uma tela branca.
-awaiting: user response
+[testing complete]
 
 ## Tests
 
@@ -26,9 +22,10 @@ result: pass
 
 ### 3. Smooth View Transitions
 expected: Ao clicar em links de navegação para outras páginas internas, a tela deve realizar um cross-fade rápido (esmaecer e surgir) ao invés de piscar uma tela branca.
-result: issue
+result: fixed
 reported: "esta com bug, quand clico 'painel da franquia', passa identificar o usuario como admin do sistema"
 severity: major
+fix: "BottomNav.tsx role leak fixed — isProOrFranchise now strict role check only (commit 0af8d0b)"
 
 ## Summary
 
