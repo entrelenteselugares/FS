@@ -689,7 +689,6 @@ export default function ClienteArea() {
  <EventGroupRow 
  key={group.event.id} 
  group={group} 
- now={now} 
  onSelectPedido={(p) => handleSelect(p)}
  />
  ))}
@@ -996,9 +995,8 @@ interface EventGroup {
  firstPendente?: Pedido;
 }
 
-function EventGroupRow({ group, now, onSelectPedido }: {
+function EventGroupRow({ group, onSelectPedido }: {
   group: EventGroup;
-  now: number;
   onSelectPedido: (p: Pedido) => void;
 }) {
   const navigate = useNavigate();
