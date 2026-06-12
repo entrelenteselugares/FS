@@ -1,36 +1,32 @@
-# Requirements
+# Requirements: Milestone v15.0
 
-## Milestone v15.0: Native Mobile Experience & App Store Prep
+## Active Requirements
 
-### Autenticação Nativa & Guest Mode
-- [ ] **AUTH-01**: Usuários não logados podem visualizar galerias de eventos (Guest Mode) recebendo prompts de autenticação apenas no momento de adicionar fotos ao carrinho ou acessar o cofre.
-- [ ] **AUTH-02**: Usuários podem realizar login com um clique utilizando Google Sign-In, nativamente integrado ao Supabase.
-- [ ] **AUTH-03**: Usuários podem realizar login com um clique utilizando Apple Sign-In (obrigatório para aprovação na App Store).
+### Autenticação (AUTH)
+- [ ] **AUTH-01**: O usuário deve poder criar conta ou fazer login com apenas 1 clique usando sua conta Google (Google One-Tap).
+- [ ] **AUTH-02**: O usuário deve poder criar conta ou fazer login com apenas 1 clique usando sua conta Apple (Sign-In with Apple).
+- [ ] **AUTH-03**: Os modais de Auth Wall devem ser redesenhados para dar destaque absoluto aos botões de Social Login, reduzindo a digitação de email/senha a um cenário secundário.
 
-### Checkout Frictionless
-- [ ] **CHECK-01**: O carrinho de compras persiste o estado agressivamente no local storage, evitando perda de itens caso o usuário saia do app para copiar a chave PIX no banco.
-- [ ] **CHECK-02**: O sistema exibe recomendações inteligentes de álbuns visitados recentemente quando o carrinho estiver vazio.
-- [ ] **CHECK-03**: A integração de pagamentos suporta Google Pay e Apple Pay para reduzir o tempo de checkout no celular.
+### Checkout Frictionless (CHECK)
+- [ ] **CHECK-01**: O carrinho de compras deve ser persistido robustamente (mesmo que o usuário feche a aba/app), atrelando os itens selecionados ao pedido `PENDENTE` em background e ao `localStorage`.
+- [ ] **CHECK-02**: O carrinho deve oferecer a opção de pagamento instantâneo via carteira digital (Google Pay / Apple Pay) em vez de apenas PIX copia-e-cola.
+- [ ] **CHECK-03**: A página de carrinho vazio (Empty State) não deve ser uma "rua sem saída"; deve sugerir os últimos 3 álbuns visitados pelo usuário.
 
-### Navegação App-Like
-- [ ] **NAV-01**: A navegação mobile utiliza uma Bottom Navigation Bar fixa com abas principais (Explorar, Vaults, Notificações, Perfil), substituindo o menu hambúrguer escondido.
-- [ ] **NAV-02**: A interface utiliza animações e transições de página (sliding) que mimetizam a navegação nativa, em vez do recarregamento brusco do navegador web.
+### Navegação (NAV)
+- [ ] **NAV-01**: A interface mobile deve desativar o Menu Hambúrguer (Drawer) e implementar uma *Bottom Navigation Bar* fixa na parte inferior da tela, contendo: Vitrine, Álbuns, Notificações e Perfil.
+- [ ] **NAV-02**: Todas as navegações entre os itens da Bottom Bar devem ocorrer sem "piscar" a tela (Smooth Transitions).
+- [ ] **NAV-03**: Impedir/Prevenir o comportamento de "pull-to-refresh" (puxar para baixo para recarregar) típico do navegador em ambientes touch, tornando a sensação mais fixa como um App.
 
-### Engajamento via Push
-- [ ] **PUSH-01**: O sistema solicita permissão nativa para envio de notificações push.
-- [ ] **PUSH-02**: O sistema pode receber e exibir notificações push do Álbum da Torcida e alertas de compras, utilizando o serviço de Push do Capacitor / Firebase Cloud Messaging.
+### Engajamento (ENGAGE)
+- [ ] **ENGAGE-01**: Infraestrutura base de registro de dispositivo (Device Token) via Firebase Cloud Messaging para habilitar Notificações Push reais.
+- [ ] **ENGAGE-02**: Componentes de câmera/upload no Álbum da Torcida devem ser atualizados para acionar imediatamente a Câmera nativa do dispositivo (se em mobile) em vez de abrir apenas a gaveta de arquivos genérica.
 
 ## Traceability
 
-| Requirement | Phase | Goal |
-|---|---|---|
-| AUTH-01 | Phase 68 | Visualização de galerias sem login forçado (Guest Mode) |
-| AUTH-02 | Phase 69 | Login via Google Sign-In |
-| AUTH-03 | Phase 69 | Login via Apple Sign-In |
-| CHECK-01 | Phase 70 | Carrinho persistente |
-| CHECK-02 | Phase 70 | Empty states com recomendações |
-| CHECK-03 | Phase 70 | Integração com Google Pay e Apple Pay |
-| NAV-01 | Phase 71 | Bottom Navigation Bar para mobile |
-| NAV-02 | Phase 71 | Transições fluidas (sliding) estilo app nativo |
-| PUSH-01 | Phase 72 | Permissão de Push Notifications nativas |
-| PUSH-02 | Phase 72 | Recepção de alertas Firebase/Capacitor Push |
+- **Phase 68 (Autenticação Expressa)**: AUTH-01, AUTH-02, AUTH-03
+- **Phase 69 (Checkout Frictionless)**: CHECK-01, CHECK-02, CHECK-03
+- **Phase 70 (Navegação App-Like)**: NAV-01, NAV-02, NAV-03
+- **Phase 71 (Engajamento via Push)**: ENGAGE-01, ENGAGE-02
+
+## Out of Scope
+- Integração profunda do Push Notification com o iOS de forma nativa no WebView (será tratado apenas quando rodando via Capacitor real, não PWA de iOS).

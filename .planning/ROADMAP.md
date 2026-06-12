@@ -75,9 +75,35 @@
 
 </details>
 
-## Backlog (Post-Launch)
+## Backlog (v15.0 Native Mobile Experience)
 
-- (Backlog is currently empty)
+### Phase 68: Autenticação Expressa (Auth Wall Rápido)
+
+**Goal:** Implementar Social Login de 1-click (Apple e Google) com redesign do modal de Auth Wall para reduzir ao máximo a fricção de entrada dos usuários no app.
+**Requirements:** AUTH-01, AUTH-02, AUTH-03
+**Depends on:** None
+**Status:** Planned
+
+### Phase 69: Checkout Frictionless
+
+**Goal:** Integrar persistência robusta de carrinho e estados vazios sugeridos, finalizando com integração de 1-click payment (Google Pay / Apple Pay).
+**Requirements:** CHECK-01, CHECK-02, CHECK-03
+**Depends on:** Phase 68
+**Status:** Planned
+
+### Phase 70: Navegação App-Like (Mobile-First UI)
+
+**Goal:** Substituir menus genéricos por uma Bottom Navigation Bar, aplicar smooth view transitions e bloquear eventos clássicos de navegador (pull-to-refresh) para uma sensação 100% nativa.
+**Requirements:** NAV-01, NAV-02, NAV-03
+**Depends on:** Phase 68
+**Status:** Planned
+
+### Phase 71: Engajamento via Push e Câmera Nativa
+
+**Goal:** Preparar os hooks para Firebase Cloud Messaging (Push Notifications) e inputs que acionam diretamente a câmera no device mobile.
+**Requirements:** ENGAGE-01, ENGAGE-02
+**Depends on:** Phase 70
+**Status:** Planned
 
 ### Phase 58: Álbum da Torcida (Promoção Copa do Mundo)
 
@@ -149,37 +175,3 @@
 **Goal:** Depurar o código, remover arquivos e dependências desnecessárias, aplicar code-splitting (lazy loading) e reduzir o peso geral da aplicação para máxima velocidade de carregamento.
 **Depends on:** Phase 66
 **Status:** Completed
-
----
-
-## Milestone v15.0: Native Mobile Experience & App Store Prep
-
-### Phase 68: Guest Mode & Auth Wall Deferral
-**Goal:** Permitir que convidados visualizem galerias de eventos livremente, exibindo o Auth Wall apenas no momento da adição ao carrinho ou cofre.
-**Requirements:** AUTH-01
-**Depends on:** None
-**Status:** Not Started
-
-### Phase 69: Social Logins (Google & Apple)
-**Goal:** Implementar o Google Sign-In e Apple Sign-In integrados ao Supabase Auth para login instantâneo.
-**Requirements:** AUTH-02, AUTH-03
-**Depends on:** Phase 68
-**Status:** Not Started
-
-### Phase 70: Checkout Frictionless
-**Goal:** Melhorar a experiência de pagamento com carrinho persistente, empty states inteligentes e integração com carteiras digitais (Google Pay/Apple Pay).
-**Requirements:** CHECK-01, CHECK-02, CHECK-03
-**Depends on:** None
-**Status:** Not Started
-
-### Phase 71: App-Like Mobile Navigation
-**Goal:** Substituir o menu lateral/hambúrguer por uma Bottom Navigation Bar fixa e implementar transições de tela suaves para criar a sensação de aplicativo nativo.
-**Requirements:** NAV-01, NAV-02
-**Depends on:** None
-**Status:** Not Started
-
-### Phase 72: Push Notifications Integration
-**Goal:** Adicionar permissões nativas e infraestrutura (Firebase/Capacitor Push) para receber alertas da plataforma (ex: Álbum da Torcida).
-**Requirements:** PUSH-01, PUSH-02
-**Depends on:** None
-**Status:** Not Started
