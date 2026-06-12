@@ -47,7 +47,7 @@ function parseUrls() {
   return urls;
 }
 
-function resolvePath(rawPath) {
+function resolvePath(rawPath: string) {
   let p = rawPath;
   p = p.replace(':slug', PARAMS.slug);
   p = p.replace(':orderId', PARAMS.orderId);
@@ -80,7 +80,7 @@ function resolvePath(rawPath) {
       'configuracoes': 'settings',
       'analytics': 'analytics'
     };
-    const mapped = adminMap[sVal] || sVal;
+    const mapped = (adminMap as Record<string, string>)[sVal] || sVal;
     return `/admin/${mapped}`;
   }
   
@@ -101,7 +101,7 @@ test.beforeAll(async ({ browser }) => {
     // Re-generate auth states dynamically
     const context = await browser.newContext();
     const page = await context.newPage();
-    const account = ACCOUNTS[roleKey];
+    const account = ACCOUNTS[roleKey as keyof typeof ACCOUNTS];
     
     await page.goto(`${BASE_URL}/login`, { waitUntil: 'networkidle' });
     await page.fill('input[type="email"]', account.email);
@@ -186,7 +186,7 @@ test.describe('Role-Based Access Control Matrix Validation', () => {
           
           if (!isRedirected) {
              // If not redirected, check if page contains "Acesso Restrito" or "Não autorizado"
-             const bodyText = await page.textContent('body');
+             const bodyText = (await page.textContent('body')) || '';
              const hasErrorMsg = bodyText.toLowerCase().includes('acesso restrito') || bodyText.toLowerCase().includes('não autorizado') || bodyText.toLowerCase().includes('não tem permissão');
              expect(hasErrorMsg).toBeTruthy();
           } else {

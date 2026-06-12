@@ -91,7 +91,7 @@
 **Goal:** Substituir menus genéricos por uma Bottom Navigation Bar, aplicar smooth view transitions e bloquear eventos clássicos de navegador (pull-to-refresh) para uma sensação 100% nativa.
 **Requirements:** NAV-01, NAV-02, NAV-03
 **Depends on:** Phase 68
-**Status:** Parcialmente Concluída (Componentes de Nav e Transition já existem, requer homologação final).
+**Status:** Completed
 
 ### Phase 71: Engajamento via Push e Câmera Nativa
 
