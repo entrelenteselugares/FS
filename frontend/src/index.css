@@ -372,3 +372,17 @@ p {
 .fs-protected-media:active {
   filter: blur(4px);
 }
+
+/* ─── MERCADO PAGO BRICK FIXES ──────────────────────────────────────────── */
+/* Fix para a tag "Parcelamento disponível" quebrando linhas no Payment Brick */
+.mp-badge, 
+[class*="mp-badge"], 
+[class*="mp-text-badge"], 
+[class*="payment-method-badge"],
+.mp-payment-method-badge {
+  white-space: nowrap !important;
+  display: inline-block !important;
+  height: auto !important;
+  min-width: max-content !important;
+}
+
