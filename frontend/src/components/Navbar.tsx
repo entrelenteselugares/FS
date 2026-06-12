@@ -55,7 +55,7 @@ export const Navbar: React.FC<NavbarProps> = ({ tenantLogoUrl }) => {
         </div>
 
         <div className="flex items-center gap-2">
-          <div className="flex items-center gap-2">
+          <div className="hidden md:flex items-center gap-2">
             <ThemeToggle />
           </div>
 
@@ -77,7 +77,7 @@ export const Navbar: React.FC<NavbarProps> = ({ tenantLogoUrl }) => {
           </button>
 
           {user ? (
-            <div className="relative" ref={userMenuRef}>
+            <div className="hidden md:block relative" ref={userMenuRef}>
               <button 
                 onClick={() => setUserMenu(v => !v)} 
                 className="flex items-center gap-2"
@@ -106,7 +106,7 @@ export const Navbar: React.FC<NavbarProps> = ({ tenantLogoUrl }) => {
               )}
             </div>
           ) : (
-            <button onClick={() => navigate("/login")} style={{ ...BtnSecondary, fontSize: 9, padding: "7px 10px" }}>
+            <button onClick={() => navigate("/login")} className="hidden md:flex" style={{ ...BtnSecondary, fontSize: 9, padding: "7px 10px" }}>
               LOGIN
             </button>
           )}

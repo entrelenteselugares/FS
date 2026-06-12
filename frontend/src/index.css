@@ -107,6 +107,14 @@ body {
   overscroll-behavior-y: none;
   overflow-x: hidden;
   max-width: 100vw;
+  -webkit-overflow-scrolling: touch;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+input, textarea, [contenteditable] {
+  -webkit-user-select: auto;
+  user-select: auto;
 }
 
 /* Melhor touch no mobile */
@@ -384,5 +392,33 @@ p {
   display: inline-block !important;
   height: auto !important;
   min-width: max-content !important;
+}
+
+/* ─── NATIVE APP-LIKE EXPERIENCES (Phase 70) ────────────────────────────── */
+
+@view-transition {
+  navigation: auto;
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 0.25s;
+  animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+::view-transition-old(root) {
+  animation-name: fade-out;
+}
+::view-transition-new(root) {
+  animation-name: fade-in;
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes fade-out {
+  from { opacity: 1; }
+  to { opacity: 0; }
 }
 

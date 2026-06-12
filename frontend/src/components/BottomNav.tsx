@@ -6,6 +6,7 @@ import { useAuth } from "../hooks/useAuth";
 const ImageIcon = Image;
 import type { NavItem } from "./DashboardLayout";
 import { Camera } from "lucide-react";
+import { ThemeToggle } from "./ThemeToggle";
 
 export const BottomNav: React.FC = () => {
   const navigate = useNavigate();
@@ -245,12 +246,15 @@ export const BottomNav: React.FC = () => {
           <Link to="/" onClick={() => setDrawerOpen(false)}>
             <img src="/logo.png" alt="Foto Segundo" className="h-6 object-contain" style={{ filter: "var(--logo-filter)" }} />
           </Link>
-          <button
-            onClick={() => setDrawerOpen(false)}
-            className="p-1.5 text-zinc-500 hover:text-white rounded-lg border border-theme-border transition-colors"
-          >
-            <X size={16} />
-          </button>
+          <div className="flex items-center gap-2">
+            <ThemeToggle />
+            <button
+              onClick={() => setDrawerOpen(false)}
+              className="p-1.5 text-zinc-500 hover:text-white rounded-lg border border-theme-border transition-colors"
+            >
+              <X size={16} />
+            </button>
+          </div>
         </div>
 
         {/* User Info / Guest CTA */}
