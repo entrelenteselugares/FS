@@ -24,6 +24,7 @@ import type { EventItem } from "../components/profissional/types";
 import { TouchSelectionGallery } from "../components/TouchSelectionGallery";
 import { SchoolAuthenticationGate } from "../components/SchoolAuthenticationGate";
 import { OptimizedImage } from "../components/OptimizedImage";
+import { useRecentAlbums } from "../hooks/useRecentAlbums";
 
 const formatDate = (date: string | null | undefined) => {
   if (!date) return "Em breve";
@@ -351,8 +352,20 @@ export default function EventPage() {
   const [isDownloading, setIsDownloading] = useState(false);
   const [downloadProgress, setDownloadProgress] = useState(0);
 
+  const { addAlbum } = useRecentAlbums();
+
   const durationHours = (event?.eventDays ? event.eventDays * 24 : 0) + (event?.eventHours || 2);
   const eventStatus = useEventStatus(event?.dataEvento, null, durationHours, event?.isExpired, event?.active);
+
+  useEffect(() => {
+    if (event) {
+      addAlbum({
+        eventId: event.id,
+        title: event.title,
+        coverUrl: event.coverPhotoUrl || undefined
+      });
+    }
+  }, [event?.id, event?.title, event?.coverPhotoUrl, addAlbum]);
 
   const handleShare = async () => {
     if (access?.accessType === "PRIVATE") {

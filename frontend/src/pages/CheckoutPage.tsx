@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback, useContext } from "react";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
-import { ShieldCheck, ArrowLeft, CheckCircle2, RefreshCw, Clock, Lock, Image as ImageIcon, Printer, ShoppingBag, Copy, Check, MapPin } from "lucide-react";
+import { ShieldCheck, ArrowLeft, CheckCircle2, RefreshCw, Clock, Lock, Image as ImageIcon, Printer, ShoppingBag, Copy, Check, MapPin, ChevronRight } from "lucide-react";
 import { Helmet } from "react-helmet-async";
 import { Navbar } from "../components/Navbar";
 import WhatsAppSupport from "../components/WhatsAppSupport";
@@ -16,6 +16,7 @@ import { API } from "../lib/api";
 
 import { AuthContext } from "../contexts/AuthContextBase";
 import { useCart } from "../hooks/useCart";
+import { useRecentAlbums } from "../hooks/useRecentAlbums";
 
 interface OrderEvent {
   id: string;
@@ -112,8 +113,10 @@ const CheckoutPageInner = () => {
   const brickController = useRef<{ unmount: () => void } | null>(null);
   const initializationStarted = useRef(false);
   const pollingRef = useRef<RealtimeChannel | null>(null);
+  const autoRecoveryAttempted = useRef(false);
   const { user: authUser, login: authLogin, register: authRegister, loading: authGlobalLoading } = useContext(AuthContext)!;
   const { digitalPhotos, physicalItems, totalPrice, clearCart } = useCart();
+  const { recentAlbums } = useRecentAlbums();
 
   // Estados de Autenticação Tática
   const [authStep, setAuthStep] = useState<'loading' | 'required' | 'login' | 'register' | 'authorized'>('loading');
@@ -571,7 +574,7 @@ const CheckoutPageInner = () => {
           payer: { email: order.buyerEmail || "contatofotosegundo@gmail.com", entityType: "individual" },
         },
         customization: {
-          paymentMethods: { creditCard: "all", bankTransfer: ["pix"], maxInstallments: 12 },
+          paymentMethods: { creditCard: "all", bankTransfer: ["pix"], maxInstallments: 12, wallet_purchase: "all" },
           visual: { style: { theme: "dark" } },
         },
         callbacks: {
@@ -684,13 +687,40 @@ const CheckoutPageInner = () => {
               Explore nossa vitrine e selecione as memórias que deseja eternizar.
             </p>
           </div>
-          <div className="pt-8">
-            <button 
-              onClick={() => navigate("/")}
-              className="w-full py-5 bg-brand-tactical text-black text-[10px] font-bold uppercase tracking-[0.4em] hover:bg-white transition-all "
-            >
-              Voltar para a Vitrine
-            </button>
+          <div className="pt-8 w-full max-w-sm mx-auto">
+            {recentAlbums.length > 0 ? (
+              <div className="space-y-4 text-left">
+                <span className="text-[10px] font-bold text-brand-tactical uppercase tracking-widest block text-center mb-6">
+                  Álbuns Recentes
+                </span>
+                <div className="flex flex-col gap-3">
+                  {recentAlbums.map((album) => (
+                    <button
+                      key={album.eventId}
+                      onClick={() => navigate(`/e/${album.eventId}`)}
+                      className="w-full flex items-center gap-4 p-3 bg-theme-bg-muted border border-white/5 rounded-xl hover:border-brand-tactical/50 transition-colors text-left"
+                    >
+                      {album.coverUrl ? (
+                        <img src={album.coverUrl} alt="" className="w-12 h-12 rounded-lg object-cover" />
+                      ) : (
+                        <div className="w-12 h-12 rounded-lg bg-[#1a1a1a] flex items-center justify-center border border-white/10">
+                          <ImageIcon size={16} className="text-gray-500" />
+                        </div>
+                      )}
+                      <span className="text-sm font-bold text-white uppercase truncate flex-1">{album.title}</span>
+                      <ChevronRight size={16} className="text-brand-tactical" />
+                    </button>
+                  ))}
+                </div>
+              </div>
+            ) : (
+              <button 
+                onClick={() => navigate("/")}
+                className="w-full py-5 bg-brand-tactical text-black text-[10px] font-bold uppercase tracking-[0.4em] hover:bg-white transition-all "
+              >
+                Voltar para a Vitrine
+              </button>
+            )}
           </div>
         </div>
       </div>
@@ -701,35 +731,35 @@ const CheckoutPageInner = () => {
   if (!effectiveOrderId && (digitalPhotos.length > 0 || physicalItems.length > 0)) {
     const firstEventId = digitalPhotos[0]?.eventId || physicalItems[0]?.eventId;
     
-    const handleGenerateOrder = async () => {
+    // Auto-Recovery Effect
+    if (!autoRecoveryAttempted.current) {
+      autoRecoveryAttempted.current = true;
       setLoading(true);
-      try {
-        const { data } = await API.post("/checkout/pending", {
-          eventId: firstEventId,
-          userId: authUser?.id,
-          email: authUser?.email || "contatofotosegundo@gmail.com",
-          cart: digitalPhotos.filter(p => p.eventId === firstEventId).map(p => p.shortId),
-          physicalItems: physicalItems.filter(p => p.eventId === firstEventId).map(i => ({
-            id: i.productId,
-            quantity: i.quantity,
-            selectedPhotos: i.selectedPhotos,
-            coverColor: i.coverColor,
-            notes: i.notes
-          }))
-        });
+      
+      API.post("/checkout/pending", {
+        eventId: firstEventId,
+        userId: authUser?.id,
+        email: authUser?.email || "contatofotosegundo@gmail.com",
+        cart: digitalPhotos.filter(p => p.eventId === firstEventId).map(p => p.shortId),
+        physicalItems: physicalItems.filter(p => p.eventId === firstEventId).map(i => ({
+          id: i.productId,
+          quantity: i.quantity,
+          selectedPhotos: i.selectedPhotos,
+          coverColor: i.coverColor,
+          notes: i.notes
+        }))
+      }).then(({ data }) => {
         localStorage.setItem('fs_last_order_id', data.orderId);
-        // Clear the physical cart items — they are now recorded in the backend order
         localStorage.removeItem('fs_cart_physical');
         localStorage.removeItem('fs_cart_digital');
         navigate(`/checkout/${data.orderId}`);
-        window.location.reload(); // Force reload to trigger order fetch
-      } catch (err) {
+        window.location.reload();
+      }).catch(err => {
         console.error("Recovery failed:", err);
         setError("Não foi possível processar seu carrinho. Tente voltar ao evento.");
-      } finally {
         setLoading(false);
-      }
-    };
+      });
+    }
 
     return (
       <div className="min-h-screen bg-theme-bg flex flex-col items-center justify-center p-4 md:p-8 text-center">
@@ -771,10 +801,10 @@ const CheckoutPageInner = () => {
               Limpar e Sair
             </button>
             <button 
-              onClick={handleGenerateOrder}
-              className="py-5 bg-brand-tactical text-black text-[10px] font-bold uppercase tracking-[0.4em] hover:bg-white transition-all shadow-[0_20px_40px_rgba(20,184,166,0.2)]"
+              disabled={true}
+              className="py-5 bg-brand-tactical/50 text-black/50 text-[10px] font-bold uppercase tracking-[0.4em] transition-all cursor-not-allowed"
             >
-              Finalizar Agora
+              Processando...
             </button>
           </div>
         </div>
