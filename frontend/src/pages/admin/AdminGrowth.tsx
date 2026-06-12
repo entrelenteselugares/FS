@@ -266,7 +266,12 @@ export function AdminGrowth() {
             ) : (
               <div className="text-center space-y-4">
                 <p className="text-[10px] font-bold text-theme-text-muted uppercase tracking-widest">Motor de WhatsApp Offline</p>
-                <button onClick={fetchData} className="px-3 md:px-6 py-3 bg-brand-tactical text-brand-text text-[10px] font-bold uppercase tracking-widest">Tentar Iniciar Sessão</button>
+                <button onClick={() => {
+                  fetchData();
+                  if (!waStatus?.connected && !waStatus?.qrCode) {
+                    toast.info("Certifique-se de que o wa-worker está rodando separadamente (npm run dev no diretório wa-worker).");
+                  }
+                }} className="px-3 md:px-6 py-3 bg-brand-tactical text-brand-text text-[10px] font-bold uppercase tracking-widest">Tentar Iniciar Sessão</button>
               </div>
             )}
           </div>

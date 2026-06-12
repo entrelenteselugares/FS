@@ -90,10 +90,12 @@ export class GrowthController {
           id: true,
           nome: true,
           email: true,
+          affiliateTier: true,
+          affiliatePayoutType: true,
         }
       });
       
-      const mapped = ambassadors.map(a => ({ ...a, affiliatePayoutType: 'STANDARD' }));
+      const mapped = ambassadors.map(a => ({ ...a, affiliatePayoutType: a.affiliatePayoutType || 'CREDIT' }));
       return res.json({ ambassadors: mapped });
     } catch (error: any) {
       return res.status(500).json({ error: "Erro ao buscar embaixadores" });

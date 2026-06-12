@@ -321,7 +321,7 @@ export class EventController {
       const take = 20;
       const skip = (Number(page) - 1) * take;
 
-      const validTypes = ['ALBUM_FULL', 'PHOTO_MARKETPLACE', 'FOTO_POINT', 'FLASH_EVENT', 'SCHOOL', 'SPORTS'];
+      const validTypes = ['ALBUM_FULL', 'PHOTO_MARKETPLACE', 'FOTO_POINT', 'FLASH_EVENT', 'SCHOOL', 'SPORTS', 'WORLD_CUP'];
       if (type && !validTypes.includes(String(type))) {
         return res.json({
           events: [],
@@ -413,6 +413,8 @@ export class EventController {
             temVideo: true,
             temReels: true,
             city: true,
+            customLogoUrl: true,
+            customBrandColor: true,
             captacao: {
               select: {
                 nome: true
@@ -421,6 +423,8 @@ export class EventController {
             cartorioUser: {
               select: {
                 nome: true,
+                tenantLogoUrl: true,
+                tenantBrandColor: true,
                 cartorio: {
                   select: {
                     cidade: true
@@ -436,7 +440,9 @@ export class EventController {
       const mapped = events.map((e: any) => ({
         ...e,
         ownerName: e.cartorioUser?.nome || e.captacao?.nome || "Foto Segundo",
-        city: e.city || (e as any).cartorioUser?.cartorio?.cidade || null
+        city: e.city || (e as any).cartorioUser?.cartorio?.cidade || null,
+        tenantLogoUrl: e.customLogoUrl || e.cartorioUser?.tenantLogoUrl || null,
+        tenantBrandColor: e.customBrandColor || e.cartorioUser?.tenantBrandColor || null
       }));
 
       return res.json({

@@ -127,6 +127,8 @@ export class CartorioController {
             user: { 
               select: { 
                 pixKey: true,
+                tenantLogoUrl: true,
+                tenantBrandColor: true,
                 franchiseProfile: {
                   select: {
                     tier: true,
@@ -148,6 +150,7 @@ export class CartorioController {
         eventosMes,
         razaoSocial: cartorioData?.razaoSocial || "Sua Unidade",
         pixKey: (cartorioData as { user?: { pixKey?: string | null } } | null)?.user?.pixKey || "",
+        user: (cartorioData as any)?.user || null,
         cartorio: cartorioData,
         events: eventosProcessados 
       });
@@ -256,6 +259,70 @@ export class CartorioController {
     } catch (error) {
       console.error("[UnidadeFixaOrders Error]:", error);
       res.status(500).json({ error: "Erro ao buscar pedidos da Unidade Fixa." });
+    }
+  }
+
+  /**
+   * GET /api/unidade-fixa/finance/export
+   * Exporta em formato CSV os repasses aprovados da Unidade Fixa.
+   */
+  static async exportFinance(req: AuthRequest, res: Response) {
+    const user = req.user;
+    if (!user) return res.status(401).json({ error: "Não autorizado" });
+
+    const { startDate, endDate } = req.query;
+
+    try {
+      const isAdmin = user.role === "ADMIN";
+
+      const pedidos = await prisma.order.findMany({
+        where: {
+          status: "APROVADO",
+          event: isAdmin ? undefined : { cartorioUserId: user.userId },
+          ...(startDate || endDate
+            ? {
+                createdAt: {
+                  ...(startDate ? { gte: new Date(String(startDate)) } : {}),
+                  ...(endDate ? { lte: new Date(String(endDate)) } : {}),
+                },
+              }
+            : {}),
+        },
+        include: {
+          event: { select: { title: true, cartorioUser: { select: { cartorio: { select: { splitPct: true } } } } } },
+          cliente: { select: { nome: true, email: true } }
+        },
+        orderBy: { createdAt: "desc" },
+      });
+
+      if (pedidos.length === 0) {
+        return res.status(404).json({ error: "Nenhum dado financeiro encontrado no período." });
+      }
+
+      // Generate CSV
+      let csv = "ID do Pedido,Data,Evento,Cliente,Email do Cliente,Valor Total (R$),Comissao Unidade (R$)\n";
+      
+      pedidos.forEach(p => {
+        const dateStr = p.createdAt.toISOString().split('T')[0];
+        const eventName = p.event?.title ? `"${p.event.title}"` : "N/A";
+        const clientName = p.cliente?.nome ? `"${p.cliente.nome}"` : "N/A";
+        const clientEmail = p.cliente?.email ? `"${p.cliente.email}"` : "N/A";
+        const total = Number(p.valor).toFixed(2);
+        
+        // Calcular o split: O valor recebido pela Unidade Fixa (se não estiver salvo no pedido, deduzimos da porcentagem)
+        const splitPct = Number(p.event?.cartorioUser?.cartorio?.splitPct ?? 10) / 100;
+        const comissao = (Number(p.valor) * splitPct).toFixed(2);
+
+        csv += `${p.id},${dateStr},${eventName},${clientName},${clientEmail},${total},${comissao}\n`;
+      });
+
+      res.setHeader('Content-Type', 'text/csv; charset=utf-8');
+      res.setHeader('Content-Disposition', 'attachment; filename="fechamento_unidade_fixa.csv"');
+      
+      return res.send(csv);
+    } catch (error) {
+      console.error("[UnidadeFixaExport Error]:", error);
+      res.status(500).json({ error: "Erro ao exportar dados financeiros da Unidade Fixa." });
     }
   }
 }

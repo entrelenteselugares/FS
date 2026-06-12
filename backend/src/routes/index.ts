@@ -224,6 +224,7 @@ router.post("/me/redeem-print",          requireAuth, redeemPrint);
 router.get("/unidade-fixa/stats",    requireAuth, requireRole("ADMIN", "CARTORIO"), CartorioController.getStats);
 router.get("/unidade-fixa/events",   requireAuth, requireRole("ADMIN", "CARTORIO"), CartorioController.getEvents);
 router.get("/unidade-fixa/orders",   requireAuth, requireRole("ADMIN", "CARTORIO"), CartorioController.getOrders);
+router.get("/unidade-fixa/finance/export", requireAuth, requireRole("ADMIN", "CARTORIO"), CartorioController.exportFinance);
 router.patch("/unidade-fixa/profile",requireAuth, requireRole("ADMIN", "CARTORIO"), updatePartnerProfile);
 router.get("/unidade-fixa/team",     requireAuth, requireRole("ADMIN", "CARTORIO", "PROFISSIONAL", "FRANCHISEE"), getTeam);
 router.put("/unidade-fixa/team",     requireAuth, requireRole("ADMIN", "CARTORIO", "PROFISSIONAL", "FRANCHISEE"), saveTeam);

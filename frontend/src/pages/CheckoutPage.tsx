@@ -453,6 +453,16 @@ const CheckoutPageInner = () => {
 
   useEffect(() => () => stopPolling(), [stopPolling]);
 
+  // Phase 40: Inject Tenant Branding CSS
+  useEffect(() => {
+    if (order?.event?.tenantBrandColor) {
+      document.documentElement.style.setProperty('--brand', order.event.tenantBrandColor);
+    }
+    return () => {
+      document.documentElement.style.removeProperty('--brand');
+    };
+  }, [order?.event?.tenantBrandColor]);
+
   useEffect(() => {
     if (!paymentSuccess || !order) return;
     

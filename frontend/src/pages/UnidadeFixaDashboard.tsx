@@ -178,6 +178,11 @@ export default function UnidadeFixaDashboard({
   const [localPrices, setLocalPrices] = useState<Record<string, number>>({});
   const [savingPrices, setSavingPrices] = useState(false);
 
+  // Tenant Branding State
+  const [tenantLogoUrl, setTenantLogoUrl] = useState("");
+  const [tenantBrandColor, setTenantBrandColor] = useState("#85b9ac");
+  const [savingBrand, setSavingBrand] = useState(false);
+
   // Team State
   const [teamData, setTeamData] = useState<ProfissionalTeam[]>([]);
   const [teamLoaded, setTeamLoaded] = useState(false);
@@ -244,6 +249,10 @@ export default function UnidadeFixaDashboard({
         API.get("/me/repasses")
       ]);
       setStats(statsRes.data);
+      if (statsRes.data.user) {
+        setTenantLogoUrl(statsRes.data.user.tenantLogoUrl || "");
+        setTenantBrandColor(statsRes.data.user.tenantBrandColor || "#85b9ac");
+      }
       setEventos(eventosRes.data.events ?? eventosRes.data);
       setRepasses(repassesRes.data || []);
       
@@ -323,6 +332,22 @@ export default function UnidadeFixaDashboard({
       setError("Erro ao salvar Tabela de preços.");
     } finally {
       setSavingPrices(false);
+    }
+  };
+
+  const saveBrandConfig = async () => {
+    setSavingBrand(true);
+    try {
+      await API.patch("/auth/me/tenant-branding", { 
+        tenantLogoUrl,
+        tenantBrandColor
+      });
+      setSuccess("Customização da marca atualizada com sucesso! 🎨");
+      setTimeout(() => setSuccess(""), 3000);
+    } catch {
+      setError("Erro ao salvar customização da marca.");
+    } finally {
+      setSavingBrand(false);
     }
   };
 
@@ -785,6 +810,26 @@ export default function UnidadeFixaDashboard({
                    Alterar Destino
                  </button>
               </div>
+
+              {/* Franchise Intel Metrics */}
+              <div className="lux-card p-3 md:p-6 md:p-8 flex flex-col justify-between bg-theme-bg rounded-2xl border border-theme-border shadow-sm">
+                 <div className="space-y-4">
+                    <p className="text-[9px] font-bold text-theme-muted uppercase tracking-[0.3em]">Inteligência de Vendas</p>
+                    <div className="flex items-center gap-4">
+                       <div className="p-3 bg-brand-tactical/10 text-brand-tactical border border-brand-tactical/20">
+                          <Activity size={20} />
+                       </div>
+                       <div>
+                          <p className="text-[10px] font-bold text-theme-text uppercase tracking-widest">{stats?.totalEventos || 0} EVENTOS</p>
+                          <p className="text-[8px] font-bold text-theme-muted uppercase">NA REDE TÉCNICA</p>
+                       </div>
+                    </div>
+                 </div>
+                 <div className="mt-8 pt-4 border-t border-theme-border/50">
+                    <p className="text-[11px] font-bold text-theme-text">{stats?.totalEventos ? ((stats.totalVendas / stats.totalEventos) * 100).toFixed(1) : "0"}%</p>
+                    <p className="text-[8px] font-bold text-theme-muted uppercase tracking-widest">Taxa de Conversão Média</p>
+                 </div>
+              </div>
             </div>
 
             {/* Financial History Table */}
@@ -795,7 +840,13 @@ export default function UnidadeFixaDashboard({
                    <p className="text-[10px] font-bold text-theme-text uppercase tracking-[0.4em] ">Livro de Liquidações Históricas</p>
                 </div>
                 <div className="flex items-center gap-4">
-                  <span className="text-[9px] font-bold text-theme-muted uppercase tracking-widest">Crédito Acumulado:</span>
+                  <button 
+                    onClick={() => window.open("/api/unidade-fixa/finance/export", "_blank")}
+                    className="flex items-center gap-2 px-3 md:px-4 py-2.5 border border-theme-border text-theme-muted hover:text-theme-text hover:border-brand-tactical hover:bg-brand-tactical/5 transition-all rounded-xl text-[9px] font-bold uppercase tracking-widest"
+                  >
+                    <Download size={14} /> Fechamento CSV
+                  </button>
+                  <span className="text-[9px] font-bold text-theme-muted uppercase tracking-widest hidden lg:block">Crédito Acumulado:</span>
                   <div className="px-3 md:px-6 py-2.5 bg-brand-tactical text-brand-text rounded-xl shadow-md shadow-brand-tactical/20">
                     <p className="text-[11px] font-bold uppercase tracking-widest">{formatCurrency(repasses.filter(r => r.status !== "PAID").reduce((acc, r) => acc + r.amount, 0))}</p>
                   </div>
@@ -951,6 +1002,58 @@ export default function UnidadeFixaDashboard({
                   >
                     {savingPix ? "PROCESSANDO..." : "VINCULAR CHAVE"}
                   </button>
+                </div>
+              </div>
+            </div>
+
+            {/* BRANDING CUSTOMIZATION */}
+            <div className="lux-card p-4 md:p-8 md:p-10 bg-theme-bg border border-theme-border rounded-2xl shadow-sm mt-8">
+              <div className="flex flex-col md:flex-row justify-between gap-5 md:gap-10">
+                <div className="space-y-4 md:w-1/3">
+                  <h4 className="text-[10px] font-bold text-theme-text uppercase tracking-[0.5em] flex items-center gap-3">
+                    <Star size={16} className="text-brand-tactical" />
+                    Customização de Marca
+                  </h4>
+                  <p className="text-[9px] font-bold text-theme-muted uppercase tracking-widest leading-relaxed">
+                    Personalize a aparência dos seus eventos e painéis de venda. Adicione seu logotipo e sua cor predominante (Hex).
+                  </p>
+                </div>
+                <div className="flex-1 space-y-4">
+                  <div className="space-y-3">
+                    <label className="text-[10px] font-bold text-theme-text uppercase tracking-widest flex items-center gap-2"><Link size={12} className="text-brand-tactical"/> URL do Logotipo (Transparente)</label>
+                    <input 
+                      value={tenantLogoUrl} 
+                      onChange={e => setTenantLogoUrl(e.target.value)} 
+                      className="w-full bg-theme-bg-muted border border-theme-border rounded-xl p-4 text-xs font-bold text-theme-text focus:border-brand-tactical outline-none transition-all"
+                      placeholder="https://..."
+                    />
+                  </div>
+                  <div className="space-y-3">
+                    <label className="text-[10px] font-bold text-theme-text uppercase tracking-widest flex items-center gap-2">Cor da Marca (HEX)</label>
+                    <div className="flex items-center gap-4">
+                      <input 
+                        type="color"
+                        value={tenantBrandColor} 
+                        onChange={e => setTenantBrandColor(e.target.value)} 
+                        className="w-14 h-14 bg-theme-bg-muted border border-theme-border rounded-xl cursor-pointer shrink-0"
+                      />
+                      <input 
+                        value={tenantBrandColor} 
+                        onChange={e => setTenantBrandColor(e.target.value)} 
+                        className="flex-1 bg-theme-bg-muted border border-theme-border rounded-xl p-4 text-xs font-bold uppercase tracking-widest text-theme-text focus:border-brand-tactical outline-none transition-all"
+                        placeholder="#85b9ac"
+                      />
+                    </div>
+                  </div>
+                  <div className="pt-4 flex justify-end">
+                    <button
+                      disabled={savingBrand}
+                      onClick={saveBrandConfig}
+                      className="bg-brand-tactical text-brand-text px-8 py-4 text-[10px] font-bold uppercase tracking-[0.4em] hover:bg-brand-tactical/90 hover:scale-[1.02] transition-all rounded-xl cursor-pointer shadow-lg"
+                    >
+                      {savingBrand ? "SALVANDO..." : "ATUALIZAR MARCA"}
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>

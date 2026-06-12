@@ -142,10 +142,6 @@ export default function ClienteArea() {
 
     // REMOVED redirects to /profissional and /unidade-fixa.
     // ClienteArea will now render these dashboards inline using noLayout={true}.
-    if (targetTab === "franquia" && user?.role === "FRANCHISEE") {
-      navigate("/franquia");
-      return;
-    }
 
     setSearchParams(prev => {
       prev.set("tab", targetTab);

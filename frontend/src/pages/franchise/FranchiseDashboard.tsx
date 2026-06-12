@@ -355,6 +355,54 @@ const FranchiseDashboard: React.FC = () => {
                ))}
             </div>
           </div>
+          </div>
+
+          {/* PASSIVE INCOME LIST & COHORT INTEL MOVED TO LEFT COLUMN */}
+          <div className="bg-theme-bg-muted border border-theme-border p-4 md:p-8 space-y-4 md:space-y-8">
+            <div className="flex items-center justify-between">
+              <h3 className="text-sm font-bold text-theme-text uppercase tracking-widest ">Comissões & Fechamento</h3>
+              <button 
+                onClick={handleExportCSV}
+                className="text-[9px] font-bold text-brand-tactical border border-brand-tactical/30 px-3 py-1.5 uppercase tracking-widest hover:bg-brand-tactical hover:text-black transition-colors"
+              >
+                Exportar CSV
+              </button>
+            </div>
+
+            {/* COHORT INTEL METRICS */}
+            {finance.intel && (
+              <div className="grid grid-cols-3 gap-4 pb-6 border-b border-theme-border">
+                <div>
+                  <span className="block text-[8px] font-bold text-theme-muted uppercase tracking-widest">Eventos da Rede</span>
+                  <span className="text-lg font-bold text-white">{finance.intel.networkEvents}</span>
+                </div>
+                <div>
+                  <span className="block text-[8px] font-bold text-theme-muted uppercase tracking-widest">Pedidos (Vendas)</span>
+                  <span className="text-lg font-bold text-white">{finance.intel.networkOrders}</span>
+                </div>
+                <div>
+                  <span className="block text-[8px] font-bold text-theme-muted uppercase tracking-widest">Conv. (Orders/Event)</span>
+                  <span className="text-lg font-bold text-brand-tactical">{finance.intel.avgOrdersPerEvent}</span>
+                </div>
+              </div>
+            )}
+
+            <div className="space-y-4">
+              {finance.recentCommissions.length === 0 ? (
+                <p className="text-[9px] text-theme-muted uppercase tracking-widest opacity-40 py-4 text-center border  border-theme-border">
+                  Nenhuma comissão passiva registrada.
+                </p>
+              ) : finance.recentCommissions.map(c => (
+                <div key={c.id} className="flex flex-col gap-1 py-3 border-b border-theme-border/10 last:border-0">
+                  <div className="flex justify-between items-start">
+                    <span className="text-[10px] font-bold text-theme-text uppercase truncate max-w-[140px]">{c.eventTitle}</span>
+                    <span className="text-[11px] font-bold text-blue-400">+{new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(c.amount)}</span>
+                  </div>
+                  <span className="text-[8px] font-bold text-theme-muted uppercase opacity-40">{new Date(c.date).toLocaleDateString('pt-BR')}</span>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
 
         {/* COLUNA 2: NETWORKING & REFERRALS */}
@@ -452,54 +500,6 @@ const FranchiseDashboard: React.FC = () => {
                 </button>
               </div>
             </div>
-          </div>
-
-          {/* PASSIVE INCOME LIST & COHORT INTEL */}
-          <div className="bg-theme-bg-muted border border-theme-border p-4 md:p-8 space-y-4 md:space-y-8">
-            <div className="flex items-center justify-between">
-              <h3 className="text-sm font-bold text-theme-text uppercase tracking-widest ">Comissões & Fechamento</h3>
-              <button 
-                onClick={handleExportCSV}
-                className="text-[9px] font-bold text-brand-tactical border border-brand-tactical/30 px-3 py-1.5 uppercase tracking-widest hover:bg-brand-tactical hover:text-black transition-colors"
-              >
-                Exportar CSV
-              </button>
-            </div>
-
-            {/* COHORT INTEL METRICS */}
-            {finance.intel && (
-              <div className="grid grid-cols-3 gap-4 pb-6 border-b border-theme-border">
-                <div>
-                  <span className="block text-[8px] font-bold text-theme-muted uppercase tracking-widest">Eventos da Rede</span>
-                  <span className="text-lg font-bold text-white">{finance.intel.networkEvents}</span>
-                </div>
-                <div>
-                  <span className="block text-[8px] font-bold text-theme-muted uppercase tracking-widest">Pedidos (Vendas)</span>
-                  <span className="text-lg font-bold text-white">{finance.intel.networkOrders}</span>
-                </div>
-                <div>
-                  <span className="block text-[8px] font-bold text-theme-muted uppercase tracking-widest">Conv. (Orders/Event)</span>
-                  <span className="text-lg font-bold text-brand-tactical">{finance.intel.avgOrdersPerEvent}</span>
-                </div>
-              </div>
-            )}
-
-            <div className="space-y-4">
-              {finance.recentCommissions.length === 0 ? (
-                <p className="text-[9px] text-theme-muted uppercase tracking-widest opacity-40 py-4 text-center border  border-theme-border">
-                  Nenhuma comissão passiva registrada.
-                </p>
-              ) : finance.recentCommissions.map(c => (
-                <div key={c.id} className="flex flex-col gap-1 py-3 border-b border-theme-border/10 last:border-0">
-                  <div className="flex justify-between items-start">
-                    <span className="text-[10px] font-bold text-theme-text uppercase truncate max-w-[140px]">{c.eventTitle}</span>
-                    <span className="text-[11px] font-bold text-blue-400">+{new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(c.amount)}</span>
-                  </div>
-                  <span className="text-[8px] font-bold text-theme-muted uppercase opacity-40">{new Date(c.date).toLocaleDateString('pt-BR')}</span>
-                </div>
-              ))}
-            </div>
-          </div>
         </div>
 
         </div>

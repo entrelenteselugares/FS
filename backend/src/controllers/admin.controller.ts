@@ -872,6 +872,7 @@ export async function adminUpdateUser(req: AuthRequest, res: Response): Promise<
         ...(req.body.isVerified !== undefined && { isVerified: req.body.isVerified }),
         ...(req.body.verificationStatus && { verificationStatus: req.body.verificationStatus }),
         ...(req.body.affiliateTier !== undefined && { affiliateTier: req.body.affiliateTier }),
+        ...(req.body.affiliatePayoutType !== undefined && { affiliatePayoutType: req.body.affiliatePayoutType }),
       },
     });
 

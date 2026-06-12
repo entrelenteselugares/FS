@@ -737,4 +737,34 @@ export class AuthController {
       });
     }
   }
+
+  static async updateTenantBranding(req: AuthRequest, res: Response) {
+    const userId = req.user?.userId;
+    if (!userId) return res.status(401).json({ error: "Não autorizado" });
+
+    if (req.user?.role !== "CARTORIO" && req.user?.role !== "ADMIN") {
+      return res.status(403).json({ error: "Acesso negado. Apenas Franquias podem customizar a marca." });
+    }
+
+    const { tenantLogoUrl, tenantBrandColor } = req.body;
+
+    try {
+      const updated = await prisma.user.update({
+        where: { id: userId },
+        data: {
+          tenantLogoUrl: tenantLogoUrl !== undefined ? tenantLogoUrl : undefined,
+          tenantBrandColor: tenantBrandColor !== undefined ? tenantBrandColor : undefined
+        },
+        select: { id: true, tenantLogoUrl: true, tenantBrandColor: true }
+      });
+
+      return res.json(updated);
+    } catch (error: any) {
+      console.error("[UPDATE TENANT BRANDING ERROR]:", error);
+      return res.status(500).json({ 
+        error: "Erro ao atualizar customização da marca", 
+        details: error.message || String(error) 
+      });
+    }
+  }
 }

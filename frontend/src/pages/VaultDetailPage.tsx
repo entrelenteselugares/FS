@@ -45,6 +45,10 @@ interface Vault {
   externalVideoLink?: string | null;
   trialEndsAt: string | null;
   myRole: string;
+  owner?: {
+    tenantBrandColor?: string | null;
+    tenantLogoUrl?: string | null;
+  };
   subscription?: {
     id: string;
     status: string;
@@ -306,6 +310,16 @@ export default function VaultDetailPage() {
     }
   }, [authLoading, user, navigate, fetchVaultDetails]);
 
+  // Phase 40: Inject Tenant Branding CSS
+  useEffect(() => {
+    if (vault?.owner?.tenantBrandColor) {
+      document.documentElement.style.setProperty('--brand', vault.owner.tenantBrandColor);
+    }
+    return () => {
+      document.documentElement.style.removeProperty('--brand');
+    };
+  }, [vault?.owner?.tenantBrandColor]);
+
   const sortedMedia = useMemo(() => {
     return [...media].sort((a, b) => {
       switch (sortConfig) {
@@ -544,7 +558,7 @@ export default function VaultDetailPage() {
         <title>{vault.nome || "Álbum"} | Meus Álbuns</title>
       </Helmet>
       <div className="hidden md:block">
-        <Navbar />
+        <Navbar tenantLogoUrl={vault?.owner?.tenantLogoUrl} />
       </div>
 
       {/* Header Sticky / Hero Area */}

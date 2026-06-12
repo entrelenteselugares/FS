@@ -16,6 +16,7 @@ router.post("/forgot-password", AuthController.forgotPassword);
 router.post("/reset-password", AuthController.updatePassword);
 router.get("/me", requireAuth, AuthController.me);
 router.patch("/me", requireAuth, AuthController.updateMe);
+router.patch("/me/tenant-branding", requireAuth, AuthController.updateTenantBranding);
 router.post("/refresh", AuthController.refresh);
 router.post("/logout", AuthController.logout);
 

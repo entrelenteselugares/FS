@@ -449,6 +449,9 @@ export class VaultController {
           members: {
             include: { user: { select: { nome: true } } }
           },
+          owner: {
+            select: { tenantBrandColor: true, tenantLogoUrl: true }
+          },
           subscription: true,
           _count: {
             select: { media: true, members: true }

@@ -983,6 +983,7 @@ enum EventType {
   FLASH_EVENT
   SCHOOL
   SPORTS
+  WORLD_CUP
 }
 
 enum EventCategory {
