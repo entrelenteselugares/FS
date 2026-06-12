@@ -74,8 +74,8 @@ export function OptimizedImage({
           className={`w-full h-full transition-opacity duration-500 ease-in-out ${
             isLoaded ? 'opacity-100' : 'opacity-0'
           }`}
-          style={{ objectFit }}
           {...props}
+          style={{ objectFit, ...props.style }}
         />
       )}
     </div>
