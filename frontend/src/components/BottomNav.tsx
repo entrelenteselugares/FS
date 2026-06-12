@@ -51,8 +51,7 @@ export const BottomNav: React.FC = () => {
 
     // Strict role check: only genuine PROFISSIONAL or FRANCHISEE roles unlock pro/franchise menus.
     // Do NOT rely solely on franchiseProfile presence — admins also have it and must not bleed into this path.
-    const isProOrFranchise = (user?.role === "PROFISSIONAL" || user?.role === "FRANCHISEE") &&
-      user?.role !== "UNIDADE" && user?.role !== "CARTORIO" && user?.role !== "ADMIN";
+    const isProOrFranchise = user?.role === "PROFISSIONAL" || user?.role === "FRANCHISEE";
     const isVerified = (user?.verificationStatus === "APPROVED" || user?.isVerified || !!user?.franchiseProfile) &&
       user?.role !== "UNIDADE" && user?.role !== "CARTORIO";
 
