@@ -220,6 +220,10 @@ async function run() {
         
         // Take full-page screenshot
         const screenshotPath = path.join(SCREENSHOTS_DIR, `${filenameBase}.png`);
+        
+        // Assert page loaded
+        await page.waitForSelector('body', { state: 'visible', timeout: 10000 });
+        
         await page.screenshot({ path: screenshotPath, fullPage: true });
         
         console.log(`✅ Completed Mobile: ${filenameBase}`);
