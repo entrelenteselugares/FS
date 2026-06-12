@@ -1208,6 +1208,7 @@ export const AlbumTorcidaPage = () => {
                       }}
                       accept="image/*"
                       style={{ display: "none" }}
+                      capture="environment"
                     />
 
                     {photo ? (

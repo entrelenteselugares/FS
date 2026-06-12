@@ -98,7 +98,7 @@
 **Goal:** Preparar os hooks para Firebase Cloud Messaging (Push Notifications) e inputs que acionam diretamente a câmera no device mobile.
 **Requirements:** ENGAGE-01, ENGAGE-02
 **Depends on:** Phase 70
-**Status:** Em Espera (Aguardando criação da conta no Firebase).
+**Status:** ✅ Completed (UAT passed: 2/2 tests)
 
 ### Phase 58: Álbum da Torcida (Promoção Copa do Mundo)
 

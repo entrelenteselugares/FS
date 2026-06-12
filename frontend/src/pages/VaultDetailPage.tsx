@@ -658,7 +658,7 @@ export default function VaultDetailPage() {
             }`}>
               <Upload size={14} />
               {media.length >= vault.goalPoses * 2 ? "Limite Atingido" : "Enviar Mídia"}
-                <input type="file" className="hidden" onChange={handleFileUpload} accept={vault.subscriptionStatus === "ACTIVE" ? "image/*,video/mp4,video/quicktime,video/webm" : "image/*"} multiple />
+                <input type="file" className="hidden" onChange={handleFileUpload} accept={vault.subscriptionStatus === "ACTIVE" ? "image/*,video/mp4,video/quicktime,video/webm" : "image/*"} multiple capture="environment" />
             </label>
           </div>
         </div>

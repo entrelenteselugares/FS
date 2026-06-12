@@ -246,7 +246,7 @@ export function AlbumMissionsTab() {
                         }}>
                           <Camera size={24} />
                           <span style={{ fontSize: 10, fontWeight: 700, textTransform: "uppercase" }}>Enviar Foto</span>
-                          <input type="file" accept="image/*" style={{ display: "none" }} onChange={(e) => slot && handlePhotoUpload(slot.id, e)} />
+                          <input type="file" accept="image/*" style={{ display: "none" }} onChange={(e) => slot && handlePhotoUpload(slot.id, e)} capture="environment" />
                         </label>
                       </div>
                     )}
