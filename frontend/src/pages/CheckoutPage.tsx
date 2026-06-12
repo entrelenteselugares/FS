@@ -78,6 +78,7 @@ interface MPBrickSettings {
       creditCard: "all";
       bankTransfer: string[];
       maxInstallments: number;
+      mercadoPago?: "all" | string;
     };
     visual: { style: { theme: "default" | "dark" } };
   };
@@ -574,7 +575,7 @@ const CheckoutPageInner = () => {
           payer: { email: order.buyerEmail || "contatofotosegundo@gmail.com", entityType: "individual" },
         },
         customization: {
-          paymentMethods: { creditCard: "all", bankTransfer: ["pix"], maxInstallments: 12, wallet_purchase: "all" },
+          paymentMethods: { creditCard: "all", bankTransfer: ["pix"], maxInstallments: 12, mercadoPago: "all" },
           visual: { style: { theme: "dark" } },
         },
         callbacks: {
