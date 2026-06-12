@@ -45,6 +45,7 @@ export class PaymentController {
         upgradePrice = catalogItems.reduce((acc, s) => acc + Number(s.basePrice), 0);
       }
 
+      let orderItemsData: any[] = [];
       let physicalPrice = 0;
       let totalSupplierCost = 0;
       const items = physicalItems || [];
@@ -55,6 +56,44 @@ export class PaymentController {
           const pPrice = product.sellingPrice !== null ? Number(product.sellingPrice) : Number(product.supplierCost) * (1 + product.marginPct / 100);
           physicalPrice += pPrice * qty;
           totalSupplierCost += Number(product.supplierCost) * qty;
+
+          orderItemsData.push({
+            printProductId: product.id,
+            price: pPrice,
+            quantity: qty,
+            selectedPhotos: item.selectedPhotos || []
+          });
+        }
+      }
+
+      if (cartItems.length > 0) {
+        for (const shortId of cartItems) {
+          let media = await prisma.eventMedia.findFirst({
+            where: { eventId, shortId }
+          });
+          if (!media) {
+            const print = await prisma.phygitalPrint.findFirst({
+              where: { eventId, referenceCode: shortId }
+            });
+            if (print) {
+              media = await prisma.eventMedia.create({
+                data: {
+                  eventId,
+                  shortId: print.referenceCode,
+                  url: print.imageUrl,
+                  price: event.pricePerPhoto || 15,
+                  type: "PHOTO"
+                }
+              });
+            }
+          }
+          if (media) {
+            orderItemsData.push({
+              mediaId: media.id,
+              price: media.price || event.pricePerPhoto || 15,
+              quantity: 1
+            });
+          }
         }
       }
 
@@ -79,6 +118,9 @@ export class PaymentController {
             physicalItems: items,
             supplierCost: totalSupplierCost
           }),
+          items: orderItemsData.length > 0 ? {
+            create: orderItemsData
+          } : undefined
         }
       });
 
