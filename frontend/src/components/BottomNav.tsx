@@ -49,8 +49,12 @@ export const BottomNav: React.FC = () => {
       { label: "Meus Dados", onClick: () => { setDrawerOpen(false); setTimeout(() => navigate("/minha-conta?tab=profile", { replace: true }), 50); }, isActive: location.pathname === "/minha-conta" && tab === "profile", icon: <User size={18} /> },
     ];
 
-    const isProOrFranchise = (user?.role === "PROFISSIONAL" || user?.role === "FRANCHISEE" || !!user?.franchiseProfile) && user?.role !== "UNIDADE" && user?.role !== "CARTORIO";
-    const isVerified = (user?.verificationStatus === "APPROVED" || !!user?.franchiseProfile) && user?.role !== "UNIDADE" && user?.role !== "CARTORIO";
+    // Strict role check: only genuine PROFISSIONAL or FRANCHISEE roles unlock pro/franchise menus.
+    // Do NOT rely solely on franchiseProfile presence — admins also have it and must not bleed into this path.
+    const isProOrFranchise = (user?.role === "PROFISSIONAL" || user?.role === "FRANCHISEE") &&
+      user?.role !== "UNIDADE" && user?.role !== "CARTORIO" && user?.role !== "ADMIN";
+    const isVerified = (user?.verificationStatus === "APPROVED" || user?.isVerified || !!user?.franchiseProfile) &&
+      user?.role !== "UNIDADE" && user?.role !== "CARTORIO";
 
     if (isProOrFranchise && isVerified) {
       items.push(
