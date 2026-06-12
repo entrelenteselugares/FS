@@ -12,6 +12,7 @@
 - ✅ **v14.0 Infrastructure Resilience** — Phase 55 (shipped)
 - ✅ **v14.1 Analytics & Telemetry** — Phase 57 (shipped)
 - ✅ **v14.2 QuotePage UX Refinement** — Phase 56 (shipped)
+- ✅ **v15.0 Native Mobile Experience** — Phases 58-71 (shipped 2026-06-12) — [Archive](file:///.planning/milestones/v15.0-ROADMAP.md)
 
 ## Phases
 
@@ -75,98 +76,5 @@
 
 </details>
 
-## Backlog (v15.0 Native Mobile Experience)
+## Backlog (v16.0 TBD)
 
-### Phase 68: Autenticação Expressa (Google Auth)
-
-**Goal:** Implementar Social Login de 1-click apenas com o Google, finalizando a configuração do OAuth2 para reduzir a fricção de entrada dos usuários no app.
-**Requirements:** AUTH-01
-**Depends on:** None
-**Status:** In Progress (Aguardando Configuração do Google Cloud Console)
-
-~~### Phase 69: Checkout Frictionless~~ (CANCELADA)
-
-### Phase 70: Navegação App-Like (Mobile-First UI)
-
-**Goal:** Substituir menus genéricos por uma Bottom Navigation Bar, aplicar smooth view transitions e bloquear eventos clássicos de navegador (pull-to-refresh) para uma sensação 100% nativa.
-**Requirements:** NAV-01, NAV-02, NAV-03
-**Depends on:** Phase 68
-**Status:** Completed
-
-### Phase 71: Engajamento via Push e Câmera Nativa
-
-**Goal:** Preparar os hooks para Firebase Cloud Messaging (Push Notifications) e inputs que acionam diretamente a câmera no device mobile.
-**Requirements:** ENGAGE-01, ENGAGE-02
-**Depends on:** Phase 70
-**Status:** ✅ Completed (UAT passed: 2/2 tests)
-
-### Phase 58: Álbum da Torcida (Promoção Copa do Mundo)
-
-**Goal:** Criar uma experiência gamificada para os usuários montarem um álbum de fotos de 12 slots durante os jogos da Copa do Mundo, com badges, escalação de amigos e integração com social sharing.
-**Requirements**: TBD
-**Depends on:** Phase 57
-**Status:** Completed
-
-### Phase 59: Banner, Chaveamento e Placar Ao Vivo da Copa
-
-**Goal:** Adicionar um banner promocional, buscar dados em tempo real da FIFA (ou API de esportes) para um placar ao vivo, e renderizar o chaveamento (bracket) do torneio em uma área especial.
-**Requirements**: TBD
-**Depends on:** Phase 58
-**Status:** Completed
-
-### Phase 61: Missões e Quiz do Álbum da Torcida
-
-**Goal:** Implementar a aba de "Missões" no Álbum da Torcida, onde os 12 slots são desbloqueados através de Quizzes e submissões de fotos validadas pela comunidade, gerando acúmulo de pontos/selos para premiações.
-**Requirements**: TBD
-**Depends on:** Phase 58
-**Status:** Completed
-
-### Phase 64: Homologação e Testes de Permissões
-
-**Goal:** Auditar todas as 76 telas do sistema garantindo a renderização visual e checagem de permissões via Playwright.
-**Requirements:**
-
-- Ajustar `generate-all-manuals.js` para usar login nas rotas públicas simulando o usuário Cliente.
-- Ajustar `generate-all-manuals-mobile.js` para Mobile.
-- Validar a geração e conferir a blindagem do `ProtectedRoute` contra acessos anônimos.
-- Produzir telas mobile e desktop 1 a 76 com renderização completa.
-**Depends on:** None
-**Status:** Completed
-
-### Phase 62: Auth Wall Universal & Câmera Rápida
-
-**Goal:** Configurar bloqueio rigoroso exigindo login para acessar o sistema inteiro (exceto links públicos) usando `returnUrl` em convites, além de adicionar uma Bottom Bar com atalho central de câmera para convidados.
-**Requirements**: CONTEXT.md defined
-**Depends on:** None
-**Status:** Completed
-
-### Phase 63: Mobile Performance Optimization
-
-**Goal:** Refatorar, otimizar e melhorar a velocidade de resposta do aplicativo na versão mobile, eliminando lags e travamentos que prejudicam a percepção de qualidade do app.
-**Requirements**: TBD
-**Depends on:** None
-**Status:** Completed
-
-### Phase 65: Refatoração e Padronização de UI/UX (Frontend Overhaul)
-
-**Goal:** Padronizar tipografia, espaçamentos, cores e componentes globais para garantir excelência estética e eliminar dívida visual técnica de ponta a ponta.
-**Requirements:**
-
-- Limpar e reestruturar `index.css` com Design Tokens estritos.
-- Padronizar componentes globais (Buttons, Inputs).
-- Implementar containers responsivos padronizados.
-- Refinar tela a tela usando a nova fundação.
-**Depends on:** Phase 64
-**Status:** Completed
-
-### Phase 66: Performance Optimization
-
-**Goal:** Melhorar a velocidade de carregamento inicial, eliminando splash screens desnecessárias e otimizando a montagem dos componentes principais (Vault, Album Torcida).
-**Depends on:** Phase 65
-**Status:** Completed
-
-### Phase 67: Code Cleanup & Bundle Optimization
-
-**Goal:** Depurar o código, remover arquivos e dependências desnecessárias, aplicar code-splitting (lazy loading) e reduzir o peso geral da aplicação para máxima velocidade de carregamento.
-**Depends on:** Phase 66
-**Status:** Completed

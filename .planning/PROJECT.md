@@ -32,20 +32,21 @@ To be the national standard for phygital (physical + digital) photography experi
 
 ## Current State
 
-Shipped **Phase 67 Code Cleanup**. The platform has undergone optimization and scale preparation, including bundle optimization and code cleanup. The platform is stable and fully validated in production.
+Shipped **v15.0 Native Mobile Experience**. The platform now supports Google OAuth, a unified Gamified Torcida Album, completely overhauled and standardized UI/UX based on design tokens, App-like Bottom Navigation, and Push Notification infrastructure.
 
-## Current Milestone: v15.0 Native Mobile Experience & App Store Prep
+## Current Milestone: v16.0 (TBD)
 
-**Goal:** Transformar a interface e os fluxos do Foto Segundo para entregar uma experiência premium de aplicativo nativo no celular, preparando o terreno para o empacotamento com Capacitor e publicação na Google Play Store.
+**Goal:** (Awaiting next planning phase)
 
 **Target features:**
-- Autenticação Expressa (Auth Wall Rápido com Apple/Google Sign-In)
-- Checkout Frictionless (Persistência de carrinho, 1-click pay com Google/Apple Pay, Empty States limpos)
-- Navegação App-Like (Bottom Navigation Bar, sem menu hambúrguer, transições suaves)
-- Engajamento via Push (Infraestrutura para Push Nativo real)
+- TBD
 
 <details>
 <summary>Archived Milestones</summary>
+
+**v15.0 Native Mobile Experience**
+_Goal:_ Transform the UI and flows to deliver a premium native app experience and scale promotional tools.
+_Outcome:_ Delivered Gamified Album, Auth Wall with Google Auth, App-like View Transitions, Bottom Bar Navigation, comprehensive Frontend Code Cleanup, and Push Notification hooks.
 
 **v13.0 Scale & Optimization**
 _Goal:_ Integrate automated conversational AI for customer engagement (WhatsApp) and implement custom service creations and media management.
