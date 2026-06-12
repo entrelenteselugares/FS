@@ -241,14 +241,14 @@ const FranchiseDashboard: React.FC = () => {
           </div>
 
           {/* REVENUE STATUS WIDGET */}
-          <div className="flex items-center gap-4 px-4 py-3 sm:px-6 sm:py-4 border border-theme-border bg-theme-bg-muted border-blue-500/30">
+          <div className="flex items-center gap-4 px-4 py-3 sm:px-6 sm:py-4 border border-theme-border bg-theme-bg-muted border-blue-500">
             <div className="relative">
-              <DollarSign size={20} className="text-blue-400" />
+              <DollarSign size={20} className="text-blue-500" />
               <div className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-blue-500 animate-pulse" />
             </div>
             <div className="space-y-0.5">
               <span className="text-[8px] font-bold text-theme-muted uppercase tracking-widest block opacity-60">Renda Passiva</span>
-              <span className="text-xs sm:text-sm font-bold uppercase text-blue-400">
+              <span className="text-xs sm:text-sm font-bold uppercase text-blue-500">
                 {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(finance.totalEarned)}
               </span>
             </div>
@@ -396,7 +396,7 @@ const FranchiseDashboard: React.FC = () => {
                 <div key={c.id} className="flex flex-col gap-1 py-3 border-b border-theme-border/10 last:border-0">
                   <div className="flex justify-between items-start">
                     <span className="text-[10px] font-bold text-theme-text uppercase truncate max-w-[140px]">{c.eventTitle}</span>
-                    <span className="text-[11px] font-bold text-blue-400">+{new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(c.amount)}</span>
+                    <span className="text-[11px] font-bold text-blue-500">+{new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(c.amount)}</span>
                   </div>
                   <span className="text-[8px] font-bold text-theme-muted uppercase opacity-40">{new Date(c.date).toLocaleDateString('pt-BR')}</span>
                 </div>

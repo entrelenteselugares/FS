@@ -559,7 +559,7 @@ export default function UnidadeFixaDashboard({
                   </div>
                </div>
                <div className="bg-theme-bg-muted p-4 md:p-6 flex flex-col md:flex-row justify-center items-center gap-3 md:gap-5 text-center md:text-left">
-                  <div className="w-10 h-10 shrink-0 rounded-full bg-blue-500/10 flex items-center justify-center text-blue-500 border border-blue-500/20">
+                  <div className="w-10 h-10 shrink-0 rounded-full bg-blue-500 flex items-center justify-center text-blue-500 border border-blue-500">
                     <Users2 size={18} />
                   </div>
                   <div className="overflow-hidden w-full">
@@ -664,7 +664,7 @@ export default function UnidadeFixaDashboard({
                                     <span className="text-[9px] font-bold text-theme-muted uppercase tracking-widest">{ev._count?.orders ?? 0} Transações</span>
                                  </div>
                                  <div className="flex items-center gap-2">
-                                    <ShieldCheck size={12} className="text-blue-400" />
+                                    <ShieldCheck size={12} className="text-blue-500" />
                                     <span className="text-[9px] font-bold text-theme-muted uppercase tracking-widest">Protocolo Ativo</span>
                                  </div>
                               </div>
@@ -1374,7 +1374,7 @@ export default function UnidadeFixaDashboard({
 
               <div className="bg-theme-bg-muted p-4 md:p-8 space-y-4">
                  <div className="flex items-center gap-3">
-                   <div className="p-2 bg-blue-500/10 text-blue-500">
+                   <div className="p-2 bg-blue-500 text-blue-500">
                      <ShieldCheck size={16} />
                    </div>
                    <p className="text-[9px] font-bold text-theme-muted uppercase tracking-widest">Status da Franquia</p>

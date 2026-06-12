@@ -58,6 +58,8 @@ const HelpPage = React.lazy(() => import("./pages/HelpPage"));
 const AlbumTorcidaPage = React.lazy(() => import("./pages/worldcup/AlbumTorcidaPage").then(m => ({ default: m.AlbumTorcidaPage })));
 const MatchFolhaPage = React.lazy(() => import("./pages/worldcup/MatchFolhaPage").then(m => ({ default: m.MatchFolhaPage })));
 import { useEffect } from "react";
+import { AnimatePresence } from "framer-motion";
+import { PageTransition } from "./components/PageTransition";
 import { API as api } from "./lib/api";
 /** Redireciona /dashboard para o painel correto baseado no role */
 const DashboardRedirect = () => {
@@ -95,12 +97,11 @@ const AnimatedRoutes = () => {
   };
 
   return (
-    <div
-      key={getAnimationKey(location.pathname)}
-      className="w-full h-full pb-20 md:pb-0"
-    >
-        <Suspense fallback={<div className="flex h-screen w-full items-center justify-center bg-theme-bg"><div className="w-6 h-6 border-2 border-brand-tactical border-t-transparent rounded-full animate-spin"></div></div>}>
-          <Routes location={location}>
+    <AnimatePresence mode="wait">
+      <PageTransition key={getAnimationKey(location.pathname)}>
+        <div className="w-full h-full pb-20 md:pb-0">
+          <Suspense fallback={<div className="flex h-screen w-full items-center justify-center bg-theme-bg"><div className="w-6 h-6 border-2 border-brand-tactical border-t-transparent rounded-full animate-spin"></div></div>}>
+            <Routes location={location}>
             {/* Public / Whitelist Routes */}
           <Route path="/login" element={<LoginPage />} />
           <Route path="/reset-password" element={<ResetPasswordPage />} />
@@ -217,10 +218,12 @@ const AnimatedRoutes = () => {
 
             {/* Home e 404 */}
             <Route path="/404" element={<NotFoundPage />} />
-            <Route path="*" element={<Navigate to="/404" replace />} />
+            <Route path="*" element={<NotFoundPage />} />
           </Routes>
         </Suspense>
-    </div>
+      </div>
+      </PageTransition>
+    </AnimatePresence>
   );
 };
 

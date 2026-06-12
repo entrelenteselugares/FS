@@ -66,7 +66,7 @@ export function ServiceStoreModal({ vaultId, vaultName, onClose }: ServiceStoreM
 
   const getIcon = (category: string) => {
     const cat = category?.toUpperCase() || "";
-    if (cat.includes("VIDEO") || cat.includes("REELS")) return <Video className="text-blue-400" size={24} />;
+    if (cat.includes("VIDEO") || cat.includes("REELS")) return <Video className="text-blue-500" size={24} />;
     if (cat.includes("RETOQUE") || cat.includes("TRATAMENTO") || cat.includes("EDIÇÃO")) return <Wand2 className="text-purple-400" size={24} />;
     return <Sparkles className="text-emerald-400" size={24} />;
   };

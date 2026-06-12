@@ -619,7 +619,7 @@ export default function VaultDetailPage() {
                 href={vault.externalVideoLink}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="hidden md:flex fs-btn items-center justify-center gap-2 bg-blue-500 hover:bg-blue-400 text-black border-2 border-blue-500 text-[10px] font-bold uppercase tracking-widest px-4 transition-all shadow-lg shadow-blue-500/20"
+                className="hidden md:flex fs-btn items-center justify-center gap-2 bg-blue-500 hover:bg-blue-500 text-black border-2 border-blue-500 text-[10px] font-bold uppercase tracking-widest px-4 transition-all shadow-lg shadow-blue-500/20"
               >
                 <Video size={14} />
                 Acessar Vídeos Brutos
@@ -915,7 +915,7 @@ export default function VaultDetailPage() {
               href={vault.externalVideoLink}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex flex-col items-center gap-1 text-blue-400 hover:text-blue-300 transition-colors mr-4"
+              className="flex flex-col items-center gap-1 text-blue-500 hover:text-blue-500 transition-colors mr-4"
             >
               <Video size={20} />
               <span className="text-[9px] font-bold uppercase tracking-widest text-center">Vídeos<br/>Brutos</span>

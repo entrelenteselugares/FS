@@ -350,7 +350,7 @@ export default function AdminFranchises() {
                   <td className="p-4 text-right">
                     <span className={`text-[8px] font-black px-2 py-1 rounded-sm uppercase tracking-tighter ${
                       order.status === 'PAID' ? 'bg-emerald-500/10 text-emerald-500' : 
-                      order.status === 'SHIPPED' ? 'bg-blue-500/10 text-blue-400' :
+                      order.status === 'SHIPPED' ? 'bg-blue-500 text-blue-500' :
                       order.status === 'PENDING' ? 'bg-amber-500/10 text-amber-500' : 'bg-zinc-800 text-zinc-500'
                     }`}>
                       {order.status === 'PAID' ? 'Pago' : order.status === 'SHIPPED' ? 'Enviado' : order.status === 'PENDING' ? 'Pendente' : order.status}
@@ -368,7 +368,7 @@ export default function AdminFranchises() {
                     )}
                     {order.status === 'SHIPPED' && (
                       <div className="flex flex-col items-end gap-1">
-                        <span className="text-[8px] text-blue-400 font-bold uppercase tracking-widest">✓ Enviado</span>
+                        <span className="text-[8px] text-blue-500 font-bold uppercase tracking-widest">✓ Enviado</span>
                         {order.trackingCode && (
                           <span className="text-[8px] text-theme-muted font-mono">{order.trackingCode}</span>
                         )}

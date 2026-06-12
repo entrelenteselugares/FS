@@ -103,7 +103,7 @@ export function FlashEventMonitor({ eventId }: { eventId: string }) {
         {/* Mini funnel */}
         <div className="ml-auto hidden md:flex items-end gap-1 h-10">
           {[
-            { h: 100, color: "bg-blue-500/40", label: `${stats.cards.total} total` },
+            { h: 100, color: "bg-blue-500", label: `${stats.cards.total} total` },
             { h: stats.cards.total > 0 ? (stats.cards.used / stats.cards.total) * 100 : 0, color: "bg-brand-tactical", label: `${stats.cards.used} usados` },
           ].map((b, i) => (
             <div key={i} className="flex flex-col items-center gap-1">
@@ -123,7 +123,7 @@ export function FlashEventMonitor({ eventId }: { eventId: string }) {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           {[
             { label: "Total",     value: stats.cards.total,   color: "text-theme-text",  bg: "bg-theme-bg" },
-            { label: "Não Usados",value: stats.cards.unused,  color: "text-blue-400",    bg: "bg-blue-500/5" },
+            { label: "Não Usados",value: stats.cards.unused,  color: "text-blue-500",    bg: "bg-blue-500" },
             { label: "Utilizados",value: stats.cards.used,    color: "text-brand-tactical", bg: "bg-brand-tactical/10" },
             { label: "Resgatados",value: stats.cards.claimed, color: "text-emerald-400", bg: "bg-emerald-500/5" },
           ].map(({ label, value, color, bg }) => (
@@ -168,7 +168,7 @@ export function FlashEventMonitor({ eventId }: { eventId: string }) {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           {[
             { label: "Pendentes",  value: stats.prints.pending,  icon: <Clock size={12} />,        color: "text-amber-400" },
-            { label: "Imprimindo", value: stats.prints.printing, icon: <Activity size={12} />,     color: "text-blue-400" },
+            { label: "Imprimindo", value: stats.prints.printing, icon: <Activity size={12} />,     color: "text-blue-500" },
             { label: "Concluídas", value: stats.prints.done,     icon: <CheckCircle2 size={12} />, color: "text-emerald-400" },
             { label: "Com Erro",   value: stats.prints.error,    icon: <XCircle size={12} />,      color: "text-red-400" },
           ].map(({ label, value, icon, color }) => (

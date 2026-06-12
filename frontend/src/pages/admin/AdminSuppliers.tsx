@@ -207,7 +207,7 @@ export default function AdminSuppliers() {
                  <div className="text-3xl font-heading font-bold text-theme-text ">{productionStats.printing}</div>
               </div>
               <div className="bg-theme-bg border border-theme-border rounded-2xl p-3 md:p-6 space-y-3 group hover:border-brand-tactical/50 transition-all shadow-sm">
-                 <div className="flex justify-between items-start"><span className="text-[8px] font-bold text-theme-muted uppercase tracking-widest">Em Trânsito</span><Truck className="text-blue-600" size={14} /></div>
+                 <div className="flex justify-between items-start"><span className="text-[8px] font-bold text-theme-muted uppercase tracking-widest">Em Trânsito</span><Truck className="text-blue-500" size={14} /></div>
                  <div className="text-3xl font-heading font-bold text-theme-text ">{productionStats.shipped}</div>
               </div>
            </div>

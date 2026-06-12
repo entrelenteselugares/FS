@@ -245,7 +245,7 @@ export const AdminUsers: React.FC = () => {
                         <div className="text-[10px] text-theme-muted font-bold uppercase mt-1.5 opacity-60 tracking-wider flex items-center gap-2 truncate">
                           {u.email}
                           {u.role === 'PROFISSIONAL' && u.profissional?.workflowType && u.profissional.workflowType.map(wt => (
-                            <span key={wt} className={`px-1.5 py-0.5 rounded-sm text-[7px] font-black tracking-tighter ${wt === 'MOBILE' ? 'bg-amber-500/20 text-amber-500 border border-amber-500/20' : 'bg-blue-500/20 text-blue-500 border border-blue-500/20'}`}>
+                            <span key={wt} className={`px-1.5 py-0.5 rounded-sm text-[7px] font-black tracking-tighter ${wt === 'MOBILE' ? 'bg-amber-500/20 text-amber-500 border border-amber-500/20' : 'bg-blue-500 text-blue-500 border border-blue-500'}`}>
                               {wt === 'MOBILE' ? 'MOBILE' : 'PC'}
                             </span>
                           ))}

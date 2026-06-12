@@ -55,7 +55,7 @@ export function ServicesTab({ profile, catalogServices, onAddService, onRemoveSe
       case "PENDING_REVIEW":
         return <span className="px-2 py-0.5 rounded-md bg-yellow-500/10 text-yellow-500 border border-yellow-500/20 text-[8px] font-bold uppercase tracking-widest flex items-center gap-1" title="Em Análise"><Clock size={10} /> Em Análise</span>;
       case "NETWORK":
-        return <span className="px-2 py-0.5 rounded-md bg-blue-500/10 text-blue-500 border border-blue-500/20 text-[8px] font-bold uppercase tracking-widest flex items-center gap-1" title="Rede Global"><ShieldCheck size={10} /> Rede Global</span>;
+        return <span className="px-2 py-0.5 rounded-md bg-blue-500 text-blue-500 border border-blue-500 text-[8px] font-bold uppercase tracking-widest flex items-center gap-1" title="Rede Global"><ShieldCheck size={10} /> Rede Global</span>;
       case "EXCLUSIVE":
         return <span className="px-2 py-0.5 rounded-md bg-purple-500/10 text-purple-500 border border-purple-500/20 text-[8px] font-bold uppercase tracking-widest flex items-center gap-1" title="Exclusivo"><Briefcase size={10} /> Exclusivo</span>;
       case "REJECTED":

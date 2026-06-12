@@ -25,7 +25,7 @@ interface BudgetBreakdown { STAFF?: StaffBreakdown[]; EQUIPMENT?: EquipBreakdown
 
 const KANBAN_COLUMNS = [
   { id: "PENDING",   label: "Novos Leads",       color: "amber",   border: "border-amber-500/40",   text: "text-amber-500",   badge: "bg-amber-500/10 text-amber-500 border-amber-500/30" },
-  { id: "PRICED",    label: "Em Análise",         color: "blue",    border: "border-blue-500/40",    text: "text-blue-500",    badge: "bg-blue-500/10 text-blue-500 border-blue-500/30" },
+  { id: "PRICED",    label: "Em Análise",         color: "blue",    border: "border-blue-500",    text: "text-blue-500",    badge: "bg-blue-500 text-blue-500 border-blue-500" },
   { id: "APPROVED",  label: "Proposta Enviada",   color: "emerald", border: "border-emerald-500/40", text: "text-emerald-500", badge: "bg-emerald-500/10 text-emerald-500 border-emerald-500/30" },
   { id: "CONVERTED", label: "Convertidos",        color: "teal",    border: "border-teal-500/40",    text: "text-teal-400",    badge: "bg-teal-500/10 text-teal-400 border-teal-500/30" },
   { id: "ARCHIVED",  label: "Arquivados",         color: "zinc",    border: "border-zinc-500/40",    text: "text-zinc-500",    badge: "bg-zinc-500/10 text-zinc-500 border-zinc-500/30" },

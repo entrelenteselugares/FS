@@ -95,6 +95,12 @@
   -webkit-tap-highlight-color: transparent;
 }
 
+html, body {
+  overscroll-behavior-y: none;
+  overscroll-behavior-x: none;
+  touch-action: manipulation;
+}
+
 body {
   background: var(--bg);
   color: var(--text);
@@ -104,7 +110,6 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   margin: 0;
-  overscroll-behavior-y: none;
   overflow-x: hidden;
   max-width: 100vw;
   -webkit-overflow-scrolling: touch;
@@ -381,17 +386,41 @@ p {
   filter: blur(4px);
 }
 
-/* ─── MERCADO PAGO BRICK FIXES ──────────────────────────────────────────── */
-/* Fix para a tag "Parcelamento disponível" quebrando linhas no Payment Brick */
-.mp-badge, 
-[class*="mp-badge"], 
-[class*="mp-text-badge"], 
-[class*="payment-method-badge"],
-.mp-payment-method-badge {
+/* Fix para a tag "Parcelamento disponível" quebrando linhas no Payment Brick (Svelte classes) */
+#paymentBrick_container [class*="logo-text-container"],
+#paymentBrick_container .mp-payment-method-logo-text-container,
+#paymentBrick_container [class*="PaymentMethodCard"] {
+  min-width: 250px !important; /* Deixa o sidebar/container largo o suficiente */
+  width: auto !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-start !important;
+  flex: 1 0 auto !important;
+}
+
+/* O Badge verde geralmente é o segundo span ou uma classe svelte sem nome padrão */
+#paymentBrick_container [class*="logo-text-container"] > span:not(:first-child),
+#paymentBrick_container .mp-payment-method-logo-text-container > span:not(:first-child),
+#paymentBrick_container [class*="mp-badge"], 
+#paymentBrick_container [class*="mp-text-badge"],
+#paymentBrick_container [class*="installment-badge"] {
   white-space: nowrap !important;
-  display: inline-block !important;
+  display: inline-flex !important;
+  background-color: var(--brand-tactical) !important;
+  color: var(--bg) !important;
+  padding: 4px 8px !important;
+  border-radius: 9999px !important;
+  font-size: 10px !important;
+  font-weight: 900 !important;
+  text-transform: uppercase !important;
+  line-height: 1 !important;
+  letter-spacing: 0.05em !important;
+  margin-top: 6px !important;
+  border: none !important;
   height: auto !important;
   min-width: max-content !important;
+  align-items: center !important;
+  justify-content: center !important;
 }
 
 /* ─── NATIVE APP-LIKE EXPERIENCES (Phase 70) ────────────────────────────── */

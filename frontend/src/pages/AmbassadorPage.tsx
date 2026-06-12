@@ -65,7 +65,7 @@ export default function AmbassadorPage() {
       {/* Ambient Background */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-brand-tactical/10 blur-[150px] rounded-full opacity-30 animate-pulse-slow" />
-        <div className="absolute bottom-0 right-1/4 w-[400px] h-[400px] bg-blue-500/5 blur-[120px] rounded-full opacity-20" />
+        <div className="absolute bottom-0 right-1/4 w-[400px] h-[400px] bg-blue-500 blur-[120px] rounded-full opacity-20" />
       </div>
 
       <main className="relative z-10 max-w-5xl mx-auto px-3 md:px-6 pt-20 pb-32 flex flex-col items-center text-center">

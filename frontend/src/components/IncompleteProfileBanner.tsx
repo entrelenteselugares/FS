@@ -16,7 +16,7 @@ export const IncompleteProfileBanner: React.FC = () => {
         initial={{ height: 0, opacity: 0 }}
         animate={{ height: 'auto', opacity: 1 }}
         exit={{ height: 0, opacity: 0 }}
-        className="bg-brand-tactical text-white px-4 py-2 flex flex-col md:flex-row items-center justify-center gap-2 md:gap-4 relative overflow-hidden shadow-lg z-50"
+        className="bg-blue-500 text-white px-4 py-2 flex flex-col md:flex-row items-center justify-center gap-2 md:gap-4 relative overflow-hidden shadow-lg z-50"
       >
         <div className="flex items-center gap-2">
           <AlertCircle size={16} className="shrink-0" />
@@ -27,7 +27,7 @@ export const IncompleteProfileBanner: React.FC = () => {
         
         <button 
           onClick={() => navigate('/minha-conta?s=menu')}
-          className="bg-white text-brand-tactical px-3 py-1.5 rounded-full text-[9px] font-black uppercase flex items-center gap-1 hover:scale-105 transition-transform"
+          className="bg-white text-blue-500 px-3 py-1.5 rounded-full text-[9px] font-black uppercase flex items-center gap-1 hover:scale-105 transition-transform"
         >
           COMPLETAR <ArrowRight size={12} />
         </button>

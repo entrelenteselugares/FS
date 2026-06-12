@@ -373,8 +373,8 @@ export function EventEditPanel({ event, onUpdated, onClose, onNotify, onOpenPrin
                   <div className="p-4 bg-theme-bg-muted rounded-2xl border border-theme-border space-y-3">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center shrink-0">
-                          <Layers size={18} className="text-blue-400" />
+                        <div className="w-10 h-10 rounded-xl bg-blue-500 flex items-center justify-center shrink-0">
+                          <Layers size={18} className="text-blue-500" />
                         </div>
                         <div>
                           <p className="text-[9px] font-bold uppercase tracking-widest opacity-50">Lightroom / Portfolio</p>
@@ -741,8 +741,8 @@ export function EventEditPanel({ event, onUpdated, onClose, onNotify, onOpenPrin
               {/* Logo do Cliente */}
               <div className="p-4 bg-theme-bg-muted rounded-2xl border border-theme-border space-y-3">
                 <div className="flex items-center gap-3 mb-1">
-                  <div className="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center shrink-0">
-                    <Layers size={18} className="text-blue-400" />
+                  <div className="w-10 h-10 rounded-xl bg-blue-500 flex items-center justify-center shrink-0">
+                    <Layers size={18} className="text-blue-500" />
                   </div>
                   <div>
                     <p className="text-[9px] font-bold uppercase tracking-widest opacity-50">Logo do Cliente / Patrocinador</p>

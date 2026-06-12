@@ -260,10 +260,10 @@ export function VaultSettingsModal({ isOpen, onClose, vault, onUpdate, sortConfi
 
               {activeTab === "Acesso" && (
                 <div className="space-y-4">
-                  <div className="flex items-center justify-between bg-blue-500/10 p-3 rounded-lg border border-blue-500/20 mb-4">
+                  <div className="flex items-center justify-between bg-blue-500 p-3 rounded-lg border border-blue-500 mb-4">
                     <div className="flex items-center gap-3">
                       <Info size={16} className="text-blue-500" />
-                      <p className="text-[10px] text-blue-200">Apenas o proprietário pode remover membros convidados.</p>
+                      <p className="text-[10px] text-blue-500">Apenas o proprietário pode remover membros convidados.</p>
                     </div>
                   </div>
 

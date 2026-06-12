@@ -203,7 +203,7 @@ export const WorldCupLiveBanner = ({ alwaysShow = false }: { alwaysShow?: boolea
             </span>
           )}
           {!isLive && match.status === "SCHEDULED" && (
-            <span className="hidden sm:inline" style={{ fontSize: 7.5, fontWeight: 900, color: "#93c5fd", letterSpacing: "0.08em" }}>
+            <span className="hidden sm:inline" style={{ fontSize: 7.5, fontWeight: 900, color: "#3b82f6", letterSpacing: "0.08em" }}>
               PRÓXIMOS
             </span>
           )}
@@ -253,7 +253,7 @@ export const WorldCupLiveBanner = ({ alwaysShow = false }: { alwaysShow?: boolea
 
         {/* RIGHT — Pagination dots + CTA */}
         <div className="flex items-center gap-2 shrink-0">
-          <span style={{ fontSize: 7.5, color: "#85b9ac", fontWeight: 900, letterSpacing: "0.08em", whiteSpace: "nowrap" }}>
+          <span style={{ fontSize: 7.5, color: "#3b82f6", fontWeight: 900, letterSpacing: "0.08em", whiteSpace: "nowrap" }}>
             Ver Álbum →
           </span>
           <div className="flex gap-1">
