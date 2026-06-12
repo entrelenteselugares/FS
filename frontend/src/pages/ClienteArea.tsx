@@ -401,8 +401,6 @@ export default function ClienteArea() {
  }
  };
 
- const now = useMemo(() => Date.now(), []);
-
  const groupedEvents = useMemo(() => {
  const groups: Record<string, { 
  event: Pedido["event"], 
