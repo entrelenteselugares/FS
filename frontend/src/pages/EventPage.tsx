@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, Suspense, lazy } from "react";
+import React, { useState, useEffect, useCallback, Suspense, lazy, useRef } from "react";
 import { createPortal } from "react-dom";
 import { useEventStatus } from "../hooks/useEventStatus";
 import { Check, Printer, QrCode, ShoppingCart, Share2, ChevronRight, ChevronLeft, Image as ImageIcon, Camera, MapPin, Clock, ShieldCheck, CheckCircle2, Lock, UserCircle, Search, X, ExternalLink, Download, Archive } from "lucide-react";
@@ -328,6 +328,15 @@ export default function EventPage() {
   const [showPrintStore, setShowPrintStore] = useState(false);
   const [showPrintKit, setShowPrintKit] = useState(false);
   const [showQrModal, setShowQrModal] = useState(false);
+
+  const photoInputRef = useRef<HTMLInputElement>(null);
+  const handleCameraCapture = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFiles = Array.from(e.target.files || []);
+    if (selectedFiles.length > 0) {
+      (window as any).fsPendingCaptureFiles = selectedFiles;
+      navigate(`/phygital-capture?e=${event?.id}`);
+    }
+  };
   const [filterMode, setFilterMode] = useState<"ALL" | "PRO" | "GUEST">("ALL");
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -464,6 +473,7 @@ export default function EventPage() {
       .then((r) => {
         const eventData = r.data;
         setEvent(eventData);
+        (window as any).fsCurrentEventId = eventData.id;
 
         // Buscar referências técnicas do banco
         api.get(`/events/${eventData.id}/references`)
@@ -724,6 +734,14 @@ export default function EventPage() {
 
 return (
     <div className="min-h-screen bg-theme-bg text-theme-text font-sans selection:bg-brand-tactical/30 overflow-x-hidden selection:text-theme-text" onContextMenu={(e) => e.preventDefault()}>
+      <input 
+        ref={photoInputRef}
+        type="file" 
+        accept="image/*" 
+        capture="environment" 
+        onChange={handleCameraCapture} 
+        className="hidden" 
+      />
       <SEO 
         title={event.title} 
         image={getProxyUrl(event.coverPhotoUrl)}
@@ -743,7 +761,7 @@ return (
           </button>
 
           <button 
-             onClick={() => navigate(`/phygital-capture?e=${event.id}`)} 
+             onClick={() => photoInputRef.current?.click()} 
              className="absolute top-6 right-6 z-50 flex items-center gap-2 px-5 py-2.5 bg-brand-tactical text-black backdrop-blur-md border border-brand-tactical/50 rounded-full hover:brightness-110 transition-all shadow-[0_0_20px_rgba(133,185,172,0.3)]"
           >
              <Camera size={16} />

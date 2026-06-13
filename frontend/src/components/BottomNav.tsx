@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useRef } from "react";
 import { useNavigate, useLocation, useSearchParams, Link } from "react-router-dom";
 import { Home, Search, ShoppingBag, Image, Menu, X, Play, Briefcase, DollarSign, Printer, Settings, Lock, Users, User, Wallet, Building2 } from "lucide-react";
 import { useAuth } from "../hooks/useAuth";
@@ -16,6 +16,16 @@ export const BottomNav: React.FC = () => {
   const s = searchParams.get("s");
 
   const [drawerOpen, setDrawerOpen] = useState(false);
+
+  const photoInputRef = useRef<HTMLInputElement>(null);
+  const handleCameraCapture = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFiles = Array.from(e.target.files || []);
+    if (selectedFiles.length > 0) {
+      (window as any).fsPendingCaptureFiles = selectedFiles;
+      const currentEventId = (window as any).fsCurrentEventId || "EVENT_TESTE";
+      navigate(`/phygital-capture?e=${currentEventId}`);
+    }
+  };
 
   const isActive = (path: string) => location.pathname === path;
 
@@ -113,6 +123,14 @@ export const BottomNav: React.FC = () => {
 
   return (
     <>
+      <input 
+        ref={photoInputRef}
+        type="file" 
+        accept="image/*" 
+        capture="environment" 
+        onChange={handleCameraCapture} 
+        className="hidden" 
+      />
       <div className="md:hidden fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md bg-[var(--bg)]/80 backdrop-blur-xl border-t border-theme-border/10 z-[100] px-3 py-3 flex items-center justify-around pb-safe">
         {isEventPage ? (
           <>
@@ -135,9 +153,7 @@ export const BottomNav: React.FC = () => {
             )}
 
             <button 
-              onClick={() => {
-                navigate("?action=camera", { replace: true });
-              }}
+              onClick={() => photoInputRef.current?.click()}
               className="flex flex-col items-center gap-1 transition-all text-brand-tactical"
             >
               <Camera size={20} strokeWidth={1.5} />
@@ -265,9 +281,13 @@ export const BottomNav: React.FC = () => {
         <div className="p-4 border-b border-theme-border bg-[var(--bg-card)]">
           {user ? (
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-full bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center font-display font-bold text-emerald-500 ">
-                {user.nome.charAt(0).toUpperCase()}
-              </div>
+              {user.profileImageUrl ? (
+                <img src={user.profileImageUrl} alt={user.nome} className="w-9 h-9 rounded-full object-cover border border-emerald-500/30" />
+              ) : (
+                <div className="w-9 h-9 rounded-full bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center font-display font-bold text-emerald-500 ">
+                  {user.nome?.charAt(0)?.toUpperCase() || "?"}
+                </div>
+              )}
               <div className="flex-1 min-w-0">
                 <p className="text-xs font-bold uppercase truncate text-white">{user.nome}</p>
                 <p className="text-[9px] font-bold uppercase tracking-wider text-emerald-500/80">
