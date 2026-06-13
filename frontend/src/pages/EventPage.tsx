@@ -743,7 +743,7 @@ return (
           </button>
 
           <button 
-             onClick={() => navigate(`/captura?eventId=${event.id}`)} 
+             onClick={() => navigate(`/phygital-capture?e=${event.id}`)} 
              className="absolute top-6 right-6 z-50 flex items-center gap-2 px-5 py-2.5 bg-brand-tactical text-black backdrop-blur-md border border-brand-tactical/50 rounded-full hover:brightness-110 transition-all shadow-[0_0_20px_rgba(133,185,172,0.3)]"
           >
              <Camera size={16} />
