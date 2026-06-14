@@ -23,7 +23,7 @@ A plataforma Foto Segundo é um ecossistema **Enterprise** estruturado em 9 cama
 ### 🏗️ Componentes Técnicos
 
 - **Core API (Backend):** Hono + Express (Transição Híbrida) + TypeScript.
-- **Client App (Frontend):** React + Vite (PWA com Service Worker) e Motor UI Multi-Vertical.
+- **Client App (Frontend):** React + Vite (PWA com Service Worker) e Motor UI Multi-Vertical. Empacotado via **Capacitor** para aplicativos móveis nativos (Android/iOS).
 - **IoT Agent (Printer):** Agente Node.js local.
 - **Notification Engine:** WhatsApp (Baileys), E-mail (SMTP/Resend), e Firebase Cloud Messaging (Web Push).
 
@@ -132,9 +132,10 @@ graph TD
         J[Growth Engine - Coupons/Affiliates]
     end
 
-    subgraph "Edge/Local Environment"
+    subgraph "Edge/Local/Mobile Environment"
         F[IoT Printer Agent]
         G[Local Printer Hardware]
+        M[Android App - Capacitor]
     end
 
     subgraph "Cron Jobs"
@@ -142,6 +143,7 @@ graph TD
     end
 
     A -- REST/WebSockets --> B
+    M -- Deep Links / OAuth --> B
     B -- Prisma ORM --> C
     B -- OAuth2 --> D
     B -- Webhooks --> E

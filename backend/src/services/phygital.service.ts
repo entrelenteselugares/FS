@@ -83,8 +83,13 @@ export class PhygitalService {
         );
 
         if (foundEvent) {
-          const count = await prisma.eventMedia.count({ where: { eventId: foundEvent.id } });
-          const shortId = `V${(count + 1).toString().padStart(3, '0')}`;
+          let shortId = `V${Math.floor(100 + Math.random() * 900)}`;
+          // Ensure uniqueness safely
+          let unique = false;
+          while(!unique) {
+             const existing = await prisma.eventMedia.findUnique({ where: { eventId_shortId: { eventId: foundEvent.id, shortId } }});
+             if (!existing) { unique = true; } else { shortId = `V${Math.floor(1000 + Math.random() * 9000)}`; }
+          }
           await prisma.eventMedia.create({
             data: {
               eventId: foundEvent.id,
@@ -368,8 +373,13 @@ export class PhygitalService {
 
       // 6.1. Adicionar à Galeria Live (EventMedia) ou Vault (SharedAlbumMedia)
       if (foundEvent) {
-        const count = await prisma.eventMedia.count({ where: { eventId: foundEvent.id } });
-        const shortId = `F${(count + 1).toString().padStart(3, '0')}`;
+        let shortId = `F${Math.floor(100 + Math.random() * 900)}`;
+        // Ensure uniqueness
+        let unique = false;
+        while(!unique) {
+           const existing = await prisma.eventMedia.findUnique({ where: { eventId_shortId: { eventId: foundEvent.id, shortId } }});
+           if (!existing) { unique = true; } else { shortId = `F${Math.floor(1000 + Math.random() * 9000)}`; }
+        }
         
         const payloadMetadata = {
           ...(metadata.globalTag ? { bibNumber: metadata.globalTag, studentId: metadata.globalTag, aiTags: [metadata.globalTag] } : {}),

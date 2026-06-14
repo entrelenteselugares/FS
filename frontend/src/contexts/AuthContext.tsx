@@ -66,7 +66,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
-        if (event === "SIGNED_IN" && session) {
+        const isOAuthRedirect = window.location.hash.includes("access_token=") || window.location.href.includes("access_token=");
+        
+        // Trata SIGNED_IN (novo login) ou INITIAL_SESSION (carregamento inicial da página com sessão recém recuperada da URL)
+        if ((event === "SIGNED_IN" || (event === "INITIAL_SESSION" && isOAuthRedirect)) && session) {
           // Quando logar pelo Google (ou magic link), sincroniza com o backend customizado
           setLoading(true);
           try {
@@ -83,12 +86,23 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
               setToken("cookie-session");
             }
             setUser(data.user);
+            
+            // Limpa o hash da URL para não processar novamente em futuros reloads
+            if (isOAuthRedirect) {
+              window.history.replaceState(null, "", window.location.pathname + window.location.search);
+            }
           } catch (e) {
             console.error("Erro no callback oauth", e);
+            setUser(null);
+            setToken(null);
           } finally {
             setLoading(false);
           }
+        } else if (event === "INITIAL_SESSION" && isOAuthRedirect) {
+           // Se era redirecionamento mas veio sem sessão (erro do supabase)
+           setLoading(false);
         }
+        
         if (event === "SIGNED_OUT") {
           localStorage.removeItem("token");
           localStorage.removeItem("refreshToken");

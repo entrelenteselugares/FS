@@ -656,6 +656,15 @@ export async function adminDeleteEvent(req: AuthRequest, res: Response): Promise
       console.log(`[AdminDelete] Executando HARD DELETE para o evento ${id}`);
       
       await prisma.$transaction([
+        // Limpeza profunda de dependências adicionais que não tem cascade
+        prisma.eventPrintProduct.deleteMany({ where: { eventId: String(id) } }),
+        prisma.flashCard.deleteMany({ where: { eventId: String(id) } }),
+        prisma.coupon.deleteMany({ where: { eventId: String(id) } }),
+        prisma.lead.deleteMany({ where: { eventId: String(id) } }),
+        prisma.editorContract.deleteMany({ where: { eventId: String(id) } }),
+        prisma.eventTeamMember.deleteMany({ where: { eventId: String(id) } }),
+        prisma.eventReference.deleteMany({ where: { eventId: String(id) } }),
+        
         // Limpeza profunda de dependÃªncias
         prisma.photoLike.deleteMany({ where: { eventId: String(id) } }),
         prisma.calendarSlot.deleteMany({ where: { eventId: String(id) } }),

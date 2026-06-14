@@ -61,6 +61,11 @@ O repositório é configurado com o frontend (`/frontend`) em Vite/React e o bac
 - **Motor Multi-Vertical:** O layout de eventos (`EventPage.tsx`) agora suporta múltiplos verticais. A renderização de componentes deve ser condicional baseada na flag `event.vertical` e `event.type`.
 - **Estado:** Evite complexidade global excessiva se o React Context for suficiente, mantendo componentes o mais puros e "dumb" possível.
 
+### 📱 Aplicativo Mobile (Android / Capacitor)
+
+A aplicação também é distribuída nativamente via Capacitor para Android.
+Consulte o [Guia de Desenvolvimento Android](./ANDROID.md) para detalhes de build, configuração de Deep Linking para Autenticação (Google/Apple) e sincronização do projeto nativo via `npx cap sync`.
+
 ### 🖨️ Componentes e Motores de Impressão (A4 & Fotos)
 
 Se você estiver desenvolvendo ou estendendo as capacidades de impressão:
