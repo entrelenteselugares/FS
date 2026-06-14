@@ -65,6 +65,16 @@ const FALLBACK_SLIDES = [
     primaryAction: "/sobre",
     icon: "star",
     bgImage: "https://images.unsplash.com/photo-1531058020387-3be344556be6?auto=format&fit=crop&q=80&w=1600",
+  },
+  {
+    id: "album-sanfona",
+    title: "ÁLBUM SANFONA",
+    subtitle: "Assinatura",
+    desc: "Receba mensalmente um álbum sanfona exclusivo com suas melhores memórias impressas em alta qualidade.",
+    primaryBtn: "ASSINAR AGORA",
+    primaryAction: "/clube",
+    icon: "camera",
+    bgImage: "https://images.unsplash.com/photo-1452587925148-ce544e77e70d?auto=format&fit=crop&q=80&w=1600",
   }
 ];
 
@@ -150,7 +160,7 @@ export function HeroCarousel() {
               
               <h1 className="text-2xl md:text-5xl lg:text-6xl font-bold text-theme-text leading-none mb-1 md:mb-2 text-center md:text-left w-full">
                 <span className="block">{currentSlide.title}</span>
-                <span className="text-theme-brand bg-clip-text text-transparent bg-gradient-to-r from-emerald-400 to-teal-300 block mt-1">
+                <span className="text-theme-brand block mt-1">
                   {currentSlide.subtitle}
                 </span>
               </h1>

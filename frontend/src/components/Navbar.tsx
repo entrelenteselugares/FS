@@ -35,93 +35,93 @@ export const Navbar: React.FC<NavbarProps> = ({ tenantLogoUrl }) => {
 
   return (
     <>
-      <IncompleteProfileBanner />
-      <nav className="flex items-center justify-between fixed top-0 left-0 right-0 w-full z-[100]" style={{
-        paddingTop: "calc(12px + env(safe-area-inset-top))",
-        paddingBottom: "12px",
-        paddingLeft: "16px",
-        paddingRight: "16px",
-        borderBottom: `1px solid ${T.border}`,
-        background: T.bgNav, backdropFilter: "blur(20px)",
-      }}>
-        <div className="flex items-center gap-4">
-          <div onClick={() => navigate("/")} style={{ cursor: "pointer", display: "flex", alignItems: "center" }}>
-            <img 
-              src={tenantLogoUrl || "/logo.png"} 
-              alt="Foto Segundo" 
+      <header className="sticky top-0 z-[100] w-full flex flex-col">
+        <IncompleteProfileBanner />
+        <nav className="flex items-center justify-between w-full" style={{
+          paddingTop: "calc(12px + env(safe-area-inset-top))",
+          paddingBottom: "12px",
+          paddingLeft: "16px",
+          paddingRight: "16px",
+          borderBottom: `1px solid ${T.border}`,
+          background: T.bgNav, backdropFilter: "blur(20px)",
+        }}>
+          <div className="flex items-center gap-4">
+            <div onClick={() => navigate("/")} style={{ cursor: "pointer", display: "flex", alignItems: "center" }}>
+              <img 
+                src={tenantLogoUrl || "/logo.png"} 
+                alt="Foto Segundo" 
+                style={{ 
+                  height: 32, 
+                  objectFit: "contain",
+                  filter: tenantLogoUrl ? "none" : "var(--logo-filter)"
+                }} 
+              />
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <div className="hidden md:flex items-center gap-2">
+              <ThemeToggle />
+            </div>
+
+            <button 
+              onClick={() => setCartOpen(true)}
+              title="Minhas Compras"
+              className="relative p-2 border rounded-md transition-all hover:bg-brand-tactical/10 group"
               style={{ 
-                height: 32, 
-                objectFit: "contain",
-                filter: tenantLogoUrl ? "none" : "var(--logo-filter)"
-              }} 
-            />
-          </div>
-        </div>
+                borderColor: T.border,
+                color: T.text,
+              }}
+            >
+              <ShoppingBag size={18} strokeWidth={1.5} />
+              {totalItems > 0 && (
+                <span className="absolute -top-1 -right-1 w-4 h-4 bg-brand-tactical text-theme-text text-[9px] font-bold flex items-center justify-center rounded-sm animate-pulse-soft">
+                  {totalItems}
+                </span>
+              )}
+            </button>
 
-        <div className="flex items-center gap-2">
-          <div className="hidden md:flex items-center gap-2">
-            <ThemeToggle />
-          </div>
-
-          <button 
-            onClick={() => setCartOpen(true)}
-            title="Minhas Compras"
-            className="relative p-2 border rounded-md transition-all hover:bg-brand-tactical/10 group"
-            style={{ 
-              borderColor: T.border,
-              color: T.text,
-            }}
-          >
-            <ShoppingBag size={18} strokeWidth={1.5} />
-            {totalItems > 0 && (
-              <span className="absolute -top-1 -right-1 w-4 h-4 bg-brand-tactical text-theme-text text-[9px] font-bold flex items-center justify-center rounded-sm animate-pulse-soft">
-                {totalItems}
-              </span>
-            )}
-          </button>
-
-          {user ? (
-            <div className="hidden md:block relative" ref={userMenuRef}>
-              <button 
-                onClick={() => setUserMenu(v => !v)} 
-                className="flex items-center gap-2"
-                style={{ ...BtnSecondary, fontSize: 9, padding: "5px 10px 5px 5px" }}
-              >
-                {user.profileImageUrl ? (
-                  <img src={user.profileImageUrl} alt="" className="w-6 h-6 rounded-full object-cover border border-theme-border" />
-                ) : (
-                  <div className="w-6 h-6 rounded-full bg-brand-tactical/20 flex items-center justify-center text-[10px] font-bold border border-theme-border">
-                    {user.nome?.[0] || "?"}
+            {user ? (
+              <div className="hidden md:block relative" ref={userMenuRef}>
+                <button 
+                  onClick={() => setUserMenu(v => !v)} 
+                  className="flex items-center gap-2"
+                  style={{ ...BtnSecondary, fontSize: 9, padding: "5px 10px 5px 5px" }}
+                >
+                  {user.profileImageUrl ? (
+                    <img src={user.profileImageUrl} alt="" className="w-6 h-6 rounded-full object-cover border border-theme-border" />
+                  ) : (
+                    <div className="w-6 h-6 rounded-full bg-brand-tactical/20 flex items-center justify-center text-[10px] font-bold border border-theme-border">
+                      {user.nome?.[0] || "?"}
+                    </div>
+                  )}
+                  <span className="hidden sm:inline">{user.nome?.split(" ")[0] || "CONTA"}</span> 
+                  <span className="hidden sm:inline" style={{ fontSize: 8, marginLeft: 2 }}>▾</span>
+                </button>
+                {userMenu && (
+                  <div style={{ 
+                    position: "absolute", right: 0, top: "calc(100% + 8px)", 
+                    background: T.bgCard, border: `1px solid ${T.border}`, 
+                    minWidth: 180, zIndex: 200, boxShadow: '0 20px 50px rgba(0,0,0,0.3)' 
+                  }}>
+                    <button onClick={() => { setUserMenu(false); navigate(dashPath); }} style={{ width: "100%", textAlign: "left", padding: "14px 16px", background: "transparent", border: "none", borderBottom: `1px solid ${T.border}`, color: T.text, fontSize: 11, fontFamily: T.fontD, fontWeight: 900, letterSpacing: "0.1em", textTransform: "uppercase", cursor: "pointer", fontStyle: 'italic' }}>👤 Meu Painel</button>
+                    <button onClick={() => { setUserMenu(false); navigate("/suporte"); }} style={{ width: "100%", textAlign: "left", padding: "14px 16px", background: "transparent", border: "none", borderBottom: `1px solid ${T.border}`, color: T.text, fontSize: 11, fontFamily: T.fontD, fontWeight: 900, letterSpacing: "0.1em", textTransform: "uppercase", cursor: "pointer", fontStyle: 'italic' }}>❓ Central de Ajuda</button>
+                    <button onClick={() => { logout(); setUserMenu(false); }} style={{ width: "100%", textAlign: "left", padding: "12px 16px", background: "transparent", border: "none", color: T.text2, fontSize: 11, fontFamily: T.fontB, letterSpacing: "0.08em", textTransform: "uppercase", cursor: "pointer" }}>Sair</button>
                   </div>
                 )}
-                <span className="hidden sm:inline">{user.nome?.split(" ")[0] || "CONTA"}</span> 
-                <span className="hidden sm:inline" style={{ fontSize: 8, marginLeft: 2 }}>▾</span>
+              </div>
+            ) : (
+              <button onClick={() => navigate("/login")} className="hidden md:flex" style={{ ...BtnSecondary, fontSize: 9, padding: "7px 10px" }}>
+                LOGIN
               </button>
-              {userMenu && (
-                <div style={{ 
-                  position: "absolute", right: 0, top: "calc(100% + 8px)", 
-                  background: T.bgCard, border: `1px solid ${T.border}`, 
-                  minWidth: 180, zIndex: 200, boxShadow: '0 20px 50px rgba(0,0,0,0.3)' 
-                }}>
-                  <button onClick={() => { setUserMenu(false); navigate(dashPath); }} style={{ width: "100%", textAlign: "left", padding: "14px 16px", background: "transparent", border: "none", borderBottom: `1px solid ${T.border}`, color: T.text, fontSize: 11, fontFamily: T.fontD, fontWeight: 900, letterSpacing: "0.1em", textTransform: "uppercase", cursor: "pointer", fontStyle: 'italic' }}>👤 Meu Painel</button>
-                  <button onClick={() => { setUserMenu(false); navigate("/suporte"); }} style={{ width: "100%", textAlign: "left", padding: "14px 16px", background: "transparent", border: "none", borderBottom: `1px solid ${T.border}`, color: T.text, fontSize: 11, fontFamily: T.fontD, fontWeight: 900, letterSpacing: "0.1em", textTransform: "uppercase", cursor: "pointer", fontStyle: 'italic' }}>❓ Central de Ajuda</button>
-                  <button onClick={() => { logout(); setUserMenu(false); }} style={{ width: "100%", textAlign: "left", padding: "12px 16px", background: "transparent", border: "none", color: T.text2, fontSize: 11, fontFamily: T.fontB, letterSpacing: "0.08em", textTransform: "uppercase", cursor: "pointer" }}>Sair</button>
-                </div>
-              )}
-            </div>
-          ) : (
-            <button onClick={() => navigate("/login")} className="hidden md:flex" style={{ ...BtnSecondary, fontSize: 9, padding: "7px 10px" }}>
-              LOGIN
+            )}
+            
+            <button onClick={() => navigate("/cotacao")} className="hidden sm:block" style={{ ...BtnPrimary, fontSize: 9, padding: "8px 12px", whiteSpace: 'nowrap' }}>
+              Agendar
             </button>
-          )}
-          
-          <button onClick={() => navigate("/cotacao")} className="hidden sm:block" style={{ ...BtnPrimary, fontSize: 9, padding: "8px 12px", whiteSpace: 'nowrap' }}>
-            Agendar
-          </button>
-        </div>
-      </nav>
-      {/* Spacer to compensate for fixed navbar */}
-      <div style={{ height: "calc(57px + env(safe-area-inset-top))", width: "100%" }} aria-hidden="true" />
+          </div>
+        </nav>
+      </header>
 
       <CartModal isOpen={cartOpen} onClose={() => setCartOpen(false)} />
     </>

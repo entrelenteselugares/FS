@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Download, RefreshCw, AlertCircle, CheckCircle2, ChevronRight, Package, Truck, Printer } from 'lucide-react';
+import { Download, RefreshCw, AlertCircle, CheckCircle2, Package, Truck, Printer } from 'lucide-react';
 import { API as api } from '../lib/api';
 
 interface Batch {
