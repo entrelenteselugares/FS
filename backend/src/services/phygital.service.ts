@@ -17,6 +17,7 @@ export interface PhygitalMetadata {
   globalTag?: string;
   price?: number;
   mimetype?: string; // Passed by frontend to distinguish image vs video
+  queueItemId?: string; // Used for idempotency to prevent duplicates
 }
 
 export class PhygitalService {
@@ -55,6 +56,23 @@ export class PhygitalService {
       }
 
       if (!foundEvent && !foundVault) throw new Error(`Destino ${eventId} não encontrado no sistema.`);
+
+      // 1.5. Idempotency Check (Only for Events to prevent duplicates on timeout/retry)
+      if (foundEvent && metadata.queueItemId) {
+        const existingMedia = await prisma.eventMedia.findFirst({
+          where: {
+            eventId: foundEvent.id,
+            metadata: {
+              path: ['queueItemId'],
+              equals: metadata.queueItemId,
+            },
+          },
+        });
+        if (existingMedia) {
+          console.log(`[PHYGITAL] Idempotency hit! Ignoring duplicate upload for queueItemId: ${metadata.queueItemId}`);
+          return { success: true, referenceCode: existingMedia.shortId, imageUrl: existingMedia.url, id: existingMedia.shortId, idempotent: true };
+        }
+      }
 
       // 2. Gera a Referência Única do Cliente
       const shortEventId = metadata.eventId.substring(0, 5).toUpperCase();
@@ -97,7 +115,7 @@ export class PhygitalService {
               shortId,
               type: 'VIDEO',
               price: metadata.price || foundEvent.pricePerPhoto || foundEvent.priceBase || 15,
-              metadata: { rawUrl: videoUrl, printUrl: videoUrl },
+              metadata: { rawUrl: videoUrl, printUrl: videoUrl, ...(metadata.queueItemId ? { queueItemId: metadata.queueItemId } : {}) },
               isGuest: !isProfessionalUpload
             } as any
           });
@@ -384,7 +402,8 @@ export class PhygitalService {
         const payloadMetadata = {
           ...(metadata.globalTag ? { bibNumber: metadata.globalTag, studentId: metadata.globalTag, aiTags: [metadata.globalTag] } : {}),
           rawUrl: rawPublicUrl,
-          printUrl: printPublicUrl
+          printUrl: printPublicUrl,
+          ...(metadata.queueItemId ? { queueItemId: metadata.queueItemId } : {})
         };
 
         const isProfessionalUpload = metadata.userId && foundEvent && (

@@ -14,7 +14,7 @@ export class PhygitalController {
         return res.status(400).json({ error: "Nenhuma foto enviada." });
       }
 
-      const { eventId, customerName, customerPhone, customerEmail, customerCep } = req.body;
+      const { eventId, customerName, customerPhone, customerEmail, customerCep, queueItemId } = req.body;
       const userId = (req as any).user?.userId;
 
       if (!eventId || !customerName) {
@@ -28,6 +28,7 @@ export class PhygitalController {
         customerEmail: customerEmail || "",
         customerCep: customerCep || "",
         userId: userId,
+        queueItemId: queueItemId || "",
         // mimetype: prefer explicit field from frontend, fallback to multer detection
         mimetype: req.body.mimetype || req.file.mimetype || undefined
       });

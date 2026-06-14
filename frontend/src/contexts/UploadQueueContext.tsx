@@ -90,6 +90,7 @@ export const UploadQueueProvider: React.FC<{ children: React.ReactNode }> = ({ c
       formDataPayload.append('customerPhone', oldestPending.customerPhone);
       formDataPayload.append('customerEmail', oldestPending.customerEmail);
       formDataPayload.append('mimetype', resolvedType);
+      formDataPayload.append('queueItemId', oldestPending.id);
       if (oldestPending.userId) {
         formDataPayload.append('userId', oldestPending.userId);
       }
