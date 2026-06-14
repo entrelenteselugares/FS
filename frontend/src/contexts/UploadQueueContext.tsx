@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 import React, { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react';
 import { API } from '../lib/api';
 import {
@@ -108,10 +109,16 @@ export const UploadQueueProvider: React.FC<{ children: React.ReactNode }> = ({ c
       } else {
         throw new Error(res.data?.error || 'Erro no envio');
       }
-    } catch (err: any) {
+    } catch (error: unknown) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const err = error as any;
+      const serverDetails = err.response?.data?.details;
+      const serverError = err.response?.data?.error;
+      const displayMessage = serverDetails || serverError || err.message || 'Falha na conexão';
+
       await updateItemStatus(oldestPending.id, {
         status: 'error',
-        errorMessage: err.message || 'Falha na conexão',
+        errorMessage: displayMessage,
       });
     } finally {
       isUploadingRef.current = false;

@@ -142,10 +142,11 @@ const STEPS = [
 function FooterCol({ title, links }: { title: string; links: {label: string, href: string}[] }) {
   const navigate = useNavigate();
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-      <span style={{ fontSize: 10, fontFamily: T.fontD, fontWeight: 900, letterSpacing: "0.4em", textTransform: "uppercase", color: T.text, fontStyle: 'italic' }}>{title}</span>
+    <div className="hp-footer-col" style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+      <span className="hp-footer-col-title" style={{ fontSize: 10, fontFamily: T.fontD, fontWeight: 900, letterSpacing: "0.4em", textTransform: "uppercase", color: T.text, fontStyle: 'italic' }}>{title}</span>
       {links.map(l => (
         <span 
+          className="hp-footer-col-link"
           key={l.label} 
           onClick={() => l.href.startsWith('http') ? window.open(l.href, '_blank') : navigate(l.href)}
           style={{ fontSize: 11, fontFamily: T.fontD, fontWeight: 900, color: T.text3, cursor: "pointer", textTransform: "uppercase", letterSpacing: "0.2em", fontStyle: 'italic' }}
@@ -262,7 +263,10 @@ export const HomePage = () => {
           .hp-step-item p { font-size: 10px !important; line-height: 1.4 !important; }
           .hp-step-item > div { font-size: 32px !important; margin-bottom: 6px !important; }
           .hp-footer-inner { flex-direction: column !important; gap: 2rem !important; }
-          .hp-footer-cols { gap: 1.5rem !important; }
+          .hp-footer-cols { gap: 0.5rem !important; flex-wrap: nowrap !important; justify-content: space-between !important; width: 100% !important; }
+          .hp-footer-col { gap: 8px !important; }
+          .hp-footer-col-title { font-size: 8px !important; letter-spacing: 0.2em !important; }
+          .hp-footer-col-link { font-size: 8.5px !important; letter-spacing: 0.1em !important; }
           .hp-search-container { flex-direction: column !important; }
           .hp-search-input { border-right: 1px solid var(--border-2) !important; border-bottom: none !important; border-top: none !important; }
           .hp-stats { gap: 10px !important; justify-content: space-between !important; flex-wrap: nowrap !important; }
@@ -568,12 +572,12 @@ export const HomePage = () => {
               {label: "Negócios", href: "/negocios"}
             ]} />
             <FooterCol title="Jurídico" links={[
-              {label: "Termos de Uso", href: "/termos"}, 
-              {label: "Privacidade", href: "/privacidade"}, 
+              {label: "Termos", href: "/termos"}, 
+              {label: "Privac.", href: "/privacidade"}, 
               {label: "LGPD", href: "/lgpd"}
             ]} />
             <FooterCol title="Suporte" links={[
-              {label: "Central de Ajuda", href: "/suporte"}, 
+              {label: "Ajuda", href: "/suporte"}, 
               {label: "Contato", href: "/contato"}, 
               {label: "Status", href: "/status"}
             ]} />
