@@ -1444,7 +1444,7 @@ return (
       
       {/* Carrinho Mobile Elevado */}
       {isMarketplace && eventCart.length > 0 && (
-        <motion.div initial={{ y: 120 }} animate={{ y: 0 }} className="lg:hidden fixed bottom-0 left-0 right-0 z-[100] bg-theme-bg/90 backdrop-blur-3xl border-t border-brand-tactical/40 p-4 md:p-8 pb-14 flex items-center justify-between shadow-2xl dark:bg-black/95">
+        <motion.div initial={{ y: 120 }} animate={{ y: 0 }} className="lg:hidden fixed left-0 right-0 z-[100] bg-theme-bg/90 backdrop-blur-3xl border-t border-brand-tactical/40 p-4 md:p-8 flex items-center justify-between shadow-2xl dark:bg-black/95" style={{ bottom: "calc(64px + env(safe-area-inset-bottom))" }}>
           <div className="space-y-1">
             <p className="text-[10px] font-bold uppercase tracking-widest text-brand-tactical ">{eventCart.length} selecionadas</p>
             <div className="flex items-baseline gap-1">
