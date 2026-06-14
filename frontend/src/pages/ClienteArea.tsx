@@ -8,11 +8,13 @@ import { SideDrawer } from "../components/SideDrawer";
 import { DashboardLayout, type NavItem } from "../components/DashboardLayout";
 import { ExpressSaleModal, FlashEventModal, type Partner } from "../components/profissional";
 import { AffiliateDashboard } from "../components/AffiliateDashboard";
+import { AlbumSanfonaBanner } from "../components/AlbumSanfonaBanner";
+import { AlbumSanfonaFlow } from "../components/AlbumSanfonaFlow";
 import { 
  Users, Play, CheckCircle2, ArrowRight, 
  ShoppingBag, ShieldCheck, Clock, Image as ImageIcon,
  Zap, Lock, User, AlertTriangle, Briefcase, Building2, Camera,
- DollarSign, Printer, Settings, Sparkles, LayoutDashboard, MapPin, Wallet
+ DollarSign, Printer, Settings, Sparkles, LayoutDashboard, MapPin, Wallet, BookImage
 } from "lucide-react";
 import { ProfilePhotoUpload } from "../components/ProfilePhotoUpload";
 import { toast } from "sonner";
@@ -35,7 +37,8 @@ type ActiveTab =
  | "configuracoes" 
  | "monitor"
  | "perfil"
- | "portfolio";
+ | "portfolio"
+ | "album-sanfona";
 
 interface Pedido {
  id: string;
@@ -148,7 +151,7 @@ export default function ClienteArea() {
       // Removemos o set('s', ...) para evitar o loop infinito com o useEffect que escuta e deleta 's'
       return prev;
     }, { replace: true });
-  }, [setSearchParams, user, navigate]);
+  }, [setSearchParams]);
  
  // Franchise States
  const [network, setNetwork] = useState<Partner[]>([]);
@@ -165,6 +168,13 @@ export default function ClienteArea() {
  const items: NavItem[] = [
   { label: "Histórico de Compras", onClick: () => handleTabChange("files"), isActive: activeTab === "files", icon: <ShoppingBag size={18} /> },
   { label: "Meus Álbuns", onClick: () => navigate("/meus-albuns"), isActive: false, icon: <Lock size={18} /> },
+  { 
+    label: "Álbum Sanfona", 
+    onClick: () => handleTabChange("album-sanfona"), 
+    isActive: activeTab === "album-sanfona", 
+    icon: <BookImage size={18} />, 
+    locked: !user?.isSanfonaSubscriber 
+  },
   { label: "Minha Carteira", onClick: () => handleTabChange("wallet"), isActive: activeTab === "wallet", icon: <Wallet size={18} /> },
   { label: "Indique e Ganhe", onClick: () => handleTabChange("affiliate"), isActive: activeTab === "affiliate", icon: <Users size={18} /> },
   { label: "Meus Dados", onClick: () => handleTabChange("profile"), isActive: activeTab === "profile", icon: <User size={18} /> },
@@ -481,6 +491,8 @@ export default function ClienteArea() {
 
  <div className="max-w-[1400px] mx-auto px-2 md:px-6 py-4 md:py-6 space-y-4 md:space-y-8">
 
+ {activeTab === "files" && <AlbumSanfonaBanner isSubscriber={user?.isSanfonaSubscriber} />}
+
  {/* Expiring Alert Banner */}
  {(() => {
  const exp = aprovados.filter(g => { 
@@ -552,7 +564,9 @@ export default function ClienteArea() {
  transition={{ duration: 0.3 }}
  className="space-y-4 md:space-y-12"
  >
- {activeTab === "wallet" ? (
+ {activeTab === "album-sanfona" ? (
+  <AlbumSanfonaFlow />
+ ) : activeTab === "wallet" ? (
   <div className="space-y-4 md:space-y-10">
   {/* Wallet Header Section */}
   <div className="grid grid-cols-2 gap-3 md:gap-8">

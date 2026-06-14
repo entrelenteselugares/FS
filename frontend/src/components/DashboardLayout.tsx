@@ -20,6 +20,7 @@ export interface NavItem {
   hide?: boolean;
   isHeader?: boolean;
   isPrimaryMobile?: boolean; // NEW: tag para fixar na bottom nav
+  locked?: boolean; // NEW: tag para bloquear o acesso
   subItems?: NavItem[];
 }
 
@@ -224,20 +225,34 @@ const SidebarContent: React.FC<SidebarContentProps & { currentPath: string }> = 
           const active = checkIsActive(item);
           const itemClassName = `group relative flex items-center gap-3 px-5 py-2.5 text-[13px] font-heading tracking-wide w-full text-left transition-all duration-300 border-l-2 ${active ? "bg-brand-tactical/10 text-brand-tactical border-brand-tactical font-black" : "bg-transparent text-theme-muted border-transparent font-medium hover:bg-white/5 hover:text-theme-text hover:border-zinc-700"}`;
 
-          const handleClick = () => {
+          const handleClick = (e?: React.MouseEvent) => {
+            if (item.locked) {
+              e?.preventDefault();
+              // Aqui poderiamos disparar um toast avisando do bloqueio,
+              // mas apenas previnir a acao ja serve para deixá-lo unclickable
+              return;
+            }
             onNavigate();
             item.onClick?.();
           };
 
           if (item.to) {
             return (
-              <Link key={item.label} to={item.to} className={itemClassName} onClick={handleClick}>
+              <Link key={item.label} to={item.to} className={itemClassName} onClick={handleClick} style={{ opacity: item.locked ? 0.6 : 1, cursor: item.locked ? "not-allowed" : "pointer" }}>
                 {item.icon && (
                   <span className={`shrink-0 transition-colors ${active ? "text-brand-tactical" : "text-theme-muted group-hover:text-theme-subtle"}`}>
                     {item.icon}
                   </span>
                 )}
                 <span className="flex-1">{item.label}</span>
+                {item.locked && (
+                  <span className="shrink-0 text-theme-muted opacity-60 ml-2">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                      <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                    </svg>
+                  </span>
+                )}
                 {item.badge !== undefined && item.badge !== 0 && (
                   <span className="bg-brand-tactical text-theme-text text-[10px] font-bold px-2 py-0.5 rounded-sm min-w-[16px] text-center">
                     {item.badge}
@@ -248,13 +263,21 @@ const SidebarContent: React.FC<SidebarContentProps & { currentPath: string }> = 
           }
 
           return (
-            <button key={item.label} className={itemClassName} onClick={handleClick}>
+            <button key={item.label} className={itemClassName} onClick={handleClick} disabled={item.locked} style={{ opacity: item.locked ? 0.6 : 1, cursor: item.locked ? "not-allowed" : "pointer" }}>
               {item.icon && (
                 <span className={`shrink-0 transition-colors ${active ? "text-brand-tactical" : "text-theme-muted group-hover:text-theme-subtle"}`}>
                   {item.icon}
                 </span>
               )}
               <span className="flex-1">{item.label}</span>
+              {item.locked && (
+                <span className="shrink-0 text-theme-muted opacity-60 ml-2">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                  </svg>
+                </span>
+              )}
               {item.badge !== undefined && item.badge !== 0 && (
                 <span className="bg-brand-tactical text-theme-text text-[9px] font-bold px-1.5 py-0.5 rounded-sm min-w-[16px] text-center">
                   {item.badge}

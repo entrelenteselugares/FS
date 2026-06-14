@@ -47,6 +47,7 @@ export interface AuthUser {
   address?: string | null;
   profileComplete: boolean;
   isExperienceValidated?: boolean;
+  isSanfonaSubscriber?: boolean;
 }
 
 export interface AuthContextType {
