@@ -78,3 +78,13 @@
 
 ## Backlog (v16.0 TBD)
 
+
+### Phase 72: Camera Stories & Background Upload
+
+**Goal:** [To be planned]
+**Requirements**: TBD
+**Depends on:** Phase 71
+**Plans:** 0 plans
+
+Plans:
+- [ ] TBD (run /gsd-plan-phase 72 to break down)
