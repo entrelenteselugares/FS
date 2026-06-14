@@ -1,9 +1,9 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import { API } from '../lib/api';
 import { CheckCircle2, Loader2, Image as ImageIcon, Video, Camera, LogOut, User as UserIcon, ArrowLeft, RefreshCcw } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { toast } from 'sonner';
+import { useUploadQueue } from '../contexts/UploadQueueContext';
 
 // ─── HELPERS ────────────────────────────────────────────────────────────────
 
@@ -25,14 +25,6 @@ const checkVideoDuration = (file: File): Promise<boolean> => {
   });
 };
 
-interface UploadItem {
-  id: string;
-  file: File;
-  status: 'uploading' | 'success' | 'error';
-  code?: string;
-  errorMessage?: string;
-}
-
 // ─── MAIN COMPONENT ─────────────────────────────────────────────────────────
 
 export default function PhygitalCapture() {
@@ -50,9 +42,8 @@ export default function PhygitalCapture() {
   const videoInputRef = useRef<HTMLInputElement>(null);
   const galleryInputRef = useRef<HTMLInputElement>(null);
 
-  // ── Upload Queue
-  const [uploadItems, setUploadItems] = useState<UploadItem[]>([]);
-  const [isUploadingGlobal, setIsUploadingGlobal] = useState(false);
+  // ── Upload Queue (Global)
+  const { uploadItems, addToQueue, retryUpload } = useUploadQueue();
 
   // ── Identification
   const [isIdentified, setIsIdentified] = useState(false);
@@ -116,52 +107,6 @@ export default function PhygitalCapture() {
     }
   };
 
-  // ─── UPLOAD LOGIC ────────────────────────────────────────────────────────
-
-  /**
-   * uploadSingleItem — envia um arquivo para o backend.
-   * Campos de texto ANTES do arquivo (requisito do multer).
-   */
-  const uploadSingleItem = useCallback(async (item: UploadItem) => {
-    try {
-      const formDataPayload = new FormData();
-      const resolvedType =
-        item.file.type ||
-        (item.file.name.match(/\.(mp4|webm|mov)$/i) ? 'video/mp4' : 'image/jpeg');
-
-      // Text fields FIRST (multer requirement)
-      formDataPayload.append('eventId', eventId);
-      formDataPayload.append('customerName', formData.customerName);
-      formDataPayload.append('customerPhone', formData.customerPhone);
-      formDataPayload.append('customerEmail', formData.customerEmail);
-      formDataPayload.append('mimetype', resolvedType);
-      if (user) formDataPayload.append('userId', user.id);
-
-      // File LAST
-      formDataPayload.append('photo', item.file, item.file.name);
-
-      const res = await API.post('/public/phygital/upload', formDataPayload);
-
-      if (res.data && res.data.success) {
-        setUploadItems(prev =>
-          prev.map(ui =>
-            ui.id === item.id ? { ...ui, status: 'success', code: res.data.referenceCode } : ui
-          )
-        );
-      } else {
-        throw new Error(res.data?.error || 'Erro no envio');
-      }
-    } catch (err: any) {
-      setUploadItems(prev =>
-        prev.map(ui =>
-          ui.id === item.id
-            ? { ...ui, status: 'error', errorMessage: err.message || 'Falha na conexão' }
-            : ui
-        )
-      );
-    }
-  }, [eventId, formData, user]);
-
   const processAndUploadFiles = useCallback(
     async (selectedFiles: File[]) => {
       if (selectedFiles.length === 0) return;
@@ -173,24 +118,15 @@ export default function PhygitalCapture() {
         return;
       }
 
-      setIsUploadingGlobal(true);
-
-      const newItems: UploadItem[] = selectedFiles.map(file => ({
-        id: Date.now() + Math.random().toString(36).substring(2),
-        file,
-        status: 'uploading',
-      }));
-
-      setUploadItems(prev => [...newItems, ...prev]);
-
-      // Upload sequencialmente (evita OOM em mobile com múltiplos uploads paralelos)
-      for (const item of newItems) {
-        await uploadSingleItem(item);
-      }
-
-      setIsUploadingGlobal(false);
+      await addToQueue(selectedFiles, {
+        eventId,
+        customerName: formData.customerName,
+        customerPhone: formData.customerPhone,
+        customerEmail: formData.customerEmail,
+        userId: user?.id,
+      });
     },
-    [uploadSingleItem]
+    [addToQueue, eventId, formData, user]
   );
 
   const handleNativeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -474,12 +410,7 @@ export default function PhygitalCapture() {
                         {item.status === 'error' && (
                           <button
                             onClick={() => {
-                              setUploadItems(prev =>
-                                prev.map(ui =>
-                                  ui.id === item.id ? { ...ui, status: 'uploading' } : ui
-                                )
-                              );
-                              uploadSingleItem(item);
+                              retryUpload(item.id);
                             }}
                             className="bg-red-500/90 text-white p-2 rounded-full hover:bg-red-500 active:scale-95 shadow-xl border border-red-400 flex flex-col items-center gap-1"
                             title="Tentar novamente"
@@ -499,26 +430,7 @@ export default function PhygitalCapture() {
           </div>
         )}
 
-        {/* ── Fullscreen Upload Overlay ────────────────────────────────────── */}
-        {isUploadingGlobal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-zinc-950/90 backdrop-blur-md">
-            <div className="flex flex-col items-center justify-center space-y-6">
-              <div className="relative flex items-center justify-center">
-                <div className="w-24 h-24 border-4 border-emerald-500/30 rounded-full animate-spin" />
-                <div className="absolute w-24 h-24 border-4 border-transparent border-t-emerald-500 rounded-full animate-spin" />
-                <Camera size={32} className="absolute text-emerald-400 animate-pulse" />
-              </div>
-              <div className="text-center space-y-2">
-                <h2 className="text-lg font-bold text-white tracking-widest uppercase">
-                  Enviando Foto
-                </h2>
-                <p className="text-[10px] text-zinc-400 font-medium tracking-widest uppercase">
-                  Não feche o aplicativo
-                </p>
-              </div>
-            </div>
-          </div>
-        )}
+        {/* ── Removed Fullscreen Upload Overlay to allow "Stories" mode ── */}
       </div>
     </div>
   );

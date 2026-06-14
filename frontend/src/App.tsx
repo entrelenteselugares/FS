@@ -7,6 +7,7 @@ import { HelmetProvider } from "react-helmet-async";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { BottomNav } from "./components/BottomNav";
 import { PushNotificationManager } from "./components/PushNotificationManager";
+import { UploadQueueProvider } from "./contexts/UploadQueueContext";
 
 import React, { Suspense } from "react";
 import { WorldCupLiveBanner } from "./components/worldcup/WorldCupLiveBanner";
@@ -61,6 +62,10 @@ import { useEffect } from "react";
 import { AnimatePresence } from "framer-motion";
 import { PageTransition } from "./components/PageTransition";
 import { API as api } from "./lib/api";
+import { Capacitor } from '@capacitor/core';
+import { App as CapacitorApp } from '@capacitor/app';
+import { useNavigate } from 'react-router-dom';
+
 /** Redireciona /dashboard para o painel correto baseado no role */
 const DashboardRedirect = () => {
   const { user } = useAuth();
@@ -78,6 +83,50 @@ const DashboardRedirect = () => {
 
 const AnimatedRoutes = () => {
   const location = useLocation();
+  const navigate = useNavigate();
+
+  // Escuta Deep Links nativos do Capacitor (ex: OAuth callback)
+  useEffect(() => {
+    if (Capacitor.isNativePlatform()) {
+      const listener = CapacitorApp.addListener('appUrlOpen', (event) => {
+        // Importa e fecha o In-App Browser do Google Auth
+        import('@capacitor/browser').then(({ Browser }) => {
+          Browser.close().catch(() => {});
+        });
+
+        // Extrai a rota e hash (ex: com.fotosegundo.app://auth-callback#access_token=...)
+        try {
+          const urlObj = new URL(event.url);
+          if (urlObj.hostname === 'auth-callback') {
+            if (urlObj.hash) {
+              window.location.hash = urlObj.hash;
+              
+              // Extrai access_token e refresh_token para definir a sessão manualmente no Supabase
+              const hashParams = new URLSearchParams(urlObj.hash.substring(1));
+              const access_token = hashParams.get("access_token");
+              const refresh_token = hashParams.get("refresh_token");
+              
+              if (access_token && refresh_token) {
+                import("./lib/supabase").then(({ supabase }) => {
+                  supabase.auth.setSession({ access_token, refresh_token }).catch(err => {
+                    console.error("Erro ao definir sessao no Supabase", err);
+                  });
+                });
+              }
+            }
+            // Navega para a home repassando o hash para o Supabase capturar o token
+            navigate({ pathname: '/', search: urlObj.search, hash: urlObj.hash }, { replace: true });
+          } else {
+            const slug = event.url.split('://').pop();
+            if (slug) navigate('/' + slug);
+          }
+        } catch (e) {
+          console.error("Erro no appUrlOpen", e);
+        }
+      });
+      return () => { listener.then(l => l.remove()); };
+    }
+  }, [navigate]);
 
   // Safety: Clear body overflow on every route change to prevent stuck overlays
   useEffect(() => {
@@ -243,14 +292,16 @@ function App() {
     <ThemeProvider>
       <AuthProvider>
         <CartProvider>
-          <HelmetProvider>
-            <Router>
-              <WorldCupLiveBanner />
-              <AnimatedRoutes />
-              <BottomNav />
-              <PushNotificationManager />
-            </Router>
-          </HelmetProvider>
+          <UploadQueueProvider>
+            <HelmetProvider>
+              <Router>
+                <WorldCupLiveBanner />
+                <AnimatedRoutes />
+                <BottomNav />
+                <PushNotificationManager />
+              </Router>
+            </HelmetProvider>
+          </UploadQueueProvider>
         </CartProvider>
       </AuthProvider>
     </ThemeProvider>
