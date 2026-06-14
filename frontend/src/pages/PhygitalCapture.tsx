@@ -395,10 +395,18 @@ export default function PhygitalCapture() {
                       key={item.id}
                       className="relative w-full aspect-square rounded-xl overflow-hidden border border-zinc-800 bg-zinc-900 flex flex-col items-center justify-center"
                     >
-                      <Camera
-                        size={24}
-                        className={item.status === 'success' ? 'text-green-500' : 'text-zinc-600'}
-                      />
+                      {item.file.type.startsWith('video/') ? (
+                        <Video
+                          size={24}
+                          className={item.status === 'success' ? 'text-green-500' : 'text-zinc-600'}
+                        />
+                      ) : (
+                        <img 
+                          src={URL.createObjectURL(item.file)}
+                          className="w-full h-full object-cover"
+                          alt="miniatura"
+                        />
+                      )}
 
                       <div className="absolute inset-0 bg-black/40 flex items-center justify-center backdrop-blur-[2px]">
                         {item.status === 'uploading' && (
