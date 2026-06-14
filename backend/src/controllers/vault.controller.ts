@@ -892,16 +892,20 @@ export class VaultController {
 
       // Se a mídia tem URL pública direta (R2 ou outro CDN), redirecionar sem proxiar pelo Drive
       if (media && media.webViewLink && media.webViewLink.startsWith('http')) {
-        // R2/CDN: servir diretamente via redirect (muito mais rápido e sem limitação do Vercel)
-        res.setHeader('Cache-Control', 'public, max-age=86400');
-        return res.redirect(302, media.webViewLink);
+        // R2/CDN: redirect 301 permanente — o WebView Android cacheia o destino
+        // sem fazer roundtrip no proxy a cada sessão
+        res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+        res.setHeader('Vary', 'Accept-Encoding');
+        return res.redirect(301, media.webViewLink);
       }
 
       const driveRes = await driveService.getMediaStream(fileId);
       
       const contentType = driveRes.headers['content-type'] || 'image/jpeg';
       res.setHeader('Content-Type', contentType);
-      res.setHeader('Cache-Control', 'public, max-age=86400');
+      res.setHeader('Cache-Control', 'public, max-age=604800, stale-while-revalidate=86400');
+      res.setHeader('Vary', 'Accept-Encoding');
+      res.setHeader('X-Cache-Source', 'drive-proxy');
 
       // Pipe the stream directly
       return (driveRes.data as any).pipe(res);

@@ -733,7 +733,7 @@ export default function EventPage() {
   })();
 
 return (
-    <div className="min-h-screen bg-theme-bg text-theme-text selection:bg-brand-tactical/30 overflow-x-hidden selection:text-theme-text" onContextMenu={(e) => e.preventDefault()}>
+    <div className="min-h-screen bg-theme-bg text-theme-text selection:bg-brand-tactical/30 selection:text-theme-text" onContextMenu={(e) => e.preventDefault()}>
       <SEO 
         title={event.title} 
         image={getProxyUrl(event.coverPhotoUrl)}
@@ -743,7 +743,7 @@ return (
 
       <main className="grid grid-cols-1 lg:grid-cols-[1fr_330px] min-h-[calc(100vh-64px)]">
         {/* Lado Esquerdo: Conteúdo Principal */}
-        <section className="relative flex flex-col bg-theme-bg overflow-y-auto scrollbar-hide">
+        <section className="relative flex flex-col bg-theme-bg lg:overflow-y-auto scrollbar-hide">
           <button 
              onClick={() => navigate(-1)} 
              className="absolute top-6 left-6 z-50 flex items-center gap-2 px-5 py-2.5 bg-theme-bg/60 backdrop-blur-md border border-theme-border rounded-full text-theme-text hover:bg-brand-tactical hover:text-theme-text transition-all shadow-xl"
@@ -1173,7 +1173,7 @@ return (
         <aside className="relative flex flex-col bg-theme-bg-muted border-l border-theme-border shadow-2xl">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(20,184,166,0.08),transparent_70%)] pointer-events-none" />
           
-          <div className="relative z-10 flex-1 overflow-y-auto p-4 lg:p-8 space-y-8 lg:space-y-14 scrollbar-hide">
+          <div className="relative z-10 flex-1 lg:overflow-y-auto p-4 lg:p-8 space-y-8 lg:space-y-14 scrollbar-hide">
             <div className="flex items-center justify-between border-b border-theme-border pb-6 lg:pb-12">
               <div className="space-y-1">
                 <p className="text-[10px] text-theme-text-muted uppercase font-bold tracking-[0.5em]">Membro Exclusive</p>

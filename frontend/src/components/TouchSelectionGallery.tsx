@@ -1,9 +1,11 @@
 import React, { useState, useRef, useEffect, useCallback } from "react";
 import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Check, X, ChevronLeft, ChevronRight, Trash2 } from "lucide-react";
+import { Check, X, ChevronLeft, ChevronRight, Trash2, Play } from "lucide-react";
 import { getProxyUrl } from "../lib/utils/media";
 import { OptimizedImage } from "./OptimizedImage";
+
+const CHUNK_SIZE = 24;
 
 interface Media {
   id: string;
@@ -43,12 +45,10 @@ const GalleryItem = React.memo(({
   onToggleCart, onDeleteMedia, handleTouchStart, handleTouchEnd, handlePhotoClick 
 }: GalleryItemProps) => {
   const displayUrl = m.url;
+  const isVideo = m.shortId.startsWith('V') || m.type === 'VIDEO';
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ delay: (idx % 20) * 0.03 }}
-      className={`relative aspect-[3/4] overflow-hidden border-2 transition-all duration-300 active:scale-95 select-none ${
+    <div
+      className={`relative aspect-[3/4] overflow-hidden border-2 transition-all duration-200 active:scale-95 select-none ${
         isUnlocked ? "border-brand-tactical shadow-lg shadow-brand-tactical/10" : 
         isSelected ? "border-emerald-500 scale-95 shadow-xl shadow-emerald-500/20" : 
         "border-theme-border"
@@ -58,18 +58,23 @@ const GalleryItem = React.memo(({
       onTouchMove={handleTouchEnd}
       onClick={() => handlePhotoClick(idx, m)}
     >
-      {m.shortId.startsWith('V') || m.type === 'VIDEO' ? (
-        <video
-          src={getProxyUrl(displayUrl)}
-          className={`w-full h-full object-cover transition-all duration-700 ${
-            isSelected ? "opacity-40" : "opacity-100"
-          } ${!isUnlocked && "blur-[0.5px]"}`}
-          preload="metadata"
-          muted
-          playsInline
-          autoPlay
-          loop
-        />
+      {isVideo ? (
+        <div className="relative w-full h-full">
+          <video
+            src={`${getProxyUrl(displayUrl)}#t=0.1`}
+            preload="metadata"
+            className={`w-full h-full object-cover transition-all duration-700 ${
+              isSelected ? "opacity-40" : "opacity-100"
+            } ${!isUnlocked && "blur-[0.5px]"}`}
+            muted
+            playsInline
+          />
+          <div className="absolute inset-0 flex items-center justify-center bg-black/20 pointer-events-none transition-all duration-300">
+            <div className="w-12 h-12 rounded-full bg-black/50 backdrop-blur-sm flex items-center justify-center border border-white/20">
+              <Play size={20} className="text-white ml-1" />
+            </div>
+          </div>
+        </div>
       ) : (
         <OptimizedImage
           src={getProxyUrl(displayUrl)}
@@ -156,7 +161,7 @@ const GalleryItem = React.memo(({
           </button>
         )}
       </div>
-    </motion.div>
+    </div>
   );
 }, (prevProps, nextProps) => {
   return (
@@ -164,8 +169,7 @@ const GalleryItem = React.memo(({
     prevProps.isUnlocked === nextProps.isUnlocked &&
     prevProps.isOwner === nextProps.isOwner &&
     prevProps.allowFreeDownload === nextProps.allowFreeDownload &&
-    prevProps.m.id === nextProps.m.id &&
-    prevProps.idx === nextProps.idx
+    prevProps.m.id === nextProps.m.id
   );
 });
 GalleryItem.displayName = "GalleryItem";
@@ -181,7 +185,9 @@ export const TouchSelectionGallery: React.FC<TouchSelectionGalleryProps> = ({
 }) => {
   const [fullscreenIndex, setFullscreenIndex] = useState<number | null>(null);
   const [isSelectMode, setIsSelectMode] = useState(false);
+  const [visibleCount, setVisibleCount] = useState(CHUNK_SIZE);
   const longPressTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const loadMoreRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     if (fullscreenIndex === null) return;
@@ -222,6 +228,21 @@ export const TouchSelectionGallery: React.FC<TouchSelectionGalleryProps> = ({
     }
   }, []);
 
+  // IntersectionObserver para carregar mais fotos ao rolar
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setVisibleCount(prev => Math.min(prev + CHUNK_SIZE, medias.length));
+        }
+      },
+      { rootMargin: '300px' }
+    );
+    const el = loadMoreRef.current;
+    if (el) observer.observe(el);
+    return () => observer.disconnect();
+  }, [medias.length]);
+
   const nextPhoto = useCallback(() => {
     setFullscreenIndex((prev) => (prev !== null && prev < medias.length - 1 ? prev + 1 : prev));
   }, [medias.length]);
@@ -256,7 +277,7 @@ export const TouchSelectionGallery: React.FC<TouchSelectionGalleryProps> = ({
       </AnimatePresence>
 
       <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3 md:gap-6">
-        {medias.map((m, idx) => {
+        {medias.slice(0, visibleCount).map((m, idx) => {
           const isSelected = selectedIds.includes(m.shortId);
           const isUnlocked = allowFreeDownload || unlockedIds.includes(m.shortId) || unlockedIds.includes(m.id);
           
@@ -278,6 +299,27 @@ export const TouchSelectionGallery: React.FC<TouchSelectionGalleryProps> = ({
           );
         })}
       </div>
+
+      {/* Sentinela: ao entrar no viewport, carrega mais fotos */}
+      {visibleCount < medias.length && (
+        <div ref={loadMoreRef} className="flex justify-center py-8">
+          <div className="flex items-center gap-3 text-theme-text-muted">
+            <div className="w-4 h-4 border-2 border-brand-tactical/40 border-t-brand-tactical rounded-full animate-spin" />
+            <span className="text-[10px] uppercase tracking-widest font-bold">
+              Carregando mais {Math.min(CHUNK_SIZE, medias.length - visibleCount)} de {medias.length - visibleCount} fotos...
+            </span>
+          </div>
+        </div>
+      )}
+
+      {/* Indicador de total quando todos foram carregados */}
+      {visibleCount >= medias.length && medias.length > CHUNK_SIZE && (
+        <div className="text-center py-4">
+          <span className="text-[9px] uppercase tracking-widest font-bold text-theme-text-muted">
+            ✓ Todas as {medias.length} fotos carregadas
+          </span>
+        </div>
+      )}
 
       {/* Fullscreen Modal with Swipe */}
       {createPortal(

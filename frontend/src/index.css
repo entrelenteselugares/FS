@@ -99,6 +99,8 @@ html, body {
   overscroll-behavior-y: none;
   overscroll-behavior-x: none;
   touch-action: manipulation;
+  /* Scroll com momentum no iOS/Android WebView */
+  -webkit-overflow-scrolling: touch;
 }
 
 body {

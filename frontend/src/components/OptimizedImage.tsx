@@ -11,9 +11,9 @@ interface OptimizedImageProps extends React.ImgHTMLAttributes<HTMLImageElement> 
 
 /**
  * OptimizedImage
- * - Usos nativos `loading="lazy"` para evitar downloads invisíveis na tela.
- * - `decoding="async"` para não travar a thread principal (evita congelamentos de scroll).
- * - Componente com estado de esqueleto (blur) até a imagem terminar de carregar.
+ * - Uses IntersectionObserver to trigger loading when near the viewport.
+ * - `decoding="async"` to prevent main thread blockage.
+ * - Skeleton state while loading.
  */
 export function OptimizedImage({ 
   src, 
@@ -26,21 +26,37 @@ export function OptimizedImage({
 }: OptimizedImageProps) {
   const [isLoaded, setIsLoaded] = useState(false);
   const [error, setError] = useState(false);
+  const [isVisible, setIsVisible] = useState(priority);
   const imgRef = useRef<HTMLImageElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   // Reseta estado se o src mudar
   useEffect(() => {
     setIsLoaded(false);
     setError(false);
-    
-    // Check if already loaded from cache
-    if (imgRef.current?.complete) {
-      setIsLoaded(true);
-    }
-  }, [src]);
+    if (priority) setIsVisible(true);
+  }, [src, priority]);
+
+  // IntersectionObserver para lazy loading
+  useEffect(() => {
+    if (priority || isVisible) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+          observer.disconnect();
+        }
+      },
+      { rootMargin: '200px' }
+    );
+
+    if (containerRef.current) observer.observe(containerRef.current);
+    return () => observer.disconnect();
+  }, [priority, isVisible]);
 
   return (
-    <div className={`relative overflow-hidden ${className}`}>
+    <div ref={containerRef} className={`relative overflow-hidden ${className}`}>
       {/* Placeholder / Skeleton: Fica visível enquanto carrega ou se der erro */}
       {(!isLoaded || error) && (
         <div 
@@ -58,12 +74,11 @@ export function OptimizedImage({
       )}
 
       {/* Imagem Real */}
-      {!error && (
+      {isVisible && !error && (
         <img
           ref={imgRef}
           src={src}
           alt={alt}
-          loading={priority ? undefined : "lazy"}
           decoding="async"
           onLoad={() => setIsLoaded(true)}
           onError={(e) => {
