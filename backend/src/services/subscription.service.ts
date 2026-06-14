@@ -73,7 +73,9 @@ export class SubscriptionService {
     const user = await prisma.user.findUnique({ where: { id: userId } });
     if (!user) throw new Error("Usuário não encontrado.");
 
-    const price = 27.90;
+    // Lê o preço dinâmico do PlatformConfig (editado pelo admin)
+    const priceConfig = await prisma.platformConfig.findUnique({ where: { key: "sanfona_price" } });
+    const price = priceConfig?.value ? Number(priceConfig.value) : 27.90;
     let subscriptionId = existing?.id;
 
     // Se não existe, cria PENDING

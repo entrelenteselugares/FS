@@ -14,6 +14,7 @@ export const AdminConfigsInfra: React.FC<Props> = ({ configs, saving, onChange, 
   const getConfig = (key: string) => configs.find(c => c.key === key);
   const hourlyRateConfig = getConfig("min_hourly_rate");
   const hourlyRate = Number(hourlyRateConfig?.value) || 83.58;
+  const sanfonaPriceConfig = getConfig("sanfona_price");
 
   return (
     <div className="space-y-12 animate-in fade-in duration-500">
@@ -128,6 +129,28 @@ export const AdminConfigsInfra: React.FC<Props> = ({ configs, saving, onChange, 
                   <p className="text-base font-heading font-bold text-brand-tactical">R${(hourlyRate * minutes / 60).toFixed(2)}</p>
                 </div>
               ))}
+            </div>
+          </div>
+        )}
+
+        {/* Clube do Álbum Sanfona — preço mensal */}
+        {sanfonaPriceConfig && (
+          <div className="space-y-6 border-t border-theme-border pt-8">
+            <div>
+              <label className="text-[9px] font-bold text-theme-muted uppercase tracking-[0.4em] block mb-3">Assinatura Mensal — Clube do Álbum Sanfona (R$/mês)</label>
+              <div className="flex items-center gap-4">
+                <span className="text-2xl font-heading font-bold text-brand-tactical">R$</span>
+                <input
+                  type="number" min="1" step="0.01"
+                  value={sanfonaPriceConfig.value}
+                  onChange={e => onChange("sanfona_price", e.target.value)}
+                  className="flex-1 bg-theme-bg-muted border border-theme-border rounded-2xl p-4 text-2xl font-heading font-bold text-theme-text focus:outline-none focus:border-brand-tactical transition-all"
+                />
+                <span className="text-[9px] font-bold text-theme-muted uppercase tracking-widest">/mês</span>
+              </div>
+              <p className="text-[9px] text-theme-muted uppercase font-bold mt-2">
+                Valor padrão: <span className="text-brand-tactical">R$27,90/mês</span> — 10 fotos impressas em álbum sanfona.
+              </p>
             </div>
           </div>
         )}

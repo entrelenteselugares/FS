@@ -24,6 +24,7 @@ const REQUIRED_INFRA = [
   { key: "maintenance_mode", label: "Modo Manutenção", value: "false" },
   { key: "public_access", label: "Vitrine Global", value: "true" },
   { key: "min_hourly_rate", label: "Valor Hora Mínimo (€)", value: "14" },
+  { key: "sanfona_price", label: "Assinatura Álbum Sanfona (R$/mês)", value: "27.90" },
 ];
 
 export const AdminConfigs: React.FC = () => {
