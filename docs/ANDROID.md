@@ -6,16 +6,22 @@ Este documento descreve as práticas, configurações e fluxos para o desenvolvi
 
 ## 1. Visão Geral
 
-A aplicação Frontend web (`/frontend`) é empacotada como um aplicativo Android nativo utilizando o **Capacitor**.
+A aplicação Frontend web (`/frontend`) é empacotada como um aplicativo Android nativo utilizando o **Capacitor v8**.
 A pasta `/frontend/android` contém todo o projeto Android Studio que é alimentado pelos builds da aplicação web (`dist`).
 
-## 2. Pré-requisitos para Android
+## 2. Configuração de Plugins (capacitor.config.ts)
+
+Atualmente configuramos nativamente os seguintes plugins:
+
+- **Splash Screen**: Duração mínima de 2000ms, fundo preto (`#000000`), loader nativo habilitado, modo Immersive em Tela Cheia.
+
+## 3. Pré-requisitos para Android
 
 - **Android Studio** instalado.
-- SDKs do Android configurados na máquina.
+- SDKs do Android configurados na máquina (API 34+ recomendada).
 - Node.js e dependências do projeto já instaladas.
 
-## 3. Fluxo de Build e Sincronização
+## 4. Fluxo de Build e Sincronização
 
 Sempre que alterações estruturais forem feitas na aplicação Web ou nos plugins do Capacitor, você precisará sincronizar as mudanças com o projeto Android.
 
@@ -38,7 +44,7 @@ Sempre que alterações estruturais forem feitas na aplicação Web ou nos plugi
    npx cap open android
    ```
 
-## 4. Integração de Login Social (Deep Linking)
+## 5. Integração de Login Social (Deep Linking)
 
 A plataforma utiliza o **Supabase Auth** para autenticação (E-mail, Google, Apple). No contexto do app Android, redirecionamentos web puros causam bugs no OAuth. Por isso, implementamos Deep Linking.
 
@@ -47,7 +53,7 @@ A plataforma utiliza o **Supabase Auth** para autenticação (E-mail, Google, Ap
 - O código do `AuthContext.tsx` automaticamente detecta quando está rodando nativamente (`Capacitor.isNativePlatform()`) e utiliza o `@capacitor/browser` em conjunto com a URL de redirecionamento nativa.
 - **IMPORTANTE:** Ao provisionar o projeto no Supabase (Painel de Autenticação), a URL `com.fotosegundo.app://auth-callback` **deve obrigatoriamente** estar cadastrada na lista de *Allowed Redirect URLs*, caso contrário o login social ficará em branco ou bloqueado no celular.
 
-## 5. Permissões Essenciais
+## 6. Permissões Essenciais
 
 O `AndroidManifest.xml` do aplicativo deve declarar permissões cruciais para o funcionamento do motor de captura (Phygital Capture) e interações nativas:
 
@@ -56,7 +62,7 @@ O `AndroidManifest.xml` do aplicativo deve declarar permissões cruciais para o 
 - `android.permission.READ_EXTERNAL_STORAGE` / `READ_MEDIA_IMAGES`
 - `android.permission.WRITE_EXTERNAL_STORAGE`
 
-## 6. Publicação
+## 7. Publicação
 
 Para publicar na Play Store:
 
@@ -65,7 +71,7 @@ Para publicar na Play Store:
 3. No menu **Build**, selecione **Generate Signed Bundle / APK**.
 4. Utilize a chave de assinatura (Keystore) do Foto Segundo para gerar a versão Release.
 
-## 7. Boas Práticas e Solução de Problemas Conhecidos (Troubleshooting)
+## 8. Boas Práticas e Solução de Problemas Conhecidos (Troubleshooting)
 
 ### Uploads via CapacitorHttp e Vercel (Boundary Loss)
 

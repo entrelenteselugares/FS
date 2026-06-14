@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from "react";
 import { useNavigate, useLocation, useSearchParams, Link } from "react-router-dom";
-import { Home, Search, ShoppingBag, Image, Menu, X, Play, Briefcase, DollarSign, Printer, Settings, Lock, Users, User, Wallet, Building2 } from "lucide-react";
+import { Home, Search, ShoppingBag, Image, Menu, X, Play, Briefcase, DollarSign, Printer, Settings, Lock, Users, User, Wallet, Building2, BookImage } from "lucide-react";
 import { useAuth } from "../hooks/useAuth";
 // ImageIcon alias for portfolio nav item
 const ImageIcon = Image;
@@ -49,6 +49,13 @@ export const BottomNav: React.FC = () => {
     const items: NavItem[] = [
       { label: "Histórico de Compras", onClick: () => { setDrawerOpen(false); setTimeout(() => navigate("/minha-conta?tab=files", { replace: true }), 50); }, isActive: location.pathname === "/minha-conta" && (tab === "files" || tab === "fotos" || tab === "pedidos"), icon: <ShoppingBag size={18} /> },
       { label: "Meus Álbuns", onClick: () => { setDrawerOpen(false); setTimeout(() => navigate("/meus-albuns", { replace: true }), 50); }, isActive: location.pathname.startsWith("/meus-albuns"), icon: <Lock size={18} /> },
+      { 
+        label: "Álbum Sanfona", 
+        onClick: () => { setDrawerOpen(false); setTimeout(() => navigate("/minha-conta?tab=album-sanfona", { replace: true }), 50); }, 
+        isActive: location.pathname === "/minha-conta" && tab === "album-sanfona", 
+        icon: <BookImage size={18} />,
+        locked: !user?.isSanfonaSubscriber
+      },
       { label: "Minha Carteira", onClick: () => { setDrawerOpen(false); setTimeout(() => navigate("/minha-conta?tab=wallet", { replace: true }), 50); }, isActive: location.pathname === "/minha-conta" && tab === "wallet", icon: <Wallet size={18} /> },
       { label: "Indique e Ganhe", onClick: () => { setDrawerOpen(false); setTimeout(() => navigate("/minha-conta?tab=affiliate", { replace: true }), 50); }, isActive: location.pathname === "/minha-conta" && tab === "affiliate", icon: <Users size={18} /> },
       { label: "Meus Dados", onClick: () => { setDrawerOpen(false); setTimeout(() => navigate("/minha-conta?tab=profile", { replace: true }), 50); }, isActive: location.pathname === "/minha-conta" && tab === "profile", icon: <User size={18} /> },

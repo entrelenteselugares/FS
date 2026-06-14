@@ -3,9 +3,10 @@ import { useNavigate } from "react-router-dom";
 import { API as api } from "../lib/api";
 import { useAuth } from "../hooks/useAuth";
 import { motion } from "framer-motion";
-import { Lock, Plus, Images, Users, Loader2, Image as ImageIcon, ShoppingBag, User, Play, Briefcase, DollarSign, Calendar, Printer, Settings, LayoutDashboard, Wallet, Building2, MapPin } from "lucide-react";
+import { Lock, Plus, Images, Users, Loader2, Image as ImageIcon, ShoppingBag, User, Play, Briefcase, DollarSign, Calendar, Printer, Settings, LayoutDashboard, Wallet, Building2, MapPin, BookImage } from "lucide-react";
 import { Helmet } from "react-helmet-async";
 import { DashboardLayout } from "../components/DashboardLayout";
+import type { NavItem } from "../components/DashboardLayout";
 
 interface Vault {
   id: string;
@@ -223,9 +224,16 @@ export default function VaultsPage() {
   }, [authLoading, user, navigate]);
 
   const NAV_ITEMS = useMemo(() => {
-    const items: Array<{ label: string; onClick?: () => void; isActive?: boolean; icon?: React.ReactNode; isHeader?: boolean; subItems?: any[] }> = [
+    const items: NavItem[] = [
       { label: "Histórico de Compras", onClick: () => navigate("/minha-conta?tab=files"), isActive: false, icon: <ShoppingBag size={18} /> },
       { label: "Meus Álbuns", onClick: () => {}, isActive: true, icon: <Lock size={18} /> },
+      { 
+        label: "Álbum Sanfona", 
+        onClick: () => navigate("/minha-conta?tab=album-sanfona"), 
+        isActive: false, 
+        icon: <BookImage size={18} />, 
+        locked: !user?.isSanfonaSubscriber 
+      },
       { label: "Minha Carteira", onClick: () => navigate("/minha-conta?tab=wallet"), isActive: false, icon: <Wallet size={18} /> },
       { label: "Indique e Ganhe", onClick: () => navigate("/minha-conta?tab=affiliate"), isActive: false, icon: <Users size={18} /> },
       { label: "Meus Dados", onClick: () => navigate("/minha-conta?tab=profile"), isActive: false, icon: <User size={18} /> },
