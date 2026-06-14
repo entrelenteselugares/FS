@@ -29,7 +29,12 @@ const UploadQueueContext = createContext<UploadQueueContextData>({} as UploadQue
 
 export const UploadQueueProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [uploadItems, setUploadItems] = useState<UploadQueueItem[]>([]);
+  const uploadItemsRef = useRef<UploadQueueItem[]>([]);
   const isUploadingRef = useRef(false);
+
+  useEffect(() => {
+    uploadItemsRef.current = uploadItems;
+  }, [uploadItems]);
 
   // Load from IndexedDB on mount
   useEffect(() => {
@@ -40,7 +45,7 @@ export const UploadQueueProvider: React.FC<{ children: React.ReactNode }> = ({ c
       .catch((err) => console.error('Failed to load upload queue:', err));
   }, []);
 
-  const updateItemStatus = async (
+  const updateItemStatus = useCallback(async (
     id: string,
     updates: Partial<UploadQueueItem>
   ) => {
@@ -57,14 +62,14 @@ export const UploadQueueProvider: React.FC<{ children: React.ReactNode }> = ({ c
         return item;
       })
     );
-  };
+  }, []);
 
   const processQueue = useCallback(async () => {
     if (isUploadingRef.current) return;
 
     // Find the oldest pending item (FIFO)
-    // uploadItems is sorted descending (newest first), so we search from the end or just find the one with the smallest timestamp.
-    const pendingItems = uploadItems.filter((i) => i.status === 'pending');
+    // Find the oldest pending item (FIFO) using the ref to avoid stale closures
+    const pendingItems = uploadItemsRef.current.filter((i) => i.status === 'pending');
     if (pendingItems.length === 0) return;
 
     // Sort pending ascending to get the oldest
@@ -109,10 +114,11 @@ export const UploadQueueProvider: React.FC<{ children: React.ReactNode }> = ({ c
       });
     } finally {
       isUploadingRef.current = false;
-      // Trigger next item in queue
+      // Trigger next item in queue - because processQueue is stable and uses the ref, 
+      // it won't suffer from stale closures
       setTimeout(processQueue, 100);
     }
-  }, [uploadItems]);
+  }, [updateItemStatus]);
 
   // Whenever uploadItems changes, try to process the queue
   useEffect(() => {
