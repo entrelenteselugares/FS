@@ -19,5 +19,9 @@ router.patch("/branding", requireAuth, requireRole("FRANCHISEE"), FranchiseContr
 router.get("/orders", requireAuth, requireProOrFranchise, FranchiseController.listSupplyOrders);
 router.post("/orders", requireAuth, requireProOrFranchise, FranchiseController.createSupplyOrder);
 router.post("/webhook", FranchiseController.handleWebhook); // Public webhook
+// Sanfona Print Queue
+router.get("/sanfona-queue", requireAuth, requireRole("FRANCHISEE"), FranchiseController.getSanfonaQueue);
+router.patch("/sanfona-queue/:id", requireAuth, requireRole("FRANCHISEE"), FranchiseController.updateSanfonaStatus);
+router.get("/sanfona-queue/:id/download", requireAuth, requireRole("FRANCHISEE"), FranchiseController.downloadSanfonaZip);
 
 export default router;

@@ -5,6 +5,9 @@ import { SupplyService } from '../services/supply.service';
 import { ReferralService } from '../services/referral.service';
 import { MercadoPagoService } from "../services/mercadopago.service";
 import { APP_URL } from "../lib/config";
+import archiver from "archiver";
+import https from "https";
+import http from "http";
 
 export class FranchiseController {
   /**
@@ -674,6 +677,120 @@ export class FranchiseController {
     } catch (error) {
       console.error("[adminUpdateSupplyOrderStatus] Error:", error);
       res.status(500).json({ error: "Erro ao atualizar status do pedido" });
+    }
+  }
+
+  // ── ALBUM SANFONA QUEUE (FRANCHISEE) ──────────────────────────────────────
+
+  /**
+   * Lista todos os lotes submetidos do Álbum Sanfona
+   */
+  static async getSanfonaQueue(req: AuthRequest, res: Response) {
+    try {
+      const userId = req.user?.userId;
+      if (!userId) return res.status(401).json({ error: "Não autorizado" });
+
+      const batches = await prisma.albumSanfonaBatch.findMany({
+        where: {
+          status: { in: ["SUBMITTED", "IN_PRODUCTION", "PRINTED", "SHIPPED"] }
+        },
+        include: {
+          user: {
+            select: { nome: true, email: true, address: true, cidade: true, estado: true, cep: true }
+          }
+        },
+        orderBy: { createdAt: "asc" }
+      });
+
+      return res.json(batches);
+    } catch (error) {
+      console.error("[getSanfonaQueue] Error:", error);
+      return res.status(500).json({ error: "Erro ao listar fila do Sanfona" });
+    }
+  }
+
+  /**
+   * Atualiza o status do lote do Álbum Sanfona
+   */
+  static async updateSanfonaStatus(req: AuthRequest, res: Response) {
+    try {
+      const id = String(req.params.id);
+      const { status } = req.body;
+      const userId = req.user?.userId;
+
+      if (!userId) return res.status(401).json({ error: "Não autorizado" });
+
+      const batch = await prisma.albumSanfonaBatch.update({
+        where: { id },
+        data: { 
+          status,
+          ...(status === "IN_PRODUCTION" ? { assignedFranchiseId: userId } : {})
+        }
+      });
+
+      return res.json({ success: true, batch });
+    } catch (error) {
+      console.error("[updateSanfonaStatus] Error:", error);
+      return res.status(500).json({ error: "Erro ao atualizar lote" });
+    }
+  }
+
+  /**
+   * Faz o download do lote de fotos em formato ZIP
+   */
+  static async downloadSanfonaZip(req: AuthRequest, res: Response) {
+    try {
+      const id = String(req.params.id);
+      const batch = await prisma.albumSanfonaBatch.findUnique({
+        where: { id },
+        include: { user: { select: { nome: true } } }
+      });
+
+      if (!batch || !batch.photos.length) {
+        return res.status(404).json({ error: "Lote não encontrado ou vazio." });
+      }
+
+      const clientName = (batch as any).user?.nome?.replace(/[^a-zA-Z0-9]/g, "_").substring(0, 20) || "cliente";
+      const zipName = `album_sanfona_${clientName}_${batch.month}.zip`;
+
+      res.setHeader("Content-Type", "application/zip");
+      res.setHeader("Content-Disposition", `attachment; filename=${zipName}`);
+
+      const archive = archiver("zip", { zlib: { level: 9 } });
+      archive.on("error", (err) => { throw err; });
+      archive.pipe(res);
+
+      const photos = batch.photos as string[];
+      for (let i = 0; i < photos.length; i++) {
+        const url = photos[i];
+        const extMatch = url.match(/\.([a-zA-Z0-9]+)(?:\?.*)?$/);
+        const ext = extMatch ? extMatch[1] : "jpg";
+        const filename = `foto_${String(i + 1).padStart(2, "0")}.${ext}`;
+
+        try {
+          const client = url.startsWith("https") ? https : http;
+          await new Promise<void>((resolve, reject) => {
+            client.get(url, (response) => {
+              if (response.statusCode === 200) {
+                archive.append(response, { name: filename });
+                resolve();
+              } else {
+                reject(new Error(`Status ${response.statusCode} on URL ${url}`));
+              }
+            }).on("error", reject);
+          });
+        } catch (downloadErr) {
+          console.error(`Erro ao baixar foto ${i + 1}:`, downloadErr);
+          // continua mesmo se uma falhar, para tentar entregar as outras
+        }
+      }
+
+      await archive.finalize();
+    } catch (error) {
+      console.error("[downloadSanfonaZip] Error:", error);
+      if (!res.headersSent) {
+        return res.status(500).json({ error: "Erro ao gerar ZIP" });
+      }
     }
   }
 }

@@ -22,28 +22,11 @@ export const SanfonaPrintQueue: React.FC = () => {
   const fetchBatches = async () => {
     setLoading(true);
     try {
-      // Stubing data for now as the backend isn't ready
-      // const res = await api.get('/franchise/sanfona-queue');
-      // setBatches(res.data);
-      setTimeout(() => {
-        setBatches([
-          {
-            id: 'batch_123',
-            month: '2026-06',
-            photos: Array(10).fill('https://via.placeholder.com/150'),
-            status: 'SUBMITTED',
-            createdAt: new Date().toISOString(),
-            user: {
-              nome: 'João Silva',
-              email: 'joao@example.com',
-              address: 'Rua A, 123, São Paulo - SP',
-            }
-          }
-        ]);
-        setLoading(false);
-      }, 1000);
+      const res = await api.get('/franchise/sanfona-queue');
+      setBatches(res.data);
     } catch (err) {
       console.error(err);
+    } finally {
       setLoading(false);
     }
   };
@@ -53,15 +36,36 @@ export const SanfonaPrintQueue: React.FC = () => {
   }, []);
 
   const handleUpdateStatus = async (id: string, newStatus: string) => {
-    // await api.patch(`/franchise/sanfona-queue/${id}`, { status: newStatus });
-    setBatches(prev => prev.map(b => b.id === id ? { ...b, status: newStatus as any } : b));
-    alert(`Status atualizado para ${newStatus}`);
+    try {
+      await api.patch(`/franchise/sanfona-queue/${id}`, { status: newStatus });
+      setBatches(prev => prev.map(b => b.id === id ? { ...b, status: newStatus as any } : b));
+    } catch (err) {
+      console.error(err);
+      alert("Erro ao atualizar status.");
+    }
   };
 
   const handleDownloadZip = (batch: Batch) => {
-    // Simulating download
-    alert(`Iniciando download do ZIP para o lote ${batch.month} de ${batch.user.nome} (10 fotos)`);
-    handleUpdateStatus(batch.id, 'IN_PRODUCTION');
+    // Download occurs via browser navigation to the authenticated endpoint
+    // To handle auth cleanly without exposing token in URL, we could fetch as Blob
+    // Let's use standard link approach if token is stored in cookies, 
+    // or fetch as Blob if token is in headers. The API uses bearer token.
+    api.get(`/franchise/sanfona-queue/${batch.id}/download`, { responseType: 'blob' })
+      .then((response) => {
+        const url = window.URL.createObjectURL(new Blob([response.data]));
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', `album_sanfona_${batch.user.nome}_${batch.month}.zip`);
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        // Assume production
+        handleUpdateStatus(batch.id, 'IN_PRODUCTION');
+      })
+      .catch((err) => {
+        console.error(err);
+        alert("Erro ao baixar ZIP.");
+      });
   };
 
   if (loading) {
