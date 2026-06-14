@@ -218,7 +218,7 @@ export default function LuxuryExperiencePage() {
           transition={{ delay: 2, duration: 2 }}
           className="absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-4 text-zinc-600"
         >
-          <span className="text-[8px] uppercase tracking-[0.3em] font-medium">Descubra</span>
+          <span className="text-[10px] uppercase tracking-[0.3em] font-medium">Descubra</span>
           <ChevronDown size={20} className="animate-bounce" />
         </motion.div>
       </section>
@@ -433,7 +433,7 @@ export default function LuxuryExperiencePage() {
                       
                       {idx === 0 && (
                         <div className="absolute top-6 left-6">
-                          <span className="text-[8px] font-medium uppercase tracking-[0.3em] text-emerald-400 border border-emerald-900/50 bg-emerald-950/30 px-3 py-1.5 backdrop-blur-sm">
+                          <span className="text-[10px] font-medium uppercase tracking-[0.3em] text-emerald-400 border border-emerald-900/50 bg-emerald-950/30 px-3 py-1.5 backdrop-blur-sm">
                             Signature
                           </span>
                         </div>
@@ -474,7 +474,7 @@ export default function LuxuryExperiencePage() {
                className="h-5 opacity-30 hover:opacity-100 transition-all cursor-pointer mix-blend-screen" 
                onClick={() => navigate('/')} 
              />
-             <p className="text-[8px] font-medium uppercase tracking-[0.4em] text-zinc-600">
+             <p className="text-[10px] font-medium uppercase tracking-[0.4em] text-zinc-600">
                © {new Date().getFullYear()} Foto Segundo
              </p>
           </footer>

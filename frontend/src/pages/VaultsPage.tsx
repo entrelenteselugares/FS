@@ -34,7 +34,7 @@ function VaultCard({ vault, onClick }: { vault: Vault; onClick: () => void }) {
         <div className="w-8 h-8 md:w-12 md:h-12 shrink-0 bg-brand-tactical/10 border border-brand-tactical/20 rounded-lg md:rounded-xl flex items-center justify-center">
           <Lock size={16} className="text-brand-tactical md:w-[18px] md:h-[18px]" />
         </div>
-        <span className={`text-[6px] md:text-[8px] font-black uppercase tracking-widest px-1.5 md:px-2 py-0.5 md:py-1 rounded md:rounded-md mt-1 shrink-0 ${
+        <span className={`text-[6px] md:text-[10px] font-black uppercase tracking-widest px-1.5 md:px-2 py-0.5 md:py-1 rounded md:rounded-md mt-1 shrink-0 ${
           vault.subscriptionStatus === "ACTIVE"
             ? "text-emerald-500 bg-emerald-500/10 border border-emerald-500/20"
             : vault.subscriptionStatus === "TRIAL"
@@ -53,7 +53,7 @@ function VaultCard({ vault, onClick }: { vault: Vault; onClick: () => void }) {
         
         <div className="h-4 md:h-6 flex items-center">
           {isOwner && (
-            <span className="inline-block text-[6px] md:text-[8px] font-bold text-brand-tactical uppercase tracking-widest bg-brand-tactical/10 border border-brand-tactical/20 px-1.5 md:px-2 py-0.5 rounded-full">
+            <span className="inline-block text-[6px] md:text-[10px] font-bold text-brand-tactical uppercase tracking-widest bg-brand-tactical/10 border border-brand-tactical/20 px-1.5 md:px-2 py-0.5 rounded-full">
               Proprietário
             </span>
           )}
@@ -63,11 +63,11 @@ function VaultCard({ vault, onClick }: { vault: Vault; onClick: () => void }) {
         <div className="flex flex-col md:flex-row items-start md:items-center gap-1 md:gap-4 text-theme-muted pt-1">
           <div className="flex items-center gap-1 md:gap-1.5">
             <Images size={10} className="text-brand-tactical/70 md:w-3 md:h-3 shrink-0" />
-            <span className="text-[8px] md:text-[10px] font-bold">{vault._count.media} fotos</span>
+            <span className="text-[10px] md:text-[10px] font-bold">{vault._count.media} fotos</span>
           </div>
           <div className="flex items-center gap-1 md:gap-1.5">
             <Users size={10} className="text-brand-tactical/70 md:w-3 md:h-3 shrink-0" />
-            <span className="text-[8px] md:text-[10px] font-bold">{vault._count.members} membros</span>
+            <span className="text-[10px] md:text-[10px] font-bold">{vault._count.members} membros</span>
           </div>
         </div>
       </div>
@@ -76,7 +76,7 @@ function VaultCard({ vault, onClick }: { vault: Vault; onClick: () => void }) {
       <div className="w-full flex flex-col justify-center mt-auto pt-2 md:pt-4 border-t border-theme-border/50">
         <div className="flex justify-between items-center mb-1 md:mb-2 px-0 md:px-1">
           <span className="text-[6px] md:text-[9px] text-theme-muted uppercase tracking-widest font-bold max-w-[60%] truncate">Progresso da Meta</span>
-          <span className="text-[8px] md:text-[10px] font-bold text-brand-tactical shrink-0">{vault._count.media} / {vault.goalPoses}</span>
+          <span className="text-[10px] md:text-[10px] font-bold text-brand-tactical shrink-0">{vault._count.media} / {vault.goalPoses}</span>
         </div>
         <div className="w-full h-1 md:h-1.5 bg-theme-bg-muted rounded-full overflow-hidden">
           <div

@@ -149,7 +149,7 @@ export const AdminApprovalHub: React.FC = () => {
             {tab.icon}
             {tab.label}
             {tab.count > 0 && (
-              <span className={`px-2 py-0.5 rounded-full text-[8px] font-black ${
+              <span className={`px-2 py-0.5 rounded-full text-[10px] font-black ${
                 activeTab === tab.key
                   ? "bg-brand-tactical text-black"
                   : "bg-theme-border text-theme-muted"

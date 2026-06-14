@@ -214,7 +214,7 @@ export function ExpressSaleModal({ network, onClose, onSuccess, onError }: Expre
                       className={`flex flex-col items-center justify-center border-2  transition-all rounded-xl h-full min-h-[70px] ${showCustomForm ? 'border-brand-tactical bg-brand-tactical/10' : 'border-theme-border hover:border-brand-tactical/60 hover:bg-theme-bg-muted'}`}
                     >
                       <Plus className={showCustomForm ? 'text-brand-tactical' : 'text-theme-muted'} size={24} />
-                      <span className={`text-[8px] font-black uppercase tracking-widest mt-1 ${showCustomForm ? 'text-brand-tactical' : 'text-theme-muted'}`}>
+                      <span className={`text-[10px] font-black uppercase tracking-widest mt-1 ${showCustomForm ? 'text-brand-tactical' : 'text-theme-muted'}`}>
                         {showCustomForm ? 'Fechar' : 'Novo Item'}
                       </span>
                     </button>
@@ -276,7 +276,7 @@ export function ExpressSaleModal({ network, onClose, onSuccess, onError }: Expre
                         
                         <div className="grid grid-cols-2 gap-4">
                           <div className="space-y-1.5">
-                            <label className="text-[8px] font-bold text-theme-muted uppercase tracking-widest block opacity-40">Nome do Produto</label>
+                            <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest block opacity-40">Nome do Produto</label>
                             <input 
                               placeholder="EX: QUADRO LUXO"
                               value={customProductName}
@@ -285,7 +285,7 @@ export function ExpressSaleModal({ network, onClose, onSuccess, onError }: Expre
                             />
                           </div>
                           <div className="space-y-1.5">
-                            <label className="text-[8px] font-bold text-theme-muted uppercase tracking-widest block opacity-40">Valor (R$)</label>
+                            <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest block opacity-40">Valor (R$)</label>
                             <input 
                               type="number"
                               placeholder="0,00"

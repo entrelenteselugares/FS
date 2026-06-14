@@ -108,7 +108,7 @@ export function FlashEventMonitor({ eventId }: { eventId: string }) {
           ].map((b, i) => (
             <div key={i} className="flex flex-col items-center gap-1">
               <div style={{ height: `${Math.max(4, b.h)}%` }} className={`w-6 ${b.color} transition-all duration-500`} />
-              <p className="text-[7px] font-bold text-theme-muted uppercase">{b.label}</p>
+              <p className="text-[9px] font-bold text-theme-muted uppercase">{b.label}</p>
             </div>
           ))}
         </div>
@@ -128,7 +128,7 @@ export function FlashEventMonitor({ eventId }: { eventId: string }) {
             { label: "Resgatados",value: stats.cards.claimed, color: "text-emerald-400", bg: "bg-emerald-500/5" },
           ].map(({ label, value, color, bg }) => (
             <div key={label} className={`p-4 border border-theme-border ${bg} space-y-2`}>
-              <p className="text-[8px] font-bold text-theme-muted uppercase tracking-widest">{label}</p>
+              <p className="text-[10px] font-bold text-theme-muted uppercase tracking-widest">{label}</p>
               <p className={`text-2xl font-black italic tracking-tighter ${color}`}>{value}</p>
             </div>
           ))}
@@ -141,7 +141,7 @@ export function FlashEventMonitor({ eventId }: { eventId: string }) {
           <Printer size={13} className="text-theme-muted" />
           <p className="text-[9px] font-bold text-theme-muted uppercase tracking-[0.3em]">Fila de Impressão</p>
           {stats.prints.printing > 0 && (
-            <span className="ml-auto text-[8px] font-bold text-amber-400 uppercase tracking-widest animate-pulse">
+            <span className="ml-auto text-[10px] font-bold text-amber-400 uppercase tracking-widest animate-pulse">
               {stats.prints.printing} imprimindo
             </span>
           )}
@@ -150,7 +150,7 @@ export function FlashEventMonitor({ eventId }: { eventId: string }) {
         {/* Progress bar */}
         {printTotal > 0 && (
           <div className="mb-4 space-y-1.5">
-            <div className="flex justify-between text-[8px] font-bold text-theme-muted uppercase tracking-widest">
+            <div className="flex justify-between text-[10px] font-bold text-theme-muted uppercase tracking-widest">
               <span>{stats.prints.done} concluídas</span>
               <span>{printDonePct}%</span>
             </div>
@@ -175,7 +175,7 @@ export function FlashEventMonitor({ eventId }: { eventId: string }) {
             <div key={label} className="flex items-center gap-3 p-4 border border-theme-border bg-theme-bg-muted/5">
               <div className={color}>{icon}</div>
               <div>
-                <p className="text-[8px] font-bold text-theme-muted uppercase tracking-widest">{label}</p>
+                <p className="text-[10px] font-bold text-theme-muted uppercase tracking-widest">{label}</p>
                 <p className={`text-lg font-black italic tracking-tighter leading-none mt-0.5 ${color}`}>{value}</p>
               </div>
             </div>

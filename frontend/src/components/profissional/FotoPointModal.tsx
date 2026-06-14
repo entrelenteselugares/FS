@@ -312,7 +312,7 @@ export function FotoPointModal({ onClose, onSuccess, onError, network }: FotoPoi
             <div className="flex items-center justify-between p-4 bg-theme-bg-muted border border-theme-border">
               <div className="space-y-1">
                 <p className="text-[10px] font-bold text-theme-text uppercase tracking-widest ">Visibilidade no Marketplace</p>
-                <p className="text-[8px] text-theme-muted uppercase font-bold tracking-widest">
+                <p className="text-[10px] text-theme-muted uppercase font-bold tracking-widest">
                   {isPrivate ? 'Privado (Apenas via QR Code/Link)' : 'Público (Aparece na Homepage do Foto Point)'}
                 </p>
               </div>

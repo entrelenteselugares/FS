@@ -416,7 +416,7 @@ export default function PhygitalCapture() {
                             title="Tentar novamente"
                           >
                             <RefreshCcw size={16} />
-                            <span className="text-[7px] font-bold uppercase tracking-wider">
+                            <span className="text-[9px] font-bold uppercase tracking-wider">
                               Tentar
                             </span>
                           </button>

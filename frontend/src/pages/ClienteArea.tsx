@@ -530,7 +530,7 @@ export default function ClienteArea() {
  <div className={`p-1.5 sm:p-2 rounded-lg ${m.highlight ? 'bg-brand-tactical text-black shadow-lg shadow-brand-tactical/20' : 'bg-theme-bg-muted text-theme-text-muted border border-white/5'}`}>
  {m.icon}
  </div>
- <p className="text-[8px] sm:text-[9px] font-bold text-theme-text-muted uppercase tracking-widest">{m.label}</p>
+ <p className="text-[10px] sm:text-[9px] font-bold text-theme-text-muted uppercase tracking-widest">{m.label}</p>
  </div>
  <p className={`text-xl sm:text-3xl md:text-4xl font-heading font-black tracking-tight leading-none ${
  m.highlight || m.isCash ? 'text-brand-tactical drop-shadow-[0_0_15px_rgba(133,185,172,0.3)]' : 'text-theme-text'
@@ -559,11 +559,11 @@ export default function ClienteArea() {
   <div className="relative overflow-hidden bg-theme-bg border-2 border-theme-border p-3 sm:p-5 md:p-8 rounded-2xl transition-all duration-500 hover:border-brand-tactical hover:shadow-[0_0_20px_rgba(133,185,172,0.3)] hover:border-brand-tactical group">
   <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-white/5 to-transparent rotate-45 translate-x-12 -translate-y-12 pointer-events-none" />
   <div className="relative z-10 space-y-2 sm:space-y-4">
-  <label className="text-[8px] sm:text-[9px] font-bold text-theme-text-muted uppercase tracking-[0.2em] block">Saldo Disponível</label>
+  <label className="text-[10px] sm:text-[9px] font-bold text-theme-text-muted uppercase tracking-[0.2em] block">Saldo Disponível</label>
   <div className="text-2xl md:text-4xl font-heading font-bold uppercase text-theme-text">
   {formatCurrency(user?.rewardCredits || 0)}
   </div>
-  <p className="text-[8px] sm:text-[10px] text-theme-text-muted font-bold leading-normal sm:leading-relaxed uppercase tracking-widest max-w-xs ">
+  <p className="text-[10px] sm:text-[10px] text-theme-text-muted font-bold leading-normal sm:leading-relaxed uppercase tracking-widest max-w-xs ">
   Use seu saldo para abater em novos pedidos, impressões ou upgrades Phygital.
   </p>
   </div>
@@ -571,16 +571,16 @@ export default function ClienteArea() {
   <div className="relative overflow-hidden bg-theme-bg border-2 border-theme-border p-3 sm:p-5 md:p-8 rounded-2xl transition-all duration-500 hover:border-brand-tactical hover:shadow-[0_0_20px_rgba(133,185,172,0.3)] hover:border-brand-tactical flex flex-col justify-between gap-3 sm:gap-6 group">
   <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-white/5 to-transparent rotate-45 translate-x-12 -translate-y-12 pointer-events-none" />
   <div className="relative z-10 space-y-2 sm:space-y-4">
-  <p className="text-[8px] sm:text-[10px] font-bold text-theme-text uppercase tracking-widest flex items-center gap-1.5 sm:gap-2">
+  <p className="text-[10px] sm:text-[10px] font-bold text-theme-text uppercase tracking-widest flex items-center gap-1.5 sm:gap-2">
   <Zap size={10} className="text-brand-tactical animate-pulse sm:w-3 sm:h-3" /> Como ganhar mais?
   </p>
-  <p className="text-[8px] sm:text-[10px] text-theme-text-muted font-bold leading-relaxed uppercase tracking-widest max-w-[280px]">
+  <p className="text-[10px] sm:text-[10px] text-theme-text-muted font-bold leading-relaxed uppercase tracking-widest max-w-[280px]">
   Indique amigos e ganhe cashback em todas as compras que eles fizerem na plataforma.
   </p>
   </div>
   <button 
   onClick={() => handleTabChange("affiliate")}
-  className="relative z-10 self-start text-[8px] sm:text-[9px] font-bold uppercase tracking-[0.2em] text-brand-tactical border border-brand-tactical/30 px-3 sm:px-6 py-2 sm:py-3 hover:bg-brand-tactical hover:text-black transition-all duration-300"
+  className="relative z-10 self-start text-[10px] sm:text-[9px] font-bold uppercase tracking-[0.2em] text-brand-tactical border border-brand-tactical/30 px-3 sm:px-6 py-2 sm:py-3 hover:bg-brand-tactical hover:text-black transition-all duration-300"
   >
   Pegar meu Link →
   </button>
@@ -606,7 +606,7 @@ export default function ClienteArea() {
  {item.description}
  </p>
  </div>
- <p className="text-[8px] text-theme-text-muted font-bold uppercase tracking-widest ml-3">
+ <p className="text-[10px] text-theme-text-muted font-bold uppercase tracking-widest ml-3">
  {new Date(item.createdAt).toLocaleDateString('pt-BR')} • {item.type}
  </p>
  </div>
@@ -617,7 +617,7 @@ export default function ClienteArea() {
  </p>
  ) : null}
  {item.points && (
- <p className="text-[8px] font-bold text-theme-text-muted uppercase tracking-widest mt-0.5">
+ <p className="text-[10px] font-bold text-theme-text-muted uppercase tracking-widest mt-0.5">
  +{item.points} pts
  </p>
  )}
@@ -713,7 +713,7 @@ export default function ClienteArea() {
  {item.description}
  </p>
  </div>
- <p className="text-[8px] text-theme-text-muted font-bold uppercase tracking-widest ml-3">
+ <p className="text-[10px] text-theme-text-muted font-bold uppercase tracking-widest ml-3">
  {new Date(item.createdAt).toLocaleDateString('pt-BR')} • {item.type}
  </p>
  </div>
@@ -724,7 +724,7 @@ export default function ClienteArea() {
  </p>
  ) : null}
  {item.points && (
- <p className="text-[8px] font-bold text-theme-text-muted uppercase tracking-widest mt-0.5">
+ <p className="text-[10px] font-bold text-theme-text-muted uppercase tracking-widest mt-0.5">
  +{item.points} pts
  </p>
  )}
@@ -759,16 +759,16 @@ export default function ClienteArea() {
  </div>
  <form onSubmit={handleUpdateProfile} className="space-y-4 md:space-y-6">
  <div className="space-y-1.5 md:space-y-2">
- <label className="text-[8px] md:text-[9px] font-bold uppercase tracking-widest text-theme-muted block ">E-mail (Não editável)</label>
+ <label className="text-[10px] md:text-[9px] font-bold uppercase tracking-widest text-theme-muted block ">E-mail (Não editável)</label>
  <input type="text" disabled value={user?.email || ""} className="fs-input opacity-60" />
  </div>
  <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-6">
  <div className="space-y-1.5 md:space-y-2">
- <label className="text-[8px] md:text-[9px] font-bold uppercase tracking-widest text-theme-muted block ">Nome Completo</label>
+ <label className="text-[10px] md:text-[9px] font-bold uppercase tracking-widest text-theme-muted block ">Nome Completo</label>
  <input type="text" value={profileData.nome} onChange={e => setProfileData(p => ({ ...p, nome: e.target.value }))} className="fs-input" placeholder="Como quer ser chamado" />
  </div>
  <div className="space-y-1.5 md:space-y-2">
- <label className="text-[8px] md:text-[9px] font-bold uppercase tracking-widest text-theme-muted block ">WhatsApp</label>
+ <label className="text-[10px] md:text-[9px] font-bold uppercase tracking-widest text-theme-muted block ">WhatsApp</label>
  <input type="text" value={profileData.whatsapp} onChange={e => setProfileData(p => ({ ...p, whatsapp: e.target.value }))} className="fs-input" placeholder="(00) 00000-0000" />
  </div>
  </div>
@@ -776,38 +776,38 @@ export default function ClienteArea() {
  <div className="pt-2 md:pt-4 space-y-4 md:space-y-6">
  <div className="flex items-center gap-3">
  <div className="h-px w-6 bg-brand-tactical" />
- <p className="text-[8px] md:text-[9px] font-bold text-theme-muted uppercase tracking-[0.4em]">Endereço de Entrega</p>
+ <p className="text-[10px] md:text-[9px] font-bold text-theme-muted uppercase tracking-[0.4em]">Endereço de Entrega</p>
  </div>
 
  <div className="grid grid-cols-6 gap-2.5 md:gap-4">
  <div className="col-span-2 sm:col-span-2 space-y-1 md:space-y-2">
- <label className="text-[8px] md:text-[9px] font-bold uppercase tracking-[0.3em] text-theme-muted block ">CEP</label>
+ <label className="text-[10px] md:text-[9px] font-bold uppercase tracking-[0.3em] text-theme-muted block ">CEP</label>
  <input type="text" value={profileData.cep} onChange={e => handleCepChange(e.target.value)} className="fs-input p-2.5 text-xs" placeholder="00000-000" />
  </div>
  <div className="col-span-4 sm:col-span-4 space-y-1 md:space-y-2">
- <label className="text-[8px] md:text-[9px] font-bold uppercase tracking-[0.3em] text-theme-muted block ">Endereço</label>
+ <label className="text-[10px] md:text-[9px] font-bold uppercase tracking-[0.3em] text-theme-muted block ">Endereço</label>
  <input type="text" value={profileData.endereco} onChange={e => setProfileData(p => ({ ...p, endereco: e.target.value }))} className="fs-input p-2.5 text-xs" placeholder="Nome da rua" />
  </div>
 
  <div className="col-span-2 sm:col-span-1 space-y-1 md:space-y-2">
- <label className="text-[8px] md:text-[9px] font-bold uppercase tracking-[0.3em] text-theme-muted block ">Nº</label>
+ <label className="text-[10px] md:text-[9px] font-bold uppercase tracking-[0.3em] text-theme-muted block ">Nº</label>
  <input type="text" value={profileData.numero} onChange={e => setProfileData(p => ({ ...p, numero: e.target.value }))} className="fs-input p-2.5 text-xs" placeholder="123" />
  </div>
  <div className="col-span-4 sm:col-span-2 space-y-1 md:space-y-2">
- <label className="text-[8px] md:text-[9px] font-bold uppercase tracking-[0.3em] text-theme-muted block ">Complemento</label>
+ <label className="text-[10px] md:text-[9px] font-bold uppercase tracking-[0.3em] text-theme-muted block ">Complemento</label>
  <input type="text" value={profileData.complemento} onChange={e => setProfileData(p => ({ ...p, complemento: e.target.value }))} className="fs-input p-2.5 text-xs" placeholder="Apto, Bloco, etc" />
  </div>
 
  <div className="col-span-6 sm:col-span-3 space-y-1 md:space-y-2">
- <label className="text-[8px] md:text-[9px] font-bold uppercase tracking-[0.3em] text-theme-muted block ">Bairro</label>
+ <label className="text-[10px] md:text-[9px] font-bold uppercase tracking-[0.3em] text-theme-muted block ">Bairro</label>
  <input type="text" value={profileData.bairro} onChange={e => setProfileData(p => ({ ...p, bairro: e.target.value }))} className="fs-input p-2.5 text-xs" placeholder="Nome do bairro" />
  </div>
  <div className="col-span-4 sm:col-span-4 space-y-1 md:space-y-2">
- <label className="text-[8px] md:text-[9px] font-bold uppercase tracking-[0.3em] text-theme-muted block ">Cidade</label>
+ <label className="text-[10px] md:text-[9px] font-bold uppercase tracking-[0.3em] text-theme-muted block ">Cidade</label>
  <input type="text" value={profileData.cidade} onChange={e => setProfileData(p => ({ ...p, cidade: e.target.value }))} className="fs-input p-2.5 text-xs" placeholder="Sua cidade" />
  </div>
  <div className="col-span-2 sm:col-span-2 space-y-1 md:space-y-2">
- <label className="text-[8px] md:text-[9px] font-bold uppercase tracking-[0.3em] text-theme-muted block ">UF</label>
+ <label className="text-[10px] md:text-[9px] font-bold uppercase tracking-[0.3em] text-theme-muted block ">UF</label>
  <input type="text" value={profileData.estado} onChange={e => setProfileData(p => ({ ...p, estado: e.target.value }))} className="fs-input p-2.5 text-xs" placeholder="SP" maxLength={2} />
  </div>
  </div>
@@ -820,7 +820,7 @@ export default function ClienteArea() {
  </div>
  </form>
  <div className="pt-4 md:pt-6 border-t border-theme-border space-y-3 md:space-y-4">
- <h3 className="text-[8px] md:text-[9px] font-bold text-red-400 uppercase tracking-[0.3em]">Zona de Suporte</h3>
+ <h3 className="text-[10px] md:text-[9px] font-bold text-red-400 uppercase tracking-[0.3em]">Zona de Suporte</h3>
  <p className="text-[10px] md:text-[11px] text-theme-muted">Para redefinir sua senha ou solicitar exclusão de dados, entre em contato com nosso suporte.</p>
  <a href="https://wa.me/5519981150440" target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 text-[10px] font-bold text-theme-text uppercase tracking-widest hover:text-brand-tactical transition-colors">
  Falar com Suporte <ArrowRight size={12} />
@@ -1265,7 +1265,7 @@ function PedidoDetalhe({ pedido, loading, onGoToEvent, onChangePrivacy, onRefres
  <div className="space-y-6 animate-in fade-in slide-in-from-top-4 duration-500">
  <div className="flex flex-col gap-5 bg-theme-bg p-3 md:p-6 border-2 border-theme-border rounded-lg">
  <div className="space-y-1.5">
- <label className="text-[8px] font-bold text-brand-tactical uppercase tracking-[0.2em]">Identidade do Álbum</label>
+ <label className="text-[10px] font-bold text-brand-tactical uppercase tracking-[0.2em]">Identidade do Álbum</label>
  <input 
  value={nome} 
  onChange={(e) => setNome(e.target.value)}
@@ -1275,7 +1275,7 @@ function PedidoDetalhe({ pedido, loading, onGoToEvent, onChangePrivacy, onRefres
  </div>
 
  <div className="space-y-2">
- <label className="text-[8px] font-bold text-brand-tactical uppercase tracking-[0.2em]">Capa do Álbum</label>
+ <label className="text-[10px] font-bold text-brand-tactical uppercase tracking-[0.2em]">Capa do Álbum</label>
  <div className="flex items-center gap-3">
  <div className="flex-1 relative">
  <input 
@@ -1307,7 +1307,7 @@ function PedidoDetalhe({ pedido, loading, onGoToEvent, onChangePrivacy, onRefres
 
  <div className="grid grid-cols-2 gap-4">
  <div className="space-y-1.5">
- <label className="text-[8px] font-bold text-theme-muted uppercase tracking-[0.2em]">Enquadramento</label>
+ <label className="text-[10px] font-bold text-theme-muted uppercase tracking-[0.2em]">Enquadramento</label>
  <select 
  value={coverPos} 
  onChange={(e) => setCoverPos(e.target.value)}
@@ -1321,7 +1321,7 @@ function PedidoDetalhe({ pedido, loading, onGoToEvent, onChangePrivacy, onRefres
  </select>
  </div>
  <div className="space-y-1.5">
- <label className="text-[8px] font-bold text-theme-muted uppercase tracking-[0.2em]">Cidade <span className="opacity-40">(Opcional)</span></label>
+ <label className="text-[10px] font-bold text-theme-muted uppercase tracking-[0.2em]">Cidade <span className="opacity-40">(Opcional)</span></label>
  <input 
  value={city} 
  onChange={(e) => setCity(e.target.value)}
@@ -1332,7 +1332,7 @@ function PedidoDetalhe({ pedido, loading, onGoToEvent, onChangePrivacy, onRefres
  </div>
  
  <div className="space-y-1.5">
- <label className="text-[8px] font-bold text-theme-muted uppercase tracking-[0.2em]">Endereço Completo / Localização</label>
+ <label className="text-[10px] font-bold text-theme-muted uppercase tracking-[0.2em]">Endereço Completo / Localização</label>
  <textarea 
  value={loc} 
  onChange={(e) => setLoc(e.target.value)}
@@ -1370,7 +1370,7 @@ function PedidoDetalhe({ pedido, loading, onGoToEvent, onChangePrivacy, onRefres
  </p>
  </div>
  </div>
- <span className={`px-3 py-1 text-[8px] font-black uppercase tracking-widest border ${pedido.hasPaid ? 'border-emerald-500/50 text-emerald-400 bg-emerald-500/5' : 'border-amber-500/50 text-amber-400 bg-amber-500/5'}`}>
+ <span className={`px-3 py-1 text-[10px] font-black uppercase tracking-widest border ${pedido.hasPaid ? 'border-emerald-500/50 text-emerald-400 bg-emerald-500/5' : 'border-amber-500/50 text-amber-400 bg-amber-500/5'}`}>
  {pedido.hasPaid ? "Liberado" : "Pagar Agora"}
  </span>
  </div>

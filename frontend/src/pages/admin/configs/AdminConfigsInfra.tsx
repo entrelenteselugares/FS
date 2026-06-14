@@ -78,7 +78,7 @@ export const AdminConfigsInfra: React.FC<Props> = ({ configs, saving, onChange, 
                     </div>
                     <div>
                       <div className="text-[10px] font-bold text-theme-text uppercase tracking-widest ">{item.label}</div>
-                      <div className="text-[8px] text-theme-muted uppercase tracking-[0.2em] mt-1">{item.desc}</div>
+                      <div className="text-[10px] text-theme-muted uppercase tracking-[0.2em] mt-1">{item.desc}</div>
                     </div>
                   </div>
                   <button
@@ -124,7 +124,7 @@ export const AdminConfigsInfra: React.FC<Props> = ({ configs, saving, onChange, 
             <div className="grid grid-cols-3 gap-3">
               {[60, 120, 180, 240, 360, 480].map(minutes => (
                 <div key={minutes} className="p-4 bg-theme-bg-muted border border-theme-border rounded-xl text-center">
-                  <p className="text-[8px] font-bold text-theme-muted uppercase tracking-widest mb-1">{minutes}min</p>
+                  <p className="text-[10px] font-bold text-theme-muted uppercase tracking-widest mb-1">{minutes}min</p>
                   <p className="text-base font-heading font-bold text-brand-tactical ">R${(hourlyRate * minutes / 60).toFixed(2)}</p>
                 </div>
               ))}

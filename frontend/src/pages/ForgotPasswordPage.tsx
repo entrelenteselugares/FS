@@ -110,7 +110,7 @@ export default function ForgotPasswordPage() {
                 <div className="text-center">
                   <Link 
                     to="/login" 
-                    className="inline-flex items-center gap-2 text-[8px] font-bold uppercase tracking-[0.3em] text-theme-muted hover:text-theme-text transition-all"
+                    className="inline-flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.3em] text-theme-muted hover:text-theme-text transition-all"
                   >
                     <ArrowLeft size={10} /> Voltar ao Login
                   </Link>

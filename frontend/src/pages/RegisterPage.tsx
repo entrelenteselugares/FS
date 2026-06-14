@@ -184,7 +184,7 @@ export const RegisterPage: React.FC = () => {
           </button>
           <div className="flex flex-col items-center">
             <Link to="/"><img src="/logo.png" alt="Foto Segundo" style={{ height: 38, objectFit: "contain", filter: "var(--logo-filter)" }} /></Link>
-            <span className="text-[8px] font-bold tracking-[0.3em] text-zinc-600 uppercase ">Solicitar Adesão</span>
+            <span className="text-[10px] font-bold tracking-[0.3em] text-zinc-600 uppercase ">Solicitar Adesão</span>
           </div>
           <div className="w-10" /> {/* Spacer */}
         </div>

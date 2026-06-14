@@ -82,12 +82,12 @@ export const CartModal: React.FC<{ isOpen: boolean, onClose: () => void }> = ({ 
                             {item.url ? (
                               <img src={item.url} alt={item.shortId} className="w-full h-full object-cover" />
                             ) : (
-                              <span className="text-[8px] font-bold text-brand-tactical">PRO</span>
+                              <span className="text-[10px] font-bold text-brand-tactical">PRO</span>
                             )}
                           </div>
                           <div>
                             <p className="text-[10px] font-bold uppercase " style={{ color: T.text }}>ID: {item.shortId}</p>
-                            <p className="text-[8px] font-bold text-zinc-500 uppercase">Download HD</p>
+                            <p className="text-[10px] font-bold text-zinc-500 uppercase">Download HD</p>
                           </div>
                         </div>
                         <button 
@@ -118,7 +118,7 @@ export const CartModal: React.FC<{ isOpen: boolean, onClose: () => void }> = ({ 
                           </div>
                           <div>
                             <p className="text-[10px] font-bold uppercase " style={{ color: T.text }}>{item.name}</p>
-                            <p className="text-[8px] font-bold text-brand-tactical uppercase">
+                            <p className="text-[10px] font-bold text-brand-tactical uppercase">
                               {item.quantity} un • R$ {item.price.toFixed(2)}
                             </p>
                           </div>

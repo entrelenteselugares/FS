@@ -387,10 +387,10 @@ export function FranchiseShopModal({ onClose, onSuccess, availableBalance, userA
                   <span className="text-emerald-500">R$ {total.toFixed(2)}</span>
                 </div>
                 <div className="pt-4 space-y-2">
-                  <p className="text-[8px] font-bold text-zinc-500 uppercase tracking-widest ">
+                  <p className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest ">
                     Logística: {deliveryType === "SHIPPING" ? "Entrega na Unidade" : "Retirada na Matriz"}
                   </p>
-                  <p className="text-[8px] font-bold text-zinc-500 uppercase tracking-widest ">
+                  <p className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest ">
                     Pagamento: {paymentMethod === "BALANCE" ? "Desconto no Repasse" : "Checkout Digital"}
                   </p>
                 </div>

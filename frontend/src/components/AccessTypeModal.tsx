@@ -95,7 +95,7 @@ export default function AccessTypeModal({ orderId, eventTitle, isPrimaryClient, 
                     Público
                 </span>
               </div>
-              <span className={`text-[8px] font-black uppercase tracking-[0.2em] px-2 py-0.5 border transition-colors
+              <span className={`text-[10px] font-black uppercase tracking-[0.2em] px-2 py-0.5 border transition-colors
                 ${selected === "PUBLIC" ? "bg-brand-tactical/10 border-brand-tactical text-brand-tactical" : "bg-theme-bg border-theme-border text-theme-muted"}`}>
                 90 DIAS
               </span>
@@ -133,7 +133,7 @@ export default function AccessTypeModal({ orderId, eventTitle, isPrimaryClient, 
                     Privado
                 </span>
               </div>
-              <span className={`text-[8px] font-black uppercase tracking-[0.2em] px-2 py-0.5 border transition-colors
+              <span className={`text-[10px] font-black uppercase tracking-[0.2em] px-2 py-0.5 border transition-colors
                 ${selected === "PRIVATE" ? "bg-red-500/10 border-red-500 text-red-500" : "bg-theme-bg border-theme-border text-theme-muted"}`}>
                 15 DIAS
               </span>
@@ -187,7 +187,7 @@ export default function AccessTypeModal({ orderId, eventTitle, isPrimaryClient, 
                 </>
               )}
             </button>
-            <p className="text-center text-[8px] font-bold uppercase tracking-[0.2em] text-theme-muted mt-3">
+            <p className="text-center text-[10px] font-bold uppercase tracking-[0.2em] text-theme-muted mt-3">
               * Escolha definitiva e irreversível.
             </p>
           </div>

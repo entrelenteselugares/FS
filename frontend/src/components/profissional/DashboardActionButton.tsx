@@ -53,7 +53,7 @@ export function DashboardActionButton({
           <h3 className="text-[9px] md:text-sm font-heading font-bold text-theme-text uppercase leading-tight px-1 break-words line-clamp-2">
             {title}
           </h3>
-          <p className="hidden md:block text-[8px] md:text-[9px] font-bold text-theme-muted uppercase tracking-[0.2em] leading-tight opacity-70">
+          <p className="hidden md:block text-[10px] md:text-[9px] font-bold text-theme-muted uppercase tracking-[0.2em] leading-tight opacity-70">
             {subtitle}
           </p>
         </div>

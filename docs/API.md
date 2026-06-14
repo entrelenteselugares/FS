@@ -148,4 +148,4 @@ The API implements rate limiting to prevent abuse:
 
 <!-- GSD-DOCS-UPDATE: SUPPLEMENTED -->
 
-_Documentação verificada e atualizada automaticamente via GSD-SDK em 2026-06._
+_Documentação verificada e atualizada automaticamente via GSD-SDK em 2026-06-14._

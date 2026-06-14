@@ -143,14 +143,14 @@ export function ProfileModal({ profile, onClose, onUpdated }: ProfileModalProps)
                       />
                       {formData.firstJobUrl && (
                         <div className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center gap-2">
-                           <span className={`text-[8px] font-black uppercase tracking-widest ${profile.isExperienceValidated ? "text-brand-tactical" : "text-amber-500"}`}>
+                           <span className={`text-[10px] font-black uppercase tracking-widest ${profile.isExperienceValidated ? "text-brand-tactical" : "text-amber-500"}`}>
                              {profile.isExperienceValidated ? "AUTENTICADO" : "EM ANÁLISE"}
                            </span>
                            {profile.isExperienceValidated ? <Check size={12} className="text-brand-tactical" /> : <div className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />}
                         </div>
                       )}
                     </div>
-                    <p className="text-[8px] text-theme-muted/50 uppercase tracking-widest font-bold">O tempo de experiência será validado pela data de publicação deste link.</p>
+                    <p className="text-[10px] text-theme-muted/50 uppercase tracking-widest font-bold">O tempo de experiência será validado pela data de publicação deste link.</p>
                   </div>
 
                   <div className="space-y-2 md:col-span-2">
@@ -186,7 +186,7 @@ export function ProfileModal({ profile, onClose, onUpdated }: ProfileModalProps)
                             <div className={`flex-shrink-0 ${isActive ? "text-brand-tactical" : "opacity-30"}`}>{type.icon}</div>
                             <div>
                               <p className={`text-[10px] font-black uppercase tracking-widest ${isActive ? "text-theme-text" : "text-theme-muted"}`}>{type.label}</p>
-                              <p className="text-[8px] font-bold uppercase opacity-60">{type.desc}</p>
+                              <p className="text-[10px] font-bold uppercase opacity-60">{type.desc}</p>
                             </div>
                           </button>
                         );
@@ -266,7 +266,7 @@ export function ProfileModal({ profile, onClose, onUpdated }: ProfileModalProps)
                           value={eq.value}
                           onChange={(e) => updateEquipment(i, "value", Number(e.target.value))}
                         />
-                        <div className="absolute right-3 top-1/2 -translate-y-1/2 text-[8px] font-bold text-theme-muted/40 uppercase">BRL</div>
+                        <div className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] font-bold text-theme-muted/40 uppercase">BRL</div>
                       </div>
                       <button onClick={() => removeEquipment(i)} className="p-4 bg-red-500/5 text-red-500/40 hover:text-red-500 hover:bg-red-500/10 transition-all">
                         <X size={16} />

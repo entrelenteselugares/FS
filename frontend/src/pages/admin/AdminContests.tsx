@@ -215,7 +215,7 @@ export const AdminContests: React.FC = () => {
               <div className="flex justify-between items-center">
                 <div className="flex-1">
                   <div className="flex items-center gap-3 mb-2">
-                    <span className={`text-[8px] font-black px-2 py-0.5 uppercase tracking-[0.1em] border ${
+                    <span className={`text-[10px] font-black px-2 py-0.5 uppercase tracking-[0.1em] border ${
                       c.status === 'ACTIVE' 
                         ? 'bg-brand-tactical/10 text-brand-tactical border-brand-tactical/30' 
                         : 'bg-theme-bg-muted text-theme-muted border-theme-border'
@@ -228,7 +228,7 @@ export const AdminContests: React.FC = () => {
                     <span>DE: {new Date(c.startDate).toLocaleDateString()}</span>
                     <span>ATÉ: {new Date(c.endDate).toLocaleDateString()}</span>
                   </div>
-                  <div className="mt-2 text-[8px] text-theme-muted uppercase tracking-[0.05em] flex flex-col gap-1">
+                  <div className="mt-2 text-[10px] text-theme-muted uppercase tracking-[0.05em] flex flex-col gap-1">
                     <div>🎯 Meta / Dinâmica: <span className="text-brand-tactical font-bold">{getDynamicText(c.description)}</span></div>
                     <div>🏆 Premiação: <span className="text-theme-text font-bold">{c.prize1st} (+{c.prize1stPts} pts)</span></div>
                   </div>
@@ -238,7 +238,7 @@ export const AdminContests: React.FC = () => {
                   {c.status !== "FINISHED" && (
                     <button 
                       onClick={() => handleEditClick(c)} 
-                      className="px-3 py-1.5 bg-theme-bg-muted border border-theme-border hover:border-brand-tactical text-theme-text text-[8px] font-bold cursor-pointer hover:text-brand-tactical transition-all rounded rounded-2xl"
+                      className="px-3 py-1.5 bg-theme-bg-muted border border-theme-border hover:border-brand-tactical text-theme-text text-[10px] font-bold cursor-pointer hover:text-brand-tactical transition-all rounded rounded-2xl"
                     >
                       EDITAR
                     </button>
@@ -247,7 +247,7 @@ export const AdminContests: React.FC = () => {
                   {c.status === "DRAFT" && (
                     <button 
                       onClick={() => updateStatus(c.id, "ACTIVE")} 
-                      className="px-3 py-1.5 bg-brand-tactical text-zinc-950 text-[8px] font-bold border-none cursor-pointer hover:brightness-110 transition-all rounded"
+                      className="px-3 py-1.5 bg-brand-tactical text-zinc-950 text-[10px] font-bold border-none cursor-pointer hover:brightness-110 transition-all rounded"
                     >
                       ATIVAR
                     </button>
@@ -256,13 +256,13 @@ export const AdminContests: React.FC = () => {
                     <>
                       <button 
                         onClick={() => updateStatus(c.id, "DRAFT")} 
-                        className="px-3 py-1.5 bg-amber-500/20 border border-amber-500/40 text-amber-400 hover:bg-amber-500/30 text-[8px] font-bold cursor-pointer transition-all rounded"
+                        className="px-3 py-1.5 bg-amber-500/20 border border-amber-500/40 text-amber-400 hover:bg-amber-500/30 text-[10px] font-bold cursor-pointer transition-all rounded"
                       >
                         PAUSAR
                       </button>
                       <button 
                         onClick={() => updateStatus(c.id, "FINISHED")} 
-                        className="px-3 py-1.5 bg-red-500/20 border border-red-500/40 text-red-400 hover:bg-red-500/30 text-[8px] font-bold cursor-pointer transition-all rounded"
+                        className="px-3 py-1.5 bg-red-500/20 border border-red-500/40 text-red-400 hover:bg-red-500/30 text-[10px] font-bold cursor-pointer transition-all rounded"
                       >
                         ENCERRAR
                       </button>
@@ -271,7 +271,7 @@ export const AdminContests: React.FC = () => {
 
                   <button 
                     onClick={() => handleDelete(c.id)} 
-                    className="px-3 py-1.5 bg-red-500/10 border border-red-500/20 text-red-500 hover:bg-red-500/20 text-[8px] font-bold cursor-pointer transition-all rounded"
+                    className="px-3 py-1.5 bg-red-500/10 border border-red-500/20 text-red-500 hover:bg-red-500/20 text-[10px] font-bold cursor-pointer transition-all rounded"
                   >
                     EXCLUIR
                   </button>
@@ -304,14 +304,14 @@ export const AdminContests: React.FC = () => {
             {/* Content */}
             <form id="contest-form" onSubmit={handleCreate} className="flex-1 overflow-y-auto p-4 md:p-8 md:p-10 space-y-8 custom-scrollbar">
               <div className="space-y-2">
-                <label className="text-[8px] font-bold text-theme-muted uppercase tracking-widest block mb-2 opacity-60 ">Título da Campanha</label>
+                <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest block mb-2 opacity-60 ">Título da Campanha</label>
                 <input required className="w-full bg-theme-bg-muted border border-theme-border p-4 text-[11px] text-theme-text font-bold outline-none focus:border-brand-tactical rounded-xl uppercase placeholder:opacity-20" value={formData.title} onChange={e => setFormData({...formData, title: e.target.value.toUpperCase()})} placeholder="EX: CORRIDA DOS 10 ÁLBUNS" />
               </div>
 
               {/* DINÂMICA / META */}
               <div className="p-4 md:p-8 bg-brand-tactical/10 border border-brand-tactical/20 rounded-[30px] space-y-6">
                 <div className="space-y-2">
-                  <label className="text-[8px] font-bold text-brand-tactical uppercase tracking-widest block mb-1 ">Estilo da Dinâmica (Meta Tática)</label>
+                  <label className="text-[10px] font-bold text-brand-tactical uppercase tracking-widest block mb-1 ">Estilo da Dinâmica (Meta Tática)</label>
                   <select 
                     className="w-full bg-transparent border-b border-brand-tactical/40 p-4 text-xs font-bold text-theme-text outline-none focus:border-brand-tactical cursor-pointer uppercase appearance-none"
                     value={dynamicType}
@@ -328,7 +328,7 @@ export const AdminContests: React.FC = () => {
 
                 {dynamicType !== 'CITY_EVENT' && dynamicType !== 'CUSTOM' && (
                   <div className="space-y-2">
-                    <label className="text-[8px] font-bold text-brand-tactical uppercase tracking-widest block mb-1 ">Quantidade Alvo (KPIS)</label>
+                    <label className="text-[10px] font-bold text-brand-tactical uppercase tracking-widest block mb-1 ">Quantidade Alvo (KPIS)</label>
                     <input 
                       type="number" 
                       required 
@@ -341,7 +341,7 @@ export const AdminContests: React.FC = () => {
 
                 {dynamicType === 'CUSTOM' && (
                   <div className="space-y-2">
-                    <label className="text-[8px] font-bold text-brand-tactical uppercase tracking-widest block mb-1 ">Regra Operacional da Meta</label>
+                    <label className="text-[10px] font-bold text-brand-tactical uppercase tracking-widest block mb-1 ">Regra Operacional da Meta</label>
                     <textarea 
                       required 
                       className="w-full bg-transparent border-b border-brand-tactical/40 p-4 text-[11px] font-bold text-theme-text outline-none focus:border-brand-tactical h-24 resize-none uppercase" 
@@ -355,22 +355,22 @@ export const AdminContests: React.FC = () => {
 
               <div className="grid grid-cols-2 gap-4 md:gap-8">
                 <div className="space-y-2">
-                  <label className="text-[8px] font-bold text-theme-muted uppercase tracking-widest block mb-2 opacity-60 ">Início da Operação</label>
+                  <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest block mb-2 opacity-60 ">Início da Operação</label>
                   <input type="date" required className="w-full bg-theme-bg-muted border border-theme-border p-4 text-[11px] text-theme-text font-bold outline-none focus:border-brand-tactical rounded-xl [color-scheme:dark]" value={formData.startDate} onChange={e => setFormData({...formData, startDate: e.target.value})} />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-[8px] font-bold text-theme-muted uppercase tracking-widest block mb-2 opacity-60 ">Encerramento</label>
+                  <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest block mb-2 opacity-60 ">Encerramento</label>
                   <input type="date" required className="w-full bg-theme-bg-muted border border-theme-border p-4 text-[11px] text-theme-text font-bold outline-none focus:border-brand-tactical rounded-xl [color-scheme:dark]" value={formData.endDate} onChange={e => setFormData({...formData, endDate: e.target.value})} />
                 </div>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8 pt-8 border-t border-theme-border">
                 <div className="space-y-2">
-                  <label className="text-[8px] font-bold text-theme-muted uppercase tracking-widest block mb-2 opacity-60 ">Recompensa: 1º Lugar</label>
+                  <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest block mb-2 opacity-60 ">Recompensa: 1º Lugar</label>
                   <input className="w-full bg-theme-bg-muted border border-theme-border p-4 text-[11px] text-theme-text font-bold outline-none focus:border-brand-tactical rounded-xl uppercase placeholder:opacity-20" value={formData.prize1st} onChange={e => setFormData({...formData, prize1st: e.target.value.toUpperCase()})} placeholder="EX: 3 FOTOS IMPRESSAS" />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-[8px] font-bold text-theme-muted uppercase tracking-widest block mb-2 opacity-60 ">Pontos Bônus de Ranking</label>
+                  <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest block mb-2 opacity-60 ">Pontos Bônus de Ranking</label>
                   <input type="number" className="w-full bg-theme-bg-muted border border-theme-border p-4 text-[11px] text-emerald-500 font-bold outline-none focus:border-brand-tactical rounded-xl" value={formData.prize1stPts} onChange={e => setFormData({...formData, prize1stPts: Number(e.target.value)})} />
                 </div>
               </div>

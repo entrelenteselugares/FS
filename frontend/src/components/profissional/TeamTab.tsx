@@ -127,7 +127,7 @@ export function TeamTab() {
                         <div className="flex items-center gap-3 mb-1">
                             <h4 className="text-lg font-heading font-bold text-theme-text uppercase truncate group-hover:text-brand-tactical transition-colors" title={p.nome}>{p.nome}</h4>
                             {vinculo === "FIXO" && (
-                              <span className="px-2 py-0.5 bg-brand-tactical text-brand-text text-[8px] font-bold uppercase tracking-widest rounded-full shrink-0">PRIORIDADE</span>
+                              <span className="px-2 py-0.5 bg-brand-tactical text-brand-text text-[10px] font-bold uppercase tracking-widest rounded-full shrink-0">PRIORIDADE</span>
                             )}
                         </div>
                         <p className="text-[10px] font-bold text-theme-muted uppercase tracking-[0.2em] truncate" title={p.email}>{p.email}</p>
@@ -141,18 +141,18 @@ export function TeamTab() {
                           {s}
                         </span>
                       )) : (
-                        <span className="text-[8px] font-bold text-theme-muted uppercase ">Perfil em análise Técnica</span>
+                        <span className="text-[10px] font-bold text-theme-muted uppercase ">Perfil em análise Técnica</span>
                       )}
                     </div>
 
                     <div className="space-y-3 mt-auto">
-                        <p className="text-[8px] font-bold text-theme-muted uppercase tracking-[0.4em] opacity-60">Status de vínculo</p>
+                        <p className="text-[10px] font-bold text-theme-muted uppercase tracking-[0.4em] opacity-60">Status de vínculo</p>
                         <div className="grid grid-cols-3 gap-1 bg-theme-bg-muted p-1 border border-theme-border rounded-xl">
                           {([null, "ROTATIVO", "FIXO"] as const).map(tipo => (
                             <button
                               key={String(tipo)}
                               onClick={() => setTeamChanges(prev => ({ ...prev, [p.id]: tipo }))}
-                              className={`py-2 text-[8px] sm:text-[9px] font-black uppercase tracking-widest rounded-lg transition-all duration-300 relative overflow-hidden truncate px-1 ${
+                              className={`py-2 text-[10px] sm:text-[9px] font-black uppercase tracking-widest rounded-lg transition-all duration-300 relative overflow-hidden truncate px-1 ${
                                 vinculo === tipo 
                                   ? tipo === "FIXO" ? "bg-brand-tactical text-brand-text shadow-lg shadow-brand-tactical/20" : tipo === "ROTATIVO" ? "bg-blue-500 text-theme-text shadow-md shadow-blue-500/20" : "bg-theme-border text-theme-text shadow-sm"
                                   : "text-theme-muted hover:text-theme-text hover:bg-theme-border/20"

@@ -648,7 +648,7 @@ export default function ProfissionalDashboard({
  R$ {Number(order.total).toFixed(2)}
  </td>
  <td className="py-4 px-2">
- <span className={`text-[8px] font-black px-2 py-1 rounded-md uppercase tracking-widest ${
+ <span className={`text-[10px] font-black px-2 py-1 rounded-md uppercase tracking-widest ${
  order.status === 'PAID' ? 'bg-brand-tactical/10 text-brand-tactical' : 
  order.status === 'PENDING' ? 'bg-amber-500/10 text-amber-500' : 'bg-zinc-800 text-zinc-500'
  }`}>
@@ -737,7 +737,7 @@ export default function ProfissionalDashboard({
  ) : (
  <div className="p-5 md:p-10 border border-theme-border text-center space-y-4 rounded-2xl">
  <p className="text-[10px] text-theme-muted uppercase font-bold tracking-widest">Nenhum evento designado para você neste momento.</p>
- <p className="text-[8px] text-theme-muted/60 uppercase font-bold max-w-xs mx-auto leading-relaxed">Fique atento à sua agenda. Quando um admin vincular sua franquia a um evento, ele aparecerá aqui para impressão.</p>
+ <p className="text-[10px] text-theme-muted/60 uppercase font-bold max-w-xs mx-auto leading-relaxed">Fique atento à sua agenda. Quando um admin vincular sua franquia a um evento, ele aparecerá aqui para impressão.</p>
  </div>
  ); })()}
  </div>
@@ -760,11 +760,11 @@ export default function ProfissionalDashboard({
  {tx.description || (tx.type === 'PRINT_CONSUMPTION' ? 'Impressão Phygital' : 'Recarga de Créditos')}
  </p>
  <div className="flex items-center gap-3">
- <p className="text-[8px] text-theme-subtle font-bold uppercase tracking-widest">
+ <p className="text-[10px] text-theme-subtle font-bold uppercase tracking-widest">
  {new Date(tx.createdAt).toLocaleString('pt-BR')}
  </p>
  <div className="w-1 h-1 rounded-full bg-white/10" />
- <p className="text-[8px] text-theme-subtle font-bold uppercase tracking-widest">
+ <p className="text-[10px] text-theme-subtle font-bold uppercase tracking-widest">
  Hash: {tx.id.slice(-8).toUpperCase()}
  </p>
  </div>

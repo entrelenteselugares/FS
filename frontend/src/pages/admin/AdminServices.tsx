@@ -78,7 +78,7 @@ const PackageModal: React.FC<{ onClose: () => void, onSave: (data: any) => void,
                   }}/>
                   <div>
                     <p className="text-[10px] font-bold text-theme-text uppercase">{s.name}</p>
-                    <p className="text-[8px] text-theme-muted">{(s.basePrice).toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'})}</p>
+                    <p className="text-[10px] text-theme-muted">{(s.basePrice).toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'})}</p>
                   </div>
                 </label>
               ))}
@@ -263,7 +263,7 @@ export const AdminServices: React.FC = () => {
         </button>
         <button onClick={() => setActiveTab("PENDENTES")} className={`text-[11px] font-black uppercase tracking-widest px-4 py-2 rounded-2xl transition-all flex items-center gap-2 ${activeTab === "PENDENTES" ? "bg-brand-tactical text-[var(--brand-text)]" : "text-theme-muted hover:bg-theme-bg-muted"}`}>
           Aprovações Pendentes
-          {pendingServices.length > 0 && <span className="bg-red-500 text-white px-2 py-0.5 rounded-full text-[8px]">{pendingServices.length}</span>}
+          {pendingServices.length > 0 && <span className="bg-red-500 text-white px-2 py-0.5 rounded-full text-[10px]">{pendingServices.length}</span>}
         </button>
       </div>
 
@@ -278,7 +278,7 @@ export const AdminServices: React.FC = () => {
             ].map(({ label, value, suffix, icon: Icon }) => (
               <div key={label} className="bg-theme-bg border border-theme-border p-3 md:p-6 space-y-3 shadow-sm group hover:border-brand-tactical/40 transition-all rounded-2xl">
                 <div className="flex justify-between items-start">
-                  <span className="text-[8px] font-bold text-theme-muted uppercase tracking-widest ">{label}</span>
+                  <span className="text-[10px] font-bold text-theme-muted uppercase tracking-widest ">{label}</span>
                   <Icon className="text-brand-tactical" size={14} />
                 </div>
                 <div className="flex items-baseline gap-2">
@@ -319,7 +319,7 @@ export const AdminServices: React.FC = () => {
                 <Briefcase size={40} className="mx-auto text-theme-muted opacity-20" />
                 <div className="space-y-2">
                   <p className="text-[11px] font-bold text-brand-tactical uppercase tracking-[0.4em] ">{activeTab === "PACOTES" ? "Catálogo de Pacotes" : "Tabela de Preços e Serviços"}</p>
-                  <p className="text-[8px] text-theme-muted/60 uppercase tracking-widest">{activeTab === "PACOTES" ? "Monte seu primeiro combo de serviços." : "Inicie o seu catálogo para habilitar o gerador de orçamentos."}</p>
+                  <p className="text-[10px] text-theme-muted/60 uppercase tracking-widest">{activeTab === "PACOTES" ? "Monte seu primeiro combo de serviços." : "Inicie o seu catálogo para habilitar o gerador de orçamentos."}</p>
                 </div>
               </div>
             ) : filteredServices.map(s => {
@@ -331,19 +331,19 @@ export const AdminServices: React.FC = () => {
                       <div className="p-4 bg-theme-bg-muted border border-theme-border text-brand-tactical rounded-2xl"><Icon size={20} /></div>
                       <div className="space-y-2">
                         <div className="flex items-center gap-3">
-                          <span className="px-2 py-0.5 border border-theme-border text-[7px] font-bold uppercase tracking-widest text-theme-muted">{s.category}</span>
+                          <span className="px-2 py-0.5 border border-theme-border text-[9px] font-bold uppercase tracking-widest text-theme-muted">{s.category}</span>
                           <h4 className="text-lg font-heading font-bold text-theme-text uppercase leading-none">{s.name}</h4>
                         </div>
                         <div className="flex flex-wrap gap-2 mt-1">
-                          {s.allowProfessional && <span className="px-2 py-0.5 bg-brand-tactical/15 border border-brand-tactical/25 text-[7px] font-bold uppercase tracking-widest text-brand-tactical rounded-2xl">PROFISSIONAL: {formatCurrency(s.priceProfessional || 0)}</span>}
-                          {s.allowMobile && <span className="px-2 py-0.5 bg-amber-500/15 border border-amber-500/25 text-[7px] font-bold uppercase tracking-widest text-amber-400 rounded-2xl">MOBILE: {formatCurrency(s.priceMobile || 0)}</span>}
+                          {s.allowProfessional && <span className="px-2 py-0.5 bg-brand-tactical/15 border border-brand-tactical/25 text-[9px] font-bold uppercase tracking-widest text-brand-tactical rounded-2xl">PROFISSIONAL: {formatCurrency(s.priceProfessional || 0)}</span>}
+                          {s.allowMobile && <span className="px-2 py-0.5 bg-amber-500/15 border border-amber-500/25 text-[9px] font-bold uppercase tracking-widest text-amber-400 rounded-2xl">MOBILE: {formatCurrency(s.priceMobile || 0)}</span>}
                         </div>
                         <p className="text-[10px] text-theme-muted uppercase tracking-widest font-medium max-w-xl leading-relaxed opacity-80 mt-1">{s.description}</p>
                       </div>
                     </div>
                     <div className="lg:w-80 flex items-center justify-between lg:justify-end gap-5 md:gap-10 border-t lg:border-t-0 pt-6 lg:pt-0 border-theme-border">
                       <div className="text-right">
-                        <span className="text-[8px] font-bold text-theme-muted uppercase tracking-widest block mb-1">Preço Sugerido</span>
+                        <span className="text-[10px] font-bold text-theme-muted uppercase tracking-widest block mb-1">Preço Sugerido</span>
                         <span className="text-xl font-heading font-bold text-theme-text ">{formatCurrency(s.basePrice)}</span>
                       </div>
                       <div className="flex gap-3 opacity-0 group-hover:opacity-100 transition-all">
@@ -369,7 +369,7 @@ export const AdminServices: React.FC = () => {
               <Check size={40} className="mx-auto text-brand-tactical opacity-50" />
               <div className="space-y-2">
                 <p className="text-[11px] font-bold text-theme-text uppercase tracking-widest ">Tudo limpo!</p>
-                <p className="text-[8px] text-theme-muted uppercase tracking-widest">Não há serviços aguardando aprovação.</p>
+                <p className="text-[10px] text-theme-muted uppercase tracking-widest">Não há serviços aguardando aprovação.</p>
               </div>
             </div>
           ) : pendingServices.map(ps => (
@@ -385,7 +385,7 @@ export const AdminServices: React.FC = () => {
                 </div>
                 <div className="text-right">
                   <div className="text-[14px] font-bold text-theme-text ">{formatCurrency(Number(ps.price))}</div>
-                  <div className="text-[8px] uppercase tracking-widest text-theme-muted">Preço Proposto</div>
+                  <div className="text-[10px] uppercase tracking-widest text-theme-muted">Preço Proposto</div>
                 </div>
               </div>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-4 border-t border-theme-border/50 z-10 relative">

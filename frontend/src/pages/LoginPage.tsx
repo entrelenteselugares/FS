@@ -251,7 +251,7 @@ export const LoginPage: React.FC = () => {
 
         {/* Bottom: Footer */}
         <div className="px-5 md:px-10 xl:px-14 pb-8 pt-6 border-t border-theme-border flex flex-col gap-4 text-center">
-          <p className="text-[8px] font-bold uppercase tracking-[0.3em] text-theme-muted">
+          <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-theme-muted">
             Novo por aqui?{" "}
             <Link
               to="/registro"
@@ -262,7 +262,7 @@ export const LoginPage: React.FC = () => {
           </p>
           <Link
             to="/"
-            className="text-[8px] font-bold uppercase tracking-[0.4em] transition-all text-theme-muted opacity-50 hover:opacity-100"
+            className="text-[10px] font-bold uppercase tracking-[0.4em] transition-all text-theme-muted opacity-50 hover:opacity-100"
           >
             ← Voltar para a Vitrine
           </Link>

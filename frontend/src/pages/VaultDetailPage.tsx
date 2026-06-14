@@ -742,7 +742,7 @@ export default function VaultDetailPage() {
                   <div>
                     <div className="flex items-center gap-2">
                       <span className="text-[10px] font-bold uppercase ">Assinatura Ativa</span>
-                      <span className="px-2 py-0.5 bg-emerald-500 text-black text-[8px] font-bold rounded-full uppercase">Premium</span>
+                      <span className="px-2 py-0.5 bg-emerald-500 text-black text-[10px] font-bold rounded-full uppercase">Premium</span>
                     </div>
                     <p className="text-[9px] text-zinc-500 uppercase tracking-widest">
                       Próximo ciclo: {vault.subscription.nextBillingDate ? new Date(vault.subscription.nextBillingDate).toLocaleDateString() : '—'}
@@ -830,7 +830,7 @@ export default function VaultDetailPage() {
 
                   {/* Pending badge (visible only to owner) */}
                   {item.status === 'PENDING' && vault.myRole === 'OWNER' && (
-                    <div className="absolute top-2 left-2 z-20 px-2 py-0.5 bg-yellow-500 text-black text-[8px] font-bold uppercase tracking-widest rounded-full">
+                    <div className="absolute top-2 left-2 z-20 px-2 py-0.5 bg-yellow-500 text-black text-[10px] font-bold uppercase tracking-widest rounded-full">
                       Pendente
                     </div>
                   )}

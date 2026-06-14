@@ -58,7 +58,7 @@ export function CashflowChart() {
              </span>
              <div className="px-2 py-0.5 bg-brand-tactical/10 border border-brand-tactical/30 rounded-full flex items-center gap-1">
                 <TrendingUp size={10} className="text-brand-tactical" />
-                <span className="text-[8px] font-bold text-brand-tactical uppercase">Estimado</span>
+                <span className="text-[10px] font-bold text-brand-tactical uppercase">Estimado</span>
              </div>
           </div>
         </div>

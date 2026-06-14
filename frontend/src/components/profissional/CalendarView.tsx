@@ -42,15 +42,15 @@ export function CalendarView({ events, currentMonth, setCurrentMonth, onSelect, 
           <div className="flex gap-4">
             <div className="flex items-center gap-1.5">
               <div className="w-2 h-2 bg-brand-tactical" />
-              <span className="text-[8px] font-bold text-theme-muted uppercase tracking-widest">Confirmado</span>
+              <span className="text-[10px] font-bold text-theme-muted uppercase tracking-widest">Confirmado</span>
             </div>
             <div className="flex items-center gap-1.5">
               <div className="w-2 h-2 bg-amber-500" />
-              <span className="text-[8px] font-bold text-theme-muted uppercase tracking-widest">Pendente</span>
+              <span className="text-[10px] font-bold text-theme-muted uppercase tracking-widest">Pendente</span>
             </div>
             <div className="flex items-center gap-1.5">
               <div className="w-2 h-2 bg-blue-500" />
-              <span className="text-[8px] font-bold text-theme-muted uppercase tracking-widest">Chamada Aberta</span>
+              <span className="text-[10px] font-bold text-theme-muted uppercase tracking-widest">Chamada Aberta</span>
             </div>
           </div>
         </div>
@@ -102,7 +102,7 @@ export function CalendarView({ events, currentMonth, setCurrentMonth, onSelect, 
                       <button
                         key={ev.id}
                         onClick={() => onSelect(ev)}
-                        className={`w-full text-left p-2 ${bgColor} text-brand-text text-[8px] font-black uppercase truncate italic rounded-md shadow-sm hover:brightness-110 transition-all`}
+                        className={`w-full text-left p-2 ${bgColor} text-brand-text text-[10px] font-black uppercase truncate italic rounded-md shadow-sm hover:brightness-110 transition-all`}
                       >
                         {ev.title}
                       </button>

@@ -141,7 +141,7 @@ export const AdminAmbassadors: React.FC = () => {
           <div key={i} className="bg-theme-card border border-theme-border p-3 md:p-6 space-y-2 rounded-2xl">
             <div className="flex items-center gap-2 text-theme-subtle">
               {s.icon}
-              <span className="text-[8px] md:text-[9px] font-bold uppercase tracking-wider md:tracking-widest">{s.label}</span>
+              <span className="text-[10px] md:text-[9px] font-bold uppercase tracking-wider md:tracking-widest">{s.label}</span>
             </div>
             <p className="text-3xl font-bold text-theme-text">{s.value}</p>
           </div>
@@ -164,7 +164,7 @@ export const AdminAmbassadors: React.FC = () => {
       <div className="bg-theme-bg-muted border border-theme-border overflow-x-auto w-full rounded-2xl">
         <table className="w-full text-left">
           <thead>
-            <tr className="border-b border-theme-border text-[8px] md:text-[9px] font-bold uppercase tracking-wider md:tracking-widest text-theme-subtle">
+            <tr className="border-b border-theme-border text-[10px] md:text-[9px] font-bold uppercase tracking-wider md:tracking-widest text-theme-subtle">
               <th className="p-3 md:p-6">Campanha / Slug</th>
               <th className="p-3 md:p-6">Embaixador</th>
               <th className="p-3 md:p-6">Recompensa</th>
@@ -201,7 +201,7 @@ export const AdminAmbassadors: React.FC = () => {
                   <span className="text-sm font-bold text-emerald-500">{c._count.conversions}</span>
                 </td>
                 <td className="p-3 md:p-6">
-                  <span className={`px-2 py-1 text-[8px] font-black uppercase tracking-widest ${c.active ? 'bg-emerald-500/10 text-emerald-500' : 'bg-red-500/10 text-red-500'}`}>
+                  <span className={`px-2 py-1 text-[10px] font-black uppercase tracking-widest ${c.active ? 'bg-emerald-500/10 text-emerald-500' : 'bg-red-500/10 text-red-500'}`}>
                     {c.active ? 'Ativa' : 'Inativa'}
                   </span>
                 </td>
@@ -256,7 +256,7 @@ export const AdminAmbassadors: React.FC = () => {
             {/* Content */}
             <form id="campaign-form" onSubmit={handleCreate} className="flex-1 overflow-y-auto p-4 md:p-8 md:p-10 space-y-8 custom-scrollbar">
               <div className="space-y-2">
-                <label className="text-[8px] font-bold text-theme-muted uppercase tracking-widest block mb-2 opacity-60 ">Nome da Campanha</label>
+                <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest block mb-2 opacity-60 ">Nome da Campanha</label>
                 <input 
                   type="text" required
                   value={formData.name}
@@ -267,7 +267,7 @@ export const AdminAmbassadors: React.FC = () => {
               </div>
 
               <div className="space-y-2">
-                <label className="text-[8px] font-bold text-theme-muted uppercase tracking-widest block mb-2 opacity-60 ">Slug URL</label>
+                <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest block mb-2 opacity-60 ">Slug URL</label>
                 <input 
                   type="text" required
                   value={formData.slug}
@@ -278,7 +278,7 @@ export const AdminAmbassadors: React.FC = () => {
               </div>
 
               <div className="space-y-2">
-                <label className="text-[8px] font-bold text-theme-muted uppercase tracking-widest block mb-2 opacity-60 ">Embaixador Responsável</label>
+                <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest block mb-2 opacity-60 ">Embaixador Responsável</label>
                 <select 
                   required
                   value={formData.ownerId}
@@ -294,7 +294,7 @@ export const AdminAmbassadors: React.FC = () => {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-6">
                 <div className="space-y-2">
-                  <label className="text-[8px] font-bold text-theme-muted uppercase tracking-widest block mb-2 opacity-60 ">Tipo de Recompensa</label>
+                  <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest block mb-2 opacity-60 ">Tipo de Recompensa</label>
                   <select 
                     value={formData.rewardType}
                     onChange={e => setFormData({...formData, rewardType: e.target.value})}
@@ -305,7 +305,7 @@ export const AdminAmbassadors: React.FC = () => {
                   </select>
                 </div>
                 <div className="space-y-2">
-                  <label className="text-[8px] font-bold text-theme-muted uppercase tracking-widest block mb-2 opacity-60 ">Valor (R$)</label>
+                  <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest block mb-2 opacity-60 ">Valor (R$)</label>
                   <input 
                     type="number" required
                     value={formData.rewardValue}
@@ -358,7 +358,7 @@ export const AdminAmbassadors: React.FC = () => {
                         <button 
                           type="button"
                           onClick={toggleCategory}
-                          className={`px-4 py-2 rounded-xl text-[8px] font-black uppercase tracking-widest transition-all ${
+                          className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${
                             isCategorySelected 
                               ? 'bg-brand-tactical text-zinc-950' 
                               : 'border border-theme-border text-theme-muted hover:text-white'

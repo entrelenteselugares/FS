@@ -535,19 +535,19 @@ export function EventEditPanel({ event, onUpdated, onClose, onNotify, onOpenPrin
                         <p className="text-[9px] font-bold uppercase tracking-wider text-theme-muted">Sugestões Atuais</p>
                         <div className="grid grid-cols-3 gap-2 text-[10px] text-center">
                           <div className="bg-theme-bg-muted p-2 rounded-lg">
-                            <span className="block text-[8px] uppercase tracking-wider text-theme-muted">Contratante</span>
+                            <span className="block text-[10px] uppercase tracking-wider text-theme-muted">Contratante</span>
                             <span className="font-bold text-theme-text">
                               {votingStatus.suggestions?.owner ? `R$ ${votingStatus.suggestions.owner}` : "Pendente"}
                             </span>
                           </div>
                           <div className="bg-theme-bg-muted p-2 rounded-lg">
-                            <span className="block text-[8px] uppercase tracking-wider text-theme-muted">Equipe</span>
+                            <span className="block text-[10px] uppercase tracking-wider text-theme-muted">Equipe</span>
                             <span className="font-bold text-theme-text">
                               {votingStatus.suggestions?.pro ? `R$ ${votingStatus.suggestions.pro}` : "Pendente"}
                             </span>
                           </div>
                           <div className="bg-theme-bg-muted p-2 rounded-lg border border-brand-tactical/30">
-                            <span className="block text-[8px] uppercase tracking-wider text-brand-tactical">Recomendado</span>
+                            <span className="block text-[10px] uppercase tracking-wider text-brand-tactical">Recomendado</span>
                             <span className="font-bold text-brand-tactical">
                               {votingStatus.suggestions?.system ? `R$ ${votingStatus.suggestions.system}` : "Pendente"}
                             </span>
@@ -926,7 +926,7 @@ export function EventEditPanel({ event, onUpdated, onClose, onNotify, onOpenPrin
                   
                   {/* Select Role */}
                   <div className="flex flex-col gap-1.5">
-                    <label className="text-[8px] font-bold uppercase tracking-widest opacity-50 font-bold">Função / Papel</label>
+                    <label className="text-[10px] font-bold uppercase tracking-widest opacity-50 font-bold">Função / Papel</label>
                     <select
                       value={selectedRole}
                       onChange={(e) => setSelectedRole(e.target.value)}

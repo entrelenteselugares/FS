@@ -426,7 +426,7 @@ export function PrintKitModal({
                  borderColor: theme === 'DARK' ? '#27272a' : '#e4e4e7',
                }}>
             {/* Watermark helper for preview */}
-            <div className="absolute top-4 right-6 text-[8px] font-bold text-theme-muted uppercase tracking-widest select-none pointer-events-none opacity-40">
+            <div className="absolute top-4 right-6 text-[10px] font-bold text-theme-muted uppercase tracking-widest select-none pointer-events-none opacity-40">
               Visualização de Impressão (A4)
             </div>
 
@@ -436,11 +436,11 @@ export function PrintKitModal({
                 <div className="flex-1 flex flex-col justify-center items-center scale-90 border  border-theme-border rounded-2xl p-4 mb-2">
                   <img src={tenantLogoUrl || '/logo.png'} style={{ filter: theme === 'DARK' ? 'brightness(0) invert(1)' : 'none' }} className="h-8 object-contain mb-4" alt="Logo" />
                   <h3 className="text-xs font-bold text-brand-tactical uppercase tracking-wider mb-2 ">{headline}</h3>
-                  <p className="text-[8px] opacity-80 leading-relaxed mb-3 max-w-[200px]">{subHeadline}</p>
+                  <p className="text-[10px] opacity-80 leading-relaxed mb-3 max-w-[200px]">{subHeadline}</p>
                   <div className="bg-white p-2 rounded-xl shadow-md mb-2">
                     <QRCodeSVG value={captureUrl} size={90} level="H" />
                   </div>
-                  <span className="text-[7px] font-bold opacity-40 uppercase tracking-widest">Suas Fotos ao Vivo</span>
+                  <span className="text-[9px] font-bold opacity-40 uppercase tracking-widest">Suas Fotos ao Vivo</span>
                 </div>
                 {/* Fold guide */}
                 <div className="border-t  border-theme-border my-2 relative">
@@ -453,11 +453,11 @@ export function PrintKitModal({
                 <div className="flex-1 flex flex-col justify-center items-center scale-90 border  border-theme-border rounded-2xl p-4 mt-2 transform rotate-180">
                   <img src={tenantLogoUrl || '/logo.png'} style={{ filter: theme === 'DARK' ? 'brightness(0) invert(1)' : 'none' }} className="h-8 object-contain mb-4" alt="Logo" />
                   <h3 className="text-xs font-bold text-brand-tactical uppercase tracking-wider mb-2 ">{headline}</h3>
-                  <p className="text-[8px] opacity-80 leading-relaxed mb-3 max-w-[200px]">{subHeadline}</p>
+                  <p className="text-[10px] opacity-80 leading-relaxed mb-3 max-w-[200px]">{subHeadline}</p>
                   <div className="bg-white p-2 rounded-xl shadow-md mb-2">
                     <QRCodeSVG value={captureUrl} size={90} level="H" />
                   </div>
-                  <span className="text-[7px] font-bold opacity-40 uppercase tracking-widest">Suas Fotos ao Vivo</span>
+                  <span className="text-[9px] font-bold opacity-40 uppercase tracking-widest">Suas Fotos ao Vivo</span>
                 </div>
               </div>
             )}
@@ -466,7 +466,7 @@ export function PrintKitModal({
               <div className="h-full flex flex-col justify-between py-4">
                 <div className="text-center mb-4">
                   <h3 className="text-xs font-bold text-brand-tactical uppercase tracking-widest">Grade com 8 Cartões</h3>
-                  <p className="text-[8px] opacity-50 uppercase">Previsualização de um único cartão individual:</p>
+                  <p className="text-[10px] opacity-50 uppercase">Previsualização de um único cartão individual:</p>
                 </div>
                 <div className="flex-1 flex items-center justify-center">
                   <div className="w-full max-w-[280px] aspect-[85/55] rounded-xl p-4 flex justify-between items-center text-left"
@@ -477,7 +477,7 @@ export function PrintKitModal({
                     <div className="flex-1 flex flex-col justify-between h-full pr-2">
                       <img src={tenantLogoUrl || '/logo.png'} style={{ filter: theme === 'DARK' ? 'brightness(0) invert(1)' : 'none' }} className="h-5 object-contain self-start" alt="Logo" />
                       <div>
-                        <h4 className="text-[8px] font-bold text-brand-tactical uppercase tracking-wider mb-1">ENVIE FOTOS AO VIVO</h4>
+                        <h4 className="text-[10px] font-bold text-brand-tactical uppercase tracking-wider mb-1">ENVIE FOTOS AO VIVO</h4>
                         <p className="text-[6px] opacity-70 leading-normal">Escaneie, capture e assista na tela na hora!</p>
                       </div>
                       <span className="text-[6px] font-bold opacity-40 uppercase tracking-wider truncate max-w-[120px]">{eventTitle}</span>
@@ -487,7 +487,7 @@ export function PrintKitModal({
                     </div>
                   </div>
                 </div>
-                <p className="text-[8px] opacity-40 uppercase tracking-widest mt-4">
+                <p className="text-[10px] opacity-40 uppercase tracking-widest mt-4">
                   Impressão configurada para caber exatamente 8 cartões idênticos por folha A4.
                 </p>
               </div>
@@ -501,7 +501,7 @@ export function PrintKitModal({
                 </div>
 
                 <div className="flex-1 flex flex-col justify-center items-center px-4">
-                  <span className="text-[8px] font-bold text-brand-tactical tracking-[0.3em] uppercase mb-2 ">LIVE PHOTO STREAMING</span>
+                  <span className="text-[10px] font-bold text-brand-tactical tracking-[0.3em] uppercase mb-2 ">LIVE PHOTO STREAMING</span>
                   <h2 className="text-lg md:text-xl font-bold uppercase leading-tight mb-3"
                       style={{ color: theme === 'DARK' ? '#ffffff' : '#09090b' }}>
                     {headline}
@@ -521,21 +521,21 @@ export function PrintKitModal({
                        }}>
                     <div className="text-left flex items-start gap-1">
                       <span className="text-[9px] font-bold text-brand-tactical">1.</span>
-                      <p className="text-[7px] font-bold uppercase leading-tight opacity-75">Aponte</p>
+                      <p className="text-[9px] font-bold uppercase leading-tight opacity-75">Aponte</p>
                     </div>
                     <div className="text-left flex items-start gap-1">
                       <span className="text-[9px] font-bold text-brand-tactical">2.</span>
-                      <p className="text-[7px] font-bold uppercase leading-tight opacity-75">Capture</p>
+                      <p className="text-[9px] font-bold uppercase leading-tight opacity-75">Capture</p>
                     </div>
                     <div className="text-left flex items-start gap-1">
                       <span className="text-[9px] font-bold text-brand-tactical">3.</span>
-                      <p className="text-[7px] font-bold uppercase leading-tight opacity-75">Envie</p>
+                      <p className="text-[9px] font-bold uppercase leading-tight opacity-75">Envie</p>
                     </div>
                   </div>
                 </div>
 
                 <div className="border-t border-theme-border/10 pt-4 mt-4">
-                  <p className="text-[8px] font-bold opacity-50 uppercase tracking-widest">{eventTitle}</p>
+                  <p className="text-[10px] font-bold opacity-50 uppercase tracking-widest">{eventTitle}</p>
                   <p className="text-[6px] opacity-35 uppercase tracking-widest mt-1">foto segundo • premium phygital</p>
                 </div>
               </div>

@@ -37,7 +37,7 @@ export function NetworkTab({ network, networkSearch, searchResults, residentUnit
                   <div className="absolute top-0 left-0 w-full h-[1px] bg-cyan-400/30" />
                   <div className="space-y-4">
                     <div className="flex justify-between items-start">
-                      <div className="px-3 py-1 bg-cyan-400/10 border border-cyan-400/30 rounded-xl text-[8px] font-bold text-cyan-400 uppercase tracking-widest ">
+                      <div className="px-3 py-1 bg-cyan-400/10 border border-cyan-400/30 rounded-xl text-[10px] font-bold text-cyan-400 uppercase tracking-widest ">
                         Parceria Ativa
                       </div>
                       <div className="text-cyan-400/20 group-hover:text-cyan-400/50 transition-colors">

@@ -283,6 +283,8 @@ export class EventController {
         verticalConfigs: (event as any).verticalConfigs || {},
         preSaleEnabled: (event as any).preSaleEnabled ?? false,
         postSaleEnabled: (event as any).postSaleEnabled ?? true,
+        eventHours: event.eventHours,
+        eventDays: event.eventDays,
       };
 
       // Se o acesso for restrito, limpamos campos sensíveis para evitar vazamento

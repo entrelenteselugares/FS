@@ -195,8 +195,8 @@ export const AdminFinance: React.FC = () => {
       {view === "payouts" && (
         <div className="space-y-6 animate-in fade-in duration-500">
           <div className="flex gap-2 border-b border-theme-border pb-4">
-             <button onClick={() => setPayoutTab("pending")} className={`px-3 md:px-6 py-2 text-[8px] font-black uppercase tracking-widest border transition-all ${payoutTab === 'pending' ? 'border-brand-tactical text-brand-tactical bg-brand-tactical/10' : 'border-theme-border text-theme-muted'}`}>PENDENTES</button>
-             <button onClick={() => setPayoutTab("history")} className={`px-3 md:px-6 py-2 text-[8px] font-black uppercase tracking-widest border transition-all ${payoutTab === 'history' ? 'border-brand-tactical text-brand-tactical bg-brand-tactical/10' : 'border-theme-border text-theme-muted'}`}>HISTÓRICO</button>
+             <button onClick={() => setPayoutTab("pending")} className={`px-3 md:px-6 py-2 text-[10px] font-black uppercase tracking-widest border transition-all ${payoutTab === 'pending' ? 'border-brand-tactical text-brand-tactical bg-brand-tactical/10' : 'border-theme-border text-theme-muted'}`}>PENDENTES</button>
+             <button onClick={() => setPayoutTab("history")} className={`px-3 md:px-6 py-2 text-[10px] font-black uppercase tracking-widest border transition-all ${payoutTab === 'history' ? 'border-brand-tactical text-brand-tactical bg-brand-tactical/10' : 'border-theme-border text-theme-muted'}`}>HISTÓRICO</button>
           </div>
           
           <div className="space-y-4">
@@ -243,17 +243,17 @@ export const AdminFinance: React.FC = () => {
                           </div>
                           {payoutTab === 'history' && (
                              <div className="text-right">
-                                <span className="text-[8px] font-bold text-theme-muted uppercase tracking-widest block">Pago em</span>
+                                <span className="text-[10px] font-bold text-theme-muted uppercase tracking-widest block">Pago em</span>
                                 <span className="text-[10px] font-bold text-brand-tactical uppercase ">{fmtDate(order.payoutPaidAt)}</span>
                              </div>
                           )}
                        </div>
 
                        <div className="grid grid-cols-2 gap-y-4 gap-x-2 pt-4 border-t border-theme-border/10">
-                          <div className="space-y-1"><span className="text-[8px] font-bold text-theme-muted uppercase tracking-widest opacity-60">Matriz</span><p className="text-sm font-bold text-theme-text ">{formatCurrency(Number(order.splitMatriz) || 0)}</p></div>
-                          {order.event.partners.captacao && <div className="space-y-1"><span className="text-[8px] font-bold text-brand-tactical uppercase tracking-widest opacity-60">Captação</span><p className="text-sm font-bold text-theme-text ">{formatCurrency(Number(order.splitCaptacao) || 0)}</p></div>}
-                          {order.event.partners.edicao && <div className="space-y-1"><span className="text-[8px] font-bold text-brand-tactical uppercase tracking-widest opacity-60">Edição</span><p className="text-sm font-bold text-theme-text ">{formatCurrency(Number(order.splitEdicao) || 0)}</p></div>}
-                          {order.event.partners.cartorio && <div className="space-y-1"><span className="text-[8px] font-bold text-theme-muted uppercase tracking-widest opacity-60">Unidade</span><p className="text-sm font-bold text-theme-text ">{formatCurrency(Number(order.splitCartorio) || 0)}</p></div>}
+                          <div className="space-y-1"><span className="text-[10px] font-bold text-theme-muted uppercase tracking-widest opacity-60">Matriz</span><p className="text-sm font-bold text-theme-text ">{formatCurrency(Number(order.splitMatriz) || 0)}</p></div>
+                          {order.event.partners.captacao && <div className="space-y-1"><span className="text-[10px] font-bold text-brand-tactical uppercase tracking-widest opacity-60">Captação</span><p className="text-sm font-bold text-theme-text ">{formatCurrency(Number(order.splitCaptacao) || 0)}</p></div>}
+                          {order.event.partners.edicao && <div className="space-y-1"><span className="text-[10px] font-bold text-brand-tactical uppercase tracking-widest opacity-60">Edição</span><p className="text-sm font-bold text-theme-text ">{formatCurrency(Number(order.splitEdicao) || 0)}</p></div>}
+                          {order.event.partners.cartorio && <div className="space-y-1"><span className="text-[10px] font-bold text-theme-muted uppercase tracking-widest opacity-60">Unidade</span><p className="text-sm font-bold text-theme-text ">{formatCurrency(Number(order.splitCartorio) || 0)}</p></div>}
                        </div>
 
                        {payoutTab === 'pending' && (
@@ -304,7 +304,7 @@ export const AdminFinance: React.FC = () => {
                               <button 
                                 onClick={() => handleSettle(b.userId)}
                                 disabled={settleLoading === b.userId}
-                                className={`px-4 py-2 text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest border border-brand-tactical text-brand-tactical hover:bg-brand-tactical hover:text-zinc-950 transition-all italic ${settleLoading === b.userId ? 'opacity-50 animate-pulse' : ''}`}
+                                className={`px-4 py-2 text-[10px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest border border-brand-tactical text-brand-tactical hover:bg-brand-tactical hover:text-zinc-950 transition-all italic ${settleLoading === b.userId ? 'opacity-50 animate-pulse' : ''}`}
                               >
                                 {settleLoading === b.userId ? "LIQUIDANDO..." : "GERAR REPASSE"}
                               </button>
@@ -458,7 +458,7 @@ export const AdminFinance: React.FC = () => {
                       <div className="flex-1 min-w-0">
                         <div className="flex justify-between items-center mb-1">
                           <span className="text-[9px] font-bold text-theme-muted uppercase tracking-widest">{fmtDate(exp.date)}</span>
-                          <span className="text-[8px] font-bold px-2 py-0.5 border border-theme-border rounded-md text-theme-muted uppercase">{exp.category}</span>
+                          <span className="text-[10px] font-bold px-2 py-0.5 border border-theme-border rounded-md text-theme-muted uppercase">{exp.category}</span>
                         </div>
                         <div className="text-sm font-bold text-theme-text uppercase truncate">{exp.description}</div>
                         <div className="text-sm font-bold text-red-500 mt-1">{formatCurrency(exp.amount)}</div>

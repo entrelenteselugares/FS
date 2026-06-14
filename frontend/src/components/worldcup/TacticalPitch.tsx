@@ -57,7 +57,7 @@ const PlayerNode = ({ name, role }: { name: string, role: string }) => (
     <div className="mt-1 bg-black/60 px-2 py-0.5 rounded text-[10px] font-bold text-white text-center shadow">
       {name}
     </div>
-    <div className="text-[8px] text-emerald-300 font-bold uppercase tracking-widest mt-0.5 drop-shadow">
+    <div className="text-[10px] text-emerald-300 font-bold uppercase tracking-widest mt-0.5 drop-shadow">
       {role}
     </div>
   </motion.div>

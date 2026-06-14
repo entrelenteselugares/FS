@@ -24,7 +24,7 @@ interface Props {
 const inputClass =
   "w-full bg-theme-bg-muted border border-theme-border p-4 text-[10px] text-theme-text font-black outline-none focus:border-brand-tactical transition-all uppercase placeholder:text-theme-muted/30 rounded-2xl";
 const labelClass =
-  "text-[8px] font-black text-theme-muted uppercase tracking-widest block mb-2 opacity-60 italic";
+  "text-[10px] font-black text-theme-muted uppercase tracking-widest block mb-2 opacity-60 italic";
 
 export const ServiceModal: React.FC<Props> = ({ onClose, onSave, initialData, saving }) => {
   const [form, setForm] = useState({

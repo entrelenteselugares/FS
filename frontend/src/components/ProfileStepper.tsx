@@ -35,7 +35,7 @@ export const ProfileStepper: React.FC<ProfileStepperProps> = ({ user, profile })
         <div className="space-y-1">
           <div className="flex items-center gap-3">
              <h3 className="text-xl font-heading font-bold text-theme-text uppercase ">Status do Perfil</h3>
-             <span className={`px-2 py-0.5 text-[8px] font-black uppercase tracking-widest ${percentage === 100 ? 'bg-brand-tactical text-black' : 'bg-amber-500/10 text-amber-500 border border-amber-500/20'}`}>
+             <span className={`px-2 py-0.5 text-[10px] font-black uppercase tracking-widest ${percentage === 100 ? 'bg-brand-tactical text-black' : 'bg-amber-500/10 text-amber-500 border border-amber-500/20'}`}>
                {percentage === 100 ? "PRONTO PARA MISSÕES" : "PERFIL INCOMPLETO"}
              </span>
           </div>
@@ -76,7 +76,7 @@ export const ProfileStepper: React.FC<ProfileStepperProps> = ({ user, profile })
 
            {nextStep ? (
              <div className="space-y-1">
-                <p className="text-[8px] font-bold text-theme-muted uppercase tracking-widest">Próximo Passo:</p>
+                <p className="text-[10px] font-bold text-theme-muted uppercase tracking-widest">Próximo Passo:</p>
                 <div className="flex items-center gap-2 text-brand-tactical">
                    <AlertCircle size={14} />
                    <p className="text-[11px] font-bold uppercase ">{nextStep.label}</p>
@@ -84,7 +84,7 @@ export const ProfileStepper: React.FC<ProfileStepperProps> = ({ user, profile })
              </div>
            ) : (
              <div className="space-y-1">
-                <p className="text-[8px] font-bold text-theme-muted uppercase tracking-widest">Recompensa Ativa:</p>
+                <p className="text-[10px] font-bold text-theme-muted uppercase tracking-widest">Recompensa Ativa:</p>
                 <div className="flex items-center gap-2 text-brand-tactical">
                    <Star size={14} fill="currentColor" />
                    <p className="text-[11px] font-bold uppercase ">Prioridade na Vitrine</p>

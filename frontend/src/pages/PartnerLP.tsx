@@ -214,7 +214,7 @@ export const PartnerLP: React.FC = () => {
                         {svc.name}
                       </h3>
                       {localPrice && localPrice !== svc.basePrice && (
-                        <span className="text-[8px] font-bold text-theme-subtle uppercase tracking-widest line-through">
+                        <span className="text-[10px] font-bold text-theme-subtle uppercase tracking-widest line-through">
                           Rede: {formatCurrency(svc.basePrice)}
                         </span>
                       )}

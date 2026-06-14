@@ -936,7 +936,7 @@ const CheckoutPageInner = () => {
                               <span className="text-[10px] font-bold text-white uppercase ">
                                 {item.media ? `Foto #${item.media.shortId}` : item.printProduct?.name}
                               </span>
-                              <span className="text-[8px] text-zinc-500 font-bold uppercase tracking-widest">
+                              <span className="text-[10px] text-zinc-500 font-bold uppercase tracking-widest">
                                 {item.media ? "Digital HD" : "Produto Físico"}
                               </span>
                             </div>
@@ -969,7 +969,7 @@ const CheckoutPageInner = () => {
                     <button 
                        type="button"
                        onClick={loadRegisteredAddress}
-                       className="text-[8px] font-bold text-white/40 hover:text-brand-tactical transition-colors uppercase tracking-widest flex items-center gap-1"
+                       className="text-[10px] font-bold text-white/40 hover:text-brand-tactical transition-colors uppercase tracking-widest flex items-center gap-1"
                     >
                        <MapPin size={10} /> Usar endereço de cadastro
                     </button>
@@ -1036,7 +1036,7 @@ const CheckoutPageInner = () => {
                   </div>
                  {shippingOptions.length > 0 && (
                    <div className="space-y-3 mt-6">
-                     <p className="text-[8px] font-bold text-zinc-500 uppercase tracking-widest ">Opções de Envio</p>
+                     <p className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest ">Opções de Envio</p>
                      {shippingOptions.map(opt => (
                        <button
                          key={opt.id}
@@ -1045,7 +1045,7 @@ const CheckoutPageInner = () => {
                        >
                          <div className="text-left">
                            <p className="text-[10px] font-bold uppercase text-white">{opt.name}</p>
-                           <p className="text-[8px] text-zinc-500 uppercase">Até {opt.deliveryTimeDays} dias úteis</p>
+                           <p className="text-[10px] text-zinc-500 uppercase">Até {opt.deliveryTimeDays} dias úteis</p>
                          </div>
                          <span className="text-xs font-bold text-brand-tactical">R$ {opt.price.toFixed(2)}</span>
                        </button>
@@ -1081,7 +1081,7 @@ const CheckoutPageInner = () => {
 
               {order.internalNotes?.includes("[ROTEAMENTO]") && (
                 <div className="mt-4 p-4 bg-brand-tactical/10 border border-brand-tactical/20 rounded-xl">
-                  <div className="flex items-center gap-2 text-[8px] font-bold text-brand-tactical uppercase tracking-widest ">
+                  <div className="flex items-center gap-2 text-[10px] font-bold text-brand-tactical uppercase tracking-widest ">
                     <ShieldCheck size={12} /> Produção Regional Ativada
                   </div>
                   <p className="text-[10px] text-zinc-400 mt-1 font-bold">
@@ -1288,7 +1288,7 @@ const CheckoutPageInner = () => {
             
             <div className="pt-8 border-t border-white/5 flex items-center justify-between opacity-30">
                <img src="https://static.mlstatic.com/org-img/vendors/br/logo-mercado-pago.png" alt="MP" className="h-3 grayscale brightness-200" />
-               <div className="flex items-center gap-2 text-[8px] font-bold uppercase tracking-widest"><Lock size={10} /> 256-bit SSL</div>
+               <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest"><Lock size={10} /> 256-bit SSL</div>
             </div>
           </div>
         </div>

@@ -107,7 +107,7 @@ export const QuoteLandingView: React.FC<QuoteLandingViewProps> = ({ selectFlow }
           
           {/* PACOTE ESSENCIAL */}
           <div className="relative group p-6 rounded-xl bg-theme-bg/90 backdrop-blur-md border border-brand-tactical/50 shadow-xl flex flex-col hover:-translate-y-1 transition-all duration-300 min-w-[280px] snap-center">
-            <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-brand-tactical text-brand-text px-3 py-0.5 rounded-full text-[8px] font-bold uppercase tracking-widest flex items-center gap-1 shadow-lg shadow-brand-tactical/20 whitespace-nowrap">
+            <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-brand-tactical text-brand-text px-3 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-widest flex items-center gap-1 shadow-lg shadow-brand-tactical/20 whitespace-nowrap">
               <Crown size={10} /> O Mais Vendido
             </div>
             

@@ -192,7 +192,7 @@ export function ProfileTab({ profile, onUpdated, onNotify }: ProfileTabProps) {
                 />
                 {formData.firstJobUrl && (
                   <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1.5">
-                    <span className={`text-[8px] font-black uppercase tracking-widest ${profile.isExperienceValidated ? "text-brand-tactical" : "text-amber-500"}`}>
+                    <span className={`text-[10px] font-black uppercase tracking-widest ${profile.isExperienceValidated ? "text-brand-tactical" : "text-amber-500"}`}>
                       {profile.isExperienceValidated ? "AUTENTICADO" : "ANÁLISE"}
                     </span>
                     {profile.isExperienceValidated ? <Check size={12} className="text-brand-tactical" /> : <div className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />}
@@ -244,7 +244,7 @@ export function ProfileTab({ profile, onUpdated, onNotify }: ProfileTabProps) {
 
             <div className="grid grid-cols-6 gap-2.5">
               <div className="col-span-2 sm:col-span-2 space-y-1">
-                <label className="text-[8px] font-bold text-theme-muted uppercase tracking-widest">CEP</label>
+                <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest">CEP</label>
                 <input
                   className="w-full bg-theme-bg border border-theme-border p-2.5 text-xs text-theme-text focus:border-brand-tactical/50 rounded-md"
                   value={formData.user?.address?.split('|')[0] || ""}
@@ -271,7 +271,7 @@ export function ProfileTab({ profile, onUpdated, onNotify }: ProfileTabProps) {
               </div>
 
               <div className="col-span-4 sm:col-span-4 space-y-1">
-                <label className="text-[8px] font-bold text-theme-muted uppercase tracking-widest">Logradouro</label>
+                <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest">Logradouro</label>
                 <input
                   className="w-full bg-theme-bg border border-theme-border p-2.5 text-xs text-theme-text focus:border-brand-tactical/50 rounded-md"
                   value={formData.user?.address?.split('|')[1] || ""}
@@ -284,7 +284,7 @@ export function ProfileTab({ profile, onUpdated, onNotify }: ProfileTabProps) {
               </div>
 
               <div className="col-span-2 sm:col-span-1 space-y-1">
-                <label className="text-[8px] font-bold text-theme-muted uppercase tracking-widest">Nº</label>
+                <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest">Nº</label>
                 <input
                   className="w-full bg-theme-bg border border-theme-border p-2.5 text-xs text-theme-text focus:border-brand-tactical/50 rounded-md"
                   value={formData.user?.address?.split('|')[2] || ""}
@@ -297,7 +297,7 @@ export function ProfileTab({ profile, onUpdated, onNotify }: ProfileTabProps) {
               </div>
 
               <div className="col-span-4 sm:col-span-2 space-y-1">
-                <label className="text-[8px] font-bold text-theme-muted uppercase tracking-widest">Bairro</label>
+                <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest">Bairro</label>
                 <input
                   className="w-full bg-theme-bg border border-theme-border p-2.5 text-xs text-theme-text focus:border-brand-tactical/50 rounded-md"
                   value={formData.user?.address?.split('|')[3] || ""}
@@ -310,7 +310,7 @@ export function ProfileTab({ profile, onUpdated, onNotify }: ProfileTabProps) {
               </div>
 
               <div className="col-span-4 sm:col-span-2 space-y-1">
-                <label className="text-[8px] font-bold text-theme-muted uppercase tracking-widest">Cidade</label>
+                <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest">Cidade</label>
                 <input
                   className="w-full bg-theme-bg border border-theme-border p-2.5 text-xs text-theme-text rounded-md opacity-70"
                   value={formData.user?.address?.split('|')[4] || ""}
@@ -319,7 +319,7 @@ export function ProfileTab({ profile, onUpdated, onNotify }: ProfileTabProps) {
               </div>
 
               <div className="col-span-2 sm:col-span-1 space-y-1">
-                <label className="text-[8px] font-bold text-theme-muted uppercase tracking-widest">UF</label>
+                <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest">UF</label>
                 <input
                   className="w-full bg-theme-bg border border-theme-border p-2.5 text-xs text-theme-text rounded-md opacity-70"
                   value={formData.user?.address?.split('|')[5] || ""}
@@ -330,7 +330,7 @@ export function ProfileTab({ profile, onUpdated, onNotify }: ProfileTabProps) {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
               <div className="space-y-1.5">
-                <label className="text-[8px] font-bold text-theme-muted uppercase tracking-widest opacity-80">Cidade Base Primária</label>
+                <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest opacity-80">Cidade Base Primária</label>
                 <input
                   className="w-full bg-theme-bg border border-theme-border p-2.5 text-sm text-theme-text focus:border-brand-tactical/50 rounded-md"
                   value={formData.city || ""}
@@ -339,7 +339,7 @@ export function ProfileTab({ profile, onUpdated, onNotify }: ProfileTabProps) {
                 />
               </div>
               <div className="space-y-1.5">
-                <label className="text-[8px] font-bold text-theme-muted uppercase tracking-widest opacity-80">Raio de Cobertura (Km)</label>
+                <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest opacity-80">Raio de Cobertura (Km)</label>
                 <div className="relative">
                   <input
                     type="number"
@@ -419,7 +419,7 @@ export function ProfileTab({ profile, onUpdated, onNotify }: ProfileTabProps) {
               <span className="text-[10px] font-bold text-brand-tactical uppercase tracking-[0.2em] ">Inventário Técnico</span>
               <button
                 onClick={addEquipment}
-                className="px-2.5 py-1.5 bg-brand-tactical/10 border border-brand-tactical/30 rounded-md text-brand-tactical text-[8px] font-bold uppercase tracking-widest hover:bg-brand-tactical hover:text-brand-text transition-all"
+                className="px-2.5 py-1.5 bg-brand-tactical/10 border border-brand-tactical/30 rounded-md text-brand-tactical text-[10px] font-bold uppercase tracking-widest hover:bg-brand-tactical hover:text-brand-text transition-all"
               >
                 + Adicionar
               </button>
@@ -443,7 +443,7 @@ export function ProfileTab({ profile, onUpdated, onNotify }: ProfileTabProps) {
                       value={eq.value || ""}
                       onChange={(e) => updateEquipment(i, "value", e.target.value === "" ? 0 : Number(e.target.value))}
                     />
-                    <span className="absolute right-1 top-1/2 -translate-y-1/2 text-[8px] text-theme-muted font-bold">R$</span>
+                    <span className="absolute right-1 top-1/2 -translate-y-1/2 text-[10px] text-theme-muted font-bold">R$</span>
                   </div>
                   <button onClick={() => removeEquipment(i)} className="p-1.5 text-red-500/60 hover:text-red-500 hover:bg-red-500/10 rounded-md transition-colors">
                     <X size={14} />

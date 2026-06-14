@@ -47,7 +47,7 @@ export const AdminConfigsPayouts: React.FC<Props> = ({ payouts, onOpenPayoutModa
           <p className="text-[9px] sm:text-[11px] font-bold text-brand-tactical uppercase tracking-[0.2em] sm:tracking-[0.4em] truncate max-w-[80vw]">
             Histórico de Repasses Vazio
           </p>
-          <p className="text-[8px] text-theme-muted/60 uppercase tracking-widest">
+          <p className="text-[10px] text-theme-muted/60 uppercase tracking-widest">
             Inicie um fechamento semanal para consolidar as provisões.
           </p>
         </div>
@@ -65,7 +65,7 @@ export const AdminConfigsPayouts: React.FC<Props> = ({ payouts, onOpenPayoutModa
                 <span className="text-2xl font-heading font-bold text-theme-text uppercase leading-none">
                   Ciclo {safeDate(payout.weekStart)} — {safeDate(payout.weekEnd)}
                 </span>
-                <span className={`text-[8px] font-black px-3 py-1 border uppercase tracking-widest italic ${
+                <span className={`text-[10px] font-black px-3 py-1 border uppercase tracking-widest italic ${
                   payout.status === "PAID"
                     ? "border-brand-tactical text-brand-tactical bg-brand-tactical/10"
                     : "border-amber-600 text-amber-600 bg-amber-600/5"
@@ -75,16 +75,16 @@ export const AdminConfigsPayouts: React.FC<Props> = ({ payouts, onOpenPayoutModa
               </div>
               <div className="flex flex-wrap gap-4 md:gap-8">
                 <div className="space-y-1">
-                  <span className="text-[7px] font-bold text-theme-muted uppercase tracking-widest">Faturamento Bruto</span>
+                  <span className="text-[9px] font-bold text-theme-muted uppercase tracking-widest">Faturamento Bruto</span>
                   <p className="text-[12px] font-bold text-theme-text font-mono ">{formatCurrency(payout.totalRevenue)}</p>
                 </div>
                 <div className="space-y-1">
-                  <span className="text-[7px] font-bold text-theme-muted uppercase tracking-widest">Provisão de Repasse</span>
+                  <span className="text-[9px] font-bold text-theme-muted uppercase tracking-widest">Provisão de Repasse</span>
                   <p className="text-[12px] font-bold text-brand-tactical font-mono ">{formatCurrency(payout.totalPayout)}</p>
                 </div>
               </div>
             </div>
-            <div className="px-3 md:px-6 py-4 bg-theme-bg border border-theme-border text-theme-muted text-[8px] font-bold uppercase tracking-[0.3em] font-mono shadow-inner group-hover:text-theme-text transition-colors rounded-2xl">
+            <div className="px-3 md:px-6 py-4 bg-theme-bg border border-theme-border text-theme-muted text-[10px] font-bold uppercase tracking-[0.3em] font-mono shadow-inner group-hover:text-theme-text transition-colors rounded-2xl">
               ID: {payout.id.slice(-8).toUpperCase()}
             </div>
           </div>
@@ -93,7 +93,7 @@ export const AdminConfigsPayouts: React.FC<Props> = ({ payouts, onOpenPayoutModa
             {payout.items?.map((item) => (
               <div key={item.id} className="px-5 md:px-10 py-4 md:py-8 grid grid-cols-1 md:grid-cols-12 items-center gap-4 md:gap-8 hover:bg-theme-bg-muted transition-all">
                 <div className="md:col-span-1">
-                  <span className="text-[7px] font-bold text-theme-muted border border-theme-border px-2 py-1 uppercase tracking-widest block text-center ">
+                  <span className="text-[9px] font-bold text-theme-muted border border-theme-border px-2 py-1 uppercase tracking-widest block text-center ">
                     {item.recipientType}
                   </span>
                 </div>
@@ -104,13 +104,13 @@ export const AdminConfigsPayouts: React.FC<Props> = ({ payouts, onOpenPayoutModa
                   </div>
                 </div>
                 <div className="md:col-span-3 text-center border-l border-theme-border/10">
-                  <span className="text-[8px] text-theme-muted uppercase tracking-widest font-bold block mb-1">Engenharia de Split</span>
+                  <span className="text-[10px] text-theme-muted uppercase tracking-widest font-bold block mb-1">Engenharia de Split</span>
                   <div className="text-[10px] text-theme-text font-bold uppercase ">
                     {item.orderCount} PEDIDOS • {item.splitPct}% DE {formatCurrency(item.grossRevenue)}
                   </div>
                 </div>
                 <div className="md:col-span-2 text-right">
-                  <span className="text-[8px] text-theme-muted uppercase tracking-widest font-bold block mb-1">Vlr Líquido</span>
+                  <span className="text-[10px] text-theme-muted uppercase tracking-widest font-bold block mb-1">Vlr Líquido</span>
                   <div className="text-xl font-heading font-bold text-brand-tactical leading-none">
                     {formatCurrency(item.amount)}
                   </div>
@@ -122,7 +122,7 @@ export const AdminConfigsPayouts: React.FC<Props> = ({ payouts, onOpenPayoutModa
                         <CheckCircle size={12} /> REPASSE EFETUADO
                       </div>
                       {item.pixTxId && (
-                        <div className="text-[8px] text-theme-muted font-mono uppercase tracking-widest opacity-60">
+                        <div className="text-[10px] text-theme-muted font-mono uppercase tracking-widest opacity-60">
                           REF: {item.pixTxId.slice(0, 16)}...
                         </div>
                       )}

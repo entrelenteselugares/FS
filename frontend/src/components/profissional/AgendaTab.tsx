@@ -142,7 +142,7 @@ export function AgendaTab({
                   <div className="flex-grow space-y-3">
                     <div className="flex flex-wrap items-center gap-2 md:gap-4">
                       <h3 className="text-lg md:text-xl font-heading font-bold text-theme-text uppercase leading-none">{ev.title}</h3>
-                      <div className="px-1.5 py-0.5 text-[8px] font-bold border rounded-md bg-brand-tactical/10 text-brand-tactical border-brand-tactical/20">
+                      <div className="px-1.5 py-0.5 text-[10px] font-bold border rounded-md bg-brand-tactical/10 text-brand-tactical border-brand-tactical/20">
                         OPORTUNIDADE
                       </div>
                     </div>
@@ -183,7 +183,7 @@ export function AgendaTab({
                     </div>
                     
                     <div className="flex gap-2 w-full md:w-auto mt-2">
-                      <button onClick={(e) => { e.stopPropagation(); onRespond(ev.id, "ACCEPTED"); }} className="px-3 py-2 bg-brand-tactical text-brand-text text-[8px] font-bold uppercase tracking-widest rounded-lg hover:bg-brand-tactical/90 transition-all flex-1 md:flex-none flex items-center justify-center gap-1">
+                      <button onClick={(e) => { e.stopPropagation(); onRespond(ev.id, "ACCEPTED"); }} className="px-3 py-2 bg-brand-tactical text-brand-text text-[10px] font-bold uppercase tracking-widest rounded-lg hover:bg-brand-tactical/90 transition-all flex-1 md:flex-none flex items-center justify-center gap-1">
                         <Check size={12} /> ACEITAR OPORTUNIDADE
                       </button>
                     </div>
@@ -209,7 +209,7 @@ export function AgendaTab({
                   <div className="flex-grow space-y-3">
                     <div className="flex flex-wrap items-center gap-2 md:gap-4">
                       <h3 className="text-lg md:text-xl font-heading font-bold text-theme-text uppercase leading-none">Convite para Residência</h3>
-                      <div className="px-1.5 py-0.5 text-[8px] font-bold border rounded-md bg-amber-500/10 text-amber-500 border-amber-500/20">
+                      <div className="px-1.5 py-0.5 text-[10px] font-bold border rounded-md bg-amber-500/10 text-amber-500 border-amber-500/20">
                         CONVITE
                       </div>
                     </div>
@@ -226,7 +226,7 @@ export function AgendaTab({
                       <button onClick={() => onRespondUnit(invite.id, "REJECTED")} className="p-2 border border-red-500/30 text-red-500 rounded-lg hover:bg-red-500/10 transition-all flex-1 md:flex-none flex items-center justify-center" title="Recusar">
                         <X size={14} />
                       </button>
-                      <button onClick={() => onRespondUnit(invite.id, "ACCEPTED")} className="px-3 py-2 bg-amber-500 text-amber-950 text-[8px] font-bold uppercase tracking-widest rounded-lg hover:bg-amber-400 transition-all flex-1 md:flex-none flex items-center justify-center gap-1">
+                      <button onClick={() => onRespondUnit(invite.id, "ACCEPTED")} className="px-3 py-2 bg-amber-500 text-amber-950 text-[10px] font-bold uppercase tracking-widest rounded-lg hover:bg-amber-400 transition-all flex-1 md:flex-none flex items-center justify-center gap-1">
                         <Check size={12} /> ACEITAR
                       </button>
                     </div>
@@ -263,7 +263,7 @@ export function AgendaTab({
                     <div className="flex-grow space-y-3">
                       <div className="flex flex-wrap items-center gap-2 md:gap-4">
                         <h3 className="text-lg md:text-xl font-heading font-bold text-theme-text uppercase leading-none">{ev.title}</h3>
-                        <div className={`px-1.5 py-0.5 text-[8px] font-black border rounded-md ${ev.captacaoStatus === "ACCEPTED" ? "bg-brand-tactical/10 text-brand-tactical border-brand-tactical/20" : "bg-amber-500/10 text-amber-500 border-amber-500/20"}`}>
+                        <div className={`px-1.5 py-0.5 text-[10px] font-black border rounded-md ${ev.captacaoStatus === "ACCEPTED" ? "bg-brand-tactical/10 text-brand-tactical border-brand-tactical/20" : "bg-amber-500/10 text-amber-500 border-amber-500/20"}`}>
                           {ev.captacaoStatus === "ACCEPTED" ? "CONFIRMADO" : "PENDENTE"}
                         </div>
                       </div>
@@ -308,7 +308,7 @@ export function AgendaTab({
                           <button onClick={(e) => { e.stopPropagation(); onRespond(ev.id, "REJECTED"); }} className="p-2 border border-red-500/30 text-red-500 rounded-lg hover:bg-red-500/10 transition-all flex-1 md:flex-none flex items-center justify-center" title="Recusar">
                             <X size={14} />
                           </button>
-                          <button onClick={(e) => { e.stopPropagation(); onRespond(ev.id, "ACCEPTED"); }} className="px-3 py-2 bg-brand-tactical text-brand-text text-[8px] font-bold uppercase tracking-widest rounded-lg hover:bg-brand-tactical/90 transition-all flex-1 md:flex-none flex items-center justify-center gap-1">
+                          <button onClick={(e) => { e.stopPropagation(); onRespond(ev.id, "ACCEPTED"); }} className="px-3 py-2 bg-brand-tactical text-brand-text text-[10px] font-bold uppercase tracking-widest rounded-lg hover:bg-brand-tactical/90 transition-all flex-1 md:flex-none flex items-center justify-center gap-1">
                             <Check size={12} /> ACEITAR
                           </button>
                         </div>
@@ -385,7 +385,7 @@ export function AgendaTab({
                     </div>
                   </div>
                   <div className="text-center">
-                    <p className="text-[8px] text-theme-muted font-bold uppercase tracking-widest">
+                    <p className="text-[10px] text-theme-muted font-bold uppercase tracking-widest">
                       Última sinc.: {calendarStatus.credential?.updatedAt ? new Date(calendarStatus.credential.updatedAt).toLocaleString('pt-BR') : "Nenhuma"}
                     </p>
                   </div>

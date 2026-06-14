@@ -215,7 +215,7 @@ export function FlashEventModal({ onClose, onSuccess, onError, network }: FlashE
             <div className="flex items-center justify-between p-4 bg-theme-bg-muted border border-theme-border">
               <div className="space-y-1">
                 <p className="text-[10px] font-bold text-theme-text uppercase tracking-widest ">Visibilidade</p>
-                <p className="text-[8px] text-theme-muted uppercase font-bold tracking-widest">
+                <p className="text-[10px] text-theme-muted uppercase font-bold tracking-widest">
                   {isPrivate ? 'Privado (Link Direto)' : 'Público (Aparece no Site)'}
                 </p>
               </div>

@@ -130,7 +130,7 @@ export const AdminConfigs: React.FC = () => {
           <button
             key={t}
             onClick={() => setTab(t)}
-            className={`px-4 md:px-8 py-3 text-[8px] md:text-[9px] font-black uppercase tracking-wider transition-all rounded-xl ${
+            className={`px-4 md:px-8 py-3 text-[10px] md:text-[9px] font-black uppercase tracking-wider transition-all rounded-xl ${
               tab === t ? "bg-brand-tactical text-zinc-950 shadow-md" : "text-theme-muted hover:text-theme-text"
             }`}
           >
@@ -206,16 +206,16 @@ export const AdminConfigs: React.FC = () => {
             <div className="p-4 md:p-8 space-y-8">
               <div className="bg-theme-bg-muted border border-theme-border p-4 md:p-8 rounded-[30px] space-y-6">
                 <div className="flex justify-between items-center border-b border-theme-border pb-4">
-                  <span className="text-[8px] font-bold text-theme-muted uppercase tracking-widest opacity-60">Favorecido</span>
+                  <span className="text-[10px] font-bold text-theme-muted uppercase tracking-widest opacity-60">Favorecido</span>
                   <span className="text-[12px] text-theme-text font-bold uppercase ">{payoutModal.name}</span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-[8px] font-bold text-theme-muted uppercase tracking-widest opacity-60">Valor do Repasse</span>
+                  <span className="text-[10px] font-bold text-theme-muted uppercase tracking-widest opacity-60">Valor do Repasse</span>
                   <span className="text-3xl font-heading text-brand-tactical font-bold ">{formatCurrency(payoutModal.amount)}</span>
                 </div>
               </div>
               <div className="space-y-4">
-                <label className="text-[8px] font-bold text-theme-muted uppercase tracking-widest block mb-2 opacity-60 ">ID da Transação Pix (Auditoria)</label>
+                <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest block mb-2 opacity-60 ">ID da Transação Pix (Auditoria)</label>
                 <div className="relative">
                   <ArrowRight className="absolute left-4 top-1/2 -translate-y-1/2 text-brand-tactical" size={16} strokeWidth={1.5} />
                   <input

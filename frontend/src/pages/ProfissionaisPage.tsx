@@ -180,7 +180,7 @@ export default function ProfissionaisPage() {
                   <option key={s} value={s} className="bg-theme-bg text-theme-text">{s}</option>
                 ))}
               </select>
-              <div className="absolute right-2 md:right-3 pointer-events-none text-theme-text-muted text-[8px]">▼</div>
+              <div className="absolute right-2 md:right-3 pointer-events-none text-theme-text-muted text-[10px]">▼</div>
             </div>
           </div>
         </div>
@@ -263,7 +263,7 @@ export default function ProfissionaisPage() {
                             {prof.isVerified && (
                               <div className="flex items-center gap-1 bg-brand-tactical/20 border border-brand-tactical/30 backdrop-blur-sm px-1.5 md:px-2.5 py-0.5 md:py-1 mb-1 md:mb-2 rounded shadow-lg">
                                 <ShieldCheck size={8} className="text-brand-tactical md:w-2.5 md:h-2.5" />
-                                <span className="text-[7px] md:text-[8px] font-bold text-brand-tactical uppercase tracking-widest">PRO</span>
+                                <span className="text-[9px] md:text-[10px] font-bold text-brand-tactical uppercase tracking-widest">PRO</span>
                               </div>
                             )}
                           </div>
@@ -276,7 +276,7 @@ export default function ProfissionaisPage() {
                               {prof.nome}
                             </h3>
                             {location && (
-                              <p className="text-[8px] md:text-[10px] text-theme-text/60 flex items-center gap-1 mt-0.5 md:mt-1 font-bold uppercase truncate">
+                              <p className="text-[10px] md:text-[10px] text-theme-text/60 flex items-center gap-1 mt-0.5 md:mt-1 font-bold uppercase truncate">
                                 <MapPin size={8} className="md:w-2.5 md:h-2.5" /> {location}
                               </p>
                             )}
@@ -285,12 +285,12 @@ export default function ProfissionaisPage() {
                           {/* Services */}
                           <div className="flex flex-wrap gap-1">
                             {prof.services.slice(0, 3).map(s => (
-                              <span key={s} className="px-1.5 py-0.5 bg-theme-surface-hover border border-theme-border text-[7px] md:text-[8px] font-bold text-theme-text/70 uppercase tracking-widest">
+                              <span key={s} className="px-1.5 py-0.5 bg-theme-surface-hover border border-theme-border text-[9px] md:text-[10px] font-bold text-theme-text/70 uppercase tracking-widest">
                                 {s.length > 5 ? s.substring(0, 5) + '.' : s}
                               </span>
                             ))}
                             {prof.services.length > 3 && (
-                              <span className="px-1.5 py-0.5 text-[7px] md:text-[8px] font-bold text-theme-text/50 uppercase">+{prof.services.length - 3}</span>
+                              <span className="px-1.5 py-0.5 text-[9px] md:text-[10px] font-bold text-theme-text/50 uppercase">+{prof.services.length - 3}</span>
                             )}
                           </div>
 
@@ -298,15 +298,15 @@ export default function ProfissionaisPage() {
                           <div className="grid grid-cols-3 gap-1 md:gap-3 pt-2 border-t border-theme-border">
                             <div className="text-center">
                               <p className="text-xs md:text-base font-heading font-bold text-theme-text ">{prof.experienceYears || 0}</p>
-                              <p className="text-[6px] md:text-[7px] text-theme-text/50 uppercase tracking-widest font-bold">Anos</p>
+                              <p className="text-[6px] md:text-[9px] text-theme-text/50 uppercase tracking-widest font-bold">Anos</p>
                             </div>
                             <div className="text-center border-x border-theme-border">
                               <p className="text-xs md:text-base font-heading font-bold text-theme-text ">{prof.totalMissions}</p>
-                              <p className="text-[6px] md:text-[7px] text-theme-text/50 uppercase tracking-widest font-bold">Mis.</p>
+                              <p className="text-[6px] md:text-[9px] text-theme-text/50 uppercase tracking-widest font-bold">Mis.</p>
                             </div>
                             <div className="text-center">
                               <p className="text-xs md:text-base font-heading font-bold text-brand-tactical ">{prof.agilityPoints}</p>
-                              <p className="text-[6px] md:text-[7px] text-theme-text/50 uppercase tracking-widest font-bold">Pts</p>
+                              <p className="text-[6px] md:text-[9px] text-theme-text/50 uppercase tracking-widest font-bold">Pts</p>
                             </div>
                           </div>
                         </div>

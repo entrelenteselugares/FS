@@ -177,7 +177,7 @@ export const AdminLeadsPage: React.FC = () => {
                       <div className="text-[9px] font-bold text-theme-text-muted lowercase flex items-center gap-2">
                         {item.cliente?.email || item.buyerEmail}
                         {item.recoverySentAt && (
-                          <span className="px-2 py-0.5 bg-brand-tactical/10 text-brand-tactical border border-brand-tactical/20 rounded-full text-[7px] font-bold uppercase">
+                          <span className="px-2 py-0.5 bg-brand-tactical/10 text-brand-tactical border border-brand-tactical/20 rounded-full text-[9px] font-bold uppercase">
                             Lembrete Enviado
                           </span>
                         )}
@@ -185,7 +185,7 @@ export const AdminLeadsPage: React.FC = () => {
                     </div>
                   </td>
                   <td className="p-3 md:p-6">
-                    <span className="text-[8px] md:text-[9px] font-bold uppercase tracking-wider md:tracking-widest text-theme-text-muted">{item.event.title}</span>
+                    <span className="text-[10px] md:text-[9px] font-bold uppercase tracking-wider md:tracking-widest text-theme-text-muted">{item.event.title}</span>
                   </td>
                   <td className="p-3 md:p-6">
                     <span className="text-xs font-heading font-bold text-theme-text">R$ {Number(item.valor).toFixed(2)}</span>
@@ -245,14 +245,14 @@ export const AdminLeadsPage: React.FC = () => {
                       <span className="text-[10px] font-bold text-theme-text lowercase">{lead.email}</span>
                     </div>
                   </td>
-                  <td className="p-3 md:p-6 text-[8px] md:text-[9px] font-bold uppercase tracking-wider md:tracking-widest text-theme-text-muted">
+                  <td className="p-3 md:p-6 text-[10px] md:text-[9px] font-bold uppercase tracking-wider md:tracking-widest text-theme-text-muted">
                     {lead.event?.title || 'Captação Geral'}
                   </td>
                   <td className="p-3 md:p-6 text-[9px] font-bold text-theme-text-muted">
                     {new Date(lead.createdAt).toLocaleDateString('pt-BR')}
                   </td>
                   <td className="p-3 md:p-6">
-                    <span className="px-2 py-1 bg-theme-bg border border-theme-border text-[8px] font-bold text-theme-text-muted uppercase tracking-widest rounded-full">{lead.source}</span>
+                    <span className="px-2 py-1 bg-theme-bg border border-theme-border text-[10px] font-bold text-theme-text-muted uppercase tracking-widest rounded-full">{lead.source}</span>
                   </td>
                   <td className="p-3 md:p-6 text-right">
                     <button 

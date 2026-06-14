@@ -88,7 +88,7 @@ function EventCard({ event, onClick }: { event: Event; onClick: () => void }) {
 
       {/* Badge de Autoria - Top Left */}
       <div className="absolute top-1.5 left-1.5 md:top-3 md:left-3 z-10 flex items-center gap-1.5">
-        <div className="w-4 h-4 md:w-6 md:h-6 rounded-full bg-emerald-500/90 flex items-center justify-center text-[7px] md:text-[10px] font-bold text-black shadow-lg">
+        <div className="w-4 h-4 md:w-6 md:h-6 rounded-full bg-emerald-500/90 flex items-center justify-center text-[9px] md:text-[10px] font-bold text-black shadow-lg">
           {event.ownerName?.charAt(0)?.toUpperCase() || event.cartorio?.charAt(0)?.toUpperCase() || "F"}
         </div>
         <span className="hidden md:inline text-[9px] font-bold text-white uppercase tracking-widest truncate max-w-[120px] drop-shadow-md">
@@ -99,12 +99,12 @@ function EventCard({ event, onClick }: { event: Event; onClick: () => void }) {
       {/* Status Badges - Top Right */}
       <div className="absolute top-1.5 right-1.5 md:top-3 md:right-3 z-10 flex flex-col gap-1 items-end">
         {today && (
-          <span className="px-1.5 py-0.5 bg-emerald-500 text-black text-[7px] md:text-[9px] font-bold uppercase tracking-widest rounded-sm shadow-xl">
+          <span className="px-1.5 py-0.5 bg-emerald-500 text-black text-[9px] md:text-[9px] font-bold uppercase tracking-widest rounded-sm shadow-xl">
             HOJE
           </span>
         )}
         {novo && (
-          <span className="px-2 py-0.5 bg-black/40 backdrop-blur-md text-white text-[7px] md:text-[9px] font-bold uppercase tracking-widest rounded-full border border-white/20 shadow-xl">
+          <span className="px-2 py-0.5 bg-black/40 backdrop-blur-md text-white text-[9px] md:text-[9px] font-bold uppercase tracking-widest rounded-full border border-white/20 shadow-xl">
             NOVO
           </span>
         )}
@@ -116,7 +116,7 @@ function EventCard({ event, onClick }: { event: Event; onClick: () => void }) {
           {event.title}
         </h3>
         {/* Metadata */}
-        <div className="flex flex-col gap-0.5 md:gap-1 text-white/70 text-[7px] md:text-[9px] font-bold uppercase tracking-widest mt-0.5 md:mt-1.5">
+        <div className="flex flex-col gap-0.5 md:gap-1 text-white/70 text-[9px] md:text-[9px] font-bold uppercase tracking-widest mt-0.5 md:mt-1.5">
           <div className="flex items-center gap-1">
             <MapPin className="w-2 h-2 md:w-2.5 md:h-2.5 text-emerald-500 shrink-0" />
             <span className="truncate">{event.city || (event.location?.startsWith("CEP:") ? null : event.location) || "PONTO DESIGNADO"}</span>

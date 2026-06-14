@@ -217,7 +217,7 @@ export const AdminOrders: React.FC = () => {
            <button
              key={f}
              onClick={() => setStatusFilter(f)}
-             className={`px-3 md:px-6 py-2.5 text-[8px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest border transition-all ${statusFilter === f ? 'border-brand-tactical bg-brand-tactical text-zinc-950' : 'border-theme-border text-theme-muted hover:border-zinc-500'}`}
+             className={`px-3 md:px-6 py-2.5 text-[10px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest border transition-all ${statusFilter === f ? 'border-brand-tactical bg-brand-tactical text-zinc-950' : 'border-theme-border text-theme-muted hover:border-zinc-500'}`}
            >
              {f === 'ALL' ? 'TODOS' : f}
            </button>
@@ -265,23 +265,23 @@ export const AdminOrders: React.FC = () => {
 
                   <div className="flex items-center gap-3 md:gap-6 md:gap-12 ml-auto md:ml-0">
                      <div className="text-right hidden sm:block">
-                        <span className="text-[8px] font-bold text-theme-muted uppercase tracking-widest block opacity-50 mb-1">Total Bruto</span>
+                        <span className="text-[10px] font-bold text-theme-muted uppercase tracking-widest block opacity-50 mb-1">Total Bruto</span>
                         <div className="text-md md:text-lg font-heading font-bold text-theme-text ">{formatCurrency(group.totalAmount)}</div>
                      </div>
                      
                      <div className="text-center min-w-[120px]">
                         {group.status === "QUITADO" && (
-                          <div className="flex items-center justify-center gap-2 px-4 py-2 border border-brand-tactical text-brand-tactical bg-brand-tactical/10 text-[8px] md:text-[9px] font-bold uppercase tracking-wider md:tracking-widest">
+                          <div className="flex items-center justify-center gap-2 px-4 py-2 border border-brand-tactical text-brand-tactical bg-brand-tactical/10 text-[10px] md:text-[9px] font-bold uppercase tracking-wider md:tracking-widest">
                              <CheckCircle2 size={12} /> {group.status}
                           </div>
                         )}
                         {group.status === "PARCIAL" && (
-                          <div className="flex items-center justify-center gap-2 px-4 py-2 border border-amber-500 text-amber-500 bg-amber-500/10 text-[8px] md:text-[9px] font-bold uppercase tracking-wider md:tracking-widest">
+                          <div className="flex items-center justify-center gap-2 px-4 py-2 border border-amber-500 text-amber-500 bg-amber-500/10 text-[10px] md:text-[9px] font-bold uppercase tracking-wider md:tracking-widest">
                              <PieChart size={12} /> {group.status}
                           </div>
                         )}
                         {group.status === "PENDENTE" && (
-                          <div className="flex items-center justify-center gap-2 px-4 py-2 border border-theme-border text-theme-muted bg-theme-bg/30 text-[8px] md:text-[9px] font-bold uppercase tracking-wider md:tracking-widest rounded-2xl">
+                          <div className="flex items-center justify-center gap-2 px-4 py-2 border border-theme-border text-theme-muted bg-theme-bg/30 text-[10px] md:text-[9px] font-bold uppercase tracking-wider md:tracking-widest rounded-2xl">
                              <Clock size={12} /> {group.status}
                           </div>
                         )}
@@ -319,27 +319,27 @@ export const AdminOrders: React.FC = () => {
                                 <td className="py-5 text-center">
                                    <div className="flex flex-wrap justify-center gap-1.5 max-w-[240px] mx-auto">
                                       {o.splitMatriz && (
-                                        <span className="px-2 py-0.5 bg-slate-900 text-[8px] text-slate-300 font-bold rounded-sm border border-slate-700" title="Matriz (Plataforma)">
+                                        <span className="px-2 py-0.5 bg-slate-900 text-[10px] text-slate-300 font-bold rounded-sm border border-slate-700" title="Matriz (Plataforma)">
                                           MT: {formatCurrency(Number(o.splitMatriz))}
                                         </span>
                                       )}
                                       {o.splitCaptacao && (
-                                        <span className="px-2 py-0.5 bg-emerald-500/10 text-[8px] text-emerald-500 font-bold rounded-sm border border-emerald-500/20" title="Captação">
+                                        <span className="px-2 py-0.5 bg-emerald-500/10 text-[10px] text-emerald-500 font-bold rounded-sm border border-emerald-500/20" title="Captação">
                                           CP: {formatCurrency(Number(o.splitCaptacao))}
                                         </span>
                                       )}
                                       {o.splitEdicao && (
-                                        <span className="px-2 py-0.5 bg-amber-500/10 text-[8px] text-amber-500 font-bold rounded-sm border border-amber-500/20" title="Edição">
+                                        <span className="px-2 py-0.5 bg-amber-500/10 text-[10px] text-amber-500 font-bold rounded-sm border border-amber-500/20" title="Edição">
                                           ED: {formatCurrency(Number(o.splitEdicao))}
                                         </span>
                                       )}
                                       {o.splitCartorio && (
-                                        <span className="px-2 py-0.5 bg-indigo-500/10 text-[8px] text-indigo-400 font-bold rounded-sm border border-indigo-500/20" title="Unidade Fixa">
+                                        <span className="px-2 py-0.5 bg-indigo-500/10 text-[10px] text-indigo-400 font-bold rounded-sm border border-indigo-500/20" title="Unidade Fixa">
                                           UF: {formatCurrency(Number(o.splitCartorio))}
                                         </span>
                                       )}
                                       {o.splitFranchisee && o.splitFranchisee > 0 && (
-                                        <span className="px-2 py-0.5 bg-cyan-500/10 text-[8px] text-cyan-400 font-bold rounded-sm border border-cyan-500/20" title={`Franqueado: ${o.passiveFranchisee || 'N/A'}`}>
+                                        <span className="px-2 py-0.5 bg-cyan-500/10 text-[10px] text-cyan-400 font-bold rounded-sm border border-cyan-500/20" title={`Franqueado: ${o.passiveFranchisee || 'N/A'}`}>
                                           FR: {formatCurrency(Number(o.splitFranchisee))}
                                         </span>
                                       )}
@@ -348,7 +348,7 @@ export const AdminOrders: React.FC = () => {
                                <td className="py-5 text-right font-heading font-bold text-theme-text text-lg">{formatCurrency(o.amount)}</td>
                                 <td className="py-5 text-center">
                                    <div className="flex flex-col items-center gap-2">
-                                      <span className={`text-[8px] font-black uppercase tracking-[0.2em] px-3 py-1.5 border ${o.status === 'APROVADO' ? 'border-brand-tactical text-brand-tactical' : 'border-red-900 text-red-500'}`}>
+                                      <span className={`text-[10px] font-black uppercase tracking-[0.2em] px-3 py-1.5 border ${o.status === 'APROVADO' ? 'border-brand-tactical text-brand-tactical' : 'border-red-900 text-red-500'}`}>
                                          {o.status}
                                       </span>
                                       {o.deliveryType === 'SHIPPING' && (
@@ -356,7 +356,7 @@ export const AdminOrders: React.FC = () => {
                                           <select 
                                             value={o.fulfillmentStatus}
                                             onChange={(e) => handleUpdateLogistics(o.id, e.target.value)}
-                                            className={`text-[7px] font-black uppercase px-2 py-0.5 border bg-transparent outline-none cursor-pointer ${o.fulfillmentStatus === 'SHIPPED' ? 'border-green-500 text-green-500' : 'border-zinc-600 text-zinc-500 hover:border-zinc-400'}`}
+                                            className={`text-[9px] font-black uppercase px-2 py-0.5 border bg-transparent outline-none cursor-pointer ${o.fulfillmentStatus === 'SHIPPED' ? 'border-green-500 text-green-500' : 'border-zinc-600 text-zinc-500 hover:border-zinc-400'}`}
                                           >
                                             <option value="PENDING">PENDENTE</option>
                                             <option value="PROCESSING">PROCESSANDO</option>
@@ -369,9 +369,9 @@ export const AdminOrders: React.FC = () => {
                                             placeholder="CÓD. RASTREIO"
                                             defaultValue={o.trackingCode}
                                             onBlur={(e) => handleUpdateLogistics(o.id, o.fulfillmentStatus || 'PENDING', e.target.value)}
-                                            className="text-[7px] text-theme-text font-bold bg-theme-bg-muted border border-theme-border px-1 py-0.5 w-20 text-center uppercase rounded-2xl"
+                                            className="text-[9px] text-theme-text font-bold bg-theme-bg-muted border border-theme-border px-1 py-0.5 w-20 text-center uppercase rounded-2xl"
                                           />
-                                          {o.shippingFee && <span className="text-[7px] text-theme-muted font-bold">Frete: {formatCurrency(Number(o.shippingFee))}</span>}
+                                          {o.shippingFee && <span className="text-[9px] text-theme-muted font-bold">Frete: {formatCurrency(Number(o.shippingFee))}</span>}
                                         </div>
                                       )}
                                    </div>
@@ -437,14 +437,14 @@ export const AdminOrders: React.FC = () => {
             <div className="flex-1 overflow-y-auto p-4 md:p-8 md:p-10 space-y-10 custom-scrollbar bg-theme-card">
               <div className="grid grid-cols-2 gap-3 md:gap-6">
                 <div className="bg-theme-bg-muted p-3 md:p-6 rounded-[30px] border border-theme-border space-y-4 shadow-inner">
-                  <span className="block text-[8px] font-bold text-theme-muted uppercase tracking-widest opacity-40 ">Informações do Cliente</span>
+                  <span className="block text-[10px] font-bold text-theme-muted uppercase tracking-widest opacity-40 ">Informações do Cliente</span>
                   <div className="space-y-1">
                     <div className="text-sm font-bold text-theme-text uppercase ">{selectedOrderForDetails.user?.nome || "CONVIDADO"}</div>
                     <div className="text-[10px] text-theme-muted font-bold lowercase opacity-60">{selectedOrderForDetails.buyerEmail || selectedOrderForDetails.user?.email}</div>
                   </div>
                 </div>
                 <div className="bg-theme-bg-muted p-3 md:p-6 rounded-[30px] border border-theme-border space-y-4 shadow-inner text-right">
-                  <span className="block text-[8px] font-bold text-theme-muted uppercase tracking-widest opacity-40 ">Temporalidade & Status</span>
+                  <span className="block text-[10px] font-bold text-theme-muted uppercase tracking-widest opacity-40 ">Temporalidade & Status</span>
                   <div className="space-y-1">
                     <div className={`text-xs font-black uppercase tracking-[0.2em] italic ${selectedOrderForDetails.status === 'APROVADO' ? 'text-brand-tactical' : 'text-amber-500'}`}>
                       {selectedOrderForDetails.status}
@@ -478,7 +478,7 @@ export const AdminOrders: React.FC = () => {
                           <div className="text-md font-bold text-brand-tactical ">
                             {formatCurrency(Number(item.price) * Number(item.quantity))}
                           </div>
-                          <span className="text-[8px] text-theme-muted uppercase tracking-widest font-bold opacity-30 ">Preço Unitário: {formatCurrency(Number(item.price))}</span>
+                          <span className="text-[10px] text-theme-muted uppercase tracking-widest font-bold opacity-30 ">Preço Unitário: {formatCurrency(Number(item.price))}</span>
                         </div>
                       </div>
                     ))}
@@ -490,7 +490,7 @@ export const AdminOrders: React.FC = () => {
             {/* Footer */}
             <div className="p-4 md:p-8 md:p-10 bg-theme-bg-muted border-t border-theme-border flex gap-3 md:gap-6 items-center shrink-0 rounded-2xl">
                <div className="flex-1 space-y-1">
-                  <span className="text-[8px] font-bold text-theme-muted uppercase tracking-[0.4em] opacity-40">Liquidado no Ledger</span>
+                  <span className="text-[10px] font-bold text-theme-muted uppercase tracking-[0.4em] opacity-40">Liquidado no Ledger</span>
                   <div className="text-3xl font-bold text-brand-tactical">{formatCurrency(selectedOrderForDetails.amount)}</div>
                </div>
                <button 

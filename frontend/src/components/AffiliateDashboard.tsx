@@ -85,7 +85,7 @@ export function AffiliateDashboard() {
             <h2 className="text-2xl font-heading font-bold text-theme-text uppercase flex items-center gap-2">
               <Share2 className="text-brand-tactical" size={22} />
               Indique e Ganhe
-              {isVip && <span className="text-[8px] px-2 py-0.5 bg-brand-tactical text-black font-bold uppercase tracking-widest rounded-full ml-2">Conta VIP</span>}
+              {isVip && <span className="text-[10px] px-2 py-0.5 bg-brand-tactical text-black font-bold uppercase tracking-widest rounded-full ml-2">Conta VIP</span>}
             </h2>
             <p className="text-xs text-theme-text-muted max-w-lg leading-relaxed">
               Compartilhe seu link exclusivo e ganhe comissões em todas as compras dos seus indicados.
@@ -118,7 +118,7 @@ export function AffiliateDashboard() {
             <div className="p-1.5 sm:p-2 bg-brand-tactical/10 text-brand-tactical rounded-xl border border-brand-tactical/20">
               <Users size={16} className="sm:w-[18px] sm:h-[18px]" />
             </div>
-            <h3 className="text-[8px] sm:text-[9px] font-bold text-theme-text-muted uppercase tracking-widest">Indicados Diretos</h3>
+            <h3 className="text-[10px] sm:text-[9px] font-bold text-theme-text-muted uppercase tracking-widest">Indicados Diretos</h3>
           </div>
           <p className="text-2xl sm:text-4xl font-heading font-bold text-theme-text leading-none">{data.totalL1}</p>
         </div>
@@ -130,7 +130,7 @@ export function AffiliateDashboard() {
             <div className="p-1.5 sm:p-2 bg-emerald-500/10 text-emerald-400 rounded-xl border border-emerald-500/20">
               <Banknote size={16} className="sm:w-[18px] sm:h-[18px]" />
             </div>
-            <h3 className="text-[8px] sm:text-[9px] font-bold text-theme-text-muted uppercase tracking-widest">Ganhos Diretos (L1)</h3>
+            <h3 className="text-[10px] sm:text-[9px] font-bold text-theme-text-muted uppercase tracking-widest">Ganhos Diretos (L1)</h3>
           </div>
           <p className="text-xl sm:text-3xl font-heading font-bold text-emerald-400 leading-none">
             {formatCurrency(data.commissionsL1 || 0)}
@@ -143,14 +143,14 @@ export function AffiliateDashboard() {
           {!isVip && (
              <div className="absolute inset-0 bg-theme-bg/95 backdrop-blur-[1px] flex flex-col items-center justify-center z-10 p-3 sm:p-4 text-center">
                <Trophy size={14} className="text-brand-tactical mb-0.5 sm:mb-1 animate-bounce sm:w-4 sm:h-4" />
-               <span className="text-[7px] sm:text-[8px] text-brand-tactical font-bold uppercase tracking-widest">Exclusivo VIP</span>
+               <span className="text-[9px] sm:text-[10px] text-brand-tactical font-bold uppercase tracking-widest">Exclusivo VIP</span>
              </div>
           )}
           <div className="flex items-center gap-2 sm:gap-3 mb-2 sm:mb-4">
             <div className="p-1.5 sm:p-2 bg-purple-500/10 text-purple-400 rounded-xl border border-purple-500/20">
               <Users size={16} className="sm:w-[18px] sm:h-[18px]" />
             </div>
-            <h3 className="text-[8px] sm:text-[9px] font-bold text-theme-text-muted uppercase tracking-widest">Rede Indireta (L2)</h3>
+            <h3 className="text-[10px] sm:text-[9px] font-bold text-theme-text-muted uppercase tracking-widest">Rede Indireta (L2)</h3>
           </div>
           <p className="text-2xl sm:text-4xl font-heading font-bold text-theme-text leading-none">{data.totalL2}</p>
         </div>
@@ -160,14 +160,14 @@ export function AffiliateDashboard() {
           <div className="absolute top-0 right-0 w-16 h-16 bg-gradient-to-br from-white/5 to-transparent rotate-45 translate-x-8 -translate-y-8" />
            {!isVip && (
              <div className="absolute inset-0 bg-theme-bg/95 backdrop-blur-[1px] flex flex-col items-center justify-center z-10 p-3 sm:p-4 text-center">
-               <span className="text-[7px] sm:text-[8px] text-brand-tactical font-bold uppercase tracking-widest">Seja VIP para Ganhar</span>
+               <span className="text-[9px] sm:text-[10px] text-brand-tactical font-bold uppercase tracking-widest">Seja VIP para Ganhar</span>
              </div>
           )}
           <div className="flex items-center gap-2 sm:gap-3 mb-2 sm:mb-4">
             <div className="p-1.5 sm:p-2 bg-emerald-500/10 text-emerald-400 rounded-xl border border-emerald-500/20">
               <Banknote size={16} className="sm:w-[18px] sm:h-[18px]" />
             </div>
-            <h3 className="text-[8px] sm:text-[9px] font-bold text-theme-text-muted uppercase tracking-widest">Ganhos de Rede (L2)</h3>
+            <h3 className="text-[10px] sm:text-[9px] font-bold text-theme-text-muted uppercase tracking-widest">Ganhos de Rede (L2)</h3>
           </div>
           <p className="text-xl sm:text-3xl font-heading font-bold text-emerald-400 leading-none">
             {formatCurrency(data.commissionsL2 || 0)}
@@ -190,7 +190,7 @@ export function AffiliateDashboard() {
                 <div className="p-1.5 sm:p-2 bg-brand-tactical/10 text-brand-tactical rounded-xl border border-brand-tactical/20">
                   <Banknote size={16} className="sm:w-[18px] sm:h-[18px]" />
                 </div>
-                <h3 className="text-[8px] sm:text-[9px] font-bold text-theme-text-muted uppercase tracking-widest">Liberado para Saque</h3>
+                <h3 className="text-[10px] sm:text-[9px] font-bold text-theme-text-muted uppercase tracking-widest">Liberado para Saque</h3>
               </div>
               <p className="text-xl sm:text-3xl font-heading font-bold text-brand-tactical leading-none">
                 {formatCurrency(data.availablePayout || 0)}
@@ -204,7 +204,7 @@ export function AffiliateDashboard() {
                 <div className="p-1.5 sm:p-2 bg-theme-bg-muted text-theme-text-muted rounded-xl border border-theme-border">
                   <Clock size={16} className="sm:w-[18px] sm:h-[18px]" />
                 </div>
-                <h3 className="text-[8px] sm:text-[9px] font-bold text-theme-text-muted uppercase tracking-widest">Em Processamento</h3>
+                <h3 className="text-[10px] sm:text-[9px] font-bold text-theme-text-muted uppercase tracking-widest">Em Processamento</h3>
               </div>
               <p className="text-xl sm:text-3xl font-heading font-bold text-theme-text-muted leading-none">
                 {formatCurrency(data.pendingPayout || 0)}

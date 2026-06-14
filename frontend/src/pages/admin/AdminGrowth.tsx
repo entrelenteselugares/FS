@@ -207,14 +207,14 @@ export function AdminGrowth() {
                       </p>
                     </div>
                     <div className="flex items-center gap-3 w-full md:w-auto justify-between md:justify-end">
-                      <span className={`px-2 py-1 text-[8px] font-black uppercase rounded ${c.active ? 'bg-emerald-500/20 text-emerald-400' : 'bg-red-500/20 text-red-400'}`}>
+                      <span className={`px-2 py-1 text-[10px] font-black uppercase rounded ${c.active ? 'bg-emerald-500/20 text-emerald-400' : 'bg-red-500/20 text-red-400'}`}>
                         {c.active ? 'Ativo' : 'Inativo'}
                       </span>
                       <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                         <button
                           type="button"
                           onClick={() => handleToggleActive(c.id, !c.active)}
-                          className={`px-3 py-1.5 text-[8px] font-black uppercase tracking-widest rounded border transition-colors cursor-pointer ${
+                          className={`px-3 py-1.5 text-[10px] font-black uppercase tracking-widest rounded border transition-colors cursor-pointer ${
                             c.active
                               ? 'bg-amber-500/10 border-amber-500/30 text-amber-400 hover:bg-amber-500/20'
                               : 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/20'
@@ -225,7 +225,7 @@ export function AdminGrowth() {
                         <button
                           type="button"
                           onClick={() => handleDeleteCoupon(c.id)}
-                          className="px-3 py-1.5 bg-red-500/10 border border-red-500/30 text-red-400 hover:bg-red-500/20 text-[8px] font-bold uppercase tracking-widest rounded transition-colors cursor-pointer"
+                          className="px-3 py-1.5 bg-red-500/10 border border-red-500/30 text-red-400 hover:bg-red-500/20 text-[10px] font-bold uppercase tracking-widest rounded transition-colors cursor-pointer"
                         >
                           Excluir
                         </button>
@@ -399,7 +399,7 @@ export function AdminGrowth() {
                 </div>
                 <div>
                   <h2 className="text-xl font-bold uppercase text-theme-text">Novo Cupom</h2>
-                  <p className="text-[8px] md:text-[9px] font-bold uppercase tracking-wider md:tracking-widest opacity-40">Criar cupom de desconto</p>
+                  <p className="text-[10px] md:text-[9px] font-bold uppercase tracking-wider md:tracking-widest opacity-40">Criar cupom de desconto</p>
                 </div>
               </div>
               <button onClick={() => setIsModalOpen(false)} className="p-2 hover:bg-theme-bg-muted rounded-full transition-all text-theme-muted">
@@ -411,7 +411,7 @@ export function AdminGrowth() {
             <form onSubmit={handleCreate} className="p-4 md:p-8 space-y-6">
               {/* Código */}
               <div className="space-y-2">
-                <label className="text-[8px] font-bold text-theme-muted uppercase tracking-widest block opacity-60">Código do Cupom</label>
+                <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest block opacity-60">Código do Cupom</label>
                 <input
                   type="text"
                   required
@@ -425,7 +425,7 @@ export function AdminGrowth() {
               {/* Tipo de Desconto */}
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <label className="text-[8px] font-bold text-theme-muted uppercase tracking-widest block opacity-60">Tipo</label>
+                  <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest block opacity-60">Tipo</label>
                   <select
                     value={form.discountType}
                     onChange={e => setForm({ ...form, discountType: e.target.value as "PCT" | "ABS" | "FREE_SHIPPING" })}
@@ -437,7 +437,7 @@ export function AdminGrowth() {
                   </select>
                 </div>
                 <div className="space-y-2">
-                  <label className="text-[8px] font-bold text-theme-muted uppercase tracking-widest block opacity-60">
+                  <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest block opacity-60">
                     {form.discountType === "FREE_SHIPPING" ? "Desconto" : form.discountType === "PCT" ? "Desconto (%)" : "Desconto (R$)"}
                   </label>
                   <input
@@ -457,7 +457,7 @@ export function AdminGrowth() {
               {/* Usos máximos e validade */}
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <label className="text-[8px] font-bold text-theme-muted uppercase tracking-widest block opacity-60">Máx. Usos (opcional)</label>
+                  <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest block opacity-60">Máx. Usos (opcional)</label>
                   <input
                     type="number"
                     min="1"
@@ -468,7 +468,7 @@ export function AdminGrowth() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-[8px] font-bold text-theme-muted uppercase tracking-widest block opacity-60">Validade (opcional)</label>
+                  <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest block opacity-60">Validade (opcional)</label>
                   <input
                     type="date"
                     value={form.expiresAt}

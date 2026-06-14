@@ -134,11 +134,11 @@ export const ProfessionalBadgesShowcase: React.FC<ProfessionalBadgesShowcaseProp
 
               {/* Header Title & Progress */}
               <div className="text-center z-10 space-y-0.5 mt-1 sm:mt-2">
-                <h4 className={`text-[8px] sm:text-sm font-heading font-black tracking-widest uppercase leading-tight ${isUnlocked ? 'text-theme-text' : 'text-theme-muted'}`}>
+                <h4 className={`text-[10px] sm:text-sm font-heading font-black tracking-widest uppercase leading-tight ${isUnlocked ? 'text-theme-text' : 'text-theme-muted'}`}>
                   {badge.name}
                 </h4>
                 {badge.progress && (
-                  <p className={`text-[7px] sm:text-[10px] font-bold tracking-widest ${isUnlocked ? 'text-theme-text-muted' : 'text-theme-muted/50'}`}>
+                  <p className={`text-[9px] sm:text-[10px] font-bold tracking-widest ${isUnlocked ? 'text-theme-text-muted' : 'text-theme-muted/50'}`}>
                     {badge.tier === "SILVER" && badge.id === "tech_master" 
                         ? `R$ ${(badge.progress.current/1000).toFixed(0)}K / ${(badge.progress.target/1000).toFixed(0)}K`
                         : `${badge.progress.current} / ${badge.progress.target}`}
@@ -156,14 +156,14 @@ export const ProfessionalBadgesShowcase: React.FC<ProfessionalBadgesShowcaseProp
                   />
                 ) : (
                   <div className="w-16 h-16 sm:w-32 sm:h-32 rounded-full border-2 border-dashed border-theme-border flex items-center justify-center">
-                    <span className="text-theme-muted text-[8px] sm:text-xs uppercase font-bold text-center">Sem<br/>Imagem</span>
+                    <span className="text-theme-muted text-[10px] sm:text-xs uppercase font-bold text-center">Sem<br/>Imagem</span>
                   </div>
                 )}
               </div>
               
               {/* Footer Description */}
               <div className="z-10 text-center w-full mt-auto pb-1">
-                <p className={`text-[6px] sm:text-[8px] uppercase tracking-widest font-black leading-tight ${isUnlocked ? 'text-theme-text-muted' : 'text-theme-muted/50'}`}>
+                <p className={`text-[6px] sm:text-[10px] uppercase tracking-widest font-black leading-tight ${isUnlocked ? 'text-theme-text-muted' : 'text-theme-muted/50'}`}>
                   {badge.description.split(':')[0]}
                 </p>
               </div>

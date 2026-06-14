@@ -90,7 +90,7 @@ export const Navbar: React.FC<NavbarProps> = ({ tenantLogoUrl }) => {
                 {user.profileImageUrl ? (
                   <img src={user.profileImageUrl} alt="" className="w-6 h-6 rounded-full object-cover border border-theme-border" />
                 ) : (
-                  <div className="w-6 h-6 rounded-full bg-brand-tactical/20 flex items-center justify-center text-[8px] font-bold border border-theme-border">
+                  <div className="w-6 h-6 rounded-full bg-brand-tactical/20 flex items-center justify-center text-[10px] font-bold border border-theme-border">
                     {user.nome?.[0] || "?"}
                   </div>
                 )}

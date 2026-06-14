@@ -365,26 +365,26 @@ export default function PrintMonitor() {
           <div className="bg-theme-bg-muted border border-theme-border/50 p-3 md:p-4 rounded-xl flex flex-col justify-center">
             <p className="text-[9px] font-bold text-theme-muted uppercase tracking-widest mb-1">Fila de Espera</p>
             <p className="text-2xl md:text-3xl font-bold text-brand-tactical leading-none">{pendingCount}</p>
-            <p className="text-[8px] text-theme-muted uppercase font-bold mt-1">fotos pendentes</p>
+            <p className="text-[10px] text-theme-muted uppercase font-bold mt-1">fotos pendentes</p>
           </div>
           <div className="bg-theme-bg-muted border border-theme-border/50 p-3 md:p-4 rounded-xl flex flex-col justify-center">
             <p className="text-[9px] font-bold text-theme-muted uppercase tracking-widest mb-1">Sincronização</p>
             <div className="flex items-center gap-1.5 text-xs md:text-sm font-bold text-theme-text leading-none">
               <Clock size={12} /> {lastSync.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
             </div>
-            <p className="text-[8px] text-theme-muted uppercase font-bold mt-1">última verificação</p>
+            <p className="text-[10px] text-theme-muted uppercase font-bold mt-1">última verificação</p>
           </div>
           <div className="bg-theme-bg-muted border border-theme-border/50 p-3 md:p-4 rounded-xl flex flex-col justify-center">
             <p className="text-[9px] font-bold text-theme-muted uppercase tracking-widest mb-1">Créditos Unidade</p>
             <p className="text-2xl md:text-3xl font-bold text-theme-text leading-none">{user?.franchiseProfile?.printCredits || 0}</p>
-            <p className="text-[8px] text-theme-muted uppercase font-bold mt-1">fotos restantes</p>
+            <p className="text-[10px] text-theme-muted uppercase font-bold mt-1">fotos restantes</p>
           </div>
           <div className="bg-theme-bg-muted border border-theme-border/50 p-3 md:p-4 rounded-xl flex flex-col justify-center">
             <p className="text-[9px] font-bold text-theme-muted uppercase tracking-widest mb-1">Configuração</p>
             <div className="flex items-center gap-1.5 text-xs md:text-sm font-bold text-theme-text leading-none uppercase">
               <Printer size={12} /> {orientation}
             </div>
-            <p className="text-[8px] text-theme-muted uppercase font-bold mt-1">layout base</p>
+            <p className="text-[10px] text-theme-muted uppercase font-bold mt-1">layout base</p>
           </div>
         </div>
 
@@ -468,14 +468,14 @@ export default function PrintMonitor() {
                     <div className="flex items-center justify-between">
                       <div>
                         <p className="text-[11px] font-bold uppercase ">{print.customerName || 'Convidado'}</p>
-                        <p className="text-[8px] text-zinc-500 uppercase font-bold mt-0.5">{new Date(print.createdAt).toLocaleTimeString()}</p>
+                        <p className="text-[10px] text-zinc-500 uppercase font-bold mt-0.5">{new Date(print.createdAt).toLocaleTimeString()}</p>
                       </div>
                       {print.status === 'PRINTED' ? (
                         <CheckCircle2 size={16} className="text-emerald-500" />
                       ) : (
                         <div className="flex items-center gap-2">
                            <div className="w-2 h-2 rounded-full bg-brand-tactical animate-pulse" />
-                           <span className="text-[8px] font-bold text-brand-tactical uppercase">Pendente</span>
+                           <span className="text-[10px] font-bold text-brand-tactical uppercase">Pendente</span>
                         </div>
                       )}
                     </div>

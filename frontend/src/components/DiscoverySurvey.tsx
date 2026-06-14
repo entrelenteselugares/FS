@@ -76,7 +76,7 @@ export const DiscoverySurvey: React.FC = () => {
             ))}
           </div>
 
-          <p className="text-[8px] text-zinc-700 font-bold uppercase tracking-widest text-center ">© Foto Segundo · Inteligência de Rede</p>
+          <p className="text-[10px] text-zinc-700 font-bold uppercase tracking-widest text-center ">© Foto Segundo · Inteligência de Rede</p>
         </motion.div>
       </div>
     </AnimatePresence>

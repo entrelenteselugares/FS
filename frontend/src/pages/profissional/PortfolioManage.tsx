@@ -394,7 +394,7 @@ export default function PortfolioManage({ isTab = false }: PortfolioManageProps)
 
                                 {/* Hidden badge */}
                                 {img.isHidden && (
-                                  <div className="absolute top-1.5 left-1.5 bg-amber-500/90 text-black text-[7px] font-bold uppercase px-1.5 py-0.5 rounded tracking-widest flex items-center gap-1">
+                                  <div className="absolute top-1.5 left-1.5 bg-amber-500/90 text-black text-[9px] font-bold uppercase px-1.5 py-0.5 rounded tracking-widest flex items-center gap-1">
                                     <EyeOff size={8} /> Oculta
                                   </div>
                                 )}

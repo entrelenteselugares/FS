@@ -107,7 +107,7 @@ export default function AdminPhygitalQueue({ eventId, eventTitle, onClose }: Pro
                   {/* Miniatura */}
                   <div className="w-24 h-24 bg-theme-card rounded-xl overflow-hidden flex-shrink-0 border border-theme-border relative">
                     <img src={job.imageUrl} alt="Print" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
-                    <div className="absolute top-1 right-1 bg-black/80 px-2 py-0.5 rounded text-[8px] font-bold text-brand-tactical uppercase">
+                    <div className="absolute top-1 right-1 bg-black/80 px-2 py-0.5 rounded text-[10px] font-bold text-brand-tactical uppercase">
                       {job.referenceCode}
                     </div>
                   </div>
@@ -119,19 +119,19 @@ export default function AdminPhygitalQueue({ eventId, eventTitle, onClose }: Pro
                       {job.status === 'PRINTED' ? (
                         <div className="flex items-center gap-1.5 text-brand-tactical">
                           <CheckCircle size={12} />
-                          <span className="text-[8px] md:text-[9px] font-bold uppercase tracking-wider md:tracking-widest">Impresso</span>
+                          <span className="text-[10px] md:text-[9px] font-bold uppercase tracking-wider md:tracking-widest">Impresso</span>
                         </div>
                       ) : (
                         <div className="flex items-center gap-1.5 text-amber-500">
                           <Clock size={12} className="animate-pulse" />
-                          <span className="text-[8px] md:text-[9px] font-bold uppercase tracking-wider md:tracking-widest">Na Fila</span>
+                          <span className="text-[10px] md:text-[9px] font-bold uppercase tracking-wider md:tracking-widest">Na Fila</span>
                         </div>
                       )}
                     </div>
                     <p className="text-[10px] text-zinc-500 font-bold mb-3">{job.customerPhone}</p>
                     
                     <div className="flex items-center gap-4">
-                       <span className="text-[8px] text-zinc-600 font-bold uppercase tracking-widest">
+                       <span className="text-[10px] text-zinc-600 font-bold uppercase tracking-widest">
                         {new Date(job.createdAt).toLocaleTimeString('pt-BR')}
                        </span>
                        <a 

@@ -270,7 +270,7 @@ function CountdownTimer({ targetDate }: { targetDate: string }) {
       ].map((item) => (
         <div key={item.label} className="flex flex-col items-center bg-theme-bg p-4 border border-theme-border">
           <span className="text-2xl md:text-4xl font-heading font-bold text-theme-text ">{String(item.val).padStart(2, '0')}</span>
-          <span className="text-[8px] font-bold text-brand-tactical uppercase tracking-[0.2em]">{item.label}</span>
+          <span className="text-[10px] font-bold text-brand-tactical uppercase tracking-[0.2em]">{item.label}</span>
         </div>
       ))}
     </div>
@@ -359,7 +359,7 @@ export default function EventPage() {
 
   const { addAlbum } = useRecentAlbums();
 
-  const durationHours = (event?.eventDays ? event.eventDays * 24 : 0) + (event?.eventHours || 2);
+  const durationHours = (event?.eventDays ? Math.max(0, event.eventDays - 1) * 24 : 0) + (event?.eventHours || 2);
   const eventStatus = useEventStatus(event?.dataEvento, null, durationHours, event?.isExpired, event?.active);
 
   const eventId = event?.id;
@@ -1511,7 +1511,7 @@ return (
             <QRCodeCanvas value={`${window.location.origin}/phygital-capture?e=${event.id}`} size={180} level="H" />
           </div>
           <div className="px-5 py-2.5 bg-theme-bg border border-theme-border rounded-full group max-w-full overflow-hidden w-full text-center">
-            <code className="text-[8px] font-bold text-brand-tactical tracking-widest group-hover:text-theme-text transition-colors block truncate">{window.location.origin}/phygital-capture?e={event.id}</code>
+            <code className="text-[10px] font-bold text-brand-tactical tracking-widest group-hover:text-theme-text transition-colors block truncate">{window.location.origin}/phygital-capture?e={event.id}</code>
           </div>
         </div>
       </Modal>

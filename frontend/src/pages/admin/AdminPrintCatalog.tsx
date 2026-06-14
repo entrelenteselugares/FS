@@ -148,21 +148,21 @@ export const AdminPrintCatalog: React.FC = () => {
       {/* DASHBOARD DE MÉTRICAS */}
       <div className="max-w-6xl mx-auto w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
          <div className="bg-theme-bg border border-theme-border p-3 md:p-6 space-y-3 shadow-sm group hover:border-brand-tactical/40 transition-all rounded-2xl">
-            <div className="flex justify-between items-start"><span className="text-[8px] font-bold text-theme-muted uppercase tracking-widest ">Mix Ativo</span><Package className="text-brand-tactical" size={14} strokeWidth={1.5} /></div>
+            <div className="flex justify-between items-start"><span className="text-[10px] font-bold text-theme-muted uppercase tracking-widest ">Mix Ativo</span><Package className="text-brand-tactical" size={14} strokeWidth={1.5} /></div>
             <div className="flex items-baseline gap-2">
                <span className="text-3xl font-heading font-bold text-theme-text ">{stats.activeCount}</span>
                <span className="text-[10px] font-bold text-theme-muted uppercase tracking-widest">/ {stats.totalCount} ITENS</span>
             </div>
          </div>
          <div className="bg-theme-bg border border-theme-border p-3 md:p-6 space-y-3 shadow-sm group hover:border-brand-tactical/40 transition-all rounded-2xl">
-            <div className="flex justify-between items-start"><span className="text-[8px] font-bold text-theme-muted uppercase tracking-widest ">Margem Média</span><TrendingUp className="text-brand-tactical" size={14} strokeWidth={1.5} /></div>
+            <div className="flex justify-between items-start"><span className="text-[10px] font-bold text-theme-muted uppercase tracking-widest ">Margem Média</span><TrendingUp className="text-brand-tactical" size={14} strokeWidth={1.5} /></div>
             <div className="flex items-baseline gap-2">
                <span className="text-3xl font-heading font-bold text-theme-text ">{stats.avgMargin.toFixed(1)}%</span>
                <span className="text-[10px] font-bold text-theme-muted uppercase tracking-widest">PROPORCIONAL</span>
             </div>
          </div>
           <div className="bg-theme-bg border border-theme-border p-3 md:p-6 space-y-3 shadow-sm group hover:border-brand-tactical/40 transition-all rounded-2xl">
-            <div className="flex justify-between items-start"><span className="text-[8px] font-bold text-theme-muted uppercase tracking-widest ">Hub de Produção</span><Layers className="text-brand-tactical" size={14} strokeWidth={1.5} /></div>
+            <div className="flex justify-between items-start"><span className="text-[10px] font-bold text-theme-muted uppercase tracking-widest ">Hub de Produção</span><Layers className="text-brand-tactical" size={14} strokeWidth={1.5} /></div>
             <div className="flex items-baseline gap-2">
                <span className="text-3xl font-heading font-bold text-theme-text ">OPERACIONAL</span>
                <span className="text-[10px] font-bold text-theme-muted uppercase tracking-widest">LOGÍSTICA ATIVA</span>
@@ -184,14 +184,14 @@ export const AdminPrintCatalog: React.FC = () => {
          <select 
             value={filterCategory}
             onChange={e => setFilterCategory(e.target.value)}
-            className="px-3 md:px-6 py-4 bg-theme-bg border border-theme-border text-[8px] md:text-[9px] font-bold uppercase tracking-wider md:tracking-widest text-theme-text outline-none focus:border-brand-tactical transition-all cursor-pointer rounded-2xl"
+            className="px-3 md:px-6 py-4 bg-theme-bg border border-theme-border text-[10px] md:text-[9px] font-bold uppercase tracking-wider md:tracking-widest text-theme-text outline-none focus:border-brand-tactical transition-all cursor-pointer rounded-2xl"
          >
             <option value="">TODAS AS CATEGORIAS</option>
             {Object.entries(CATEGORY_LABELS).map(([k, v]) => <option key={k} value={k}>{v.label}</option>)}
          </select>
          <button 
             onClick={() => setShowInactive(!showInactive)}
-            className="px-4 md:px-8 py-4 bg-theme-bg border border-theme-border text-[8px] md:text-[9px] font-bold uppercase tracking-wider md:tracking-widest text-theme-muted hover:text-white flex items-center gap-3 transition-all rounded-2xl"
+            className="px-4 md:px-8 py-4 bg-theme-bg border border-theme-border text-[10px] md:text-[9px] font-bold uppercase tracking-wider md:tracking-widest text-theme-muted hover:text-white flex items-center gap-3 transition-all rounded-2xl"
          >
             {showInactive ? <Eye size={14} /> : <EyeOff size={14} />} {showInactive ? 'OCULTAR INATIVOS' : 'EXIBIR TODOS'}
          </button>
@@ -221,7 +221,7 @@ export const AdminPrintCatalog: React.FC = () => {
                      <div className="flex items-center gap-4">
                         <div className="w-1.5 h-1.5 rounded-full" style={{ background: catInfo.color }} />
                         <h3 className="text-xs font-heading font-bold text-theme-text uppercase tracking-widest">{catInfo.label}</h3>
-                        <span className="text-[8px] font-bold text-theme-muted uppercase tracking-[0.2em] opacity-60">• {catProducts.length} ITENS</span>
+                        <span className="text-[10px] font-bold text-theme-muted uppercase tracking-[0.2em] opacity-60">• {catProducts.length} ITENS</span>
                      </div>
                      <div className="flex items-center gap-3 md:gap-6">
                         <div className="flex items-center gap-2 group/bulk" onClick={e => e.stopPropagation()}>
@@ -232,7 +232,7 @@ export const AdminPrintCatalog: React.FC = () => {
                                  if (e.key === 'Enter') handleBulkMargin(catId, parseFloat(e.currentTarget.value));
                               }}
                            />
-                           <button className="text-[8px] font-bold text-theme-muted uppercase tracking-widest hover:text-brand-tactical transition-all">APLICAR</button>
+                           <button className="text-[10px] font-bold text-theme-muted uppercase tracking-widest hover:text-brand-tactical transition-all">APLICAR</button>
                         </div>
                         {isExpanded ? <ChevronDown size={14} className="text-theme-muted" /> : <ChevronRight size={14} className="text-theme-muted" />}
                      </div>
@@ -242,7 +242,7 @@ export const AdminPrintCatalog: React.FC = () => {
                   {isExpanded && (
                      <div className="divide-y divide-theme-border/20 overflow-x-auto">
                         {/* TABLE HEADER */}
-                        <div className="min-w-[900px] grid grid-cols-[40px_1fr_100px_80px_80px_80px_80px_150px_110px] gap-4 p-4 bg-theme-bg text-[7px] font-bold uppercase tracking-widest text-theme-muted ">
+                        <div className="min-w-[900px] grid grid-cols-[40px_1fr_100px_80px_80px_80px_80px_150px_110px] gap-4 p-4 bg-theme-bg text-[9px] font-bold uppercase tracking-widest text-theme-muted ">
                            <div>STATUS</div>
                            <div>IDENTIFICAÇÃO DO PRODUTO</div>
                            <div className="text-right">CUSTO</div>
@@ -265,7 +265,7 @@ export const AdminPrintCatalog: React.FC = () => {
 
                                  <div className="space-y-1">
                                     <p className="text-[11px] font-bold text-theme-text uppercase leading-tight">{p.name}</p>
-                                    <div className="flex items-center gap-3 text-[7px] font-bold text-theme-muted uppercase tracking-widest">
+                                    <div className="flex items-center gap-3 text-[9px] font-bold text-theme-muted uppercase tracking-widest">
                                        <Tag size={8} /> {p.sku} <span className="opacity-40">•</span> {p.unit}
                                     </div>
                                  </div>
@@ -348,7 +348,7 @@ function NewSupplierModal({ onClose, onSave }: { onClose: () => void, onSave: ()
   const [loading, setLoading] = useState(false);
 
   const inputClass = "w-full bg-theme-bg-muted border border-theme-border p-4 text-[10px] text-theme-text font-black outline-none focus:border-brand-tactical transition-all uppercase placeholder:text-theme-muted/30 rounded-xl";
-  const labelClass = "text-[8px] font-black text-theme-muted uppercase tracking-widest block mb-2 opacity-60 italic";
+  const labelClass = "text-[10px] font-black text-theme-muted uppercase tracking-widest block mb-2 opacity-60 italic";
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -394,7 +394,7 @@ function NewSupplierModal({ onClose, onSave }: { onClose: () => void, onSave: ()
           </div>
           
           <div className="pt-6 flex gap-4">
-            <button type="button" onClick={onClose} className="flex-1 py-4 border border-theme-border text-[8px] md:text-[9px] font-bold uppercase tracking-wider md:tracking-widest text-theme-muted hover:text-white transition-all rounded-2xl ">Cancelar</button>
+            <button type="button" onClick={onClose} className="flex-1 py-4 border border-theme-border text-[10px] md:text-[9px] font-bold uppercase tracking-wider md:tracking-widest text-theme-muted hover:text-white transition-all rounded-2xl ">Cancelar</button>
             <button type="submit" disabled={loading} className="flex-1 py-4 bg-brand-tactical text-zinc-950 text-[9px] font-bold uppercase tracking-[0.3em] shadow-xl hover:brightness-110 transition-all rounded-2xl ">
               {loading ? "Sincronizando..." : "Salvar Registro"}
             </button>
@@ -462,7 +462,7 @@ function NewProductModal({ onClose, onSave, suppliers, onRefreshSuppliers }: {
   };
 
   const inputClass = "w-full bg-theme-bg-muted border border-theme-border p-4 text-[10px] text-theme-text font-black outline-none focus:border-brand-tactical transition-all uppercase placeholder:text-theme-muted/30 rounded-xl";
-  const labelClass = "text-[8px] font-black text-theme-muted uppercase tracking-widest block mb-2 opacity-60 italic";
+  const labelClass = "text-[10px] font-black text-theme-muted uppercase tracking-widest block mb-2 opacity-60 italic";
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

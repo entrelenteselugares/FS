@@ -53,15 +53,15 @@ export function ServicesTab({ profile, catalogServices, onAddService, onRemoveSe
   const getStatusBadge = (status?: string, note?: string | null) => {
     switch (status) {
       case "PENDING_REVIEW":
-        return <span className="px-2 py-0.5 rounded-md bg-yellow-500/10 text-yellow-500 border border-yellow-500/20 text-[8px] font-bold uppercase tracking-widest flex items-center gap-1" title="Em Análise"><Clock size={10} /> Em Análise</span>;
+        return <span className="px-2 py-0.5 rounded-md bg-yellow-500/10 text-yellow-500 border border-yellow-500/20 text-[10px] font-bold uppercase tracking-widest flex items-center gap-1" title="Em Análise"><Clock size={10} /> Em Análise</span>;
       case "NETWORK":
-        return <span className="px-2 py-0.5 rounded-md bg-blue-500 text-blue-500 border border-blue-500 text-[8px] font-bold uppercase tracking-widest flex items-center gap-1" title="Rede Global"><ShieldCheck size={10} /> Rede Global</span>;
+        return <span className="px-2 py-0.5 rounded-md bg-blue-500 text-blue-500 border border-blue-500 text-[10px] font-bold uppercase tracking-widest flex items-center gap-1" title="Rede Global"><ShieldCheck size={10} /> Rede Global</span>;
       case "EXCLUSIVE":
-        return <span className="px-2 py-0.5 rounded-md bg-purple-500/10 text-purple-500 border border-purple-500/20 text-[8px] font-bold uppercase tracking-widest flex items-center gap-1" title="Exclusivo"><Briefcase size={10} /> Exclusivo</span>;
+        return <span className="px-2 py-0.5 rounded-md bg-purple-500/10 text-purple-500 border border-purple-500/20 text-[10px] font-bold uppercase tracking-widest flex items-center gap-1" title="Exclusivo"><Briefcase size={10} /> Exclusivo</span>;
       case "REJECTED":
-        return <span className="px-2 py-0.5 rounded-md bg-red-500/10 text-red-500 border border-red-500/20 text-[8px] font-bold uppercase tracking-widest flex items-center gap-1" title={note || "Recusado"}><X size={10} /> Recusado</span>;
+        return <span className="px-2 py-0.5 rounded-md bg-red-500/10 text-red-500 border border-red-500/20 text-[10px] font-bold uppercase tracking-widest flex items-center gap-1" title={note || "Recusado"}><X size={10} /> Recusado</span>;
       case "NEEDS_ADJUSTMENT":
-        return <span className="px-2 py-0.5 rounded-md bg-orange-500/10 text-orange-500 border border-orange-500/20 text-[8px] font-bold uppercase tracking-widest flex items-center gap-1" title={note || "Requer Ajustes"}><AlertCircle size={10} /> Requer Ajustes</span>;
+        return <span className="px-2 py-0.5 rounded-md bg-orange-500/10 text-orange-500 border border-orange-500/20 text-[10px] font-bold uppercase tracking-widest flex items-center gap-1" title={note || "Requer Ajustes"}><AlertCircle size={10} /> Requer Ajustes</span>;
       case "APPROVED":
         return null;
       default:
@@ -87,13 +87,13 @@ export function ServicesTab({ profile, catalogServices, onAddService, onRemoveSe
           <div className="space-y-2 sm:space-y-4 flex flex-col">
             <div className="flex items-center gap-2 sm:gap-3">
               <div className="p-1.5 sm:p-2 bg-theme-bg border border-theme-border rounded-xl text-brand-tactical shadow-sm"><Clock size={14} className="sm:w-4 sm:h-4" /></div>
-              <label className="text-[8px] sm:text-[11px] font-bold text-theme-text uppercase tracking-widest leading-tight">Valor Hora Automático</label>
+              <label className="text-[10px] sm:text-[11px] font-bold text-theme-text uppercase tracking-widest leading-tight">Valor Hora Automático</label>
             </div>
             <div className="w-full bg-theme-bg border-2 border-theme-border rounded-xl p-3 sm:p-5 text-base sm:text-xl font-heading font-bold text-theme-text/80 flex justify-between items-center shadow-md flex-1">
               <span>R$ {Number(profile?.hourlyRate || 0).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</span>
               <ShieldCheck size={14} className="text-brand-tactical animate-pulse hidden sm:block" />
             </div>
-            <p className="text-[7px] sm:text-[9px] text-theme-muted uppercase font-bold">
+            <p className="text-[9px] sm:text-[9px] text-theme-muted uppercase font-bold">
               Definido pela meritocracia.
             </p>
           </div>
@@ -101,13 +101,13 @@ export function ServicesTab({ profile, catalogServices, onAddService, onRemoveSe
           <div className="space-y-2 sm:space-y-4 flex flex-col">
             <div className="flex items-center gap-2 sm:gap-3">
               <div className="p-1.5 sm:p-2 bg-theme-bg border border-theme-border rounded-xl text-brand-tactical shadow-sm"><Zap size={14} className="sm:w-4 sm:h-4" /></div>
-              <label className="text-[8px] sm:text-[11px] font-bold text-theme-text uppercase tracking-widest leading-tight">Multiplicador Técnico</label>
+              <label className="text-[10px] sm:text-[11px] font-bold text-theme-text uppercase tracking-widest leading-tight">Multiplicador Técnico</label>
             </div>
             <div className="w-full bg-theme-bg border-2 border-theme-border rounded-xl p-3 sm:p-5 text-base sm:text-xl font-heading font-bold text-brand-tactical flex justify-between items-center shadow-md flex-1">
               <span>{profile?.equipmentMultiplier || "1.0"}</span>
-              <span className="text-[6px] sm:text-[8px] font-bold uppercase text-theme-muted ">Ativos</span>
+              <span className="text-[6px] sm:text-[10px] font-bold uppercase text-theme-muted ">Ativos</span>
             </div>
-            <p className="text-[7px] sm:text-[9px] text-theme-muted uppercase font-bold">
+            <p className="text-[9px] sm:text-[9px] text-theme-muted uppercase font-bold">
               Gerencie seus ativos.{" "}
               <button onClick={onOpenProfile} className="text-brand-tactical hover:underline cursor-pointer">
                 INVENTÁRIO
@@ -136,7 +136,7 @@ export function ServicesTab({ profile, catalogServices, onAddService, onRemoveSe
               <Plus size={14} /> CRIAR SERVIÇO PERSONALIZADO
             </button>
             <div className="text-right hidden md:block">
-              <p className="text-[8px] font-bold text-theme-muted uppercase tracking-widest mb-1 opacity-60">Total</p>
+              <p className="text-[10px] font-bold text-theme-muted uppercase tracking-widest mb-1 opacity-60">Total</p>
               <p className="text-xl font-heading font-bold text-theme-text leading-none">{profile?.proServices?.length || 0}</p>
             </div>
           </div>
@@ -196,7 +196,7 @@ export function ServicesTab({ profile, catalogServices, onAddService, onRemoveSe
                         </button>
                       </div>
                       {localError && (
-                        <p className="text-[8px] text-red-500 font-bold uppercase tracking-widest text-right max-w-[200px]">
+                        <p className="text-[10px] text-red-500 font-bold uppercase tracking-widest text-right max-w-[200px]">
                           {localError}
                         </p>
                       )}
@@ -204,7 +204,7 @@ export function ServicesTab({ profile, catalogServices, onAddService, onRemoveSe
                   ) : (
                     <div className="flex items-center justify-between sm:justify-end gap-6 sm:gap-12 w-full sm:w-auto">
                       <div className="text-left md:text-right">
-                        <p className="text-[8px] font-bold text-theme-muted uppercase tracking-widest mb-1 opacity-60">Preço Ativo</p>
+                        <p className="text-[10px] font-bold text-theme-muted uppercase tracking-widest mb-1 opacity-60">Preço Ativo</p>
                         <p className="text-xl sm:text-2xl font-heading font-bold text-theme-text leading-none flex items-center gap-2">
                           <span>R$ {Number(svc.price).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</span>
                           {onUpdateServicePrice && (
@@ -284,33 +284,33 @@ export function ServicesTab({ profile, catalogServices, onAddService, onRemoveSe
                           {cat.name}
                         </div>
                         <div className="flex flex-col xl:flex-row xl:items-center gap-1 sm:gap-3">
-                          <div className="flex items-center gap-1 text-[8px] font-bold text-theme-muted uppercase tracking-widest ">
+                          <div className="flex items-center gap-1 text-[10px] font-bold text-theme-muted uppercase tracking-widest ">
                             <Clock size={8} className="text-brand-tactical" /> {cat.estimatedMinutes} MIN
                           </div>
                           <div className="hidden xl:block w-1 h-1 rounded-full bg-theme-border" />
-                          <div className="text-[8px] font-bold text-theme-muted uppercase tracking-widest ">
+                          <div className="text-[10px] font-bold text-theme-muted uppercase tracking-widest ">
                             Mín: R$ {((minHourlyRate * cat.estimatedMinutes) / 60).toFixed(2)}
                           </div>
                         </div>
                       </div>
                       <div className="flex flex-col xl:flex-row xl:items-end justify-between border-t border-theme-border/50 pt-2 gap-2 sm:gap-3 mt-auto">
                         <div className="space-y-0.5">
-                          <div className="flex items-center gap-1 text-[7px] sm:text-[8px] font-bold text-brand-tactical uppercase tracking-widest line-clamp-1">
+                          <div className="flex items-center gap-1 text-[9px] sm:text-[10px] font-bold text-brand-tactical uppercase tracking-widest line-clamp-1">
                             <TrendingUp size={8} /> Sugerido
                           </div>
                           <div className="text-sm sm:text-xl font-heading font-bold text-brand-tactical leading-none">
-                            <span className="text-[8px] sm:text-[10px] mr-0.5 font-sans not-">R$</span>
+                            <span className="text-[10px] sm:text-[10px] mr-0.5 font-sans not-">R$</span>
                             {suggested.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
                           </div>
                         </div>
                         {alreadyAdded ? (
-                          <div className="w-full xl:w-auto px-2 py-1.5 bg-brand-tactical/10 border border-brand-tactical/30 rounded-md text-brand-tactical text-[7px] font-bold uppercase tracking-widest flex items-center justify-center gap-1">
+                          <div className="w-full xl:w-auto px-2 py-1.5 bg-brand-tactical/10 border border-brand-tactical/30 rounded-md text-brand-tactical text-[9px] font-bold uppercase tracking-widest flex items-center justify-center gap-1">
                             <Check size={10} /> EM VITRINE
                           </div>
                         ) : (
                           <button
                             onClick={() => onAddService(cat)}
-                            className="w-full xl:w-auto px-2 sm:px-4 py-1.5 bg-brand-tactical text-brand-text text-[8px] sm:text-[9px] font-bold uppercase tracking-[0.2em] rounded-md hover:bg-brand-tactical/90 hover:scale-[1.02] hover:shadow-lg hover:shadow-brand-tactical/30 transition-all cursor-pointer text-center"
+                            className="w-full xl:w-auto px-2 sm:px-4 py-1.5 bg-brand-tactical text-brand-text text-[10px] sm:text-[9px] font-bold uppercase tracking-[0.2em] rounded-md hover:bg-brand-tactical/90 hover:scale-[1.02] hover:shadow-lg hover:shadow-brand-tactical/30 transition-all cursor-pointer text-center"
                           >
                             IMPORTAR
                           </button>

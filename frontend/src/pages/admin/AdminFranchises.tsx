@@ -249,7 +249,7 @@ export default function AdminFranchises() {
                   </div>
                 </td>
                 <td className="p-3 md:p-6 text-center">
-                  <span className={`px-3 py-1 text-[8px] font-black uppercase rounded-full ${f.franchiseProfile?.active ? 'bg-emerald-500/10 text-emerald-500' : 'bg-red-500/10 text-red-500'}`}>
+                  <span className={`px-3 py-1 text-[10px] font-black uppercase rounded-full ${f.franchiseProfile?.active ? 'bg-emerald-500/10 text-emerald-500' : 'bg-red-500/10 text-red-500'}`}>
                     {f.franchiseProfile?.active ? 'Ativo' : 'Inativo'}
                   </span>
                 </td>
@@ -258,7 +258,7 @@ export default function AdminFranchises() {
                     <span className={`text-xl font-black ${(f.franchiseProfile?.printCredits || 0) < 50 ? 'text-amber-500' : 'text-theme-text'}`}>
                       {f.franchiseProfile?.printCredits || 0}
                     </span>
-                    <span className="text-[8px] text-theme-muted font-bold uppercase">Fotos Disponíveis</span>
+                    <span className="text-[10px] text-theme-muted font-bold uppercase">Fotos Disponíveis</span>
                   </div>
                 </td>
                 <td className="p-3 md:p-6 text-center text-sm font-bold text-theme-muted">
@@ -291,7 +291,7 @@ export default function AdminFranchises() {
                         </button>
                       </>
                     ) : (
-                      <span className="text-[8px] font-bold text-theme-muted uppercase tracking-widest bg-theme-bg-muted px-3 py-2 border border-theme-border rounded-2xl">Acesso Restrito</span>
+                      <span className="text-[10px] font-bold text-theme-muted uppercase tracking-widest bg-theme-bg-muted px-3 py-2 border border-theme-border rounded-2xl">Acesso Restrito</span>
                     )}
                   </div>
                 </td>
@@ -322,21 +322,21 @@ export default function AdminFranchises() {
             </thead>
             <tbody className="divide-y divide-theme-border/50">
               {loadingOrders ? (
-                <tr><td colSpan={5} className="p-5 md:p-10 text-center text-theme-muted text-[8px] md:text-[9px] font-bold uppercase tracking-wider md:tracking-widest">Carregando pedidos...</td></tr>
+                <tr><td colSpan={5} className="p-5 md:p-10 text-center text-theme-muted text-[10px] md:text-[9px] font-bold uppercase tracking-wider md:tracking-widest">Carregando pedidos...</td></tr>
               ) : supplyOrders.length === 0 ? (
-                <tr><td colSpan={5} className="p-5 md:p-10 text-center text-theme-muted text-[8px] md:text-[9px] font-bold uppercase tracking-wider md:tracking-widest">Nenhum pedido registrado.</td></tr>
+                <tr><td colSpan={5} className="p-5 md:p-10 text-center text-theme-muted text-[10px] md:text-[9px] font-bold uppercase tracking-wider md:tracking-widest">Nenhum pedido registrado.</td></tr>
               ) : supplyOrders.map(order => (
                 <tr key={order.id} className="hover:bg-white/[0.02] transition-colors">
                   <td className="p-4">
                     <div className="flex flex-col">
                       <span className="text-[10px] font-bold text-theme-text font-mono">#{order.id.slice(-6).toUpperCase()}</span>
-                      <span className="text-[8px] text-theme-muted">{new Date(order.createdAt).toLocaleDateString('pt-BR')}</span>
+                      <span className="text-[10px] text-theme-muted">{new Date(order.createdAt).toLocaleDateString('pt-BR')}</span>
                     </div>
                   </td>
                   <td className="p-4">
                     <div className="flex flex-col">
                       <span className="text-[10px] font-bold text-theme-text uppercase">{order.franchisee?.nome}</span>
-                      <span className="text-[8px] text-theme-muted">{order.franchisee?.email}</span>
+                      <span className="text-[10px] text-theme-muted">{order.franchisee?.email}</span>
                     </div>
                   </td>
                   <td className="p-4">
@@ -348,7 +348,7 @@ export default function AdminFranchises() {
                     <span className="text-[10px] font-bold text-emerald-500 ">R$ {Number(order.total).toFixed(2)}</span>
                   </td>
                   <td className="p-4 text-right">
-                    <span className={`text-[8px] font-black px-2 py-1 rounded-sm uppercase tracking-tighter ${
+                    <span className={`text-[10px] font-black px-2 py-1 rounded-sm uppercase tracking-tighter ${
                       order.status === 'PAID' ? 'bg-emerald-500/10 text-emerald-500' : 
                       order.status === 'SHIPPED' ? 'bg-blue-500 text-blue-500' :
                       order.status === 'PENDING' ? 'bg-amber-500/10 text-amber-500' : 'bg-zinc-800 text-zinc-500'
@@ -361,16 +361,16 @@ export default function AdminFranchises() {
                       <button
                         onClick={() => setFulfillModal({ orderId: order.id, franchisee: order.franchisee?.nome })}
                         disabled={fulfillingOrder === order.id}
-                        className="text-[8px] font-bold uppercase tracking-widest px-3 py-1.5 bg-emerald-500 hover:bg-emerald-400 text-black rounded-sm transition-all disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
+                        className="text-[10px] font-bold uppercase tracking-widest px-3 py-1.5 bg-emerald-500 hover:bg-emerald-400 text-black rounded-sm transition-all disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
                       >
                         {fulfillingOrder === order.id ? 'Processando...' : '✓ Enviar & Creditar'}
                       </button>
                     )}
                     {order.status === 'SHIPPED' && (
                       <div className="flex flex-col items-end gap-1">
-                        <span className="text-[8px] text-blue-500 font-bold uppercase tracking-widest">✓ Enviado</span>
+                        <span className="text-[10px] text-blue-500 font-bold uppercase tracking-widest">✓ Enviado</span>
                         {order.trackingCode && (
-                          <span className="text-[8px] text-theme-muted font-mono">{order.trackingCode}</span>
+                          <span className="text-[10px] text-theme-muted font-mono">{order.trackingCode}</span>
                         )}
                       </div>
                     )}
@@ -405,7 +405,7 @@ export default function AdminFranchises() {
             {/* Content */}
             <form id="promote-franchise-form" onSubmit={handlePromote} className="flex-1 overflow-y-auto p-4 md:p-8 md:p-10 space-y-8 custom-scrollbar">
               <div className="space-y-4">
-                <label className="text-[8px] font-bold text-theme-muted uppercase tracking-widest block mb-2 opacity-60 ">Selecione o Usuário Alvo</label>
+                <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest block mb-2 opacity-60 ">Selecione o Usuário Alvo</label>
                 <select 
                   className="w-full bg-theme-bg-muted border border-theme-border p-5 text-theme-text text-xs font-bold uppercase tracking-widest focus:border-brand-tactical outline-none cursor-pointer rounded-2xl appearance-none"
                   value={selectedUserId}
@@ -481,7 +481,7 @@ export default function AdminFranchises() {
                 </button>
                 <div className="text-center">
                   <div className="text-2xl md:text-4xl font-bold text-theme-text ">{creditsToAdd}</div>
-                  <div className="text-[8px] text-theme-muted font-bold uppercase tracking-widest opacity-60">Unidades</div>
+                  <div className="text-[10px] text-theme-muted font-bold uppercase tracking-widest opacity-60">Unidades</div>
                 </div>
                 <button 
                   onClick={() => setCreditsToAdd(creditsToAdd + 100)} 
@@ -536,7 +536,7 @@ export default function AdminFranchises() {
 
               <div className="space-y-6">
                 <div className="space-y-2">
-                  <label className="text-[8px] font-bold text-theme-muted uppercase tracking-widest block mb-2 opacity-60 ">Código de Rastreio</label>
+                  <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest block mb-2 opacity-60 ">Código de Rastreio</label>
                   <input
                     type="text"
                     placeholder="EX: BR123456789BR"
@@ -546,7 +546,7 @@ export default function AdminFranchises() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-[8px] font-bold text-theme-muted uppercase tracking-widest block mb-2 opacity-60 ">Observações do Envio</label>
+                  <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest block mb-2 opacity-60 ">Observações do Envio</label>
                   <textarea
                     rows={3}
                     placeholder="EX: ENVIADO VIA CORREIOS PAC — PRAZO ESTIMADO 5 DIAS ÚTEIS"

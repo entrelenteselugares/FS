@@ -510,8 +510,8 @@ export function PrintStoreModal({ eventId, eventTitle, medias = [], unlockedMedi
                             <h2 className="text-[10px] font-bold text-theme-text uppercase tracking-[0.4em] ">Mídias de Captura</h2>
                             {(isOwner || availableMedias.length > 0) && (
                               <div className="flex p-1 bg-theme-bg-muted border border-theme-border">
-                                 <button onClick={() => setPhotoSource('album')} className={`px-4 py-2 text-[8px] font-black uppercase tracking-widest italic transition-all ${photoSource === 'album' ? 'bg-brand-tactical text-black' : 'text-theme-text-muted'}`}>ÁLBUM</button>
-                                 <button onClick={() => setPhotoSource('upload')} className={`px-4 py-2 text-[8px] font-black uppercase tracking-widest italic transition-all ${photoSource === 'upload' ? 'bg-brand-tactical text-black' : 'text-theme-text-muted'}`}>UPLOAD</button>
+                                 <button onClick={() => setPhotoSource('album')} className={`px-4 py-2 text-[10px] font-black uppercase tracking-widest italic transition-all ${photoSource === 'album' ? 'bg-brand-tactical text-black' : 'text-theme-text-muted'}`}>ÁLBUM</button>
+                                 <button onClick={() => setPhotoSource('upload')} className={`px-4 py-2 text-[10px] font-black uppercase tracking-widest italic transition-all ${photoSource === 'upload' ? 'bg-brand-tactical text-black' : 'text-theme-text-muted'}`}>UPLOAD</button>
                               </div>
                             )}
                           </div>

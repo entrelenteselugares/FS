@@ -148,7 +148,7 @@ export function CoverPhotoInput({ currentUrl, currentPosition, onChange, onPosit
                 key={pos.id}
                 type="button"
                 onClick={() => onPositionChange?.(pos.id)}
-                className={`px-4 py-1.5 text-[8px] font-black uppercase tracking-widest rounded-full transition-all ${currentPosition === pos.id || (!currentPosition && pos.id === 'center') ? "bg-brand-tactical text-black" : "text-white hover:bg-white/10"}`}
+                className={`px-4 py-1.5 text-[10px] font-black uppercase tracking-widest rounded-full transition-all ${currentPosition === pos.id || (!currentPosition && pos.id === 'center') ? "bg-brand-tactical text-black" : "text-white hover:bg-white/10"}`}
               >
                 {pos.label}
               </button>
@@ -237,7 +237,7 @@ export function CoverPhotoInput({ currentUrl, currentPosition, onChange, onPosit
         onChange={handleFileChange}
       />
 
-      <p className="text-[8px] text-theme-muted uppercase font-bold tracking-[0.2em] opacity-40 text-center leading-relaxed">
+      <p className="text-[10px] text-theme-muted uppercase font-bold tracking-[0.2em] opacity-40 text-center leading-relaxed">
         ACEITA LINK DO GOOGLE DRIVE, DROPBOX OU IMAGEM DIRETA · JPG, PNG, WEBP
       </p>
     </div>

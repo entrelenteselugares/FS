@@ -80,3 +80,7 @@ Once the system is running, explore these documents for more details:
 <!-- GSD-DOCS-UPDATE: SUPPLEMENTED -->
 
 _Documentação verificada e complementada automaticamente via GSD-SDK em 2026-06._
+
+
+<!-- GSD-DOCS-UPDATE: VERIFIED -->
+_Documentação verificada e atualizada automaticamente via GSD-SDK em 2026-06-14._
