@@ -101,29 +101,29 @@ export function FinanceTab({
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
         <div className="bg-theme-bg-muted border border-theme-border rounded-xl p-4 flex flex-col shadow-sm relative overflow-hidden group hover:border-brand-tactical/30 transition-all">
           <div className="absolute top-0 right-0 p-3 opacity-10"><Wallet size={40} /></div>
-          <span className="text-[8px] font-bold text-theme-muted uppercase tracking-widest z-10">Saldo Disponível</span>
-          <p className="text-xl md:text-2xl font-heading font-bold text-brand-tactical mt-1 z-10">
+          <span className="text-[8px] font-bold text-theme-muted uppercase tracking-widest z-10 line-clamp-1">Saldo Disponível</span>
+          <p className="text-xl md:text-2xl font-heading font-bold text-brand-tactical mt-1 z-10 truncate" title={summary ? formatCurrency(summary.available) : "---"}>
             {summary ? formatCurrency(summary.available) : "---"}
           </p>
         </div>
         <div className="bg-theme-bg-muted border border-theme-border rounded-xl p-4 flex flex-col shadow-sm relative overflow-hidden group hover:border-amber-500/30 transition-all">
           <div className="absolute top-0 right-0 p-3 opacity-10"><Clock size={40} /></div>
-          <span className="text-[8px] font-bold text-theme-muted uppercase tracking-widest z-10">A Receber (Garantia)</span>
-          <p className="text-xl md:text-2xl font-heading font-bold text-amber-500 mt-1 z-10">
+          <span className="text-[8px] font-bold text-theme-muted uppercase tracking-widest z-10 line-clamp-1" title="A Receber (Garantia)">A Receber (Garantia)</span>
+          <p className="text-xl md:text-2xl font-heading font-bold text-amber-500 mt-1 z-10 truncate" title={summary ? formatCurrency(summary.pending) : "---"}>
             {summary ? formatCurrency(summary.pending) : "---"}
           </p>
         </div>
         <div className="bg-theme-bg-muted border border-theme-border rounded-xl p-4 flex flex-col shadow-sm relative overflow-hidden group hover:border-theme-muted transition-all">
           <div className="absolute top-0 right-0 p-3 opacity-10"><BarChart2 size={40} /></div>
-          <span className="text-[8px] font-bold text-theme-muted uppercase tracking-widest z-10">Taxa de Conversão</span>
-          <p className="text-xl md:text-2xl font-heading font-bold text-theme-text mt-1 z-10">
+          <span className="text-[8px] font-bold text-theme-muted uppercase tracking-widest z-10 line-clamp-1">Taxa de Conversão</span>
+          <p className="text-xl md:text-2xl font-heading font-bold text-theme-text mt-1 z-10 truncate" title={conversionData ? `${conversionData.conversionRate}%` : "---"}>
             {conversionData ? `${conversionData.conversionRate}%` : "---"}
           </p>
         </div>
         <div className="bg-theme-bg-muted border border-theme-border rounded-xl p-4 flex flex-col shadow-sm relative overflow-hidden group hover:border-theme-muted transition-all">
           <div className="absolute top-0 right-0 p-3 opacity-10"><TrendingUp size={40} /></div>
-          <span className="text-[8px] font-bold text-theme-muted uppercase tracking-widest z-10">Ticket Médio</span>
-          <p className="text-xl md:text-2xl font-heading font-bold text-theme-text mt-1 z-10">
+          <span className="text-[8px] font-bold text-theme-muted uppercase tracking-widest z-10 line-clamp-1">Ticket Médio</span>
+          <p className="text-xl md:text-2xl font-heading font-bold text-theme-text mt-1 z-10 truncate" title={conversionData ? formatCurrency(conversionData.ticketMedio) : "---"}>
             {conversionData ? formatCurrency(conversionData.ticketMedio) : "---"}
           </p>
         </div>
