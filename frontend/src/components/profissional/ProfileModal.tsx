@@ -88,7 +88,7 @@ export function ProfileModal({ profile, onClose, onUpdated }: ProfileModalProps)
               <div className="space-y-8">
                 <div className="flex items-center gap-4 text-brand-tactical">
                   <div className="w-8 h-[1px] bg-brand-tactical/30" />
-                  <span className="text-[11px] font-bold uppercase tracking-[0.3em] ">Credenciais Operacionais</span>
+                  <span className="text-[11px] font-bold uppercase tracking-[0.3em]">Credenciais Operacionais</span>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -199,7 +199,7 @@ export function ProfileModal({ profile, onClose, onUpdated }: ProfileModalProps)
               <div className="space-y-8">
                 <div className="flex items-center gap-4 text-brand-tactical">
                   <div className="w-8 h-[1px] bg-brand-tactical/30" />
-                  <span className="text-[11px] font-bold uppercase tracking-[0.3em] ">Matriz de Especialidades</span>
+                  <span className="text-[11px] font-bold uppercase tracking-[0.3em]">Matriz de Especialidades</span>
                 </div>
                 <div className="flex flex-wrap gap-4">
                   {["FOTO", "VÍDEO", "EDIÇÃO"].map((s) => {
@@ -212,7 +212,7 @@ export function ProfileModal({ profile, onClose, onUpdated }: ProfileModalProps)
                           active ? "bg-brand-tactical border-brand-tactical text-brand-text" : "bg-theme-bg-muted border-theme-border text-theme-muted hover:border-brand-tactical/30"
                         }`}
                       >
-                        <span className="tracking-[0.4em] ">{s}</span>
+                        <span className="tracking-[0.4em]">{s}</span>
                         <div className={`w-4 h-[1px] ${active ? "bg-brand-text/40" : "bg-brand-tactical/20"}`} />
                       </button>
                     );
@@ -236,12 +236,12 @@ export function ProfileModal({ profile, onClose, onUpdated }: ProfileModalProps)
               <div className="p-8 bg-theme-bg-muted border border-theme-border space-y-8">
                 <div className="flex justify-between items-center">
                   <div className="space-y-1">
-                    <p className="text-[11px] font-bold text-brand-tactical uppercase tracking-[0.3em] ">Inventário Técnico</p>
+                    <p className="text-[11px] font-bold text-brand-tactical uppercase tracking-[0.3em]">Inventário Técnico</p>
                     <p className="text-[9px] text-theme-muted uppercase opacity-60 font-bold">Ativos usados para cálculo de multiplicador</p>
                   </div>
                   <button
                     onClick={addEquipment}
-                    className="px-4 py-2 bg-brand-tactical/10 border border-brand-tactical/30 text-brand-tactical text-[9px] font-bold uppercase tracking-widest hover:bg-brand-tactical hover:text-brand-text transition-all "
+                    className="px-4 py-2 bg-brand-tactical/10 border border-brand-tactical/30 text-brand-tactical text-[9px] font-bold uppercase tracking-widest hover:bg-brand-tactical hover:text-brand-text transition-all"
                   >
                     + Inserir Item
                   </button>
@@ -262,7 +262,7 @@ export function ProfileModal({ profile, onClose, onUpdated }: ProfileModalProps)
                         <input
                           type="number"
                           placeholder="Valor"
-                          className="w-full bg-theme-bg border border-theme-border p-4 text-[11px] text-brand-tactical font-bold outline-none "
+                          className="w-full bg-theme-bg border border-theme-border p-4 text-[11px] text-brand-tactical font-bold outline-none"
                           value={eq.value}
                           onChange={(e) => updateEquipment(i, "value", Number(e.target.value))}
                         />
@@ -274,7 +274,7 @@ export function ProfileModal({ profile, onClose, onUpdated }: ProfileModalProps)
                     </div>
                   ))}
                   {(formData.equipmentList || []).length === 0 && (
-                    <div className="py-20 text-center space-y-4 border  border-theme-border">
+                    <div className="py-20 text-center space-y-4 border border-theme-border">
                       <div className="flex justify-center text-theme-muted/20"><Briefcase size={48} /></div>
                       <p className="text-[9px] text-theme-muted uppercase tracking-[0.2em] font-bold">Nenhum ativo técnico registrado</p>
                     </div>
@@ -282,8 +282,8 @@ export function ProfileModal({ profile, onClose, onUpdated }: ProfileModalProps)
                 </div>
 
                 <div className="pt-8 border-t border-theme-border flex justify-between items-center">
-                  <span className="text-[9px] font-bold text-theme-muted uppercase tracking-[0.2em] ">Patrimônio Técnico Estimado</span>
-                  <span className="text-xl font-heading font-bold text-theme-text ">
+                  <span className="text-[9px] font-bold text-theme-muted uppercase tracking-[0.2em]">Patrimônio Técnico Estimado</span>
+                  <span className="text-xl font-heading font-bold text-theme-text">
                     R$ {totalPatrimony.toLocaleString("pt-BR")}
                   </span>
                 </div>
@@ -294,7 +294,7 @@ export function ProfileModal({ profile, onClose, onUpdated }: ProfileModalProps)
 
         {/* Footer */}
         <div className="p-8 md:p-12 border-t border-theme-border bg-theme-bg flex justify-end gap-6 relative z-10">
-          <button onClick={onClose} className="px-8 py-5 text-theme-muted text-[11px] font-bold uppercase tracking-[0.3em] hover:text-theme-text transition-all ">
+          <button onClick={onClose} className="px-8 py-5 text-theme-muted text-[11px] font-bold uppercase tracking-[0.3em] hover:text-theme-text transition-all">
             Descartar
           </button>
           <button

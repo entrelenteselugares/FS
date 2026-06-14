@@ -219,7 +219,7 @@ const FranchiseDashboard: React.FC = () => {
       {/* HEADER OPERACIONAL */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-3 md:gap-6">
         <div className="space-y-2">
-          <span className="text-[11px] font-bold text-brand-tactical uppercase tracking-[0.4em] ">Gestão de Franquia</span>
+          <span className="text-[11px] font-bold text-brand-tactical uppercase tracking-[0.4em]">Gestão de Franquia</span>
           <h1 className="text-2xl md:text-4xl font-heading font-bold uppercase text-theme-text">
             Command <span className="text-brand-tactical">Center</span>
           </h1>
@@ -298,7 +298,7 @@ const FranchiseDashboard: React.FC = () => {
                 <div className="space-y-4">
                   <div className="flex justify-between items-end">
                     <span className="text-[11px] font-bold text-theme-muted uppercase tracking-widest">Papel & Ribbon</span>
-                    <span className="text-lg font-bold text-theme-text ">ESTÁVEL</span>
+                    <span className="text-lg font-bold text-theme-text">ESTÁVEL</span>
                   </div>
                   <div className="h-1.5 w-full bg-theme-border/20 rounded-full overflow-hidden">
                     <div 
@@ -336,7 +336,7 @@ const FranchiseDashboard: React.FC = () => {
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                  <History size={18} className="text-theme-muted" />
-                 <h3 className="text-sm font-bold text-theme-text uppercase tracking-widest ">Logs de Operação</h3>
+                 <h3 className="text-sm font-bold text-theme-text uppercase tracking-widest">Logs de Operação</h3>
               </div>
               <button className="text-[9px] font-bold text-theme-muted hover:text-brand-tactical uppercase tracking-widest transition-colors flex items-center gap-1">
                 Ver Tudo <ExternalLink size={10} />
@@ -350,7 +350,7 @@ const FranchiseDashboard: React.FC = () => {
                        <span className="text-[9px] font-bold text-theme-muted tabular-nums opacity-40">14:3{i}</span>
                        <p className="text-[11px] font-bold text-theme-text uppercase group-hover:text-brand-tactical transition-colors">Impressão realizada: Hub B2B Automático</p>
                     </div>
-                    <span className="text-[9px] font-bold text-brand-tactical ">-1 CRÉDITO</span>
+                    <span className="text-[9px] font-bold text-brand-tactical">-1 CRÉDITO</span>
                  </div>
                ))}
             </div>
@@ -360,10 +360,10 @@ const FranchiseDashboard: React.FC = () => {
           {/* PASSIVE INCOME LIST & COHORT INTEL MOVED TO LEFT COLUMN */}
           <div className="bg-theme-bg-muted border border-theme-border p-4 md:p-8 space-y-4 md:space-y-8">
             <div className="flex items-center justify-between">
-              <h3 className="text-sm font-bold text-theme-text uppercase tracking-widest ">Comissões & Fechamento</h3>
+              <h3 className="text-sm font-bold text-theme-text uppercase tracking-widest">Comissões & Fechamento</h3>
               <button 
                 onClick={handleExportCSV}
-                className="text-[9px] font-bold text-brand-tactical border border-brand-tactical/30 px-3 py-1.5 uppercase tracking-widest hover:bg-brand-tactical hover:text-black transition-colors"
+                className="text-[9px] font-bold text-brand-tactical border border-brand-tactical/30 px-3 py-1.5 uppercase tracking-widest hover:bg-brand-tactical hover:text-theme-text transition-colors"
               >
                 Exportar CSV
               </button>
@@ -374,11 +374,11 @@ const FranchiseDashboard: React.FC = () => {
               <div className="grid grid-cols-3 gap-4 pb-6 border-b border-theme-border">
                 <div>
                   <span className="block text-[10px] font-bold text-theme-muted uppercase tracking-widest">Eventos da Rede</span>
-                  <span className="text-lg font-bold text-white">{finance.intel.networkEvents}</span>
+                  <span className="text-lg font-bold text-theme-text">{finance.intel.networkEvents}</span>
                 </div>
                 <div>
                   <span className="block text-[10px] font-bold text-theme-muted uppercase tracking-widest">Pedidos (Vendas)</span>
-                  <span className="text-lg font-bold text-white">{finance.intel.networkOrders}</span>
+                  <span className="text-lg font-bold text-theme-text">{finance.intel.networkOrders}</span>
                 </div>
                 <div>
                   <span className="block text-[10px] font-bold text-theme-muted uppercase tracking-widest">Conv. (Orders/Event)</span>
@@ -389,7 +389,7 @@ const FranchiseDashboard: React.FC = () => {
 
             <div className="space-y-4">
               {finance.recentCommissions.length === 0 ? (
-                <p className="text-[9px] text-theme-muted uppercase tracking-widest opacity-40 py-4 text-center border  border-theme-border">
+                <p className="text-[9px] text-theme-muted uppercase tracking-widest opacity-40 py-4 text-center border border-theme-border">
                   Nenhuma comissão passiva registrada.
                 </p>
               ) : finance.recentCommissions.map(c => (
@@ -411,7 +411,7 @@ const FranchiseDashboard: React.FC = () => {
             <div className="space-y-1.5">
               <Users size={22} className="text-brand-tactical" />
               <h3 className="text-xl md:text-2xl font-heading font-bold uppercase text-theme-text">Minha Rede</h3>
-              <p className="text-[10px] text-theme-muted font-bold leading-relaxed uppercase ">
+              <p className="text-[10px] text-theme-muted font-bold leading-relaxed uppercase">
                 Indique fotógrafos e expanda sua capilaridade regional.
               </p>
             </div>
@@ -437,20 +437,20 @@ const FranchiseDashboard: React.FC = () => {
               <span className="text-[10px] font-bold text-theme-muted uppercase tracking-widest opacity-60">Parceiros Vinculados ({partners.length})</span>
               <div className="space-y-3">
                 {partners.length === 0 ? (
-                  <p className="text-[9px] text-theme-muted uppercase tracking-widest opacity-40 py-4 text-center border  border-theme-border">
+                  <p className="text-[9px] text-theme-muted uppercase tracking-widest opacity-40 py-4 text-center border border-theme-border">
                     Nenhum parceiro vinculado ainda.
                   </p>
                 ) : partners.map(p => (
                   <div key={p.id} className="p-4 border border-theme-border hover:border-brand-tactical/30 transition-all group">
                     <div className="flex justify-between items-center mb-2">
-                      <span className="text-xs font-bold text-theme-text uppercase ">{p.user.nome}</span>
-                      <span className={`text-[10px] font-black px-2 py-0.5 ${p.user.isVerified ? 'bg-brand-tactical text-zinc-950' : 'bg-zinc-800 text-zinc-400'} uppercase`}>
+                      <span className="text-xs font-bold text-theme-text uppercase">{p.user.nome}</span>
+                      <span className={`text-[10px] font-black px-2 py-0.5 ${p.user.isVerified ? 'bg-brand-tactical text-zinc-950' : 'bg-zinc-800 text-theme-muted'} uppercase`}>
                         {p.user.isVerified ? 'VERIFIED' : 'PENDING'}
                       </span>
                     </div>
                     <div className="flex justify-between items-end">
                       <span className="text-[9px] font-bold text-theme-muted uppercase tracking-widest opacity-40">Experiência</span>
-                      <span className="text-[11px] font-bold text-theme-text ">{p.user.profissional?.experienceYears || 0} Anos</span>
+                      <span className="text-[11px] font-bold text-theme-text">{p.user.profissional?.experienceYears || 0} Anos</span>
                     </div>
                   </div>
                 ))}

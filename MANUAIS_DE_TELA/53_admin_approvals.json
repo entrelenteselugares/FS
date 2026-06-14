@@ -5,7 +5,7 @@
   ],
   "buttons": [
     "Visão Geral",
-    "Eventos\n9",
+    "Eventos\n10",
     "Comercial",
     "Rede",
     "Marketing",
@@ -15,9 +15,9 @@
     "Aprovações",
     "Impressão (Lab)",
     "Estoque",
-    "57",
+    "58",
     "ENCERRAR SESSÃO",
-    "Eventos9",
+    "Eventos10",
     "Encerrar Sessão",
     "VALIDAÇÃO DE EXPERIÊNCIA",
     "APROVAÇÕES DE ACESSO",
@@ -25,10 +25,6 @@
     "Menu"
   ],
   "links": [
-    {
-      "text": "COPA 2026\nPRÓXIMOS\nCANADÁ\n12/06 · 16:00\nGRP B\nBÓSNIA\nVer Álbum →",
-      "href": "/album-torcida"
-    },
     {
       "text": "VISITAR SITE",
       "href": "/"

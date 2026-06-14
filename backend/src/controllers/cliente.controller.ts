@@ -39,7 +39,11 @@ export async function getMeusPedidos(req: AuthRequest, res: Response): Promise<v
           },
         },
         items: {
-          include: { media: true }
+          include: { 
+            media: {
+              select: { id: true, url: true, shortId: true }
+            }
+          }
         }
       },
       orderBy: { createdAt: "desc" },
@@ -115,7 +119,11 @@ export async function getMeuPedidoDetalhe(req: AuthRequest, res: Response): Prom
           },
         },
         items: {
-          include: { media: true }
+          include: { 
+            media: {
+              select: { id: true, url: true, shortId: true }
+            }
+          }
         }
       },
     });

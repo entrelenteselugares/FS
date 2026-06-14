@@ -24,7 +24,7 @@
 - **Botão:** `Minha Rede`
 - **Botão:** `Franquia Print`
 - **Botão:** `Meu Perfil`
-- **Botão:** `18`
+- **Botão:** `19`
 - **Botão:** `ENCERRAR SESSÃO`
 - **Botão:** `Encerrar Sessão`
 - **Botão:** `AJUSTAR META`
@@ -36,13 +36,6 @@ TRIBUTOS`
 
 ## 🔗 Links de Navegação
 
-- **COPA 2026
-PRÓXIMOS
-EUA
-12/06 · 22:00
-GRP D
-PARAGUAI
-Ver Álbum →** -> `/album-torcida`
 - **VISITAR SITE** -> `/`
 - **Visitar Site** -> `/`
 

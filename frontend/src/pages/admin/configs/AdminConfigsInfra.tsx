@@ -77,7 +77,7 @@ export const AdminConfigsInfra: React.FC<Props> = ({ configs, saving, onChange, 
                       <Icon size={20} />
                     </div>
                     <div>
-                      <div className="text-[10px] font-bold text-theme-text uppercase tracking-widest ">{item.label}</div>
+                      <div className="text-[10px] font-bold text-theme-text uppercase tracking-widest">{item.label}</div>
                       <div className="text-[10px] text-theme-muted uppercase tracking-[0.2em] mt-1">{item.desc}</div>
                     </div>
                   </div>
@@ -108,7 +108,7 @@ export const AdminConfigsInfra: React.FC<Props> = ({ configs, saving, onChange, 
             <div className="space-y-3">
               <label className="text-[9px] font-bold text-theme-muted uppercase tracking-[0.4em] block">Valor Hora Mínimo (R$/hora)</label>
               <div className="flex items-center gap-4">
-                <span className="text-2xl font-heading font-bold text-brand-tactical ">R$</span>
+                <span className="text-2xl font-heading font-bold text-brand-tactical">R$</span>
                 <input
                   type="number" min="1" step="0.5"
                   value={hourlyRateConfig.value}
@@ -125,7 +125,7 @@ export const AdminConfigsInfra: React.FC<Props> = ({ configs, saving, onChange, 
               {[60, 120, 180, 240, 360, 480].map(minutes => (
                 <div key={minutes} className="p-4 bg-theme-bg-muted border border-theme-border rounded-xl text-center">
                   <p className="text-[10px] font-bold text-theme-muted uppercase tracking-widest mb-1">{minutes}min</p>
-                  <p className="text-base font-heading font-bold text-brand-tactical ">R${(hourlyRate * minutes / 60).toFixed(2)}</p>
+                  <p className="text-base font-heading font-bold text-brand-tactical">R${(hourlyRate * minutes / 60).toFixed(2)}</p>
                 </div>
               ))}
             </div>

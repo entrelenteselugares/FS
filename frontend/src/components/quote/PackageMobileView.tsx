@@ -43,15 +43,15 @@ export const PackageMobileView = (props: any) => {
     return (
       <div className="min-h-[100dvh] flex flex-col items-center justify-center px-6 text-center bg-zinc-950">
         <div className="w-16 h-16 bg-emerald-500/10 rounded-full flex items-center justify-center mb-6 border border-emerald-500/20">
-          <CheckCircle2 size={32} className="text-emerald-500" />
+          <CheckCircle2 size={32} className="text-theme-brand" />
         </div>
-        <h2 className="text-2xl font-bold uppercase text-white mb-2">Orçamento Enviado!</h2>
-        <p className="text-sm text-zinc-400 leading-relaxed max-w-xs">
-          Recebemos sua solicitação. Nossa equipe entrará em contato via WhatsApp em até <strong className="text-white">2h</strong>.
+        <h2 className="text-2xl font-bold uppercase text-theme-text mb-2">Orçamento Enviado!</h2>
+        <p className="text-sm text-theme-muted leading-relaxed max-w-xs">
+          Recebemos sua solicitação. Nossa equipe entrará em contato via WhatsApp em até <strong className="text-theme-text">2h</strong>.
         </p>
         <button
           onClick={() => window.location.href = "/"}
-          className="mt-8 px-8 py-3.5 bg-emerald-500 text-black text-[11px] font-bold uppercase tracking-widest rounded-full"
+          className="mt-8 px-8 py-3.5 bg-emerald-500 text-theme-text text-[11px] font-bold uppercase tracking-widest rounded-full"
         >
           Voltar ao Início
         </button>
@@ -60,20 +60,20 @@ export const PackageMobileView = (props: any) => {
   }
 
   return (
-    <div className="min-h-[100dvh] flex flex-col bg-zinc-950 text-white pb-28">
+    <div className="min-h-[100dvh] flex flex-col bg-zinc-950 text-theme-text pb-28">
 
       {/* ── Header ── */}
       <div className="sticky top-0 z-50 bg-zinc-950/90 backdrop-blur-md border-b border-white/5 px-4 py-3 flex items-center gap-3">
         {step > 1 && (
-          <button onClick={prevStep} className="p-1 -ml-1 text-zinc-400 hover:text-white transition-colors">
+          <button onClick={prevStep} className="p-1 -ml-1 text-theme-muted hover:text-theme-text transition-colors">
             <ChevronLeft size={20} />
           </button>
         )}
         <div className="flex-1">
-          <p className="text-[10px] font-bold text-emerald-500 uppercase tracking-widest">
+          <p className="text-[10px] font-bold text-theme-brand uppercase tracking-widest">
             Passo {currentStepIndex + 1} de {totalSteps}
           </p>
-          <p className="text-sm font-bold text-white/90">{STEPS[currentStepIndex].label}</p>
+          <p className="text-sm font-bold text-theme-text/90">{STEPS[currentStepIndex].label}</p>
         </div>
         {/* Progress dots */}
         <div className="flex gap-1.5">
@@ -103,7 +103,7 @@ export const PackageMobileView = (props: any) => {
               <>
                 {/* Package cards */}
                 <div className="space-y-3">
-                  <p className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Escolha seu pacote</p>
+                  <p className="text-[10px] font-bold text-theme-muted uppercase tracking-widest">Escolha seu pacote</p>
                   <div className="grid grid-cols-1 gap-3">
                     {packages.map((pkg: any) => {
                       const isSelected = pkg.id === selectedPackageId;
@@ -120,22 +120,22 @@ export const PackageMobileView = (props: any) => {
                         >
                           <div className="flex items-start justify-between gap-3">
                             <div className="flex items-center gap-3">
-                              <div className={`w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 transition-colors ${isSelected ? "bg-emerald-500 text-black" : "bg-zinc-800 text-zinc-500"}`}>
+                              <div className={`w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 transition-colors ${isSelected ? "bg-emerald-500 text-theme-text" : "bg-zinc-800 text-theme-muted"}`}>
                                 {PACKAGE_ICONS[pkg.id] || <Camera size={18} />}
                               </div>
                               <div>
-                                <p className={`text-sm font-black uppercase italic tracking-tight transition-colors ${isSelected ? "text-emerald-400" : "text-white"}`}>
+                                <p className={`text-sm font-black uppercase italic tracking-tight transition-colors ${isSelected ? "text-theme-brand" : "text-theme-text"}`}>
                                   {pkg.name}
                                 </p>
-                                <p className="text-[10px] text-zinc-500 font-medium">{pkg.hours}h de cobertura</p>
+                                <p className="text-[10px] text-theme-muted font-medium">{pkg.hours}h de cobertura</p>
                               </div>
                             </div>
                             <div className="text-right flex-shrink-0">
-                              <p className={`text-base font-black italic transition-colors ${isSelected ? "text-emerald-400" : "text-zinc-300"}`}>
+                              <p className={`text-base font-black italic transition-colors ${isSelected ? "text-theme-brand" : "text-theme-subtle"}`}>
                                 R$ {pkg.price.toLocaleString("pt-BR")}
                               </p>
                               {isSelected && (
-                                <CheckCircle2 size={14} className="text-emerald-500 ml-auto mt-1" />
+                                <CheckCircle2 size={14} className="text-theme-brand ml-auto mt-1" />
                               )}
                             </div>
                           </div>
@@ -143,7 +143,7 @@ export const PackageMobileView = (props: any) => {
                           {highlights.length > 0 && (
                             <div className="mt-3 flex flex-wrap gap-1.5">
                               {highlights.map((h: string) => (
-                                <span key={h} className={`text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full transition-colors ${isSelected ? "bg-emerald-500/15 text-emerald-400" : "bg-zinc-800 text-zinc-500"}`}>
+                                <span key={h} className={`text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full transition-colors ${isSelected ? "bg-emerald-500/15 text-theme-brand" : "bg-zinc-800 text-theme-muted"}`}>
                                   {h}
                                 </span>
                               ))}
@@ -157,8 +157,8 @@ export const PackageMobileView = (props: any) => {
 
                 {/* CEP */}
                 <div className="space-y-2">
-                  <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest flex items-center gap-1.5">
-                    <MapPin size={11} className="text-emerald-500" /> CEP do Local
+                  <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest flex items-center gap-1.5">
+                    <MapPin size={11} className="text-theme-brand" /> CEP do Local
                   </label>
                   <div className="relative">
                     <input
@@ -167,14 +167,14 @@ export const PackageMobileView = (props: any) => {
                       placeholder="00000-000"
                       value={customCep}
                       onChange={(e) => handleCepChange(e.target.value)}
-                      className="w-full bg-zinc-900/60 border border-zinc-800 focus:border-emerald-500/50 rounded-xl p-3.5 text-sm text-white placeholder-zinc-600 outline-none transition-colors"
+                      className="w-full bg-zinc-900/60 border border-zinc-800 focus:border-emerald-500/50 rounded-xl p-3.5 text-sm text-theme-text placeholder-zinc-600 outline-none transition-colors"
                     />
                     {isCepLoading && (
-                      <Loader2 size={14} className="absolute right-4 top-1/2 -translate-y-1/2 text-emerald-500 animate-spin" />
+                      <Loader2 size={14} className="absolute right-4 top-1/2 -translate-y-1/2 text-theme-brand animate-spin" />
                     )}
                   </div>
                   {addressData?.logradouro && (
-                    <p className="text-[10px] text-emerald-400 font-medium px-1">
+                    <p className="text-[10px] text-theme-brand font-medium px-1">
                       {addressData.logradouro}, {addressData.bairro} — {addressData.cidade}/{addressData.uf}
                     </p>
                   )}
@@ -182,14 +182,14 @@ export const PackageMobileView = (props: any) => {
 
                 {/* Data */}
                 <div className="space-y-2">
-                  <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest flex items-center gap-1.5">
-                    <Calendar size={11} className="text-emerald-500" /> Data do Evento
+                  <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest flex items-center gap-1.5">
+                    <Calendar size={11} className="text-theme-brand" /> Data do Evento
                   </label>
                   <input
                     type="date"
                     value={eventDate}
                     onChange={(e) => setEventDate(e.target.value)}
-                    className="w-full bg-zinc-900/60 border border-zinc-800 focus:border-emerald-500/50 rounded-xl p-3.5 text-sm text-white outline-none transition-colors"
+                    className="w-full bg-zinc-900/60 border border-zinc-800 focus:border-emerald-500/50 rounded-xl p-3.5 text-sm text-theme-text outline-none transition-colors"
                   />
                 </div>
               </>
@@ -200,14 +200,14 @@ export const PackageMobileView = (props: any) => {
               <>
                 {/* Package summary */}
                 <div className="bg-emerald-500/5 border border-emerald-500/20 rounded-2xl p-4 flex items-center gap-3">
-                  <div className="w-10 h-10 bg-emerald-500/15 rounded-xl flex items-center justify-center text-emerald-500 flex-shrink-0">
+                  <div className="w-10 h-10 bg-emerald-500/15 rounded-xl flex items-center justify-center text-theme-brand flex-shrink-0">
                     {PACKAGE_ICONS[selectedPackageId] || <Camera size={18} />}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-[10px] font-bold text-emerald-500 uppercase tracking-widest">Pacote Selecionado</p>
-                    <p className="text-sm font-bold text-white uppercase ">{selectedPkg?.name}</p>
+                    <p className="text-[10px] font-bold text-theme-brand uppercase tracking-widest">Pacote Selecionado</p>
+                    <p className="text-sm font-bold text-theme-text uppercase">{selectedPkg?.name}</p>
                   </div>
-                  <p className="text-base font-bold text-emerald-400 flex-shrink-0">
+                  <p className="text-base font-bold text-theme-brand flex-shrink-0">
                     R$ {selectedPkg?.price.toLocaleString("pt-BR")}
                   </p>
                 </div>
@@ -219,47 +219,47 @@ export const PackageMobileView = (props: any) => {
                     { label: "WhatsApp", value: whatsapp, setter: setWhatsapp, type: "tel", icon: <Phone size={12} />, placeholder: "(11) 99999-9999" },
                   ].map((field) => (
                     <div key={field.label} className="space-y-1.5">
-                      <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest flex items-center gap-1.5">
-                        <span className="text-emerald-500">{field.icon}</span> {field.label}
+                      <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest flex items-center gap-1.5">
+                        <span className="text-theme-brand">{field.icon}</span> {field.label}
                       </label>
                       <input
                         type={field.type}
                         value={field.value}
                         onChange={(e) => field.setter(e.target.value)}
                         placeholder={field.placeholder}
-                        className="w-full bg-zinc-900/60 border border-zinc-800 focus:border-emerald-500/50 rounded-xl p-3.5 text-sm text-white placeholder-zinc-600 outline-none transition-colors"
+                        className="w-full bg-zinc-900/60 border border-zinc-800 focus:border-emerald-500/50 rounded-xl p-3.5 text-sm text-theme-text placeholder-zinc-600 outline-none transition-colors"
                       />
                     </div>
                   ))}
 
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Observações (Opcional)</label>
+                    <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest">Observações (Opcional)</label>
                     <textarea
                       value={description}
                       onChange={(e) => setDescription(e.target.value)}
                       placeholder="Tipo de evento, estilo, detalhes especiais..."
                       rows={3}
-                      className="w-full bg-zinc-900/60 border border-zinc-800 focus:border-emerald-500/50 rounded-xl p-3.5 text-sm text-white placeholder-zinc-600 outline-none transition-colors resize-none"
+                      className="w-full bg-zinc-900/60 border border-zinc-800 focus:border-emerald-500/50 rounded-xl p-3.5 text-sm text-theme-text placeholder-zinc-600 outline-none transition-colors resize-none"
                     />
                   </div>
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Link de Venda de Ingressos (Opcional)</label>
+                    <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest">Link de Venda de Ingressos (Opcional)</label>
                     <input
                       type="url"
                       placeholder="https://sympla.com/..."
                       value={ticketUrl || ''}
                       onChange={(e) => setTicketUrl(e.target.value)}
-                      className="w-full bg-zinc-900/60 border border-zinc-800 focus:border-emerald-500/50 rounded-xl p-3.5 text-sm text-white placeholder-zinc-600 outline-none transition-colors"
+                      className="w-full bg-zinc-900/60 border border-zinc-800 focus:border-emerald-500/50 rounded-xl p-3.5 text-sm text-theme-text placeholder-zinc-600 outline-none transition-colors"
                     />
                   </div>
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Seu Cupom Promocional (Opcional)</label>
+                    <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest">Seu Cupom Promocional (Opcional)</label>
                     <input
                       type="text"
                       placeholder="EX: FOTOSEGUNDO10"
                       value={fotoSegundoPromoCode || ''}
                       onChange={(e) => setFotoSegundoPromoCode(e.target.value.toUpperCase())}
-                      className="w-full bg-zinc-900/60 border border-zinc-800 focus:border-emerald-500/50 rounded-xl p-3.5 text-sm text-white placeholder-zinc-600 outline-none transition-colors"
+                      className="w-full bg-zinc-900/60 border border-zinc-800 focus:border-emerald-500/50 rounded-xl p-3.5 text-sm text-theme-text placeholder-zinc-600 outline-none transition-colors"
                     />
                   </div>
                 </div>
@@ -280,8 +280,8 @@ export const PackageMobileView = (props: any) => {
         <div className="flex items-center gap-3">
           {selectedPkg && step === 1 && (
             <div className="flex-1">
-              <p className="text-[9px] text-zinc-500 font-bold uppercase tracking-widest">Pacote {selectedPkg.name}</p>
-              <p className="text-lg font-bold text-emerald-400 leading-none">
+              <p className="text-[9px] text-theme-muted font-bold uppercase tracking-widest">Pacote {selectedPkg.name}</p>
+              <p className="text-lg font-bold text-theme-brand leading-none">
                 R$ {selectedPkg.price.toLocaleString("pt-BR")}
               </p>
             </div>
@@ -290,7 +290,7 @@ export const PackageMobileView = (props: any) => {
           <button
             onClick={step === 1 ? nextStep : handleSubmit}
             disabled={submitting}
-            className={`${step === 1 ? "flex-1" : "w-full"} bg-emerald-500 hover:bg-emerald-400 disabled:opacity-50 text-black font-black text-[11px] uppercase tracking-widest py-4 rounded-2xl flex items-center justify-center gap-2 transition-all active:scale-[0.98]`}
+            className={`${step === 1 ? "flex-1" : "w-full"} bg-emerald-500 hover:bg-emerald-400 disabled:opacity-50 text-theme-text font-black text-[11px] uppercase tracking-widest py-4 rounded-2xl flex items-center justify-center gap-2 transition-all active:scale-[0.98]`}
           >
             {submitting ? (
               <><Loader2 size={16} className="animate-spin" /> Enviando...</>

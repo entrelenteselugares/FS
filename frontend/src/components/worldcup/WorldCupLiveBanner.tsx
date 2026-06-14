@@ -163,7 +163,11 @@ export const WorldCupLiveBanner = ({ alwaysShow = false }: { alwaysShow?: boolea
   }, [matches.length]);
 
   const isCopaTime = alwaysShow || now >= new Date("2026-06-11T00:00:00-03:00").getTime();
-  if (!isCopaTime) return null;
+  
+  const hiddenPaths = ["/admin", "/profissional", "/franquia", "/unidade-fixa", "/minha-conta"];
+  const shouldHide = hiddenPaths.some(p => window.location.pathname.startsWith(p));
+  
+  if (!isCopaTime || shouldHide) return null;
 
   // Safely clamp active index to prevent out of bounds when matches array length changes
   const safeActive = Math.min(active, Math.max(0, matches.length - 1));

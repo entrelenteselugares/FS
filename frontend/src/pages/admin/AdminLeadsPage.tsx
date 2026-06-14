@@ -173,7 +173,7 @@ export const AdminLeadsPage: React.FC = () => {
                 <tr key={item.id} className="hover:bg-brand-tactical/10 transition-colors group">
                   <td className="p-3 md:p-6">
                     <div className="space-y-1">
-                      <div className="text-[10px] font-bold text-theme-text uppercase ">{item.cliente?.nome || 'Cliente não identificado'}</div>
+                      <div className="text-[10px] font-bold text-theme-text uppercase">{item.cliente?.nome || 'Cliente não identificado'}</div>
                       <div className="text-[9px] font-bold text-theme-text-muted lowercase flex items-center gap-2">
                         {item.cliente?.email || item.buyerEmail}
                         {item.recoverySentAt && (
@@ -201,14 +201,14 @@ export const AdminLeadsPage: React.FC = () => {
                       {(item.cliente?.whatsapp || item.buyerWhatsapp) && (
                         <button 
                           onClick={() => window.open(`https://wa.me/${(item.cliente?.whatsapp || item.buyerWhatsapp)?.replace(/\D/g, '')}?text=${encodeURIComponent('Olá! Vimos que você iniciou um pedido no Foto Segundo para o evento ' + item.event.title + '. Ficou com alguma dúvida?')}`, '_blank')}
-                          className="p-2 bg-[#25D366]/10 text-[#25D366] hover:bg-[#25D366] hover:text-white transition-all rounded-lg"
+                          className="p-2 bg-[#25D366]/10 text-[#25D366] hover:bg-[#25D366] hover:text-theme-text transition-all rounded-lg"
                         >
                           <MessageCircle size={14} />
                         </button>
                       )}
                       <button 
                         onClick={() => window.open(`mailto:${item.cliente?.email || item.buyerEmail}?subject=${encodeURIComponent('Seu pedido no Foto Segundo')}`, '_blank')}
-                        className="p-2 bg-brand-tactical/10 text-brand-tactical hover:bg-brand-tactical hover:text-black transition-all rounded-lg"
+                        className="p-2 bg-brand-tactical/10 text-brand-tactical hover:bg-brand-tactical hover:text-theme-text transition-all rounded-lg"
                       >
                         <Mail size={14} />
                       </button>
@@ -218,7 +218,7 @@ export const AdminLeadsPage: React.FC = () => {
               ))}
               {abandoned.length === 0 && (
                 <tr>
-                  <td colSpan={5} className="p-20 text-center text-[10px] font-bold text-zinc-600 uppercase tracking-widest">Nenhum abandono detectado na última hora.</td>
+                  <td colSpan={5} className="p-20 text-center text-[10px] font-bold text-theme-muted uppercase tracking-widest">Nenhum abandono detectado na última hora.</td>
                 </tr>
               )}
             </tbody>
@@ -257,7 +257,7 @@ export const AdminLeadsPage: React.FC = () => {
                   <td className="p-3 md:p-6 text-right">
                     <button 
                       onClick={() => window.open(`mailto:${lead.email}`, '_blank')}
-                      className="text-brand-tactical hover:text-white transition-colors"
+                      className="text-brand-tactical hover:text-theme-text transition-colors"
                     >
                       <ArrowRight size={16} />
                     </button>
@@ -266,7 +266,7 @@ export const AdminLeadsPage: React.FC = () => {
               ))}
               {leads.length === 0 && (
                 <tr>
-                  <td colSpan={5} className="p-20 text-center text-[10px] font-bold text-zinc-600 uppercase tracking-widest">Nenhum lead capturado ainda.</td>
+                  <td colSpan={5} className="p-20 text-center text-[10px] font-bold text-theme-muted uppercase tracking-widest">Nenhum lead capturado ainda.</td>
                 </tr>
               )}
             </tbody>

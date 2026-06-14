@@ -200,15 +200,15 @@ export default function AdminSuppliers() {
            <div className="max-w-6xl mx-auto w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
               <div className="bg-theme-bg border border-theme-border rounded-2xl p-3 md:p-6 space-y-3 group hover:border-brand-tactical/50 transition-all shadow-sm">
                  <div className="flex justify-between items-start"><span className="text-[10px] font-bold text-theme-muted uppercase tracking-widest">Aguardando Início</span><Clock className="text-amber-600" size={14} /></div>
-                 <div className="text-3xl font-heading font-bold text-theme-text ">{productionStats.pending}</div>
+                 <div className="text-3xl font-heading font-bold text-theme-text">{productionStats.pending}</div>
               </div>
               <div className="bg-theme-bg border border-theme-border rounded-2xl p-3 md:p-6 space-y-3 group hover:border-brand-tactical/50 transition-all shadow-sm">
                  <div className="flex justify-between items-start"><span className="text-[10px] font-bold text-theme-muted uppercase tracking-widest">Na Impressora</span><Printer className="text-brand-tactical" size={14} /></div>
-                 <div className="text-3xl font-heading font-bold text-theme-text ">{productionStats.printing}</div>
+                 <div className="text-3xl font-heading font-bold text-theme-text">{productionStats.printing}</div>
               </div>
               <div className="bg-theme-bg border border-theme-border rounded-2xl p-3 md:p-6 space-y-3 group hover:border-brand-tactical/50 transition-all shadow-sm">
                  <div className="flex justify-between items-start"><span className="text-[10px] font-bold text-theme-muted uppercase tracking-widest">Em Trânsito</span><Truck className="text-blue-500" size={14} /></div>
-                 <div className="text-3xl font-heading font-bold text-theme-text ">{productionStats.shipped}</div>
+                 <div className="text-3xl font-heading font-bold text-theme-text">{productionStats.shipped}</div>
               </div>
            </div>
 
@@ -233,7 +233,7 @@ export default function AdminSuppliers() {
               {loading ? (
                 <div className="py-24 text-center border border-theme-border bg-theme-bg animate-pulse text-[10px] text-theme-muted uppercase tracking-[0.5em] font-bold rounded-2xl">Sincronizando Fila de Produção...</div>
               ) : filteredRedemptions.length === 0 ? (
-                <div className="py-32 text-center border  border-theme-border bg-theme-bg-muted/5 space-y-4 rounded-2xl">
+                <div className="py-32 text-center border border-theme-border bg-theme-bg-muted/5 space-y-4 rounded-2xl">
                    <Package size={32} className="mx-auto text-theme-muted opacity-30" />
                    <p className="text-[9px] sm:text-[11px] font-bold text-brand-tactical uppercase tracking-[0.2em] sm:tracking-[0.4em] truncate max-w-[80vw]">Nenhum protocolo na fila de impressão</p>
                 </div>
@@ -246,7 +246,7 @@ export default function AdminSuppliers() {
                               r.status === 'PENDING' || r.status === 'APROVADO' ? 'border-amber-500 text-amber-500' :
                               r.status === 'PRINTING' ? 'border-brand-tactical text-brand-tactical bg-brand-tactical/10' :
                               r.status === 'SHIPPED' ? 'border-blue-500 text-blue-500' :
-                              'border-zinc-500 text-zinc-500'
+                              'border-zinc-500 text-theme-muted'
                             }`}>
                               {r.status}
                             </span>
@@ -268,7 +268,7 @@ export default function AdminSuppliers() {
                                <div className="flex items-center gap-2 text-[10px] font-bold text-theme-muted uppercase tracking-widest"><ImageIcon size={10} /> Ativos para Impressão</div>
                                <div className="flex flex-wrap gap-1.5">
                                   {r.selectedPhotos.map((photo, i) => (
-                                    <div key={i} className="px-2 py-1 bg-theme-bg border border-theme-border text-[10px] font-bold text-theme-text font-mono rounded-2xl">#{photo.slice(-5)}</div>
+                                    <div key={i} className="px-2 py-1 bg-theme-bg border border-theme-border text-[10px] font-bold text-theme-text rounded-2xl">#{photo.slice(-5)}</div>
                                   ))}
                                </div>
                             </div>
@@ -289,13 +289,13 @@ export default function AdminSuppliers() {
                                     className="w-full bg-theme-bg border border-theme-border p-2.5 pl-10 text-[9px] text-theme-text font-bold outline-none focus:border-brand-tactical transition-all uppercase rounded-2xl" 
                                  />
                               </div>
-                              <button onClick={() => updateStatus(r.id, 'SHIPPED')} className="w-full border border-brand-tactical text-brand-tactical py-3 text-[10px] font-bold uppercase tracking-widest rounded-xl hover:bg-brand-tactical/10 transition-all ">FINALIZAR & ENVIAR</button>
+                              <button onClick={() => updateStatus(r.id, 'SHIPPED')} className="w-full border border-brand-tactical text-brand-tactical py-3 text-[10px] font-bold uppercase tracking-widest rounded-xl hover:bg-brand-tactical/10 transition-all">FINALIZAR & ENVIAR</button>
                            </div>
                          ) : (
                            <div className="text-center p-4 bg-zinc-950/20 border border-theme-border">
                               <span className="text-[10px] font-bold text-theme-muted uppercase tracking-widest block mb-2">Objeto em Trânsito</span>
-                              <p className="text-[10px] font-bold text-brand-tactical uppercase font-mono">{r.trackingCode || "S/ RASTREIO"}</p>
-                              <button onClick={() => updateStatus(r.id, 'DELIVERED')} className="mt-4 text-[9px] font-bold text-theme-muted uppercase border border-theme-border px-3 py-1.5 hover:text-white transition-all ">CONFIRMAR ENTREGA</button>
+                              <p className="text-[10px] font-bold text-brand-tactical uppercase">{r.trackingCode || "S/ RASTREIO"}</p>
+                              <button onClick={() => updateStatus(r.id, 'DELIVERED')} className="mt-4 text-[9px] font-bold text-theme-muted uppercase border border-theme-border px-3 py-1.5 hover:text-theme-text transition-all">CONFIRMAR ENTREGA</button>
                            </div>
                          )}
                       </div>
@@ -333,22 +333,22 @@ export default function AdminSuppliers() {
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-6">
                          <div className="bg-theme-bg border border-theme-border rounded-2xl p-3 md:p-6 space-y-4 shadow-sm">
                             <span className="text-[10px] font-bold text-theme-muted uppercase tracking-widest block">Unitário Operacional</span>
-                            <p className="text-2xl font-heading font-bold text-theme-text ">{formatCurrency(breakeven.costPerPhoto)}</p>
+                            <p className="text-2xl font-heading font-bold text-theme-text">{formatCurrency(breakeven.costPerPhoto)}</p>
                          </div>
                          <div className="bg-theme-bg border border-theme-border rounded-2xl p-3 md:p-6 space-y-4 shadow-sm">
                             <span className="text-[10px] font-bold text-theme-muted uppercase tracking-widest block">Valor do Equipamento</span>
-                            <p className="text-2xl font-heading font-bold text-theme-text ">{formatCurrency(breakeven.printerCost)}</p>
+                            <p className="text-2xl font-heading font-bold text-theme-text">{formatCurrency(breakeven.printerCost)}</p>
                          </div>
                          <div className="bg-brand-tactical/10 border border-brand-tactical rounded-2xl p-3 md:p-6 space-y-4 shadow-md">
                             <span className="text-[10px] font-bold text-brand-tactical uppercase tracking-widest block">Fotos para Amortizar</span>
-                            <p className="text-2xl font-heading font-bold text-brand-tactical ">{breakeven.photosToBreakeven} <span className="text-[10px] uppercase font-sans">un</span></p>
+                            <p className="text-2xl font-heading font-bold text-brand-tactical">{breakeven.photosToBreakeven} <span className="text-[10px] uppercase">un</span></p>
                          </div>
                       </div>
 
                       <div className="bg-theme-bg border border-theme-border rounded-2xl p-5 md:p-10 relative overflow-hidden group shadow-sm">
                          <div className="flex items-center justify-between mb-10">
                             <div className="space-y-1">
-                               <h4 className="text-[11px] font-bold uppercase tracking-[0.5em] text-theme-text ">Simulador de Conversão</h4>
+                               <h4 className="text-[11px] font-bold uppercase tracking-[0.5em] text-theme-text">Simulador de Conversão</h4>
                                <p className="text-[9px] text-theme-muted uppercase tracking-widest font-bold">Projeção orgânica de retorno</p>
                             </div>
                             <BarChart3 className="text-brand-tactical opacity-20" size={32} />
@@ -365,11 +365,11 @@ export default function AdminSuppliers() {
                                <tbody className="divide-y divide-theme-border/20">
                                   {breakeven.scenarios.map(s => (
                                     <tr key={s.printerPrice} className="hover:bg-theme-bg-muted transition-all text-[11px] font-bold text-theme-text uppercase">
-                                       <td className="p-4 ">{formatCurrency(s.printerPrice)}</td>
+                                       <td className="p-4">{formatCurrency(s.printerPrice)}</td>
                                        <td className="p-4 text-center">
-                                          <span className="px-3 py-1 bg-brand-tactical/10 text-brand-tactical border border-brand-tactical/20 ">{s.photosNeeded} FOTOS</span>
+                                          <span className="px-3 py-1 bg-brand-tactical/10 text-brand-tactical border border-brand-tactical/20">{s.photosNeeded} FOTOS</span>
                                        </td>
-                                       <td className="p-4 text-right text-theme-muted ">{s.monthsAt10PerMonth} Meses</td>
+                                       <td className="p-4 text-right text-theme-muted">{s.monthsAt10PerMonth} Meses</td>
                                     </tr>
                                   ))}
                                </tbody>
@@ -392,10 +392,10 @@ export default function AdminSuppliers() {
       {view === "suppliers" && (
         <div className="space-y-8 animate-in fade-in duration-500">
            <div className="flex justify-between items-center border-b border-theme-border pb-6">
-              <h3 className="text-xl font-heading text-theme-text uppercase ">Ativos & Hardware</h3>
+              <h3 className="text-xl font-heading text-theme-text uppercase">Ativos & Hardware</h3>
               <button 
                 onClick={() => setIsModalOpen(true)}
-                className="bg-brand-tactical text-zinc-950 px-3 md:px-6 py-3 text-[10px] md:text-[9px] font-bold uppercase tracking-wider md:tracking-widest shadow-lg flex items-center gap-2 hover:brightness-110 transition-all "
+                className="bg-brand-tactical text-zinc-950 px-3 md:px-6 py-3 text-[10px] md:text-[9px] font-bold uppercase tracking-wider md:tracking-widest shadow-lg flex items-center gap-2 hover:brightness-110 transition-all"
               >
                 <Plus size={12} /> NOVO EQUIPAMENTO
               </button>
@@ -409,11 +409,11 @@ export default function AdminSuppliers() {
                       <h4 className="text-xl font-heading font-bold text-theme-text uppercase leading-none">{s.name}</h4>
                    </div>
                    <div className="grid grid-cols-2 gap-4 pt-6 border-t border-theme-border/10">
-                      <div className="space-y-1"><span className="text-[9px] font-bold text-theme-muted uppercase tracking-widest">Custo Foto</span><p className="text-sm font-bold text-theme-text ">{formatCurrency(s.costPer10x15)}</p></div>
-                      <div className="space-y-1"><span className="text-[9px] font-bold text-theme-muted uppercase tracking-widest">Resgates</span><p className="text-sm font-bold text-theme-text ">{s._count.redemptions}</p></div>
+                      <div className="space-y-1"><span className="text-[9px] font-bold text-theme-muted uppercase tracking-widest">Custo Foto</span><p className="text-sm font-bold text-theme-text">{formatCurrency(s.costPer10x15)}</p></div>
+                      <div className="space-y-1"><span className="text-[9px] font-bold text-theme-muted uppercase tracking-widest">Resgates</span><p className="text-sm font-bold text-theme-text">{s._count.redemptions}</p></div>
                    </div>
                    <div className="pt-6 flex justify-end gap-3 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <button className="p-2 border border-theme-border text-theme-muted hover:text-white transition-all"><Settings size={14}/></button>
+                      <button className="p-2 border border-theme-border text-theme-muted hover:text-theme-text transition-all"><Settings size={14}/></button>
                       <button className="p-2 border border-red-900/30 text-red-900/50 hover:text-red-500 transition-all"><Trash2 size={14}/></button>
                    </div>
                 </div>
@@ -483,14 +483,14 @@ function NewSupplierModal({ onClose, onSave }: { onClose: () => void; onSave: (d
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-10">
             <div className="space-y-6">
               <div className="space-y-4">
-                <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest block mb-2 opacity-60 ">Informações do Ativo</label>
+                <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest block mb-2 opacity-60">Informações do Ativo</label>
                 <div className="space-y-4">
                   <div className="space-y-2">
-                    <label className="text-[9px] font-bold text-theme-muted uppercase tracking-widest block mb-1 opacity-40 ">Nome do Equipamento</label>
+                    <label className="text-[9px] font-bold text-theme-muted uppercase tracking-widest block mb-1 opacity-40">Nome do Equipamento</label>
                     <input required className="w-full bg-theme-bg-muted border border-theme-border p-4 text-[10px] text-theme-text font-bold outline-none focus:border-brand-tactical rounded-xl uppercase placeholder:opacity-20" value={form.name} onChange={e => setForm({...form, name: e.target.value})} placeholder="EX: IMPRESSORA LAB CENTRAL" />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[9px] font-bold text-theme-muted uppercase tracking-widest block mb-1 opacity-40 ">Tipo de Operação</label>
+                    <label className="text-[9px] font-bold text-theme-muted uppercase tracking-widest block mb-1 opacity-40">Tipo de Operação</label>
                     <select className="w-full bg-theme-bg-muted border border-theme-border p-4 text-[10px] text-theme-text font-bold outline-none focus:border-brand-tactical rounded-xl appearance-none cursor-pointer" value={form.type} onChange={e => setForm({...form, type: e.target.value})}>
                       <option value="OWN_PRINTER">IMPRESSORA PRÓPRIA</option>
                       <option value="EXTERNAL_LAB">LABORATÓRIO EXTERNO</option>
@@ -503,14 +503,14 @@ function NewSupplierModal({ onClose, onSave }: { onClose: () => void; onSave: (d
 
             <div className="space-y-6">
               <div className="space-y-4">
-                <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest block mb-2 opacity-60 ">Hardware & Capex</label>
+                <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest block mb-2 opacity-60">Hardware & Capex</label>
                 <div className="space-y-4">
                   <div className="space-y-2">
-                    <label className="text-[9px] font-bold text-theme-muted uppercase tracking-widest block mb-1 opacity-40 ">Modelo / Marca</label>
+                    <label className="text-[9px] font-bold text-theme-muted uppercase tracking-widest block mb-1 opacity-40">Modelo / Marca</label>
                     <input className="w-full bg-theme-bg-muted border border-theme-border p-4 text-[10px] text-theme-text font-bold outline-none focus:border-brand-tactical rounded-xl uppercase placeholder:opacity-20" value={form.printerModel} onChange={e => setForm({...form, printerModel: e.target.value})} placeholder="EX: EPSON L805" />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[9px] font-bold text-theme-muted uppercase tracking-widest block mb-1 opacity-40 ">Custo de Aquisição (R$)</label>
+                    <label className="text-[9px] font-bold text-theme-muted uppercase tracking-widest block mb-1 opacity-40">Custo de Aquisição (R$)</label>
                     <input type="number" step="0.01" className="w-full bg-theme-bg-muted border border-theme-border p-4 text-[10px] text-theme-text font-bold outline-none focus:border-brand-tactical rounded-xl placeholder:opacity-20" value={form.printerCost} onChange={e => setForm({...form, printerCost: e.target.value})} placeholder="0.00" />
                   </div>
                 </div>
@@ -519,22 +519,22 @@ function NewSupplierModal({ onClose, onSave }: { onClose: () => void; onSave: (d
           </div>
 
           <div className="pt-10 border-t border-theme-border">
-            <label className="text-[10px] font-bold text-brand-tactical uppercase tracking-widest block mb-8 opacity-60 ">Custos Operacionais Unitários (OPEX)</label>
+            <label className="text-[10px] font-bold text-brand-tactical uppercase tracking-widest block mb-8 opacity-60">Custos Operacionais Unitários (OPEX)</label>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6">
               <div className="space-y-2">
-                <label className="text-[9px] font-bold text-theme-muted uppercase tracking-widest block mb-1 opacity-40 ">Papel/Tinta</label>
+                <label className="text-[9px] font-bold text-theme-muted uppercase tracking-widest block mb-1 opacity-40">Papel/Tinta</label>
                 <input required type="number" step="0.0001" className="w-full bg-theme-bg-muted border border-theme-border p-4 text-[10px] text-theme-text font-bold outline-none focus:border-brand-tactical rounded-xl" value={form.costPer10x15} onChange={e => setForm({...form, costPer10x15: e.target.value})} placeholder="0.00" />
               </div>
               <div className="space-y-2">
-                <label className="text-[9px] font-bold text-theme-muted uppercase tracking-widest block mb-1 opacity-40 ">Caixa/Emb.</label>
+                <label className="text-[9px] font-bold text-theme-muted uppercase tracking-widest block mb-1 opacity-40">Caixa/Emb.</label>
                 <input required type="number" step="0.01" className="w-full bg-theme-bg-muted border border-theme-border p-4 text-[10px] text-theme-text font-bold outline-none focus:border-brand-tactical rounded-xl" value={form.boxCost} onChange={e => setForm({...form, boxCost: e.target.value})} placeholder="0.00" />
               </div>
               <div className="space-y-2">
-                <label className="text-[9px] font-bold text-theme-muted uppercase tracking-widest block mb-1 opacity-40 ">Etiqueta</label>
+                <label className="text-[9px] font-bold text-theme-muted uppercase tracking-widest block mb-1 opacity-40">Etiqueta</label>
                 <input required type="number" step="0.01" className="w-full bg-theme-bg-muted border border-theme-border p-4 text-[10px] text-theme-text font-bold outline-none focus:border-brand-tactical rounded-xl" value={form.labelCost} onChange={e => setForm({...form, labelCost: e.target.value})} placeholder="0.00" />
               </div>
               <div className="space-y-2">
-                <label className="text-[9px] font-bold text-theme-muted uppercase tracking-widest block mb-1 opacity-40 ">Logística</label>
+                <label className="text-[9px] font-bold text-theme-muted uppercase tracking-widest block mb-1 opacity-40">Logística</label>
                 <input required type="number" step="0.01" className="w-full bg-theme-bg-muted border border-theme-border p-4 text-[10px] text-theme-text font-bold outline-none focus:border-brand-tactical rounded-xl" value={form.uberCost} onChange={e => setForm({...form, uberCost: e.target.value})} placeholder="0.00" />
               </div>
             </div>
@@ -547,7 +547,7 @@ function NewSupplierModal({ onClose, onSave }: { onClose: () => void; onSave: (d
 
         {/* Footer */}
         <div className="p-4 md:p-8 md:p-10 bg-theme-bg-muted border-t border-theme-border flex gap-4 shrink-0 rounded-2xl">
-          <button type="button" onClick={onClose} className="flex-1 py-5 border border-theme-border text-[11px] font-bold uppercase tracking-[0.3em] text-theme-muted hover:text-white transition-all rounded-[20px] ">Cancelar</button>
+          <button type="button" onClick={onClose} className="flex-1 py-5 border border-theme-border text-[11px] font-bold uppercase tracking-[0.3em] text-theme-muted hover:text-theme-text transition-all rounded-[20px]">Cancelar</button>
           <button 
             type="submit" 
             form="new-supplier-form"

@@ -54,7 +54,7 @@ function ConfirmModal({
           </button>
           <button
             onClick={onConfirm}
-            className="flex-1 py-3 bg-red-500 rounded-xl text-[10px] font-bold uppercase tracking-widest text-white hover:bg-red-600 transition-all"
+            className="flex-1 py-3 bg-red-500 rounded-xl text-[10px] font-bold uppercase tracking-widest text-theme-text hover:bg-red-600 transition-all"
           >
             Confirmar
           </button>
@@ -214,7 +214,7 @@ export default function PortfolioManage({ isTab = false }: PortfolioManageProps)
             </div>
             <button
               onClick={() => setIsCreating(true)}
-              className="self-start px-4 md:px-6 py-2 md:py-3 bg-brand-tactical text-black text-[10px] font-bold uppercase tracking-widest flex items-center gap-2 hover:brightness-110 transition-all"
+              className="self-start px-4 md:px-6 py-2 md:py-3 bg-brand-tactical text-theme-text text-[10px] font-bold uppercase tracking-widest flex items-center gap-2 hover:brightness-110 transition-all"
             >
               <Plus size={14} /> Novo Álbum
             </button>
@@ -232,7 +232,7 @@ export default function PortfolioManage({ isTab = false }: PortfolioManageProps)
           </div>
           <button
             onClick={() => setIsCreating(true)}
-            className="self-start px-4 md:px-6 py-2 md:py-3 bg-brand-tactical text-black text-[10px] font-bold uppercase tracking-widest flex items-center gap-2 hover:brightness-110 transition-all rounded-xl"
+            className="self-start px-4 md:px-6 py-2 md:py-3 bg-brand-tactical text-theme-text text-[10px] font-bold uppercase tracking-widest flex items-center gap-2 hover:brightness-110 transition-all rounded-xl"
           >
             <Plus size={14} /> Novo Álbum
           </button>
@@ -251,8 +251,8 @@ export default function PortfolioManage({ isTab = false }: PortfolioManageProps)
               className="bg-theme-bg border border-theme-border rounded-2xl p-3 md:p-6 mb-8 space-y-4"
             >
               <div className="flex items-center justify-between">
-                <h2 className="text-sm font-bold text-white uppercase tracking-widest">Criar Álbum</h2>
-                <button type="button" onClick={() => setIsCreating(false)} className="text-theme-muted hover:text-white transition-colors">
+                <h2 className="text-sm font-bold text-theme-text uppercase tracking-widest">Criar Álbum</h2>
+                <button type="button" onClick={() => setIsCreating(false)} className="text-theme-muted hover:text-theme-text transition-colors">
                   <X size={18} />
                 </button>
               </div>
@@ -263,27 +263,27 @@ export default function PortfolioManage({ isTab = false }: PortfolioManageProps)
                   placeholder="Título do Álbum"
                   value={newAlbum.title}
                   onChange={e => setNewAlbum({ ...newAlbum, title: e.target.value })}
-                  className="w-full bg-black border border-white/10 rounded-xl p-3 text-xs text-white outline-none focus:border-brand-tactical"
+                  className="w-full bg-black border border-white/10 rounded-xl p-3 text-xs text-theme-text outline-none focus:border-brand-tactical"
                 />
                 <input
                   type="text"
                   placeholder="Categoria (Ex: Casamento, Formatura)"
                   value={newAlbum.category}
                   onChange={e => setNewAlbum({ ...newAlbum, category: e.target.value })}
-                  className="w-full bg-black border border-white/10 rounded-xl p-3 text-xs text-white outline-none focus:border-brand-tactical"
+                  className="w-full bg-black border border-white/10 rounded-xl p-3 text-xs text-theme-text outline-none focus:border-brand-tactical"
                 />
               </div>
               <textarea
                 placeholder="Descrição"
                 value={newAlbum.description}
                 onChange={e => setNewAlbum({ ...newAlbum, description: e.target.value })}
-                className="w-full bg-black border border-white/10 rounded-xl p-3 text-xs text-white h-24 outline-none focus:border-brand-tactical"
+                className="w-full bg-black border border-white/10 rounded-xl p-3 text-xs text-theme-text h-24 outline-none focus:border-brand-tactical"
               />
               <div className="flex gap-4">
-                <button type="submit" className="px-3 md:px-6 py-2 bg-brand-tactical text-black text-xs font-bold uppercase tracking-widest rounded-xl">
+                <button type="submit" className="px-3 md:px-6 py-2 bg-brand-tactical text-theme-text text-xs font-bold uppercase tracking-widest rounded-xl">
                   Salvar
                 </button>
-                <button type="button" onClick={() => setIsCreating(false)} className="px-3 md:px-6 py-2 border border-white/10 text-white text-xs font-bold uppercase tracking-widest rounded-xl">
+                <button type="button" onClick={() => setIsCreating(false)} className="px-3 md:px-6 py-2 border border-white/10 text-theme-text text-xs font-bold uppercase tracking-widest rounded-xl">
                   Cancelar
                 </button>
               </div>
@@ -307,7 +307,7 @@ export default function PortfolioManage({ isTab = false }: PortfolioManageProps)
                     {album.coverUrl ? (
                       <img src={album.coverUrl} alt={album.title} className="w-full h-full object-cover" />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center text-white/20">
+                      <div className="w-full h-full flex items-center justify-center text-theme-text/20">
                         <ImageIcon size={24} />
                       </div>
                     )}
@@ -315,7 +315,7 @@ export default function PortfolioManage({ isTab = false }: PortfolioManageProps)
 
                   {/* Info */}
                   <div className="flex-1 min-w-0">
-                    <h3 className="text-sm font-bold text-white uppercase truncate">{album.title}</h3>
+                    <h3 className="text-sm font-bold text-theme-text uppercase truncate">{album.title}</h3>
                     <div className="flex items-center gap-3 mt-1 flex-wrap">
                       <span className="text-[9px] text-theme-muted uppercase tracking-widest">
                         {album.category || "Sem categoria"}
@@ -330,7 +330,7 @@ export default function PortfolioManage({ isTab = false }: PortfolioManageProps)
                   {/* Actions */}
                   <div className="flex items-center gap-2 flex-shrink-0">
                     {/* Upload button */}
-                    <label className="cursor-pointer px-3 py-2 bg-brand-tactical/10 border border-brand-tactical/30 text-brand-tactical text-[9px] font-bold uppercase tracking-widest rounded-lg flex items-center gap-1.5 hover:bg-brand-tactical hover:text-black transition-all">
+                    <label className="cursor-pointer px-3 py-2 bg-brand-tactical/10 border border-brand-tactical/30 text-brand-tactical text-[9px] font-bold uppercase tracking-widest rounded-lg flex items-center gap-1.5 hover:bg-brand-tactical hover:text-theme-text transition-all">
                       {uploading === album.id ? (
                         <Loader2 size={12} className="animate-spin" />
                       ) : (
@@ -379,7 +379,7 @@ export default function PortfolioManage({ isTab = false }: PortfolioManageProps)
                     >
                       <div className="border-t border-theme-border p-4">
                         {(!album.images || album.images.length === 0) ? (
-                          <div className="py-3 md:py-6 md:py-12 text-center text-[10px] text-theme-muted uppercase tracking-widest border  border-theme-border rounded-xl">
+                          <div className="py-3 md:py-6 md:py-12 text-center text-[10px] text-theme-muted uppercase tracking-widest border border-theme-border rounded-xl">
                             Nenhuma foto neste álbum. Clique em &quot;Adicionar&quot; para enviar.
                           </div>
                         ) : (
@@ -394,7 +394,7 @@ export default function PortfolioManage({ isTab = false }: PortfolioManageProps)
 
                                 {/* Hidden badge */}
                                 {img.isHidden && (
-                                  <div className="absolute top-1.5 left-1.5 bg-amber-500/90 text-black text-[9px] font-bold uppercase px-1.5 py-0.5 rounded tracking-widest flex items-center gap-1">
+                                  <div className="absolute top-1.5 left-1.5 bg-amber-500/90 text-theme-text text-[9px] font-bold uppercase px-1.5 py-0.5 rounded tracking-widest flex items-center gap-1">
                                     <EyeOff size={8} /> Oculta
                                   </div>
                                 )}
@@ -402,14 +402,14 @@ export default function PortfolioManage({ isTab = false }: PortfolioManageProps)
                                 {/* Hover overlay */}
                                 <div className="absolute inset-0 bg-black/70 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
                                   {processingImage === img.id ? (
-                                    <Loader2 size={20} className="text-white animate-spin" />
+                                    <Loader2 size={20} className="text-theme-text animate-spin" />
                                   ) : (
                                     <>
                                       {/* Toggle hide */}
                                       <button
                                         onClick={() => handleToggleHide(img.id, img.isHidden)}
                                         title={img.isHidden ? "Tornar visível" : "Ocultar da vitrine"}
-                                        className="p-2 rounded-lg bg-white/10 hover:bg-amber-500/30 text-white hover:text-amber-400 transition-all"
+                                        className="p-2 rounded-lg bg-white/10 hover:bg-amber-500/30 text-theme-text hover:text-amber-400 transition-all"
                                       >
                                         {img.isHidden ? <Eye size={16} /> : <EyeOff size={16} />}
                                       </button>
@@ -418,7 +418,7 @@ export default function PortfolioManage({ isTab = false }: PortfolioManageProps)
                                       <button
                                         onClick={() => handleDeleteImage(img.id)}
                                         title="Excluir permanentemente"
-                                        className="p-2 rounded-lg bg-white/10 hover:bg-red-500/30 text-white hover:text-red-400 transition-all"
+                                        className="p-2 rounded-lg bg-white/10 hover:bg-red-500/30 text-theme-text hover:text-red-400 transition-all"
                                       >
                                         <Trash2 size={16} />
                                       </button>

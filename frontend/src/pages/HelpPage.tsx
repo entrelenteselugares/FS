@@ -128,7 +128,7 @@ const HelpPage: React.FC = () => {
   const currentFaqs = faqData[activeCategory] || [];
 
   return (
-    <div className="min-h-screen bg-theme-bg text-theme-text font-sans selection:bg-brand-tactical/30">
+    <div className="min-h-screen bg-theme-bg text-theme-text selection:bg-brand-tactical/30">
       <SEO title="Central de Ajuda | Foto Segundo" description="Encontre respostas rápidas para as dúvidas mais comuns." />
       <Navbar />
 
@@ -155,7 +155,7 @@ const HelpPage: React.FC = () => {
                 onClick={() => { setActiveCategory(cat.id); setOpenItem(null); }}
                 className={`flex items-center gap-2 px-4 py-3 rounded-xl transition-all duration-300 font-bold uppercase tracking-widest text-[10px] ${
                   activeCategory === cat.id 
-                    ? "bg-brand-tactical text-black shadow-lg shadow-brand-tactical/20" 
+                    ? "bg-brand-tactical text-theme-text shadow-lg shadow-brand-tactical/20" 
                     : "bg-theme-bg border border-theme-border text-theme-text hover:border-brand-tactical/40"
                 }`}
               >
@@ -227,12 +227,12 @@ const HelpPage: React.FC = () => {
           <div className="p-4 md:p-8 md:p-12 bg-brand-tactical/10 border border-brand-tactical/20 text-center space-y-6 mt-16 rounded-2xl">
             <HelpCircle size={48} className="mx-auto text-brand-tactical" />
             <div className="space-y-2">
-              <h2 className="text-2xl font-bold uppercase ">Não encontrou sua resposta?</h2>
+              <h2 className="text-2xl font-bold uppercase">Não encontrou sua resposta?</h2>
               <p className="text-theme-text-muted text-sm uppercase tracking-widest font-bold max-w-md mx-auto">
                 Entre em contato com nossa equipe pela página de contato. Respondemos em até 24 horas úteis.
               </p>
             </div>
-            <Link to="/contato" className="inline-block px-3 md:px-6 md:px-12 py-4 bg-brand-tactical text-black font-bold uppercase tracking-[0.3em] text-[10px] hover:brightness-110 transition-all shadow-xl shadow-brand-tactical/20 rounded-full">
+            <Link to="/contato" className="inline-block px-3 md:px-6 md:px-12 py-4 bg-brand-tactical text-theme-text font-bold uppercase tracking-[0.3em] text-[10px] hover:brightness-110 transition-all shadow-xl shadow-brand-tactical/20 rounded-full">
               Falar com o Suporte
             </Link>
           </div>
@@ -242,7 +242,7 @@ const HelpPage: React.FC = () => {
       {/* Footer Minimalista */}
       <footer className="border-t border-theme-border py-3 md:py-6 md:py-12 px-3 md:px-6">
         <div className="max-w-4xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4 md:gap-8">
-          <div className="text-[10px] font-bold text-theme-text-muted uppercase tracking-[0.5em] ">
+          <div className="text-[10px] font-bold text-theme-text-muted uppercase tracking-[0.5em]">
             © 2026 Foto Segundo • Todos os direitos reservados
           </div>
         </div>

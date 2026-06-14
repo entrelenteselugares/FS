@@ -71,18 +71,18 @@ export default function AdminPhygitalQueue({ eventId, eventTitle, onClose }: Pro
         {/* Header */}
         <div className="p-4 md:p-8 border-b border-theme-border flex items-center justify-between">
           <div>
-            <h2 className="text-xl font-bold text-theme-text uppercase ">Radar Phygital</h2>
-            <p className="text-[10px] text-zinc-500 uppercase tracking-widest mt-1 ">{eventTitle}</p>
+            <h2 className="text-xl font-bold text-theme-text uppercase">Radar Phygital</h2>
+            <p className="text-[10px] text-theme-muted uppercase tracking-widest mt-1">{eventTitle}</p>
           </div>
           <div className="flex items-center gap-4">
             <button 
               onClick={() => setAutoRefresh(!autoRefresh)}
-              className={`p-2 rounded-lg border transition-all ${autoRefresh ? 'bg-brand-tactical/10 border-brand-tactical text-brand-tactical' : 'border-theme-border text-zinc-500'}`}
+              className={`p-2 rounded-lg border transition-all ${autoRefresh ? 'bg-brand-tactical/10 border-brand-tactical text-brand-tactical' : 'border-theme-border text-theme-muted'}`}
               title="Atualização Automática"
             >
               <RefreshCw size={18} className={autoRefresh ? 'animate-spin' : ''} style={{ animationDuration: '3s' }} />
             </button>
-            <button onClick={onClose} className="p-2 text-zinc-500 hover:text-white transition-colors">
+            <button onClick={onClose} className="p-2 text-theme-muted hover:text-theme-text transition-colors">
               <X size={24} />
             </button>
           </div>
@@ -91,12 +91,12 @@ export default function AdminPhygitalQueue({ eventId, eventTitle, onClose }: Pro
         {/* Content */}
         <div className="flex-1 overflow-y-auto p-4 md:p-8 space-y-6">
           {loading && jobs.length === 0 ? (
-            <div className="h-64 flex flex-col items-center justify-center text-zinc-500 gap-4">
+            <div className="h-64 flex flex-col items-center justify-center text-theme-muted gap-4">
               <RefreshCw className="animate-spin" />
               <p className="text-[10px] font-bold uppercase tracking-widest">Sincronizando Fila...</p>
             </div>
           ) : jobs.length === 0 ? (
-            <div className="h-64 flex flex-col items-center justify-center text-zinc-500 gap-4 border-2  border-theme-border rounded-2xl">
+            <div className="h-64 flex flex-col items-center justify-center text-theme-muted gap-4 border-2 border-theme-border rounded-2xl">
               <Printer size={40} className="opacity-20" />
               <p className="text-[10px] font-bold uppercase tracking-widest opacity-40">Nenhuma foto enviada ainda.</p>
             </div>
@@ -115,7 +115,7 @@ export default function AdminPhygitalQueue({ eventId, eventTitle, onClose }: Pro
                   {/* Info */}
                   <div className="flex-1 flex flex-col justify-center">
                     <div className="flex items-center justify-between mb-1">
-                      <span className="text-[12px] font-bold text-theme-text uppercase ">{job.customerName}</span>
+                      <span className="text-[12px] font-bold text-theme-text uppercase">{job.customerName}</span>
                       {job.status === 'PRINTED' ? (
                         <div className="flex items-center gap-1.5 text-brand-tactical">
                           <CheckCircle size={12} />
@@ -128,10 +128,10 @@ export default function AdminPhygitalQueue({ eventId, eventTitle, onClose }: Pro
                         </div>
                       )}
                     </div>
-                    <p className="text-[10px] text-zinc-500 font-bold mb-3">{job.customerPhone}</p>
+                    <p className="text-[10px] text-theme-muted font-bold mb-3">{job.customerPhone}</p>
                     
                     <div className="flex items-center gap-4">
-                       <span className="text-[10px] text-zinc-600 font-bold uppercase tracking-widest">
+                       <span className="text-[10px] text-theme-muted font-bold uppercase tracking-widest">
                         {new Date(job.createdAt).toLocaleTimeString('pt-BR')}
                        </span>
                        <a 
@@ -155,15 +155,15 @@ export default function AdminPhygitalQueue({ eventId, eventTitle, onClose }: Pro
           <div className="flex justify-between items-center">
             <div className="text-center">
               <span className="text-[24px] font-bold text-theme-text">{jobs.length}</span>
-              <span className="text-[9px] font-bold text-zinc-600 uppercase tracking-[0.2em] block">Total Enviado</span>
+              <span className="text-[9px] font-bold text-theme-muted uppercase tracking-[0.2em] block">Total Enviado</span>
             </div>
             <div className="text-center" style={{ minWidth: '80px' }}>
               <span className="text-[24px] font-bold text-brand-tactical">{jobs.filter(j => j.status === 'PRINTED').length}</span>
-              <span className="text-[9px] font-bold text-zinc-600 uppercase tracking-[0.2em] block">Impressas</span>
+              <span className="text-[9px] font-bold text-theme-muted uppercase tracking-[0.2em] block">Impressas</span>
             </div>
             <div className="text-center">
               <span className="text-[24px] font-bold text-amber-500">{jobs.filter(j => j.status === 'PENDING_PRINT').length}</span>
-              <span className="text-[9px] font-bold text-zinc-600 uppercase tracking-[0.2em] block">Pendente</span>
+              <span className="text-[9px] font-bold text-theme-muted uppercase tracking-[0.2em] block">Pendente</span>
             </div>
           </div>
         </div>

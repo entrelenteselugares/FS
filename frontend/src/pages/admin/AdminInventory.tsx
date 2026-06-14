@@ -168,9 +168,9 @@ export default function AdminInventory() {
         ))}
         {filteredProducts.filter(p => p.stockLevel < 10 && p.stockType !== 'FORNECEDOR').length === 0 && (
           <div className="bg-emerald-500/5 border border-emerald-500/20 p-3 md:p-6 col-span-4 flex items-center gap-4">
-            <Package className="text-emerald-500" size={20} />
+            <Package className="text-theme-brand" size={20} />
             <div>
-              <p className="text-[9px] font-bold text-emerald-500 uppercase tracking-widest">Status do Inventário</p>
+              <p className="text-[9px] font-bold text-theme-brand uppercase tracking-widest">Status do Inventário</p>
               <p className="text-[9px] sm:text-[11px] font-bold text-brand-tactical uppercase tracking-[0.2em] sm:tracking-[0.4em] truncate max-w-[80vw]">Estoque Saudável. Nenhum alerta crítico.</p>
             </div>
           </div>
@@ -197,9 +197,9 @@ export default function AdminInventory() {
               <tr key={p.id} className="hover:bg-theme-bg-muted transition-all group">
                 <td className="p-3 md:p-6">
                   <div className="flex flex-col">
-                    <span className="text-sm font-bold text-theme-text uppercase ">{p.name}</span>
+                    <span className="text-sm font-bold text-theme-text uppercase">{p.name}</span>
                     <div className="flex items-center gap-2 mt-1">
-                      <span className="text-[10px] text-theme-muted font-bold font-mono tracking-widest">{p.sku}</span>
+                      <span className="text-[10px] text-theme-muted font-bold tracking-widest">{p.sku}</span>
                       {p.externalLink && (
                         <a 
                           href={p.externalLink} 
@@ -217,14 +217,14 @@ export default function AdminInventory() {
                   <span className={`text-[9px] font-black px-3 py-1 uppercase tracking-widest ${
                     p.stockType === 'PROPRIO' ? 'bg-theme-bg-muted text-theme-text border border-theme-border' :
                     p.stockType === 'FORNECEDOR' ? 'bg-amber-500/10 text-amber-500 border border-amber-500/20' :
-                    'bg-emerald-500/10 text-emerald-500 border border-emerald-500/20'
+                    'bg-emerald-500/10 text-theme-brand border border-emerald-500/20'
                   }`}>
                     {p.stockType === 'PROPRIO' ? 'Próprio' : p.stockType === 'FORNECEDOR' ? 'Fornecedor (Drop)' : 'Híbrido (Ambos)'}
                   </span>
                 </td>
                 <td className="p-3 md:p-6 text-center">
                   {p.stockType === 'FORNECEDOR' ? (
-                    <div className="text-sm font-bold text-theme-muted uppercase ">Sob Demanda</div>
+                    <div className="text-sm font-bold text-theme-muted uppercase">Sob Demanda</div>
                   ) : (
                     <>
                       <div className={`text-2xl font-black italic ${p.stockLevel < 10 ? 'text-red-500' : p.stockLevel < 30 ? 'text-amber-500' : 'text-theme-text'}`}>
@@ -274,7 +274,7 @@ export default function AdminInventory() {
             <form id="new-inventory-form" onSubmit={(e) => { e.preventDefault(); handleCreate(); }} className="flex-1 overflow-y-auto p-4 md:p-8 md:p-10 space-y-8 custom-scrollbar">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-6">
                 <div className="space-y-2">
-                  <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest block mb-2 opacity-60 ">Nome do Produto</label>
+                  <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest block mb-2 opacity-60">Nome do Produto</label>
                   <input 
                     required
                     type="text"
@@ -285,7 +285,7 @@ export default function AdminInventory() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest block mb-2 opacity-60 ">SKU (ID Único)</label>
+                  <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest block mb-2 opacity-60">SKU (ID Único)</label>
                   <input 
                     required
                     type="text"
@@ -299,7 +299,7 @@ export default function AdminInventory() {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-6">
                 <div className="space-y-2">
-                  <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest block mb-2 opacity-60 ">Categoria</label>
+                  <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest block mb-2 opacity-60">Categoria</label>
                   <select 
                     className="w-full bg-theme-bg-muted border border-theme-border p-4 text-[10px] font-bold text-theme-text uppercase outline-none focus:border-brand-tactical cursor-pointer rounded-xl"
                     value={newData.category}
@@ -312,7 +312,7 @@ export default function AdminInventory() {
                   </select>
                 </div>
                 <div className="space-y-2">
-                  <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest block mb-2 opacity-60 ">Tipo de Gestão</label>
+                  <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest block mb-2 opacity-60">Tipo de Gestão</label>
                   <select 
                     className="w-full bg-theme-bg-muted border border-theme-border p-4 text-[10px] font-bold text-theme-text uppercase outline-none focus:border-brand-tactical cursor-pointer rounded-xl"
                     value={newData.stockType}
@@ -326,7 +326,7 @@ export default function AdminInventory() {
               </div>
 
               <div className="space-y-2">
-                <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest block mb-2 opacity-60 ">Link de Afiliado / Dropshipping (Opcional)</label>
+                <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest block mb-2 opacity-60">Link de Afiliado / Dropshipping (Opcional)</label>
                 <input 
                   type="text"
                   className="w-full bg-theme-bg-muted border border-theme-border p-4 text-[10px] font-bold text-theme-text outline-none focus:border-brand-tactical rounded-xl"
@@ -339,7 +339,7 @@ export default function AdminInventory() {
 
             {/* Footer */}
             <div className="p-4 md:p-8 md:p-10 bg-theme-bg-muted border-t border-theme-border flex gap-4 shrink-0 rounded-2xl">
-              <button onClick={() => setShowCreateModal(false)} className="flex-1 py-5 border border-theme-border text-[11px] font-bold uppercase tracking-[0.3em] text-theme-muted hover:text-white transition-all rounded-[20px] ">Cancelar</button>
+              <button onClick={() => setShowCreateModal(false)} className="flex-1 py-5 border border-theme-border text-[11px] font-bold uppercase tracking-[0.3em] text-theme-muted hover:text-theme-text transition-all rounded-[20px]">Cancelar</button>
               <button 
                 type="submit"
                 form="new-inventory-form"
@@ -389,7 +389,7 @@ export default function AdminInventory() {
               <div className="bg-theme-bg-muted p-4 md:p-8 border border-theme-border text-center space-y-4 rounded-2xl">
                 <div className="flex items-center justify-between max-w-[200px] mx-auto">
                   <button onClick={() => setAdjustData({...adjustData, quantity: Math.max(1, adjustData.quantity - 1)})} className="text-theme-text text-3xl font-bold w-12 h-12 bg-theme-bg-muted rounded-full hover:bg-white/10 transition-colors">-</button>
-                  <div className="text-2xl md:text-4xl font-bold text-theme-text ">{adjustData.quantity}</div>
+                  <div className="text-2xl md:text-4xl font-bold text-theme-text">{adjustData.quantity}</div>
                   <button onClick={() => setAdjustData({...adjustData, quantity: adjustData.quantity + 1})} className="text-theme-text text-3xl font-bold w-12 h-12 bg-theme-bg-muted rounded-full hover:bg-white/10 transition-colors">+</button>
                 </div>
                 <p className="text-[9px] text-theme-muted font-bold uppercase tracking-widest">Unidades para movimentar</p>
@@ -404,7 +404,7 @@ export default function AdminInventory() {
               />
 
               <div className="flex gap-4 pt-4">
-                <button onClick={() => setShowAdjustModal(null)} className="flex-1 py-4 border border-theme-border text-[10px] md:text-[9px] font-bold uppercase tracking-wider md:tracking-widest text-theme-muted hover:text-white transition-all rounded-2xl ">Cancelar</button>
+                <button onClick={() => setShowAdjustModal(null)} className="flex-1 py-4 border border-theme-border text-[10px] md:text-[9px] font-bold uppercase tracking-wider md:tracking-widest text-theme-muted hover:text-theme-text transition-all rounded-2xl">Cancelar</button>
                 <button onClick={handleAdjust} className="flex-1 py-4 bg-brand-tactical text-zinc-950 text-[9px] font-bold uppercase tracking-[0.2em] shadow-xl hover:brightness-110 transition-all rounded-2xl flex items-center justify-center gap-2">
                   Confirmar Movimentação
                   <ArrowRight size={18} strokeWidth={1.5} />

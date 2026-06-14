@@ -147,7 +147,7 @@ export function FotoPointModal({ onClose, onSuccess, onError, network }: FotoPoi
           <form onSubmit={handleSubmit} className="space-y-8">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                    <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest ">Título do Ponto</label>
+                    <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest">Título do Ponto</label>
                     <input
                         required
                         autoFocus
@@ -159,7 +159,7 @@ export function FotoPointModal({ onClose, onSuccess, onError, network }: FotoPoi
                 </div>
 
                 <div className="space-y-2">
-                    <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest ">Valor por Click (R$)</label>
+                    <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest">Valor por Click (R$)</label>
                     <div className="relative">
                         <span className="absolute left-4 top-1/2 -translate-y-1/2 text-cyan-400 font-bold text-sm">R$</span>
                         <input
@@ -167,7 +167,7 @@ export function FotoPointModal({ onClose, onSuccess, onError, network }: FotoPoi
                             required
                             value={price}
                             onChange={e => setPrice(e.target.value)}
-                            className="w-full bg-theme-bg-muted border border-theme-border p-4 pl-12 text-theme-text outline-none focus:border-cyan-400/50 transition-all font-bold text-xl "
+                            className="w-full bg-theme-bg-muted border border-theme-border p-4 pl-12 text-theme-text outline-none focus:border-cyan-400/50 transition-all font-bold text-xl"
                         />
                     </div>
                 </div>
@@ -261,7 +261,7 @@ export function FotoPointModal({ onClose, onSuccess, onError, network }: FotoPoi
                         placeholder="Ex: https://maps.app.goo.gl/... ou MASP"
                         value={location}
                         onChange={e => setLocation(e.target.value)}
-                        className={`w-full bg-theme-bg-muted border p-4 text-theme-text outline-none transition-all font-medium ${location.includes('maps.') || location.includes('http') ? 'border-green-400/50 text-green-400 focus:border-green-400' : 'border-theme-border focus:border-cyan-400/50'}`}
+                        className={`w-full bg-theme-bg-muted border p-4 text-theme-text outline-none transition-all font-medium ${location.includes('maps.') || location.includes('http') ? 'border-green-400/50 text-theme-brand focus:border-green-400' : 'border-theme-border focus:border-cyan-400/50'}`}
                     />
                 </div>
             </div>
@@ -311,7 +311,7 @@ export function FotoPointModal({ onClose, onSuccess, onError, network }: FotoPoi
 
             <div className="flex items-center justify-between p-4 bg-theme-bg-muted border border-theme-border">
               <div className="space-y-1">
-                <p className="text-[10px] font-bold text-theme-text uppercase tracking-widest ">Visibilidade no Marketplace</p>
+                <p className="text-[10px] font-bold text-theme-text uppercase tracking-widest">Visibilidade no Marketplace</p>
                 <p className="text-[10px] text-theme-muted uppercase font-bold tracking-widest">
                   {isPrivate ? 'Privado (Apenas via QR Code/Link)' : 'Público (Aparece na Homepage do Foto Point)'}
                 </p>
@@ -328,7 +328,7 @@ export function FotoPointModal({ onClose, onSuccess, onError, network }: FotoPoi
             <button
               type="submit"
               disabled={loading || !name}
-              className="w-full py-5 bg-cyan-400 text-black text-[11px] font-bold uppercase tracking-[0.3em] hover:bg-white hover:scale-[1.01] active:scale-[0.98] transition-all flex items-center justify-center gap-4 shadow-2xl shadow-cyan-400/20 disabled:opacity-40"
+              className="w-full py-5 bg-cyan-400 text-theme-text text-[11px] font-bold uppercase tracking-[0.3em] hover:bg-white hover:scale-[1.01] active:scale-[0.98] transition-all flex items-center justify-center gap-4 shadow-2xl shadow-cyan-400/20 disabled:opacity-40"
             >
               {loading ? (
                 "PUBLICANDO PONTO..."

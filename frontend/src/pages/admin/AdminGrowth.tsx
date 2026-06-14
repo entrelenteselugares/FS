@@ -185,13 +185,13 @@ export function AdminGrowth() {
               <button
                 id="btn-novo-cupom"
                 onClick={openModal}
-                className="flex items-center gap-2 px-4 py-2 bg-brand-tactical text-black text-[10px] font-bold uppercase tracking-widest hover:bg-white transition-colors"
+                className="flex items-center gap-2 px-4 py-2 bg-brand-tactical text-theme-text text-[10px] font-bold uppercase tracking-widest hover:bg-white transition-colors"
               >
                 <Plus size={14} /> Novo Cupom
               </button>
             </div>
             {coupons.length === 0 ? (
-              <div className="p-3 md:p-6 md:p-12 text-center border  border-theme-border rounded-xl">
+              <div className="p-3 md:p-6 md:p-12 text-center border border-theme-border rounded-xl">
                 <p className="text-[10px] font-bold text-theme-text-muted uppercase tracking-widest">Nenhum cupom ativo</p>
               </div>
             ) : (
@@ -207,7 +207,7 @@ export function AdminGrowth() {
                       </p>
                     </div>
                     <div className="flex items-center gap-3 w-full md:w-auto justify-between md:justify-end">
-                      <span className={`px-2 py-1 text-[10px] font-black uppercase rounded ${c.active ? 'bg-emerald-500/20 text-emerald-400' : 'bg-red-500/20 text-red-400'}`}>
+                      <span className={`px-2 py-1 text-[10px] font-black uppercase rounded ${c.active ? 'bg-emerald-500/20 text-theme-brand' : 'bg-red-500/20 text-red-400'}`}>
                         {c.active ? 'Ativo' : 'Inativo'}
                       </span>
                       <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -217,7 +217,7 @@ export function AdminGrowth() {
                           className={`px-3 py-1.5 text-[10px] font-black uppercase tracking-widest rounded border transition-colors cursor-pointer ${
                             c.active
                               ? 'bg-amber-500/10 border-amber-500/30 text-amber-400 hover:bg-amber-500/20'
-                              : 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/20'
+                              : 'bg-emerald-500/10 border-emerald-500/30 text-theme-brand hover:bg-emerald-500/20'
                           }`}
                         >
                           {c.active ? 'Pausar' : 'Ativar'}
@@ -241,11 +241,11 @@ export function AdminGrowth() {
             {waStatus?.connected ? (
               <div className="text-center space-y-6">
                 <div className="w-24 h-24 bg-emerald-500/10 rounded-full flex items-center justify-center mx-auto">
-                  <Phone size={40} className="text-emerald-500" />
+                  <Phone size={40} className="text-theme-brand" />
                 </div>
                 <div>
                   <h3 className="text-2xl font-bold text-theme-text uppercase">WhatsApp Conectado</h3>
-                  <p className="text-[10px] font-bold text-emerald-500 tracking-widest uppercase mt-2">Motor de notificações ativo</p>
+                  <p className="text-[10px] font-bold text-theme-brand tracking-widest uppercase mt-2">Motor de notificações ativo</p>
                 </div>
               </div>
             ) : waStatus?.qrCode ? (
@@ -487,14 +487,14 @@ export function AdminGrowth() {
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="flex-1 py-4 border border-theme-border text-[10px] font-bold uppercase tracking-widest text-theme-muted hover:text-white transition-all rounded-[16px]"
+                  className="flex-1 py-4 border border-theme-border text-[10px] font-bold uppercase tracking-widest text-theme-muted hover:text-theme-text transition-all rounded-[16px]"
                 >
                   Cancelar
                 </button>
                 <button
                   type="submit"
                   disabled={creating}
-                  className="flex-[2] py-4 bg-brand-tactical text-black text-[10px] font-bold uppercase tracking-widest shadow-2xl shadow-brand-tactical/20 hover:brightness-110 transition-all rounded-[16px] flex items-center justify-center gap-3 disabled:opacity-50"
+                  className="flex-[2] py-4 bg-brand-tactical text-theme-text text-[10px] font-bold uppercase tracking-widest shadow-2xl shadow-brand-tactical/20 hover:brightness-110 transition-all rounded-[16px] flex items-center justify-center gap-3 disabled:opacity-50"
                 >
                   {creating ? "Criando..." : "Criar Cupom"}
                   {!creating && <ArrowRight size={16} />}

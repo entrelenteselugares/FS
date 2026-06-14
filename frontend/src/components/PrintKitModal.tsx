@@ -313,10 +313,10 @@ export function PrintKitModal({
             {/* Header */}
             <div className="flex justify-between items-start">
               <div className="space-y-1">
-                <p className="text-[10px] font-bold text-brand-tactical uppercase tracking-widest ">Kit de Divulgação</p>
-                <h2 className="text-2xl font-bold uppercase ">Kit de Impressão</h2>
+                <p className="text-[10px] font-bold text-brand-tactical uppercase tracking-widest">Kit de Divulgação</p>
+                <h2 className="text-2xl font-bold uppercase">Kit de Impressão</h2>
               </div>
-              <button onClick={onClose} className="p-3 text-theme-muted hover:text-white hover:bg-theme-border/50 rounded-full transition-all">
+              <button onClick={onClose} className="p-3 text-theme-muted hover:text-theme-text hover:bg-theme-border/50 rounded-full transition-all">
                 <X size={20} />
               </button>
             </div>
@@ -433,9 +433,9 @@ export function PrintKitModal({
             {template === 'TABLE_TENT' && (
               <div className="h-full flex flex-col justify-between py-4">
                 {/* Top Tent Segment */}
-                <div className="flex-1 flex flex-col justify-center items-center scale-90 border  border-theme-border rounded-2xl p-4 mb-2">
+                <div className="flex-1 flex flex-col justify-center items-center scale-90 border border-theme-border rounded-2xl p-4 mb-2">
                   <img src={tenantLogoUrl || '/logo.png'} style={{ filter: theme === 'DARK' ? 'brightness(0) invert(1)' : 'none' }} className="h-8 object-contain mb-4" alt="Logo" />
-                  <h3 className="text-xs font-bold text-brand-tactical uppercase tracking-wider mb-2 ">{headline}</h3>
+                  <h3 className="text-xs font-bold text-brand-tactical uppercase tracking-wider mb-2">{headline}</h3>
                   <p className="text-[10px] opacity-80 leading-relaxed mb-3 max-w-[200px]">{subHeadline}</p>
                   <div className="bg-white p-2 rounded-xl shadow-md mb-2">
                     <QRCodeSVG value={captureUrl} size={90} level="H" />
@@ -443,16 +443,16 @@ export function PrintKitModal({
                   <span className="text-[9px] font-bold opacity-40 uppercase tracking-widest">Suas Fotos ao Vivo</span>
                 </div>
                 {/* Fold guide */}
-                <div className="border-t  border-theme-border my-2 relative">
+                <div className="border-t border-theme-border my-2 relative">
                   <span className="absolute -top-2 left-50 transform -translate-x-50 bg-theme-bg px-2 text-[6px] font-bold opacity-50 uppercase tracking-wider"
                         style={{ background: theme === 'DARK' ? '#09090b' : '#ffffff' }}>
                     Dobrar aqui
                   </span>
                 </div>
                 {/* Bottom Tent Segment (Rotated) */}
-                <div className="flex-1 flex flex-col justify-center items-center scale-90 border  border-theme-border rounded-2xl p-4 mt-2 transform rotate-180">
+                <div className="flex-1 flex flex-col justify-center items-center scale-90 border border-theme-border rounded-2xl p-4 mt-2 transform rotate-180">
                   <img src={tenantLogoUrl || '/logo.png'} style={{ filter: theme === 'DARK' ? 'brightness(0) invert(1)' : 'none' }} className="h-8 object-contain mb-4" alt="Logo" />
-                  <h3 className="text-xs font-bold text-brand-tactical uppercase tracking-wider mb-2 ">{headline}</h3>
+                  <h3 className="text-xs font-bold text-brand-tactical uppercase tracking-wider mb-2">{headline}</h3>
                   <p className="text-[10px] opacity-80 leading-relaxed mb-3 max-w-[200px]">{subHeadline}</p>
                   <div className="bg-white p-2 rounded-xl shadow-md mb-2">
                     <QRCodeSVG value={captureUrl} size={90} level="H" />
@@ -501,7 +501,7 @@ export function PrintKitModal({
                 </div>
 
                 <div className="flex-1 flex flex-col justify-center items-center px-4">
-                  <span className="text-[10px] font-bold text-brand-tactical tracking-[0.3em] uppercase mb-2 ">LIVE PHOTO STREAMING</span>
+                  <span className="text-[10px] font-bold text-brand-tactical tracking-[0.3em] uppercase mb-2">LIVE PHOTO STREAMING</span>
                   <h2 className="text-lg md:text-xl font-bold uppercase leading-tight mb-3"
                       style={{ color: theme === 'DARK' ? '#ffffff' : '#09090b' }}>
                     {headline}

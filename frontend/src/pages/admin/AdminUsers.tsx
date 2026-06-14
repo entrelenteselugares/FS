@@ -84,9 +84,9 @@ export const AdminUsers: React.FC = () => {
       case 'ADMIN': return { bg: 'bg-red-500/10', border: 'border-red-500/30', text: 'text-red-500' };
       case 'PROFISSIONAL': return { bg: 'bg-brand-tactical/10', border: 'border-brand-tactical/30', text: 'text-brand-tactical' };
       case 'CARTORIO': 
-      case 'UNIDADE_FIXA': return { bg: 'bg-slate-500/10', border: 'border-slate-500/30', text: 'text-slate-400' };
+      case 'UNIDADE_FIXA': return { bg: 'bg-slate-500/10', border: 'border-slate-500/30', text: 'text-theme-muted' };
       case 'FRANCHISEE': return { bg: 'bg-amber-500/10', border: 'border-amber-500/30', text: 'text-amber-500' };
-      default: return { bg: 'bg-zinc-500/10', border: 'border-zinc-500/30', text: 'text-zinc-500' };
+      default: return { bg: 'bg-zinc-500/10', border: 'border-zinc-500/30', text: 'text-theme-muted' };
     }
   };
 
@@ -237,7 +237,7 @@ export const AdminUsers: React.FC = () => {
                       <div className={`w-2.5 h-2.5 rounded-full ${u.active ? 'bg-brand-tactical shadow-[0_0_10px_rgba(133,185,172,0.4)]' : 'bg-red-500 shadow-[0_0_10px_rgba(239,68,68,0.4)]'} ${u.active ? 'animate-pulse' : ''}`} />
                     </div>
                     <div className="col-span-4 flex items-center gap-5">
-                      <div className="w-10 h-10 bg-theme-border border border-theme-border rounded-xl flex items-center justify-center text-[12px] font-bold text-theme-text ">
+                      <div className="w-10 h-10 bg-theme-border border border-theme-border rounded-xl flex items-center justify-center text-[12px] font-bold text-theme-text">
                         {getInitials(u.nome)}
                       </div>
                       <div className="min-w-0">
@@ -262,12 +262,12 @@ export const AdminUsers: React.FC = () => {
                         </span>
                       )}
                       {u.franchiseProfile && (
-                        <span className="px-2 py-1 bg-brand-tactical/10 border border-brand-tactical/30 text-brand-tactical text-[9px] font-bold uppercase tracking-widest rounded-lg ">
+                        <span className="px-2 py-1 bg-brand-tactical/10 border border-brand-tactical/30 text-brand-tactical text-[9px] font-bold uppercase tracking-widest rounded-lg">
                           FRANQUIA: {u.franchiseProfile.printCredits} CR
                         </span>
                       )}
                       {u.affiliateTier === 'VIP' && (
-                        <span className="px-2 py-1 bg-yellow-500/10 border border-yellow-500/30 text-yellow-500 text-[9px] font-bold uppercase tracking-widest flex items-center gap-1 rounded-lg ">
+                        <span className="px-2 py-1 bg-yellow-500/10 border border-yellow-500/30 text-yellow-500 text-[9px] font-bold uppercase tracking-widest flex items-center gap-1 rounded-lg">
                           AFILIADO VIP
                         </span>
                       )}
@@ -280,7 +280,7 @@ export const AdminUsers: React.FC = () => {
                     <div className="col-span-2 flex justify-end gap-5">
                       <button 
                         onClick={() => handleEditOpen(u)}
-                        className="text-theme-muted hover:text-white transition-colors p-2 hover:bg-theme-border rounded-xl"
+                        className="text-theme-muted hover:text-theme-text transition-colors p-2 hover:bg-theme-border rounded-xl"
                         title="AJUSTAR"
                       >
                         <Edit3 size={14} />
@@ -325,14 +325,14 @@ export const AdminUsers: React.FC = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8">
                 <div className="space-y-6">
                   <div className="space-y-4">
-                    <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest block mb-2 opacity-60 ">Identidade de Acesso</label>
+                    <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest block mb-2 opacity-60">Identidade de Acesso</label>
                     <div className="space-y-4">
                       <div className="space-y-2">
-                        <label className="text-[9px] font-bold text-theme-muted uppercase tracking-widest block mb-1 opacity-40 ">Nome de Guerra</label>
+                        <label className="text-[9px] font-bold text-theme-muted uppercase tracking-widest block mb-1 opacity-40">Nome de Guerra</label>
                         <input required className="fs-input font-bold uppercase" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} placeholder="EX: JOHN DOE" />
                       </div>
                       <div className="space-y-2">
-                        <label className="text-[9px] font-bold text-theme-muted uppercase tracking-widest block mb-1 opacity-40 ">E-mail Corporativo</label>
+                        <label className="text-[9px] font-bold text-theme-muted uppercase tracking-widest block mb-1 opacity-40">E-mail Corporativo</label>
                         <input required type="email" className="fs-input font-bold lowercase" value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} placeholder="email@exemplo.com" />
                       </div>
                     </div>
@@ -341,14 +341,14 @@ export const AdminUsers: React.FC = () => {
 
                 <div className="space-y-6">
                   <div className="space-y-4">
-                    <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest block mb-2 opacity-60 ">Segurança & Função</label>
+                    <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest block mb-2 opacity-60">Segurança & Função</label>
                     <div className="space-y-4">
                       <div className="space-y-2">
-                        <label className="text-[9px] font-bold text-theme-muted uppercase tracking-widest block mb-1 opacity-40 ">Nova Senha {editingUser && '(Opcional)'}</label>
+                        <label className="text-[9px] font-bold text-theme-muted uppercase tracking-widest block mb-1 opacity-40">Nova Senha {editingUser && '(Opcional)'}</label>
                         <input type="password" className="fs-input font-bold" value={formData.password} onChange={e => setFormData({...formData, password: e.target.value})} placeholder="••••••••" required={!editingUser} />
                       </div>
                       <div className="space-y-2">
-                        <label className="text-[9px] font-bold text-theme-muted uppercase tracking-widest block mb-1 opacity-40 ">Nível de Acesso</label>
+                        <label className="text-[9px] font-bold text-theme-muted uppercase tracking-widest block mb-1 opacity-40">Nível de Acesso</label>
                         <div className="relative">
                           <select className="fs-input font-bold uppercase appearance-none cursor-pointer w-full" value={formData.role} onChange={e => setFormData({...formData, role: e.target.value})}>
                             <option value="ADMIN">ADMINISTRADOR</option>
@@ -366,22 +366,22 @@ export const AdminUsers: React.FC = () => {
               </div>
 
               <div className="space-y-2">
-                <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest block mb-2 opacity-60 ">Chave PIX (Para Liquidações Financeiras)</label>
-                <input className="w-full bg-theme-bg-muted border border-theme-border p-4 text-[11px] text-theme-text font-bold outline-none focus:border-brand-tactical rounded-xl uppercase placeholder:opacity-20 " value={formData.pixKey} onChange={e => setFormData({...formData, pixKey: e.target.value})} placeholder="CPF, E-MAIL OU CHAVE ALEATÓRIA" />
+                <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest block mb-2 opacity-60">Chave PIX (Para Liquidações Financeiras)</label>
+                <input className="w-full bg-theme-bg-muted border border-theme-border p-4 text-[11px] text-theme-text font-bold outline-none focus:border-brand-tactical rounded-xl uppercase placeholder:opacity-20" value={formData.pixKey} onChange={e => setFormData({...formData, pixKey: e.target.value})} placeholder="CPF, E-MAIL OU CHAVE ALEATÓRIA" />
               </div>
 
               {formData.role === "PROFISSIONAL" && (
                 <div className="pt-10 border-t border-theme-border space-y-10">
                   <div className="grid grid-cols-2 gap-4 md:gap-8">
                     <div className="space-y-2">
-                      <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest block mb-1 opacity-40 ">% Comissão Captação</label>
+                      <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest block mb-1 opacity-40">% Comissão Captação</label>
                       <div className="relative">
                         <input type="number" className="w-full bg-theme-bg-muted border border-theme-border p-4 text-xl font-bold text-brand-tactical outline-none focus:border-brand-tactical rounded-xl" value={formData.captPct} onChange={e => setFormData({...formData, captPct: Number(e.target.value)})} />
                         <span className="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-bold text-theme-muted opacity-40">%</span>
                       </div>
                     </div>
                     <div className="space-y-2">
-                      <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest block mb-1 opacity-40 ">% Comissão Edição</label>
+                      <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest block mb-1 opacity-40">% Comissão Edição</label>
                       <div className="relative">
                         <input type="number" className="w-full bg-theme-bg-muted border border-theme-border p-4 text-xl font-bold text-brand-tactical outline-none focus:border-brand-tactical rounded-xl" value={formData.editPct} onChange={e => setFormData({...formData, editPct: Number(e.target.value)})} />
                         <span className="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-bold text-theme-muted opacity-40">%</span>
@@ -390,12 +390,12 @@ export const AdminUsers: React.FC = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest block mb-2 opacity-60 ">Ativos & Hardware de Trabalho</label>
+                    <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest block mb-2 opacity-60">Ativos & Hardware de Trabalho</label>
                     <textarea className="w-full bg-theme-bg-muted border border-theme-border p-4 text-[11px] text-theme-text font-bold outline-none focus:border-brand-tactical rounded-xl h-24 resize-none uppercase placeholder:opacity-20" value={formData.equipment} onChange={e => setFormData({...formData, equipment: e.target.value})} placeholder="CÂMERAS, LENTES, DRONES, ETC..." />
                   </div>
 
                   <div className="space-y-4">
-                    <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest block mb-2 opacity-60 ">Perfil de Workflow (Entrega)</label>
+                    <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest block mb-2 opacity-60">Perfil de Workflow (Entrega)</label>
                     <div className="grid grid-cols-2 gap-4">
                       {['TRADICIONAL', 'MOBILE'].map(t => (
                         <button 
@@ -422,7 +422,7 @@ export const AdminUsers: React.FC = () => {
               <div className="pt-10 border-t border-theme-border space-y-6">
                 <div className="flex items-center justify-between bg-theme-bg-muted p-3 md:p-6 rounded-2xl border border-theme-border">
                   <div className="space-y-1">
-                    <label className="text-[10px] font-bold text-theme-text uppercase tracking-widest ">Ponto de Impressão (Phygital)</label>
+                    <label className="text-[10px] font-bold text-theme-text uppercase tracking-widest">Ponto de Impressão (Phygital)</label>
                     <p className="text-[10px] text-theme-muted uppercase font-bold opacity-40">Habilitar este usuário como franqueado phygital ativo</p>
                   </div>
                   <button
@@ -438,12 +438,12 @@ export const AdminUsers: React.FC = () => {
                   <div className="p-3 md:p-6 bg-brand-tactical/10 border border-brand-tactical/20 rounded-2xl animate-in slide-in-from-top-4 duration-300">
                     <div className="flex items-center justify-between">
                       <div className="space-y-1">
-                        <label className="text-[10px] font-bold text-brand-tactical uppercase tracking-widest ">Saldo de Créditos de Impressão</label>
-                        <p className="text-[9px] text-theme-muted uppercase font-bold opacity-40 ">Limite operacional de revelações automáticas</p>
+                        <label className="text-[10px] font-bold text-brand-tactical uppercase tracking-widest">Saldo de Créditos de Impressão</label>
+                        <p className="text-[9px] text-theme-muted uppercase font-bold opacity-40">Limite operacional de revelações automáticas</p>
                       </div>
                       <input 
                         type="number" 
-                        className="bg-transparent border-b border-brand-tactical/40 w-32 text-2xl font-bold text-brand-tactical text-right focus:border-brand-tactical outline-none "
+                        className="bg-transparent border-b border-brand-tactical/40 w-32 text-2xl font-bold text-brand-tactical text-right focus:border-brand-tactical outline-none"
                         value={formData.printCredits} 
                         onChange={e => setFormData({...formData, printCredits: Number(e.target.value)})}
                       />
@@ -457,8 +457,8 @@ export const AdminUsers: React.FC = () => {
                 {formData.role === "PROFISSIONAL" && (
                   <div className="flex items-center justify-between bg-brand-tactical/10 p-3 md:p-6 rounded-2xl border border-brand-tactical/20">
                     <div className="space-y-1">
-                      <label className="text-[10px] font-bold text-brand-tactical uppercase tracking-widest ">Verificação Elite (PRO)</label>
-                      <p className="text-[10px] text-theme-muted uppercase font-bold opacity-40 ">Habilitar repasse financeiro imediato (F-09 Protocol)</p>
+                      <label className="text-[10px] font-bold text-brand-tactical uppercase tracking-widest">Verificação Elite (PRO)</label>
+                      <p className="text-[10px] text-theme-muted uppercase font-bold opacity-40">Habilitar repasse financeiro imediato (F-09 Protocol)</p>
                     </div>
                     <button
                       type="button"
@@ -472,8 +472,8 @@ export const AdminUsers: React.FC = () => {
 
                 <div className="flex items-center justify-between bg-yellow-500/5 p-3 md:p-6 rounded-2xl border border-yellow-500/20">
                   <div className="space-y-1">
-                    <label className="text-[10px] font-bold text-yellow-500 uppercase tracking-widest ">Afiliado VIP (L2)</label>
-                    <p className="text-[10px] text-theme-muted uppercase font-bold opacity-40 ">Ativa ganhos de comissão passiva sobre indicados (Regra dos 50)</p>
+                    <label className="text-[10px] font-bold text-yellow-500 uppercase tracking-widest">Afiliado VIP (L2)</label>
+                    <p className="text-[10px] text-theme-muted uppercase font-bold opacity-40">Ativa ganhos de comissão passiva sobre indicados (Regra dos 50)</p>
                   </div>
                   <button
                     type="button"
@@ -488,7 +488,7 @@ export const AdminUsers: React.FC = () => {
 
             {/* Footer */}
             <div className="p-4 md:p-8 md:p-10 bg-theme-bg-muted border-t border-theme-border flex gap-4 shrink-0 rounded-2xl">
-              <button type="button" onClick={() => setIsModalOpen(false)} className="fs-btn flex-1 border border-theme-border text-theme-muted hover:text-white transition-all ">Cancelar</button>
+              <button type="button" onClick={() => setIsModalOpen(false)} className="fs-btn flex-1 border border-theme-border text-theme-muted hover:text-theme-text transition-all">Cancelar</button>
               <button 
                 type="submit" 
                 form="member-form"
@@ -514,24 +514,24 @@ export const AdminUsers: React.FC = () => {
               </div>
               
               <div className="space-y-2">
-                <h3 className="text-2xl font-bold uppercase text-theme-text ">Banir Membro?</h3>
+                <h3 className="text-2xl font-bold uppercase text-theme-text">Banir Membro?</h3>
                 <p className="text-[9px] sm:text-[11px] font-bold text-brand-tactical uppercase tracking-[0.2em] sm:tracking-[0.4em] truncate max-w-[80vw]">Operação de Times, Unidades e Parceiros</p>
               </div>
               
-              <p className="text-[11px] uppercase tracking-[0.2em] leading-relaxed text-theme-muted ">
+              <p className="text-[11px] uppercase tracking-[0.2em] leading-relaxed text-theme-muted">
                 ESTA AÇÃO IRÁ REVOGAR O ACESSO DE <span className="text-theme-text font-bold">{confirmDelete.nome}</span> IMEDIATAMENTE DE TODAS AS OPERAÇÕES.
               </p>
 
               <div className="grid grid-cols-1 gap-4 pt-4">
                 <button 
                   onClick={() => handleDelete(confirmDelete.id)}
-                  className="w-full py-5 bg-red-600 text-white text-[11px] font-bold uppercase tracking-[0.4em] hover:bg-red-700 transition-all rounded-xl shadow-lg shadow-red-600/20"
+                  className="w-full py-5 bg-red-600 text-theme-text text-[11px] font-bold uppercase tracking-[0.4em] hover:bg-red-700 transition-all rounded-xl shadow-lg shadow-red-600/20"
                 >
                   BANIR AGORA
                 </button>
                 <button 
                   onClick={() => setConfirmDelete(null)}
-                  className="w-full py-5 border border-theme-border text-theme-muted text-[11px] font-bold uppercase tracking-[0.4em] hover:text-white transition-all rounded-xl "
+                  className="w-full py-5 border border-theme-border text-theme-muted text-[11px] font-bold uppercase tracking-[0.4em] hover:text-theme-text transition-all rounded-xl"
                 >
                   ABORTAR MISSÃO
                 </button>

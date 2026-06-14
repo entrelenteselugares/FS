@@ -26,13 +26,7 @@
 
 ## 🔗 Links de Navegação
 
-- **COPA 2026
-PRÓXIMOS
-CANADÁ
-12/06 · 16:00
-GRP B
-BÓSNIA
-Ver Álbum →** -> `/album-torcida`
+*Nenhum link de navigation detectado.*
 
 ## ⚙️ Observações Técnicas e Fluxo
 

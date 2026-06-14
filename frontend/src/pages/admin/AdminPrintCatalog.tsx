@@ -139,7 +139,7 @@ export const AdminPrintCatalog: React.FC = () => {
         </div>
         
         <div className="flex gap-3">
-          <button onClick={() => setIsModalOpen(true)} className="px-4 md:px-8 py-4 bg-brand-tactical text-zinc-950 text-[9px] font-bold uppercase tracking-[0.4em] shadow-xl hover:brightness-110 transition-all flex items-center gap-2 ">
+          <button onClick={() => setIsModalOpen(true)} className="px-4 md:px-8 py-4 bg-brand-tactical text-zinc-950 text-[9px] font-bold uppercase tracking-[0.4em] shadow-xl hover:brightness-110 transition-all flex items-center gap-2">
             <Plus size={14} strokeWidth={1.5} /> NOVO ITEM
           </button>
         </div>
@@ -148,23 +148,23 @@ export const AdminPrintCatalog: React.FC = () => {
       {/* DASHBOARD DE MÉTRICAS */}
       <div className="max-w-6xl mx-auto w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
          <div className="bg-theme-bg border border-theme-border p-3 md:p-6 space-y-3 shadow-sm group hover:border-brand-tactical/40 transition-all rounded-2xl">
-            <div className="flex justify-between items-start"><span className="text-[10px] font-bold text-theme-muted uppercase tracking-widest ">Mix Ativo</span><Package className="text-brand-tactical" size={14} strokeWidth={1.5} /></div>
+            <div className="flex justify-between items-start"><span className="text-[10px] font-bold text-theme-muted uppercase tracking-widest">Mix Ativo</span><Package className="text-brand-tactical" size={14} strokeWidth={1.5} /></div>
             <div className="flex items-baseline gap-2">
-               <span className="text-3xl font-heading font-bold text-theme-text ">{stats.activeCount}</span>
+               <span className="text-3xl font-heading font-bold text-theme-text">{stats.activeCount}</span>
                <span className="text-[10px] font-bold text-theme-muted uppercase tracking-widest">/ {stats.totalCount} ITENS</span>
             </div>
          </div>
          <div className="bg-theme-bg border border-theme-border p-3 md:p-6 space-y-3 shadow-sm group hover:border-brand-tactical/40 transition-all rounded-2xl">
-            <div className="flex justify-between items-start"><span className="text-[10px] font-bold text-theme-muted uppercase tracking-widest ">Margem Média</span><TrendingUp className="text-brand-tactical" size={14} strokeWidth={1.5} /></div>
+            <div className="flex justify-between items-start"><span className="text-[10px] font-bold text-theme-muted uppercase tracking-widest">Margem Média</span><TrendingUp className="text-brand-tactical" size={14} strokeWidth={1.5} /></div>
             <div className="flex items-baseline gap-2">
-               <span className="text-3xl font-heading font-bold text-theme-text ">{stats.avgMargin.toFixed(1)}%</span>
+               <span className="text-3xl font-heading font-bold text-theme-text">{stats.avgMargin.toFixed(1)}%</span>
                <span className="text-[10px] font-bold text-theme-muted uppercase tracking-widest">PROPORCIONAL</span>
             </div>
          </div>
           <div className="bg-theme-bg border border-theme-border p-3 md:p-6 space-y-3 shadow-sm group hover:border-brand-tactical/40 transition-all rounded-2xl">
-            <div className="flex justify-between items-start"><span className="text-[10px] font-bold text-theme-muted uppercase tracking-widest ">Hub de Produção</span><Layers className="text-brand-tactical" size={14} strokeWidth={1.5} /></div>
+            <div className="flex justify-between items-start"><span className="text-[10px] font-bold text-theme-muted uppercase tracking-widest">Hub de Produção</span><Layers className="text-brand-tactical" size={14} strokeWidth={1.5} /></div>
             <div className="flex items-baseline gap-2">
-               <span className="text-3xl font-heading font-bold text-theme-text ">OPERACIONAL</span>
+               <span className="text-3xl font-heading font-bold text-theme-text">OPERACIONAL</span>
                <span className="text-[10px] font-bold text-theme-muted uppercase tracking-widest">LOGÍSTICA ATIVA</span>
             </div>
           </div>
@@ -191,14 +191,14 @@ export const AdminPrintCatalog: React.FC = () => {
          </select>
          <button 
             onClick={() => setShowInactive(!showInactive)}
-            className="px-4 md:px-8 py-4 bg-theme-bg border border-theme-border text-[10px] md:text-[9px] font-bold uppercase tracking-wider md:tracking-widest text-theme-muted hover:text-white flex items-center gap-3 transition-all rounded-2xl"
+            className="px-4 md:px-8 py-4 bg-theme-bg border border-theme-border text-[10px] md:text-[9px] font-bold uppercase tracking-wider md:tracking-widest text-theme-muted hover:text-theme-text flex items-center gap-3 transition-all rounded-2xl"
          >
             {showInactive ? <Eye size={14} /> : <EyeOff size={14} />} {showInactive ? 'OCULTAR INATIVOS' : 'EXIBIR TODOS'}
          </button>
       </div>
 
       {loading ? (
-        <div className="py-32 text-center border  border-theme-border bg-theme-bg-muted/5 space-y-4 animate-pulse rounded-2xl">
+        <div className="py-32 text-center border border-theme-border bg-theme-bg-muted/5 space-y-4 animate-pulse rounded-2xl">
            <Layers size={32} className="mx-auto text-theme-muted opacity-30" />
            <p className="text-[9px] sm:text-[11px] font-bold text-brand-tactical uppercase tracking-[0.2em] sm:tracking-[0.4em] truncate max-w-[80vw]">Precificação e Portfólio de Impressão</p>
         </div>
@@ -242,7 +242,7 @@ export const AdminPrintCatalog: React.FC = () => {
                   {isExpanded && (
                      <div className="divide-y divide-theme-border/20 overflow-x-auto">
                         {/* TABLE HEADER */}
-                        <div className="min-w-[900px] grid grid-cols-[40px_1fr_100px_80px_80px_80px_80px_150px_110px] gap-4 p-4 bg-theme-bg text-[9px] font-bold uppercase tracking-widest text-theme-muted ">
+                        <div className="min-w-[900px] grid grid-cols-[40px_1fr_100px_80px_80px_80px_80px_150px_110px] gap-4 p-4 bg-theme-bg text-[9px] font-bold uppercase tracking-widest text-theme-muted">
                            <div>STATUS</div>
                            <div>IDENTIFICAÇÃO DO PRODUTO</div>
                            <div className="text-right">CUSTO</div>
@@ -270,7 +270,7 @@ export const AdminPrintCatalog: React.FC = () => {
                                     </div>
                                  </div>
 
-                                 <div className="text-right text-[10px] font-bold text-theme-text font-mono opacity-60">
+                                 <div className="text-right text-[10px] font-bold text-theme-text opacity-60">
                                     {formatCurrency(p.supplierCost)}
                                  </div>
 
@@ -282,7 +282,7 @@ export const AdminPrintCatalog: React.FC = () => {
                                     />
                                  </div>
 
-                                 <div className="text-right text-[10px] font-bold text-brand-tactical/60 font-mono ">
+                                 <div className="text-right text-[10px] font-bold text-brand-tactical/60">
                                     {formatCurrency(p.calculatedPrice)}
                                  </div>
 
@@ -394,8 +394,8 @@ function NewSupplierModal({ onClose, onSave }: { onClose: () => void, onSave: ()
           </div>
           
           <div className="pt-6 flex gap-4">
-            <button type="button" onClick={onClose} className="flex-1 py-4 border border-theme-border text-[10px] md:text-[9px] font-bold uppercase tracking-wider md:tracking-widest text-theme-muted hover:text-white transition-all rounded-2xl ">Cancelar</button>
-            <button type="submit" disabled={loading} className="flex-1 py-4 bg-brand-tactical text-zinc-950 text-[9px] font-bold uppercase tracking-[0.3em] shadow-xl hover:brightness-110 transition-all rounded-2xl ">
+            <button type="button" onClick={onClose} className="flex-1 py-4 border border-theme-border text-[10px] md:text-[9px] font-bold uppercase tracking-wider md:tracking-widest text-theme-muted hover:text-theme-text transition-all rounded-2xl">Cancelar</button>
+            <button type="submit" disabled={loading} className="flex-1 py-4 bg-brand-tactical text-zinc-950 text-[9px] font-bold uppercase tracking-[0.3em] shadow-xl hover:brightness-110 transition-all rounded-2xl">
               {loading ? "Sincronizando..." : "Salvar Registro"}
             </button>
           </div>
@@ -583,7 +583,7 @@ function NewProductModal({ onClose, onSave, suppliers, onRefreshSuppliers }: {
 
           {/* Footer */}
           <div className="p-4 md:p-8 md:p-10 bg-theme-bg-muted border-t border-theme-border flex gap-4 shrink-0 rounded-2xl">
-            <button type="button" onClick={onClose} className="flex-1 py-5 border border-theme-border text-[11px] font-bold uppercase tracking-[0.3em] text-theme-muted hover:text-white transition-all rounded-[20px] ">Cancelar</button>
+            <button type="button" onClick={onClose} className="flex-1 py-5 border border-theme-border text-[11px] font-bold uppercase tracking-[0.3em] text-theme-muted hover:text-theme-text transition-all rounded-[20px]">Cancelar</button>
             <button 
               type="submit" 
               form="new-product-form"

@@ -136,7 +136,7 @@ export const ServiceModal: React.FC<Props> = ({ onClose, onSave, initialData, sa
                 </div>
               </div>
               <div className="flex items-center">
-                <p className="text-[9px] sm:text-[11px] font-bold text-brand-tactical uppercase tracking-[0.4em] ">
+                <p className="text-[9px] sm:text-[11px] font-bold text-brand-tactical uppercase tracking-[0.4em]">
                   Este valor será utilizado como base fallback no gerador de orçamentos automático da rede.
                 </p>
               </div>
@@ -184,7 +184,7 @@ export const ServiceModal: React.FC<Props> = ({ onClose, onSave, initialData, sa
 
           {/* Footer */}
           <div className="p-4 md:p-8 md:p-10 bg-theme-bg-muted border-t border-theme-border flex gap-4 shrink-0 rounded-2xl">
-            <button type="button" onClick={onClose} className="flex-1 py-5 border border-theme-border text-[11px] font-bold uppercase tracking-[0.3em] text-theme-muted hover:text-white transition-all rounded-2xl ">
+            <button type="button" onClick={onClose} className="flex-1 py-5 border border-theme-border text-[11px] font-bold uppercase tracking-[0.3em] text-theme-muted hover:text-theme-text transition-all rounded-2xl">
               Cancelar
             </button>
             <button type="submit" disabled={saving} className="flex-[2] py-5 bg-brand-tactical text-[var(--brand-text)] text-[11px] font-bold uppercase tracking-[0.3em] shadow-2xl hover:brightness-110 transition-all rounded-2xl flex items-center justify-center gap-4">

@@ -78,7 +78,7 @@ export function ServicesTab({ profile, catalogServices, onAddService, onRemoveSe
           <h3 className="text-xl sm:text-2xl font-heading font-bold text-theme-text uppercase tracking-widest leading-none">
             Matriz de <span className="text-brand-tactical">Precificação</span>
           </h3>
-          <p className="text-[9px] sm:text-[10px] text-theme-muted uppercase tracking-[0.2em] sm:tracking-[0.4em] ">
+          <p className="text-[9px] sm:text-[10px] text-theme-muted uppercase tracking-[0.2em] sm:tracking-[0.4em]">
             Configuração base para cálculo de orçamentos dinâmicos
           </p>
         </div>
@@ -105,7 +105,7 @@ export function ServicesTab({ profile, catalogServices, onAddService, onRemoveSe
             </div>
             <div className="w-full bg-theme-bg border-2 border-theme-border rounded-xl p-3 sm:p-5 text-base sm:text-xl font-heading font-bold text-brand-tactical flex justify-between items-center shadow-md flex-1">
               <span>{profile?.equipmentMultiplier || "1.0"}</span>
-              <span className="text-[6px] sm:text-[10px] font-bold uppercase text-theme-muted ">Ativos</span>
+              <span className="text-[6px] sm:text-[10px] font-bold uppercase text-theme-muted">Ativos</span>
             </div>
             <p className="text-[9px] sm:text-[9px] text-theme-muted uppercase font-bold">
               Gerencie seus ativos.{" "}
@@ -124,7 +124,7 @@ export function ServicesTab({ profile, catalogServices, onAddService, onRemoveSe
             <h3 className="text-xl sm:text-2xl font-heading font-bold text-theme-text uppercase tracking-widest leading-none">
               Vitrine de <span className="text-brand-tactical">Ativos</span>
             </h3>
-            <p className="text-[9px] sm:text-[10px] text-theme-muted uppercase tracking-[0.2em] sm:tracking-[0.4em] ">
+            <p className="text-[9px] sm:text-[10px] text-theme-muted uppercase tracking-[0.2em] sm:tracking-[0.4em]">
               Serviços ativos e disponíveis para contratação
             </p>
           </div>
@@ -153,7 +153,7 @@ export function ServicesTab({ profile, catalogServices, onAddService, onRemoveSe
                 <div className="space-y-2 flex-1">
                   <div className="flex items-center gap-3">
                     <Briefcase size={14} className="text-brand-tactical" />
-                    <div className="text-base font-bold text-theme-text uppercase ">{svc.name}</div>
+                    <div className="text-base font-bold text-theme-text uppercase">{svc.name}</div>
                     {getStatusBadge(svc.reviewStatus, svc.reviewNote)}
                   </div>
                   {svc.description && (
@@ -169,7 +169,7 @@ export function ServicesTab({ profile, catalogServices, onAddService, onRemoveSe
                   {editingServiceId === svc.id ? (
                     <div className="flex flex-col items-end gap-1.5 w-full sm:w-auto">
                       <div className="flex items-center gap-2">
-                        <span className="text-xs font-bold text-theme-muted uppercase ">R$</span>
+                        <span className="text-xs font-bold text-theme-muted uppercase">R$</span>
                         <input
                           type="number"
                           value={editingPriceValue}
@@ -248,7 +248,7 @@ export function ServicesTab({ profile, catalogServices, onAddService, onRemoveSe
           <h3 className="text-xl sm:text-2xl font-heading font-bold text-theme-text uppercase tracking-widest leading-none">
             Catálogo Geral da <span className="text-brand-tactical">Rede</span>
           </h3>
-          <p className="text-[9px] sm:text-[10px] text-theme-muted uppercase tracking-[0.2em] sm:tracking-[0.4em] ">
+          <p className="text-[9px] sm:text-[10px] text-theme-muted uppercase tracking-[0.2em] sm:tracking-[0.4em]">
             Benchmark de serviços e precificação sugerida por IA
           </p>
         </div>
@@ -284,11 +284,11 @@ export function ServicesTab({ profile, catalogServices, onAddService, onRemoveSe
                           {cat.name}
                         </div>
                         <div className="flex flex-col xl:flex-row xl:items-center gap-1 sm:gap-3">
-                          <div className="flex items-center gap-1 text-[10px] font-bold text-theme-muted uppercase tracking-widest ">
+                          <div className="flex items-center gap-1 text-[10px] font-bold text-theme-muted uppercase tracking-widest">
                             <Clock size={8} className="text-brand-tactical" /> {cat.estimatedMinutes} MIN
                           </div>
                           <div className="hidden xl:block w-1 h-1 rounded-full bg-theme-border" />
-                          <div className="text-[10px] font-bold text-theme-muted uppercase tracking-widest ">
+                          <div className="text-[10px] font-bold text-theme-muted uppercase tracking-widest">
                             Mín: R$ {((minHourlyRate * cat.estimatedMinutes) / 60).toFixed(2)}
                           </div>
                         </div>
@@ -299,7 +299,7 @@ export function ServicesTab({ profile, catalogServices, onAddService, onRemoveSe
                             <TrendingUp size={8} /> Sugerido
                           </div>
                           <div className="text-sm sm:text-xl font-heading font-bold text-brand-tactical leading-none">
-                            <span className="text-[10px] sm:text-[10px] mr-0.5 font-sans not-">R$</span>
+                            <span className="text-[10px] sm:text-[10px] mr-0.5 not-">R$</span>
                             {suggested.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
                           </div>
                         </div>

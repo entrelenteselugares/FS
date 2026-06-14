@@ -75,7 +75,7 @@ export const AdminOverview: React.FC<OverviewProps> = ({ stats, recentOrders = [
           { label: "Membros", icon: <Users size={24} />, route: "/admin/users" },
         ].map((action, i) => (
           <button key={i} onClick={() => navigate(action.route)}
-            className="flex flex-col items-center justify-center p-3 md:p-6 bg-theme-bg border border-theme-border rounded-2xl gap-3 text-zinc-400 hover:text-emerald-500 hover:border-emerald-500/50 transition-all active:scale-95"
+            className="flex flex-col items-center justify-center p-3 md:p-6 bg-theme-bg border border-theme-border rounded-2xl gap-3 text-theme-muted hover:text-theme-brand hover:border-emerald-500/50 transition-all active:scale-95"
           >
             {action.icon}
             <span className="text-[10px] font-bold uppercase tracking-widest">{action.label}</span>
@@ -89,8 +89,8 @@ export const AdminOverview: React.FC<OverviewProps> = ({ stats, recentOrders = [
         {/* KPI Card Template */}
         {[
           { label: "Receita Bruta", value: `R$ ${Number(stats?.totalRevenue || 0).toLocaleString("pt-BR")}`, color: "text-theme-text" },
-          { label: "MRR (Assinaturas)", value: `R$ ${Number(stats?.mrr || 0).toLocaleString("pt-BR")}`, color: "text-emerald-500" },
-          { label: "Assinaturas Ativas", value: stats?.totalActiveSubscriptions || 0, color: "text-emerald-500" },
+          { label: "MRR (Assinaturas)", value: `R$ ${Number(stats?.mrr || 0).toLocaleString("pt-BR")}`, color: "text-theme-brand" },
+          { label: "Assinaturas Ativas", value: stats?.totalActiveSubscriptions || 0, color: "text-theme-brand" },
           { label: "Eventos Ativos", value: stats?.activeEvents || 0, color: "text-brand-tactical" }
         ].map((kpi, i) => (
           <div key={i} className="min-w-[75vw] md:min-w-0 snap-center bg-theme-bg p-3 md:p-6 space-y-2 rounded-2xl border border-theme-border md:border-none md:rounded-none flex-shrink-0">

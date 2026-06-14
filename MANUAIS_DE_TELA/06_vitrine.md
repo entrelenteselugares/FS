@@ -46,10 +46,10 @@ PROFISSIONAIS
 
 - **COPA 2026
 PRÓXIMOS
-EUA
-12/06 · 22:00
-GRP D
-PARAGUAI
+SUÉCIA
+14/06 · 23:00
+GRP F
+TUNÍSIA
 Ver Álbum →** -> `/album-torcida`
 - **PRO
 RENATA MORAES

@@ -28,7 +28,7 @@ export function NetworkTab({ network, networkSearch, searchResults, residentUnit
           <div className="space-y-6 animate-in slide-in-from-left-4 duration-500">
             <div className="flex items-center gap-4">
               <div className="h-1 w-12 bg-cyan-400" />
-              <h4 className="text-sm font-bold text-theme-text uppercase tracking-widest ">Unidades que Sou Residente</h4>
+              <h4 className="text-sm font-bold text-theme-text uppercase tracking-widest">Unidades que Sou Residente</h4>
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -37,7 +37,7 @@ export function NetworkTab({ network, networkSearch, searchResults, residentUnit
                   <div className="absolute top-0 left-0 w-full h-[1px] bg-cyan-400/30" />
                   <div className="space-y-4">
                     <div className="flex justify-between items-start">
-                      <div className="px-3 py-1 bg-cyan-400/10 border border-cyan-400/30 rounded-xl text-[10px] font-bold text-cyan-400 uppercase tracking-widest ">
+                      <div className="px-3 py-1 bg-cyan-400/10 border border-cyan-400/30 rounded-xl text-[10px] font-bold text-cyan-400 uppercase tracking-widest">
                         Parceria Ativa
                       </div>
                       <div className="text-cyan-400/20 group-hover:text-cyan-400/50 transition-colors">
@@ -45,7 +45,7 @@ export function NetworkTab({ network, networkSearch, searchResults, residentUnit
                       </div>
                     </div>
                     <div className="space-y-1">
-                      <h5 className="text-base font-heading font-bold text-theme-text uppercase leading-tight ">
+                      <h5 className="text-base font-heading font-bold text-theme-text uppercase leading-tight">
                         {u.cartorio.razaoSocial}
                       </h5>
                       <p className="text-[10px] text-theme-muted uppercase font-bold tracking-widest">
@@ -90,7 +90,7 @@ export function NetworkTab({ network, networkSearch, searchResults, residentUnit
             {searchResults.map((p) => (
               <div key={p.id} className="flex justify-between items-center rounded-xl p-4 bg-brand-tactical/10 border border-brand-tactical/20">
                 <div className="space-y-1">
-                  <p className="text-sm font-bold text-theme-text uppercase ">{p.nome}</p>
+                  <p className="text-sm font-bold text-theme-text uppercase">{p.nome}</p>
                   <p className="text-[9px] text-theme-muted uppercase font-bold">{p.email}</p>
                 </div>
                 <button
@@ -108,7 +108,7 @@ export function NetworkTab({ network, networkSearch, searchResults, residentUnit
         <div className="space-y-6 pt-8 border-t border-theme-border">
           <div className="flex items-center gap-4">
             <div className="h-1 w-12 bg-brand-tactical" />
-            <h4 className="text-lg sm:text-xl font-heading font-bold text-theme-text uppercase ">
+            <h4 className="text-lg sm:text-xl font-heading font-bold text-theme-text uppercase">
               Meus Parceiros Favoritos
             </h4>
           </div>
@@ -126,7 +126,7 @@ export function NetworkTab({ network, networkSearch, searchResults, residentUnit
                         <div className="p-2 bg-brand-tactical/10 text-brand-tactical rounded-xl">
                           <Users size={16} />
                         </div>
-                        <p className="text-base font-bold text-theme-text uppercase ">{p.nome}</p>
+                        <p className="text-base font-bold text-theme-text uppercase">{p.nome}</p>
                       </div>
                       <p className="text-[10px] text-theme-muted uppercase font-bold tracking-widest">{p.email}</p>
                       {p.whatsapp && (
@@ -152,7 +152,7 @@ export function NetworkTab({ network, networkSearch, searchResults, residentUnit
                 <Users size={64} />
               </div>
               <div className="space-y-2">
-                <p className="text-[11px] font-bold text-theme-muted uppercase tracking-[0.4em] ">Sua rede está vazia</p>
+                <p className="text-[11px] font-bold text-theme-muted uppercase tracking-[0.4em]">Sua rede está vazia</p>
                 <p className="text-[9px] text-theme-muted/60 uppercase font-bold tracking-widest">
                   Busque profissionais acima para começar sua rede tática de conexões
                 </p>

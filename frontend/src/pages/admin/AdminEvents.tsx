@@ -572,11 +572,11 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
               <tr><td colSpan={7} className="py-20 text-center text-[10px] text-theme-muted uppercase tracking-[0.3em]">Nenhum registro encontrado.</td></tr>
             ) : events.map((event, idx) => (
               <tr key={event.id} className={`${idx % 2 === 0 ? 'bg-theme-bg-muted' : 'bg-transparent'} border-b border-theme-border`}>
-                <td className="p-2 md:p-3 text-[10px] font-mono text-brand-tactical uppercase">#{event.id.slice(-6).toUpperCase()}</td>
+                <td className="p-2 md:p-3 text-[10px] text-brand-tactical uppercase">#{event.id.slice(-6).toUpperCase()}</td>
                 <td className="p-2 md:p-3">
                   <div className="flex items-center gap-2 mb-1">
                     <EventStatusDot eventDate={event.date} active={event.active} size="w-1.5 h-1.5" />
-                  <div className="text-[12px] font-bold text-theme-text uppercase ">{event.title}</div>
+                  <div className="text-[12px] font-bold text-theme-text uppercase">{event.title}</div>
                 </div>
                 <div className="text-[9px] text-theme-muted font-bold uppercase">{event.city || (event.location?.startsWith("CEP:") ? null : event.location) || "—"}</div>
               </td>
@@ -626,7 +626,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
               </div>
               <div className="p-4 flex flex-col gap-3">
                 <div>
-                  <h3 className="text-sm font-bold text-theme-text uppercase ">{event.title}</h3>
+                  <h3 className="text-sm font-bold text-theme-text uppercase">{event.title}</h3>
                   <p className="text-[10px] text-theme-muted font-bold uppercase mt-0.5">{event.city || (event.location?.startsWith("CEP:") ? null : event.location) || "—"}</p>
                 </div>
                 <div className="flex justify-between items-center bg-theme-bg-muted/50 p-3 rounded-xl border border-theme-border/50">
@@ -669,7 +669,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
               
               <div className="grid grid-cols-2 md:flex items-center gap-4 md:gap-8 mr-0 md:mr-12">
                 {(['info', 'equipe', 'comercial', 'galeria', 'referencias'] as const).map(t => (
-                  <button key={t} type="button" onClick={() => setActiveTab(t)} className={`pb-2 text-[10px] font-black uppercase tracking-[0.2em] relative transition-all italic ${activeTab === t ? 'text-brand-tactical' : 'text-theme-muted hover:text-white'}`}>
+                  <button key={t} type="button" onClick={() => setActiveTab(t)} className={`pb-2 text-[10px] font-black uppercase tracking-[0.2em] relative transition-all italic ${activeTab === t ? 'text-brand-tactical' : 'text-theme-muted hover:text-theme-text'}`}>
                     {t === 'info' ? '1. Essencial' : t === 'equipe' ? '2. Operação' : t === 'comercial' ? '3. Comercial' : t === 'galeria' ? '4. Galeria' : '5. Referências'}
                     {activeTab === t && <div className="absolute -bottom-2 left-0 right-0 h-0.5 bg-brand-tactical" />}
                   </button>
@@ -685,7 +685,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-10 animate-in fade-in duration-500">
                   <div className="space-y-6">
                     <div className="space-y-4">
-                      <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest block mb-2 opacity-60 ">Capa da Vitrine</label>
+                      <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest block mb-2 opacity-60">Capa da Vitrine</label>
                       <div onClick={() => fileInputRef.current?.click()} className="w-full h-64 bg-theme-bg-muted border border-theme-border rounded-[30px] flex flex-col items-center justify-center cursor-pointer overflow-hidden group relative shadow-inner">
                         {coverPreview ? (
                           <>
@@ -700,7 +700,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
                                   key={pos.id}
                                   type="button"
                                   onClick={() => setFormData({ ...formData, coverPosition: pos.id })}
-                                  className={`px-4 py-1.5 text-[10px] font-black uppercase tracking-widest rounded-full transition-all ${formData.coverPosition === pos.id || (!formData.coverPosition && pos.id === 'center') ? "bg-brand-tactical text-black" : "text-white hover:bg-white/10"}`}
+                                  className={`px-4 py-1.5 text-[10px] font-black uppercase tracking-widest rounded-full transition-all ${formData.coverPosition === pos.id || (!formData.coverPosition && pos.id === 'center') ? "bg-brand-tactical text-theme-text" : "text-theme-text hover:bg-white/10"}`}
                                 >
                                   {pos.label}
                                 </button>
@@ -720,31 +720,31 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
                   </div>
                   <div className="space-y-6">
                     <div className="space-y-2">
-                      <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest block mb-2 opacity-60 ">Título do Evento</label>
+                      <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest block mb-2 opacity-60">Título do Evento</label>
                       <input type="text" required className="fs-input font-bold uppercase" value={formData.title} onChange={e => setFormData({ ...formData, title: e.target.value })} />
                     </div>
                     <div className="space-y-2">
-                      <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest block mb-2 opacity-60 ">Identificador URL (Slug)</label>
+                      <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest block mb-2 opacity-60">Identificador URL (Slug)</label>
                       <input type="text" className="fs-input font-bold" value={formData.slug} onChange={e => setFormData({ ...formData, slug: e.target.value.toLowerCase().replace(/\s/g, "-") })} placeholder="ex: taynan-e-felipe" />
                     </div>
 
                     <div className="grid grid-cols-2 gap-3 md:gap-6 p-3 md:p-6 bg-brand-tactical/10 border border-brand-tactical/10 rounded-[24px]">
                       <div className="space-y-2">
-                        <label className="text-[10px] font-bold text-brand-tactical uppercase tracking-widest block mb-2 opacity-60 ">Nome do Cliente</label>
+                        <label className="text-[10px] font-bold text-brand-tactical uppercase tracking-widest block mb-2 opacity-60">Nome do Cliente</label>
                         <input type="text" className="w-full bg-theme-bg/50 border border-brand-tactical/20 p-4 text-[10px] text-theme-text font-bold outline-none focus:border-brand-tactical rounded-xl uppercase placeholder:text-brand-tactical/30" value={formData.clientName} onChange={e => setFormData({ ...formData, clientName: e.target.value })} placeholder="NOME DO CLIENTE" />
                       </div>
                       <div className="space-y-2">
-                        <label className="text-[10px] font-bold text-brand-tactical uppercase tracking-widest block mb-2 opacity-60 ">E-mail de Acesso</label>
+                        <label className="text-[10px] font-bold text-brand-tactical uppercase tracking-widest block mb-2 opacity-60">E-mail de Acesso</label>
                         <input type="email" className="w-full bg-theme-bg/50 border border-brand-tactical/20 p-4 text-[10px] text-theme-text font-bold outline-none focus:border-brand-tactical rounded-xl lowercase placeholder:text-brand-tactical/30" value={formData.clientEmail} onChange={e => setFormData({ ...formData, clientEmail: e.target.value })} placeholder="provisorio@gmail.com" />
                       </div>
                     </div>
                     <div className="grid grid-cols-2 gap-3 md:gap-6">
                       <div className="space-y-2">
-                        <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest block mb-2 opacity-60 ">Data</label>
+                        <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest block mb-2 opacity-60">Data</label>
                         <input type="datetime-local" required className="w-full bg-theme-bg-muted border border-theme-border p-4 text-[10px] text-theme-text font-bold outline-none focus:border-brand-tactical rounded-xl" value={formData.date} onChange={e => setFormData({...formData, date: e.target.value})} />
                       </div>
                       <div className="space-y-2">
-                        <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest block mb-2 opacity-60 ">Local</label>
+                        <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest block mb-2 opacity-60">Local</label>
                         <input type="text" required className="w-full bg-theme-bg-muted border border-theme-border p-4 text-[10px] text-theme-text font-bold outline-none focus:border-brand-tactical rounded-xl uppercase" value={formData.location} onChange={e => setFormData({...formData, location: e.target.value})} placeholder="EX: UNIDADE X" />
                       </div>
                     </div>
@@ -756,14 +756,14 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-10 animate-in fade-in duration-500">
                   <div className="space-y-6">
                     <div className="space-y-2">
-                      <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest block mb-2 opacity-60 ">Unidade Fixa</label>
+                      <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest block mb-2 opacity-60">Unidade Fixa</label>
                       <select value={formData.cartorioId} onChange={e => setFormData({...formData, cartorioId: e.target.value})} className="w-full bg-theme-bg-muted border border-theme-border p-4 text-[10px] text-theme-text font-bold outline-none focus:border-brand-tactical rounded-xl appearance-none cursor-pointer">
                         <option value="">SELECIONE A UNIDADE</option>
                         {users.filter(u => u.role === "UNIDADE" || u.role === "CARTORIO").map(u => <option key={u.id} value={u.id}>{u.nome.toUpperCase()}</option>)}
                       </select>
                     </div>
                     <div className="space-y-2">
-                      <label className="text-[10px] font-bold text-brand-tactical uppercase tracking-widest block mb-2 opacity-60 ">Logística (Franqueado)</label>
+                      <label className="text-[10px] font-bold text-brand-tactical uppercase tracking-widest block mb-2 opacity-60">Logística (Franqueado)</label>
                       <select value={formData.franchiseeId} onChange={e => setFormData({...formData, franchiseeId: e.target.value})} className="w-full bg-theme-bg-muted border border-brand-tactical/30 p-4 text-[10px] text-theme-text font-bold outline-none focus:border-brand-tactical rounded-xl appearance-none cursor-pointer">
                         <option value="">FOTO SEGUNDO MATRIZ</option>
                         {users.filter(u => u.franchiseProfile).map(u => (
@@ -774,21 +774,21 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
                       </select>
                     </div>
                     <div className="space-y-2">
-                      <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest block mb-2 opacity-60 ">Cidade / UF</label>
+                      <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest block mb-2 opacity-60">Cidade / UF</label>
                       <input type="text" className="w-full bg-theme-bg-muted border border-theme-border p-4 text-[10px] text-theme-text font-bold outline-none focus:border-brand-tactical rounded-xl uppercase" value={formData.city} onChange={e => setFormData({ ...formData, city: e.target.value })} placeholder="EX: SÃO PAULO - SP" />
                     </div>
                   </div>
                   <div className="space-y-6">
                     <div className="grid grid-cols-2 gap-3 md:gap-6">
                       <div className="space-y-2">
-                        <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest block mb-2 opacity-60 ">Captação</label>
+                        <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest block mb-2 opacity-60">Captação</label>
                         <select value={formData.captacaoId} onChange={e => setFormData({...formData, captacaoId: e.target.value})} className="w-full bg-theme-bg-muted border border-theme-border p-4 text-[10px] text-theme-text font-bold outline-none focus:border-brand-tactical rounded-xl appearance-none cursor-pointer">
                           <option value="">PROFISSIONAL</option>
                           {users.filter(u => u.role === "PROFISSIONAL").map(u => <option key={u.id} value={u.id}>{u.nome.toUpperCase()}</option>)}
                         </select>
                       </div>
                       <div className="space-y-2">
-                        <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest block mb-2 opacity-60 ">Edição</label>
+                        <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest block mb-2 opacity-60">Edição</label>
                         <select value={formData.edicaoId} onChange={e => setFormData({...formData, edicaoId: e.target.value})} className="w-full bg-theme-bg-muted border border-theme-border p-4 text-[10px] text-theme-text font-bold outline-none focus:border-brand-tactical rounded-xl appearance-none cursor-pointer">
                           <option value="">PROFISSIONAL</option>
                           {users.filter(u => u.role === "PROFISSIONAL").map(u => <option key={u.id} value={u.id}>{u.nome.toUpperCase()}</option>)}
@@ -796,13 +796,13 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
                       </div>
                     </div>
                     <div className="space-y-2">
-                      <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest block mb-2 opacity-60 ">Horas de Trabalho</label>
+                      <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest block mb-2 opacity-60">Horas de Trabalho</label>
                       <input type="number" required value={formData.eventHours} onChange={e => setFormData({...formData, eventHours: Number(e.target.value)})} className="w-full bg-theme-bg-muted border border-theme-border p-4 text-[10px] text-theme-text font-bold outline-none focus:border-brand-tactical rounded-xl" />
                     </div>
                   </div>
 
                   <div className="md:col-span-2 space-y-2">
-                    <label className="text-[10px] font-bold text-brand-tactical uppercase tracking-widest block mb-2 opacity-60 ">Briefing / Observações (Briefing do Cliente)</label>
+                    <label className="text-[10px] font-bold text-brand-tactical uppercase tracking-widest block mb-2 opacity-60">Briefing / Observações (Briefing do Cliente)</label>
                     <textarea 
                       className="w-full bg-theme-bg-muted border border-theme-border p-4 text-[10px] text-theme-text font-bold outline-none focus:border-brand-tactical rounded-xl h-32 resize-none" 
                       value={formData.description} 
@@ -819,18 +819,18 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
                     <div className="space-y-6">
                       <div className="grid grid-cols-2 gap-3 md:gap-6">
                         <div className="space-y-2">
-                          <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest block mb-2 opacity-60 ">Preço Álbum (R$)</label>
+                          <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest block mb-2 opacity-60">Preço Álbum (R$)</label>
                           <input type="number" className="w-full bg-theme-bg-muted border border-theme-border p-4 text-[10px] text-theme-text font-bold outline-none focus:border-brand-tactical rounded-xl" value={formData.priceBase} onChange={e => setFormData({ ...formData, priceBase: Number(e.target.value) })} />
                         </div>
                         <div className="space-y-2">
-                          <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest block mb-2 opacity-60 ">Antecipado (R$)</label>
+                          <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest block mb-2 opacity-60">Antecipado (R$)</label>
                           <input type="number" className="w-full bg-theme-bg-muted border border-theme-border p-4 text-[10px] text-theme-text font-bold outline-none focus:border-brand-tactical rounded-xl" value={formData.priceEarly} onChange={e => setFormData({...formData, priceEarly: Number(e.target.value)})} />
                         </div>
                       </div>
                       <div className="space-y-2">
-                        <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest block mb-2 opacity-60 ">Google Drive</label>
+                        <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest block mb-2 opacity-60">Google Drive</label>
                         <div className="flex gap-2">
-                          <input type="text" className="flex-1 bg-theme-bg-muted border border-theme-border p-4 text-[10px] text-theme-text font-mono outline-none focus:border-brand-tactical rounded-xl" value={formData.driveUrl} onChange={e => setFormData({ ...formData, driveUrl: e.target.value })} placeholder="https://drive.google.com/..." />
+                          <input type="text" className="flex-1 bg-theme-bg-muted border border-theme-border p-4 text-[10px] text-theme-text outline-none focus:border-brand-tactical rounded-xl" value={formData.driveUrl} onChange={e => setFormData({ ...formData, driveUrl: e.target.value })} placeholder="https://drive.google.com/..." />
                           {editingEvent && (
                             <button 
                               type="button"
@@ -845,18 +845,18 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
                         </div>
                       </div>
                       <div className="space-y-2">
-                        <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest block mb-2 opacity-60 ">Lightroom / Galeria</label>
-                        <input type="text" className="w-full bg-theme-bg-muted border border-theme-border p-4 text-[10px] text-theme-text font-mono outline-none focus:border-brand-tactical rounded-xl" value={formData.lightroomUrl} onChange={e => setFormData({ ...formData, lightroomUrl: e.target.value })} placeholder="https://gallery.lightroom.com/..." />
+                        <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest block mb-2 opacity-60">Lightroom / Galeria</label>
+                        <input type="text" className="w-full bg-theme-bg-muted border border-theme-border p-4 text-[10px] text-theme-text outline-none focus:border-brand-tactical rounded-xl" value={formData.lightroomUrl} onChange={e => setFormData({ ...formData, lightroomUrl: e.target.value })} placeholder="https://gallery.lightroom.com/..." />
                       </div>
                       <div className="space-y-2">
-                        <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest block mb-2 opacity-60 ">Retenção Galeria (Dias)</label>
+                        <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest block mb-2 opacity-60">Retenção Galeria (Dias)</label>
                         <input type="number" className="w-full bg-theme-bg-muted border border-theme-border p-4 text-[10px] text-theme-text font-bold outline-none focus:border-brand-tactical rounded-xl" value={formData.retentionDays} onChange={e => setFormData({ ...formData, retentionDays: Number(e.target.value) })} />
                         <p className="text-[9px] sm:text-[11px] font-bold text-brand-tactical uppercase tracking-[0.2em] sm:tracking-[0.4em] truncate max-w-[80vw]">Administração de Coberturas Fotográficas</p>
                       </div>
                     </div>
                     <div className="space-y-6">
                       <div className="space-y-4">
-                        <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest block mb-2 opacity-60 ">Modelo e Serviços</label>
+                        <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest block mb-2 opacity-60">Modelo e Serviços</label>
                         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                           <button type="button" onClick={() => setFormData({ ...formData, type: 'ALBUM_FULL' })} className={`py-4 border text-[10px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest transition-all rounded-xl italic ${formData.type === 'ALBUM_FULL' ? 'bg-brand-tactical border-brand-tactical text-zinc-950 shadow-lg shadow-brand-tactical/20' : 'bg-theme-bg-muted border-theme-border text-theme-muted hover:border-theme-text'}`}>Social</button>
                           <button type="button" onClick={() => setFormData({ ...formData, type: 'PHOTO_MARKETPLACE' })} className={`py-4 border text-[10px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest transition-all rounded-xl italic ${formData.type === 'PHOTO_MARKETPLACE' ? 'bg-brand-tactical border-brand-tactical text-zinc-950 shadow-lg shadow-brand-tactical/20' : 'bg-theme-bg-muted border-theme-border text-theme-muted hover:border-theme-text'}`}>Marketplace</button>
@@ -866,7 +866,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
                         </div>
                         {formData.type === 'SCHOOL' && (
                           <div className="p-3 md:p-6 bg-brand-tactical/10 border border-brand-tactical/20 rounded-[20px] space-y-4">
-                            <label className="text-[10px] font-bold text-brand-tactical uppercase tracking-widest block opacity-60 ">Lista de Alunos (Nomes separados por vírgula ou linha)</label>
+                            <label className="text-[10px] font-bold text-brand-tactical uppercase tracking-widest block opacity-60">Lista de Alunos (Nomes separados por vírgula ou linha)</label>
                             <textarea 
                               className="w-full bg-theme-bg-muted border border-brand-tactical/20 p-4 text-[10px] text-theme-text font-bold outline-none focus:border-brand-tactical rounded-xl h-24 resize-none placeholder:text-brand-tactical/30" 
                               value={(formData.verticalConfigs?.studentList as string) || ""}
@@ -877,7 +877,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
                         )}
                         {formData.type === 'SPORTS' && (
                           <div className="p-3 md:p-6 bg-brand-tactical/10 border border-brand-tactical/20 rounded-[20px] space-y-4 flex items-center justify-between">
-                            <label className="text-[10px] font-bold text-brand-tactical uppercase tracking-widest block opacity-60 ">Habilitar Busca por Número de Peito (Bib)</label>
+                            <label className="text-[10px] font-bold text-brand-tactical uppercase tracking-widest block opacity-60">Habilitar Busca por Número de Peito (Bib)</label>
                             <label className="flex items-center gap-3 cursor-pointer group">
                               <div className={`w-5 h-5 rounded-md border flex items-center justify-center transition-all ${formData.verticalConfigs?.enableBibSearch !== false ? 'bg-brand-tactical border-brand-tactical' : 'bg-theme-bg-muted border-theme-border'}`}>
                                 {formData.verticalConfigs?.enableBibSearch !== false && <div className="w-2.5 h-2.5 bg-black rounded-sm" />}
@@ -901,15 +901,15 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
                       {formData.isCrowdfund && (
                         <div className="p-4 md:p-8 bg-brand-tactical/10 border border-brand-tactical/20 rounded-[30px] flex justify-between items-center shadow-inner">
                           <div className="space-y-2">
-                            <label className="text-[10px] font-bold text-brand-tactical uppercase tracking-widest block opacity-60 ">Meta de Arrecadação</label>
+                            <label className="text-[10px] font-bold text-brand-tactical uppercase tracking-widest block opacity-60">Meta de Arrecadação</label>
                             <div className="flex items-center gap-2">
                               <span className="text-xl font-bold text-brand-tactical">R$</span>
-                              <input type="number" className="bg-transparent text-3xl font-bold text-theme-text outline-none w-32 " value={formData.targetAmount} onChange={e => setFormData({...formData, targetAmount: Number(e.target.value)})} />
+                              <input type="number" className="bg-transparent text-3xl font-bold text-theme-text outline-none w-32" value={formData.targetAmount} onChange={e => setFormData({...formData, targetAmount: Number(e.target.value)})} />
                             </div>
                           </div>
                           <div className="text-right space-y-1">
-                            <span className="text-[10px] font-bold text-theme-muted uppercase tracking-widest block opacity-60 ">Status Atual</span>
-                            <span className="text-xl font-bold text-brand-tactical ">{new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(editingEvent?.collectedAmount || 0)}</span>
+                            <span className="text-[10px] font-bold text-theme-muted uppercase tracking-widest block opacity-60">Status Atual</span>
+                            <span className="text-xl font-bold text-brand-tactical">{new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(editingEvent?.collectedAmount || 0)}</span>
                           </div>
                         </div>
                       )}
@@ -922,7 +922,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
                 <div className="animate-in fade-in duration-500 space-y-8">
                   <div className="flex items-center justify-between border-b border-theme-border pb-4">
                     <div className="flex items-center gap-3 md:gap-6">
-                      <h3 className="text-sm font-bold uppercase tracking-widest text-theme-text ">Fotos do Marketplace</h3>
+                      <h3 className="text-sm font-bold uppercase tracking-widest text-theme-text">Fotos do Marketplace</h3>
                       {editingEvent && (
                         <button 
                           type="button"
@@ -947,7 +947,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
                             alt={m.shortId} 
                             className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 opacity-80 group-hover:opacity-100" 
                           />
-                          <div className="absolute top-2 left-2 px-2 py-1 bg-black/60 backdrop-blur-md rounded text-[10px] font-mono text-white border border-white/10 uppercase">{m.shortId}</div>
+                          <div className="absolute top-2 left-2 px-2 py-1 bg-black/60 backdrop-blur-md rounded text-[10px] text-theme-text border border-white/10 uppercase">{m.shortId}</div>
                         </div>
                         <div className="p-3 space-y-3 bg-theme-card">
                           <div className="space-y-1">
@@ -975,7 +975,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
                   </div>
 
                   {eventMedia.length === 0 && (
-                    <div className="py-20 text-center border-2  border-theme-border rounded-[30px] bg-theme-bg-muted">
+                    <div className="py-20 text-center border-2 border-theme-border rounded-[30px] bg-theme-bg-muted">
                       <Image size={40} className="mx-auto text-theme-muted/30 mb-4" strokeWidth={1} />
                       <p className="text-[9px] sm:text-[11px] font-bold text-brand-tactical uppercase tracking-[0.2em] sm:tracking-[0.4em] truncate max-w-[80vw]">Nenhuma mídia sincronizada.</p>
                       <p className="text-[10px] sm:text-[9px] font-bold text-theme-muted uppercase tracking-[0.2em] sm:tracking-[0.4em] truncate max-w-[80vw] mt-2">Clique em &quot;SINCRO DRIVE&quot; para importar imagens.</p>
@@ -988,13 +988,13 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
               {activeTab === 'referencias' && (
                 <div className="animate-in fade-in duration-500 space-y-8">
                   <div className="flex items-center justify-between border-b border-theme-border pb-4">
-                    <h3 className="text-sm font-bold uppercase tracking-widest text-theme-text ">Referências Técnicas</h3>
+                    <h3 className="text-sm font-bold uppercase tracking-widest text-theme-text">Referências Técnicas</h3>
                     <span className={`text-[10px] font-black uppercase tracking-widest ${eventRefs.length >= 6 ? 'text-red-500' : 'text-theme-muted'}`}>{eventRefs.length}/6</span>
                   </div>
 
                   {/* Not-saved hint */}
                   {!editingEvent && (
-                    <div className="py-5 md:py-10 text-center border  border-theme-border rounded-2xl">
+                    <div className="py-5 md:py-10 text-center border border-theme-border rounded-2xl">
                       <p className="text-[10px] text-theme-muted uppercase tracking-widest font-bold">Salve o evento primeiro para adicionar referências.</p>
                     </div>
                   )}
@@ -1005,7 +1005,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-6">
                         {/* Image upload */}
                         <div className="space-y-3">
-                          <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest block opacity-60 ">Upload de Imagem</label>
+                          <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest block opacity-60">Upload de Imagem</label>
                           <button
                             type="button"
                             disabled={refUploading || eventRefs.length >= 6}
@@ -1023,7 +1023,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
 
                         {/* YouTube link */}
                         <div className="space-y-3">
-                          <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest block opacity-60 ">Link do YouTube (vídeo de capa — loop automático)</label>
+                          <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest block opacity-60">Link do YouTube (vídeo de capa — loop automático)</label>
                           <div className="flex gap-2">
                             <input
                               type="text"
@@ -1031,7 +1031,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
                               onChange={e => setYtInput(e.target.value)}
                               placeholder="https://youtube.com/watch?v=..."
                               disabled={eventRefs.length >= 6}
-                              className="flex-1 bg-theme-bg-muted border border-theme-border p-4 text-[10px] text-theme-text font-mono outline-none focus:border-brand-tactical rounded-xl disabled:opacity-40"
+                              className="flex-1 bg-theme-bg-muted border border-theme-border p-4 text-[10px] text-theme-text outline-none focus:border-brand-tactical rounded-xl disabled:opacity-40"
                             />
                             <button
                               type="button"
@@ -1065,7 +1065,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
 
                       {/* Grid of current references */}
                       {eventRefs.length === 0 ? (
-                        <div className="py-16 text-center border  border-theme-border rounded-2xl">
+                        <div className="py-16 text-center border border-theme-border rounded-2xl">
                           <Image size={36} className="mx-auto text-theme-muted/20 mb-3" strokeWidth={1} />
                           <p className="text-[9px] text-theme-muted uppercase tracking-widest font-bold">Nenhuma referência adicionada.</p>
                         </div>
@@ -1080,7 +1080,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
                               />
                               {/* YouTube badge */}
                               {ref.type === 'YOUTUBE' && (
-                                <div className="absolute top-2 left-2 bg-red-600 text-white text-[9px] font-bold uppercase px-2 py-0.5 rounded tracking-widest flex items-center gap-1">
+                                <div className="absolute top-2 left-2 bg-red-600 text-theme-text text-[9px] font-bold uppercase px-2 py-0.5 rounded tracking-widest flex items-center gap-1">
                                   ▶ YouTube
                                 </div>
                               )}
@@ -1104,7 +1104,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
 
             {/* Footer */}
             <div className="p-4 md:p-8 md:p-10 bg-theme-bg-muted border-t border-theme-border flex gap-4 shrink-0 rounded-2xl">
-              <button type="button" onClick={() => setIsModalOpen(false)} className="fs-btn flex-1 border border-theme-border text-theme-muted hover:text-white transition-all ">Cancelar</button>
+              <button type="button" onClick={() => setIsModalOpen(false)} className="fs-btn flex-1 border border-theme-border text-theme-muted hover:text-theme-text transition-all">Cancelar</button>
               {activeTab !== 'comercial' && activeTab !== 'referencias' ? (
                 <button
                   type="button"
@@ -1156,7 +1156,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
             {/* Content */}
             <div className="p-4 md:p-8 md:p-10 space-y-10">
               <div className="text-center space-y-2">
-                <h3 className="text-xl font-bold text-theme-text uppercase ">{qrModalEvent.title}</h3>
+                <h3 className="text-xl font-bold text-theme-text uppercase">{qrModalEvent.title}</h3>
                 <p className="text-[9px] text-theme-muted font-bold uppercase tracking-widest opacity-40">Distribuição de Acesso Omnichannel</p>
               </div>
 
@@ -1164,7 +1164,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
                 {/* QR Code de Venda (Álbum) */}
                 <div className="bg-theme-bg-muted p-4 md:p-8 rounded-[30px] border border-theme-border flex flex-col items-center gap-3 md:gap-6 shadow-inner">
                   <div className="text-center">
-                    <h4 className="text-[10px] font-bold text-theme-text uppercase tracking-widest ">Vitrine Online</h4>
+                    <h4 className="text-[10px] font-bold text-theme-text uppercase tracking-widest">Vitrine Online</h4>
                     <p className="text-[10px] text-theme-muted uppercase tracking-widest mt-1 opacity-60">Para Compra de Fotos</p>
                   </div>
                   <div className="bg-white p-4 rounded-2xl shadow-xl">
@@ -1172,7 +1172,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
                   </div>
                   <button 
                     onClick={() => { navigator.clipboard.writeText(`${getAppUrl()}/e/${qrModalEvent.slug}`); setCopied(true); setTimeout(()=>setCopied(false),2000); }} 
-                    className="w-full py-4 bg-theme-bg border border-theme-border text-[10px] md:text-[9px] font-bold uppercase tracking-wider md:tracking-widest hover:border-theme-text transition-all rounded-xl "
+                    className="w-full py-4 bg-theme-bg border border-theme-border text-[10px] md:text-[9px] font-bold uppercase tracking-wider md:tracking-widest hover:border-theme-text transition-all rounded-xl"
                   >
                     {copied ? "COPIADO!" : "COPIAR LINK ÁLBUM"}
                   </button>
@@ -1181,7 +1181,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
                 {/* QR Code Phygital (Captura) */}
                 <div className="bg-brand-tactical/10 p-4 md:p-8 rounded-[30px] border border-brand-tactical/20 flex flex-col items-center gap-3 md:gap-6 shadow-inner">
                   <div className="text-center">
-                    <h4 className="text-[10px] font-bold text-brand-tactical uppercase tracking-widest ">Captura Phygital</h4>
+                    <h4 className="text-[10px] font-bold text-brand-tactical uppercase tracking-widest">Captura Phygital</h4>
                     <p className="text-[10px] text-brand-tactical/60 uppercase tracking-widest mt-1 opacity-60">Para Convidados</p>
                   </div>
                   <div className="bg-white p-4 rounded-2xl shadow-xl border-4 border-brand-tactical/20">
@@ -1189,7 +1189,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
                   </div>
                   <button 
                     onClick={() => { navigator.clipboard.writeText(`${getAppUrl()}/captura?e=${qrModalEvent.id}`); setNotification({ message: "Link de Captura Copiado!", type: 'success' }); }} 
-                    className="w-full py-4 bg-brand-tactical text-zinc-950 text-[10px] md:text-[9px] font-bold uppercase tracking-wider md:tracking-widest hover:brightness-110 transition-all shadow-lg rounded-xl "
+                    className="w-full py-4 bg-brand-tactical text-zinc-950 text-[10px] md:text-[9px] font-bold uppercase tracking-wider md:tracking-widest hover:brightness-110 transition-all shadow-lg rounded-xl"
                   >
                     COPIAR LINK CAPTURA
                   </button>
@@ -1223,7 +1223,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
                     w.document.close(); 
                   } 
                 }} 
-                className="w-full py-5 border border-theme-border text-[11px] font-bold uppercase tracking-[0.4em] text-theme-muted hover:text-white transition-all rounded-[20px] flex items-center justify-center gap-4 group"
+                className="w-full py-5 border border-theme-border text-[11px] font-bold uppercase tracking-[0.4em] text-theme-muted hover:text-theme-text transition-all rounded-[20px] flex items-center justify-center gap-4 group"
                >
                  <ArrowRight className="group-hover:translate-x-2 transition-transform" size={18} />
                  Gerar Cartaz de Mesa (Print Kit)
@@ -1275,7 +1275,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-6 md:gap-12">
                 <div className="space-y-8">
                   <div className="space-y-4">
-                    <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest block mb-2 opacity-60 ">Identificação do Cliente</label>
+                    <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest block mb-2 opacity-60">Identificação do Cliente</label>
                     <input 
                       type="email" 
                       required 
@@ -1305,7 +1305,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
                   </div>
                   
                   <div className="pt-6 border-t border-theme-border">
-                    <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest block mb-6 opacity-60 ">Serviços Habilitados</label>
+                    <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest block mb-6 opacity-60">Serviços Habilitados</label>
                     <div className="grid grid-cols-2 gap-4">
                       {["FOTO DIGITAL", "FOTO IMPRESSA", "VIDEO", "REELS"].map(s => (
                         <label key={s} className="flex items-center gap-3 cursor-pointer group">
@@ -1333,20 +1333,20 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
                 <div className="space-y-8">
                   <div className="grid grid-cols-2 gap-3 md:gap-6">
                     <div className="space-y-4">
-                      <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest block opacity-60 ">Valor Transação</label>
+                      <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest block opacity-60">Valor Transação</label>
                       <div className="relative">
-                        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-brand-tactical font-bold ">R$</span>
-                        <input type="number" required className="w-full bg-theme-bg-muted border border-theme-border p-4 pl-12 text-xl text-theme-text outline-none font-bold rounded-xl " value={expressFormData.amount} onChange={e => setExpressFormData({...expressFormData, amount: Number(e.target.value)})} />
+                        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-brand-tactical font-bold">R$</span>
+                        <input type="number" required className="w-full bg-theme-bg-muted border border-theme-border p-4 pl-12 text-xl text-theme-text outline-none font-bold rounded-xl" value={expressFormData.amount} onChange={e => setExpressFormData({...expressFormData, amount: Number(e.target.value)})} />
                       </div>
                     </div>
                     <div className="space-y-4">
-                      <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest block opacity-60 ">Local Operação</label>
+                      <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest block opacity-60">Local Operação</label>
                       <input type="text" required className="w-full bg-theme-bg-muted border border-theme-border p-4 text-[11px] text-theme-text outline-none font-bold rounded-xl uppercase" value={expressFormData.location} onChange={e => setExpressFormData({...expressFormData, location: e.target.value})} />
                     </div>
                   </div>
 
                   <div className="space-y-4">
-                    <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest block opacity-60 ">Método de Pagamento</label>
+                    <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest block opacity-60">Método de Pagamento</label>
                     <div className="flex gap-4">
                       {(["MONEY", "PIX", "CARD"] as const).map(m => (
                         <button 
@@ -1370,7 +1370,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
 
             {/* Footer */}
             <div className="p-4 md:p-8 md:p-10 bg-theme-bg-muted border-t border-theme-border flex gap-4 shrink-0 rounded-2xl">
-              <button type="button" onClick={() => setIsExpressModalOpen(false)} className="flex-1 py-5 border border-theme-border text-[11px] font-bold uppercase tracking-[0.3em] text-theme-muted hover:text-white transition-all rounded-[20px] ">Cancelar</button>
+              <button type="button" onClick={() => setIsExpressModalOpen(false)} className="flex-1 py-5 border border-theme-border text-[11px] font-bold uppercase tracking-[0.3em] text-theme-muted hover:text-theme-text transition-all rounded-[20px]">Cancelar</button>
               <button 
                 type="submit" 
                 onClick={handleExpressSaleSubmit}
@@ -1416,10 +1416,10 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
 
             {/* Footer */}
             <div className="p-4 md:p-8 md:p-10 bg-theme-bg-muted border-t border-theme-border flex gap-4 shrink-0 rounded-2xl">
-              <button onClick={() => setConfirmDelete(null)} className="flex-1 py-5 border border-theme-border text-[11px] font-bold uppercase tracking-[0.3em] text-theme-muted hover:text-white transition-all rounded-[20px] ">Cancelar</button>
+              <button onClick={() => setConfirmDelete(null)} className="flex-1 py-5 border border-theme-border text-[11px] font-bold uppercase tracking-[0.3em] text-theme-muted hover:text-theme-text transition-all rounded-[20px]">Cancelar</button>
               <button 
                 onClick={() => handleDelete(confirmDelete.id)}
-                className="flex-[2] py-5 bg-red-600 text-white text-[11px] font-bold uppercase tracking-[0.3em] shadow-2xl shadow-red-600/20 hover:bg-red-500 transition-all rounded-[20px] flex items-center justify-center gap-4"
+                className="flex-[2] py-5 bg-red-600 text-theme-text text-[11px] font-bold uppercase tracking-[0.3em] shadow-2xl shadow-red-600/20 hover:bg-red-500 transition-all rounded-[20px] flex items-center justify-center gap-4"
               >
                 Confirmar Exclusão
                 <Trash2 size={18} strokeWidth={1.5} />

@@ -380,7 +380,7 @@ export const AlbumTorcidaPage = () => {
     .slice(0, 12);
 
   return (
-    <div style={{ background: "#050e08", minHeight: "100vh", color: "white", fontFamily: "sans-serif", paddingBottom: 120 }}>
+    <div style={{ background: "#050e08", minHeight: "100vh", color: "white", fontFamily: T.fontB, paddingBottom: 120 }}>
       {/* ── HERO / HEADER ──────────────────────────────────────────────────── */}
       <div
         style={{

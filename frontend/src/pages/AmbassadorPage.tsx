@@ -61,7 +61,7 @@ export default function AmbassadorPage() {
   const name = info?.ownerName || slug?.split('-')[0] || "Um Embaixador";
 
   return (
-    <div className="min-h-screen bg-[#050505] text-white selection:bg-brand-tactical/30 selection:text-white overflow-x-hidden">
+    <div className="min-h-screen bg-[#050505] text-theme-text selection:bg-brand-tactical/30 selection:text-theme-text overflow-x-hidden">
       {/* Ambient Background */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-brand-tactical/10 blur-[150px] rounded-full opacity-30 animate-pulse-slow" />
@@ -94,7 +94,7 @@ export default function AmbassadorPage() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="text-3xl md:text-5xl md:text-8xl font-heading font-bold uppercase leading-[0.85] text-white"
+            className="text-3xl md:text-5xl md:text-8xl font-heading font-bold uppercase leading-[0.85] text-theme-text"
           >
             Você foi convidado <br />
             <span className="text-brand-tactical">por {name}</span>
@@ -104,7 +104,7 @@ export default function AmbassadorPage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.2 }}
-            className="text-zinc-500 text-sm md:text-lg max-w-2xl mx-auto font-medium leading-relaxed"
+            className="text-theme-muted text-sm md:text-lg max-w-2xl mx-auto font-medium leading-relaxed"
           >
             Entre para a rede premium que está redefinindo a fotografia de eventos com tecnologia Phygital, Live Print e curadoria editorial instantânea.
           </motion.p>
@@ -124,11 +124,11 @@ export default function AmbassadorPage() {
               transition={{ delay: 0.3 + (i * 0.1) }}
               className="p-4 md:p-8 bg-zinc-900/40 border border-zinc-800/50 backdrop-blur-xl flex flex-col items-center text-center space-y-4 group hover:border-brand-tactical/40 transition-all"
             >
-              <div className="text-brand-tactical p-3 bg-brand-tactical/10 rounded-2xl group-hover:bg-brand-tactical group-hover:text-black transition-all">
+              <div className="text-brand-tactical p-3 bg-brand-tactical/10 rounded-2xl group-hover:bg-brand-tactical group-hover:text-theme-text transition-all">
                 {f.icon}
               </div>
-              <h3 className="text-sm font-bold uppercase tracking-widest text-white">{f.title}</h3>
-              <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider">{f.desc}</p>
+              <h3 className="text-sm font-bold uppercase tracking-widest text-theme-text">{f.title}</h3>
+              <p className="text-[10px] text-theme-muted font-bold uppercase tracking-wider">{f.desc}</p>
             </motion.div>
           ))}
         </div>
@@ -142,14 +142,14 @@ export default function AmbassadorPage() {
         >
           <button
             onClick={handleStart}
-            className="w-full py-3 md:py-6 bg-brand-tactical text-black font-bold uppercase tracking-[0.4em] text-[12px] hover:bg-white transition-all shadow-[0_0_60px_rgba(133,185,172,0.2)] active:scale-95 flex items-center justify-center gap-4 "
+            className="w-full py-3 md:py-6 bg-brand-tactical text-theme-text font-bold uppercase tracking-[0.4em] text-[12px] hover:bg-white transition-all shadow-[0_0_60px_rgba(133,185,172,0.2)] active:scale-95 flex items-center justify-center gap-4"
           >
             Aceitar Convite e Começar
             <ArrowRight size={18} />
           </button>
           
-          <p className="text-[10px] text-zinc-600 font-bold uppercase tracking-[0.3em]">
-            Já possui acesso? <button onClick={() => navigate('/login')} className="text-zinc-400 hover:text-brand-tactical">Fazer Login</button>
+          <p className="text-[10px] text-theme-muted font-bold uppercase tracking-[0.3em]">
+            Já possui acesso? <button onClick={() => navigate('/login')} className="text-theme-muted hover:text-brand-tactical">Fazer Login</button>
           </p>
         </motion.div>
       </main>

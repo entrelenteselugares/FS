@@ -151,7 +151,7 @@ export const AdminApprovalHub: React.FC = () => {
             {tab.count > 0 && (
               <span className={`px-2 py-0.5 rounded-full text-[10px] font-black ${
                 activeTab === tab.key
-                  ? "bg-brand-tactical text-black"
+                  ? "bg-brand-tactical text-theme-text"
                   : "bg-theme-border text-theme-muted"
               }`}>
                 {tab.count}
@@ -177,7 +177,7 @@ export const AdminApprovalHub: React.FC = () => {
             </div>
           ) : (
             <div className="space-y-4">
-              <p className="text-[10px] text-theme-muted uppercase tracking-widest font-bold ">
+              <p className="text-[10px] text-theme-muted uppercase tracking-widest font-bold">
                 Como funciona: O profissional informou um link de trabalho antigo para provar seus anos de experiência.
                 Acesse o link, verifique a data de publicação e aprove ou reprove abaixo.
               </p>
@@ -200,8 +200,8 @@ export const AdminApprovalHub: React.FC = () => {
                             {v.user.nome.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2)}
                           </div>
                           <div>
-                            <h3 className="font-bold text-theme-text text-sm ">{v.user.nome}</h3>
-                            <p className="text-[10px] text-theme-muted font-mono">{v.user.email}</p>
+                            <h3 className="font-bold text-theme-text text-sm">{v.user.nome}</h3>
+                            <p className="text-[10px] text-theme-muted">{v.user.email}</p>
                           </div>
                         </div>
                         <div className="bg-amber-500/10 border border-amber-500/30 text-amber-500 text-[9px] font-bold uppercase px-3 py-1.5 rounded-xl tracking-widest flex items-center gap-1.5">
@@ -242,7 +242,7 @@ export const AdminApprovalHub: React.FC = () => {
                         <button
                           onClick={() => handleReviewExperience(v.id, true)}
                           disabled={processingId === v.id}
-                          className="flex-[2] h-10 bg-brand-tactical hover:bg-brand-tactical/90 disabled:opacity-50 text-black text-[10px] font-bold uppercase tracking-widest rounded-xl flex items-center justify-center gap-2 transition-all shadow-lg shadow-brand-tactical/20"
+                          className="flex-[2] h-10 bg-brand-tactical hover:bg-brand-tactical/90 disabled:opacity-50 text-theme-text text-[10px] font-bold uppercase tracking-widest rounded-xl flex items-center justify-center gap-2 transition-all shadow-lg shadow-brand-tactical/20"
                         >
                           {processingId === v.id ? "..." : <><Check size={14} /> Validar Experiência</>}
                         </button>
@@ -289,8 +289,8 @@ export const AdminApprovalHub: React.FC = () => {
                             {app.role === 'PROFISSIONAL' ? <UserIcon size={20} /> : <Building2 size={20} />}
                           </div>
                           <div>
-                            <h3 className="font-bold text-theme-text text-sm ">{app.nome}</h3>
-                            <p className="text-[10px] text-theme-muted font-mono">{app.email}</p>
+                            <h3 className="font-bold text-theme-text text-sm">{app.nome}</h3>
+                            <p className="text-[10px] text-theme-muted">{app.email}</p>
                           </div>
                         </div>
                         <div className="bg-brand-tactical/10 text-brand-tactical text-[9px] font-bold uppercase px-2 py-1 rounded-md tracking-widest">
@@ -311,7 +311,7 @@ export const AdminApprovalHub: React.FC = () => {
                               ))}
                             </div>
                             {app.profissional?.otherHabilities && (
-                              <p className="text-[10px] text-theme-muted line-clamp-2 ">&quot;{app.profissional.otherHabilities}&quot;</p>
+                              <p className="text-[10px] text-theme-muted line-clamp-2">&quot;{app.profissional.otherHabilities}&quot;</p>
                             )}
                           </div>
                         ) : (
@@ -322,11 +322,11 @@ export const AdminApprovalHub: React.FC = () => {
                             </div>
                             <div className="grid grid-cols-2 gap-2 text-[10px]">
                               <div>
-                                <p className="text-brand-tactical uppercase font-bold ">CNPJ</p>
-                                <p className="text-theme-text font-mono">{app.cartorio?.cnpj || <span className="text-theme-muted text-[9px]">Não informado</span>}</p>
+                                <p className="text-brand-tactical uppercase font-bold">CNPJ</p>
+                                <p className="text-theme-text">{app.cartorio?.cnpj || <span className="text-theme-muted text-[9px]">Não informado</span>}</p>
                               </div>
                               <div>
-                                <p className="text-brand-tactical uppercase font-bold ">Cidade</p>
+                                <p className="text-brand-tactical uppercase font-bold">Cidade</p>
                                 <p className="text-theme-text">{app.cartorio?.cidade || <span className="text-theme-muted text-[9px]">Não informada</span>}</p>
                               </div>
                             </div>
@@ -345,7 +345,7 @@ export const AdminApprovalHub: React.FC = () => {
                         <button
                           onClick={() => handleAction(app.id, 'approve')}
                           disabled={processingId === app.id}
-                          className="flex-1 h-9 bg-brand-tactical hover:bg-brand-tactical/90 disabled:opacity-50 text-black text-[10px] font-bold uppercase tracking-widest rounded-lg flex items-center justify-center gap-2 transition-all shadow-lg shadow-brand-tactical/20"
+                          className="flex-1 h-9 bg-brand-tactical hover:bg-brand-tactical/90 disabled:opacity-50 text-theme-text text-[10px] font-bold uppercase tracking-widest rounded-lg flex items-center justify-center gap-2 transition-all shadow-lg shadow-brand-tactical/20"
                         >
                           {processingId === app.id ? "..." : <><Check size={14} /> Aprovar</>}
                         </button>

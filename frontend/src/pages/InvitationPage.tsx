@@ -65,7 +65,7 @@ export default function InvitationPage() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center" style={{ background: T.bg }}>
-        <Loader2 className="animate-spin text-emerald-500" size={32} />
+        <Loader2 className="animate-spin text-theme-brand" size={32} />
       </div>
     );
   }
@@ -74,8 +74,8 @@ export default function InvitationPage() {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center p-3 md:p-6 text-center" style={{ background: T.bg, color: T.text }}>
         <Shield size={48} className="text-red-500/30 mb-4" />
-        <h1 className="text-2xl font-bold uppercase ">Ops! {error}</h1>
-        <button onClick={() => navigate("/")} className="mt-8 text-emerald-500 font-bold uppercase tracking-widest text-[11px] border border-emerald-500/20 px-3 md:px-6 py-3 rounded-full hover:bg-emerald-500/5 transition-all">
+        <h1 className="text-2xl font-bold uppercase">Ops! {error}</h1>
+        <button onClick={() => navigate("/")} className="mt-8 text-theme-brand font-bold uppercase tracking-widest text-[11px] border border-emerald-500/20 px-3 md:px-6 py-3 rounded-full hover:bg-emerald-500/5 transition-all">
           Voltar para Início
         </button>
       </div>
@@ -83,7 +83,7 @@ export default function InvitationPage() {
   }
 
   return (
-    <div className="min-h-screen font-sans" style={{ background: T.bg, color: T.text }}>
+    <div className="min-h-screen" style={{ background: T.bg, color: T.text }}>
       <Helmet>
         <title>Convite para {invitation?.album?.nome} | Foto Segundo</title>
       </Helmet>
@@ -91,10 +91,10 @@ export default function InvitationPage() {
 
       <main className="max-w-xl mx-auto px-3 md:px-6 py-20 flex flex-col items-center text-center">
         <div className="w-24 h-24 bg-emerald-500/10 border border-emerald-500/20 rounded-full flex items-center justify-center mb-8 shadow-[0_0_50px_rgba(133,185,172,0.1)]">
-          <Lock size={40} className="text-emerald-500" />
+          <Lock size={40} className="text-theme-brand" />
         </div>
 
-        <p className="text-[10px] font-bold text-emerald-500 uppercase tracking-[0.4em] mb-4">Você foi convidado</p>
+        <p className="text-[10px] font-bold text-theme-brand uppercase tracking-[0.4em] mb-4">Você foi convidado</p>
         
         <h1 className="text-2xl md:text-4xl md:text-5xl font-bold uppercase leading-none mb-6">
           {invitation?.album?.nome}
@@ -102,24 +102,24 @@ export default function InvitationPage() {
 
         <div className="flex items-center gap-3 md:gap-6 mb-12 py-4 px-4 md:px-8 bg-theme-bg-muted border border-white/10 rounded-2xl">
           <div className="flex flex-col items-center">
-             <span className="text-lg font-bold text-white">{invitation?.album?._count?.media || 0}</span>
-             <span className="text-[9px] font-bold text-gray-500 uppercase tracking-widest">Fotos</span>
+             <span className="text-lg font-bold text-theme-text">{invitation?.album?._count?.media || 0}</span>
+             <span className="text-[9px] font-bold text-theme-muted uppercase tracking-widest">Fotos</span>
           </div>
           <div className="w-px h-8 bg-white/10" />
           <div className="flex flex-col items-center">
-             <span className="text-lg font-bold text-white">{invitation?.album?._count?.members || 0}</span>
-             <span className="text-[9px] font-bold text-gray-500 uppercase tracking-widest">Membros</span>
+             <span className="text-lg font-bold text-theme-text">{invitation?.album?._count?.members || 0}</span>
+             <span className="text-[9px] font-bold text-theme-muted uppercase tracking-widest">Membros</span>
           </div>
         </div>
 
-        <p className="text-sm text-gray-400 leading-relaxed mb-12 max-w-sm">
+        <p className="text-sm text-theme-muted leading-relaxed mb-12 max-w-sm">
           Este é um álbum privado. Ao aceitar, você poderá visualizar, votar e compartilhar fotos neste álbum.
         </p>
 
         <button
           onClick={handleAccept}
           disabled={accepting}
-          className="w-full py-5 bg-emerald-500 hover:bg-emerald-400 text-black font-bold uppercase tracking-[0.2em] rounded-2xl transition-all shadow-xl shadow-emerald-500/20 flex items-center justify-center gap-3 group"
+          className="w-full py-5 bg-emerald-500 hover:bg-emerald-400 text-theme-text font-bold uppercase tracking-[0.2em] rounded-2xl transition-all shadow-xl shadow-emerald-500/20 flex items-center justify-center gap-3 group"
         >
           {accepting ? <Loader2 className="animate-spin" size={20} /> : (
             <>
@@ -129,7 +129,7 @@ export default function InvitationPage() {
         </button>
 
         {!user && (
-          <p className="mt-6 text-[10px] text-gray-600 uppercase tracking-widest font-bold">
+          <p className="mt-6 text-[10px] text-theme-muted uppercase tracking-widest font-bold">
             Será necessário criar uma conta ou fazer login para aceitar.
           </p>
         )}

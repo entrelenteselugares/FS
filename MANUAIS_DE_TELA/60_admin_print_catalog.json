@@ -10,7 +10,7 @@
   ],
   "buttons": [
     "Visão Geral",
-    "Eventos\n9",
+    "Eventos\n10",
     "Comercial",
     "CRM & Leads",
     "Orçamentos\n8",
@@ -20,9 +20,9 @@
     "Rede",
     "Marketing",
     "Sistema",
-    "57",
+    "58",
     "ENCERRAR SESSÃO",
-    "Eventos9",
+    "Eventos10",
     "Orçamentos8",
     "Encerrar Sessão",
     "NOVO ITEM",
@@ -32,10 +32,6 @@
     "Menu"
   ],
   "links": [
-    {
-      "text": "COPA 2026\nPRÓXIMOS\nEUA\n12/06 · 22:00\nGRP D\nPARAGUAI\nVer Álbum →",
-      "href": "/album-torcida"
-    },
     {
       "text": "VISITAR SITE",
       "href": "/"

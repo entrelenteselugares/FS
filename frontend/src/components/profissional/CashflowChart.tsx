@@ -29,7 +29,7 @@ export function CashflowChart() {
   if (loading) {
     return (
       <div className="h-[300px] w-full bg-theme-bg-muted border border-theme-border flex items-center justify-center animate-pulse">
-        <span className="text-[10px] font-bold text-theme-muted uppercase tracking-[0.4em] ">Calculando Projeções...</span>
+        <span className="text-[10px] font-bold text-theme-muted uppercase tracking-[0.4em]">Calculando Projeções...</span>
       </div>
     );
   }
@@ -51,9 +51,9 @@ export function CashflowChart() {
     <div className="space-y-6">
       <div className="flex justify-between items-end">
         <div className="space-y-1">
-          <p className="text-[10px] font-bold text-brand-tactical uppercase tracking-[0.3em] ">Projeção de Caixa (30 dias)</p>
+          <p className="text-[10px] font-bold text-brand-tactical uppercase tracking-[0.3em]">Projeção de Caixa (30 dias)</p>
           <div className="flex items-center gap-3">
-             <span className="text-3xl font-heading font-bold text-theme-text ">
+             <span className="text-3xl font-heading font-bold text-theme-text">
                R$ {totalProjected.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
              </span>
              <div className="px-2 py-0.5 bg-brand-tactical/10 border border-brand-tactical/30 rounded-full flex items-center gap-1">

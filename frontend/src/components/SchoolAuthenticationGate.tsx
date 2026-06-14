@@ -70,7 +70,7 @@ export const SchoolAuthenticationGate: React.FC<SchoolAuthenticationGateProps> =
         <button
           type="submit"
           disabled={!selectedStudent}
-          className="w-full py-4 bg-brand-tactical text-black font-bold uppercase tracking-[0.2em] text-[10px] rounded-xl hover:bg-white transition-all disabled:opacity-50 disabled:hover:bg-brand-tactical flex items-center justify-center gap-3 group"
+          className="w-full py-4 bg-brand-tactical text-theme-text font-bold uppercase tracking-[0.2em] text-[10px] rounded-xl hover:bg-white transition-all disabled:opacity-50 disabled:hover:bg-brand-tactical flex items-center justify-center gap-3 group"
         >
           Acessar Galeria
           <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />

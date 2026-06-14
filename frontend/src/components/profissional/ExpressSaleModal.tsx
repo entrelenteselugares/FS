@@ -202,7 +202,7 @@ export function ExpressSaleModal({ network, onClose, onSuccess, onError }: Expre
                             className="p-3 text-center border border-theme-border bg-theme-bg-muted hover:border-brand-tactical hover:bg-brand-tactical/10 transition-all group"
                           >
                             <div className="text-[10px] font-bold text-theme-text uppercase truncate mb-1">{name}</div>
-                            <div className="text-[11px] font-bold text-brand-tactical ">R$ {price}</div>
+                            <div className="text-[11px] font-bold text-brand-tactical">R$ {price}</div>
                           </button>
                         );
                       })}
@@ -259,7 +259,7 @@ export function ExpressSaleModal({ network, onClose, onSuccess, onError }: Expre
                               className="w-full p-3 text-left border border-theme-border bg-theme-bg hover:border-brand-tactical/50 hover:bg-brand-tactical/10 transition-all flex justify-between items-center group rounded-lg"
                             >
                               <span className="text-[10px] font-bold text-theme-text uppercase group-hover:text-brand-tactical">{name}</span>
-                              <span className="text-[10px] font-bold text-brand-tactical ">R$ {price}</span>
+                              <span className="text-[10px] font-bold text-brand-tactical">R$ {price}</span>
                             </button>
                           );
                         })}
@@ -321,13 +321,13 @@ export function ExpressSaleModal({ network, onClose, onSuccess, onError }: Expre
                   
                   <div className="space-y-2 max-h-[150px] overflow-y-auto no-scrollbar pr-1">
                     {cartItems.length === 0 ? (
-                      <div className="py-8 text-center border border-theme-border text-[9px] text-theme-muted uppercase tracking-[0.2em] font-bold ">Aguardando seleção de itens...</div>
+                      <div className="py-8 text-center border border-theme-border text-[9px] text-theme-muted uppercase tracking-[0.2em] font-bold">Aguardando seleção de itens...</div>
                     ) : (
                       cartItems.map(item => (
                         <div key={item.id} className="flex justify-between items-center p-3 bg-theme-bg-muted border border-theme-border group">
                           <div className="flex flex-col">
-                            <span className="text-[10px] font-bold text-theme-text uppercase ">{item.name}</span>
-                            <span className="text-[11px] font-bold text-brand-tactical ">R$ {Number(item.price).toFixed(2)}</span>
+                            <span className="text-[10px] font-bold text-theme-text uppercase">{item.name}</span>
+                            <span className="text-[11px] font-bold text-brand-tactical">R$ {Number(item.price).toFixed(2)}</span>
                           </div>
                           <button onClick={() => removeFromCart(item.id, item.price)} className="text-theme-muted hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100 p-2">
                             <X size={14} />
@@ -401,7 +401,7 @@ export function ExpressSaleModal({ network, onClose, onSuccess, onError }: Expre
             <div className="space-y-6 animate-in zoom-in-95 duration-300">
               <div className="p-6 bg-brand-tactical/10 border border-brand-tactical/20 space-y-4">
                 <div className="flex justify-between items-center border-b border-brand-tactical/10 pb-3">
-                  <span className="text-[11px] font-bold text-brand-tactical uppercase tracking-widest ">Borderô de Transação</span>
+                  <span className="text-[11px] font-bold text-brand-tactical uppercase tracking-widest">Borderô de Transação</span>
                   <div className="w-2 h-2 rounded-full bg-brand-tactical animate-pulse" />
                 </div>
                 <div className="space-y-3">
@@ -413,14 +413,14 @@ export function ExpressSaleModal({ network, onClose, onSuccess, onError }: Expre
                     <span className="text-[10px] font-bold text-theme-muted uppercase tracking-widest">Itens</span>
                     <div className="text-right flex flex-col gap-1">
                       {cartItems.map(item => (
-                        <span key={item.id} className="text-[10px] font-bold text-theme-text uppercase ">{item.name} (R$ {item.price})</span>
+                        <span key={item.id} className="text-[10px] font-bold text-theme-text uppercase">{item.name} (R$ {item.price})</span>
                       ))}
                     </div>
                   </div>
                   <div className="pt-4 border-t border-brand-tactical/10">
                     <div className="flex justify-between items-end">
-                      <span className="text-[11px] font-bold text-brand-tactical uppercase ">Total Líquido</span>
-                      <span className="text-3xl font-heading font-bold text-brand-tactical ">
+                      <span className="text-[11px] font-bold text-brand-tactical uppercase">Total Líquido</span>
+                      <span className="text-3xl font-heading font-bold text-brand-tactical">
                         R$ {form.amount.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
                       </span>
                     </div>
@@ -433,7 +433,7 @@ export function ExpressSaleModal({ network, onClose, onSuccess, onError }: Expre
           {step === 5 && successData && (
             <div className="space-y-8 animate-in zoom-in-95 duration-500 text-center py-10">
               <div className="w-20 h-20 bg-emerald-500/10 rounded-full flex items-center justify-center mx-auto border border-emerald-500/20">
-                <ShoppingBag className="text-emerald-500" size={32} />
+                <ShoppingBag className="text-theme-brand" size={32} />
               </div>
               <div className="space-y-2">
                 <h3 className="text-2xl font-bold uppercase text-theme-text">{successData.msg}</h3>
@@ -454,7 +454,7 @@ export function ExpressSaleModal({ network, onClose, onSuccess, onError }: Expre
                     <input 
                       readOnly
                       value={successData.checkoutUrl}
-                      className="flex-1 bg-theme-bg border border-theme-border p-3 text-[10px] font-mono text-theme-text/60 truncate rounded-xl outline-none"
+                      className="flex-1 bg-theme-bg border border-theme-border p-3 text-[10px] text-theme-text/60 truncate rounded-xl outline-none"
                     />
                     <button 
                       onClick={() => {
@@ -489,7 +489,7 @@ export function ExpressSaleModal({ network, onClose, onSuccess, onError }: Expre
                     <input 
                       readOnly
                       value={successData.magicLink}
-                      className="flex-1 bg-theme-bg border border-theme-border p-3 text-[10px] font-mono text-theme-text/60 truncate rounded-xl outline-none"
+                      className="flex-1 bg-theme-bg border border-theme-border p-3 text-[10px] text-theme-text/60 truncate rounded-xl outline-none"
                     />
                     <button 
                       onClick={() => {
@@ -521,7 +521,7 @@ export function ExpressSaleModal({ network, onClose, onSuccess, onError }: Expre
               <button
                 disabled={!form.customerEmail}
                 onClick={() => setStep(2)}
-                className="w-full py-5 bg-brand-tactical text-black text-[11px] font-bold uppercase tracking-[0.3em] hover:bg-white hover:scale-[1.01] active:scale-[0.98] transition-all flex items-center justify-center gap-4 shadow-2xl shadow-brand-tactical/20 disabled:opacity-40"
+                className="w-full py-5 bg-brand-tactical text-theme-text text-[11px] font-bold uppercase tracking-[0.3em] hover:bg-white hover:scale-[1.01] active:scale-[0.98] transition-all flex items-center justify-center gap-4 shadow-2xl shadow-brand-tactical/20 disabled:opacity-40"
               >
                 CONTINUAR OPERAÇÃO
               </button>
@@ -536,7 +536,7 @@ export function ExpressSaleModal({ network, onClose, onSuccess, onError }: Expre
                 <button
                   onClick={() => (step === 4 ? handleSubmit() : setStep((step + 1) as 1 | 2 | 3 | 4 | 5))}
                   disabled={loading}
-                  className="flex-[2] py-5 bg-brand-tactical text-black text-[11px] font-bold uppercase tracking-[0.3em] hover:bg-white hover:scale-[1.01] active:scale-[0.98] transition-all flex items-center justify-center gap-4 shadow-2xl shadow-brand-tactical/20"
+                  className="flex-[2] py-5 bg-brand-tactical text-theme-text text-[11px] font-bold uppercase tracking-[0.3em] hover:bg-white hover:scale-[1.01] active:scale-[0.98] transition-all flex items-center justify-center gap-4 shadow-2xl shadow-brand-tactical/20"
                 >
                   {loading
                     ? "PROCESSANDO..."

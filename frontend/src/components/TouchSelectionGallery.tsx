@@ -103,8 +103,8 @@ const GalleryItem = React.memo(({
           }}
           className={`absolute top-3 right-3 w-7 h-7 rounded-full flex items-center justify-center border backdrop-blur-md transition-all active:scale-90 z-20 ${
             isSelected
-              ? "bg-emerald-500 border-emerald-400 text-black shadow-lg shadow-emerald-500/30"
-              : "bg-black/40 border-white/30 text-white/70 hover:bg-white hover:text-black hover:border-white"
+              ? "bg-emerald-500 border-emerald-400 text-theme-text shadow-lg shadow-emerald-500/30"
+              : "bg-black/40 border-white/30 text-theme-text/70 hover:bg-white hover:text-theme-text hover:border-white"
           }`}
         >
           <Check size={14} strokeWidth={isSelected ? 4 : 2} className={isSelected ? "opacity-100" : "opacity-100"} />
@@ -120,7 +120,7 @@ const GalleryItem = React.memo(({
               onDeleteMedia(m.id);
             }
           }}
-          className="absolute top-3 left-3 w-7 h-7 rounded-full flex items-center justify-center border border-red-500/50 bg-black/60 text-red-400 hover:bg-red-500 hover:text-white hover:border-red-500 backdrop-blur-md transition-all active:scale-90 z-20"
+          className="absolute top-3 left-3 w-7 h-7 rounded-full flex items-center justify-center border border-red-500/50 bg-black/60 text-red-400 hover:bg-red-500 hover:text-theme-text hover:border-red-500 backdrop-blur-md transition-all active:scale-90 z-20"
           title="Excluir foto"
         >
           <Trash2 size={12} />
@@ -130,7 +130,7 @@ const GalleryItem = React.memo(({
       {/* Selection Badge */}
       {isSelected && (
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-          <div className="w-12 h-12 bg-emerald-500 rounded-full flex items-center justify-center text-black shadow-2xl">
+          <div className="w-12 h-12 bg-emerald-500 rounded-full flex items-center justify-center text-theme-text shadow-2xl">
             <Check size={24} strokeWidth={4} />
           </div>
         </div>
@@ -138,7 +138,7 @@ const GalleryItem = React.memo(({
 
       {/* Status Info */}
       <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/80 to-transparent flex items-center justify-between">
-        <span className="text-[10px] font-bold text-white opacity-80">#{m.shortId}</span>
+        <span className="text-[10px] font-bold text-theme-text opacity-80">#{m.shortId}</span>
         {allowFreeDownload && (
           <button
             onClick={(e) => {
@@ -149,7 +149,7 @@ const GalleryItem = React.memo(({
               a.download = `foto-${m.shortId}.jpg`;
               a.click();
             }}
-            className="w-7 h-7 bg-brand-tactical/90 rounded-full flex items-center justify-center text-black hover:bg-brand-tactical transition-all z-20"
+            className="w-7 h-7 bg-brand-tactical/90 rounded-full flex items-center justify-center text-theme-text hover:bg-brand-tactical transition-all z-20"
             title="Baixar Foto"
           >
             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
@@ -243,11 +243,11 @@ export const TouchSelectionGallery: React.FC<TouchSelectionGalleryProps> = ({
           >
             <div className="flex items-center gap-3">
               <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
-              <span className="text-[10px] font-bold text-emerald-500 uppercase tracking-widest ">Modo Seleção Ativo</span>
+              <span className="text-[10px] font-bold text-theme-brand uppercase tracking-widest">Modo Seleção Ativo</span>
             </div>
             <button 
               onClick={() => setIsSelectMode(false)}
-              className="text-[10px] font-bold text-theme-text-muted uppercase tracking-widest hover:text-white transition-colors"
+              className="text-[10px] font-bold text-theme-text-muted uppercase tracking-widest hover:text-theme-text transition-colors"
             >
               Cancelar
             </button>
@@ -292,8 +292,8 @@ export const TouchSelectionGallery: React.FC<TouchSelectionGalleryProps> = ({
             {/* Header */}
             <div className="p-6 flex items-center justify-between relative z-10">
               <div className="flex flex-col">
-                <span className="text-[10px] font-bold text-brand-tactical uppercase tracking-widest ">Visualização Tactical</span>
-                <span className="text-xl font-bold text-white ">#{medias[fullscreenIndex]?.shortId}</span>
+                <span className="text-[10px] font-bold text-brand-tactical uppercase tracking-widest">Visualização Tactical</span>
+                <span className="text-xl font-bold text-theme-text">#{medias[fullscreenIndex]?.shortId}</span>
               </div>
               <div className="flex items-center gap-4">
                 {allowFreeDownload && (
@@ -308,7 +308,7 @@ export const TouchSelectionGallery: React.FC<TouchSelectionGalleryProps> = ({
                         a.click();
                       }
                     }}
-                    className="w-12 h-12 flex items-center justify-center bg-brand-tactical rounded-full text-black hover:brightness-110"
+                    className="w-12 h-12 flex items-center justify-center bg-brand-tactical rounded-full text-theme-text hover:brightness-110"
                     title="Baixar Foto"
                   >
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
@@ -316,7 +316,7 @@ export const TouchSelectionGallery: React.FC<TouchSelectionGalleryProps> = ({
                 )}
                 <button 
                   onClick={() => setFullscreenIndex(null)}
-                  className="w-12 h-12 flex items-center justify-center bg-theme-bg-muted rounded-full text-white"
+                  className="w-12 h-12 flex items-center justify-center bg-theme-bg-muted rounded-full text-theme-text"
                   aria-label="Fechar visualização"
                 >
                   <X size={24} />
@@ -388,14 +388,14 @@ export const TouchSelectionGallery: React.FC<TouchSelectionGalleryProps> = ({
                 <button 
                   onClick={(e) => { e.stopPropagation(); prevPhoto(); }}
                   disabled={fullscreenIndex === 0}
-                  className={`w-14 h-14 rounded-full bg-theme-bg-muted border border-white/10 flex items-center justify-center text-white pointer-events-auto transition-all ${fullscreenIndex === 0 ? "opacity-20" : "hover:bg-brand-tactical hover:text-black"}`}
+                  className={`w-14 h-14 rounded-full bg-theme-bg-muted border border-white/10 flex items-center justify-center text-theme-text pointer-events-auto transition-all ${fullscreenIndex === 0 ? "opacity-20" : "hover:bg-brand-tactical hover:text-theme-text"}`}
                 >
                   <ChevronLeft size={32} />
                 </button>
                 <button 
                   onClick={(e) => { e.stopPropagation(); nextPhoto(); }}
                   disabled={fullscreenIndex === medias.length - 1}
-                  className={`w-14 h-14 rounded-full bg-theme-bg-muted border border-white/10 flex items-center justify-center text-white pointer-events-auto transition-all ${fullscreenIndex === medias.length - 1 ? "opacity-20" : "hover:bg-brand-tactical hover:text-black"}`}
+                  className={`w-14 h-14 rounded-full bg-theme-bg-muted border border-white/10 flex items-center justify-center text-theme-text pointer-events-auto transition-all ${fullscreenIndex === medias.length - 1 ? "opacity-20" : "hover:bg-brand-tactical hover:text-theme-text"}`}
                 >
                   <ChevronRight size={32} />
                 </button>
@@ -406,8 +406,8 @@ export const TouchSelectionGallery: React.FC<TouchSelectionGalleryProps> = ({
             <div className="p-8 border-t border-white/10 bg-zinc-950/50 backdrop-blur-xl">
               <div className="flex items-center justify-between max-w-lg mx-auto">
                 <div className="space-y-1">
-                  <p className="text-[10px] font-bold text-white uppercase tracking-widest ">Memória Premium</p>
-                  <p className="text-xs text-white font-medium">Fotos entregues em alta resolução 300DPI.</p>
+                  <p className="text-[10px] font-bold text-theme-text uppercase tracking-widest">Memória Premium</p>
+                  <p className="text-xs text-theme-text font-medium">Fotos entregues em alta resolução 300DPI.</p>
                 </div>
                 {allowFreeDownload ? (
                   <button
@@ -434,7 +434,7 @@ export const TouchSelectionGallery: React.FC<TouchSelectionGalleryProps> = ({
                     }}
                     className={`fs-btn text-[10px] tracking-widest uppercase font-black italic transition-all ${
                       medias[fullscreenIndex] && selectedIds.includes(medias[fullscreenIndex].shortId)
-                        ? "bg-emerald-500 text-black"
+                        ? "bg-emerald-500 text-theme-text"
                         : "fs-btn-primary"
                     }`}
                   >

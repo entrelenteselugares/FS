@@ -20,7 +20,7 @@
 
 - **Botão:** `Visão Geral`
 - **Botão:** `Eventos
-9`
+10`
 - **Botão:** `Comercial`
 - **Botão:** `Rede`
 - **Botão:** `Franquias`
@@ -28,9 +28,9 @@
 - **Botão:** `Embaixadores`
 - **Botão:** `Marketing`
 - **Botão:** `Sistema`
-- **Botão:** `57`
+- **Botão:** `58`
 - **Botão:** `ENCERRAR SESSÃO`
-- **Botão:** `Eventos9`
+- **Botão:** `Eventos10`
 - **Botão:** `Encerrar Sessão`
 - **Botão:** `NOVO FRANQUEADO`
 - **Botão:** `Eventos`
@@ -38,13 +38,6 @@
 
 ## 🔗 Links de Navegação
 
-- **COPA 2026
-PRÓXIMOS
-EUA
-12/06 · 22:00
-GRP D
-PARAGUAI
-Ver Álbum →** -> `/album-torcida`
 - **VISITAR SITE** -> `/`
 - **Visitar Site** -> `/`
 

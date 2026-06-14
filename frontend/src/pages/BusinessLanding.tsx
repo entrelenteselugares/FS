@@ -5,13 +5,13 @@ import SEO from "../components/SEO";
 
 export function BusinessLanding() {
   return (
-    <div className="min-h-screen bg-theme-bg text-theme-text font-sans selection:bg-brand-tactical/30">
+    <div className="min-h-screen bg-theme-bg text-theme-text selection:bg-brand-tactical/30">
       <SEO title="Negócios | Foto Segundo" description="Faça parte da maior rede de audiovisual do Brasil como fotógrafo ou videomaker." />
       <Navbar />
       
       {/* Header Minimalista */}
       <header className="fixed top-0 left-0 right-0 h-16 bg-theme-bg/80 backdrop-blur-lg border-b border-theme-border z-50 flex items-center px-4 md:px-8">
-        <Link to="/" className="text-brand-tactical hover:brightness-110 transition-all flex items-center gap-2 text-xs font-bold tracking-widest uppercase ">
+        <Link to="/" className="text-brand-tactical hover:brightness-110 transition-all flex items-center gap-2 text-xs font-bold tracking-widest uppercase">
           <ArrowLeft size={16} /> Voltar para o início
         </Link>
       </header>
@@ -20,7 +20,7 @@ export function BusinessLanding() {
         <div className="mb-16 md:mb-24 text-center max-w-4xl mx-auto">
           <div className="flex items-center justify-center gap-4 mb-6">
             <div className="h-px w-12 bg-brand-tactical" />
-            <span className="text-[10px] font-bold text-brand-tactical uppercase tracking-[0.5em] ">Rede Profissional</span>
+            <span className="text-[10px] font-bold text-brand-tactical uppercase tracking-[0.5em]">Rede Profissional</span>
             <div className="h-px w-12 bg-brand-tactical" />
           </div>
           <h1 className="text-3xl md:text-5xl md:text-7xl font-heading font-bold text-theme-text uppercase mb-6 leading-none">
@@ -101,7 +101,7 @@ export function BusinessLanding() {
                 <div className="w-14 h-14 bg-brand-tactical/10 text-brand-tactical rounded-xl flex items-center justify-center mb-6">
                   {m.i}
                 </div>
-                <h3 className="text-lg font-bold uppercase tracking-widest mb-3 ">{m.t}</h3>
+                <h3 className="text-lg font-bold uppercase tracking-widest mb-3">{m.t}</h3>
                 <p className="text-theme-text-muted text-sm font-normal leading-relaxed">{m.d}</p>
               </div>
             ))}
@@ -134,8 +134,8 @@ export function BusinessLanding() {
             </div>
           </div>
 
-          <div className="bg-brand-tactical text-black rounded-3xl p-4 md:p-8 md:p-10 relative overflow-hidden">
-            <DollarSign className="absolute -right-8 -top-8 text-black/5" size={200} />
+          <div className="bg-brand-tactical text-theme-text rounded-3xl p-4 md:p-8 md:p-10 relative overflow-hidden">
+            <DollarSign className="absolute -right-8 -top-8 text-theme-text/5" size={200} />
             <div className="relative z-10">
               <h2 className="text-2xl font-bold uppercase mb-6">
                 Remuneração
@@ -181,7 +181,7 @@ export function BusinessLanding() {
           <p className="text-theme-text-muted font-normal mb-10 max-w-lg mx-auto">
             Entre em contato com nossa equipe com o assunto <strong className="text-theme-text">&quot;Quero ser profissional da rede&quot;</strong> e não se esqueça de incluir o link do seu portfólio.
           </p>
-          <Link to="/contato" className="inline-block px-3 md:px-6 md:px-12 py-5 bg-brand-tactical text-black font-bold uppercase tracking-[0.3em] text-[10px] hover:brightness-110 transition-all shadow-2xl shadow-brand-tactical/20">
+          <Link to="/contato" className="inline-block px-3 md:px-6 md:px-12 py-5 bg-brand-tactical text-theme-text font-bold uppercase tracking-[0.3em] text-[10px] hover:brightness-110 transition-all shadow-2xl shadow-brand-tactical/20">
             Acessar Contato
           </Link>
         </section>

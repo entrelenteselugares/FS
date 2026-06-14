@@ -4,12 +4,12 @@ import SEO from "../components/SEO";
 
 export function PrivacyPage() {
   return (
-    <div className="min-h-screen bg-theme-bg text-theme-text font-sans selection:bg-brand-tactical/30">
+    <div className="min-h-screen bg-theme-bg text-theme-text selection:bg-brand-tactical/30">
       <SEO title="Política de Privacidade | Foto Segundo" description="Política de Privacidade e Proteção de Dados da plataforma Foto Segundo (LGPD)." />
       
       {/* Header Minimalista */}
       <header className="fixed top-0 left-0 right-0 h-16 bg-theme-bg/80 backdrop-blur-lg border-b border-theme-border z-50 flex items-center px-4 md:px-8">
-        <Link to="/" className="text-brand-tactical hover:brightness-110 transition-all flex items-center gap-2 text-xs font-bold tracking-widest uppercase ">
+        <Link to="/" className="text-brand-tactical hover:brightness-110 transition-all flex items-center gap-2 text-xs font-bold tracking-widest uppercase">
           <ArrowLeft size={16} /> Voltar para o início
         </Link>
       </header>
@@ -18,9 +18,9 @@ export function PrivacyPage() {
         <div className="mb-16">
           <div className="flex items-center gap-4 mb-4">
             <div className="h-px w-12 bg-brand-tactical" />
-            <span className="text-[10px] font-bold text-brand-tactical uppercase tracking-[0.5em] ">Segurança Legal</span>
+            <span className="text-[10px] font-bold text-brand-tactical uppercase tracking-[0.5em]">Segurança Legal</span>
           </div>
-          <h1 className="text-2xl md:text-4xl md:text-5xl font-heading font-bold text-theme-text uppercase mb-4 ">
+          <h1 className="text-2xl md:text-4xl md:text-5xl font-heading font-bold text-theme-text uppercase mb-4">
             Política de <span className="text-brand-tactical">Privacidade</span>
           </h1>
           <p className="text-theme-text-muted font-medium text-sm">

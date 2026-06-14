@@ -151,15 +151,15 @@ export function FranchiseShopModal({ onClose, onSuccess, availableBalance, userA
         {/* Header */}
         <div className="p-8 border-b border-white/5 flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-500 rounded-xl">
+            <div className="w-12 h-12 bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-theme-brand rounded-xl">
               <ShoppingBag size={24} />
             </div>
             <div>
-              <h2 className="text-2xl font-bold text-white uppercase leading-none">Loja da Franquia</h2>
-              <p className="text-[10px] text-zinc-500 uppercase tracking-[0.3em] font-bold mt-1">Abastecimento de Créditos e Insumos</p>
+              <h2 className="text-2xl font-bold text-theme-text uppercase leading-none">Loja da Franquia</h2>
+              <p className="text-[10px] text-theme-muted uppercase tracking-[0.3em] font-bold mt-1">Abastecimento de Créditos e Insumos</p>
             </div>
           </div>
-          <button onClick={onClose} className="p-2 text-zinc-500 hover:text-white transition-colors">
+          <button onClick={onClose} className="p-2 text-theme-muted hover:text-theme-text transition-colors">
             <X size={24} />
           </button>
         </div>
@@ -173,7 +173,7 @@ export function FranchiseShopModal({ onClose, onSuccess, availableBalance, userA
             { id: "confirm", label: "CONFIRMAR", icon: <CheckCircle2 size={12} /> },
           ].map((s, idx) => (
             <div key={s.id} className="flex items-center gap-3">
-              <div className={`flex items-center gap-2 ${step === s.id ? 'text-emerald-500' : 'text-zinc-600'}`}>
+              <div className={`flex items-center gap-2 ${step === s.id ? 'text-theme-brand' : 'text-theme-muted'}`}>
                 <div className={`w-6 h-6 rounded-full border flex items-center justify-center text-[10px] font-black ${step === s.id ? 'border-emerald-500 bg-emerald-500/10' : 'border-zinc-800 bg-zinc-800'}`}>
                   {idx + 1}
                 </div>
@@ -192,21 +192,21 @@ export function FranchiseShopModal({ onClose, onSuccess, availableBalance, userA
                 {PRODUCTS.map(p => (
                   <div key={p.id} className="bg-zinc-800/50 border border-white/5 p-5 flex items-center justify-between group hover:border-emerald-500/30 transition-all rounded-2xl">
                     <div className="space-y-1">
-                      <h4 className="text-sm font-bold text-white uppercase ">{p.name}</h4>
-                      <p className="text-[10px] text-zinc-500 uppercase tracking-widest leading-relaxed">{p.description}</p>
-                      <p className="text-emerald-500 text-xs font-bold mt-2">R$ {p.price.toFixed(2)}</p>
+                      <h4 className="text-sm font-bold text-theme-text uppercase">{p.name}</h4>
+                      <p className="text-[10px] text-theme-muted uppercase tracking-widest leading-relaxed">{p.description}</p>
+                      <p className="text-theme-brand text-xs font-bold mt-2">R$ {p.price.toFixed(2)}</p>
                     </div>
                     <div className="flex items-center gap-4 bg-zinc-900 border border-white/5 p-1 rounded-xl">
                       <button 
                         onClick={() => updateQty(p.id, -1)}
-                        className="w-8 h-8 flex items-center justify-center text-zinc-500 hover:text-white transition-colors rounded-lg"
+                        className="w-8 h-8 flex items-center justify-center text-theme-muted hover:text-theme-text transition-colors rounded-lg"
                       >
                         <Minus size={16} />
                       </button>
-                      <span className="text-sm font-bold text-white w-4 text-center">{cart[p.id] || 0}</span>
+                      <span className="text-sm font-bold text-theme-text w-4 text-center">{cart[p.id] || 0}</span>
                       <button 
                         onClick={() => updateQty(p.id, 1)}
-                        className="w-8 h-8 flex items-center justify-center text-emerald-500 hover:text-white transition-colors rounded-lg"
+                        className="w-8 h-8 flex items-center justify-center text-theme-brand hover:text-theme-text transition-colors rounded-lg"
                       >
                         <Plus size={16} />
                       </button>
@@ -220,19 +220,19 @@ export function FranchiseShopModal({ onClose, onSuccess, availableBalance, userA
           {step === "logistics" && (
             <div className="space-y-8 animate-in fade-in slide-in-from-right-4 duration-500">
               <div className="space-y-4">
-                <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-[0.2em]">Ponto de Recebimento</label>
+                <label className="text-[10px] font-bold text-theme-muted uppercase tracking-[0.2em]">Ponto de Recebimento</label>
                 <div 
                   onClick={() => setDeliveryType("SHIPPING")}
                   className={`p-6 border transition-all cursor-pointer flex flex-col gap-4 group rounded-2xl ${deliveryType === "SHIPPING" ? 'bg-emerald-500/5 border-emerald-500' : 'bg-zinc-800/50 border-white/5 hover:border-zinc-700'}`}
                 >
                   <div className="flex items-center justify-between w-full">
                     <div className="flex items-center gap-5">
-                      <div className={`p-3 border rounded-xl ${deliveryType === "SHIPPING" ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-500' : 'bg-zinc-900 border-zinc-800 text-zinc-600'}`}>
+                      <div className={`p-3 border rounded-xl ${deliveryType === "SHIPPING" ? 'bg-emerald-500/10 border-emerald-500/20 text-theme-brand' : 'bg-zinc-900 border-zinc-800 text-theme-muted'}`}>
                         <MapPin size={20} />
                       </div>
                       <div className="space-y-1 text-left">
-                        <p className="text-xs font-bold text-white uppercase ">Enviar para Unidade</p>
-                        <p className="text-[9px] text-zinc-500 font-bold uppercase tracking-widest ">Entrega via Logística Regional</p>
+                        <p className="text-xs font-bold text-theme-text uppercase">Enviar para Unidade</p>
+                        <p className="text-[9px] text-theme-muted font-bold uppercase tracking-widest">Entrega via Logística Regional</p>
                       </div>
                     </div>
                     <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${deliveryType === "SHIPPING" ? 'border-emerald-500' : 'border-zinc-800'}`}>
@@ -248,7 +248,7 @@ export function FranchiseShopModal({ onClose, onSuccess, availableBalance, userA
                           value={shippingData.cep}
                           onBlur={handleCepBlur}
                           onChange={e => setShippingData({...shippingData, cep: e.target.value})}
-                          className="w-full bg-zinc-900 border border-white/10 p-2 text-[10px] text-white font-mono rounded-xl"
+                          className="w-full bg-zinc-900 border border-white/10 p-2 text-[10px] text-theme-text rounded-xl"
                         />
                       </div>
                       <div className="col-span-4">
@@ -256,7 +256,7 @@ export function FranchiseShopModal({ onClose, onSuccess, availableBalance, userA
                           placeholder="Logradouro" 
                           value={shippingData.street}
                           onChange={e => setShippingData({...shippingData, street: e.target.value})}
-                          className="w-full bg-zinc-900 border border-white/10 p-2 text-[10px] text-white rounded-xl"
+                          className="w-full bg-zinc-900 border border-white/10 p-2 text-[10px] text-theme-text rounded-xl"
                         />
                       </div>
                       <div className="col-span-1">
@@ -264,7 +264,7 @@ export function FranchiseShopModal({ onClose, onSuccess, availableBalance, userA
                           placeholder="Nº" 
                           value={shippingData.number}
                           onChange={e => setShippingData({...shippingData, number: e.target.value})}
-                          className="w-full bg-zinc-900 border border-white/10 p-2 text-[10px] text-white rounded-xl"
+                          className="w-full bg-zinc-900 border border-white/10 p-2 text-[10px] text-theme-text rounded-xl"
                         />
                       </div>
                       <div className="col-span-2">
@@ -272,7 +272,7 @@ export function FranchiseShopModal({ onClose, onSuccess, availableBalance, userA
                           placeholder="Bairro" 
                           value={shippingData.neighborhood}
                           onChange={e => setShippingData({...shippingData, neighborhood: e.target.value})}
-                          className="w-full bg-zinc-900 border border-white/10 p-2 text-[10px] text-white rounded-xl"
+                          className="w-full bg-zinc-900 border border-white/10 p-2 text-[10px] text-theme-text rounded-xl"
                         />
                       </div>
                       <div className="col-span-2">
@@ -280,7 +280,7 @@ export function FranchiseShopModal({ onClose, onSuccess, availableBalance, userA
                           placeholder="Cidade" 
                           value={shippingData.city}
                           readOnly
-                          className="w-full bg-zinc-900 border border-white/10 p-2 text-[10px] text-white opacity-50 rounded-xl"
+                          className="w-full bg-zinc-900 border border-white/10 p-2 text-[10px] text-theme-text opacity-50 rounded-xl"
                         />
                       </div>
                       <div className="col-span-1">
@@ -288,7 +288,7 @@ export function FranchiseShopModal({ onClose, onSuccess, availableBalance, userA
                           placeholder="UF" 
                           value={shippingData.state}
                           readOnly
-                          className="w-full bg-zinc-900 border border-white/10 p-2 text-[10px] text-white opacity-50 rounded-xl"
+                          className="w-full bg-zinc-900 border border-white/10 p-2 text-[10px] text-theme-text opacity-50 rounded-xl"
                         />
                       </div>
                     </div>
@@ -300,12 +300,12 @@ export function FranchiseShopModal({ onClose, onSuccess, availableBalance, userA
                   className={`p-6 border transition-all cursor-pointer flex items-center justify-between group rounded-2xl ${deliveryType === "MATRIZ" ? 'bg-emerald-500/5 border-emerald-500' : 'bg-zinc-800/50 border-white/5 hover:border-zinc-700'}`}
                 >
                   <div className="flex items-center gap-5">
-                    <div className={`p-3 border rounded-xl ${deliveryType === "MATRIZ" ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-500' : 'bg-zinc-900 border-zinc-800 text-zinc-600'}`}>
+                    <div className={`p-3 border rounded-xl ${deliveryType === "MATRIZ" ? 'bg-emerald-500/10 border-emerald-500/20 text-theme-brand' : 'bg-zinc-900 border-zinc-800 text-theme-muted'}`}>
                       <Package size={20} />
                     </div>
                     <div className="space-y-1 text-left">
-                      <p className="text-xs font-bold text-white uppercase ">Retirada na Matriz</p>
-                      <p className="text-[9px] text-zinc-500 font-bold uppercase tracking-widest">Sem custo de frete · Disponível em 24h</p>
+                      <p className="text-xs font-bold text-theme-text uppercase">Retirada na Matriz</p>
+                      <p className="text-[9px] text-theme-muted font-bold uppercase tracking-widest">Sem custo de frete · Disponível em 24h</p>
                     </div>
                   </div>
                   <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${deliveryType === "MATRIZ" ? 'border-emerald-500' : 'border-zinc-800'}`}>
@@ -319,19 +319,19 @@ export function FranchiseShopModal({ onClose, onSuccess, availableBalance, userA
           {step === "payment" && (
             <div className="space-y-8 animate-in fade-in slide-in-from-right-4 duration-500">
               <div className="space-y-4">
-                <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-[0.2em]">Método de Liquidação</label>
+                <label className="text-[10px] font-bold text-theme-muted uppercase tracking-[0.2em]">Método de Liquidação</label>
                 
                 <div 
                   onClick={() => canPayWithBalance && setPaymentMethod("BALANCE")}
                   className={`p-6 border transition-all flex items-center justify-between group rounded-2xl ${!canPayWithBalance ? 'opacity-40 cursor-not-allowed grayscale' : 'cursor-pointer'} ${paymentMethod === "BALANCE" ? 'bg-emerald-500/5 border-emerald-500' : 'bg-zinc-800/50 border-white/5 hover:border-zinc-700'}`}
                 >
                   <div className="flex items-center gap-5">
-                    <div className={`p-3 border rounded-xl ${paymentMethod === "BALANCE" ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-500' : 'bg-zinc-900 border-zinc-800 text-zinc-600'}`}>
+                    <div className={`p-3 border rounded-xl ${paymentMethod === "BALANCE" ? 'bg-emerald-500/10 border-emerald-500/20 text-theme-brand' : 'bg-zinc-900 border-zinc-800 text-theme-muted'}`}>
                       <Wallet size={20} />
                     </div>
                     <div className="space-y-1 text-left">
-                      <p className="text-xs font-bold text-white uppercase ">Abatimento no Repasse</p>
-                      <p className="text-[9px] text-zinc-500 font-bold uppercase tracking-widest">Saldo Disponível: R$ {availableBalance.toFixed(2)}</p>
+                      <p className="text-xs font-bold text-theme-text uppercase">Abatimento no Repasse</p>
+                      <p className="text-[9px] text-theme-muted font-bold uppercase tracking-widest">Saldo Disponível: R$ {availableBalance.toFixed(2)}</p>
                     </div>
                   </div>
                   <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${paymentMethod === "BALANCE" ? 'border-emerald-500' : 'border-zinc-800'}`}>
@@ -344,12 +344,12 @@ export function FranchiseShopModal({ onClose, onSuccess, availableBalance, userA
                   className={`p-6 border transition-all cursor-pointer flex items-center justify-between group rounded-2xl ${paymentMethod === "CHECKOUT" ? 'bg-emerald-500/5 border-emerald-500' : 'bg-zinc-800/50 border-white/5 hover:border-zinc-700'}`}
                 >
                   <div className="flex items-center gap-5">
-                    <div className={`p-3 border rounded-xl ${paymentMethod === "CHECKOUT" ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-500' : 'bg-zinc-900 border-zinc-800 text-zinc-600'}`}>
+                    <div className={`p-3 border rounded-xl ${paymentMethod === "CHECKOUT" ? 'bg-emerald-500/10 border-emerald-500/20 text-theme-brand' : 'bg-zinc-900 border-zinc-800 text-theme-muted'}`}>
                       <CreditCard size={20} />
                     </div>
                     <div className="space-y-1 text-left">
-                      <p className="text-xs font-bold text-white uppercase ">Cartão ou Pix</p>
-                      <p className="text-[9px] text-zinc-500 font-bold uppercase tracking-widest">Pagamento via Checkout Seguro</p>
+                      <p className="text-xs font-bold text-theme-text uppercase">Cartão ou Pix</p>
+                      <p className="text-[9px] text-theme-muted font-bold uppercase tracking-widest">Pagamento via Checkout Seguro</p>
                     </div>
                   </div>
                   <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${paymentMethod === "CHECKOUT" ? 'border-emerald-500' : 'border-zinc-800'}`}>
@@ -362,12 +362,12 @@ export function FranchiseShopModal({ onClose, onSuccess, availableBalance, userA
 
           {step === "confirm" && (
             <div className="space-y-8 animate-in fade-in slide-in-from-right-4 duration-500 text-center py-4">
-              <div className="w-20 h-20 bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-500 mx-auto rounded-full mb-6">
+              <div className="w-20 h-20 bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-theme-brand mx-auto rounded-full mb-6">
                 <ShoppingBag size={32} />
               </div>
               <div className="space-y-2">
-                <h3 className="text-2xl font-bold text-white uppercase ">Resumo do Pedido</h3>
-                <p className="text-[10px] text-zinc-500 uppercase tracking-widest font-bold">Confirme as informações antes de finalizar</p>
+                <h3 className="text-2xl font-bold text-theme-text uppercase">Resumo do Pedido</h3>
+                <p className="text-[10px] text-theme-muted uppercase tracking-widest font-bold">Confirme as informações antes de finalizar</p>
               </div>
 
               <div className="bg-zinc-800/30 border border-white/5 p-6 space-y-4 text-left max-w-sm mx-auto rounded-2xl">
@@ -376,21 +376,21 @@ export function FranchiseShopModal({ onClose, onSuccess, availableBalance, userA
                     const p = PRODUCTS.find(item => item.id === id);
                     return (
                       <div key={id} className="flex justify-between text-[10px] font-bold uppercase">
-                        <span className="text-zinc-500">{qty}x {p?.name}</span>
-                        <span className="text-white">R$ {((p?.price || 0) * qty).toFixed(2)}</span>
+                        <span className="text-theme-muted">{qty}x {p?.name}</span>
+                        <span className="text-theme-text">R$ {((p?.price || 0) * qty).toFixed(2)}</span>
                       </div>
                     );
                   })}
                 </div>
-                <div className="flex justify-between text-xs font-bold uppercase ">
-                  <span className="text-emerald-500">Total do Pedido</span>
-                  <span className="text-emerald-500">R$ {total.toFixed(2)}</span>
+                <div className="flex justify-between text-xs font-bold uppercase">
+                  <span className="text-theme-brand">Total do Pedido</span>
+                  <span className="text-theme-brand">R$ {total.toFixed(2)}</span>
                 </div>
                 <div className="pt-4 space-y-2">
-                  <p className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest ">
+                  <p className="text-[10px] font-bold text-theme-muted uppercase tracking-widest">
                     Logística: {deliveryType === "SHIPPING" ? "Entrega na Unidade" : "Retirada na Matriz"}
                   </p>
-                  <p className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest ">
+                  <p className="text-[10px] font-bold text-theme-muted uppercase tracking-widest">
                     Pagamento: {paymentMethod === "BALANCE" ? "Desconto no Repasse" : "Checkout Digital"}
                   </p>
                 </div>
@@ -402,8 +402,8 @@ export function FranchiseShopModal({ onClose, onSuccess, availableBalance, userA
         {/* Footer Actions */}
         <div className="p-8 border-t border-white/5 bg-zinc-900/80 flex items-center justify-between">
           <div>
-            <p className="text-[9px] font-bold text-zinc-500 uppercase tracking-widest">Valor Total</p>
-            <p className="text-xl font-bold text-white ">R$ {total.toFixed(2)}</p>
+            <p className="text-[9px] font-bold text-theme-muted uppercase tracking-widest">Valor Total</p>
+            <p className="text-xl font-bold text-theme-text">R$ {total.toFixed(2)}</p>
           </div>
           <div className="flex items-center gap-4">
             {step !== "products" && (
@@ -419,7 +419,7 @@ export function FranchiseShopModal({ onClose, onSuccess, availableBalance, userA
               <button 
                 disabled={total === 0}
                 onClick={handleNext}
-                className="px-10 py-4 bg-emerald-500 text-black text-[10px] font-bold uppercase tracking-widest hover:brightness-110 transition-all disabled:opacity-40 flex items-center gap-2 rounded-xl"
+                className="px-10 py-4 bg-emerald-500 text-theme-text text-[10px] font-bold uppercase tracking-widest hover:brightness-110 transition-all disabled:opacity-40 flex items-center gap-2 rounded-xl"
               >
                 Próximo Passo <ArrowRight size={14} />
               </button>
@@ -427,7 +427,7 @@ export function FranchiseShopModal({ onClose, onSuccess, availableBalance, userA
               <button 
                 disabled={isProcessing}
                 onClick={handleFinish}
-                className="px-12 py-4 bg-emerald-500 text-black text-[11px] font-bold uppercase tracking-widest hover:brightness-110 transition-all shadow-xl shadow-emerald-500/20 flex items-center gap-3 rounded-xl"
+                className="px-12 py-4 bg-emerald-500 text-theme-text text-[11px] font-bold uppercase tracking-widest hover:brightness-110 transition-all shadow-xl shadow-emerald-500/20 flex items-center gap-3 rounded-xl"
               >
                 {isProcessing ? "PROCESSANDO..." : <><CheckCircle2 size={16} /> FINALIZAR PEDIDO</>}
               </button>

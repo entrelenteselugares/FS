@@ -64,8 +64,8 @@ export function AffiliateDashboard() {
 
   if (!data) {
     return (
-      <div className="p-12 text-center border  border-theme-border rounded-2xl bg-theme-bg-muted/5">
-        <p className="text-[10px] font-bold uppercase tracking-widest text-theme-text-muted ">Não foi possível carregar as informações do seu painel de indicações.</p>
+      <div className="p-12 text-center border border-theme-border rounded-2xl bg-theme-bg-muted/5">
+        <p className="text-[10px] font-bold uppercase tracking-widest text-theme-text-muted">Não foi possível carregar as informações do seu painel de indicações.</p>
       </div>
     );
   }
@@ -85,7 +85,7 @@ export function AffiliateDashboard() {
             <h2 className="text-2xl font-heading font-bold text-theme-text uppercase flex items-center gap-2">
               <Share2 className="text-brand-tactical" size={22} />
               Indique e Ganhe
-              {isVip && <span className="text-[10px] px-2 py-0.5 bg-brand-tactical text-black font-bold uppercase tracking-widest rounded-full ml-2">Conta VIP</span>}
+              {isVip && <span className="text-[10px] px-2 py-0.5 bg-brand-tactical text-theme-text font-bold uppercase tracking-widest rounded-full ml-2">Conta VIP</span>}
             </h2>
             <p className="text-xs text-theme-text-muted max-w-lg leading-relaxed">
               Compartilhe seu link exclusivo e ganhe comissões em todas as compras dos seus indicados.
@@ -93,16 +93,16 @@ export function AffiliateDashboard() {
           </div>
 
           <div className="w-full lg:w-auto space-y-2">
-            <label className="text-[9px] font-bold uppercase tracking-widest text-theme-text-muted block ">Seu Link de Convite</label>
+            <label className="text-[9px] font-bold uppercase tracking-widest text-theme-text-muted block">Seu Link de Convite</label>
             <div className="flex items-center gap-2">
-              <code className="bg-theme-bg-field px-4 py-2.5 rounded-xl text-theme-text-muted font-mono text-xs border border-theme-border flex items-center min-h-[44px] select-all truncate max-w-xs md:max-w-md">
+              <code className="bg-theme-bg-field px-4 py-2.5 rounded-xl text-theme-text-muted text-xs border border-theme-border flex items-center min-h-[44px] select-all truncate max-w-xs md:max-w-md">
                 {getAppUrl().replace(/^https?:\/\//, '')}/register?ref={data.referralCode}
               </code>
               <button 
                 onClick={handleCopy}
                 className="p-2.5 bg-brand-tactical/10 hover:bg-brand-tactical/20 border border-brand-tactical/30 rounded-xl transition-all text-brand-tactical shrink-0"
               >
-                {copied ? <Check size={18} className="text-emerald-400" /> : <Copy size={18} />}
+                {copied ? <Check size={18} className="text-theme-brand" /> : <Copy size={18} />}
               </button>
             </div>
           </div>
@@ -127,12 +127,12 @@ export function AffiliateDashboard() {
         <div className="bg-theme-bg border border-theme-border p-4 sm:p-6 rounded-2xl hover:border-theme-border transition-all duration-500 group relative overflow-hidden">
           <div className="absolute top-0 right-0 w-16 h-16 bg-gradient-to-br from-white/5 to-transparent rotate-45 translate-x-8 -translate-y-8" />
           <div className="flex items-center gap-2 sm:gap-3 mb-2 sm:mb-4">
-            <div className="p-1.5 sm:p-2 bg-emerald-500/10 text-emerald-400 rounded-xl border border-emerald-500/20">
+            <div className="p-1.5 sm:p-2 bg-emerald-500/10 text-theme-brand rounded-xl border border-emerald-500/20">
               <Banknote size={16} className="sm:w-[18px] sm:h-[18px]" />
             </div>
             <h3 className="text-[10px] sm:text-[9px] font-bold text-theme-text-muted uppercase tracking-widest">Ganhos Diretos (L1)</h3>
           </div>
-          <p className="text-xl sm:text-3xl font-heading font-bold text-emerald-400 leading-none">
+          <p className="text-xl sm:text-3xl font-heading font-bold text-theme-brand leading-none">
             {formatCurrency(data.commissionsL1 || 0)}
           </p>
         </div>
@@ -164,12 +164,12 @@ export function AffiliateDashboard() {
              </div>
           )}
           <div className="flex items-center gap-2 sm:gap-3 mb-2 sm:mb-4">
-            <div className="p-1.5 sm:p-2 bg-emerald-500/10 text-emerald-400 rounded-xl border border-emerald-500/20">
+            <div className="p-1.5 sm:p-2 bg-emerald-500/10 text-theme-brand rounded-xl border border-emerald-500/20">
               <Banknote size={16} className="sm:w-[18px] sm:h-[18px]" />
             </div>
             <h3 className="text-[10px] sm:text-[9px] font-bold text-theme-text-muted uppercase tracking-widest">Ganhos de Rede (L2)</h3>
           </div>
-          <p className="text-xl sm:text-3xl font-heading font-bold text-emerald-400 leading-none">
+          <p className="text-xl sm:text-3xl font-heading font-bold text-theme-brand leading-none">
             {formatCurrency(data.commissionsL2 || 0)}
           </p>
         </div>
@@ -218,7 +218,7 @@ export function AffiliateDashboard() {
         <div className="p-6 bg-brand-tactical/10 border border-brand-tactical/20 rounded-xl flex items-start gap-4 animate-in fade-in slide-in-from-bottom-2 duration-700">
           <Trophy className="text-brand-tactical mt-0.5 shrink-0" size={20} />
           <div className="space-y-1">
-            <h4 className="font-heading font-bold text-brand-tactical uppercase tracking-widest text-[11px] ">Quer faturar na profundidade?</h4>
+            <h4 className="font-heading font-bold text-brand-tactical uppercase tracking-widest text-[11px]">Quer faturar na profundidade?</h4>
             <p className="text-xs text-theme-text-muted leading-relaxed">
               Atualmente você ganha comissões apenas das suas indicações diretas. Nossos parceiros <span className="text-brand-tactical font-bold">VIP</span> também ganham sobre as vendas da segunda geração (indicados dos seus indicados). Fale com o suporte técnico para saber como se qualificar.
             </p>

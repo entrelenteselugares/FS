@@ -109,7 +109,7 @@ export const AdminAnalytics: React.FC = () => {
                     <tr key={c.id} className="border-b last:border-0 hover:bg-theme-bg-muted transition-colors" style={{ borderColor: T.border }}>
                       <td className="py-4 px-4 font-bold" style={{ color: T.text }}>{c.code}</td>
                       <td className="py-4 px-4">
-                        <span className={`text-[9px] font-black uppercase tracking-widest px-2 py-1 rounded-sm ${c.active ? 'bg-green-500/20 text-green-500' : 'bg-red-500/20 text-red-500'}`}>
+                        <span className={`text-[9px] font-black uppercase tracking-widest px-2 py-1 rounded-sm ${c.active ? 'bg-green-500/20 text-theme-brand' : 'bg-red-500/20 text-red-500'}`}>
                           {c.active ? 'Ativo' : 'Inativo'}
                         </span>
                       </td>

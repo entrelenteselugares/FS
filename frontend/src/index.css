@@ -104,7 +104,7 @@ html, body {
 body {
   background: var(--bg);
   color: var(--text);
-  font-family: var(--font-body);
+  font-family: var(--font-body) !important;
   font-weight: 400;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
@@ -115,6 +115,38 @@ body {
   -webkit-overflow-scrolling: touch;
   -webkit-user-select: none;
   user-select: none;
+}
+
+/* ─── GLOBAL TABLES (Padronizado) ───────────────────────────────────────── */
+table {
+  border-collapse: separate !important;
+  border-spacing: 0 !important;
+  width: 100% !important;
+  border-radius: var(--radius-lg) !important;
+  overflow: hidden !important;
+  border: 1px solid var(--border) !important;
+  background-color: var(--bg-card);
+}
+
+table th, table td {
+  padding: var(--space-3) var(--space-4) !important;
+  border-bottom: 1px solid var(--border) !important;
+  text-align: left;
+  font-family: var(--font-body);
+}
+
+table th {
+  background-color: var(--bg-field) !important;
+  color: var(--text-muted) !important;
+  font-family: var(--font-display) !important;
+  font-size: 0.75rem !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.05em !important;
+}
+
+table tr:last-child td {
+  border-bottom: none !important;
 }
 
 input, textarea, [contenteditable] {

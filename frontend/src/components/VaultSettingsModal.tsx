@@ -105,14 +105,14 @@ export function VaultSettingsModal({ isOpen, onClose, vault, onUpdate, sortConfi
             <div className="flex items-center justify-between px-6 py-4 border-b border-white/5">
               <div className="flex items-center gap-3">
                 <div className="w-8 h-8 rounded-full bg-emerald-500/10 flex items-center justify-center">
-                  <Settings size={16} className="text-emerald-500" />
+                  <Settings size={16} className="text-theme-brand" />
                 </div>
                 <div>
-                  <h2 className="text-sm font-bold uppercase tracking-widest text-white">Configurações</h2>
-                  <p className="text-[10px] text-zinc-500 font-medium">{vault.nome}</p>
+                  <h2 className="text-sm font-bold uppercase tracking-widest text-theme-text">Configurações</h2>
+                  <p className="text-[10px] text-theme-muted font-medium">{vault.nome}</p>
                 </div>
               </div>
-              <button onClick={onClose} className="p-2 text-zinc-400 hover:text-white bg-theme-bg-muted rounded-full transition-colors">
+              <button onClick={onClose} className="p-2 text-theme-muted hover:text-theme-text bg-theme-bg-muted rounded-full transition-colors">
                 <X size={16} />
               </button>
             </div>
@@ -124,7 +124,7 @@ export function VaultSettingsModal({ isOpen, onClose, vault, onUpdate, sortConfi
                   key={tab}
                   onClick={() => setActiveTab(tab)}
                   className={`flex-1 py-3 text-[10px] font-black uppercase tracking-widest transition-colors ${
-                    activeTab === tab ? "text-emerald-500 border-b-2 border-emerald-500 bg-emerald-500/5" : "text-zinc-500 hover:text-zinc-300"
+                    activeTab === tab ? "text-theme-brand border-b-2 border-emerald-500 bg-emerald-500/5" : "text-theme-muted hover:text-theme-subtle"
                   }`}
                 >
                   {tab}
@@ -138,34 +138,34 @@ export function VaultSettingsModal({ isOpen, onClose, vault, onUpdate, sortConfi
                 <div className="space-y-6">
                   {/* Nome */}
                   <div>
-                    <label className="block text-[10px] font-bold uppercase tracking-widest text-zinc-400 mb-2">Nome do Cofre</label>
+                    <label className="block text-[10px] font-bold uppercase tracking-widest text-theme-muted mb-2">Nome do Cofre</label>
                     <input 
                       type="text" 
                       value={nome}
                       onChange={e => setNome(e.target.value)}
-                      className="w-full h-12 bg-black/50 border border-white/10 rounded-lg px-4 text-sm text-white focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all"
+                      className="w-full h-12 bg-black/50 border border-white/10 rounded-lg px-4 text-sm text-theme-text focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all"
                       placeholder="Ex: Férias 2024"
                     />
                   </div>
 
                   {/* External Video Link */}
                   <div>
-                    <label className="block text-[10px] font-bold uppercase tracking-widest text-zinc-400 mb-2">Link da Pasta de Vídeos (Drive/Dropbox)</label>
+                    <label className="block text-[10px] font-bold uppercase tracking-widest text-theme-muted mb-2">Link da Pasta de Vídeos (Drive/Dropbox)</label>
                     <input 
                       type="url" 
                       value={externalVideoLink}
                       onChange={e => setExternalVideoLink(e.target.value)}
-                      className="w-full h-12 bg-black/50 border border-white/10 rounded-lg px-4 text-sm text-white focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all"
+                      className="w-full h-12 bg-black/50 border border-white/10 rounded-lg px-4 text-sm text-theme-text focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all"
                       placeholder="https://drive.google.com/drive/folders/..."
                     />
-                    <p className="text-[9px] text-zinc-500 mt-2 leading-relaxed">
+                    <p className="text-[9px] text-theme-muted mt-2 leading-relaxed">
                       Se preenchido, os membros verão um botão &quot;🎬 Acessar Vídeos Brutos&quot; para acessar arquivos massivos.
                     </p>
                   </div>
 
                   {/* Quantidade de Fotos */}
                   <div>
-                    <label className="block text-[10px] font-bold uppercase tracking-widest text-zinc-400 mb-3">
+                    <label className="block text-[10px] font-bold uppercase tracking-widest text-theme-muted mb-3">
                       Quantidade de Fotos para Impressão
                     </label>
                     <div className="grid grid-cols-2 gap-2">
@@ -185,11 +185,11 @@ export function VaultSettingsModal({ isOpen, onClose, vault, onUpdate, sortConfi
                             }`}>
                               {goalPoses === preset.qty && <div className="w-2 h-2 rounded-full bg-emerald-500" />}
                             </div>
-                            <span className={`text-[13px] font-black ${goalPoses === preset.qty ? "text-emerald-400" : "text-white"}`}>
+                            <span className={`text-[13px] font-black ${goalPoses === preset.qty ? "text-theme-brand" : "text-theme-text"}`}>
                               {preset.label}
                             </span>
                           </div>
-                          <span className={`text-[11px] font-bold ${goalPoses === preset.qty ? "text-emerald-500" : "text-zinc-500"}`}>
+                          <span className={`text-[11px] font-bold ${goalPoses === preset.qty ? "text-theme-brand" : "text-theme-muted"}`}>
                             R$ {preset.price.toFixed(2).replace(".", ",")}
                           </span>
                         </button>
@@ -199,8 +199,8 @@ export function VaultSettingsModal({ isOpen, onClose, vault, onUpdate, sortConfi
                     {/* Pricing summary */}
                     {selectedPreset && (
                       <div className="mt-3 p-3 bg-zinc-900/60 rounded-lg border border-white/5 flex items-center justify-between">
-                        <span className="text-[10px] text-zinc-400 uppercase tracking-widest">Total estimado</span>
-                        <span className="text-[13px] font-bold text-emerald-400">
+                        <span className="text-[10px] text-theme-muted uppercase tracking-widest">Total estimado</span>
+                        <span className="text-[13px] font-bold text-theme-brand">
                           R$ {selectedPreset.price.toFixed(2).replace(".", ",")}
                         </span>
                       </div>
@@ -219,7 +219,7 @@ export function VaultSettingsModal({ isOpen, onClose, vault, onUpdate, sortConfi
                   <button 
                     onClick={handleSave}
                     disabled={loading || !hasChanges || !nome.trim()}
-                    className="w-full h-12 bg-emerald-500 hover:bg-emerald-400 text-black text-[11px] font-bold uppercase tracking-widest rounded-lg transition-colors flex items-center justify-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed shadow-lg shadow-emerald-500/20"
+                    className="w-full h-12 bg-emerald-500 hover:bg-emerald-400 text-theme-text text-[11px] font-bold uppercase tracking-widest rounded-lg transition-colors flex items-center justify-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed shadow-lg shadow-emerald-500/20"
                   >
                     {loading ? <Loader2 size={16} className="animate-spin" /> : "Salvar Alterações"}
                   </button>
@@ -228,7 +228,7 @@ export function VaultSettingsModal({ isOpen, onClose, vault, onUpdate, sortConfi
 
               {activeTab === "Organização" && (
                 <div className="space-y-4">
-                  <p className="text-[11px] text-zinc-400 leading-relaxed mb-2">
+                  <p className="text-[11px] text-theme-muted leading-relaxed mb-2">
                     Escolha como deseja visualizar a galeria deste cofre.
                   </p>
                   
@@ -248,7 +248,7 @@ export function VaultSettingsModal({ isOpen, onClose, vault, onUpdate, sortConfi
                         }`}>
                           {sortConfig === opt.id && <div className="w-2 h-2 rounded-full bg-emerald-500" />}
                         </div>
-                        <span className={`text-[12px] font-bold ${sortConfig === opt.id ? "text-emerald-500" : "text-zinc-300"}`}>
+                        <span className={`text-[12px] font-bold ${sortConfig === opt.id ? "text-theme-brand" : "text-theme-subtle"}`}>
                           {opt.label}
                         </span>
                         <input type="radio" className="hidden" checked={sortConfig === opt.id} onChange={() => setSortConfig(opt.id)} />
@@ -271,8 +271,8 @@ export function VaultSettingsModal({ isOpen, onClose, vault, onUpdate, sortConfi
                     {members.map(member => (
                       <div key={member.id} className="flex items-center justify-between p-4 bg-black/20 border border-white/5 rounded-xl">
                         <div>
-                          <p className="text-[13px] font-bold text-white">{member.user?.nome || "Usuário"}</p>
-                          <p className="text-[10px] text-zinc-500">{member.role}</p>
+                          <p className="text-[13px] font-bold text-theme-text">{member.user?.nome || "Usuário"}</p>
+                          <p className="text-[10px] text-theme-muted">{member.role}</p>
                         </div>
                         
                         {member.role !== "OWNER" && (
@@ -284,7 +284,7 @@ export function VaultSettingsModal({ isOpen, onClose, vault, onUpdate, sortConfi
                           </button>
                         )}
                         {member.role === "OWNER" && (
-                          <div className="px-3 py-1 bg-emerald-500/20 text-emerald-500 text-[9px] font-bold uppercase tracking-widest rounded-full">
+                          <div className="px-3 py-1 bg-emerald-500/20 text-theme-brand text-[9px] font-bold uppercase tracking-widest rounded-full">
                             Dono
                           </div>
                         )}

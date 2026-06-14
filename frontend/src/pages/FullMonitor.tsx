@@ -93,7 +93,7 @@ export default function FullMonitor() {
   }
 
   return (
-    <div data-theme="dark" className="h-screen w-screen bg-theme-bg text-theme-text font-sans selection:bg-brand-tactical/30 relative overflow-hidden">
+    <div data-theme="dark" className="h-screen w-screen bg-theme-bg text-theme-text selection:bg-brand-tactical/30 relative overflow-hidden">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(20,184,166,0.08),transparent_70%)] pointer-events-none" />
 
 
@@ -186,13 +186,13 @@ export default function FullMonitor() {
               <div className="flex items-center gap-1 bg-theme-bg-muted border border-theme-border p-1 rounded-full">
                 <button
                   onClick={() => setOrientation('portrait')}
-                  className={`px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-all ${orientation === 'portrait' ? 'bg-zinc-800 text-white shadow' : 'text-zinc-500 hover:text-white'}`}
+                  className={`px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-all ${orientation === 'portrait' ? 'bg-zinc-800 text-theme-text shadow' : 'text-theme-muted hover:text-theme-text'}`}
                 >
                   Retrato
                 </button>
                 <button
                   onClick={() => setOrientation('landscape')}
-                  className={`px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-all ${orientation === 'landscape' ? 'bg-zinc-800 text-white shadow' : 'text-zinc-500 hover:text-white'}`}
+                  className={`px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-all ${orientation === 'landscape' ? 'bg-zinc-800 text-theme-text shadow' : 'text-theme-muted hover:text-theme-text'}`}
                 >
                   Paisagem
                 </button>
@@ -201,13 +201,13 @@ export default function FullMonitor() {
               <div className="flex items-center gap-1 bg-theme-bg-muted border border-theme-border p-1 rounded-full">
                 <button
                   onClick={() => setPrintFit('cover')}
-                  className={`px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-all ${printFit === 'cover' ? 'bg-zinc-800 text-white shadow' : 'text-zinc-500 hover:text-white'}`}
+                  className={`px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-all ${printFit === 'cover' ? 'bg-zinc-800 text-theme-text shadow' : 'text-theme-muted hover:text-theme-text'}`}
                 >
                   Preencher
                 </button>
                 <button
                   onClick={() => setPrintFit('contain')}
-                  className={`px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-all ${printFit === 'contain' ? 'bg-zinc-800 text-white shadow' : 'text-zinc-500 hover:text-white'}`}
+                  className={`px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-all ${printFit === 'contain' ? 'bg-zinc-800 text-theme-text shadow' : 'text-theme-muted hover:text-theme-text'}`}
                 >
                   Encaixar
                 </button>
@@ -255,7 +255,7 @@ export default function FullMonitor() {
             <button
               onClick={handlePrint}
               disabled={selected.length === 0}
-              className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest bg-brand-tactical text-white hover:bg-brand-tactical/80 disabled:opacity-40 disabled:cursor-not-allowed transition-all rounded-full px-4 py-2 shadow-lg shadow-brand-tactical/20"
+              className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest bg-brand-tactical text-theme-text hover:bg-brand-tactical/80 disabled:opacity-40 disabled:cursor-not-allowed transition-all rounded-full px-4 py-2 shadow-lg shadow-brand-tactical/20"
             >
               <Printer size={14} />
               Imprimir ({selected.length})
@@ -304,7 +304,7 @@ export default function FullMonitor() {
                       <div className="absolute top-2.5 right-2.5 z-20">
                         {isSelected ? (
                           <div className="w-7 h-7 rounded-full bg-brand-tactical flex items-center justify-center shadow-md shadow-brand-tactical/40 ring-2 ring-white/30">
-                            <Check size={14} className="text-white" strokeWidth={3} />
+                            <Check size={14} className="text-theme-text" strokeWidth={3} />
                           </div>
                         ) : (
                           <div className="w-7 h-7 rounded-full border-2 border-white/40 bg-black/30 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200">
@@ -333,7 +333,7 @@ export default function FullMonitor() {
                         <p className="text-sm font-bold text-theme-text truncate leading-tight">
                           {print.customerName || "Convidado"}
                         </p>
-                        <span className="text-[10px] font-semibold text-theme-muted shrink-0 bg-theme-bg/60 px-2 py-0.5 rounded font-mono">
+                        <span className="text-[10px] font-semibold text-theme-muted shrink-0 bg-theme-bg/60 px-2 py-0.5 rounded">
                           {new Date(print.createdAt).toLocaleTimeString([], {
                             hour: "2-digit",
                             minute: "2-digit",
@@ -397,7 +397,7 @@ export default function FullMonitor() {
               </div>
               <button
                 onClick={() => { navigator.clipboard.writeText(captureUrl); }}
-                className="w-full mt-4 py-2.5 bg-brand-tactical text-white text-xs font-bold uppercase tracking-widest rounded-xl hover:bg-brand-tactical/80 transition-colors"
+                className="w-full mt-4 py-2.5 bg-brand-tactical text-theme-text text-xs font-bold uppercase tracking-widest rounded-xl hover:bg-brand-tactical/80 transition-colors"
               >
                 Copiar Link
               </button>

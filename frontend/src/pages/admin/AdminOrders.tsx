@@ -187,7 +187,7 @@ export const AdminOrders: React.FC = () => {
               <span className="text-[9px] font-bold text-theme-muted uppercase tracking-[0.3em]">Volume Bruto (Liquidado)</span>
               <DollarSign className="text-brand-tactical opacity-30" size={16} />
            </div>
-           <div className="text-3xl font-heading font-bold text-theme-text ">{formatCurrency(stats.totalVolume)}</div>
+           <div className="text-3xl font-heading font-bold text-theme-text">{formatCurrency(stats.totalVolume)}</div>
            <div className="absolute -bottom-2 -right-2 opacity-[0.03] group-hover:opacity-[0.05] transition-opacity">
               <TrendingUp size={100} />
            </div>
@@ -198,15 +198,15 @@ export const AdminOrders: React.FC = () => {
               <span className="text-[9px] font-bold text-theme-muted uppercase tracking-[0.3em]">Ticket Médio / Projeto</span>
               <Zap className="text-amber-500 opacity-30" size={16} />
            </div>
-           <div className="text-3xl font-heading font-bold text-theme-text ">{formatCurrency(stats.ticketMedio)}</div>
+           <div className="text-3xl font-heading font-bold text-theme-text">{formatCurrency(stats.ticketMedio)}</div>
         </div>
 
         <div className="bg-theme-bg-muted border border-theme-border p-4 space-y-3 relative overflow-hidden group hover:border-brand-tactical/50 transition-all rounded-2xl">
            <div className="flex justify-between items-start">
               <span className="text-[9px] font-bold text-theme-muted uppercase tracking-[0.3em]">Projetos Pendentes</span>
-              <Clock className="text-zinc-500 opacity-30" size={16} />
+              <Clock className="text-theme-muted opacity-30" size={16} />
            </div>
-           <div className="text-2xl md:text-3xl font-heading font-bold text-theme-text ">{stats.pendingCount}</div>
+           <div className="text-2xl md:text-3xl font-heading font-bold text-theme-text">{stats.pendingCount}</div>
         </div>
       </div>
 
@@ -228,7 +228,7 @@ export const AdminOrders: React.FC = () => {
       <div className="space-y-4">
         {loading ? (
           <div className="py-24 text-center border border-theme-border bg-theme-bg rounded-2xl">
-            <div className="text-[10px] text-theme-muted animate-pulse uppercase tracking-[0.5em] font-bold ">Auditando Ledger Financeiro...</div>
+            <div className="text-[10px] text-theme-muted animate-pulse uppercase tracking-[0.5em] font-bold">Auditando Ledger Financeiro...</div>
           </div>
         ) : groupedOrders.length > 0 ? (
           groupedOrders.map((group) => (
@@ -266,7 +266,7 @@ export const AdminOrders: React.FC = () => {
                   <div className="flex items-center gap-3 md:gap-6 md:gap-12 ml-auto md:ml-0">
                      <div className="text-right hidden sm:block">
                         <span className="text-[10px] font-bold text-theme-muted uppercase tracking-widest block opacity-50 mb-1">Total Bruto</span>
-                        <div className="text-md md:text-lg font-heading font-bold text-theme-text ">{formatCurrency(group.totalAmount)}</div>
+                        <div className="text-md md:text-lg font-heading font-bold text-theme-text">{formatCurrency(group.totalAmount)}</div>
                      </div>
                      
                      <div className="text-center min-w-[120px]">
@@ -306,7 +306,7 @@ export const AdminOrders: React.FC = () => {
                        <tbody className="divide-y divide-theme-border/20">
                           {group.orders.sort((a,b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()).map(o => (
                             <tr key={o.id} className="group hover:bg-theme-bg-muted transition-all">
-                               <td className="py-5 font-mono text-[10px] text-theme-muted group-hover:text-theme-text transition-colors">#{o.id.toUpperCase()}</td>
+                               <td className="py-5 text-[10px] text-theme-muted group-hover:text-theme-text transition-colors">#{o.id.toUpperCase()}</td>
                                <td className="py-5">
                                   <div className="flex items-center gap-3">
                                      <CreditCard size={14} className="text-brand-tactical opacity-50" />
@@ -319,12 +319,12 @@ export const AdminOrders: React.FC = () => {
                                 <td className="py-5 text-center">
                                    <div className="flex flex-wrap justify-center gap-1.5 max-w-[240px] mx-auto">
                                       {o.splitMatriz && (
-                                        <span className="px-2 py-0.5 bg-slate-900 text-[10px] text-slate-300 font-bold rounded-sm border border-slate-700" title="Matriz (Plataforma)">
+                                        <span className="px-2 py-0.5 bg-slate-900 text-[10px] text-theme-subtle font-bold rounded-sm border border-slate-700" title="Matriz (Plataforma)">
                                           MT: {formatCurrency(Number(o.splitMatriz))}
                                         </span>
                                       )}
                                       {o.splitCaptacao && (
-                                        <span className="px-2 py-0.5 bg-emerald-500/10 text-[10px] text-emerald-500 font-bold rounded-sm border border-emerald-500/20" title="Captação">
+                                        <span className="px-2 py-0.5 bg-emerald-500/10 text-[10px] text-theme-brand font-bold rounded-sm border border-emerald-500/20" title="Captação">
                                           CP: {formatCurrency(Number(o.splitCaptacao))}
                                         </span>
                                       )}
@@ -356,7 +356,7 @@ export const AdminOrders: React.FC = () => {
                                           <select 
                                             value={o.fulfillmentStatus}
                                             onChange={(e) => handleUpdateLogistics(o.id, e.target.value)}
-                                            className={`text-[9px] font-black uppercase px-2 py-0.5 border bg-transparent outline-none cursor-pointer ${o.fulfillmentStatus === 'SHIPPED' ? 'border-green-500 text-green-500' : 'border-zinc-600 text-zinc-500 hover:border-zinc-400'}`}
+                                            className={`text-[9px] font-black uppercase px-2 py-0.5 border bg-transparent outline-none cursor-pointer ${o.fulfillmentStatus === 'SHIPPED' ? 'border-green-500 text-theme-brand' : 'border-zinc-600 text-theme-muted hover:border-zinc-400'}`}
                                           >
                                             <option value="PENDING">PENDENTE</option>
                                             <option value="PROCESSING">PROCESSANDO</option>
@@ -403,7 +403,7 @@ export const AdminOrders: React.FC = () => {
             </div>
           ))
         ) : (
-          <div className="py-32 text-center border  border-theme-border bg-theme-bg space-y-6 rounded-2xl">
+          <div className="py-32 text-center border border-theme-border bg-theme-bg space-y-6 rounded-2xl">
              <div className="relative inline-block">
                 <div className="absolute inset-0 bg-theme-border/20 rounded-full animate-ping" />
                 <ArrowUpRight size={48} className="text-theme-muted relative z-10" />
@@ -437,14 +437,14 @@ export const AdminOrders: React.FC = () => {
             <div className="flex-1 overflow-y-auto p-4 md:p-8 md:p-10 space-y-10 custom-scrollbar bg-theme-card">
               <div className="grid grid-cols-2 gap-3 md:gap-6">
                 <div className="bg-theme-bg-muted p-3 md:p-6 rounded-[30px] border border-theme-border space-y-4 shadow-inner">
-                  <span className="block text-[10px] font-bold text-theme-muted uppercase tracking-widest opacity-40 ">Informações do Cliente</span>
+                  <span className="block text-[10px] font-bold text-theme-muted uppercase tracking-widest opacity-40">Informações do Cliente</span>
                   <div className="space-y-1">
-                    <div className="text-sm font-bold text-theme-text uppercase ">{selectedOrderForDetails.user?.nome || "CONVIDADO"}</div>
+                    <div className="text-sm font-bold text-theme-text uppercase">{selectedOrderForDetails.user?.nome || "CONVIDADO"}</div>
                     <div className="text-[10px] text-theme-muted font-bold lowercase opacity-60">{selectedOrderForDetails.buyerEmail || selectedOrderForDetails.user?.email}</div>
                   </div>
                 </div>
                 <div className="bg-theme-bg-muted p-3 md:p-6 rounded-[30px] border border-theme-border space-y-4 shadow-inner text-right">
-                  <span className="block text-[10px] font-bold text-theme-muted uppercase tracking-widest opacity-40 ">Temporalidade & Status</span>
+                  <span className="block text-[10px] font-bold text-theme-muted uppercase tracking-widest opacity-40">Temporalidade & Status</span>
                   <div className="space-y-1">
                     <div className={`text-xs font-black uppercase tracking-[0.2em] italic ${selectedOrderForDetails.status === 'APROVADO' ? 'text-brand-tactical' : 'text-amber-500'}`}>
                       {selectedOrderForDetails.status}
@@ -456,12 +456,12 @@ export const AdminOrders: React.FC = () => {
 
               <div className="space-y-6">
                 <div className="flex items-center justify-between border-b border-theme-border pb-4">
-                  <h4 className="text-[10px] font-bold uppercase tracking-[0.4em] text-theme-text ">Composição do Carrinho</h4>
+                  <h4 className="text-[10px] font-bold uppercase tracking-[0.4em] text-theme-text">Composição do Carrinho</h4>
                   <span className="text-[9px] font-bold text-theme-muted uppercase tracking-widest opacity-40">{selectedOrderForDetails.items?.length || 0} Itens Registrados</span>
                 </div>
 
                 {(!selectedOrderForDetails.items || selectedOrderForDetails.items.length === 0) ? (
-                  <div className="p-5 md:p-10 text-center bg-theme-bg-muted border  border-theme-border rounded-[30px]">
+                  <div className="p-5 md:p-10 text-center bg-theme-bg-muted border border-theme-border rounded-[30px]">
                     <p className="text-[9px] sm:text-[11px] font-bold text-brand-tactical uppercase tracking-[0.2em] sm:tracking-[0.4em] truncate max-w-[80vw]">Nenhum item detalhado neste pedido</p>
                   </div>
                 ) : (
@@ -469,16 +469,16 @@ export const AdminOrders: React.FC = () => {
                     {selectedOrderForDetails.items.map(item => (
                       <div key={item.id} className="flex items-center justify-between p-3 md:p-6 bg-theme-bg-muted border border-theme-border rounded-[24px] group hover:border-brand-tactical transition-all shadow-sm">
                         <div className="flex-1 space-y-1">
-                          <div className="text-[11px] font-bold text-theme-text uppercase tracking-widest ">
+                          <div className="text-[11px] font-bold text-theme-text uppercase tracking-widest">
                             {item.quantity}x {item.service?.name || item.printProduct?.title || (item.mediaId ? `Foto (Digital)` : "Item de Inventário")}
                           </div>
-                          {item.mediaId && <div className="text-[9px] font-mono text-theme-muted opacity-40">REF_UUID: {item.mediaId}</div>}
+                          {item.mediaId && <div className="text-[9px] text-theme-muted opacity-40">REF_UUID: {item.mediaId}</div>}
                         </div>
                         <div className="text-right">
-                          <div className="text-md font-bold text-brand-tactical ">
+                          <div className="text-md font-bold text-brand-tactical">
                             {formatCurrency(Number(item.price) * Number(item.quantity))}
                           </div>
-                          <span className="text-[10px] text-theme-muted uppercase tracking-widest font-bold opacity-30 ">Preço Unitário: {formatCurrency(Number(item.price))}</span>
+                          <span className="text-[10px] text-theme-muted uppercase tracking-widest font-bold opacity-30">Preço Unitário: {formatCurrency(Number(item.price))}</span>
                         </div>
                       </div>
                     ))}

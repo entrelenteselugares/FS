@@ -47,7 +47,7 @@ export const CartModal: React.FC<{ isOpen: boolean, onClose: () => void }> = ({ 
               <ShoppingBag className="text-brand-tactical" size={24} />
             </div>
             <div>
-              <h2 className="text-2xl font-bold uppercase " style={{ color: T.text }}>Minha Seleção</h2>
+              <h2 className="text-2xl font-bold uppercase" style={{ color: T.text }}>Minha Seleção</h2>
               <p className="text-[10px] font-bold uppercase tracking-[0.2em] opacity-40">Resumo de Memórias</p>
             </div>
           </div>
@@ -71,7 +71,7 @@ export const CartModal: React.FC<{ isOpen: boolean, onClose: () => void }> = ({ 
               {digitalPhotos.length > 0 && (
                 <div className="space-y-4">
                   <div className="flex items-center justify-between border-b border-white/5 pb-2">
-                    <h3 className="text-[10px] font-bold uppercase tracking-widest text-zinc-500">Fotos Digitais</h3>
+                    <h3 className="text-[10px] font-bold uppercase tracking-widest text-theme-muted">Fotos Digitais</h3>
                     <span className="px-2 py-0.5 bg-brand-tactical/10 text-brand-tactical text-[9px] font-bold rounded-full">{digitalPhotos.length}</span>
                   </div>
                   <div className="space-y-2">
@@ -86,13 +86,13 @@ export const CartModal: React.FC<{ isOpen: boolean, onClose: () => void }> = ({ 
                             )}
                           </div>
                           <div>
-                            <p className="text-[10px] font-bold uppercase " style={{ color: T.text }}>ID: {item.shortId}</p>
-                            <p className="text-[10px] font-bold text-zinc-500 uppercase">Download HD</p>
+                            <p className="text-[10px] font-bold uppercase" style={{ color: T.text }}>ID: {item.shortId}</p>
+                            <p className="text-[10px] font-bold text-theme-muted uppercase">Download HD</p>
                           </div>
                         </div>
                         <button 
                           onClick={() => removeFromCart(item.eventId, item.shortId)} 
-                          className="p-2 text-zinc-600 hover:text-red-500 hover:bg-red-500/10 rounded-lg transition-all"
+                          className="p-2 text-theme-muted hover:text-red-500 hover:bg-red-500/10 rounded-lg transition-all"
                         >
                           <Trash2 size={14} />
                         </button>
@@ -106,8 +106,8 @@ export const CartModal: React.FC<{ isOpen: boolean, onClose: () => void }> = ({ 
               {physicalItems.length > 0 && (
                 <div className="space-y-4">
                   <div className="flex items-center justify-between border-b border-white/5 pb-2">
-                    <h3 className="text-[10px] font-bold uppercase tracking-widest text-zinc-500">Impressos</h3>
-                    <span className="px-2 py-0.5 bg-emerald-500/10 text-emerald-500 text-[9px] font-bold rounded-full">{physicalItems.length}</span>
+                    <h3 className="text-[10px] font-bold uppercase tracking-widest text-theme-muted">Impressos</h3>
+                    <span className="px-2 py-0.5 bg-emerald-500/10 text-theme-brand text-[9px] font-bold rounded-full">{physicalItems.length}</span>
                   </div>
                   <div className="space-y-2">
                     {physicalItems.map((item) => (
@@ -117,7 +117,7 @@ export const CartModal: React.FC<{ isOpen: boolean, onClose: () => void }> = ({ 
                             <span className="text-lg">📦</span>
                           </div>
                           <div>
-                            <p className="text-[10px] font-bold uppercase " style={{ color: T.text }}>{item.name}</p>
+                            <p className="text-[10px] font-bold uppercase" style={{ color: T.text }}>{item.name}</p>
                             <p className="text-[10px] font-bold text-brand-tactical uppercase">
                               {item.quantity} un • R$ {item.price.toFixed(2)}
                             </p>
@@ -125,7 +125,7 @@ export const CartModal: React.FC<{ isOpen: boolean, onClose: () => void }> = ({ 
                         </div>
                         <button 
                           onClick={() => removePhysicalItem(item.productId)} 
-                          className="p-2 text-zinc-600 hover:text-red-500 hover:bg-red-500/10 rounded-lg transition-all"
+                          className="p-2 text-theme-muted hover:text-red-500 hover:bg-red-500/10 rounded-lg transition-all"
                         >
                           <Trash2 size={14} />
                         </button>
@@ -143,14 +143,14 @@ export const CartModal: React.FC<{ isOpen: boolean, onClose: () => void }> = ({ 
           <div className="p-8 md:p-10 bg-theme-bg-muted border-t flex flex-col md:flex-row items-center justify-between gap-6 shrink-0" style={{ borderColor: T.border }}>
             <div className="text-center md:text-left">
               <span className="block text-[10px] font-bold uppercase tracking-widest text-theme-text-muted mb-1">Total da Seleção</span>
-              <span className="text-4xl font-bold " style={{ color: T.text }}>R$ {currentTotal.toFixed(2)}</span>
+              <span className="text-4xl font-bold" style={{ color: T.text }}>R$ {currentTotal.toFixed(2)}</span>
             </div>
             <button 
               onClick={() => {
                 onClose();
                 navigate("/checkout");
               }}
-              className="w-full md:w-auto px-10 py-5 bg-brand-tactical text-black text-[11px] font-bold uppercase tracking-[0.3em] hover:bg-white hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-4 shadow-2xl shadow-brand-tactical/20"
+              className="w-full md:w-auto px-10 py-5 bg-brand-tactical text-theme-text text-[11px] font-bold uppercase tracking-[0.3em] hover:bg-white hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-4 shadow-2xl shadow-brand-tactical/20"
             >
               Confirmar e Pagar
               <ArrowRight size={18} />

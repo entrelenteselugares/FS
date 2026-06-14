@@ -41,10 +41,10 @@ DA TORCIDA
 
 - **COPA 2026
 PRÓXIMOS
-AUS
-13/06 · 01:00
-GRP D
-TURQUIA
+SUÉCIA
+14/06 · 23:00
+GRP F
+TUNÍSIA
 Ver Álbum →** -> `/album-torcida`
 - **VOLTAR PARA A HOME** -> `/`
 

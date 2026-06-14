@@ -126,7 +126,7 @@ export const BottomNav: React.FC = () => {
               className="flex flex-col items-center gap-1 text-theme-text opacity-40 transition-all hover:opacity-100"
             >
               <Home size={20} strokeWidth={1.5} />
-              <span className="text-[7.5px] font-bold uppercase ">Home</span>
+              <span className="text-[7.5px] font-bold uppercase">Home</span>
             </button>
 
             {user && (
@@ -135,7 +135,7 @@ export const BottomNav: React.FC = () => {
                 className="flex flex-col items-center gap-1 text-theme-text opacity-40 transition-all hover:opacity-100"
               >
                 <ShoppingBag size={20} strokeWidth={1.5} />
-                <span className="text-[7.5px] font-bold uppercase ">Compras</span>
+                <span className="text-[7.5px] font-bold uppercase">Compras</span>
               </button>
             )}
 
@@ -144,7 +144,7 @@ export const BottomNav: React.FC = () => {
               className="flex flex-col items-center gap-1 transition-all text-brand-tactical"
             >
               <Camera size={20} strokeWidth={1.5} />
-              <span className="text-[7.5px] font-bold uppercase ">Câmera</span>
+              <span className="text-[7.5px] font-bold uppercase">Câmera</span>
             </button>
 
             {user && (
@@ -153,7 +153,7 @@ export const BottomNav: React.FC = () => {
                 className="flex flex-col items-center gap-1 text-theme-text opacity-40 transition-all hover:opacity-100"
               >
                 <Image size={20} strokeWidth={1.5} />
-                <span className="text-[7.5px] font-bold uppercase ">Álbuns</span>
+                <span className="text-[7.5px] font-bold uppercase">Álbuns</span>
               </button>
             )}
 
@@ -162,17 +162,17 @@ export const BottomNav: React.FC = () => {
               className="flex flex-col items-center gap-1 text-theme-text opacity-40 transition-all hover:opacity-100"
             >
               <Menu size={20} strokeWidth={1.5} />
-              <span className="text-[7.5px] font-bold uppercase ">Menu</span>
+              <span className="text-[7.5px] font-bold uppercase">Menu</span>
             </button>
           </>
         ) : (
           <>
             <button 
               onClick={() => navigate("/", { replace: true })}
-              className={`flex flex-col items-center gap-1 transition-all ${isActive("/") ? "text-emerald-500" : "text-theme-text opacity-40"}`}
+              className={`flex flex-col items-center gap-1 transition-all ${isActive("/") ? "text-theme-brand" : "text-theme-text opacity-40"}`}
             >
               <Home size={20} strokeWidth={1.5} />
-              <span className="text-[7.5px] font-bold uppercase ">Home</span>
+              <span className="text-[7.5px] font-bold uppercase">Home</span>
             </button>
 
             <button 
@@ -191,25 +191,25 @@ export const BottomNav: React.FC = () => {
               className="flex flex-col items-center gap-1 text-theme-text opacity-40 transition-all hover:opacity-100"
             >
               <Search size={20} strokeWidth={1.5} />
-              <span className="text-[7.5px] font-bold uppercase ">Buscar</span>
+              <span className="text-[7.5px] font-bold uppercase">Buscar</span>
             </button>
 
             {user && (
               <>
                 <button 
                   onClick={() => navigate("/minha-conta?s=files", { replace: true })}
-                  className={`flex flex-col items-center gap-1 transition-all ${location.pathname === "/minha-conta" && (s === "files" || s === "fotos" || s === "wallet" || s === "pedidos") ? "text-emerald-500" : "text-theme-text opacity-40"}`}
+                  className={`flex flex-col items-center gap-1 transition-all ${location.pathname === "/minha-conta" && (s === "files" || s === "fotos" || s === "wallet" || s === "pedidos") ? "text-theme-brand" : "text-theme-text opacity-40"}`}
                 >
                   <ShoppingBag size={20} strokeWidth={1.5} />
-                  <span className="text-[7.5px] font-bold uppercase ">Compras</span>
+                  <span className="text-[7.5px] font-bold uppercase">Compras</span>
                 </button>
 
                 <button 
                   onClick={() => navigate("/meus-albuns", { replace: true })}
-                  className={`flex flex-col items-center gap-1 transition-all ${location.pathname.startsWith("/meus-albuns") ? "text-emerald-500" : "text-theme-text opacity-40"}`}
+                  className={`flex flex-col items-center gap-1 transition-all ${location.pathname.startsWith("/meus-albuns") ? "text-theme-brand" : "text-theme-text opacity-40"}`}
                 >
                   <Image size={20} strokeWidth={1.5} />
-                  <span className="text-[7.5px] font-bold uppercase ">Meus Álbuns</span>
+                  <span className="text-[7.5px] font-bold uppercase">Meus Álbuns</span>
                 </button>
               </>
             )}
@@ -223,12 +223,12 @@ export const BottomNav: React.FC = () => {
                 location.pathname.startsWith("/admin") || 
                 location.pathname.startsWith("/franquia") || 
                 (location.pathname === "/minha-conta" && s !== "wallet" && s !== "pedidos")
-                  ? "text-emerald-500" 
+                  ? "text-theme-brand" 
                   : "text-theme-text opacity-40"
               }`}
             >
               <Menu size={20} strokeWidth={1.5} />
-              <span className="text-[7.5px] font-bold uppercase ">Opções</span>
+              <span className="text-[7.5px] font-bold uppercase">Opções</span>
             </button>
           </>
         )}
@@ -257,7 +257,7 @@ export const BottomNav: React.FC = () => {
             <ThemeToggle />
             <button
               onClick={() => setDrawerOpen(false)}
-              className="p-1.5 text-zinc-500 hover:text-white rounded-lg border border-theme-border transition-colors"
+              className="p-1.5 text-theme-muted hover:text-theme-text rounded-lg border border-theme-border transition-colors"
             >
               <X size={16} />
             </button>
@@ -271,23 +271,23 @@ export const BottomNav: React.FC = () => {
               {user.profileImageUrl ? (
                 <img src={user.profileImageUrl} alt={user.nome} className="w-9 h-9 rounded-full object-cover border border-emerald-500/30" />
               ) : (
-                <div className="w-9 h-9 rounded-full bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center font-display font-bold text-emerald-500 ">
+                <div className="w-9 h-9 rounded-full bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center font-display font-bold text-theme-brand">
                   {user.nome?.charAt(0)?.toUpperCase() || "?"}
                 </div>
               )}
               <div className="flex-1 min-w-0">
-                <p className="text-xs font-bold uppercase truncate text-white">{user.nome}</p>
-                <p className="text-[9px] font-bold uppercase tracking-wider text-emerald-500/80">
+                <p className="text-xs font-bold uppercase truncate text-theme-text">{user.nome}</p>
+                <p className="text-[9px] font-bold uppercase tracking-wider text-theme-brand/80">
                   {user.role === "PROFISSIONAL" ? "Profissional da Rede" : user.role === "ADMIN" ? "Administrador" : user.role === "FRANCHISEE" ? "Franqueado" : user.role === "UNIDADE" ? "Unidade Fixa" : user.role === "CARTORIO" ? "Cartório" : "Cliente"}
                 </p>
               </div>
             </div>
           ) : (
             <div className="space-y-3">
-              <p className="text-[10px] font-bold uppercase tracking-widest text-zinc-500">Acesse sua conta</p>
+              <p className="text-[10px] font-bold uppercase tracking-widest text-theme-muted">Acesse sua conta</p>
               <button
                 onClick={() => { navigate("/login"); setDrawerOpen(false); }}
-                className="w-full py-2.5 bg-emerald-500 text-black text-[10px] font-bold uppercase tracking-widest rounded-xl hover:bg-emerald-400 transition-colors flex items-center justify-center gap-2 "
+                className="w-full py-2.5 bg-emerald-500 text-theme-text text-[10px] font-bold uppercase tracking-widest rounded-xl hover:bg-emerald-400 transition-colors flex items-center justify-center gap-2"
               >
                 <User size={12} />
                 Entrar
@@ -304,7 +304,7 @@ export const BottomNav: React.FC = () => {
                 return (
                   <div
                     key={`header-${idx}`}
-                    className="px-5 pt-4 pb-1.5 text-[9px] font-bold uppercase tracking-[0.2em] text-emerald-500/60"
+                    className="px-5 pt-4 pb-1.5 text-[9px] font-bold uppercase tracking-[0.2em] text-theme-brand/60"
                   >
                     {item.label}
                   </div>

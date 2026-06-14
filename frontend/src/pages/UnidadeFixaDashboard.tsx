@@ -433,7 +433,7 @@ export default function UnidadeFixaDashboard({
             <div className="flex flex-wrap items-center gap-4 w-full xl:w-auto">
               <div className="flex items-center gap-2 px-3 py-1.5 bg-brand-tactical/10 border border-brand-tactical/30">
                 <ShieldCheck size={12} className="text-brand-tactical" />
-                <p className="text-[10px] font-bold text-brand-tactical uppercase tracking-widest ">{stats?.razaoSocial || "Unidade Operacional"}</p>
+                <p className="text-[10px] font-bold text-brand-tactical uppercase tracking-widest">{stats?.razaoSocial || "Unidade Operacional"}</p>
               </div>
             </div>
           </div>
@@ -453,20 +453,20 @@ export default function UnidadeFixaDashboard({
                     <h2 className="text-xl md:text-2xl font-heading font-bold uppercase text-theme-text">
                       {stats.user.franchiseProfile.tier}
                     </h2>
-                    <span className="px-3 py-1 bg-brand-tactical/10 border border-brand-tactical/30 text-brand-tactical text-[10px] font-bold uppercase tracking-[0.2em] ">Franqueado Verificado</span>
+                    <span className="px-3 py-1 bg-brand-tactical/10 border border-brand-tactical/30 text-brand-tactical text-[10px] font-bold uppercase tracking-[0.2em]">Franqueado Verificado</span>
                   </div>
-                  <p className="text-[10px] text-theme-muted uppercase font-bold tracking-[0.4em] ">Selo de Qualidade & Performance B2B</p>
+                  <p className="text-[10px] text-theme-muted uppercase font-bold tracking-[0.4em]">Selo de Qualidade & Performance B2B</p>
                </div>
                <div className="flex justify-between items-end">
                   <div className="space-y-1">
                     <p className="text-[9px] font-bold text-theme-muted uppercase tracking-widest">Volume de Vendas Aprovadas</p>
-                    <p className="text-xl font-heading font-bold text-theme-text ">{stats.user.franchiseProfile.approvedSalesVolume} / {
+                    <p className="text-xl font-heading font-bold text-theme-text">{stats.user.franchiseProfile.approvedSalesVolume} / {
                       stats.user.franchiseProfile.tier === "BRONZE" ? "50" :
                       stats.user.franchiseProfile.tier === "SILVER" ? "150" :
                       stats.user.franchiseProfile.tier === "GOLD" ? "500" : "MAX"
                     }</p>
                   </div>
-                  <p className="text-[9px] font-bold text-brand-tactical uppercase tracking-widest ">Próximo Nível</p>
+                  <p className="text-[9px] font-bold text-brand-tactical uppercase tracking-widest">Próximo Nível</p>
                </div>
                <div className="h-1.5 w-full bg-theme-border/30 rounded-full overflow-hidden">
                   <div 
@@ -490,13 +490,13 @@ export default function UnidadeFixaDashboard({
           <div className="bg-red-500/10 border border-red-500/30 p-3 md:p-6 flex flex-col md:flex-row md:items-center gap-3 md:gap-6 shadow-2xl relative overflow-hidden group">
              <AlertTriangle size={24} className="text-red-500 shrink-0 animate-pulse" />
              <div className="space-y-2 relative z-10 flex-1">
-                <p className="text-[11px] font-bold text-red-500 uppercase tracking-[0.4em] ">Alerta Estratégico: Nível Crítico de Insumos</p>
+                <p className="text-[11px] font-bold text-red-500 uppercase tracking-[0.4em]">Alerta Estratégico: Nível Crítico de Insumos</p>
                 <p className="text-[10px] font-bold text-theme-text/80 uppercase tracking-widest max-w-3xl leading-relaxed">
                    Atenção Operacional: Sua unidade tem apenas <span className="text-red-400 font-bold">{user.franchiseProfile.printCredits} créditos</span> restantes para impressões Phygital. 
                    A operação será bloqueada ao chegar a zero. Solicite reposição imediata de papel fotográfico e ribbons.
                 </p>
              </div>
-             <button onClick={() => setTab("franquia")} className="px-3 md:px-6 py-3 bg-red-500/10 border border-red-500/40 text-[9px] font-bold text-red-500 uppercase tracking-widest hover:bg-red-500 hover:text-white transition-all whitespace-nowrap">
+             <button onClick={() => setTab("franquia")} className="px-3 md:px-6 py-3 bg-red-500/10 border border-red-500/40 text-[9px] font-bold text-red-500 uppercase tracking-widest hover:bg-red-500 hover:text-theme-text transition-all whitespace-nowrap">
                 Solicitar Reposição
              </button>
              <div className="absolute -right-10 -top-10 opacity-5 pointer-events-none group-hover:scale-110 transition-transform duration-700">
@@ -594,14 +594,14 @@ export default function UnidadeFixaDashboard({
                       <div className="absolute -top-2 -right-2 w-4 h-4 bg-brand-tactical rounded-full" />
                     </div>
                     <div className="space-y-2">
-                      <p className="text-lg font-heading font-bold text-theme-text uppercase ">Standby Estratégico</p>
+                      <p className="text-lg font-heading font-bold text-theme-text uppercase">Standby Estratégico</p>
                       <p className="text-[10px] font-bold text-theme-muted uppercase tracking-[0.3em] max-w-xs mx-auto leading-relaxed">
                         Nenhuma operação detectada nos radares desta unidade para o período atual.
                       </p>
                     </div>
                     <button 
                       onClick={() => navigate(lpSlug ? `/p/${lpSlug}` : "/")} 
-                      className="inline-flex items-center gap-4 px-4 md:px-8 py-3 bg-theme-bg border border-theme-border text-[9px] font-bold uppercase tracking-[0.4em] text-theme-text hover:bg-brand-tactical hover:text-brand-text hover:border-brand-tactical transition-all "
+                      className="inline-flex items-center gap-4 px-4 md:px-8 py-3 bg-theme-bg border border-theme-border text-[9px] font-bold uppercase tracking-[0.4em] text-theme-text hover:bg-brand-tactical hover:text-brand-text hover:border-brand-tactical transition-all"
                     >
                       Ver Vitrine da Rede <ArrowRight size={14} />
                     </button>
@@ -638,7 +638,7 @@ export default function UnidadeFixaDashboard({
                                     {ev.captacao ? (
                                       <div className="space-y-1">
                                         <p className="text-[10px] font-bold text-theme-muted uppercase tracking-[0.2em]">Agente Designado</p>
-                                        <p className="text-[11px] font-bold text-theme-text uppercase ">{ev.captacao?.user?.name ?? ev.captacao?.user?.nome ?? ev.captacao?.nome}</p>
+                                        <p className="text-[11px] font-bold text-theme-text uppercase">{ev.captacao?.user?.name ?? ev.captacao?.user?.nome ?? ev.captacao?.nome}</p>
                                       </div>
                                     ) : (
                                       <div className="space-y-1">
@@ -711,7 +711,7 @@ export default function UnidadeFixaDashboard({
                     {calendarStatus?.connected ? (
                       <div className="space-y-6">
                          <div className="bg-theme-bg-muted border border-theme-border rounded-xl p-5 space-y-3">
-                            <p className="text-[10px] font-bold text-theme-muted uppercase tracking-widest flex items-center gap-2"><Activity size={12} className="text-emerald-500"/> Agenda Vinculada</p>
+                            <p className="text-[10px] font-bold text-theme-muted uppercase tracking-widest flex items-center gap-2"><Activity size={12} className="text-theme-brand"/> Agenda Vinculada</p>
                             <p className="text-sm font-bold text-theme-text truncate">{calendarStatus.credential?.calendarId}</p>
                             <p className="text-[9px] text-theme-muted font-bold tracking-widest">Última Sincronização: {new Date(calendarStatus.credential?.updatedAt || "").toLocaleString()}</p>
                          </div>
@@ -837,7 +837,7 @@ export default function UnidadeFixaDashboard({
               <div className="p-4 md:p-8 border-b border-theme-border flex flex-col sm:flex-row justify-between items-center bg-theme-bg gap-3 md:gap-6">
                 <div className="flex items-center gap-4">
                    <div className="h-8 w-1 bg-brand-tactical rounded-full" />
-                   <p className="text-[10px] font-bold text-theme-text uppercase tracking-[0.4em] ">Livro de Liquidações Históricas</p>
+                   <p className="text-[10px] font-bold text-theme-text uppercase tracking-[0.4em]">Livro de Liquidações Históricas</p>
                 </div>
                 <div className="flex items-center gap-4">
                   <button 
@@ -883,7 +883,7 @@ export default function UnidadeFixaDashboard({
                            {r.paidAt && (
                              <p className="text-[9px] font-bold text-theme-muted uppercase tracking-widest">Liquidado em {formatDate(r.paidAt)}</p>
                            )}
-                           <p className="text-[10px] font-medium text-theme-muted/40 uppercase ">ID: {r.id.slice(-8).toUpperCase()}</p>
+                           <p className="text-[10px] font-medium text-theme-muted/40 uppercase">ID: {r.id.slice(-8).toUpperCase()}</p>
                         </div>
                         <span className={`text-[10px] font-black uppercase tracking-[0.2em] px-3 md:px-6 py-2 border rounded-full transition-all shadow-sm ${
                           r.status === "PAID" 
@@ -929,7 +929,7 @@ export default function UnidadeFixaDashboard({
                   <div className="space-y-2">
                     <div className="flex items-center gap-2">
                        <div className="w-2 h-2 rounded-full bg-brand-tactical animate-pulse" />
-                       <p className="text-[10px] font-bold text-theme-muted uppercase tracking-widest ">Operação Ativa</p>
+                       <p className="text-[10px] font-bold text-theme-muted uppercase tracking-widest">Operação Ativa</p>
                     </div>
                     <h4 className="text-xl font-heading font-bold text-theme-text uppercase truncate">{ev.title}</h4>
                     <p className="text-[9px] font-bold text-theme-muted uppercase tracking-widest">{formatDate(ev.date)} · {ev.location}</p>
@@ -938,7 +938,7 @@ export default function UnidadeFixaDashboard({
                   <div className="pt-4 border-t border-theme-border flex items-center justify-between">
                     <div className="space-y-1">
                       <p className="text-[10px] font-bold text-theme-muted uppercase tracking-widest">Status da Fila</p>
-                      <p className="text-[11px] font-bold text-theme-text uppercase ">Monitor de Rede</p>
+                      <p className="text-[11px] font-bold text-theme-text uppercase">Monitor de Rede</p>
                     </div>
                     <button 
                       onClick={() => navigate(`/profissional/monitor/${ev.id}`)}
@@ -951,7 +951,7 @@ export default function UnidadeFixaDashboard({
               ))}
               
               {eventos.length === 0 && (
-                <div className="col-span-full py-20 border  border-theme-border flex flex-col items-center justify-center gap-4 text-center">
+                <div className="col-span-full py-20 border border-theme-border flex flex-col items-center justify-center gap-4 text-center">
                    <Printer size={48} className="text-theme-border/30" />
                    <p className="text-[10px] font-bold text-theme-muted uppercase tracking-[0.4em]">Nenhum evento detectado para monitoramento.</p>
                 </div>
@@ -1099,7 +1099,7 @@ export default function UnidadeFixaDashboard({
                                   <Settings size={12} className={isDisabled ? "" : "animate-spin-slow"} />
                                 </button>
                               </div>
-                              <span className="block text-[10px] font-bold text-theme-muted uppercase tracking-[0.3em] ">Rede: {formatCurrency(svc.basePrice)}</span>
+                              <span className="block text-[10px] font-bold text-theme-muted uppercase tracking-[0.3em]">Rede: {formatCurrency(svc.basePrice)}</span>
                               {isDisabled && <span className="inline-block mt-1 text-[9px] bg-theme-border px-2 py-0.5 rounded text-theme-text-muted font-bold">INATIVO</span>}
                               
                               <p className="text-[10px] sm:text-[10px] font-medium text-theme-muted leading-relaxed opacity-60 group-hover:opacity-100 transition-opacity line-clamp-2 mt-2">{svc.description}</p>
@@ -1203,7 +1203,7 @@ export default function UnidadeFixaDashboard({
                     <label className="text-[10px] font-bold text-theme-text uppercase tracking-widest flex items-center gap-2"><Link size={12} className="text-brand-tactical"/> Identificador Único (URL)</label>
                     <p className="text-[10px] text-theme-muted/70 leading-relaxed font-medium">Este será o endereço público da sua vitrine de serviços.</p>
                     <div className="flex flex-col sm:flex-row items-stretch sm:items-center bg-theme-bg-muted border border-theme-border rounded-xl overflow-hidden focus-within:border-brand-tactical focus-within:ring-1 focus-within:ring-brand-tactical/30 transition-all">
-                      <div className="px-4 py-3 sm:py-0 h-full sm:h-12 bg-theme-border/20 text-theme-muted font-mono text-xs border-b sm:border-b-0 sm:border-r border-theme-border flex items-center justify-center sm:justify-start">
+                      <div className="px-4 py-3 sm:py-0 h-full sm:h-12 bg-theme-border/20 text-theme-muted text-xs border-b sm:border-b-0 sm:border-r border-theme-border flex items-center justify-center sm:justify-start">
                         {window.location.host.toLowerCase()}/p/
                       </div>
                       <input 
@@ -1246,7 +1246,7 @@ export default function UnidadeFixaDashboard({
                   <div className="md:col-span-2 bg-theme-bg-muted p-4 md:p-8 border border-theme-border space-y-8">
                      <div className="flex flex-col sm:flex-row items-center justify-between gap-4 md:gap-8">
                         <div className="space-y-1">
-                          <p className="text-[10px] font-bold text-theme-text uppercase ">Parâmetros de Cobertura</p>
+                          <p className="text-[10px] font-bold text-theme-text uppercase">Parâmetros de Cobertura</p>
                           <p className="text-[10px] font-bold text-theme-muted uppercase tracking-widest">Configuração padrão de tempo e visibilidade do cronômetro.</p>
                         </div>
                         <div className="flex items-center gap-3 md:gap-6">
@@ -1273,7 +1273,7 @@ export default function UnidadeFixaDashboard({
                   <div className="md:col-span-2 space-y-10 border-t border-theme-border pt-12">
                      <div className="flex items-center gap-4">
                        <div className="h-8 w-1 bg-brand-tactical" />
-                       <p className="text-[10px] font-bold text-theme-text uppercase tracking-[0.4em] ">Grade de Disponibilidade Semanal</p>
+                       <p className="text-[10px] font-bold text-theme-text uppercase tracking-[0.4em]">Grade de Disponibilidade Semanal</p>
                      </div>
 
                      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
@@ -1379,7 +1379,7 @@ export default function UnidadeFixaDashboard({
                    </div>
                    <p className="text-[9px] font-bold text-theme-muted uppercase tracking-widest">Status da Franquia</p>
                  </div>
-                 <p className={`text-xl font-heading font-black italic tracking-tighter uppercase ${user.franchiseProfile.active ? 'text-emerald-500' : 'text-red-500'}`}>
+                 <p className={`text-xl font-heading font-black italic tracking-tighter uppercase ${user.franchiseProfile.active ? 'text-theme-brand' : 'text-red-500'}`}>
                    {user.franchiseProfile.active ? '● OPERACIONAL' : '● INATIVO'}
                  </p>
                  <p className="text-[9px] font-bold text-theme-muted uppercase tracking-widest">VINCULADO À REDE</p>
@@ -1395,13 +1395,13 @@ export default function UnidadeFixaDashboard({
                  <div className="space-y-4">
                     <button 
                       onClick={() => setIsShopModalOpen(true)}
-                      className="w-full py-4 bg-emerald-500 text-black font-display font-bold text-[10px] uppercase tracking-widest hover:brightness-110 transition-all shadow-lg shadow-emerald-500/10"
+                      className="w-full py-4 bg-emerald-500 text-theme-text font-display font-bold text-[10px] uppercase tracking-widest hover:brightness-110 transition-all shadow-lg shadow-emerald-500/10"
                     >
                       LOJA DA FRANQUIA
                     </button>
                     <button 
                       onClick={() => window.open("https://wa.me/5519981150440?text=Olá! Preciso de assistência técnica para minha unidade Foto Segundo.", "_blank")}
-                      className="mt-2 text-[9px] font-bold text-theme-muted uppercase tracking-widest hover:text-emerald-500 transition-all text-left block"
+                      className="mt-2 text-[9px] font-bold text-theme-muted uppercase tracking-widest hover:text-theme-brand transition-all text-left block"
                     >
                       ASSISTÊNCIA TÉCNICA →
                     </button>
@@ -1443,7 +1443,7 @@ export default function UnidadeFixaDashboard({
                                <Printer size={20} />
                             </div>
                             <div>
-                               <p className="text-sm font-bold text-theme-text uppercase ">{ev.title}</p>
+                               <p className="text-sm font-bold text-theme-text uppercase">{ev.title}</p>
                                <p className="text-[9px] text-theme-muted font-bold uppercase tracking-widest mt-1">{new Date(ev.date).toLocaleDateString('pt-BR')} · {ev.location}</p>
                             </div>
                          </div>
@@ -1456,7 +1456,7 @@ export default function UnidadeFixaDashboard({
                       </div>
                     ))
                   ) : (
-                    <div className="p-5 md:p-10 border  border-theme-border text-center space-y-4">
+                    <div className="p-5 md:p-10 border border-theme-border text-center space-y-4">
                        <p className="text-[10px] font-black text-theme-muted uppercase font-bold tracking-widest">Nenhum evento vinculado à sua unidade.</p>
                        <p className="text-[10px] text-theme-muted/60 uppercase font-bold max-w-xs mx-auto leading-relaxed">Quando um admin vincular sua franquia a um evento, ele aparecerá aqui para controle de Live Print.</p>
                     </div>
@@ -1468,7 +1468,7 @@ export default function UnidadeFixaDashboard({
              <div className="space-y-6">
                 <div className="flex items-center gap-4">
                    <div className="h-px w-8 bg-emerald-500" />
-                   <p className="text-[10px] font-bold text-theme-muted uppercase tracking-[0.5em] ">Registro de Atividades</p>
+                   <p className="text-[10px] font-bold text-theme-muted uppercase tracking-[0.5em]">Registro de Atividades</p>
                 </div>
 
                 <div className="bg-theme-bg border border-theme-border overflow-hidden">
@@ -1477,7 +1477,7 @@ export default function UnidadeFixaDashboard({
                        {user.franchiseProfile.transactions.map((tx) => (
                          <div key={tx.id} className="p-3 md:p-6 flex items-center justify-between hover:bg-white/[0.02] transition-all group">
                             <div className="space-y-1">
-                               <p className="text-[11px] font-bold text-theme-text uppercase tracking-widest ">
+                               <p className="text-[11px] font-bold text-theme-text uppercase tracking-widest">
                                  {tx.description || (tx.type === 'PRINT_CONSUMPTION' ? 'Impressão Phygital' : 'Recarga de Créditos')}
                                </p>
                                <div className="flex items-center gap-3">
@@ -1490,7 +1490,7 @@ export default function UnidadeFixaDashboard({
                                  </p>
                                </div>
                             </div>
-                            <div className={`text-lg font-display font-black italic tracking-tighter ${tx.amount > 0 ? 'text-emerald-500' : 'text-theme-muted'}`}>
+                            <div className={`text-lg font-display font-black italic tracking-tighter ${tx.amount > 0 ? 'text-theme-brand' : 'text-theme-muted'}`}>
                                {tx.amount > 0 ? '+' : ''}{tx.amount}
                             </div>
                          </div>
@@ -1550,7 +1550,7 @@ export default function UnidadeFixaDashboard({
                     setCopied(true);
                     setTimeout(() => setCopied(false), 2000);
                   }}
-                  className="w-full flex items-center justify-center gap-4 py-4 bg-theme-bg-muted border border-theme-border text-[10px] font-bold uppercase tracking-widest hover:bg-theme-border transition-all "
+                  className="w-full flex items-center justify-center gap-4 py-4 bg-theme-bg-muted border border-theme-border text-[10px] font-bold uppercase tracking-widest hover:bg-theme-border transition-all"
                 >
                   {copied ? (
                     <><Check size={16} className="text-brand-tactical" /> Protocolo Copiado</>
@@ -1578,7 +1578,7 @@ export default function UnidadeFixaDashboard({
                     };
                     img.src = "data:image/svg+xml;base64," + btoa(unescape(encodeURIComponent(svgData)));
                   }}
-                  className="w-full flex items-center justify-center gap-4 py-4 bg-brand-tactical text-brand-text text-[10px] font-bold uppercase tracking-widest hover:brightness-110 transition-all "
+                  className="w-full flex items-center justify-center gap-4 py-4 bg-brand-tactical text-brand-text text-[10px] font-bold uppercase tracking-widest hover:brightness-110 transition-all"
                 >
                   <Download size={16} /> Exportar para Impressão
                 </button>

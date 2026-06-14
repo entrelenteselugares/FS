@@ -16,6 +16,8 @@
 - VENDA RÁPIDA
 - FOTO POINT
 - LIVE PRINT
+- BRASIL X MARROCOS - CASA DO BAIANO
+- DIA DE JOGO DO BRASIL
 - ABERTURA D COP 2026
 - NA LOJA
 - GELIN
@@ -36,7 +38,7 @@
 - **Botão:** `Minha Rede`
 - **Botão:** `Franquia Print`
 - **Botão:** `Meu Perfil`
-- **Botão:** `18`
+- **Botão:** `19`
 - **Botão:** `ENCERRAR SESSÃO`
 - **Botão:** `Encerrar Sessão`
 - **Botão:** `LISTA`
@@ -55,13 +57,6 @@ ATIVE O MONITOR DE IMPRESSÃO EM TEMPO REAL`
 
 ## 🔗 Links de Navegação
 
-- **COPA 2026
-PRÓXIMOS
-CANADÁ
-12/06 · 16:00
-GRP B
-BÓSNIA
-Ver Álbum →** -> `/album-torcida`
 - **VISITAR SITE** -> `/`
 - **Visitar Site** -> `/`
 - **FALAR COM MATRIZ** -> `https://wa.me/5519981150440`

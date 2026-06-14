@@ -13,33 +13,35 @@
 
 ## 🌟 Títulos e Seções Encontradas
 
-*Nenhum título H1/H2/H3 detectado.*
+- IMPRESSÃO (LAB)
 
 ## 🔘 Ações e Botões Disponíveis
 
 - **Botão:** `Visão Geral`
 - **Botão:** `Eventos
-9`
+10`
 - **Botão:** `Comercial`
 - **Botão:** `Rede`
 - **Botão:** `Marketing`
 - **Botão:** `Sistema`
-- **Botão:** `57`
+- **Botão:** `Financeiro`
+- **Botão:** `Configurações`
+- **Botão:** `Aprovações`
+- **Botão:** `Impressão (Lab)`
+- **Botão:** `Estoque`
+- **Botão:** `58`
 - **Botão:** `ENCERRAR SESSÃO`
-- **Botão:** `Eventos9`
+- **Botão:** `Eventos10`
 - **Botão:** `Encerrar Sessão`
+- **Botão:** `FILA DE PRODUÇÃO`
+- **Botão:** `ENGENHARIA DE ROI`
+- **Botão:** `ATIVOS / HARDWARE`
+- **Botão:** `FILTROS TÁTICOS`
 - **Botão:** `Eventos`
 - **Botão:** `Menu`
 
 ## 🔗 Links de Navegação
 
-- **COPA 2026
-PRÓXIMOS
-EUA
-12/06 · 22:00
-GRP D
-PARAGUAI
-Ver Álbum →** -> `/album-torcida`
 - **VISITAR SITE** -> `/`
 - **Visitar Site** -> `/`
 

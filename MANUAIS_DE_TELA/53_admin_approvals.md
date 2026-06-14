@@ -19,7 +19,7 @@
 
 - **Botão:** `Visão Geral`
 - **Botão:** `Eventos
-9`
+10`
 - **Botão:** `Comercial`
 - **Botão:** `Rede`
 - **Botão:** `Marketing`
@@ -29,9 +29,9 @@
 - **Botão:** `Aprovações`
 - **Botão:** `Impressão (Lab)`
 - **Botão:** `Estoque`
-- **Botão:** `57`
+- **Botão:** `58`
 - **Botão:** `ENCERRAR SESSÃO`
-- **Botão:** `Eventos9`
+- **Botão:** `Eventos10`
 - **Botão:** `Encerrar Sessão`
 - **Botão:** `VALIDAÇÃO DE EXPERIÊNCIA`
 - **Botão:** `APROVAÇÕES DE ACESSO`
@@ -40,13 +40,6 @@
 
 ## 🔗 Links de Navegação
 
-- **COPA 2026
-PRÓXIMOS
-CANADÁ
-12/06 · 16:00
-GRP B
-BÓSNIA
-Ver Álbum →** -> `/album-torcida`
 - **VISITAR SITE** -> `/`
 - **Visitar Site** -> `/`
 

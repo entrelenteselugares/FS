@@ -539,7 +539,7 @@ export default function VaultDetailPage() {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center p-3 md:p-6 text-center" style={{ background: T.bg, color: T.text }}>
         <Lock size={48} className="text-red-500/30 mb-4" />
-        <h1 className="text-2xl font-bold uppercase ">Álbum não encontrado</h1>
+        <h1 className="text-2xl font-bold uppercase">Álbum não encontrado</h1>
         <button onClick={() => navigate("/meus-albuns")} className="mt-6 text-brand-tactical font-bold uppercase tracking-widest text-[11px]">
           Voltar para meus álbuns
         </button>
@@ -553,7 +553,7 @@ export default function VaultDetailPage() {
   const isBlocked = vault.subscriptionStatus === "BLOCKED" || vault.subscriptionStatus === "EXPIRED";
 
   return (
-    <div className="min-h-screen font-sans flex flex-col" style={{ background: T.bg, color: T.text }}>
+    <div className="min-h-screen flex flex-col" style={{ background: T.bg, color: T.text }}>
       <Helmet>
         <title>{vault.nome || "Álbum"} | Meus Álbuns</title>
       </Helmet>
@@ -594,7 +594,7 @@ export default function VaultDetailPage() {
             {vault.myRole === "OWNER" && (
               <button 
                 onClick={() => setIsSettingsOpen(true)}
-                className="p-2 text-zinc-400 hover:text-white hover:bg-theme-bg-muted rounded-full transition-colors"
+                className="p-2 text-theme-muted hover:text-theme-text hover:bg-theme-bg-muted rounded-full transition-colors"
                 title="Configurações do Álbum"
               >
                 <Settings size={20} />
@@ -605,7 +605,7 @@ export default function VaultDetailPage() {
                 onClick={() => setIsPrintStoreOpen(true)}
                 className={`hidden md:flex fs-btn items-center justify-center gap-2 text-[10px] font-black uppercase tracking-widest px-5 transition-all shadow-lg ${
                   media.length >= vault.goalPoses 
-                    ? "fs-btn-primary text-black shadow-[0_0_20px_rgba(133,185,172,0.4)] animate-pulse border-2 border-brand-tactical" 
+                    ? "fs-btn-primary text-theme-text shadow-[0_0_20px_rgba(133,185,172,0.4)] animate-pulse border-2 border-brand-tactical" 
                     : "fs-btn-secondary"
                 }`}
               >
@@ -619,7 +619,7 @@ export default function VaultDetailPage() {
                 href={vault.externalVideoLink}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="hidden md:flex fs-btn items-center justify-center gap-2 bg-blue-500 hover:bg-blue-500 text-black border-2 border-blue-500 text-[10px] font-bold uppercase tracking-widest px-4 transition-all shadow-lg shadow-blue-500/20"
+                className="hidden md:flex fs-btn items-center justify-center gap-2 bg-blue-500 hover:bg-blue-500 text-theme-text border-2 border-blue-500 text-[10px] font-bold uppercase tracking-widest px-4 transition-all shadow-lg shadow-blue-500/20"
               >
                 <Video size={14} />
                 Acessar Vídeos Brutos
@@ -686,14 +686,14 @@ export default function VaultDetailPage() {
             <Lock size={40} className="text-red-500" />
           </div>
           <h2 className="text-3xl font-bold uppercase text-red-500 mb-4">Cofre Bloqueado</h2>
-          <p className="text-zinc-400 max-w-md mx-auto mb-8 text-[14px]">
+          <p className="text-theme-muted max-w-md mx-auto mb-8 text-[14px]">
             O período gratuito de 30 dias para o cofre <strong>{vault.nome}</strong> expirou. Suas fotos estão seguras, mas o acesso está suspenso. {vault.myRole === 'OWNER' ? 'Para reativar o cofre imediatamente, inicie uma assinatura.' : 'Fale com o proprietário do cofre para reativar o acesso.'}
           </p>
           {vault.myRole === 'OWNER' ? (
             <button 
               onClick={handleSubscribe}
               disabled={checkingOut}
-              className="bg-emerald-500 hover:bg-emerald-400 text-black font-bold uppercase tracking-widest text-[13px] px-5 md:px-10 py-4 rounded-full transition-all shadow-xl shadow-emerald-500/20 active:scale-95 flex items-center gap-2"
+              className="bg-emerald-500 hover:bg-emerald-400 text-theme-text font-bold uppercase tracking-widest text-[13px] px-5 md:px-10 py-4 rounded-full transition-all shadow-xl shadow-emerald-500/20 active:scale-95 flex items-center gap-2"
             >
               {checkingOut ? <Loader2 size={18} className="animate-spin" /> : <Zap size={18} fill="currentColor" />}
               Reativar Cofre Agora
@@ -713,18 +713,18 @@ export default function VaultDetailPage() {
                 <div className="bg-gradient-to-r from-emerald-600/20 to-teal-600/20 border border-emerald-500/30 rounded-2xl p-4 md:p-8 md:p-10 flex flex-col md:flex-row items-center justify-between gap-4 md:gap-8 backdrop-blur-md">
                   <div className="flex items-center gap-3 md:gap-6">
                     <div className="w-14 h-14 bg-brand-tactical rounded-full flex items-center justify-center shadow-[0_0_20px_rgba(133,185,172,0.4)]">
-                      <Printer className="text-black" size={24} />
+                      <Printer className="text-theme-text" size={24} />
                     </div>
                     <div>
-                      <h3 className="text-lg font-bold uppercase ">Imprimir Álbum</h3>
-                      <p className="text-[11px] text-zinc-400 uppercase tracking-widest leading-relaxed max-w-md">
-                        Materialize este álbum com as <span className="text-white font-bold">{vault.goalPoses} poses</span> selecionadas. Garanta a impressão em alta qualidade.
+                      <h3 className="text-lg font-bold uppercase">Imprimir Álbum</h3>
+                      <p className="text-[11px] text-theme-muted uppercase tracking-widest leading-relaxed max-w-md">
+                        Materialize este álbum com as <span className="text-theme-text font-bold">{vault.goalPoses} poses</span> selecionadas. Garanta a impressão em alta qualidade.
                       </p>
                     </div>
                   </div>
                   <button 
                     onClick={() => setIsPrintStoreOpen(true)}
-                    className="w-full md:w-auto bg-emerald-500 hover:bg-emerald-400 text-black font-bold uppercase tracking-widest text-[11px] px-4 md:px-8 py-3.5 rounded-full transition-all shadow-xl shadow-emerald-500/20 active:scale-95 flex items-center justify-center gap-2"
+                    className="w-full md:w-auto bg-emerald-500 hover:bg-emerald-400 text-theme-text font-bold uppercase tracking-widest text-[11px] px-4 md:px-8 py-3.5 rounded-full transition-all shadow-xl shadow-emerald-500/20 active:scale-95 flex items-center justify-center gap-2"
                   >
                     <Printer size={16} />
                     Materializar Álbum
@@ -741,10 +741,10 @@ export default function VaultDetailPage() {
                   </div>
                   <div>
                     <div className="flex items-center gap-2">
-                      <span className="text-[10px] font-bold uppercase ">Assinatura Ativa</span>
-                      <span className="px-2 py-0.5 bg-emerald-500 text-black text-[10px] font-bold rounded-full uppercase">Premium</span>
+                      <span className="text-[10px] font-bold uppercase">Assinatura Ativa</span>
+                      <span className="px-2 py-0.5 bg-emerald-500 text-theme-text text-[10px] font-bold rounded-full uppercase">Premium</span>
                     </div>
-                    <p className="text-[9px] text-zinc-500 uppercase tracking-widest">
+                    <p className="text-[9px] text-theme-muted uppercase tracking-widest">
                       Próximo ciclo: {vault.subscription.nextBillingDate ? new Date(vault.subscription.nextBillingDate).toLocaleDateString() : '—'}
                     </p>
                   </div>
@@ -776,8 +776,8 @@ export default function VaultDetailPage() {
               <Camera size={32} className="text-brand-tactical/50" />
               <input type="file" className="hidden" onChange={handleFileUpload} accept={vault.subscriptionStatus === "ACTIVE" ? "image/*,video/mp4,video/quicktime,video/webm" : "image/*"} multiple capture="environment" />
             </label>
-            <h2 className="text-xl font-bold uppercase text-gray-500">O álbum está vazio</h2>
-            <p className="text-[11px] text-gray-600 uppercase tracking-widest mt-2 max-w-[280px]">
+            <h2 className="text-xl font-bold uppercase text-theme-muted">O álbum está vazio</h2>
+            <p className="text-[11px] text-theme-muted uppercase tracking-widest mt-2 max-w-[280px]">
               Seja o primeiro a eternizar um momento neste álbum. Clique na câmera acima para enviar.
             </p>
           </div>
@@ -830,7 +830,7 @@ export default function VaultDetailPage() {
 
                   {/* Pending badge (visible only to owner) */}
                   {item.status === 'PENDING' && vault.myRole === 'OWNER' && (
-                    <div className="absolute top-2 left-2 z-20 px-2 py-0.5 bg-yellow-500 text-black text-[10px] font-bold uppercase tracking-widest rounded-full">
+                    <div className="absolute top-2 left-2 z-20 px-2 py-0.5 bg-yellow-500 text-theme-text text-[10px] font-bold uppercase tracking-widest rounded-full">
                       Pendente
                     </div>
                   )}
@@ -838,7 +838,7 @@ export default function VaultDetailPage() {
                   {/* Video Indicator */}
                   {item.type === 'VIDEO' && (
                     <div className="absolute inset-0 flex items-center justify-center z-10 pointer-events-none">
-                      <PlayCircle size={32} className="text-white/70 drop-shadow-lg" />
+                      <PlayCircle size={32} className="text-theme-text/70 drop-shadow-lg" />
                     </div>
                   )}
 
@@ -849,14 +849,14 @@ export default function VaultDetailPage() {
                       animate={{ scale: 1 }}
                       className="absolute top-2 right-2 md:top-3 md:right-3 w-8 h-8 bg-brand-tactical rounded-full shadow-[0_0_10px_rgba(133,185,172,0.5)] flex items-center justify-center z-20 shadow-lg"
                     >
-                      <Heart size={16} className="text-black" fill="currentColor" />
+                      <Heart size={16} className="text-theme-text" fill="currentColor" />
                     </motion.div>
                   )}
                   
                   {/* Bottom Action Bar */}
                   <div className={`absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 to-transparent p-3 flex items-center justify-between transition-opacity ${item.votedByMe ? 'opacity-100' : 'opacity-80 group-hover:opacity-100'}`}>
                     <div className="flex items-center gap-2">
-                      <div className={`flex items-center gap-1.5 transition-all ${ item.votedByMe ? 'text-brand-tactical' : 'text-white/80'}`}>
+                      <div className={`flex items-center gap-1.5 transition-all ${ item.votedByMe ? 'text-brand-tactical' : 'text-theme-text/80'}`}>
                         <Heart size={16} fill={item.votedByMe ? "currentColor" : "none"} />
                         <span className="text-[12px] font-bold">{item._count.votes}</span>
                       </div>
@@ -873,14 +873,14 @@ export default function VaultDetailPage() {
       {/* Immersive Mobile Bottom Nav */}
       <div className="fixed bottom-0 left-0 right-0 z-50 md:hidden bg-zinc-950/80 backdrop-blur-xl border-t border-white/10 pb-safe">
         <div className="flex items-center justify-between px-4 py-3">
-          <button onClick={() => navigate("/meus-albuns")} className="flex flex-col items-center gap-1 text-zinc-400 hover:text-brand-tactical transition-colors">
+          <button onClick={() => navigate("/meus-albuns")} className="flex flex-col items-center gap-1 text-theme-muted hover:text-brand-tactical transition-colors">
             <ChevronLeft size={20} />
             <span className="text-[9px] font-bold uppercase tracking-widest">Voltar</span>
           </button>
 
           <button 
             onClick={() => setIsServiceStoreOpen(true)}
-            className="flex flex-col items-center gap-1 text-zinc-400 hover:text-brand-tactical transition-colors ml-2"
+            className="flex flex-col items-center gap-1 text-theme-muted hover:text-brand-tactical transition-colors ml-2"
           >
             <Layers size={20} />
             <span className="text-[9px] font-bold uppercase tracking-widest text-center">Serviços</span>
@@ -890,14 +890,14 @@ export default function VaultDetailPage() {
             onClick={() => setIsPrintStoreOpen(true)}
             className={`flex-1 max-w-[220px] mx-4 rounded-full py-3 px-4 flex items-center justify-center gap-2 shadow-xl transition-all active:scale-95 disabled:opacity-50 ${
               media.filter(m => m.votedByMe).length > 0
-                ? "bg-emerald-500 text-black shadow-emerald-500/40"
+                ? "bg-emerald-500 text-theme-text shadow-emerald-500/40"
                 : media.length >= vault.goalPoses
-                  ? "bg-emerald-500/50 text-white"
-                  : "bg-zinc-800 text-gray-400"
+                  ? "bg-emerald-500/50 text-theme-text"
+                  : "bg-zinc-800 text-theme-muted"
             }`}
           >
             {media.some(m => m.votedByMe) ? (
-              <Heart size={18} fill="currentColor" className="text-black" />
+              <Heart size={18} fill="currentColor" className="text-theme-text" />
             ) : (
               <Printer size={18} />
             )}
@@ -922,7 +922,7 @@ export default function VaultDetailPage() {
             </a>
           )}
 
-          <label className="flex flex-col items-center gap-1 text-zinc-400 hover:text-brand-tactical transition-colors cursor-pointer">
+          <label className="flex flex-col items-center gap-1 text-theme-muted hover:text-brand-tactical transition-colors cursor-pointer">
             <Upload size={20} />
             <span className="text-[9px] font-bold uppercase tracking-widest">Enviar</span>
             <input type="file" className="hidden" onChange={handleFileUpload} accept={vault.subscriptionStatus === "ACTIVE" ? "image/*,video/mp4,video/quicktime,video/webm" : "image/*"} multiple capture="environment" />
@@ -972,7 +972,7 @@ export default function VaultDetailPage() {
             {/* Prev Button */}
             <button
               onClick={(e) => handleNavigateMedia('prev', e)}
-              className="absolute left-2 md:left-10 z-[210] p-2 md:p-4 bg-white/10 hover:bg-white/20 border border-white/20 hover:border-white/50 text-white rounded-full backdrop-blur-md transition-all shadow-xl"
+              className="absolute left-2 md:left-10 z-[210] p-2 md:p-4 bg-white/10 hover:bg-white/20 border border-white/20 hover:border-white/50 text-theme-text rounded-full backdrop-blur-md transition-all shadow-xl"
             >
               <ChevronLeft size={32} />
             </button>
@@ -980,7 +980,7 @@ export default function VaultDetailPage() {
             {/* Next Button */}
             <button
               onClick={(e) => handleNavigateMedia('next', e)}
-              className="absolute right-2 md:right-10 z-[210] p-2 md:p-4 bg-white/10 hover:bg-white/20 border border-white/20 hover:border-white/50 text-white rounded-full backdrop-blur-md transition-all shadow-xl"
+              className="absolute right-2 md:right-10 z-[210] p-2 md:p-4 bg-white/10 hover:bg-white/20 border border-white/20 hover:border-white/50 text-theme-text rounded-full backdrop-blur-md transition-all shadow-xl"
             >
               <ChevronRight size={32} />
             </button>
@@ -997,14 +997,14 @@ export default function VaultDetailPage() {
                 <button 
                   onClick={handleDownloadSingle}
                   disabled={downloadingSingle}
-                  className="text-white/60 hover:text-white transition-colors flex items-center gap-2"
+                  className="text-theme-text/60 hover:text-theme-text transition-colors flex items-center gap-2"
                 >
                   {downloadingSingle ? <Loader2 size={20} className="animate-spin" /> : <Download size={20} />}
                   <span className="text-[10px] font-bold uppercase tracking-widest hidden md:inline">Baixar</span>
                 </button>
                 <button 
                   onClick={() => setSelectedPhoto(null)}
-                  className="text-white/60 hover:text-white transition-colors flex items-center gap-2"
+                  className="text-theme-text/60 hover:text-theme-text transition-colors flex items-center gap-2"
                 >
                   <Share2 size={20} className="rotate-45" />
                   <span className="text-[10px] font-bold uppercase tracking-widest hidden md:inline">Fechar</span>
@@ -1041,14 +1041,14 @@ export default function VaultDetailPage() {
                   <div className="absolute top-3 right-3 flex flex-col gap-2">
                     <button
                       onClick={(e) => { e.stopPropagation(); handleRotateMedia(selectedPhoto.id, 'LEFT'); }}
-                      className="p-2 bg-black/60 hover:bg-black text-white rounded-full transition-all"
+                      className="p-2 bg-black/60 hover:bg-black text-theme-text rounded-full transition-all"
                       title="Rotacionar para a esquerda"
                     >
                       <RotateCcw size={16} />
                     </button>
                     <button
                       onClick={(e) => { e.stopPropagation(); handleRotateMedia(selectedPhoto.id, 'RIGHT'); }}
-                      className="p-2 bg-black/60 hover:bg-black text-white rounded-full transition-all"
+                      className="p-2 bg-black/60 hover:bg-black text-theme-text rounded-full transition-all"
                       title="Rotacionar para a direita"
                     >
                       <RotateCw size={16} />
@@ -1062,7 +1062,7 @@ export default function VaultDetailPage() {
                 <button 
                   onClick={() => { handleVote(selectedPhoto.id); setSelectedPhoto(prev => prev ? { ...prev, votedByMe: !prev.votedByMe, _count: { votes: prev.votedByMe ? prev._count.votes - 1 : prev._count.votes + 1 } } : null); }}
                   className={`flex items-center gap-2 px-5 py-2.5 rounded-full font-black uppercase tracking-wider text-[11px] transition-all whitespace-nowrap ${
-                    selectedPhoto.votedByMe ? 'bg-emerald-500 text-black' : 'bg-white/10 text-white hover:bg-white/20 border border-white/20'
+                    selectedPhoto.votedByMe ? 'bg-emerald-500 text-theme-text' : 'bg-white/10 text-theme-text hover:bg-white/20 border border-white/20'
                   }`}
                 >
                   <Heart size={15} fill={selectedPhoto.votedByMe ? "currentColor" : "none"} />
@@ -1075,15 +1075,15 @@ export default function VaultDetailPage() {
                       onClick={() => handleApproveMedia(selectedPhoto.id, selectedPhoto.status || 'PENDING')}
                       className={`flex items-center gap-2 px-5 py-2.5 rounded-full font-black uppercase tracking-wider text-[11px] transition-all whitespace-nowrap ${
                         selectedPhoto.status === 'APPROVED'
-                          ? 'bg-emerald-500/30 text-emerald-400 border border-emerald-500/40'
-                          : 'bg-yellow-500 text-black hover:bg-yellow-400'
+                          ? 'bg-emerald-500/30 text-theme-brand border border-emerald-500/40'
+                          : 'bg-yellow-500 text-theme-text hover:bg-yellow-400'
                       }`}
                     >
                       {selectedPhoto.status === 'APPROVED' ? '✓ Aprovada' : '✓ Aprovar'}
                     </button>
                     <button
                       onClick={() => handleDeleteMedia(selectedPhoto.id)}
-                      className="flex items-center gap-2 px-5 py-2.5 rounded-full font-bold uppercase tracking-wider text-[11px] bg-red-500/80 hover:bg-red-500 text-white transition-all whitespace-nowrap"
+                      className="flex items-center gap-2 px-5 py-2.5 rounded-full font-bold uppercase tracking-wider text-[11px] bg-red-500/80 hover:bg-red-500 text-theme-text transition-all whitespace-nowrap"
                     >
                       🗑 Excluir
                     </button>
@@ -1093,8 +1093,8 @@ export default function VaultDetailPage() {
 
               {/* ── Info: enviada por ── */}
               <div className="text-center shrink-0 pt-2 pb-1">
-                <p className="text-white/40 text-[10px] font-bold uppercase tracking-[0.2em]">Enviada por {selectedPhoto.uploadedBy.nome}</p>
-                <p className="text-white/20 text-[9px] uppercase mt-0.5">{new Date(selectedPhoto.createdAt).toLocaleDateString()}</p>
+                <p className="text-theme-text/40 text-[10px] font-bold uppercase tracking-[0.2em]">Enviada por {selectedPhoto.uploadedBy.nome}</p>
+                <p className="text-theme-text/20 text-[9px] uppercase mt-0.5">{new Date(selectedPhoto.createdAt).toLocaleDateString()}</p>
               </div>
             </motion.div>
           </motion.div>

@@ -95,6 +95,12 @@ O crescimento exigiu adaptações críticas à infraestrutura serverless origina
 
 Composição vetorial em iframe invisível no navegador para impressão de molduras nativas em papel fotográfico (ex: Epson L5290). Integração via PWA (`capture="environment"`) permite acesso direto à câmera nativa do device, transformando a web-app em uma experiência sem fricção.
 
+### 🔄 Camera Stories & Background Upload (Phase 72)
+
+Motor de processamento de fotos em segundo plano para o Phygital Capture (Stories-like). 
+- **Non-Blocking Capture:** O usuário não é bloqueado por telas de loading; as fotos caem imediatamente numa fila visual na parte inferior da tela e são despachadas paralelamente.
+- **Offline Queue Persistence:** Integração com **IndexedDB** garante que capturas em locais sem internet não sejam perdidas. O upload é retomado automaticamente (Global Background Upload) ao reabrir o PWA ou trocar de aba.
+
 ### 💰 Growth Engine — Cupom & Afiliado
 
 Rastreamento de conversão via cookie `fs_referral`. Se o preço cai para R$0 com cupom, ocorre o bypass imediato do MercadoPago gerando order FREE.

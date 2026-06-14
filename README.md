@@ -45,7 +45,7 @@ npm run dev
 
 ### 1. Phygital Capture & Live Print
 
-Real-time syncing from camera devices directly to event galleries and print stations.
+Real-time syncing from camera devices directly to event galleries and print stations. A nova versão (v15.0) inclui **Offline Queue Persistence (IndexedDB) e Non-Blocking Background Uploads**, garantindo que a captura (Stories-like) funcione sem telas de loading, mesmo sem sinal 4G/Wi-Fi, retomando automaticamente.
 
 ```bash
 POST /api/marketplace/events/:eventId/sync-drive

@@ -222,17 +222,17 @@ export default function PrintMonitor() {
   }
 
   return (
-    <div className="min-h-screen bg-theme-bg text-theme-text font-sans selection:bg-brand-tactical/30">
+    <div className="min-h-screen bg-theme-bg text-theme-text selection:bg-brand-tactical/30">
       <div className="print:hidden">
         {/* Header Fixo */}
         <div className="sticky top-0 z-50 bg-zinc-950/80 backdrop-blur-xl border-b border-theme-border px-4 md:px-6 py-4 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
         <div className="flex items-center gap-4 md:gap-6 w-full md:w-auto justify-between md:justify-start">
-          <button onClick={() => navigate(-1)} className="p-2 hover:bg-theme-bg-muted rounded-full transition-all text-zinc-400 hover:text-white">
+          <button onClick={() => navigate(-1)} className="p-2 hover:bg-theme-bg-muted rounded-full transition-all text-theme-muted hover:text-theme-text">
             <ArrowLeft size={20} />
           </button>
           <div>
             <h1 className="text-sm font-bold uppercase tracking-widest">{event?.title || 'Radar Phygital'}</h1>
-            <p className="text-[9px] text-zinc-500 font-bold uppercase tracking-widest mt-0.5">Central de Comando de Impressão</p>
+            <p className="text-[9px] text-theme-muted font-bold uppercase tracking-widest mt-0.5">Central de Comando de Impressão</p>
           </div>
         </div>
 
@@ -267,7 +267,7 @@ export default function PrintMonitor() {
           />
           <button 
             onClick={() => document.getElementById('manual-upload')?.click()}
-            className="hidden md:flex items-center gap-2 px-3 md:px-6 py-2.5 rounded-full text-[9px] font-bold uppercase tracking-widest bg-brand-tactical text-white border border-brand-tactical hover:brightness-110 transition-all"
+            className="hidden md:flex items-center gap-2 px-3 md:px-6 py-2.5 rounded-full text-[9px] font-bold uppercase tracking-widest bg-brand-tactical text-theme-text border border-brand-tactical hover:brightness-110 transition-all"
           >
             <ExternalLink size={12} /> Enviar Fotos
           </button>
@@ -288,7 +288,7 @@ export default function PrintMonitor() {
             className={`flex items-center gap-2 px-3 md:px-6 py-2.5 rounded-full text-[9px] font-black uppercase tracking-widest transition-all ${
               autoPrint 
                 ? 'bg-brand-tactical text-zinc-950 shadow-[0_0_15px_rgba(133,185,172,0.4)] ring-2 ring-brand-tactical/50' 
-                : 'bg-theme-bg-muted hover:bg-white/10 text-white/90'
+                : 'bg-theme-bg-muted hover:bg-white/10 text-theme-text/90'
             }`}
           >
             <Play size={12} /> Auto-Print {autoPrint ? 'ON' : 'OFF'}
@@ -298,7 +298,7 @@ export default function PrintMonitor() {
       
       {/* Barra de Configurações de Impressão */}
       <div className="print:hidden border-b border-theme-border bg-zinc-950/50 py-2 px-4 md:px-6 flex flex-wrap items-center gap-3 overflow-x-auto text-[9px] font-bold uppercase tracking-widest">
-        <span className="text-zinc-500 mr-2 flex-shrink-0">Configurações de Impressão:</span>
+        <span className="text-theme-muted mr-2 flex-shrink-0">Configurações de Impressão:</span>
         
         <div className="flex-shrink-0 flex items-center gap-2 bg-theme-bg border border-theme-border p-1 rounded-full">
             <select 
@@ -399,7 +399,7 @@ export default function PrintMonitor() {
         <div className="space-y-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
-              <h2 className="text-lg font-bold uppercase ">Fila de Operação</h2>
+              <h2 className="text-lg font-bold uppercase">Fila de Operação</h2>
               {selected.length > 0 && (
                 <button
                   onClick={handlePrintSelected}
@@ -410,15 +410,15 @@ export default function PrintMonitor() {
                 </button>
               )}
             </div>
-            <button onClick={fetchPrints} className="p-2 text-zinc-500 hover:text-brand-tactical transition-all">
+            <button onClick={fetchPrints} className="p-2 text-theme-muted hover:text-brand-tactical transition-all">
               <RefreshCw size={16} className={loading ? 'animate-spin' : ''} />
             </button>
           </div>
 
           {prints.length === 0 ? (
-            <div className="py-20 border  border-theme-border rounded-2xl flex flex-col items-center justify-center gap-4">
-              <Printer size={48} className="text-zinc-800" />
-              <p className="text-[10px] font-bold text-zinc-600 uppercase tracking-[0.3em]">Aguardando Capturas Phygital...</p>
+            <div className="py-20 border border-theme-border rounded-2xl flex flex-col items-center justify-center gap-4">
+              <Printer size={48} className="text-theme-text" />
+              <p className="text-[10px] font-bold text-theme-muted uppercase tracking-[0.3em]">Aguardando Capturas Phygital...</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6">
@@ -444,7 +444,7 @@ export default function PrintMonitor() {
                   <div className="absolute top-3 left-3 z-20">
                     {isSelected ? (
                       <div className="w-6 h-6 rounded-full bg-brand-tactical flex items-center justify-center shadow-md shadow-brand-tactical/40 ring-2 ring-white/30">
-                        <Check size={12} className="text-white" strokeWidth={3} />
+                        <Check size={12} className="text-theme-text" strokeWidth={3} />
                       </div>
                     ) : (
                       <div className="w-6 h-6 rounded-full border-2 border-white/40 bg-black/30 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200">
@@ -467,11 +467,11 @@ export default function PrintMonitor() {
                   <div className="p-5 space-y-4">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-[11px] font-bold uppercase ">{print.customerName || 'Convidado'}</p>
-                        <p className="text-[10px] text-zinc-500 uppercase font-bold mt-0.5">{new Date(print.createdAt).toLocaleTimeString()}</p>
+                        <p className="text-[11px] font-bold uppercase">{print.customerName || 'Convidado'}</p>
+                        <p className="text-[10px] text-theme-muted uppercase font-bold mt-0.5">{new Date(print.createdAt).toLocaleTimeString()}</p>
                       </div>
                       {print.status === 'PRINTED' ? (
-                        <CheckCircle2 size={16} className="text-emerald-500" />
+                        <CheckCircle2 size={16} className="text-theme-brand" />
                       ) : (
                         <div className="flex items-center gap-2">
                            <div className="w-2 h-2 rounded-full bg-brand-tactical animate-pulse" />
@@ -482,7 +482,7 @@ export default function PrintMonitor() {
 
                     <button 
                       onClick={() => handlePrint(print)}
-                      className={`w-full py-3 text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-2 transition-all ${print.status === 'PRINTED' ? 'bg-theme-border text-zinc-400' : 'bg-brand-tactical text-zinc-950 hover:brightness-110 shadow-lg shadow-brand-tactical/20'}`}
+                      className={`w-full py-3 text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-2 transition-all ${print.status === 'PRINTED' ? 'bg-theme-border text-theme-muted' : 'bg-brand-tactical text-zinc-950 hover:brightness-110 shadow-lg shadow-brand-tactical/20'}`}
                     >
                       <Printer size={14} />
                       {print.status === 'PRINTED' ? 'REIMPRIMIR' : 'IMPRIMIR AGORA'}
@@ -501,7 +501,7 @@ export default function PrintMonitor() {
           <div className="bg-theme-card border border-theme-border p-4 md:p-8 md:p-12 max-w-md w-full relative flex flex-col items-center text-center gap-4 md:gap-8 shadow-2xl" style={{ margin: "auto" }}>
             <button 
               onClick={() => setShowQR(false)}
-              className="absolute top-6 right-6 p-2 text-zinc-500 hover:text-white transition-all bg-theme-bg-muted rounded-full"
+              className="absolute top-6 right-6 p-2 text-theme-muted hover:text-theme-text transition-all bg-theme-bg-muted rounded-full"
             >
               <X size={20} />
             </button>
@@ -509,9 +509,9 @@ export default function PrintMonitor() {
             <div className="space-y-3">
               <div className="flex items-center justify-center gap-3 mb-2">
                 <div className="w-2 h-2 rounded-full bg-brand-tactical animate-pulse" />
-                <h3 className="text-2xl font-bold uppercase " style={{ fontFamily: T.fontD, color: T.text }}>Captura ao Vivo</h3>
+                <h3 className="text-2xl font-bold uppercase" style={{ fontFamily: T.fontD, color: T.text }}>Captura ao Vivo</h3>
               </div>
-              <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-[0.3em]">Aponte a câmera para enviar fotos</p>
+              <p className="text-[10px] text-theme-muted font-bold uppercase tracking-[0.3em]">Aponte a câmera para enviar fotos</p>
             </div>
             
             <div className="p-3 md:p-6 bg-white rounded-3xl shadow-2xl shadow-brand-tactical/10">
@@ -527,8 +527,8 @@ export default function PrintMonitor() {
               </button>
 
               <div className="space-y-3">
-                <p className="text-[9px] font-bold text-zinc-600 uppercase tracking-[0.4em] ">Sua Foto Impressa na Hora</p>
-                <p className="text-[11px] text-zinc-400 font-medium leading-relaxed">As fotos enviadas aparecem instantaneamente na nossa estação de comando.</p>
+                <p className="text-[9px] font-bold text-theme-muted uppercase tracking-[0.4em]">Sua Foto Impressa na Hora</p>
+                <p className="text-[11px] text-theme-muted font-medium leading-relaxed">As fotos enviadas aparecem instantaneamente na nossa estação de comando.</p>
               </div>
             </div>
           </div>

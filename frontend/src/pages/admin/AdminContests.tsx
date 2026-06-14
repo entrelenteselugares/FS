@@ -208,7 +208,7 @@ export const AdminContests: React.FC = () => {
         {loading ? (
           <div className="py-24 text-center border border-theme-border bg-theme-bg animate-pulse text-[10px] text-theme-muted uppercase tracking-[0.5em] font-bold rounded-2xl">Sincronizando Concursos da Rede...</div>
         ) : contests.length === 0 ? (
-          <div className="py-20 text-center text-[10px] text-zinc-700 uppercase tracking-widest border border-theme-border bg-black/10 ">Nenhum concurso programado.</div>
+          <div className="py-20 text-center text-[10px] text-theme-text uppercase tracking-widest border border-theme-border bg-black/10">Nenhum concurso programado.</div>
         ) : (
           contests.map(c => (
             <div key={c.id} className="border border-theme-border p-5 bg-theme-bg group hover:border-brand-tactical/30 transition-all shadow-sm rounded-2xl">
@@ -222,7 +222,7 @@ export const AdminContests: React.FC = () => {
                     }`}>
                       {c.status === 'ACTIVE' ? 'ATIVO' : c.status === 'FINISHED' ? 'FINALIZADO' : 'RASCUNHO'}
                     </span>
-                    <h3 className="text-lg font-bold text-theme-text uppercase ">{c.title}</h3>
+                    <h3 className="text-lg font-bold text-theme-text uppercase">{c.title}</h3>
                   </div>
                   <div className="text-[9px] text-theme-muted font-bold uppercase tracking-[0.1em] flex gap-4">
                     <span>DE: {new Date(c.startDate).toLocaleDateString()}</span>
@@ -304,14 +304,14 @@ export const AdminContests: React.FC = () => {
             {/* Content */}
             <form id="contest-form" onSubmit={handleCreate} className="flex-1 overflow-y-auto p-4 md:p-8 md:p-10 space-y-8 custom-scrollbar">
               <div className="space-y-2">
-                <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest block mb-2 opacity-60 ">Título da Campanha</label>
+                <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest block mb-2 opacity-60">Título da Campanha</label>
                 <input required className="w-full bg-theme-bg-muted border border-theme-border p-4 text-[11px] text-theme-text font-bold outline-none focus:border-brand-tactical rounded-xl uppercase placeholder:opacity-20" value={formData.title} onChange={e => setFormData({...formData, title: e.target.value.toUpperCase()})} placeholder="EX: CORRIDA DOS 10 ÁLBUNS" />
               </div>
 
               {/* DINÂMICA / META */}
               <div className="p-4 md:p-8 bg-brand-tactical/10 border border-brand-tactical/20 rounded-[30px] space-y-6">
                 <div className="space-y-2">
-                  <label className="text-[10px] font-bold text-brand-tactical uppercase tracking-widest block mb-1 ">Estilo da Dinâmica (Meta Tática)</label>
+                  <label className="text-[10px] font-bold text-brand-tactical uppercase tracking-widest block mb-1">Estilo da Dinâmica (Meta Tática)</label>
                   <select 
                     className="w-full bg-transparent border-b border-brand-tactical/40 p-4 text-xs font-bold text-theme-text outline-none focus:border-brand-tactical cursor-pointer uppercase appearance-none"
                     value={dynamicType}
@@ -328,7 +328,7 @@ export const AdminContests: React.FC = () => {
 
                 {dynamicType !== 'CITY_EVENT' && dynamicType !== 'CUSTOM' && (
                   <div className="space-y-2">
-                    <label className="text-[10px] font-bold text-brand-tactical uppercase tracking-widest block mb-1 ">Quantidade Alvo (KPIS)</label>
+                    <label className="text-[10px] font-bold text-brand-tactical uppercase tracking-widest block mb-1">Quantidade Alvo (KPIS)</label>
                     <input 
                       type="number" 
                       required 
@@ -341,7 +341,7 @@ export const AdminContests: React.FC = () => {
 
                 {dynamicType === 'CUSTOM' && (
                   <div className="space-y-2">
-                    <label className="text-[10px] font-bold text-brand-tactical uppercase tracking-widest block mb-1 ">Regra Operacional da Meta</label>
+                    <label className="text-[10px] font-bold text-brand-tactical uppercase tracking-widest block mb-1">Regra Operacional da Meta</label>
                     <textarea 
                       required 
                       className="w-full bg-transparent border-b border-brand-tactical/40 p-4 text-[11px] font-bold text-theme-text outline-none focus:border-brand-tactical h-24 resize-none uppercase" 
@@ -355,30 +355,30 @@ export const AdminContests: React.FC = () => {
 
               <div className="grid grid-cols-2 gap-4 md:gap-8">
                 <div className="space-y-2">
-                  <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest block mb-2 opacity-60 ">Início da Operação</label>
+                  <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest block mb-2 opacity-60">Início da Operação</label>
                   <input type="date" required className="w-full bg-theme-bg-muted border border-theme-border p-4 text-[11px] text-theme-text font-bold outline-none focus:border-brand-tactical rounded-xl [color-scheme:dark]" value={formData.startDate} onChange={e => setFormData({...formData, startDate: e.target.value})} />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest block mb-2 opacity-60 ">Encerramento</label>
+                  <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest block mb-2 opacity-60">Encerramento</label>
                   <input type="date" required className="w-full bg-theme-bg-muted border border-theme-border p-4 text-[11px] text-theme-text font-bold outline-none focus:border-brand-tactical rounded-xl [color-scheme:dark]" value={formData.endDate} onChange={e => setFormData({...formData, endDate: e.target.value})} />
                 </div>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8 pt-8 border-t border-theme-border">
                 <div className="space-y-2">
-                  <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest block mb-2 opacity-60 ">Recompensa: 1º Lugar</label>
+                  <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest block mb-2 opacity-60">Recompensa: 1º Lugar</label>
                   <input className="w-full bg-theme-bg-muted border border-theme-border p-4 text-[11px] text-theme-text font-bold outline-none focus:border-brand-tactical rounded-xl uppercase placeholder:opacity-20" value={formData.prize1st} onChange={e => setFormData({...formData, prize1st: e.target.value.toUpperCase()})} placeholder="EX: 3 FOTOS IMPRESSAS" />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest block mb-2 opacity-60 ">Pontos Bônus de Ranking</label>
-                  <input type="number" className="w-full bg-theme-bg-muted border border-theme-border p-4 text-[11px] text-emerald-500 font-bold outline-none focus:border-brand-tactical rounded-xl" value={formData.prize1stPts} onChange={e => setFormData({...formData, prize1stPts: Number(e.target.value)})} />
+                  <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest block mb-2 opacity-60">Pontos Bônus de Ranking</label>
+                  <input type="number" className="w-full bg-theme-bg-muted border border-theme-border p-4 text-[11px] text-theme-brand font-bold outline-none focus:border-brand-tactical rounded-xl" value={formData.prize1stPts} onChange={e => setFormData({...formData, prize1stPts: Number(e.target.value)})} />
                 </div>
               </div>
             </form>
 
             {/* Footer */}
             <div className="p-4 md:p-8 md:p-10 bg-theme-bg-muted border-t border-theme-border flex gap-4 shrink-0 rounded-2xl">
-              <button onClick={() => setShowModal(false)} className="flex-1 py-5 border border-theme-border text-[11px] font-bold uppercase tracking-[0.3em] text-theme-muted hover:text-white transition-all rounded-[20px] ">Cancelar</button>
+              <button onClick={() => setShowModal(false)} className="flex-1 py-5 border border-theme-border text-[11px] font-bold uppercase tracking-[0.3em] text-theme-muted hover:text-theme-text transition-all rounded-[20px]">Cancelar</button>
               <button 
                 type="submit" form="contest-form"                className="flex-[2] py-5 bg-brand-tactical text-zinc-950 text-[11px] font-bold uppercase tracking-[0.3em] shadow-2xl shadow-brand-tactical/20 hover:brightness-110 transition-all rounded-[20px] flex items-center justify-center gap-4"
               >

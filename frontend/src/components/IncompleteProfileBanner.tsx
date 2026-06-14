@@ -16,7 +16,7 @@ export const IncompleteProfileBanner: React.FC = () => {
         initial={{ height: 0, opacity: 0 }}
         animate={{ height: 'auto', opacity: 1 }}
         exit={{ height: 0, opacity: 0 }}
-        className="bg-blue-500 text-white px-4 py-2 flex flex-col md:flex-row items-center justify-center gap-2 md:gap-4 relative overflow-hidden shadow-lg z-50"
+        className="bg-blue-500 text-theme-text px-4 py-2 flex flex-col md:flex-row items-center justify-center gap-2 md:gap-4 relative overflow-hidden shadow-lg z-50"
       >
         <div className="flex items-center gap-2">
           <AlertCircle size={16} className="shrink-0" />

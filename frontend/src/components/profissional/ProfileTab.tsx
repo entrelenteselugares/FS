@@ -74,20 +74,20 @@ export function ProfileTab({ profile, onUpdated, onNotify }: ProfileTabProps) {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-4">
-            <h2 className="text-2xl sm:text-3xl font-bold text-theme-text uppercase ">Meu Perfil</h2>
+            <h2 className="text-2xl sm:text-3xl font-bold text-theme-text uppercase">Meu Perfil</h2>
             {profile.user?.isVerified && (
               <div className="px-3 py-1 bg-brand-tactical/10 border border-brand-tactical/30 rounded-full flex items-center gap-2">
                 <ShieldCheck size={12} className="text-brand-tactical" />
-                <span className="text-[9px] font-bold text-brand-tactical uppercase tracking-widest ">PRO VERIFICADO</span>
+                <span className="text-[9px] font-bold text-brand-tactical uppercase tracking-widest">PRO VERIFICADO</span>
               </div>
             )}
           </div>
-          <p className="text-[10px] text-theme-muted uppercase tracking-[0.4em] mt-1 font-bold ">Gerenciamento de Identidade e Ativos Técnicos</p>
+          <p className="text-[10px] text-theme-muted uppercase tracking-[0.4em] mt-1 font-bold">Gerenciamento de Identidade e Ativos Técnicos</p>
         </div>
         
         <div className="bg-theme-bg-muted border border-theme-border rounded-xl px-4 py-2 flex flex-col items-end shadow-sm">
           <span className="text-[9px] font-bold text-theme-text-muted uppercase tracking-widest">Visualizações do Perfil</span>
-          <span className="text-xl font-bold text-brand-tactical ">{profile.profileViews || 0}</span>
+          <span className="text-xl font-bold text-brand-tactical">{profile.profileViews || 0}</span>
         </div>
       </div>
 
@@ -136,7 +136,7 @@ export function ProfileTab({ profile, onUpdated, onNotify }: ProfileTabProps) {
           {/* Dados Principais */}
           <div className="bg-theme-bg-muted border border-theme-border rounded-xl p-5 shadow-sm space-y-4">
             <div className="flex items-center gap-2 text-brand-tactical border-b border-theme-border/50 pb-2">
-              <span className="text-[10px] font-bold uppercase tracking-[0.2em] ">Dados Principais</span>
+              <span className="text-[10px] font-bold uppercase tracking-[0.2em]">Dados Principais</span>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -175,7 +175,7 @@ export function ProfileTab({ profile, onUpdated, onNotify }: ProfileTabProps) {
                     value={formData.experienceYears || ""}
                     onChange={(e) => setFormData({ ...formData, experienceYears: e.target.value === "" ? 0 : Number(e.target.value) })}
                   />
-                  <div className="absolute right-3 top-1/2 -translate-y-1/2 text-[9px] font-bold text-theme-muted/50 uppercase ">Anos</div>
+                  <div className="absolute right-3 top-1/2 -translate-y-1/2 text-[9px] font-bold text-theme-muted/50 uppercase">Anos</div>
                 </div>
               </div>
             </div>
@@ -239,7 +239,7 @@ export function ProfileTab({ profile, onUpdated, onNotify }: ProfileTabProps) {
           {/* Endereço & Atuação */}
           <div className="bg-theme-bg-muted border border-theme-border rounded-xl p-5 shadow-sm space-y-4">
             <div className="flex items-center gap-2 text-brand-tactical border-b border-theme-border/50 pb-2">
-              <span className="text-[10px] font-bold uppercase tracking-[0.2em] ">Base & Endereço</span>
+              <span className="text-[10px] font-bold uppercase tracking-[0.2em]">Base & Endereço</span>
             </div>
 
             <div className="grid grid-cols-6 gap-2.5">
@@ -378,7 +378,7 @@ export function ProfileTab({ profile, onUpdated, onNotify }: ProfileTabProps) {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             <div className="bg-theme-bg-muted border border-theme-border rounded-xl p-5 shadow-sm space-y-4">
               <div className="flex items-center gap-2 text-brand-tactical border-b border-theme-border/50 pb-2">
-                <span className="text-[10px] font-bold uppercase tracking-[0.2em] ">Especialidades</span>
+                <span className="text-[10px] font-bold uppercase tracking-[0.2em]">Especialidades</span>
               </div>
               <div className="grid grid-cols-2 gap-2">
                 {["FOTO", "VÍDEO", "EDIÇÃO", "IMPRESSÃO"].map((s) => {
@@ -400,7 +400,7 @@ export function ProfileTab({ profile, onUpdated, onNotify }: ProfileTabProps) {
 
             <div className="bg-theme-bg-muted border border-theme-border rounded-xl p-5 shadow-sm space-y-4">
               <div className="flex items-center gap-2 text-brand-tactical border-b border-theme-border/50 pb-2">
-                <span className="text-[10px] font-bold uppercase tracking-[0.2em] ">Qualificações Extras</span>
+                <span className="text-[10px] font-bold uppercase tracking-[0.2em]">Qualificações Extras</span>
               </div>
               <textarea
                 className="w-full bg-theme-bg border border-theme-border rounded-lg p-3 text-xs text-theme-text min-h-[92px] resize-none focus:border-brand-tactical/40"
@@ -416,7 +416,7 @@ export function ProfileTab({ profile, onUpdated, onNotify }: ProfileTabProps) {
         <div className="lg:col-span-5 flex flex-col gap-5">
           <div className="flex-1 bg-theme-bg-muted border border-theme-border rounded-xl p-5 shadow-sm flex flex-col relative overflow-hidden min-h-[400px]">
             <div className="flex justify-between items-center border-b border-theme-border/50 pb-3 mb-4">
-              <span className="text-[10px] font-bold text-brand-tactical uppercase tracking-[0.2em] ">Inventário Técnico</span>
+              <span className="text-[10px] font-bold text-brand-tactical uppercase tracking-[0.2em]">Inventário Técnico</span>
               <button
                 onClick={addEquipment}
                 className="px-2.5 py-1.5 bg-brand-tactical/10 border border-brand-tactical/30 rounded-md text-brand-tactical text-[10px] font-bold uppercase tracking-widest hover:bg-brand-tactical hover:text-brand-text transition-all"
@@ -460,7 +460,7 @@ export function ProfileTab({ profile, onUpdated, onNotify }: ProfileTabProps) {
 
             <div className="pt-4 mt-4 border-t border-theme-border/50 flex justify-between items-center">
               <span className="text-[9px] font-bold text-theme-muted uppercase tracking-[0.2em]">Patrimônio Total</span>
-              <span className="text-xl font-heading font-bold text-theme-text ">
+              <span className="text-xl font-heading font-bold text-theme-text">
                 R$ {totalPatrimony.toLocaleString("pt-BR")}
               </span>
             </div>
@@ -469,7 +469,7 @@ export function ProfileTab({ profile, onUpdated, onNotify }: ProfileTabProps) {
           <button
             onClick={handleSave}
             disabled={saving}
-            className="w-full py-4 bg-brand-tactical rounded-xl text-brand-text text-[11px] font-bold uppercase tracking-[0.3em] hover:brightness-110 disabled:opacity-50 transition-all flex items-center justify-center gap-2 shadow-lg shadow-brand-tactical/10 "
+            className="w-full py-4 bg-brand-tactical rounded-xl text-brand-text text-[11px] font-bold uppercase tracking-[0.3em] hover:brightness-110 disabled:opacity-50 transition-all flex items-center justify-center gap-2 shadow-lg shadow-brand-tactical/10"
           >
             {saving ? "SALVANDO..." : <><Save size={16} /> CONFIRMAR ALTERAÇÕES</>}
           </button>

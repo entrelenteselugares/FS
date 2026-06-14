@@ -107,12 +107,12 @@ export default function ProfissionaisPage() {
               Fotógrafos Verificados
             </div>
             
-            <h1 className="text-3xl md:text-5xl md:text-7xl font-heading font-bold text-white uppercase leading-none drop-shadow-2xl">
+            <h1 className="text-3xl md:text-5xl md:text-7xl font-heading font-bold text-theme-text uppercase leading-none drop-shadow-2xl">
               Diretório de<br />
               <span className="text-brand-tactical" style={{ textShadow: "0 0 30px var(--brand)" }}>Profissionais</span>
             </h1>
             
-            <p className="text-white/80 text-sm max-w-lg mx-auto font-medium leading-relaxed drop-shadow-md">
+            <p className="text-theme-text/80 text-sm max-w-lg mx-auto font-medium leading-relaxed drop-shadow-md">
               Encontre fotógrafos verificados pela Foto Segundo para coberturas, retratos, eventos corporativos e mais.
             </p>
           </motion.div>
@@ -156,7 +156,7 @@ export default function ProfissionaisPage() {
                 title="Perto de Mim"
                 className={`absolute right-1 p-1 rounded-full transition-all ${
                   nearby
-                    ? "bg-brand-tactical text-black shadow-[0_0_10px_rgba(133,185,172,0.5)]"
+                    ? "bg-brand-tactical text-theme-text shadow-[0_0_10px_rgba(133,185,172,0.5)]"
                     : "text-theme-text-muted hover:text-theme-text hover:bg-theme-bg-muted"
                 }`}
               >
@@ -213,7 +213,7 @@ export default function ProfissionaisPage() {
                 {profs.length} profissional{profs.length !== 1 ? "is" : ""} disponível{profs.length !== 1 ? "is" : ""}
               </p>
               <div className="h-px flex-1 bg-theme-border/40 mx-6" />
-              <p className="text-[10px] text-brand-tactical uppercase tracking-widest font-bold ">Ordenados por Pontuação</p>
+              <p className="text-[10px] text-brand-tactical uppercase tracking-widest font-bold">Ordenados por Pontuação</p>
             </div>
 
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 md:gap-4">
@@ -297,15 +297,15 @@ export default function ProfissionaisPage() {
                           {/* Stats */}
                           <div className="grid grid-cols-3 gap-1 md:gap-3 pt-2 border-t border-theme-border">
                             <div className="text-center">
-                              <p className="text-xs md:text-base font-heading font-bold text-theme-text ">{prof.experienceYears || 0}</p>
+                              <p className="text-xs md:text-base font-heading font-bold text-theme-text">{prof.experienceYears || 0}</p>
                               <p className="text-[6px] md:text-[9px] text-theme-text/50 uppercase tracking-widest font-bold">Anos</p>
                             </div>
                             <div className="text-center border-x border-theme-border">
-                              <p className="text-xs md:text-base font-heading font-bold text-theme-text ">{prof.totalMissions}</p>
+                              <p className="text-xs md:text-base font-heading font-bold text-theme-text">{prof.totalMissions}</p>
                               <p className="text-[6px] md:text-[9px] text-theme-text/50 uppercase tracking-widest font-bold">Mis.</p>
                             </div>
                             <div className="text-center">
-                              <p className="text-xs md:text-base font-heading font-bold text-brand-tactical ">{prof.agilityPoints}</p>
+                              <p className="text-xs md:text-base font-heading font-bold text-brand-tactical">{prof.agilityPoints}</p>
                               <p className="text-[6px] md:text-[9px] text-theme-text/50 uppercase tracking-widest font-bold">Pts</p>
                             </div>
                           </div>

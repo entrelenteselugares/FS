@@ -35,7 +35,7 @@ export const TacticalPitch = () => {
       </div>
 
       <div className="absolute inset-0 bg-black/50 flex items-center justify-center backdrop-blur-sm opacity-0 hover:opacity-100 transition-opacity cursor-pointer group">
-        <div className="bg-theme-surface text-emerald-400 font-bold px-6 py-3 rounded-full flex items-center gap-2 group-hover:scale-105 transition-transform">
+        <div className="bg-theme-surface text-theme-brand font-bold px-6 py-3 rounded-full flex items-center gap-2 group-hover:scale-105 transition-transform">
           <Shield size={20} /> Editar Escalação (Em Breve)
         </div>
       </div>
@@ -54,7 +54,7 @@ const PlayerNode = ({ name, role }: { name: string, role: string }) => (
       <div className="absolute inset-0 bg-gradient-to-br from-emerald-500 to-emerald-700 opacity-20" />
       👤
     </div>
-    <div className="mt-1 bg-black/60 px-2 py-0.5 rounded text-[10px] font-bold text-white text-center shadow">
+    <div className="mt-1 bg-black/60 px-2 py-0.5 rounded text-[10px] font-bold text-theme-text text-center shadow">
       {name}
     </div>
     <div className="text-[10px] text-emerald-300 font-bold uppercase tracking-widest mt-0.5 drop-shadow">

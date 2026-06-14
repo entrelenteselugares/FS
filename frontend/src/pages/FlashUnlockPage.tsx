@@ -62,7 +62,7 @@ const FlashUnlockPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] text-white flex flex-col items-center justify-center p-3 md:p-6 relative overflow-hidden">
+    <div className="min-h-screen bg-[#0a0a0a] text-theme-text flex flex-col items-center justify-center p-3 md:p-6 relative overflow-hidden">
       {/* Background Decor */}
       <div className="absolute top-[-10%] right-[-10%] w-96 h-96 bg-emerald-500/10 rounded-full blur-[120px]" />
       <div className="absolute bottom-[-10%] left-[-10%] w-96 h-96 bg-emerald-500/5 rounded-full blur-[120px]" />
@@ -78,14 +78,14 @@ const FlashUnlockPage: React.FC = () => {
           >
             <div className="mb-8 flex justify-center">
               <div className="w-20 h-20 bg-emerald-500/10 rounded-full flex items-center justify-center border border-emerald-500/20">
-                <Lock className="w-10 h-10 text-emerald-500" />
+                <Lock className="w-10 h-10 text-theme-brand" />
               </div>
             </div>
 
-            <h1 className="text-3xl font-bold mb-2 uppercase ">
+            <h1 className="text-3xl font-bold mb-2 uppercase">
               Sua foto está segura
             </h1>
-            <p className="text-gray-400 mb-8 px-4">
+            <p className="text-theme-muted mb-8 px-4">
               Digite o PIN de 6 dígitos que está no seu cartão para visualizar o momento.
             </p>
 
@@ -121,7 +121,7 @@ const FlashUnlockPage: React.FC = () => {
               </div>
             )}
 
-            <div className="mt-12 text-gray-500 text-sm flex items-center justify-center gap-2">
+            <div className="mt-12 text-theme-muted text-sm flex items-center justify-center gap-2">
               <Camera className="w-4 h-4" />
               Powered by Foto Segundo
             </div>
@@ -134,8 +134,8 @@ const FlashUnlockPage: React.FC = () => {
             className="w-full max-w-2xl z-10 flex flex-col items-center"
           >
             <div className="mb-6 flex items-center gap-3 bg-emerald-500/10 px-4 py-2 rounded-full border border-emerald-500/20">
-              <Unlock className="w-5 h-5 text-emerald-500" />
-              <span className="text-emerald-500 font-bold tracking-widest text-sm">DESBLOQUEADO</span>
+              <Unlock className="w-5 h-5 text-theme-brand" />
+              <span className="text-theme-brand font-bold tracking-widest text-sm">DESBLOQUEADO</span>
             </div>
 
             {mediaData ? (
@@ -154,9 +154,9 @@ const FlashUnlockPage: React.FC = () => {
               </div>
             ) : (
               <div className="w-full aspect-video bg-[#1a1a1a] rounded-2xl flex flex-col items-center justify-center text-center p-4 md:p-8 border border-white/10">
-                <Camera className="w-16 h-16 text-gray-600 mb-4" />
+                <Camera className="w-16 h-16 text-theme-muted mb-4" />
                 <h2 className="text-xl font-bold mb-2">Quase lá!</h2>
-                <p className="text-gray-400">O fotógrafo está processando sua foto. Atualize esta página em alguns instantes.</p>
+                <p className="text-theme-muted">O fotógrafo está processando sua foto. Atualize esta página em alguns instantes.</p>
               </div>
             )}
 
@@ -164,7 +164,7 @@ const FlashUnlockPage: React.FC = () => {
             <div className="w-full mt-8 space-y-4">
               <button 
                 onClick={() => navigate("/register?claim=" + shortId)}
-                className="w-full py-4 bg-emerald-500 hover:bg-emerald-400 text-black font-bold rounded-xl transition-all transform active:scale-[0.98] flex items-center justify-center gap-3 shadow-[0_0_20px_rgba(133,185,172,0.3)]"
+                className="w-full py-4 bg-emerald-500 hover:bg-emerald-400 text-theme-text font-bold rounded-xl transition-all transform active:scale-[0.98] flex items-center justify-center gap-3 shadow-[0_0_20px_rgba(133,185,172,0.3)]"
               >
                 <Download className="w-6 h-6" />
                 REMOVER MARCA D&apos;ÁGUA E SALVAR
@@ -172,14 +172,14 @@ const FlashUnlockPage: React.FC = () => {
               
               <button 
                 onClick={() => navigate("/login")}
-                className="w-full py-4 bg-theme-bg-muted hover:bg-white/10 text-white font-bold rounded-xl transition-all flex items-center justify-center gap-3"
+                className="w-full py-4 bg-theme-bg-muted hover:bg-white/10 text-theme-text font-bold rounded-xl transition-all flex items-center justify-center gap-3"
               >
                 <UserPlus className="w-5 h-5" />
                 JÁ TENHO CONTA
               </button>
             </div>
 
-            <p className="mt-8 text-gray-500 text-xs text-center max-w-xs">
+            <p className="mt-8 text-theme-muted text-xs text-center max-w-xs">
               Ao salvar, esta foto será transferida permanentemente para sua galeria privada.
             </p>
           </motion.div>

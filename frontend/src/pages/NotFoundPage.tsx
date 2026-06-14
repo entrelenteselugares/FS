@@ -29,7 +29,7 @@ export function NotFoundPage() {
         </div>
 
         <div className="space-y-4">
-          <h2 className="text-3xl font-extrabold ">Ops! Evento indisponível ou não encontrado.</h2>
+          <h2 className="text-3xl font-extrabold">Ops! Evento indisponível ou não encontrado.</h2>
           <p className="text-theme-muted text-[11px] font-bold uppercase tracking-[0.3em] leading-relaxed">
             O registro solicitado não existe em nossa rede ou foi movido para um diretório privado.
           </p>

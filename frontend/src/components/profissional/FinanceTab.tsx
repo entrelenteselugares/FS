@@ -80,7 +80,7 @@ export function FinanceTab({
           <div className="relative group flex-1 md:flex-none">
             <button
               onClick={onDownloadTaxReport}
-              className="w-full flex justify-center items-center gap-1.5 px-3 md:px-4 py-2 bg-brand-tactical/10 text-brand-tactical border border-brand-tactical/30 hover:bg-brand-tactical hover:text-black rounded-lg text-[9px] font-bold uppercase tracking-widest transition-all shadow-sm whitespace-nowrap"
+              className="w-full flex justify-center items-center gap-1.5 px-3 md:px-4 py-2 bg-brand-tactical/10 text-brand-tactical border border-brand-tactical/30 hover:bg-brand-tactical hover:text-theme-text rounded-lg text-[9px] font-bold uppercase tracking-widest transition-all shadow-sm whitespace-nowrap"
             >
               <Download size={12} />
               <span className="hidden sm:inline">Relatório de </span>Tributos
@@ -134,7 +134,7 @@ export function FinanceTab({
         <div className="lg:col-span-2 space-y-4">
           <div className="bg-theme-bg border border-theme-border rounded-xl p-4 md:p-5 shadow-sm relative">
             <div className="flex justify-between items-center mb-4">
-              <h4 className="text-[10px] font-bold text-brand-tactical uppercase tracking-[0.2em] ">Fluxo de Caixa Operacional</h4>
+              <h4 className="text-[10px] font-bold text-brand-tactical uppercase tracking-[0.2em]">Fluxo de Caixa Operacional</h4>
               <span className="text-[9px] font-bold bg-brand-tactical/10 text-brand-tactical px-2 py-1 rounded border border-brand-tactical/20 uppercase tracking-widest">Tempo Real</span>
             </div>
             <div className="h-[200px] w-full">
@@ -145,8 +145,8 @@ export function FinanceTab({
           <div className="bg-theme-bg border border-theme-border rounded-xl p-4 md:p-5 flex flex-col md:flex-row gap-5 items-center shadow-sm">
               <div className="flex-1 w-full space-y-3">
                 <div className="flex justify-between items-end">
-                  <p className="text-[9px] font-bold text-theme-muted uppercase tracking-widest ">Progresso da Meta Mensal</p>
-                  <p className="text-sm font-heading font-bold text-theme-text ">{Math.round(progressPct)}%</p>
+                  <p className="text-[9px] font-bold text-theme-muted uppercase tracking-widest">Progresso da Meta Mensal</p>
+                  <p className="text-sm font-heading font-bold text-theme-text">{Math.round(progressPct)}%</p>
                 </div>
                 <div className="h-2 bg-theme-bg-muted border border-theme-border rounded-full overflow-hidden">
                   <div className="h-full bg-brand-tactical transition-all duration-1000" style={{ width: `${progressPct}%` }} />
@@ -173,7 +173,7 @@ export function FinanceTab({
         {/* SIDEBAR: HISTORY */}
         <div className="bg-theme-bg border border-theme-border rounded-xl p-4 flex flex-col shadow-sm">
           <div className="flex items-center justify-between border-b border-theme-border pb-3 mb-3">
-            <h4 className="text-[10px] font-bold text-theme-text uppercase tracking-widest ">Movimentações</h4>
+            <h4 className="text-[10px] font-bold text-theme-text uppercase tracking-widest">Movimentações</h4>
             <span className="text-[10px] bg-theme-bg-muted border border-theme-border px-2 py-0.5 rounded text-theme-muted font-bold uppercase">{profile?.payoutHistory?.length || 0} Registros</span>
           </div>
           
@@ -194,7 +194,7 @@ export function FinanceTab({
                       </span>
                     </div>
                   </div>
-                  <p className="text-xs font-heading font-bold text-theme-text ">
+                  <p className="text-xs font-heading font-bold text-theme-text">
                     R$ {Number(p.amount).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
                   </p>
                 </div>

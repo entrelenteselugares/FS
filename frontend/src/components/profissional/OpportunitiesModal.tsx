@@ -31,7 +31,7 @@ export function OpportunitiesModal({
         <div className="grid grid-cols-1 gap-4">
           {unitInvitesCount > 0 && (
             <div className="bg-brand-tactical/10 p-6 border border-brand-tactical/20 hover:border-brand-tactical transition-all">
-              <div className="text-[9px] font-bold text-brand-tactical uppercase tracking-[0.2em] mb-2 ">Expansão de Rede</div>
+              <div className="text-[9px] font-bold text-brand-tactical uppercase tracking-[0.2em] mb-2">Expansão de Rede</div>
               <div className="text-xl font-heading font-bold text-theme-text leading-none">
                 {unitInvitesCount} {unitInvitesCount === 1 ? "CONVITE DE UNIDADE" : "CONVITES DE UNIDADE"}
               </div>
@@ -39,7 +39,7 @@ export function OpportunitiesModal({
           )}
           {pendingEventsCount > 0 && (
             <div className="bg-theme-bg-muted p-6 border border-theme-border hover:border-brand-tactical/40 transition-all">
-              <div className="text-[9px] font-bold text-theme-muted uppercase tracking-[0.2em] mb-2 ">Chamados de Campo</div>
+              <div className="text-[9px] font-bold text-theme-muted uppercase tracking-[0.2em] mb-2">Chamados de Campo</div>
               <div className="text-xl font-heading font-bold text-theme-text leading-none">
                 {pendingEventsCount} {pendingEventsCount === 1 ? "TRABALHO DISPONÍVEL" : "TRABALHOS DISPONÍVEIS"}
               </div>
@@ -47,7 +47,7 @@ export function OpportunitiesModal({
           )}
           {opportunitiesCount > 0 && (
             <div className="bg-yellow-400/5 p-6 border border-yellow-400/20 hover:border-yellow-400/40 transition-all">
-              <div className="text-[9px] font-bold text-yellow-400 uppercase tracking-[0.2em] mb-2 ">Chamada Aberta</div>
+              <div className="text-[9px] font-bold text-yellow-400 uppercase tracking-[0.2em] mb-2">Chamada Aberta</div>
               <div className="text-xl font-heading font-bold text-theme-text leading-none">
                 {opportunitiesCount} {opportunitiesCount === 1 ? "OPORTUNIDADE DISPONÍVEL" : "OPORTUNIDADES DISPONÍVEIS"}
               </div>
@@ -66,7 +66,7 @@ export function OpportunitiesModal({
           </button>
           <button
             onClick={onClose}
-            className="text-[9px] font-bold text-theme-muted uppercase tracking-[0.3em] hover:text-brand-tactical transition-colors "
+            className="text-[9px] font-bold text-theme-muted uppercase tracking-[0.3em] hover:text-brand-tactical transition-colors"
           >
             IGNORAR POR ENQUANTO
           </button>

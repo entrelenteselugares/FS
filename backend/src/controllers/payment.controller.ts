@@ -67,14 +67,28 @@ export class PaymentController {
       }
 
       if (cartItems.length > 0) {
-        for (const shortId of cartItems) {
-          let media = await prisma.eventMedia.findFirst({
-            where: { eventId, shortId }
+        // Busca todas as mídias de uma vez para evitar N+1 queries
+        const medias = await prisma.eventMedia.findMany({
+          where: { eventId, shortId: { in: cartItems } }
+        });
+        const mediaMap = new Map(medias.map(m => [m.shortId, m]));
+
+        const missingShortIds = cartItems.filter((id: string) => !mediaMap.has(id));
+        let printsMap = new Map();
+        
+        // Se houver mídias faltantes, busca no phygitalPrint em lote
+        if (missingShortIds.length > 0) {
+          const prints = await prisma.phygitalPrint.findMany({
+            where: { eventId, referenceCode: { in: missingShortIds } }
           });
+          printsMap = new Map(prints.map(p => [p.referenceCode, p]));
+        }
+
+        for (const shortId of cartItems) {
+          let media = mediaMap.get(shortId);
+          
           if (!media) {
-            const print = await prisma.phygitalPrint.findFirst({
-              where: { eventId, referenceCode: shortId }
-            });
+            const print = printsMap.get(shortId);
             if (print) {
               media = await prisma.eventMedia.create({
                 data: {
@@ -85,12 +99,14 @@ export class PaymentController {
                   type: "PHOTO"
                 }
               });
+              mediaMap.set(shortId, media);
             }
           }
+          
           if (media) {
             orderItemsData.push({
               mediaId: media.id,
-              price: media.price || event.pricePerPhoto || 15,
+              price: (media as any).price || event.pricePerPhoto || 15,
               quantity: 1
             });
           }
@@ -871,8 +887,9 @@ export class PaymentController {
       // 2e. Aplicação de Cupom de Desconto
       let appliedCoupon = null;
       if (couponCode) {
-        const coupons: any[] = await prisma.$queryRaw`SELECT * FROM "coupons" WHERE code = ${String(couponCode).trim()}`;
-        appliedCoupon = coupons.length > 0 ? coupons[0] : null;
+        appliedCoupon = await prisma.coupon.findUnique({
+          where: { code: String(couponCode).trim().toUpperCase() }
+        });
         if (
           appliedCoupon && 
           appliedCoupon.active && 
@@ -885,6 +902,8 @@ export class PaymentController {
           } else if (appliedCoupon.discountAbs) {
             preco = Math.max(0, preco - Number(appliedCoupon.discountAbs));
           }
+          // Evita erros de casas decimais (ex: R$ 13.3333333) no MP
+          preco = Number(preco.toFixed(2));
         } else {
           appliedCoupon = null; // Inválido ou expirado
         }
@@ -1129,7 +1148,10 @@ export class PaymentController {
 
       // Se aplicou cupom válido, incrementar contador
       if (appliedCoupon) {
-        await prisma.$executeRaw`UPDATE "coupons" SET "usedCount" = "usedCount" + 1 WHERE id = ${appliedCoupon.id}`;
+        await prisma.coupon.update({
+          where: { id: appliedCoupon.id },
+          data: { usedCount: { increment: 1 } }
+        });
       }
 
       // 4b. Bypass para Pedidos GRATUITOS (Cupom 100% OFF ou valor R$ 0)

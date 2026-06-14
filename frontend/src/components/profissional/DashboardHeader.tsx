@@ -20,7 +20,7 @@ export function DashboardHeader({ activeTab, viewTab, onViewTabChange, residentU
             {residentUnits.length > 0 && (activeTab === "agenda" || activeTab === "convites") && (
               <div className="flex items-center gap-2">
                 <ShieldCheck size={14} className="text-brand-tactical" />
-                <p className="text-[11px] font-bold text-brand-tactical uppercase tracking-[0.4em] ">
+                <p className="text-[11px] font-bold text-brand-tactical uppercase tracking-[0.4em]">
                   Residente: {residentUnits.join(", ")}
                 </p>
               </div>

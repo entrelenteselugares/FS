@@ -40,7 +40,7 @@ export default function ForgotPasswordPage() {
           <div className="inline-flex p-4 rounded-full bg-brand-tactical/10 text-brand-tactical mb-4">
             <ShieldCheck size={32} />
           </div>
-          <h1 className="text-2xl md:text-4xl font-heading font-bold text-theme-text uppercase ">
+          <h1 className="text-2xl md:text-4xl font-heading font-bold text-theme-text uppercase">
             Recuperar Acesso
           </h1>
           <p className="text-[10px] font-bold text-theme-muted uppercase tracking-[0.4em]">
@@ -68,7 +68,7 @@ export default function ForgotPasswordPage() {
           ) : (
             <>
               <div className="space-y-2">
-                <h2 className="text-xl font-heading font-bold text-theme-text uppercase ">Esqueceu sua senha?</h2>
+                <h2 className="text-xl font-heading font-bold text-theme-text uppercase">Esqueceu sua senha?</h2>
                 <p className="text-[9px] font-bold text-theme-muted uppercase tracking-[0.3em]">Informe seu e-mail para receber as instruções de recuperação</p>
               </div>
 

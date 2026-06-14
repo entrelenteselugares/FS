@@ -226,10 +226,10 @@ export const MatchFolhaPage = () => {
 
   if (!folha) {
     return (
-      <div className="min-h-screen bg-theme-bg flex items-center justify-center text-white p-4">
+      <div className="min-h-screen bg-theme-bg flex items-center justify-center text-theme-text p-4">
         <div className="text-center">
           <p className="text-lg font-bold text-red-500">Erro ao carregar folha do jogo.</p>
-          <Link to="/album-torcida" className="mt-4 inline-block px-4 py-2 bg-emerald-500 text-black font-bold rounded-xl text-sm">
+          <Link to="/album-torcida" className="mt-4 inline-block px-4 py-2 bg-emerald-500 text-theme-text font-bold rounded-xl text-sm">
             Voltar para o Álbum
           </Link>
         </div>
@@ -240,7 +240,7 @@ export const MatchFolhaPage = () => {
   const filledCount = folha.slots.filter((s: { imageUrl?: string }) => !!s.imageUrl).length;
 
   return (
-    <div className="min-h-screen bg-theme-bg text-white pb-24">
+    <div className="min-h-screen bg-theme-bg text-theme-text pb-24">
       {/* Header */}
       <div className="sticky top-0 z-10 bg-theme-bg/90 backdrop-blur-md border-b border-theme-border p-4">
         <div className="max-w-4xl mx-auto flex items-center justify-between">
@@ -249,7 +249,7 @@ export const MatchFolhaPage = () => {
           </Link>
           <div className="text-center">
             <h1 className="font-bold">Match Day</h1>
-            <div className="text-sm text-emerald-400 font-bold">{filledCount} / 12 Fotos</div>
+            <div className="text-sm text-theme-brand font-bold">{filledCount} / 12 Fotos</div>
           </div>
           <button 
             onClick={() => setShowCollage(true)}
@@ -293,7 +293,7 @@ export const MatchFolhaPage = () => {
                 className={`aspect-[3/4] rounded-xl overflow-hidden relative cursor-pointer transition-transform hover:scale-[1.02] active:scale-95 ${
                   slot.imageUrl 
                     ? '' 
-                    : 'border-2 border-dashed border-theme-border hover:border-emerald-500/50 bg-theme-surface flex items-center justify-center text-gray-500'
+                    : 'border-2 border-dashed border-theme-border hover:border-emerald-500/50 bg-theme-surface flex items-center justify-center text-theme-muted'
                 }`}
               >
                 {slot.imageUrl ? (
@@ -329,7 +329,7 @@ export const MatchFolhaPage = () => {
         {activeSlot === 8 && (
            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-md">
               <div className="w-full relative">
-                <button onClick={() => setActiveSlot(null)} className="absolute -top-12 right-0 p-2 text-white"><X size={24}/></button>
+                <button onClick={() => setActiveSlot(null)} className="absolute -top-12 right-0 p-2 text-theme-text"><X size={24}/></button>
                 <TacticalPitch />
               </div>
            </div>
@@ -345,14 +345,14 @@ export const MatchFolhaPage = () => {
             <div className="bg-theme-bg border border-theme-border w-full max-w-lg rounded-2xl overflow-hidden relative p-3 md:p-6 flex flex-col gap-4 my-8">
               <button 
                 onClick={() => { setSelectedPreviewSlot(null); setCommentText(""); }}
-                className="absolute top-4 right-4 p-2 text-gray-400 hover:text-white rounded-full hover:bg-theme-surface"
+                className="absolute top-4 right-4 p-2 text-theme-muted hover:text-theme-text rounded-full hover:bg-theme-surface"
               >
                 <X size={20} />
               </button>
 
               <div className="text-center">
-                <h3 className="font-bold text-lg text-white">Visualizar Figurinha</h3>
-                <span className="text-xs text-emerald-400 font-bold uppercase tracking-wider">
+                <h3 className="font-bold text-lg text-theme-text">Visualizar Figurinha</h3>
+                <span className="text-xs text-theme-brand font-bold uppercase tracking-wider">
                   Missão: {selectedPreviewSlot.missionType}
                 </span>
               </div>
@@ -383,12 +383,12 @@ export const MatchFolhaPage = () => {
                     />
                     <span className="text-xs font-bold">{likes.length} Curtidas</span>
                   </button>
-                  <span className="text-xs text-gray-400">Score do Card: {50 + (likes.length * 10) + Math.min(comments.length, 5) * 20} PTS</span>
+                  <span className="text-xs text-theme-muted">Score do Card: {50 + (likes.length * 10) + Math.min(comments.length, 5) * 20} PTS</span>
                 </div>
 
                 {/* Edit Caption (Only for slot owner or simple placeholder) */}
                 <div className="flex flex-col gap-2">
-                  <label className="text-xs font-bold text-gray-400 uppercase tracking-wide">
+                  <label className="text-xs font-bold text-theme-muted uppercase tracking-wide">
                     Alterar Legenda da Figurinha:
                   </label>
                   <div className="flex gap-2">
@@ -397,7 +397,7 @@ export const MatchFolhaPage = () => {
                       value={commentText}
                       onChange={(e) => setCommentText(e.target.value)}
                       placeholder="Escreva algo sobre este momento marcante..."
-                      className="flex-1 bg-theme-surface border border-theme-border rounded-xl px-3 py-2 text-sm text-white focus:border-emerald-500 outline-none"
+                      className="flex-1 bg-theme-surface border border-theme-border rounded-xl px-3 py-2 text-sm text-theme-text focus:border-emerald-500 outline-none"
                     />
                     <button
                       onClick={async () => {
@@ -418,7 +418,7 @@ export const MatchFolhaPage = () => {
                           toast.error("Erro ao salvar legenda.", { id: toastId });
                         }
                       }}
-                      className="px-4 py-2 bg-emerald-500 text-black font-bold rounded-xl text-xs hover:bg-emerald-400 transition-colors"
+                      className="px-4 py-2 bg-emerald-500 text-theme-text font-bold rounded-xl text-xs hover:bg-emerald-400 transition-colors"
                     >
                       Salvar
                     </button>
@@ -427,17 +427,17 @@ export const MatchFolhaPage = () => {
 
                 {/* Comments List */}
                 <div className="flex flex-col gap-2">
-                  <label className="text-xs font-bold text-gray-400 uppercase tracking-wide flex items-center gap-1">
+                  <label className="text-xs font-bold text-theme-muted uppercase tracking-wide flex items-center gap-1">
                     <MessageSquare size={12} /> Comentários ({comments.length})
                   </label>
                   <div className="max-h-32 overflow-y-auto flex flex-col gap-2 bg-theme-surface/30 p-2 rounded-xl border border-theme-border">
                     {comments.length === 0 ? (
-                      <p className="text-xs text-gray-500 p-2">Nenhum comentário ainda. Seja o primeiro!</p>
+                      <p className="text-xs text-theme-muted p-2">Nenhum comentário ainda. Seja o primeiro!</p>
                     ) : (
                       comments.map((c: any) => (
                         <div key={c.id} className="text-xs bg-theme-surface/55 p-2 rounded-lg">
-                          <strong className="text-emerald-400 mr-2">{c.userName}:</strong>
-                          <span className="text-gray-300">{c.commentText}</span>
+                          <strong className="text-theme-brand mr-2">{c.userName}:</strong>
+                          <span className="text-theme-subtle">{c.commentText}</span>
                         </div>
                       ))
                     )}
@@ -451,11 +451,11 @@ export const MatchFolhaPage = () => {
                     value={newCommentText}
                     onChange={(e) => setNewCommentText(e.target.value)}
                     placeholder="Adicione um comentário..."
-                    className="flex-1 bg-theme-surface border border-theme-border rounded-xl px-3 py-2 text-sm text-white focus:border-emerald-500 outline-none"
+                    className="flex-1 bg-theme-surface border border-theme-border rounded-xl px-3 py-2 text-sm text-theme-text focus:border-emerald-500 outline-none"
                   />
                   <button
                     onClick={handleAddComment}
-                    className="px-4 py-2 bg-emerald-500 text-black font-bold rounded-xl text-sm hover:bg-emerald-400 transition-colors"
+                    className="px-4 py-2 bg-emerald-500 text-theme-text font-bold rounded-xl text-sm hover:bg-emerald-400 transition-colors"
                   >
                     Enviar
                   </button>
@@ -472,7 +472,7 @@ export const MatchFolhaPage = () => {
                     setActiveSlot(idx);
                     setTimeout(() => fileInputRef.current?.click(), 100);
                   }}
-                  className="w-full py-3 bg-theme-surface text-white font-bold rounded-xl text-sm border border-theme-border hover:bg-theme-surface/80 transition-colors uppercase tracking-wider"
+                  className="w-full py-3 bg-theme-surface text-theme-text font-bold rounded-xl text-sm border border-theme-border hover:bg-theme-surface/80 transition-colors uppercase tracking-wider"
                 >
                   Substituir Foto
                 </button>

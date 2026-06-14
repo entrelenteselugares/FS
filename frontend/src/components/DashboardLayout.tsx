@@ -162,18 +162,18 @@ const SidebarContent: React.FC<SidebarContentProps & { currentPath: string }> = 
               <div key={item.label} className="mb-1">
                 <button
                   onClick={() => toggleExpand(item.label)}
-                  className={`flex items-center gap-3 px-5 py-2.5 text-[13px] font-heading tracking-wide cursor-pointer border-none w-full text-left transition-all duration-300 ${hasActiveChild ? "text-white font-black" : "text-zinc-400 font-medium hover:text-white hover:bg-white/5"}`}
+                  className={`flex items-center gap-3 px-5 py-2.5 text-[13px] font-heading tracking-wide cursor-pointer border-none w-full text-left transition-all duration-300 ${hasActiveChild ? "text-theme-text font-black" : "text-theme-muted font-medium hover:text-theme-text hover:bg-white/5"}`}
                   style={{ background: "transparent" }}
                 >
                   {item.icon && (
-                    <span className={`shrink-0 transition-colors ${hasActiveChild ? "text-brand-tactical" : "text-zinc-500"}`}>
+                    <span className={`shrink-0 transition-colors ${hasActiveChild ? "text-brand-tactical" : "text-theme-muted"}`}>
                       {item.icon}
                     </span>
                   )}
                   <span className="flex-1">{item.label}</span>
                   <svg 
                     width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
-                    className={`text-zinc-500 transition-transform duration-300 ${isExpanded ? "rotate-180" : "rotate-0"}`}
+                    className={`text-theme-muted transition-transform duration-300 ${isExpanded ? "rotate-180" : "rotate-0"}`}
                   >
                     <polyline points="6 9 12 15 18 9" />
                   </svg>
@@ -189,14 +189,14 @@ const SidebarContent: React.FC<SidebarContentProps & { currentPath: string }> = 
                         subItem.onClick?.();
                       };
                       
-                      const className = `flex items-center justify-between px-3 py-2 text-[12px] font-heading cursor-pointer border-none text-left rounded-md transition-all duration-300 ${active ? "bg-brand-tactical/10 text-brand-tactical font-black" : "bg-transparent text-zinc-400 font-medium hover:bg-white/5 hover:text-white"}`;
+                      const className = `flex items-center justify-between px-3 py-2 text-[12px] font-heading cursor-pointer border-none text-left rounded-md transition-all duration-300 ${active ? "bg-brand-tactical/10 text-brand-tactical font-black" : "bg-transparent text-theme-muted font-medium hover:bg-white/5 hover:text-theme-text"}`;
 
                       if (subItem.to) {
                         return (
                           <Link key={subItem.label} to={subItem.to} className={className} onClick={handleClick}>
                             <span>{subItem.label}</span>
                             {subItem.badge !== undefined && subItem.badge !== 0 && (
-                              <span className="bg-brand-tactical text-black text-[9px] font-bold px-1.5 py-0.5 rounded text-center">
+                              <span className="bg-brand-tactical text-theme-text text-[9px] font-bold px-1.5 py-0.5 rounded text-center">
                                 {subItem.badge}
                               </span>
                             )}
@@ -208,7 +208,7 @@ const SidebarContent: React.FC<SidebarContentProps & { currentPath: string }> = 
                         <button key={subItem.label} className={className} onClick={handleClick}>
                           <span>{subItem.label}</span>
                           {subItem.badge !== undefined && subItem.badge !== 0 && (
-                            <span className="bg-brand-tactical text-black text-[9px] font-bold px-1.5 py-0.5 rounded text-center">
+                            <span className="bg-brand-tactical text-theme-text text-[9px] font-bold px-1.5 py-0.5 rounded text-center">
                               {subItem.badge}
                             </span>
                           )}
@@ -222,7 +222,7 @@ const SidebarContent: React.FC<SidebarContentProps & { currentPath: string }> = 
           }
 
           const active = checkIsActive(item);
-          const itemClassName = `group relative flex items-center gap-3 px-5 py-2.5 text-[13px] font-heading tracking-wide w-full text-left transition-all duration-300 border-l-2 ${active ? "bg-brand-tactical/10 text-brand-tactical border-brand-tactical font-black" : "bg-transparent text-zinc-400 border-transparent font-medium hover:bg-white/5 hover:text-white hover:border-zinc-700"}`;
+          const itemClassName = `group relative flex items-center gap-3 px-5 py-2.5 text-[13px] font-heading tracking-wide w-full text-left transition-all duration-300 border-l-2 ${active ? "bg-brand-tactical/10 text-brand-tactical border-brand-tactical font-black" : "bg-transparent text-theme-muted border-transparent font-medium hover:bg-white/5 hover:text-theme-text hover:border-zinc-700"}`;
 
           const handleClick = () => {
             onNavigate();
@@ -233,13 +233,13 @@ const SidebarContent: React.FC<SidebarContentProps & { currentPath: string }> = 
             return (
               <Link key={item.label} to={item.to} className={itemClassName} onClick={handleClick}>
                 {item.icon && (
-                  <span className={`shrink-0 transition-colors ${active ? "text-brand-tactical" : "text-zinc-500 group-hover:text-zinc-300"}`}>
+                  <span className={`shrink-0 transition-colors ${active ? "text-brand-tactical" : "text-theme-muted group-hover:text-theme-subtle"}`}>
                     {item.icon}
                   </span>
                 )}
                 <span className="flex-1">{item.label}</span>
                 {item.badge !== undefined && item.badge !== 0 && (
-                  <span className="bg-brand-tactical text-black text-[10px] font-bold px-2 py-0.5 rounded-sm min-w-[16px] text-center">
+                  <span className="bg-brand-tactical text-theme-text text-[10px] font-bold px-2 py-0.5 rounded-sm min-w-[16px] text-center">
                     {item.badge}
                   </span>
                 )}
@@ -250,13 +250,13 @@ const SidebarContent: React.FC<SidebarContentProps & { currentPath: string }> = 
           return (
             <button key={item.label} className={itemClassName} onClick={handleClick}>
               {item.icon && (
-                <span className={`shrink-0 transition-colors ${active ? "text-brand-tactical" : "text-zinc-500 group-hover:text-zinc-300"}`}>
+                <span className={`shrink-0 transition-colors ${active ? "text-brand-tactical" : "text-theme-muted group-hover:text-theme-subtle"}`}>
                   {item.icon}
                 </span>
               )}
               <span className="flex-1">{item.label}</span>
               {item.badge !== undefined && item.badge !== 0 && (
-                <span className="bg-brand-tactical text-black text-[9px] font-bold px-1.5 py-0.5 rounded-sm min-w-[16px] text-center">
+                <span className="bg-brand-tactical text-theme-text text-[9px] font-bold px-1.5 py-0.5 rounded-sm min-w-[16px] text-center">
                   {item.badge}
                 </span>
               )}

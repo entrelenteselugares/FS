@@ -36,12 +36,12 @@ export const QuoteLandingView: React.FC<QuoteLandingViewProps> = ({ selectFlow }
   }, [covers]);
 
   return (
-    <div className="min-h-screen bg-theme-bg text-theme-text font-sans pb-24 overflow-x-hidden relative">
+    <div className="min-h-screen bg-theme-bg text-theme-text pb-24 overflow-x-hidden relative">
       {/* Fixed Header */}
       <div className="fixed top-0 left-0 w-full z-50 p-6 flex justify-between items-center bg-gradient-to-b from-black/80 to-transparent pointer-events-none">
         <button 
           onClick={() => window.location.href = '/'}
-          className="pointer-events-auto flex items-center gap-2 text-white/80 hover:text-white transition-colors text-[10px] font-bold uppercase tracking-[0.2em]"
+          className="pointer-events-auto flex items-center gap-2 text-theme-text/80 hover:text-theme-text transition-colors text-[10px] font-bold uppercase tracking-[0.2em]"
         >
           <ArrowLeft size={16} />
           Voltar para Home
@@ -66,18 +66,18 @@ export const QuoteLandingView: React.FC<QuoteLandingViewProps> = ({ selectFlow }
       {/* Hero Section */}
       <div className="w-full max-w-6xl mx-auto px-6 pt-24 pb-12 relative z-10 flex flex-col items-center text-center min-h-[40vh] justify-center">
         <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-black/40 backdrop-blur-md border border-white/10 rounded-full mb-6 shadow-2xl">
-          <Sparkles size={12} className="text-emerald-400" />
-          <span className="text-[9px] font-bold uppercase tracking-[0.3em] text-white">Eternize Seus Momentos</span>
+          <Sparkles size={12} className="text-theme-brand" />
+          <span className="text-[9px] font-bold uppercase tracking-[0.3em] text-theme-text">Eternize Seus Momentos</span>
         </div>
         
-        <h1 className="text-4xl md:text-5xl font-display font-bold mb-4 leading-[1.1] text-white drop-shadow-2xl">
+        <h1 className="text-4xl md:text-5xl font-display font-bold mb-4 leading-[1.1] text-theme-text drop-shadow-2xl">
           Sua História. <br />
           <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-200 pr-2">
             Nossa Lente.
           </span>
         </h1>
         
-        <p className="text-white/80 text-sm md:text-base max-w-xl mx-auto mb-10 font-medium drop-shadow-lg">
+        <p className="text-theme-text/80 text-sm md:text-base max-w-xl mx-auto mb-10 font-medium drop-shadow-lg">
           A Foto Segundo oferece a cobertura audiovisual mais premium do mercado.
         </p>
 
@@ -85,11 +85,11 @@ export const QuoteLandingView: React.FC<QuoteLandingViewProps> = ({ selectFlow }
           <div className="flex -space-x-3">
             {[1,2,3].map(i => (
               <div key={i} className="w-8 h-8 rounded-full border-2 border-black bg-zinc-800 flex items-center justify-center">
-                <Star size={10} className="text-emerald-400" />
+                <Star size={10} className="text-theme-brand" />
               </div>
             ))}
           </div>
-          <div className="text-[10px] font-bold text-white text-left leading-tight">
+          <div className="text-[10px] font-bold text-theme-text text-left leading-tight">
             +1000 eventos realizados <br/>com sucesso em 2026.
           </div>
         </div>
@@ -98,7 +98,7 @@ export const QuoteLandingView: React.FC<QuoteLandingViewProps> = ({ selectFlow }
       {/* Pillars Section */}
       <div className="w-full max-w-7xl mx-auto px-6 relative z-10 mt-10">
         <div className="text-center mb-16">
-          <h2 className="text-3xl font-bold uppercase tracking-widest mb-4 text-white">Como deseja contratar?</h2>
+          <h2 className="text-3xl font-bold uppercase tracking-widest mb-4 text-theme-text">Como deseja contratar?</h2>
           <div className="h-px w-24 bg-brand-tactical mx-auto mb-4" />
           <p className="text-theme-text-muted text-sm">Escolha a jornada perfeita para o seu evento.</p>
         </div>
@@ -161,7 +161,7 @@ export const QuoteLandingView: React.FC<QuoteLandingViewProps> = ({ selectFlow }
 
             <button
               onClick={() => selectFlow("PARTNER")}
-              className="w-full py-3.5 bg-theme-bg-muted border border-theme-border text-theme-text font-bold uppercase tracking-widest text-[10px] rounded-lg hover:bg-theme-border hover:text-white transition-all flex items-center justify-center gap-2"
+              className="w-full py-3.5 bg-theme-bg-muted border border-theme-border text-theme-text font-bold uppercase tracking-widest text-[10px] rounded-lg hover:bg-theme-border hover:text-theme-text transition-all flex items-center justify-center gap-2"
             >
               Ver Unidades <ArrowRight size={12} className="group-hover:translate-x-1 transition-transform" />
             </button>
@@ -190,7 +190,7 @@ export const QuoteLandingView: React.FC<QuoteLandingViewProps> = ({ selectFlow }
 
             <button
               onClick={() => selectFlow("CUSTOM")}
-              className="w-full py-3.5 bg-theme-bg-muted border border-theme-border text-theme-text font-bold uppercase tracking-widest text-[10px] rounded-lg hover:bg-theme-border hover:text-white transition-all flex items-center justify-center gap-2"
+              className="w-full py-3.5 bg-theme-bg-muted border border-theme-border text-theme-text font-bold uppercase tracking-widest text-[10px] rounded-lg hover:bg-theme-border hover:text-theme-text transition-all flex items-center justify-center gap-2"
             >
               Montar do Zero <ArrowRight size={12} className="group-hover:translate-x-1 transition-transform" />
             </button>

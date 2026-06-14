@@ -4,12 +4,12 @@ import SEO from "../components/SEO";
 
 export function PartnershipsPage() {
   return (
-    <div className="min-h-screen bg-theme-bg text-theme-text font-sans selection:bg-brand-tactical/30">
+    <div className="min-h-screen bg-theme-bg text-theme-text selection:bg-brand-tactical/30">
       <SEO title="Parcerias e Afiliados | Foto Segundo" description="Seja um ponto autorizado da rede Foto Segundo e gere receita passiva." />
       
       {/* Header Minimalista */}
       <header className="fixed top-0 left-0 right-0 h-16 bg-theme-bg/80 backdrop-blur-lg border-b border-theme-border z-50 flex items-center px-4 md:px-8">
-        <Link to="/" className="text-brand-tactical hover:brightness-110 transition-all flex items-center gap-2 text-xs font-bold tracking-widest uppercase ">
+        <Link to="/" className="text-brand-tactical hover:brightness-110 transition-all flex items-center gap-2 text-xs font-bold tracking-widest uppercase">
           <ArrowLeft size={16} /> Voltar para o início
         </Link>
       </header>
@@ -18,7 +18,7 @@ export function PartnershipsPage() {
         <div className="mb-16 md:mb-24 text-center max-w-3xl mx-auto">
           <div className="flex items-center justify-center gap-4 mb-6">
             <div className="h-px w-12 bg-brand-tactical" />
-            <span className="text-[10px] font-bold text-brand-tactical uppercase tracking-[0.5em] ">B2B & Institucional</span>
+            <span className="text-[10px] font-bold text-brand-tactical uppercase tracking-[0.5em]">B2B & Institucional</span>
             <div className="h-px w-12 bg-brand-tactical" />
           </div>
           <h1 className="text-3xl md:text-5xl md:text-7xl font-heading font-bold text-theme-text uppercase mb-6 leading-none">
@@ -102,7 +102,7 @@ export function PartnershipsPage() {
         </section>
 
         {/* Vantagens */}
-        <section className="mb-24 bg-brand-tactical text-black rounded-3xl p-4 md:p-8 md:p-12">
+        <section className="mb-24 bg-brand-tactical text-theme-text rounded-3xl p-4 md:p-8 md:p-12">
           <h2 className="text-3xl font-bold uppercase mb-10">
             Vantagens da Rede
           </h2>
@@ -116,10 +116,10 @@ export function PartnershipsPage() {
             ].map((v, idx) => (
               <div key={idx}>
                 <div className="flex items-center gap-2 mb-2">
-                  <Zap size={18} className="text-black" strokeWidth={3} />
+                  <Zap size={18} className="text-theme-text" strokeWidth={3} />
                   <h3 className="font-bold uppercase tracking-widest text-sm">{v.t}</h3>
                 </div>
-                <p className="text-black/70 text-sm font-medium leading-relaxed pl-7">{v.d}</p>
+                <p className="text-theme-text/70 text-sm font-medium leading-relaxed pl-7">{v.d}</p>
               </div>
             ))}
           </div>
@@ -151,7 +151,7 @@ export function PartnershipsPage() {
           <p className="text-theme-text-muted font-normal mb-10 max-w-lg mx-auto">
             Preencha o formulário de interesse e nossa equipe entrará em contato em até 2 dias úteis com o seu link de ativação.
           </p>
-          <Link to="/contato" className="inline-block px-3 md:px-6 md:px-12 py-5 bg-brand-tactical text-black font-bold uppercase tracking-[0.3em] text-[10px] hover:brightness-110 transition-all shadow-2xl shadow-brand-tactical/20">
+          <Link to="/contato" className="inline-block px-3 md:px-6 md:px-12 py-5 bg-brand-tactical text-theme-text font-bold uppercase tracking-[0.3em] text-[10px] hover:brightness-110 transition-all shadow-2xl shadow-brand-tactical/20">
             Preencher Formulário de Interesse
           </Link>
         </section>

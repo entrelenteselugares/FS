@@ -100,7 +100,7 @@ export function FlashEventModal({ onClose, onSuccess, onError, network }: FlashE
         <div className="flex-1 overflow-y-auto p-8 md:p-10 space-y-8 custom-scrollbar">
           <form onSubmit={handleSubmit} className="space-y-8">
             <div className="space-y-2">
-              <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest ">Nome da Ocasião / Evento</label>
+              <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest">Nome da Ocasião / Evento</label>
               <input
                 required
                 autoFocus
@@ -112,7 +112,7 @@ export function FlashEventModal({ onClose, onSuccess, onError, network }: FlashE
             </div>
 
             <div className="space-y-2">
-              <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest ">Preço de Venda (Por Foto R$)</label>
+              <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest">Preço de Venda (Por Foto R$)</label>
               <div className="relative">
                 <span className="absolute left-4 top-1/2 -translate-y-1/2 text-yellow-400 font-bold text-sm">R$</span>
                 <input
@@ -120,14 +120,14 @@ export function FlashEventModal({ onClose, onSuccess, onError, network }: FlashE
                   required
                   value={price}
                   onChange={e => setPrice(e.target.value)}
-                  className="w-full bg-theme-bg-muted border border-theme-border p-4 pl-12 text-theme-text outline-none focus:border-yellow-400/50 transition-all font-bold text-xl "
+                  className="w-full bg-theme-bg-muted border border-theme-border p-4 pl-12 text-theme-text outline-none focus:border-yellow-400/50 transition-all font-bold text-xl"
                 />
               </div>
             </div>
             
             <div className="flex gap-4">
               <div className="space-y-2 w-[100px]">
-                <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest ">Estado</label>
+                <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest">Estado</label>
                 <select
                   required
                   value={uf}
@@ -144,7 +144,7 @@ export function FlashEventModal({ onClose, onSuccess, onError, network }: FlashE
                 </select>
               </div>
               <div className="space-y-2 flex-1">
-                <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest ">Cidade</label>
+                <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest">Cidade</label>
                 <select
                   required
                   disabled={!uf || citiesList.length === 0}
@@ -170,7 +170,7 @@ export function FlashEventModal({ onClose, onSuccess, onError, network }: FlashE
                   required
                   value={date}
                   onChange={e => setDate(e.target.value)}
-                  className="w-full bg-theme-bg-muted border border-theme-border p-4 text-theme-text outline-none focus:border-yellow-400/50 transition-all font-bold text-xs "
+                  className="w-full bg-theme-bg-muted border border-theme-border p-4 text-theme-text outline-none focus:border-yellow-400/50 transition-all font-bold text-xs"
                 />
               </div>
 
@@ -183,7 +183,7 @@ export function FlashEventModal({ onClose, onSuccess, onError, network }: FlashE
                   required
                   value={startTime}
                   onChange={e => setStartTime(e.target.value)}
-                  className="w-full bg-theme-bg-muted border border-theme-border p-4 text-theme-text outline-none focus:border-yellow-400/50 transition-all font-bold text-xs "
+                  className="w-full bg-theme-bg-muted border border-theme-border p-4 text-theme-text outline-none focus:border-yellow-400/50 transition-all font-bold text-xs"
                 />
               </div>
 
@@ -196,7 +196,7 @@ export function FlashEventModal({ onClose, onSuccess, onError, network }: FlashE
                   required
                   value={endTime}
                   onChange={e => setEndTime(e.target.value)}
-                  className="w-full bg-theme-bg-muted border border-theme-border p-4 text-theme-text outline-none focus:border-yellow-400/50 transition-all font-bold text-xs "
+                  className="w-full bg-theme-bg-muted border border-theme-border p-4 text-theme-text outline-none focus:border-yellow-400/50 transition-all font-bold text-xs"
                 />
               </div>
             </div>
@@ -214,7 +214,7 @@ export function FlashEventModal({ onClose, onSuccess, onError, network }: FlashE
 
             <div className="flex items-center justify-between p-4 bg-theme-bg-muted border border-theme-border">
               <div className="space-y-1">
-                <p className="text-[10px] font-bold text-theme-text uppercase tracking-widest ">Visibilidade</p>
+                <p className="text-[10px] font-bold text-theme-text uppercase tracking-widest">Visibilidade</p>
                 <p className="text-[10px] text-theme-muted uppercase font-bold tracking-widest">
                   {isPrivate ? 'Privado (Link Direto)' : 'Público (Aparece no Site)'}
                 </p>
@@ -231,7 +231,7 @@ export function FlashEventModal({ onClose, onSuccess, onError, network }: FlashE
             <button
               type="submit"
               disabled={loading || !name}
-              className="w-full py-5 bg-yellow-400 text-black text-[11px] font-bold uppercase tracking-[0.3em] hover:bg-white hover:scale-[1.01] active:scale-[0.98] transition-all flex items-center justify-center gap-4 shadow-2xl shadow-yellow-400/20 disabled:opacity-40"
+              className="w-full py-5 bg-yellow-400 text-theme-text text-[11px] font-bold uppercase tracking-[0.3em] hover:bg-white hover:scale-[1.01] active:scale-[0.98] transition-all flex items-center justify-center gap-4 shadow-2xl shadow-yellow-400/20 disabled:opacity-40"
             >
               {loading ? (
                 "GERANDO SISTEMA..."
@@ -243,7 +243,7 @@ export function FlashEventModal({ onClose, onSuccess, onError, network }: FlashE
             </button>
           </form>
           
-          <p className="text-[9px] text-center text-theme-muted uppercase tracking-[0.2em] leading-relaxed opacity-40 font-bold ">
+          <p className="text-[9px] text-center text-theme-muted uppercase tracking-[0.2em] leading-relaxed opacity-40 font-bold">
             O evento será ativado instantaneamente. <br />
             Você poderá capturar fotos e o cliente pagará para baixar/imprimir.
           </p>

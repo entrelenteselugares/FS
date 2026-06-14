@@ -4,7 +4,7 @@ export function SupportBanner() {
   return (
     <div className="bg-theme-bg-muted border-l-4 border-brand-tactical border-y border-r border-theme-border rounded-2xl p-4 md:p-6 flex flex-col md:flex-row items-center justify-between gap-6 overflow-hidden">
       <div className="space-y-1">
-        <h4 className="text-[11px] font-bold text-brand-tactical uppercase tracking-[0.4em] ">Suporte de Campo</h4>
+        <h4 className="text-[11px] font-bold text-brand-tactical uppercase tracking-[0.4em]">Suporte de Campo</h4>
         <p className="text-[10px] text-theme-muted uppercase tracking-widest font-medium">Linha direta com a matriz para dúvidas operacionais ou técnicas.</p>
       </div>
       <a

@@ -65,7 +65,7 @@ export const ProfessionalBadgesShowcase: React.FC<ProfessionalBadgesShowcaseProp
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-theme-border pb-6">
         <div className="space-y-1">
           <div className="flex items-center gap-2.5">
-            <h3 className="text-2xl font-heading font-bold text-theme-text uppercase ">
+            <h3 className="text-2xl font-heading font-bold text-theme-text uppercase">
               Galeria de Conquistas
             </h3>
             <span className="px-2 py-0.5 text-[9px] font-bold uppercase bg-theme-bg border border-theme-border text-theme-muted tracking-widest rounded">
@@ -83,7 +83,7 @@ export const ProfessionalBadgesShowcase: React.FC<ProfessionalBadgesShowcaseProp
             <p className="text-[9px] font-bold text-theme-muted uppercase tracking-widest">
               Medalhas Ativas
             </p>
-            <p className="text-base font-heading font-bold text-theme-text ">
+            <p className="text-base font-heading font-bold text-theme-text">
               {unlockedCount} de {badges.length} Desbloqueadas
             </p>
           </div>

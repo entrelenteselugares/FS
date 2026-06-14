@@ -74,7 +74,7 @@ export const Navbar: React.FC<NavbarProps> = ({ tenantLogoUrl }) => {
           >
             <ShoppingBag size={18} strokeWidth={1.5} />
             {totalItems > 0 && (
-              <span className="absolute -top-1 -right-1 w-4 h-4 bg-brand-tactical text-black text-[9px] font-bold flex items-center justify-center rounded-sm animate-pulse-soft">
+              <span className="absolute -top-1 -right-1 w-4 h-4 bg-brand-tactical text-theme-text text-[9px] font-bold flex items-center justify-center rounded-sm animate-pulse-soft">
                 {totalItems}
               </span>
             )}

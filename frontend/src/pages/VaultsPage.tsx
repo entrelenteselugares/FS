@@ -36,7 +36,7 @@ function VaultCard({ vault, onClick }: { vault: Vault; onClick: () => void }) {
         </div>
         <span className={`text-[6px] md:text-[10px] font-black uppercase tracking-widest px-1.5 md:px-2 py-0.5 md:py-1 rounded md:rounded-md mt-1 shrink-0 ${
           vault.subscriptionStatus === "ACTIVE"
-            ? "text-emerald-500 bg-emerald-500/10 border border-emerald-500/20"
+            ? "text-theme-brand bg-emerald-500/10 border border-emerald-500/20"
             : vault.subscriptionStatus === "TRIAL"
             ? "text-yellow-500 bg-yellow-500/10 border border-yellow-500/20"
             : "text-red-500 bg-red-500/10 border border-red-500/20"
@@ -133,14 +133,14 @@ function NewVaultModal({ onClose, onCreated }: { onClose: () => void; onCreated:
             <Lock size={18} className="text-brand-tactical" />
           </div>
           <div>
-            <h2 className="text-lg font-bold text-theme-text uppercase ">Novo Álbum</h2>
-            <p className="text-[10px] text-gray-500 uppercase tracking-widest">Memórias privadas compartilhadas</p>
+            <h2 className="text-lg font-bold text-theme-text uppercase">Novo Álbum</h2>
+            <p className="text-[10px] text-theme-muted uppercase tracking-widest">Memórias privadas compartilhadas</p>
           </div>
         </div>
 
         <form onSubmit={e => { e.preventDefault(); handleCreate(); }} className="space-y-6 flex-1">
           <div>
-            <label className="block text-[10px] font-bold uppercase tracking-widest text-gray-500 mb-2">Nome do Álbum</label>
+            <label className="block text-[10px] font-bold uppercase tracking-widest text-theme-muted mb-2">Nome do Álbum</label>
             <input
               id="input-nome-album"
               required
@@ -153,7 +153,7 @@ function NewVaultModal({ onClose, onCreated }: { onClose: () => void; onCreated:
           </div>
 
           <div>
-            <label className="block text-[10px] font-bold uppercase tracking-widest text-gray-500 mb-2">
+            <label className="block text-[10px] font-bold uppercase tracking-widest text-theme-muted mb-2">
               Meta de fotos do ciclo: <span className="text-brand-tactical">{goalPoses}</span>
             </label>
             <input
@@ -163,7 +163,7 @@ function NewVaultModal({ onClose, onCreated }: { onClose: () => void; onCreated:
               onChange={e => setGoalPoses(Number(e.target.value))}
               className="w-full accent-brand-tactical"
             />
-            <div className="flex justify-between text-[9px] text-gray-600 mt-1">
+            <div className="flex justify-between text-[9px] text-theme-muted mt-1">
               <span>12</span><span>120</span>
             </div>
           </div>
@@ -175,7 +175,7 @@ function NewVaultModal({ onClose, onCreated }: { onClose: () => void; onCreated:
               id="btn-cancelar-criar-album"
               type="button"
               onClick={onClose}
-              className="flex-1 py-3 border border-[#2a2a2a] text-gray-400 text-[11px] font-bold uppercase tracking-widest rounded-xl hover:border-gray-600 transition-colors"
+              className="flex-1 py-3 border border-[#2a2a2a] text-theme-muted text-[11px] font-bold uppercase tracking-widest rounded-xl hover:border-gray-600 transition-colors"
             >
               Cancelar
             </button>
@@ -183,7 +183,7 @@ function NewVaultModal({ onClose, onCreated }: { onClose: () => void; onCreated:
               id="btn-confirmar-criar-album"
               type="submit"
               disabled={loading}
-              className="flex-1 py-3 bg-brand-tactical hover:bg-brand-tactical/90 disabled:opacity-50 text-black text-[11px] font-bold uppercase tracking-widest rounded-xl transition-colors flex items-center justify-center gap-2"
+              className="flex-1 py-3 bg-brand-tactical hover:bg-brand-tactical/90 disabled:opacity-50 text-theme-text text-[11px] font-bold uppercase tracking-widest rounded-xl transition-colors flex items-center justify-center gap-2"
             >
               {loading ? <Loader2 size={14} className="animate-spin" /> : <Plus size={14} />}
               Criar Álbum
@@ -318,7 +318,7 @@ export default function VaultsPage() {
           <button
             id="btn-novo-album"
             onClick={() => setShowModal(true)}
-            className="flex items-center gap-2 bg-brand-tactical hover:bg-brand-tactical/90 text-black text-[11px] font-bold uppercase tracking-widest px-4 md:px-6 py-2.5 md:py-4 rounded-xl transition-all active:scale-95 shadow-lg shadow-brand-tactical/20 "
+            className="flex items-center gap-2 bg-brand-tactical hover:bg-brand-tactical/90 text-theme-text text-[11px] font-bold uppercase tracking-widest px-4 md:px-6 py-2.5 md:py-4 rounded-xl transition-all active:scale-95 shadow-lg shadow-brand-tactical/20"
           >
             <Plus size={14} />
             NOVO ÁLBUM
@@ -352,14 +352,14 @@ export default function VaultsPage() {
               <Lock size={48} className="text-brand-tactical/40" />
             </div>
             <div className="space-y-2">
-              <p className="text-2xl font-bold uppercase text-gray-400">NENHUM ÁLBUM AINDA</p>
-              <p className="text-[10px] text-gray-600 uppercase tracking-widest max-w-xs mx-auto font-bold">
+              <p className="text-2xl font-bold uppercase text-theme-muted">NENHUM ÁLBUM AINDA</p>
+              <p className="text-[10px] text-theme-muted uppercase tracking-widest max-w-xs mx-auto font-bold">
                 Crie seu primeiro álbum privado e convide pessoas para compartilhar memórias.
               </p>
             </div>
             <button
               onClick={() => setShowModal(true)}
-              className="mt-4 flex items-center gap-2 border border-brand-tactical/30 text-brand-tactical hover:bg-brand-tactical/10 text-[10px] font-bold uppercase tracking-widest px-3 md:px-6 md:px-8 py-2.5 md:py-4 rounded-xl transition-all "
+              className="mt-4 flex items-center gap-2 border border-brand-tactical/30 text-brand-tactical hover:bg-brand-tactical/10 text-[10px] font-bold uppercase tracking-widest px-3 md:px-6 md:px-8 py-2.5 md:py-4 rounded-xl transition-all"
             >
               <Plus size={14} />
               CRIAR PRIMEIRO ÁLBUM

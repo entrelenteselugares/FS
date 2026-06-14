@@ -96,8 +96,8 @@ export default function LuxuryExperiencePage() {
       <div className="absolute inset-0 bg-emerald-900/10 blur-[120px] rounded-full -m-64 opacity-30" />
       <div className="relative z-10 flex flex-col items-center gap-4 md:gap-8">
         <div className="w-px h-16 bg-gradient-to-b from-transparent via-emerald-500/50 to-transparent" />
-        <div className="text-[14px] font-display font-bold uppercase tracking-[0.8em] text-zinc-300">FOTO SEGUNDO</div>
-        <div className="text-[9px] font-medium uppercase tracking-[0.4em] text-emerald-500/80 animate-pulse">Iniciando Experiência</div>
+        <div className="text-[14px] font-display font-bold uppercase tracking-[0.8em] text-theme-subtle">FOTO SEGUNDO</div>
+        <div className="text-[9px] font-medium uppercase tracking-[0.4em] text-theme-brand/80 animate-pulse">Iniciando Experiência</div>
         <div className="w-px h-16 bg-gradient-to-t from-transparent via-emerald-500/50 to-transparent" />
       </div>
     </div>
@@ -106,8 +106,8 @@ export default function LuxuryExperiencePage() {
   if (!event) return (
     <div className="min-h-screen flex items-center justify-center p-3 md:p-6 text-center bg-[#050505]">
       <div className="space-y-6 max-w-sm">
-        <p className="text-2xl md:text-4xl font-display font-bold uppercase text-zinc-100">404</p>
-        <p className="text-[11px] font-medium text-zinc-500 uppercase tracking-[0.2em] leading-relaxed">A galeria solicitada encontra-se indisponível ou privada.</p>
+        <p className="text-2xl md:text-4xl font-display font-bold uppercase text-theme-subtle">404</p>
+        <p className="text-[11px] font-medium text-theme-muted uppercase tracking-[0.2em] leading-relaxed">A galeria solicitada encontra-se indisponível ou privada.</p>
       </div>
     </div>
   );
@@ -147,7 +147,7 @@ export default function LuxuryExperiencePage() {
   });
 
   return (
-    <div className="min-h-screen font-sans selection:bg-emerald-500 selection:text-white bg-[#030303] text-zinc-100 overflow-x-hidden">
+    <div className="min-h-screen selection:bg-emerald-500 selection:text-theme-text bg-[#030303] text-theme-subtle overflow-x-hidden">
       
       {/* GLASMORPHISM NAV */}
       <motion.nav 
@@ -194,18 +194,18 @@ export default function LuxuryExperiencePage() {
             transition={{ delay: 0.5, duration: 1.2, ease: "easeOut" }}
             className="space-y-8 w-full"
           >
-            <p className="text-[10px] md:text-[12px] font-medium text-emerald-400 uppercase tracking-[0.5em] md:tracking-[1em]">Galeria Privada</p>
-            <h1 className="text-3xl md:text-5xl md:text-8xl lg:text-[120px] font-display font-medium uppercase leading-[0.85] text-white drop-shadow-2xl">
+            <p className="text-[10px] md:text-[12px] font-medium text-theme-brand uppercase tracking-[0.5em] md:tracking-[1em]">Galeria Privada</p>
+            <h1 className="text-3xl md:text-5xl md:text-8xl lg:text-[120px] font-display font-medium uppercase leading-[0.85] text-theme-text drop-shadow-2xl">
               {event.title}
             </h1>
-            <div className="flex flex-col md:flex-row justify-center items-center gap-4 md:gap-12 text-[10px] md:text-[11px] font-medium uppercase tracking-[0.3em] text-zinc-400 mt-12">
+            <div className="flex flex-col md:flex-row justify-center items-center gap-4 md:gap-12 text-[10px] md:text-[11px] font-medium uppercase tracking-[0.3em] text-theme-muted mt-12">
               <span className="flex items-center gap-3">
-                <Calendar size={14} className="text-emerald-500/70" /> 
+                <Calendar size={14} className="text-theme-brand/70" /> 
                 {new Date(event.dataEvento).toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' })}
               </span>
               <span className="hidden md:block w-1 h-1 rounded-full bg-zinc-800" />
               <span className="flex items-center gap-3">
-                <MapPin size={14} className="text-emerald-500/70" /> 
+                <MapPin size={14} className="text-theme-brand/70" /> 
                 {event.location || "Localização Exclusiva"}
               </span>
             </div>
@@ -216,7 +216,7 @@ export default function LuxuryExperiencePage() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 2, duration: 2 }}
-          className="absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-4 text-zinc-600"
+          className="absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-4 text-theme-muted"
         >
           <span className="text-[10px] uppercase tracking-[0.3em] font-medium">Descubra</span>
           <ChevronDown size={20} className="animate-bounce" />
@@ -239,28 +239,28 @@ export default function LuxuryExperiencePage() {
                 className="flex flex-col md:flex-row items-center md:items-start gap-4 md:gap-8 md:gap-16"
               >
                 <div className="relative shrink-0 group">
-                  <div className="w-32 h-32 md:w-40 md:h-40 rounded-full border border-zinc-800/50 overflow-hidden bg-zinc-900/50 flex items-center justify-center text-2xl md:text-4xl md:text-5xl font-display font-normal text-emerald-500/50 transition-all duration-700 group-hover:border-emerald-500/30 group-hover:text-emerald-400">
+                  <div className="w-32 h-32 md:w-40 md:h-40 rounded-full border border-zinc-800/50 overflow-hidden bg-zinc-900/50 flex items-center justify-center text-2xl md:text-4xl md:text-5xl font-display font-normal text-theme-brand/50 transition-all duration-700 group-hover:border-emerald-500/30 group-hover:text-theme-brand">
                     {prof.profileImageUrl ? (
                       <img src={prof.profileImageUrl} alt={prof.nome} className="w-full h-full object-cover grayscale opacity-80 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-700" />
                     ) : (
                       prof.nome?.charAt(0)?.toUpperCase() || '?'
                     )}
                   </div>
-                  <div className="absolute -bottom-2 -right-2 md:bottom-2 md:right-2 p-3 bg-[#030303] border border-zinc-800 rounded-full text-zinc-400 group-hover:text-emerald-500 group-hover:border-emerald-500/50 transition-all duration-500">
+                  <div className="absolute -bottom-2 -right-2 md:bottom-2 md:right-2 p-3 bg-[#030303] border border-zinc-800 rounded-full text-theme-muted group-hover:text-theme-brand group-hover:border-emerald-500/50 transition-all duration-500">
                     <Camera size={18} strokeWidth={1.5} />
                   </div>
                 </div>
                 
                 <div className="space-y-6 text-center md:text-left flex-1 md:pt-4">
                   <div className="space-y-2">
-                    <p className="text-[10px] font-medium text-emerald-500/80 uppercase tracking-[0.4em]">{prof.role}</p>
-                    <h2 className="text-3xl md:text-4xl font-display font-medium uppercase text-zinc-100">
+                    <p className="text-[10px] font-medium text-theme-brand/80 uppercase tracking-[0.4em]">{prof.role}</p>
+                    <h2 className="text-3xl md:text-4xl font-display font-medium uppercase text-theme-subtle">
                       {prof.nome}
                     </h2>
                   </div>
                   
                   <div className="w-12 h-px bg-zinc-800 mx-auto md:mx-0 mt-6" />
-                  <p className="text-[11px] md:text-xs font-normal tracking-[0.1em] text-zinc-400 max-w-2xl leading-loose mx-auto md:mx-0 whitespace-pre-wrap">
+                  <p className="text-[11px] md:text-xs font-normal tracking-[0.1em] text-theme-muted max-w-2xl leading-loose mx-auto md:mx-0 whitespace-pre-wrap">
                     {prof.description || "Profissional dedicado a transformar momentos em legados visuais através de uma curadoria meticulosa e olhar apurado."}
                   </p>
                 </div>
@@ -274,19 +274,19 @@ export default function LuxuryExperiencePage() {
               <div className="flex items-center gap-4 border-b border-zinc-800 pb-px">
                 <button
                   onClick={() => setSearchParams({ tab: 'OFFICIAL' }, { replace: true })}
-                  className={`pb-4 text-[10px] uppercase tracking-[0.2em] font-medium transition-colors ${activeTab === 'OFFICIAL' ? 'text-emerald-400 border-b border-emerald-400' : 'text-zinc-500 hover:text-zinc-300'}`}
+                  className={`pb-4 text-[10px] uppercase tracking-[0.2em] font-medium transition-colors ${activeTab === 'OFFICIAL' ? 'text-theme-brand border-b border-emerald-400' : 'text-theme-muted hover:text-theme-subtle'}`}
                 >
                   Curadoria Oficial
                 </button>
                 <button
                   onClick={() => setSearchParams({ tab: 'GUEST' }, { replace: true })}
-                  className={`pb-4 text-[10px] uppercase tracking-[0.2em] font-medium transition-colors ${activeTab === 'GUEST' ? 'text-emerald-400 border-b border-emerald-400' : 'text-zinc-500 hover:text-zinc-300'}`}
+                  className={`pb-4 text-[10px] uppercase tracking-[0.2em] font-medium transition-colors ${activeTab === 'GUEST' ? 'text-theme-brand border-b border-emerald-400' : 'text-theme-muted hover:text-theme-subtle'}`}
                 >
                   Live Connect
                 </button>
                 <button
                   onClick={() => setSearchParams({ tab: 'VIDEO' }, { replace: true })}
-                  className={`pb-4 text-[10px] uppercase tracking-[0.2em] font-medium transition-colors ${activeTab === 'VIDEO' ? 'text-emerald-400 border-b border-emerald-400' : 'text-zinc-500 hover:text-zinc-300'}`}
+                  className={`pb-4 text-[10px] uppercase tracking-[0.2em] font-medium transition-colors ${activeTab === 'VIDEO' ? 'text-theme-brand border-b border-emerald-400' : 'text-theme-muted hover:text-theme-subtle'}`}
                 >
                   Cinematografia
                 </button>
@@ -295,7 +295,7 @@ export default function LuxuryExperiencePage() {
               <div className="flex items-center gap-4">
                 <button
                   onClick={() => setSortOrder(prev => prev === 'DESC' ? 'ASC' : 'DESC')}
-                  className="flex items-center gap-2 text-[10px] font-medium uppercase tracking-widest text-zinc-400 hover:text-emerald-400 transition-colors"
+                  className="flex items-center gap-2 text-[10px] font-medium uppercase tracking-widest text-theme-muted hover:text-theme-brand transition-colors"
                 >
                   <ChevronDown size={14} className={`transition-transform ${sortOrder === 'ASC' ? 'rotate-180' : ''}`} />
                   {sortOrder === 'DESC' ? 'Mais Recentes' : 'Mais Antigas'}
@@ -303,7 +303,7 @@ export default function LuxuryExperiencePage() {
 
                 <a 
                   href={`${window.location.origin}/captura?eventId=${event.id}`}
-                  className="flex items-center gap-2 px-4 py-2 border border-emerald-900 rounded-full text-[9px] uppercase tracking-[0.2em] font-medium text-emerald-400 hover:bg-emerald-900/30 transition-colors"
+                  className="flex items-center gap-2 px-4 py-2 border border-emerald-900 rounded-full text-[9px] uppercase tracking-[0.2em] font-medium text-theme-brand hover:bg-emerald-900/30 transition-colors"
                 >
                   <Camera size={12} />
                   Enviar Foto
@@ -315,8 +315,8 @@ export default function LuxuryExperiencePage() {
             {activeTab === 'OFFICIAL' && (event.lightroomUrl || event.driveUrl) && (
               <div className="mb-12 p-3 md:p-6 rounded-2xl border border-zinc-800 bg-zinc-900/50 flex flex-col md:flex-row items-center justify-between gap-3 md:gap-6">
                 <div className="space-y-2 text-center md:text-left">
-                  <h4 className="text-sm font-medium uppercase tracking-widest text-emerald-400">Acervo Completo em Alta Resolução</h4>
-                  <p className="text-[11px] text-zinc-400 leading-relaxed max-w-lg">
+                  <h4 className="text-sm font-medium uppercase tracking-widest text-theme-brand">Acervo Completo em Alta Resolução</h4>
+                  <p className="text-[11px] text-theme-muted leading-relaxed max-w-lg">
                     Acesse o repositório externo configurado pelo fotógrafo para visualizar ou baixar todas as fotos em qualidade original.
                   </p>
                 </div>
@@ -326,7 +326,7 @@ export default function LuxuryExperiencePage() {
                       href={event.lightroomUrl.trim().replace(/\s/g, '')} 
                       target="_blank" 
                       rel="noopener noreferrer"
-                      className="flex items-center gap-2 px-3 md:px-6 py-3 bg-zinc-800 hover:bg-zinc-700 transition-colors border border-zinc-700 rounded-full text-[10px] font-bold uppercase tracking-widest text-zinc-100"
+                      className="flex items-center gap-2 px-3 md:px-6 py-3 bg-zinc-800 hover:bg-zinc-700 transition-colors border border-zinc-700 rounded-full text-[10px] font-bold uppercase tracking-widest text-theme-subtle"
                     >
                       <ExternalLink size={14} />
                       Lightroom
@@ -337,7 +337,7 @@ export default function LuxuryExperiencePage() {
                       href={event.driveUrl.trim().replace(/\s/g, '')} 
                       target="_blank" 
                       rel="noopener noreferrer"
-                      className="flex items-center gap-2 px-3 md:px-6 py-3 bg-zinc-800 hover:bg-zinc-700 transition-colors border border-zinc-700 rounded-full text-[10px] font-bold uppercase tracking-widest text-zinc-100"
+                      className="flex items-center gap-2 px-3 md:px-6 py-3 bg-zinc-800 hover:bg-zinc-700 transition-colors border border-zinc-700 rounded-full text-[10px] font-bold uppercase tracking-widest text-theme-subtle"
                     >
                       <Download size={14} />
                       Google Drive
@@ -349,8 +349,8 @@ export default function LuxuryExperiencePage() {
 
             {filteredMedias.length === 0 ? (
               <div className="py-32 flex flex-col items-center justify-center text-center space-y-4 border border-dashed border-zinc-800 rounded-3xl">
-                <Camera size={32} className="text-zinc-700" />
-                <p className="text-[11px] font-medium text-zinc-500 uppercase tracking-[0.2em]">Nenhuma mídia encontrada nesta categoria</p>
+                <Camera size={32} className="text-theme-text" />
+                <p className="text-[11px] font-medium text-theme-muted uppercase tracking-[0.2em]">Nenhuma mídia encontrada nesta categoria</p>
               </div>
             ) : (
               <div className="columns-1 md:columns-2 lg:columns-3 gap-3 md:gap-6 space-y-6">
@@ -377,7 +377,7 @@ export default function LuxuryExperiencePage() {
                         download
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="w-12 h-12 rounded-full border border-zinc-600 flex items-center justify-center text-zinc-300 hover:text-emerald-400 hover:border-emerald-400 hover:bg-emerald-900/20 transition-all"
+                        className="w-12 h-12 rounded-full border border-zinc-600 flex items-center justify-center text-theme-subtle hover:text-theme-brand hover:border-emerald-400 hover:bg-emerald-900/20 transition-all"
                       >
                         <Download size={18} />
                       </a>
@@ -385,14 +385,14 @@ export default function LuxuryExperiencePage() {
                         href={midia.metadata?.rawUrl || midia.url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="w-12 h-12 rounded-full border border-zinc-600 flex items-center justify-center text-zinc-300 hover:text-emerald-400 hover:border-emerald-400 hover:bg-emerald-900/20 transition-all"
+                        className="w-12 h-12 rounded-full border border-zinc-600 flex items-center justify-center text-theme-subtle hover:text-theme-brand hover:border-emerald-400 hover:bg-emerald-900/20 transition-all"
                       >
                         <ExternalLink size={18} />
                       </a>
                     </div>
 
                     {midia.type === 'VIDEO' && (
-                      <div className="absolute top-4 right-4 p-2 bg-black/50 backdrop-blur-md rounded-full text-white">
+                      <div className="absolute top-4 right-4 p-2 bg-black/50 backdrop-blur-md rounded-full text-theme-text">
                         <PlayCircle size={16} />
                       </div>
                     )}
@@ -406,9 +406,9 @@ export default function LuxuryExperiencePage() {
           {products.length > 0 && (
             <div className="space-y-20 pt-16">
               <div className="text-center space-y-6">
-                <p className="text-[10px] font-medium text-zinc-500 uppercase tracking-[0.5em]">Boutique</p>
-                <h3 className="text-2xl md:text-4xl md:text-5xl font-display font-medium uppercase text-zinc-100">Obras Físicas</h3>
-                <p className="text-[11px] uppercase font-normal tracking-[0.2em] text-zinc-400 max-w-xl mx-auto leading-relaxed">
+                <p className="text-[10px] font-medium text-theme-muted uppercase tracking-[0.5em]">Boutique</p>
+                <h3 className="text-2xl md:text-4xl md:text-5xl font-display font-medium uppercase text-theme-subtle">Obras Físicas</h3>
+                <p className="text-[11px] uppercase font-normal tracking-[0.2em] text-theme-muted max-w-xl mx-auto leading-relaxed">
                   Materialize suas memórias com nossa seleção de fine art e álbuns premium.
                 </p>
               </div>
@@ -425,7 +425,7 @@ export default function LuxuryExperiencePage() {
                   >
                     <div className="aspect-[3/4] bg-zinc-900 border border-zinc-800/50 relative overflow-hidden mb-8 group-hover:border-zinc-700 transition-all duration-500">
                       <div className="absolute inset-0 flex items-center justify-center">
-                        <span className="font-display font-normal text-8xl text-zinc-800/30 uppercase mix-blend-overlay group-hover:scale-105 transition-transform duration-1000">
+                        <span className="font-display font-normal text-8xl text-theme-text/30 uppercase mix-blend-overlay group-hover:scale-105 transition-transform duration-1000">
                           {p.category.slice(0, 3)}
                         </span>
                       </div>
@@ -433,7 +433,7 @@ export default function LuxuryExperiencePage() {
                       
                       {idx === 0 && (
                         <div className="absolute top-6 left-6">
-                          <span className="text-[10px] font-medium uppercase tracking-[0.3em] text-emerald-400 border border-emerald-900/50 bg-emerald-950/30 px-3 py-1.5 backdrop-blur-sm">
+                          <span className="text-[10px] font-medium uppercase tracking-[0.3em] text-theme-brand border border-emerald-900/50 bg-emerald-950/30 px-3 py-1.5 backdrop-blur-sm">
                             Signature
                           </span>
                         </div>
@@ -442,19 +442,19 @@ export default function LuxuryExperiencePage() {
 
                     <div className="space-y-4 px-2">
                       <div className="flex justify-between items-baseline">
-                        <h4 className="text-lg font-display font-medium uppercase text-zinc-200 group-hover:text-white transition-colors">{p.name}</h4>
-                        <span className="text-[9px] font-medium uppercase tracking-[0.2em] text-zinc-500">{p.category}</span>
+                        <h4 className="text-lg font-display font-medium uppercase text-theme-subtle group-hover:text-theme-text transition-colors">{p.name}</h4>
+                        <span className="text-[9px] font-medium uppercase tracking-[0.2em] text-theme-muted">{p.category}</span>
                       </div>
-                      <p className="text-[11px] font-normal tracking-[0.05em] leading-relaxed text-zinc-400 line-clamp-3">
+                      <p className="text-[11px] font-normal tracking-[0.05em] leading-relaxed text-theme-muted line-clamp-3">
                         {p.description || "Acabamento premium artesanal."}
                       </p>
                       
                       <div className="pt-6 flex justify-between items-center">
-                        <span className="text-xl font-display font-medium text-emerald-500">
-                          <span className="text-xs text-zinc-600 mr-1">R$</span>
+                        <span className="text-xl font-display font-medium text-theme-brand">
+                          <span className="text-xs text-theme-muted mr-1">R$</span>
                           {Number(p.sellingPrice).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                         </span>
-                        <button className="text-[9px] font-bold uppercase tracking-[0.2em] text-zinc-300 hover:text-emerald-400 transition-colors flex items-center gap-2">
+                        <button className="text-[9px] font-bold uppercase tracking-[0.2em] text-theme-subtle hover:text-theme-brand transition-colors flex items-center gap-2">
                           Encomendar <ArrowRight size={12} />
                         </button>
                       </div>
@@ -474,7 +474,7 @@ export default function LuxuryExperiencePage() {
                className="h-5 opacity-30 hover:opacity-100 transition-all cursor-pointer mix-blend-screen" 
                onClick={() => navigate('/')} 
              />
-             <p className="text-[10px] font-medium uppercase tracking-[0.4em] text-zinc-600">
+             <p className="text-[10px] font-medium uppercase tracking-[0.4em] text-theme-muted">
                © {new Date().getFullYear()} Foto Segundo
              </p>
           </footer>

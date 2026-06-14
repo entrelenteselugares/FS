@@ -493,7 +493,7 @@ export default function ProfissionalDashboard({
  <div className="bg-theme-bg-muted border border-theme-border p-3 md:p-6 flex items-center justify-center text-center opacity-40 grayscale group hover:grayscale-0 transition-all">
  <div className="space-y-2">
  <Printer size={24} className="mx-auto mb-2 opacity-20 group-hover:opacity-100 transition-opacity" />
- <p className="text-[9px] font-bold uppercase tracking-widest leading-relaxed max-w-[140px] mx-auto ">Recurso exclusivo para franqueados ativos</p>
+ <p className="text-[9px] font-bold uppercase tracking-widest leading-relaxed max-w-[140px] mx-auto">Recurso exclusivo para franqueados ativos</p>
  </div>
  </div>
  )}
@@ -573,7 +573,7 @@ export default function ProfissionalDashboard({
  <div className={`text-7xl font-display font-black tracking-tighter ${user.franchiseProfile.printCredits < 50 ? 'text-amber-500' : 'text-brand-tactical'}`}>
  {user.franchiseProfile.printCredits}
  </div>
- <p className="text-[10px] text-theme-muted font-bold uppercase tracking-[0.2em] mt-2 ">Fotos para Impressão</p>
+ <p className="text-[10px] text-theme-muted font-bold uppercase tracking-[0.2em] mt-2">Fotos para Impressão</p>
  </div>
  
  <div className="bg-theme-bg border border-theme-border p-5 md:p-10 relative group rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300">
@@ -597,7 +597,7 @@ export default function ProfissionalDashboard({
  <div className="space-y-4 mt-6">
  <button 
  onClick={() => setIsShopModalOpen(true)}
- className="w-full py-4 bg-brand-tactical text-black font-display font-bold text-[10px] uppercase tracking-widest hover:bg-brand-tactical/90 hover:scale-[1.02] hover:shadow-xl hover:shadow-brand-tactical/20 transition-all shadow-lg shadow-brand-tactical/10 rounded-xl cursor-pointer"
+ className="w-full py-4 bg-brand-tactical text-theme-text font-display font-bold text-[10px] uppercase tracking-widest hover:bg-brand-tactical/90 hover:scale-[1.02] hover:shadow-xl hover:shadow-brand-tactical/20 transition-all shadow-lg shadow-brand-tactical/10 rounded-xl cursor-pointer"
  >
  LOJA DA FRANQUIA
  </button>
@@ -636,11 +636,11 @@ export default function ProfissionalDashboard({
  <tbody>
  {supplyOrders.map((order) => (
  <tr key={order.id} className="border-b border-theme-border hover:bg-theme-bg-muted transition-colors">
- <td className="py-4 px-2 text-[10px] text-theme-text font-mono">
+ <td className="py-4 px-2 text-[10px] text-theme-text">
  {new Date(order.createdAt).toLocaleDateString('pt-BR')}
  </td>
  <td className="py-4 px-2">
- <p className="text-[10px] text-theme-text font-bold uppercase ">
+ <p className="text-[10px] text-theme-text font-bold uppercase">
  {order.items?.map((it) => `${it.quantity}x ${it.name}`).join(", ") || "N/A"}
  </p>
  </td>
@@ -650,7 +650,7 @@ export default function ProfissionalDashboard({
  <td className="py-4 px-2">
  <span className={`text-[10px] font-black px-2 py-1 rounded-md uppercase tracking-widest ${
  order.status === 'PAID' ? 'bg-brand-tactical/10 text-brand-tactical' : 
- order.status === 'PENDING' ? 'bg-amber-500/10 text-amber-500' : 'bg-zinc-800 text-zinc-500'
+ order.status === 'PENDING' ? 'bg-amber-500/10 text-amber-500' : 'bg-zinc-800 text-theme-muted'
  }`}>
  {order.status === 'PAID' ? 'Pago' : order.status === 'PENDING' ? 'Pendente' : order.status}
  </span>
@@ -690,7 +690,7 @@ export default function ProfissionalDashboard({
  <tbody className="divide-y divide-theme-border">
  {user.franchiseProfile.transactions?.filter(tx => tx.amount < 0).map(tx => (
  <tr key={tx.id} className="hover:bg-white/[0.02] transition-colors">
- <td className="p-4 text-[10px] text-theme-muted font-mono">{new Date(tx.createdAt).toLocaleDateString('pt-BR')}</td>
+ <td className="p-4 text-[10px] text-theme-muted">{new Date(tx.createdAt).toLocaleDateString('pt-BR')}</td>
  <td className="p-4">
  <span className="text-[10px] font-bold text-theme-text uppercase">{tx.description || "Consumo Phygital"}</span>
  </td>
@@ -722,7 +722,7 @@ export default function ProfissionalDashboard({
  <Printer size={20} />
  </div>
  <div>
- <p className="text-sm font-bold text-theme-text uppercase ">{ev.title}</p>
+ <p className="text-sm font-bold text-theme-text uppercase">{ev.title}</p>
  <p className="text-[9px] text-theme-muted font-bold uppercase tracking-widest mt-1">{new Date(ev.dataEvento).toLocaleDateString('pt-BR')} · {ev.city || (ev.location?.startsWith("CEP:") ? null : ev.location) || "—"}</p>
  </div>
  </div>
@@ -747,7 +747,7 @@ export default function ProfissionalDashboard({
  <div className="space-y-6">
  <div className="flex items-center gap-4">
  <div className="h-px w-8 bg-brand-tactical" />
- <p className="text-[10px] font-bold text-theme-muted uppercase tracking-[0.5em] ">Registro de Atividades</p>
+ <p className="text-[10px] font-bold text-theme-muted uppercase tracking-[0.5em]">Registro de Atividades</p>
  </div>
  
  <div className="bg-theme-bg border border-theme-border overflow-hidden rounded-2xl shadow-xl">
@@ -756,7 +756,7 @@ export default function ProfissionalDashboard({
  {user.franchiseProfile.transactions.map(tx => (
  <div key={tx.id} className="p-3 md:p-6 flex items-center justify-between hover:bg-white/[0.02] transition-all group">
  <div className="space-y-1">
- <p className="text-[11px] font-bold text-theme-text uppercase tracking-widest ">
+ <p className="text-[11px] font-bold text-theme-text uppercase tracking-widest">
  {tx.description || (tx.type === 'PRINT_CONSUMPTION' ? 'Impressão Phygital' : 'Recarga de Créditos')}
  </p>
  <div className="flex items-center gap-3">

@@ -102,7 +102,7 @@ export function TeamSelector({ label, onSelect, network }: TeamSelectorProps) {
                   className={`flex items-center justify-between p-3 border transition-all ${selectedPartnerId === p.id ? "border-cyan-400 bg-cyan-400/5" : "border-theme-border hover:border-cyan-400/30"}`}
                 >
                   <div className="text-left">
-                    <p className="text-[10px] font-bold text-theme-text uppercase ">{p.nome}</p>
+                    <p className="text-[10px] font-bold text-theme-text uppercase">{p.nome}</p>
                     <p className="text-[10px] text-theme-muted uppercase font-bold tracking-widest">{p.email}</p>
                   </div>
                   {selectedPartnerId === p.id && <ShieldCheck size={14} className="text-cyan-400" />}

@@ -2,9 +2,6 @@
   "title": "Foto Segundo | Suas memórias, entregues agora.",
   "headings": [],
   "buttons": [
-    "VOLTAR",
-    "TIRAR FOTO / GRAVAR VÍDEO",
-    "ESCOLHER DA GALERIA (ATÉ 12)",
     "Home",
     "Buscar",
     "Compras",
@@ -25,7 +22,7 @@
   ],
   "links": [
     {
-      "text": "COPA 2026\nPRÓXIMOS\nCANADÁ\n12/06 · 16:00\nGRP B\nBÓSNIA\nVer Álbum →",
+      "text": "COPA 2026\nPRÓXIMOS\nHOLANDA\n14/06 · 17:00\nGRP F\nJAPÃO\nVer Álbum →",
       "href": "/album-torcida"
     }
   ]

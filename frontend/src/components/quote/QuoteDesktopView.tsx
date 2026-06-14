@@ -77,7 +77,7 @@ function DateTimePicker({ value, onChange, workingHours }: { value: string; onCh
     <div ref={ref} style={{ position: "relative" }}>
       {/* Trigger */}
       <div onClick={() => setOpen(o => !o)} className="relative flex items-center cursor-pointer group">
-        <Calendar size={18} className="absolute left-6 text-emerald-500 z-10 group-hover:scale-110 transition-transform" />
+        <Calendar size={18} className="absolute left-6 text-theme-brand z-10 group-hover:scale-110 transition-transform" />
         <div
           className="fs-input w-full !pl-16 text-[11px] font-bold uppercase tracking-widest min-h-[64px] flex items-center border border-theme-border bg-theme-bg-muted hover:border-emerald-500/40 transition-colors"
           style={{
@@ -243,14 +243,14 @@ export const QuoteDesktopView = (props: any) => {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-theme-bg text-theme-text font-b selection:bg-emerald-500 selection:text-black py-10 md:py-20 px-4">
+    <div className="min-h-screen bg-theme-bg text-theme-text font-b selection:bg-emerald-500 selection:text-theme-text py-10 md:py-20 px-4">
       {loading && (
         <div className="fixed inset-0 z-[100] flex flex-col items-center justify-center gap-6 bg-theme-bg">
           <div className="absolute inset-0 bg-emerald-500/5 blur-[120px] rounded-full -m-64 opacity-20" />
           <div className="relative z-10 flex flex-col items-center gap-8">
             <div className="w-px h-16 bg-gradient-to-b from-transparent via-emerald-500 to-transparent" />
             <div className="text-[18px] font-display font-bold uppercase tracking-[0.8em] text-theme-text">FOTO SEGUNDO</div>
-            <div className="text-[9px] font-bold uppercase tracking-[0.4em] text-emerald-500 animate-pulse">Configurando Motor Tático</div>
+            <div className="text-[9px] font-bold uppercase tracking-[0.4em] text-theme-brand animate-pulse">Configurando Motor Tático</div>
             <div className="w-px h-16 bg-gradient-to-t from-transparent via-emerald-500 to-transparent" />
           </div>
         </div>
@@ -304,11 +304,11 @@ export const QuoteDesktopView = (props: any) => {
             </Link>
           </div>
           <div 
-            className="text-[10px] font-bold text-emerald-500 mb-4 uppercase tracking-[0.5em] " 
+            className="text-[10px] font-bold text-theme-brand mb-4 uppercase tracking-[0.5em]" 
             style={{ opacity: 0.8 }}
           >Solicitação de Orçamento</div>
           <h1 className="text-4xl md:text-6xl font-display font-bold uppercase leading-none text-theme-text">
-            ETERNIZE SEU <span className="text-theme-subtle ">EVENTO</span>
+            ETERNIZE SEU <span className="text-theme-subtle">EVENTO</span>
           </h1>
         </header>
 
@@ -316,10 +316,10 @@ export const QuoteDesktopView = (props: any) => {
           <div className="mb-8 p-4 bg-emerald-500/10 border border-emerald-500/20 rounded-xl flex items-center justify-between shadow-xl">
             <div className="flex items-center gap-3">
               <div className="w-8 h-8 rounded-full bg-emerald-500/20 flex items-center justify-center">
-                <span className="text-emerald-500">⭐</span>
+                <span className="text-theme-brand">⭐</span>
               </div>
               <div>
-                <div className="text-[10px] font-bold uppercase tracking-widest text-emerald-500">Jornada Selecionada</div>
+                <div className="text-[10px] font-bold uppercase tracking-widest text-theme-brand">Jornada Selecionada</div>
                 <div className="text-sm font-bold text-theme-text">
                   {flowType === "PARTNER" && "Unidade Fixa (Casas Parceiras)"}
                   {flowType === "CUSTOM" && "Orçamento Sob Medida"}
@@ -335,7 +335,7 @@ export const QuoteDesktopView = (props: any) => {
         {flowType === "PACKAGE" && props.availablePackages && (
           <div className="mb-8">
             <div className="flex items-center justify-between mb-4">
-              <label className="text-[10px] font-bold uppercase tracking-widest text-emerald-500">Escolha o seu Pacote</label>
+              <label className="text-[10px] font-bold uppercase tracking-widest text-theme-brand">Escolha o seu Pacote</label>
               <button onClick={() => window.location.href = '/cotacao'} className="text-[10px] font-bold uppercase tracking-widest text-theme-text-muted hover:text-theme-text transition-colors border-b border-theme-border pb-1">
                 Voltar à Vitrine
               </button>
@@ -358,7 +358,7 @@ export const QuoteDesktopView = (props: any) => {
                   <div className="text-[10px] text-theme-text-muted mb-4 uppercase tracking-widest leading-relaxed">
                     {pkg.desc}
                   </div>
-                  <div className="text-lg font-bold text-emerald-500">
+                  <div className="text-lg font-bold text-theme-brand">
                     R$ {pkg.price.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
                   </div>
                 </div>
@@ -400,7 +400,7 @@ export const QuoteDesktopView = (props: any) => {
                           value={customCep} 
                           onChange={e => handleCepChange(e.target.value)} 
                           placeholder="CEP DO LOCAL" 
-                          className="fs-input font-mono" 
+                          className="fs-input" 
                           style={{ width: "100%", padding: "15px" }} 
                         />
                         {isCepLoading && (
@@ -766,7 +766,7 @@ export const QuoteDesktopView = (props: any) => {
               <div style={{ borderTop: `1px solid ${THEME.border}`, paddingTop: 20, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                 <div>
                   <div style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", color: THEME.text2, letterSpacing: 2 }}>Total Estimado</div>
-                  <div className="font-display font-bold text-emerald-500 " style={{ fontSize: 32 }}>
+                  <div className="font-display font-bold text-theme-brand" style={{ fontSize: 32 }}>
                     {showPrices ? new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(totalPrice) : "SOB CONSULTA"}
                   </div>
                 </div>
@@ -782,7 +782,7 @@ export const QuoteDesktopView = (props: any) => {
                       }
                     }}
                     style={{ flex: 1 }}
-                    className="px-8 py-4 bg-brand-tactical text-black font-display font-bold text-[11px] uppercase tracking-widest hover:bg-white transition-all shadow-[0_0_20px_rgba(133,185,172,0.4)] rounded-lg"
+                    className="px-8 py-4 bg-brand-tactical text-theme-text font-display font-bold text-[11px] uppercase tracking-widest hover:bg-white transition-all shadow-[0_0_20px_rgba(133,185,172,0.4)] rounded-lg"
                   >CONTINUAR &rarr;</button>
                 </div>
               </div>
@@ -827,7 +827,7 @@ export const QuoteDesktopView = (props: any) => {
                       </option>
                     ))}
                   </select>
-                  <p className="text-[9px] text-white/20 ">Selecione um profissional específico para priorizar seu atendimento.</p>
+                  <p className="text-[9px] text-theme-text/20">Selecione um profissional específico para priorizar seu atendimento.</p>
                 </div>
 
                 <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
@@ -839,12 +839,12 @@ export const QuoteDesktopView = (props: any) => {
                   <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
                     <label style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", color: THEME.text2 }}>Link de Venda de Ingressos (Opcional)</label>
                     <input value={ticketUrl || ''} onChange={e => setTicketUrl(e.target.value)} placeholder="HTTPS://SYMPLA.COM/..." className="fs-input" style={{ width: "100%", padding: "15px" }} />
-                    <p className="text-[9px] text-white/40 ">Ganhe mais visibilidade divulgando seus ingressos na nossa vitrine.</p>
+                    <p className="text-[9px] text-theme-text/40">Ganhe mais visibilidade divulgando seus ingressos na nossa vitrine.</p>
                   </div>
                   <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
                     <label style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", color: THEME.text2 }}>Seu Cupom Promocional (Opcional)</label>
                     <input value={fotoSegundoPromoCode || ''} onChange={e => setFotoSegundoPromoCode(e.target.value.toUpperCase())} placeholder="EX: FOTOSEGUNDO10" className="fs-input" style={{ width: "100%", padding: "15px" }} />
-                    <p className="text-[9px] text-white/40 ">Ofereça um desconto exclusivo para clientes Foto Segundo e gere comissionamento.</p>
+                    <p className="text-[9px] text-theme-text/40">Ofereça um desconto exclusivo para clientes Foto Segundo e gere comissionamento.</p>
                   </div>
                 </div>
 
@@ -885,14 +885,14 @@ export const QuoteDesktopView = (props: any) => {
             
             <div className="relative z-10">
               <div style={{ width: 80, height: 80, background: "var(--theme-bg)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 30px", border: "1px solid var(--theme-border)" }}>
-                <ShieldCheck size={40} className="text-emerald-500" />
+                <ShieldCheck size={40} className="text-theme-brand" />
               </div>
               <h2 className="text-4xl md:text-6xl font-display font-bold text-theme-text uppercase mb-8 leading-none">Solicitação Enviada</h2>
               
               {createdQuoteId && (
                 <div style={{ background: "var(--theme-bg)", border: "1px solid var(--theme-border)", padding: "20px 40px", marginBottom: 40, display: "inline-block" }}>
                   <span className="text-[9px] font-bold text-theme-muted uppercase tracking-[0.3em] block mb-2">Protocolo de Segurança</span>
-                  <span className="text-2xl font-display font-bold text-emerald-500 tracking-[0.15em] ">ORC-{createdQuoteId.slice(-6).toUpperCase()}</span>
+                  <span className="text-2xl font-display font-bold text-theme-brand tracking-[0.15em]">ORC-{createdQuoteId.slice(-6).toUpperCase()}</span>
                 </div>
               )}
 
@@ -903,13 +903,13 @@ export const QuoteDesktopView = (props: any) => {
               <div className="flex flex-col gap-4 max-w-sm mx-auto">
                 <button 
                   onClick={() => window.open('https://wa.me/5519981150440', '_blank')}
-                  className="w-full py-6 bg-emerald-500 text-white font-display font-bold text-xs uppercase tracking-[0.3em] hover:bg-white transition-all shadow-2xl shadow-emerald-500/20"
+                  className="w-full py-6 bg-emerald-500 text-theme-text font-display font-bold text-xs uppercase tracking-[0.3em] hover:bg-white transition-all shadow-2xl shadow-emerald-500/20"
                 >
                   FALAR COM ESPECIALISTA
                 </button>
                 <button 
                   onClick={() => navigate("/")}
-                  className="w-full py-4 text-theme-subtle font-display font-bold text-[10px] uppercase tracking-[0.5em] hover:text-white transition-colors"
+                  className="w-full py-4 text-theme-subtle font-display font-bold text-[10px] uppercase tracking-[0.5em] hover:text-theme-text transition-colors"
                 >
                   VOLTAR PARA VITRINE
                 </button>

@@ -55,17 +55,17 @@ const PackageModal: React.FC<{ onClose: () => void, onSave: (data: any) => void,
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
       <div className="bg-theme-card border border-theme-border w-full max-w-2xl rounded-2xl p-3 md:p-6 shadow-2xl max-h-[90vh] overflow-y-auto">
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-xl font-heading font-bold text-theme-text uppercase ">{initialData ? 'Editar Pacote' : 'Montar Novo Pacote'}</h2>
-          <button onClick={onClose} className="text-theme-muted hover:text-white"><Trash2 size={20}/></button>
+          <h2 className="text-xl font-heading font-bold text-theme-text uppercase">{initialData ? 'Editar Pacote' : 'Montar Novo Pacote'}</h2>
+          <button onClick={onClose} className="text-theme-muted hover:text-theme-text"><Trash2 size={20}/></button>
         </div>
         <div className="space-y-4">
           <div>
             <label className="text-[10px] font-bold uppercase text-theme-muted">Nome do Pacote</label>
-            <input className="w-full bg-theme-bg p-3 rounded-lg text-white text-sm outline-none border border-theme-border focus:border-amber-500" value={name} onChange={e => setName(e.target.value)} />
+            <input className="w-full bg-theme-bg p-3 rounded-lg text-theme-text text-sm outline-none border border-theme-border focus:border-amber-500" value={name} onChange={e => setName(e.target.value)} />
           </div>
           <div>
             <label className="text-[10px] font-bold uppercase text-theme-muted">Descrição</label>
-            <textarea className="w-full bg-theme-bg p-3 rounded-lg text-white text-sm outline-none border border-theme-border focus:border-amber-500 h-20" value={description} onChange={e => setDescription(e.target.value)} />
+            <textarea className="w-full bg-theme-bg p-3 rounded-lg text-theme-text text-sm outline-none border border-theme-border focus:border-amber-500 h-20" value={description} onChange={e => setDescription(e.target.value)} />
           </div>
           <div>
             <label className="text-[10px] font-bold uppercase text-theme-muted block mb-2">Serviços Inclusos no Pacote</label>
@@ -94,7 +94,7 @@ const PackageModal: React.FC<{ onClose: () => void, onSave: (data: any) => void,
                 <input type="number" className="w-full bg-theme-bg p-3 rounded-lg text-amber-500 font-bold text-lg outline-none border border-theme-border focus:border-amber-500" value={basePrice} onChange={e => setBasePrice(Number(e.target.value))} />
              </div>
           </div>
-          <button disabled={saving || !name || selectedItems.length === 0} onClick={() => onSave({ name, description, basePrice, packageItems: selectedItems, category: 'PACOTE' })} className="w-full py-4 bg-amber-500 text-black font-bold uppercase tracking-widest rounded-lg mt-4 disabled:opacity-50">
+          <button disabled={saving || !name || selectedItems.length === 0} onClick={() => onSave({ name, description, basePrice, packageItems: selectedItems, category: 'PACOTE' })} className="w-full py-4 bg-amber-500 text-theme-text font-bold uppercase tracking-widest rounded-lg mt-4 disabled:opacity-50">
             {saving ? 'Salvando...' : 'Salvar Pacote'}
           </button>
         </div>
@@ -243,11 +243,11 @@ export const AdminServices: React.FC = () => {
           <p className="text-[10px] text-theme-muted uppercase tracking-[0.5em] mt-2 font-bold">Gestão de catálogo, portfólio de serviços e aprovações</p>
         </div>
         {activeTab === "PACOTES" ? (
-          <button onClick={() => { setEditingPackage(null); setIsPackageModalOpen(true); }} className="px-4 md:px-8 py-4 bg-amber-500 text-black text-[9px] font-bold uppercase tracking-[0.4em] shadow-xl hover:brightness-110 transition-all flex items-center gap-3 ">
+          <button onClick={() => { setEditingPackage(null); setIsPackageModalOpen(true); }} className="px-4 md:px-8 py-4 bg-amber-500 text-theme-text text-[9px] font-bold uppercase tracking-[0.4em] shadow-xl hover:brightness-110 transition-all flex items-center gap-3">
             <Layers size={14} /> MONTAR PACOTE
           </button>
         ) : (
-          <button onClick={() => { setEditingService(null); setIsModalOpen(true); }} className="px-4 md:px-8 py-4 bg-brand-tactical text-[var(--brand-text)] text-[9px] font-bold uppercase tracking-[0.4em] shadow-xl hover:brightness-110 transition-all flex items-center gap-3 ">
+          <button onClick={() => { setEditingService(null); setIsModalOpen(true); }} className="px-4 md:px-8 py-4 bg-brand-tactical text-[var(--brand-text)] text-[9px] font-bold uppercase tracking-[0.4em] shadow-xl hover:brightness-110 transition-all flex items-center gap-3">
           <Plus size={14} /> ADICIONAR SERVIÇO
         </button>
         )}
@@ -258,12 +258,12 @@ export const AdminServices: React.FC = () => {
         <button onClick={() => setActiveTab("CATALOGO")} className={`text-[11px] font-black uppercase tracking-widest px-4 py-2 rounded-2xl transition-all ${activeTab === "CATALOGO" ? "bg-brand-tactical text-[var(--brand-text)]" : "text-theme-muted hover:bg-theme-bg-muted"}`}>
           Catálogo Global
         </button>
-        <button onClick={() => setActiveTab("PACOTES")} className={`text-[11px] font-black uppercase tracking-widest px-4 py-2 rounded-2xl transition-all flex items-center gap-2 ${activeTab === "PACOTES" ? "bg-amber-500 text-black" : "text-theme-muted hover:bg-theme-bg-muted"}`}>
+        <button onClick={() => setActiveTab("PACOTES")} className={`text-[11px] font-black uppercase tracking-widest px-4 py-2 rounded-2xl transition-all flex items-center gap-2 ${activeTab === "PACOTES" ? "bg-amber-500 text-theme-text" : "text-theme-muted hover:bg-theme-bg-muted"}`}>
           Pacotes (Combos)
         </button>
         <button onClick={() => setActiveTab("PENDENTES")} className={`text-[11px] font-black uppercase tracking-widest px-4 py-2 rounded-2xl transition-all flex items-center gap-2 ${activeTab === "PENDENTES" ? "bg-brand-tactical text-[var(--brand-text)]" : "text-theme-muted hover:bg-theme-bg-muted"}`}>
           Aprovações Pendentes
-          {pendingServices.length > 0 && <span className="bg-red-500 text-white px-2 py-0.5 rounded-full text-[10px]">{pendingServices.length}</span>}
+          {pendingServices.length > 0 && <span className="bg-red-500 text-theme-text px-2 py-0.5 rounded-full text-[10px]">{pendingServices.length}</span>}
         </button>
       </div>
 
@@ -278,11 +278,11 @@ export const AdminServices: React.FC = () => {
             ].map(({ label, value, suffix, icon: Icon }) => (
               <div key={label} className="bg-theme-bg border border-theme-border p-3 md:p-6 space-y-3 shadow-sm group hover:border-brand-tactical/40 transition-all rounded-2xl">
                 <div className="flex justify-between items-start">
-                  <span className="text-[10px] font-bold text-theme-muted uppercase tracking-widest ">{label}</span>
+                  <span className="text-[10px] font-bold text-theme-muted uppercase tracking-widest">{label}</span>
                   <Icon className="text-brand-tactical" size={14} />
                 </div>
                 <div className="flex items-baseline gap-2">
-                  <span className="text-3xl font-heading font-bold text-theme-text ">{value}</span>
+                  <span className="text-3xl font-heading font-bold text-theme-text">{value}</span>
                   <span className="text-[10px] font-bold text-theme-muted uppercase tracking-widest">{suffix}</span>
                 </div>
               </div>
@@ -310,15 +310,15 @@ export const AdminServices: React.FC = () => {
           {/* LISTAGEM */}
           <div className="space-y-4">
             {isLoading ? (
-              <div className="py-32 text-center border  border-theme-border bg-theme-bg-muted/5 space-y-4 animate-pulse rounded-2xl">
+              <div className="py-32 text-center border border-theme-border bg-theme-bg-muted/5 space-y-4 animate-pulse rounded-2xl">
                 <Zap size={32} className="mx-auto text-theme-muted opacity-30" />
-                <p className="text-[11px] font-bold text-brand-tactical uppercase tracking-[0.4em] ">Carregando Catálogo...</p>
+                <p className="text-[11px] font-bold text-brand-tactical uppercase tracking-[0.4em]">Carregando Catálogo...</p>
               </div>
             ) : filteredServices.length === 0 ? (
-              <div className="py-32 text-center border  border-theme-border bg-theme-bg-muted/5 space-y-6 rounded-2xl">
+              <div className="py-32 text-center border border-theme-border bg-theme-bg-muted/5 space-y-6 rounded-2xl">
                 <Briefcase size={40} className="mx-auto text-theme-muted opacity-20" />
                 <div className="space-y-2">
-                  <p className="text-[11px] font-bold text-brand-tactical uppercase tracking-[0.4em] ">{activeTab === "PACOTES" ? "Catálogo de Pacotes" : "Tabela de Preços e Serviços"}</p>
+                  <p className="text-[11px] font-bold text-brand-tactical uppercase tracking-[0.4em]">{activeTab === "PACOTES" ? "Catálogo de Pacotes" : "Tabela de Preços e Serviços"}</p>
                   <p className="text-[10px] text-theme-muted/60 uppercase tracking-widest">{activeTab === "PACOTES" ? "Monte seu primeiro combo de serviços." : "Inicie o seu catálogo para habilitar o gerador de orçamentos."}</p>
                 </div>
               </div>
@@ -344,7 +344,7 @@ export const AdminServices: React.FC = () => {
                     <div className="lg:w-80 flex items-center justify-between lg:justify-end gap-5 md:gap-10 border-t lg:border-t-0 pt-6 lg:pt-0 border-theme-border">
                       <div className="text-right">
                         <span className="text-[10px] font-bold text-theme-muted uppercase tracking-widest block mb-1">Preço Sugerido</span>
-                        <span className="text-xl font-heading font-bold text-theme-text ">{formatCurrency(s.basePrice)}</span>
+                        <span className="text-xl font-heading font-bold text-theme-text">{formatCurrency(s.basePrice)}</span>
                       </div>
                       <div className="flex gap-3 opacity-0 group-hover:opacity-100 transition-all">
                         <button onClick={() => { if ((s as any).isPackage) { setEditingPackage(s); setIsPackageModalOpen(true); } else { setEditingService(s); setIsModalOpen(true); } }} className="p-3 border border-theme-border text-theme-muted hover:text-brand-tactical hover:border-brand-tactical transition-all">
@@ -365,10 +365,10 @@ export const AdminServices: React.FC = () => {
         /* APROVAÇÕES PENDENTES */
         <div className="space-y-4">
           {pendingServices.length === 0 ? (
-            <div className="py-32 text-center border  border-theme-border bg-theme-bg-muted/5 space-y-6 rounded-2xl">
+            <div className="py-32 text-center border border-theme-border bg-theme-bg-muted/5 space-y-6 rounded-2xl">
               <Check size={40} className="mx-auto text-brand-tactical opacity-50" />
               <div className="space-y-2">
-                <p className="text-[11px] font-bold text-theme-text uppercase tracking-widest ">Tudo limpo!</p>
+                <p className="text-[11px] font-bold text-theme-text uppercase tracking-widest">Tudo limpo!</p>
                 <p className="text-[10px] text-theme-muted uppercase tracking-widest">Não há serviços aguardando aprovação.</p>
               </div>
             </div>
@@ -377,14 +377,14 @@ export const AdminServices: React.FC = () => {
               <div className="absolute top-0 right-0 p-4 md:p-8 opacity-[0.03]"><Briefcase size={80} /></div>
               <div className="flex justify-between items-start z-10 relative">
                 <div>
-                  <h3 className="text-lg font-heading font-bold text-theme-text uppercase ">{ps.name}</h3>
+                  <h3 className="text-lg font-heading font-bold text-theme-text uppercase">{ps.name}</h3>
                   <p className="text-[10px] text-theme-muted uppercase tracking-widest">{ps.description}</p>
                   <div className="mt-2 text-[9px] text-theme-muted uppercase font-bold">
                     <span className="text-brand-tactical">Solicitante:</span> {ps.professional?.user?.name || "Desconhecido"}
                   </div>
                 </div>
                 <div className="text-right">
-                  <div className="text-[14px] font-bold text-theme-text ">{formatCurrency(Number(ps.price))}</div>
+                  <div className="text-[14px] font-bold text-theme-text">{formatCurrency(Number(ps.price))}</div>
                   <div className="text-[10px] uppercase tracking-widest text-theme-muted">Preço Proposto</div>
                 </div>
               </div>
@@ -412,7 +412,7 @@ export const AdminServices: React.FC = () => {
         <div className="absolute top-0 right-0 p-5 md:p-10 opacity-[0.03] group-hover:opacity-[0.07] transition-opacity"><DollarSign size={120} /></div>
         <div className="p-3 md:p-6 bg-brand-tactical/10 border border-brand-tactical/20 text-brand-tactical rounded-full"><AlertCircle size={32} /></div>
         <div className="flex-1 space-y-2 text-center md:text-left">
-          <h4 className="text-[11px] font-bold uppercase tracking-[0.5em] text-theme-text ">Diretrizes de Precificação e Compliance</h4>
+          <h4 className="text-[11px] font-bold uppercase tracking-[0.5em] text-theme-text">Diretrizes de Precificação e Compliance</h4>
           <p className="text-[9px] text-theme-muted uppercase tracking-widest font-medium leading-relaxed max-w-3xl">
             Os valores cadastrados servem como base dinâmica para o gerador de propostas. Alterações neste catálogo não impactam retroativamente contratos já assinados ou eventos em fase de execução, garantindo a integridade jurídica da operação.
           </p>
@@ -427,13 +427,13 @@ export const AdminServices: React.FC = () => {
             <div className="p-5 md:p-10 space-y-8 text-center">
               <div className="w-20 h-20 bg-red-500/10 rounded-2xl flex items-center justify-center border border-red-500/20 mx-auto mb-6"><Trash2 className="text-red-500" size={32} /></div>
               <div className="space-y-2">
-                <h3 className="text-2xl font-bold uppercase text-theme-text ">Remover Serviço?</h3>
-                <p className="text-[11px] font-bold text-brand-tactical uppercase tracking-[0.4em] ">{activeTab === "PACOTES" ? "Catálogo de Pacotes" : "Tabela de Preços e Serviços"}</p>
+                <h3 className="text-2xl font-bold uppercase text-theme-text">Remover Serviço?</h3>
+                <p className="text-[11px] font-bold text-brand-tactical uppercase tracking-[0.4em]">{activeTab === "PACOTES" ? "Catálogo de Pacotes" : "Tabela de Preços e Serviços"}</p>
               </div>
-              <p className="text-[11px] uppercase tracking-[0.2em] leading-relaxed text-theme-muted ">ESTA AÇÃO IRÁ REMOVER PERMANENTEMENTE O ITEM DO GERADOR DE ORÇAMENTOS DA REDE.</p>
+              <p className="text-[11px] uppercase tracking-[0.2em] leading-relaxed text-theme-muted">ESTA AÇÃO IRÁ REMOVER PERMANENTEMENTE O ITEM DO GERADOR DE ORÇAMENTOS DA REDE.</p>
               <div className="grid grid-cols-1 gap-4 pt-4">
-                <button onClick={executeDelete} className="w-full py-5 bg-red-600 text-white text-[11px] font-bold uppercase tracking-[0.4em] hover:bg-red-700 transition-all rounded-2xl shadow-lg">REMOVER AGORA</button>
-                <button onClick={() => setConfirmDelete(null)} className="w-full py-5 border border-theme-border text-theme-muted text-[11px] font-bold uppercase tracking-[0.4em] hover:text-white transition-all rounded-2xl ">ABORTAR MISSÃO</button>
+                <button onClick={executeDelete} className="w-full py-5 bg-red-600 text-theme-text text-[11px] font-bold uppercase tracking-[0.4em] hover:bg-red-700 transition-all rounded-2xl shadow-lg">REMOVER AGORA</button>
+                <button onClick={() => setConfirmDelete(null)} className="w-full py-5 border border-theme-border text-theme-muted text-[11px] font-bold uppercase tracking-[0.4em] hover:text-theme-text transition-all rounded-2xl">ABORTAR MISSÃO</button>
               </div>
             </div>
           </div>

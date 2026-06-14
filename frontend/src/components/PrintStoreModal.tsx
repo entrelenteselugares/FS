@@ -150,7 +150,7 @@ function AlbumPhotoGrid({ medias, selectedAlbumPhotos, toggleAlbumPhoto }: {
               className="w-full h-full object-cover"
             />
             {isSelected && (
-              <div className="absolute top-2 right-2 bg-brand-tactical text-black w-5 h-5 flex items-center justify-center text-[10px] font-bold">✓</div>
+              <div className="absolute top-2 right-2 bg-brand-tactical text-theme-text w-5 h-5 flex items-center justify-center text-[10px] font-bold">✓</div>
             )}
           </div>
         );
@@ -317,15 +317,15 @@ export function PrintStoreModal({ eventId, eventTitle, medias = [], unlockedMedi
              <div className="p-4 lg:p-8 border-b border-theme-border flex items-center justify-between lg:items-start lg:flex-col lg:justify-start">
                 <div>
                   <p className="text-[10px] font-bold text-brand-tactical uppercase tracking-[0.5em] lg:mb-3">Eternize no Papel</p>
-                  <h2 className="text-xl lg:text-3xl font-heading font-bold text-theme-text uppercase leading-none " style={{ paddingRight: '0.12em' }}>Print Store</h2>
+                  <h2 className="text-xl lg:text-3xl font-heading font-bold text-theme-text uppercase leading-none" style={{ paddingRight: '0.12em' }}>Print Store</h2>
                 </div>
-                <button onClick={onClose} className="lg:hidden p-2 text-theme-text-muted hover:text-white transition-colors">
+                <button onClick={onClose} className="lg:hidden p-2 text-theme-text-muted hover:text-theme-text transition-colors">
                   <X size={24} />
                 </button>
              </div>
 
              <div className="hidden lg:flex flex-1 overflow-y-auto p-6 flex-col space-y-4">
-                <p className="text-[10px] font-bold text-theme-text-muted uppercase tracking-[0.2em] mb-6 ">Protocolo de Seleção</p>
+                <p className="text-[10px] font-bold text-theme-text-muted uppercase tracking-[0.2em] mb-6">Protocolo de Seleção</p>
                 
                 {[
                   { id: 'catalog', label: 'Catálogo', icon: <ShoppingCart size={14} />, status: step === 'catalog' ? 'active' : 'completed' },
@@ -333,7 +333,7 @@ export function PrintStoreModal({ eventId, eventTitle, medias = [], unlockedMedi
                   { id: 'delivery', label: 'Logística', icon: <Truck size={14} />, status: step === 'delivery' ? 'active' : (step === 'processing' ? 'completed' : 'pending') },
                 ].map((s, idx) => (
                   <div key={s.id} className="flex items-center gap-4 group">
-                     <div className={`w-8 h-8 flex items-center justify-center border transition-all ${s.status === 'active' ? 'border-brand-tactical bg-brand-tactical text-black shadow-[0_0_15px_rgba(20,184,166,0.4)]' : (s.status === 'completed' ? 'border-brand-tactical text-brand-tactical' : 'border-theme-border text-theme-text-muted')}`}>
+                     <div className={`w-8 h-8 flex items-center justify-center border transition-all ${s.status === 'active' ? 'border-brand-tactical bg-brand-tactical text-theme-text shadow-[0_0_15px_rgba(20,184,166,0.4)]' : (s.status === 'completed' ? 'border-brand-tactical text-brand-tactical' : 'border-theme-border text-theme-text-muted')}`}>
                         {s.status === 'completed' ? <Check size={14} /> : s.icon}
                      </div>
                      <span className={`text-[11px] font-black uppercase tracking-widest italic ${s.status === 'active' ? 'text-theme-text' : 'text-theme-text-muted'}`}>{s.label}</span>
@@ -345,22 +345,22 @@ export function PrintStoreModal({ eventId, eventTitle, medias = [], unlockedMedi
                    <div className="pt-10 space-y-6">
                       <div className="h-px bg-theme-border/40" />
                       <div className="space-y-2">
-                        <p className="text-[9px] font-bold text-brand-tactical uppercase tracking-widest ">Item Selecionado</p>
+                        <p className="text-[9px] font-bold text-brand-tactical uppercase tracking-widest">Item Selecionado</p>
                         <p className="text-sm font-bold text-theme-text uppercase leading-tight">{selectedProduct.name}</p>
                       </div>
                       <div className="flex items-end justify-between">
                          <div className="space-y-1">
-                            <p className="text-[9px] font-bold text-theme-text-muted uppercase tracking-widest ">Total Estimado</p>
-                            <p className="text-2xl font-bold text-brand-tactical ">R$ {totalPrice.toFixed(0)}<span className="text-sm">,00</span></p>
+                            <p className="text-[9px] font-bold text-theme-text-muted uppercase tracking-widest">Total Estimado</p>
+                            <p className="text-2xl font-bold text-brand-tactical">R$ {totalPrice.toFixed(0)}<span className="text-sm">,00</span></p>
                          </div>
-                         <div className="text-[10px] font-bold text-theme-text-muted uppercase ">x{quantity}</div>
+                         <div className="text-[10px] font-bold text-theme-text-muted uppercase">x{quantity}</div>
                       </div>
                    </div>
                 )}
              </div>
 
              <div className="hidden lg:block p-8 border-t border-theme-border bg-brand-tactical/10">
-                <button onClick={onClose} className="w-full py-4 border border-theme-border text-[10px] font-bold text-theme-text-muted uppercase tracking-widest hover:text-white hover:border-white transition-all ">Fechar Loja</button>
+                <button onClick={onClose} className="w-full py-4 border border-theme-border text-[10px] font-bold text-theme-text-muted uppercase tracking-widest hover:text-theme-text hover:border-white transition-all">Fechar Loja</button>
              </div>
           </div>
 
@@ -380,7 +380,7 @@ export function PrintStoreModal({ eventId, eventTitle, medias = [], unlockedMedi
                         <button
                           key={cat}
                           onClick={() => setActiveCategory(cat)}
-                          className={`shrink-0 snap-start px-5 py-2.5 lg:px-8 lg:py-3 text-[9px] lg:text-[10px] font-black uppercase tracking-[0.15em] lg:tracking-[0.2em] transition-all italic whitespace-nowrap rounded-sm ${activeCategory === cat ? 'bg-brand-tactical text-black shadow-[0_5px_15px_rgba(20,184,166,0.3)]' : 'border border-theme-border text-theme-text-muted hover:border-brand-tactical hover:text-brand-tactical'}`}
+                          className={`shrink-0 snap-start px-5 py-2.5 lg:px-8 lg:py-3 text-[9px] lg:text-[10px] font-black uppercase tracking-[0.15em] lg:tracking-[0.2em] transition-all italic whitespace-nowrap rounded-sm ${activeCategory === cat ? 'bg-brand-tactical text-theme-text shadow-[0_5px_15px_rgba(20,184,166,0.3)]' : 'border border-theme-border text-theme-text-muted hover:border-brand-tactical hover:text-brand-tactical'}`}
                         >
                           {CATEGORY_LABELS[cat] || cat}
                         </button>
@@ -390,7 +390,7 @@ export function PrintStoreModal({ eventId, eventTitle, medias = [], unlockedMedi
                     {loading ? (
                       <div className="py-20 flex flex-col items-center gap-4 opacity-40">
                          <div className="w-12 h-12 border-2 border-brand-tactical border-t-transparent rounded-full animate-spin" />
-                         <p className="text-[10px] font-bold uppercase tracking-widest ">Sincronizando Catálogo...</p>
+                         <p className="text-[10px] font-bold uppercase tracking-widest">Sincronizando Catálogo...</p>
                       </div>
                     ) : (
                       <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 xl:gap-8">
@@ -422,10 +422,10 @@ export function PrintStoreModal({ eventId, eventTitle, medias = [], unlockedMedi
                                <div className="flex items-end justify-between pt-2">
                                   <div className="flex items-baseline gap-[2px] md:gap-1">
                                      <span className="text-[9px] md:text-xs text-theme-text-muted font-bold uppercase">R$</span>
-                                     <span className="text-xl md:text-3xl font-bold text-theme-text ">{product.finalPrice.toFixed(0)}</span>
+                                     <span className="text-xl md:text-3xl font-bold text-theme-text">{product.finalPrice.toFixed(0)}</span>
                                      <span className="text-[9px] md:text-xs text-theme-text-muted font-bold uppercase">,00</span>
                                   </div>
-                                  <button className="p-2.5 md:p-4 bg-brand-tactical/10 border border-brand-tactical/30 text-brand-tactical group-hover:bg-brand-tactical group-hover:text-black transition-all">
+                                  <button className="p-2.5 md:p-4 bg-brand-tactical/10 border border-brand-tactical/30 text-brand-tactical group-hover:bg-brand-tactical group-hover:text-theme-text transition-all">
                                      <Plus size={16} className="md:w-5 md:h-5" />
                                   </button>
                                </div>
@@ -439,29 +439,29 @@ export function PrintStoreModal({ eventId, eventTitle, medias = [], unlockedMedi
 
                 {step === 'details' && selectedProduct && (
                   <div className="space-y-16 max-w-4xl mx-auto animate-in fade-in slide-in-from-bottom-8 duration-700">
-                    <button onClick={() => setStep('catalog')} className="flex items-center gap-3 text-[10px] font-bold text-theme-text-muted uppercase tracking-widest hover:text-brand-tactical transition-all ">
+                    <button onClick={() => setStep('catalog')} className="flex items-center gap-3 text-[10px] font-bold text-theme-text-muted uppercase tracking-widest hover:text-brand-tactical transition-all">
                        <ChevronLeft size={16} /> Voltar ao Catálogo
                     </button>
 
                     <div className="grid grid-cols-1 xl:grid-cols-2 gap-16">
                        <div className="space-y-10">
                           <div className="space-y-4">
-                             <h2 className="text-[10px] font-bold text-brand-tactical uppercase tracking-[0.4em] ">Configuração do Item</h2>
+                             <h2 className="text-[10px] font-bold text-brand-tactical uppercase tracking-[0.4em]">Configuração do Item</h2>
                              <div className="h-px w-20 bg-brand-tactical" />
                           </div>
 
                           <div className="space-y-6">
-                             <p className="text-[10px] font-bold text-theme-text-muted uppercase tracking-widest ">Quantidade</p>
+                             <p className="text-[10px] font-bold text-theme-text-muted uppercase tracking-widest">Quantidade</p>
                              <div className="flex items-center gap-10">
                                 <button onClick={() => setQuantity(q => Math.max(1, q - 1))} className="w-14 h-14 border border-theme-border flex items-center justify-center text-theme-text-muted hover:border-brand-tactical hover:text-brand-tactical transition-all"><Minus size={20} /></button>
-                                <span className="text-5xl font-bold text-theme-text ">{quantity}</span>
+                                <span className="text-5xl font-bold text-theme-text">{quantity}</span>
                                 <button onClick={() => setQuantity(q => q + 1)} className="w-14 h-14 border border-theme-border flex items-center justify-center text-theme-text-muted hover:border-brand-tactical hover:text-brand-tactical transition-all"><Plus size={20} /></button>
                              </div>
                           </div>
 
                           {(selectedProduct.category === "ALBUM" || selectedProduct.category === "ALBUM_30X40") && (
                               <div className="space-y-6">
-                                 <p className="text-[10px] font-bold text-theme-text-muted uppercase tracking-widest ">
+                                 <p className="text-[10px] font-bold text-theme-text-muted uppercase tracking-widest">
                                     Cor da Capa (Mostruário de Tecidos)
                                  </p>
                                  <div className="grid grid-cols-5 sm:grid-cols-10 gap-3">
@@ -478,7 +478,7 @@ export function PrintStoreModal({ eventId, eventTitle, medias = [], unlockedMedi
                                              style={{ backgroundColor: color.hex }}
                                           >
                                              {isSelected && (
-                                                <span className="absolute inset-0 flex items-center justify-center text-black drop-shadow-md">
+                                                <span className="absolute inset-0 flex items-center justify-center text-theme-text drop-shadow-md">
                                                    <Check size={12} className="stroke-[3]" />
                                                 </span>
                                              )}
@@ -495,23 +495,23 @@ export function PrintStoreModal({ eventId, eventTitle, medias = [], unlockedMedi
                            )}
 
                           <div className="space-y-6">
-                             <p className="text-[10px] font-bold text-theme-text-muted uppercase tracking-widest ">Observações de Produção</p>
+                             <p className="text-[10px] font-bold text-theme-text-muted uppercase tracking-widest">Observações de Produção</p>
                              <textarea 
                                 value={notes}
                                 onChange={e => setNotes(e.target.value)}
                                 placeholder="Ex: Capa com foto do casal, nome e data..."
-                                className="w-full bg-theme-bg-muted border border-theme-border p-8 text-sm text-theme-text placeholder:text-zinc-700 outline-none focus:border-brand-tactical transition-all min-h-[120px]"
+                                className="w-full bg-theme-bg-muted border border-theme-border p-8 text-sm text-theme-text placeholder:text-theme-text outline-none focus:border-brand-tactical transition-all min-h-[120px]"
                              />
                           </div>
                        </div>
 
                        <div className="space-y-10">
                           <div className="flex items-center justify-between">
-                            <h2 className="text-[10px] font-bold text-theme-text uppercase tracking-[0.4em] ">Mídias de Captura</h2>
+                            <h2 className="text-[10px] font-bold text-theme-text uppercase tracking-[0.4em]">Mídias de Captura</h2>
                             {(isOwner || availableMedias.length > 0) && (
                               <div className="flex p-1 bg-theme-bg-muted border border-theme-border">
-                                 <button onClick={() => setPhotoSource('album')} className={`px-4 py-2 text-[10px] font-black uppercase tracking-widest italic transition-all ${photoSource === 'album' ? 'bg-brand-tactical text-black' : 'text-theme-text-muted'}`}>ÁLBUM</button>
-                                 <button onClick={() => setPhotoSource('upload')} className={`px-4 py-2 text-[10px] font-black uppercase tracking-widest italic transition-all ${photoSource === 'upload' ? 'bg-brand-tactical text-black' : 'text-theme-text-muted'}`}>UPLOAD</button>
+                                 <button onClick={() => setPhotoSource('album')} className={`px-4 py-2 text-[10px] font-black uppercase tracking-widest italic transition-all ${photoSource === 'album' ? 'bg-brand-tactical text-theme-text' : 'text-theme-text-muted'}`}>ÁLBUM</button>
+                                 <button onClick={() => setPhotoSource('upload')} className={`px-4 py-2 text-[10px] font-black uppercase tracking-widest italic transition-all ${photoSource === 'upload' ? 'bg-brand-tactical text-theme-text' : 'text-theme-text-muted'}`}>UPLOAD</button>
                               </div>
                             )}
                           </div>
@@ -531,19 +531,19 @@ export function PrintStoreModal({ eventId, eventTitle, medias = [], unlockedMedi
                             <div className="space-y-6">
                                <button 
                                  onClick={() => fileInputRef.current?.click()}
-                                 className="w-full aspect-video border-2  border-theme-border flex flex-col items-center justify-center gap-4 text-theme-text-muted hover:border-brand-tactical hover:text-brand-tactical transition-all group"
+                                 className="w-full aspect-video border-2 border-theme-border flex flex-col items-center justify-center gap-4 text-theme-text-muted hover:border-brand-tactical hover:text-brand-tactical transition-all group"
                                >
                                   <div className="p-5 rounded-full bg-theme-bg-muted border border-theme-border group-hover:scale-110 transition-transform"><Camera size={32} /></div>
-                                  <p className="text-[10px] font-bold uppercase tracking-[0.3em] ">Selecionar do Dispositivo</p>
+                                  <p className="text-[10px] font-bold uppercase tracking-[0.3em]">Selecionar do Dispositivo</p>
                                </button>
                                <input ref={fileInputRef} type="file" multiple accept="image/*" onChange={handleFileSelect} className="hidden" />
                                
                                <div className="p-3 bg-theme-bg-muted border border-theme-border text-center">
-                                  <p className="text-[10px] font-bold text-brand-tactical uppercase tracking-widest ">
+                                  <p className="text-[10px] font-bold text-brand-tactical uppercase tracking-widest">
                                      {selectedFiles.length} / {maxAllowedPhotos || "∞"} fotos selecionadas
                                   </p>
                                   {maxAllowedPhotos && (
-                                     <p className="text-[9px] text-theme-text-muted mt-1 ">
+                                     <p className="text-[9px] text-theme-text-muted mt-1">
                                         Total calculado com base na quantidade do item.
                                      </p>
                                   )}
@@ -565,7 +565,7 @@ export function PrintStoreModal({ eventId, eventTitle, medias = [], unlockedMedi
                     <div className="pt-10 flex justify-end">
                        <button 
                         onClick={() => setStep('delivery')}
-                        className="px-12 py-5 bg-brand-tactical text-black text-[11px] font-bold uppercase tracking-[0.4em] shadow-[0_20px_50px_rgba(20,184,166,0.3)] hover:scale-105 transition-all"
+                        className="px-12 py-5 bg-brand-tactical text-theme-text text-[11px] font-bold uppercase tracking-[0.4em] shadow-[0_20px_50px_rgba(20,184,166,0.3)] hover:scale-105 transition-all"
                        >
                           Prosseguir para Entrega
                        </button>
@@ -575,13 +575,13 @@ export function PrintStoreModal({ eventId, eventTitle, medias = [], unlockedMedi
 
                 {step === 'delivery' && selectedProduct && (
                    <div className="space-y-16 max-w-2xl mx-auto animate-in fade-in slide-in-from-bottom-8 duration-700">
-                      <button onClick={() => setStep('details')} className="flex items-center gap-3 text-[10px] font-bold text-theme-text-muted uppercase tracking-widest hover:text-brand-tactical transition-all ">
+                      <button onClick={() => setStep('details')} className="flex items-center gap-3 text-[10px] font-bold text-theme-text-muted uppercase tracking-widest hover:text-brand-tactical transition-all">
                          <ChevronLeft size={16} /> Voltar para Configuração
                       </button>
 
                       <div className="space-y-12">
                          <div className="space-y-4">
-                            <h2 className="text-[10px] font-bold text-brand-tactical uppercase tracking-[0.4em] ">Método de Distribuição</h2>
+                            <h2 className="text-[10px] font-bold text-brand-tactical uppercase tracking-[0.4em]">Método de Distribuição</h2>
                             <div className="h-px w-20 bg-brand-tactical" />
                          </div>
 
@@ -590,10 +590,10 @@ export function PrintStoreModal({ eventId, eventTitle, medias = [], unlockedMedi
                               onClick={() => setDeliveryMethod('LOCAL_PICKUP')}
                               className={`p-10 border text-left transition-all space-y-6 relative overflow-hidden group ${deliveryMethod === 'LOCAL_PICKUP' ? 'border-brand-tactical bg-brand-tactical/10' : 'border-theme-border hover:border-zinc-700'}`}
                             >
-                               <div className={`w-12 h-12 flex items-center justify-center border transition-all ${deliveryMethod === 'LOCAL_PICKUP' ? 'bg-brand-tactical text-black' : 'text-theme-text-muted'}`}><MapPin size={24} /></div>
+                               <div className={`w-12 h-12 flex items-center justify-center border transition-all ${deliveryMethod === 'LOCAL_PICKUP' ? 'bg-brand-tactical text-theme-text' : 'text-theme-text-muted'}`}><MapPin size={24} /></div>
                                <div className="space-y-2">
-                                  <p className="text-[11px] font-bold text-theme-text uppercase tracking-widest ">Retirada no Ponto</p>
-                                  <p className="text-[9px] text-theme-text-muted uppercase ">Sem custo adicional • Retirada no local do evento ou sede.</p>
+                                  <p className="text-[11px] font-bold text-theme-text uppercase tracking-widest">Retirada no Ponto</p>
+                                  <p className="text-[9px] text-theme-text-muted uppercase">Sem custo adicional • Retirada no local do evento ou sede.</p>
                                </div>
                                {deliveryMethod === 'LOCAL_PICKUP' && <div className="absolute top-4 right-4 text-brand-tactical"><Check size={20} /></div>}
                             </button>
@@ -602,10 +602,10 @@ export function PrintStoreModal({ eventId, eventTitle, medias = [], unlockedMedi
                               onClick={() => setDeliveryMethod('SHIPPING')}
                               className={`p-10 border text-left transition-all space-y-6 relative overflow-hidden group ${deliveryMethod === 'SHIPPING' ? 'border-brand-tactical bg-brand-tactical/10' : 'border-theme-border hover:border-zinc-700'}`}
                             >
-                               <div className={`w-12 h-12 flex items-center justify-center border transition-all ${deliveryMethod === 'SHIPPING' ? 'bg-brand-tactical text-black' : 'text-theme-text-muted'}`}><Truck size={24} /></div>
+                               <div className={`w-12 h-12 flex items-center justify-center border transition-all ${deliveryMethod === 'SHIPPING' ? 'bg-brand-tactical text-theme-text' : 'text-theme-text-muted'}`}><Truck size={24} /></div>
                                <div className="space-y-2">
-                                  <p className="text-[11px] font-bold text-theme-text uppercase tracking-widest ">Envio por Transportadora</p>
-                                  <p className="text-[9px] text-theme-text-muted uppercase ">Taxa tática calculada no checkout • Entrega em domicílio.</p>
+                                  <p className="text-[11px] font-bold text-theme-text uppercase tracking-widest">Envio por Transportadora</p>
+                                  <p className="text-[9px] text-theme-text-muted uppercase">Taxa tática calculada no checkout • Entrega em domicílio.</p>
                                </div>
                                {deliveryMethod === 'SHIPPING' && <div className="absolute top-4 right-4 text-brand-tactical"><Check size={20} /></div>}
                             </button>
@@ -614,7 +614,7 @@ export function PrintStoreModal({ eventId, eventTitle, medias = [], unlockedMedi
                          <div className="p-8 bg-theme-bg-muted border border-theme-border space-y-4">
                             <div className="flex items-center gap-3">
                                <Package size={16} className="text-brand-tactical" />
-                               <p className="text-[10px] font-bold text-theme-text uppercase tracking-widest ">Protocolo de Produção</p>
+                               <p className="text-[10px] font-bold text-theme-text uppercase tracking-widest">Protocolo de Produção</p>
                             </div>
                             <p className="text-[10px] text-theme-text-muted uppercase leading-relaxed">
                                Este item entra em produção imediatamente após a confirmação do pagamento. O prazo médio de finalização é de 7 a 12 dias úteis, seguindo o padrão de qualidade Foto Segundo.
@@ -626,13 +626,13 @@ export function PrintStoreModal({ eventId, eventTitle, medias = [], unlockedMedi
                         <button 
                           onClick={handleAddToCart}
                           disabled={submitting}
-                          className="w-full py-6 bg-brand-tactical text-black text-[12px] font-bold uppercase tracking-[0.5em] shadow-[0_30px_60px_rgba(20,184,166,0.3)] hover:scale-[1.02] transition-all flex items-center justify-center gap-4"
+                          className="w-full py-6 bg-brand-tactical text-theme-text text-[12px] font-bold uppercase tracking-[0.5em] shadow-[0_30px_60px_rgba(20,184,166,0.3)] hover:scale-[1.02] transition-all flex items-center justify-center gap-4"
                         >
                            {submitting ? "Sincronizando Carrinho..." : <><ShoppingCart size={20} /> ADICIONAR AO MEU CARRINHO</>}
                         </button>
                         <button 
                           onClick={handleWhatsAppCheckout}
-                          className="w-full py-5 border border-theme-border text-[10px] font-bold text-theme-text-muted uppercase tracking-widest hover:text-white hover:border-brand-tactical transition-all flex items-center justify-center gap-3"
+                          className="w-full py-5 border border-theme-border text-[10px] font-bold text-theme-text-muted uppercase tracking-widest hover:text-theme-text hover:border-brand-tactical transition-all flex items-center justify-center gap-3"
                         >
                            <Phone size={16} /> Encomendar via Consultoria WhatsApp
                         </button>

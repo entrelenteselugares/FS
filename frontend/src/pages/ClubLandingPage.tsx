@@ -46,7 +46,7 @@ export const ClubLandingPage = () => {
   };
 
   return (
-    <div className="min-h-screen font-sans flex flex-col" style={{ background: T.bg, color: T.text }}>
+    <div className="min-h-screen flex flex-col" style={{ background: T.bg, color: T.text }}>
       <Helmet>
         <title>Clube de Memórias | Foto Segundo</title>
       </Helmet>
@@ -58,7 +58,7 @@ export const ClubLandingPage = () => {
       <main className="flex-1 max-w-7xl mx-auto px-3 md:px-6 py-3 md:py-6 md:py-12 md:py-24 w-full">
         <button 
           onClick={() => navigate(-1)} 
-          className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-500 hover:text-white transition-all mb-12"
+          className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-theme-muted hover:text-theme-text transition-all mb-12"
         >
           <ArrowLeft size={14} /> Voltar
         </button>
@@ -71,22 +71,22 @@ export const ClubLandingPage = () => {
               <Star size={14} fill="currentColor" />
               <span className="text-[9px] font-bold uppercase tracking-widest">Assinatura Premium</span>
             </div>
-                     <h1 className="text-3xl md:text-5xl md:text-8xl font-heading font-bold uppercase leading-none text-white">
+                     <h1 className="text-3xl md:text-5xl md:text-8xl font-heading font-bold uppercase leading-none text-theme-text">
               Os Seus <span className="text-brand-tactical block">Meus Álbuns</span>
             </h1>
             
-            <p className="text-zinc-400 text-lg md:text-xl font-medium max-w-lg leading-relaxed">
+            <p className="text-theme-muted text-lg md:text-xl font-medium max-w-lg leading-relaxed">
               Materialize os momentos mais importantes da sua vida sem esforço. Suas fotos favoritas impressas com qualidade de museu, direto na sua casa, todo mês.
             </p>
 
             <div className="space-y-6 pt-4">
               <div className="flex gap-4">
                 <div className="mt-1 w-8 h-8 rounded-full bg-theme-bg-muted flex items-center justify-center shrink-0 border border-white/10">
-                  <Printer size={16} className="text-emerald-500" />
+                  <Printer size={16} className="text-theme-brand" />
                 </div>
                 <div>
-                  <h3 className="text-white font-bold uppercase tracking-wide text-sm">36 Impressões Mensais</h3>
-                  <p className="text-zinc-500 text-sm mt-1">Fotos reveladas em papel fotográfico de alta durabilidade (Seda/Fosco), no formato 10x15cm.</p>
+                  <h3 className="text-theme-text font-bold uppercase tracking-wide text-sm">36 Impressões Mensais</h3>
+                  <p className="text-theme-muted text-sm mt-1">Fotos reveladas em papel fotográfico de alta durabilidade (Seda/Fosco), no formato 10x15cm.</p>
                 </div>
               </div>
               <div className="flex gap-4">
@@ -94,8 +94,8 @@ export const ClubLandingPage = () => {
                   <Camera size={16} className="text-brand-tactical" />
                 </div>
                 <div>
-                  <h3 className="text-white font-bold uppercase tracking-wide text-sm">Votação Automática</h3>
-                  <p className="text-zinc-500 text-sm mt-1">O sistema seleciona automaticamente as fotos mais curtidas (Double Tap) nos seus álbuns.</p>
+                  <h3 className="text-theme-text font-bold uppercase tracking-wide text-sm">Votação Automática</h3>
+                  <p className="text-theme-muted text-sm mt-1">O sistema seleciona automaticamente as fotos mais curtidas (Double Tap) nos seus álbuns.</p>
                 </div>
               </div>
               <div className="flex gap-4">
@@ -103,8 +103,8 @@ export const ClubLandingPage = () => {
                   <Package size={16} className="text-blue-500" />
                 </div>
                 <div>
-                  <h3 className="text-white font-bold uppercase tracking-wide text-sm">Frete Incluso e Envios Seguros</h3>
-                  <p className="text-zinc-500 text-sm mt-1">Receba seu pacote de memórias no conforto da sua casa, embalado com todo o cuidado.</p>
+                  <h3 className="text-theme-text font-bold uppercase tracking-wide text-sm">Frete Incluso e Envios Seguros</h3>
+                  <p className="text-theme-muted text-sm mt-1">Receba seu pacote de memórias no conforto da sua casa, embalado com todo o cuidado.</p>
                 </div>
               </div>
             </div>
@@ -117,14 +117,14 @@ export const ClubLandingPage = () => {
               
               <div className="relative z-10 space-y-8">
                 <div>
-                  <h2 className="text-2xl font-bold text-white uppercase ">Plano TBT Mensal</h2>
-                  <p className="text-[11px] text-zinc-500 font-bold uppercase tracking-widest mt-2">Acesso ilimitado ao sistema + Impressões</p>
+                  <h2 className="text-2xl font-bold text-theme-text uppercase">Plano TBT Mensal</h2>
+                  <p className="text-[11px] text-theme-muted font-bold uppercase tracking-widest mt-2">Acesso ilimitado ao sistema + Impressões</p>
                 </div>
 
                 <div className="flex items-baseline gap-2">
-                  <span className="text-zinc-500 text-lg font-bold">R$</span>
-                  <span className="text-2xl md:text-4xl md:text-6xl font-heading font-bold text-white leading-none">49,90</span>
-                  <span className="text-zinc-500 text-sm font-bold uppercase tracking-widest">/ mês</span>
+                  <span className="text-theme-muted text-lg font-bold">R$</span>
+                  <span className="text-2xl md:text-4xl md:text-6xl font-heading font-bold text-theme-text leading-none">49,90</span>
+                  <span className="text-theme-muted text-sm font-bold uppercase tracking-widest">/ mês</span>
                 </div>
 
                 <div className="space-y-4">
@@ -137,7 +137,7 @@ export const ClubLandingPage = () => {
                   ].map((benefit, i) => (
                     <div key={i} className="flex items-center gap-3">
                       <CheckCircle2 size={16} className="text-brand-tactical shrink-0" />
-                      <span className="text-sm font-medium text-zinc-300">{benefit}</span>
+                      <span className="text-sm font-medium text-theme-subtle">{benefit}</span>
                     </div>
                   ))}
                 </div>
@@ -146,12 +146,12 @@ export const ClubLandingPage = () => {
                   <button 
                     onClick={handleSubscribe}
                     disabled={loading}
-                    className="w-full bg-brand-tactical hover:bg-brand-tactical/90 text-black font-bold uppercase tracking-[0.2em] text-[12px] py-5 rounded-xl transition-all shadow-[0_0_40px_rgba(20,184,166,0.3)] hover:shadow-[0_0_60px_rgba(20,184,166,0.5)] active:scale-95 disabled:opacity-50 disabled:active:scale-100 flex items-center justify-center gap-2"
+                    className="w-full bg-brand-tactical hover:bg-brand-tactical/90 text-theme-text font-bold uppercase tracking-[0.2em] text-[12px] py-5 rounded-xl transition-all shadow-[0_0_40px_rgba(20,184,166,0.3)] hover:shadow-[0_0_60px_rgba(20,184,166,0.5)] active:scale-95 disabled:opacity-50 disabled:active:scale-100 flex items-center justify-center gap-2"
                   >
                     {loading ? "Processando..." : "Assinar Agora"}
                     {!loading && <Zap size={16} fill="currentColor" />}
                   </button>
-                  <p className="text-center text-[10px] text-zinc-600 font-bold uppercase tracking-widest mt-4">
+                  <p className="text-center text-[10px] text-theme-muted font-bold uppercase tracking-widest mt-4">
                     Cancele quando quiser. Sem taxas escondidas.
                   </p>
                 </div>
@@ -167,9 +167,9 @@ export const ClubLandingPage = () => {
         <div className="max-w-7xl mx-auto px-3 md:px-6 flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-3 opacity-50">
             <img src="/logo.png" alt="Foto Segundo" style={{ height: 16, objectFit: "contain", filter: "var(--logo-filter)" }} />
-            <span className="text-[9px] font-bold uppercase tracking-[0.3em] text-white">Advanced Phygital Engine</span>
+            <span className="text-[9px] font-bold uppercase tracking-[0.3em] text-theme-text">Advanced Phygital Engine</span>
           </div>
-          <div className="flex items-center gap-2 text-zinc-600 text-[9px] font-bold uppercase tracking-widest">
+          <div className="flex items-center gap-2 text-theme-muted text-[9px] font-bold uppercase tracking-widest">
             <ShieldCheck size={14} /> Ambiente Blindado
           </div>
         </div>

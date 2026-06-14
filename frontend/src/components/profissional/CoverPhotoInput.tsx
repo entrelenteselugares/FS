@@ -132,7 +132,7 @@ export function CoverPhotoInput({ currentUrl, currentPosition, onChange, onPosit
           <button
             type="button"
             onClick={handleRemove}
-            className="absolute top-4 right-4 bg-black/60 backdrop-blur-md text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-all hover:text-red-500 shadow-xl"
+            className="absolute top-4 right-4 bg-black/60 backdrop-blur-md text-theme-text p-2 rounded-full opacity-0 group-hover:opacity-100 transition-all hover:text-red-500 shadow-xl"
           >
             <X size={18} />
           </button>
@@ -148,7 +148,7 @@ export function CoverPhotoInput({ currentUrl, currentPosition, onChange, onPosit
                 key={pos.id}
                 type="button"
                 onClick={() => onPositionChange?.(pos.id)}
-                className={`px-4 py-1.5 text-[10px] font-black uppercase tracking-widest rounded-full transition-all ${currentPosition === pos.id || (!currentPosition && pos.id === 'center') ? "bg-brand-tactical text-black" : "text-white hover:bg-white/10"}`}
+                className={`px-4 py-1.5 text-[10px] font-black uppercase tracking-widest rounded-full transition-all ${currentPosition === pos.id || (!currentPosition && pos.id === 'center') ? "bg-brand-tactical text-theme-text" : "text-theme-text hover:bg-white/10"}`}
               >
                 {pos.label}
               </button>

@@ -17,9 +17,6 @@
 
 ## 🔘 Ações e Botões Disponíveis
 
-- **Botão:** `VOLTAR`
-- **Botão:** `TIRAR FOTO / GRAVAR VÍDEO`
-- **Botão:** `ESCOLHER DA GALERIA (ATÉ 12)`
 - **Botão:** `Home`
 - **Botão:** `Buscar`
 - **Botão:** `Compras`
@@ -42,10 +39,10 @@
 
 - **COPA 2026
 PRÓXIMOS
-CANADÁ
-12/06 · 16:00
-GRP B
-BÓSNIA
+HOLANDA
+14/06 · 17:00
+GRP F
+JAPÃO
 Ver Álbum →** -> `/album-torcida`
 
 ## ⚙️ Observações Técnicas e Fluxo

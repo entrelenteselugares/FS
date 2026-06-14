@@ -5,13 +5,13 @@ import SEO from "../components/SEO";
 
 export function ContactPage() {
   return (
-    <div className="min-h-screen bg-theme-bg text-theme-text font-sans selection:bg-brand-tactical/30">
+    <div className="min-h-screen bg-theme-bg text-theme-text selection:bg-brand-tactical/30">
       <SEO title="Contato | Foto Segundo" description="Fale com a Foto Segundo. Suporte, parcerias, profissionais e imprensa." />
       <Navbar />
       
       {/* Header Minimalista */}
       <header className="fixed top-0 left-0 right-0 h-16 bg-theme-bg/80 backdrop-blur-lg border-b border-theme-border z-50 flex items-center px-4 md:px-8">
-        <Link to="/" className="text-brand-tactical hover:brightness-110 transition-all flex items-center gap-2 text-xs font-bold tracking-widest uppercase ">
+        <Link to="/" className="text-brand-tactical hover:brightness-110 transition-all flex items-center gap-2 text-xs font-bold tracking-widest uppercase">
           <ArrowLeft size={16} /> Voltar para o início
         </Link>
       </header>
@@ -20,7 +20,7 @@ export function ContactPage() {
         <div className="mb-16 md:mb-24 text-center max-w-3xl mx-auto">
           <div className="flex items-center justify-center gap-4 mb-6">
             <div className="h-px w-12 bg-brand-tactical" />
-            <span className="text-[10px] font-bold text-brand-tactical uppercase tracking-[0.5em] ">Comunicação Direta</span>
+            <span className="text-[10px] font-bold text-brand-tactical uppercase tracking-[0.5em]">Comunicação Direta</span>
             <div className="h-px w-12 bg-brand-tactical" />
           </div>
           <h1 className="text-3xl md:text-5xl md:text-7xl font-heading font-bold text-theme-text uppercase mb-6 leading-none">

@@ -96,7 +96,7 @@ export const PushNotificationManager: React.FC = () => {
         <div className="fixed bottom-20 left-4 right-4 md:left-auto md:right-8 md:w-80 bg-zinc-900 border border-brand-tactical/30 p-6 rounded-2xl shadow-2xl z-[100] animate-in fade-in slide-in-from-bottom-4 duration-500">
           <button 
             onClick={handleClose}
-            className="absolute top-4 right-4 text-zinc-500 hover:text-white transition-colors"
+            className="absolute top-4 right-4 text-theme-muted hover:text-theme-text transition-colors"
           >
             <X size={16} />
           </button>
@@ -106,14 +106,14 @@ export const PushNotificationManager: React.FC = () => {
               <Bell size={24} />
             </div>
             <div>
-              <h4 className="text-sm font-bold text-white uppercase ">Notificações</h4>
-              <p className="text-[10px] text-zinc-400 uppercase tracking-widest">Ative alertas de entrega e vendas</p>
+              <h4 className="text-sm font-bold text-theme-text uppercase">Notificações</h4>
+              <p className="text-[10px] text-theme-muted uppercase tracking-widest">Ative alertas de entrega e vendas</p>
             </div>
           </div>
 
           <button
             onClick={subscribe}
-            className="w-full bg-brand-tactical text-black font-bold uppercase tracking-[0.2em] text-[10px] py-3 rounded-xl hover:bg-white transition-all "
+            className="w-full bg-brand-tactical text-theme-text font-bold uppercase tracking-[0.2em] text-[10px] py-3 rounded-xl hover:bg-white transition-all"
           >
             Ativar Agora
           </button>

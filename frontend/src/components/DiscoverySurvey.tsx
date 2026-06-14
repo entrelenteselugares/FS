@@ -57,9 +57,9 @@ export const DiscoverySurvey: React.FC = () => {
           <div className="absolute top-0 right-0 w-64 h-64 bg-brand-tactical/10 rounded-full blur-[100px] pointer-events-none" />
           
           <div className="space-y-3 relative z-10">
-            <p className="text-[10px] font-bold text-brand-tactical uppercase tracking-[0.4em] ">Missão Reconhecimento</p>
-            <h2 className="text-4xl font-heading font-bold text-white uppercase leading-none">Como você chegou na Foto Segundo?</h2>
-            <p className="text-xs text-zinc-500 font-medium leading-relaxed max-w-md ">Sua resposta nos ajuda a fortalecer a rede e levar mais oportunidades para fotógrafos de todo o Brasil.</p>
+            <p className="text-[10px] font-bold text-brand-tactical uppercase tracking-[0.4em]">Missão Reconhecimento</p>
+            <h2 className="text-4xl font-heading font-bold text-theme-text uppercase leading-none">Como você chegou na Foto Segundo?</h2>
+            <p className="text-xs text-theme-muted font-medium leading-relaxed max-w-md">Sua resposta nos ajuda a fortalecer a rede e levar mais oportunidades para fotógrafos de todo o Brasil.</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 relative z-10">
@@ -70,13 +70,13 @@ export const DiscoverySurvey: React.FC = () => {
                 disabled={submitting}
                 className="p-6 border border-zinc-800 bg-zinc-900/50 text-left hover:border-brand-tactical transition-all group flex flex-col gap-2 disabled:opacity-50"
               >
-                <p className="text-[11px] font-bold text-white uppercase tracking-widest group-hover:text-brand-tactical transition-colors ">{opt.label}</p>
-                <p className="text-[9px] text-zinc-500 uppercase font-bold tracking-widest">{opt.desc}</p>
+                <p className="text-[11px] font-bold text-theme-text uppercase tracking-widest group-hover:text-brand-tactical transition-colors">{opt.label}</p>
+                <p className="text-[9px] text-theme-muted uppercase font-bold tracking-widest">{opt.desc}</p>
               </button>
             ))}
           </div>
 
-          <p className="text-[10px] text-zinc-700 font-bold uppercase tracking-widest text-center ">© Foto Segundo · Inteligência de Rede</p>
+          <p className="text-[10px] text-theme-text font-bold uppercase tracking-widest text-center">© Foto Segundo · Inteligência de Rede</p>
         </motion.div>
       </div>
     </AnimatePresence>

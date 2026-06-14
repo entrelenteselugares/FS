@@ -48,12 +48,12 @@ export function NotificationBell() {
       {/* Bell Icon Trigger */}
       <button 
         onClick={toggleFeed}
-        className="relative p-2 text-gray-500 hover:bg-gray-100 rounded-full transition-colors"
+        className="relative p-2 text-theme-muted hover:bg-gray-100 rounded-full transition-colors"
         aria-label="Notificações"
       >
         <Bell className="w-5 h-5" />
         {unreadCount > 0 && (
-          <span className="absolute top-0.5 right-0.5 inline-flex items-center justify-center w-4 h-4 text-[10px] font-bold text-black bg-brand-tactical rounded-full">
+          <span className="absolute top-0.5 right-0.5 inline-flex items-center justify-center w-4 h-4 text-[10px] font-bold text-theme-text bg-brand-tactical rounded-full">
             {unreadCount > 99 ? '99+' : unreadCount}
           </span>
         )}
@@ -73,14 +73,14 @@ export function NotificationBell() {
             {/* Header */}
             <div className="p-6 md:p-8 border-b border-white/5 flex justify-between items-center bg-white/[0.02]">
               <div>
-                <h3 className="text-xl font-bold uppercase text-white">Alertas & Notificações</h3>
-                <p className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 mt-1">Central de Comunicação</p>
+                <h3 className="text-xl font-bold uppercase text-theme-text">Alertas & Notificações</h3>
+                <p className="text-[10px] font-bold uppercase tracking-widest text-theme-muted mt-1">Central de Comunicação</p>
               </div>
               <div className="flex gap-4">
                 {unreadCount > 0 && (
                   <button 
                     onClick={markAllAsRead}
-                    className="text-[10px] font-bold uppercase tracking-widest text-brand-tactical hover:text-white transition-colors flex items-center gap-2"
+                    className="text-[10px] font-bold uppercase tracking-widest text-brand-tactical hover:text-theme-text transition-colors flex items-center gap-2"
                   >
                     <Check className="w-4 h-4" />
                     Marcar lidas
@@ -88,7 +88,7 @@ export function NotificationBell() {
                 )}
                 <button 
                   onClick={() => setIsOpen(false)} 
-                  className="w-10 h-10 rounded-full bg-theme-bg-muted flex items-center justify-center text-zinc-400 hover:text-white hover:bg-white/10 transition-all"
+                  className="w-10 h-10 rounded-full bg-theme-bg-muted flex items-center justify-center text-theme-muted hover:text-theme-text hover:bg-white/10 transition-all"
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -104,11 +104,11 @@ export function NotificationBell() {
               ) : notifications.length === 0 ? (
                 <div className="h-full flex flex-col items-center justify-center text-center p-12 space-y-6">
                   <div className="w-20 h-20 bg-theme-bg-muted rounded-full flex items-center justify-center border border-white/5 opacity-20">
-                    <BellOff size={40} className="text-white" />
+                    <BellOff size={40} className="text-theme-text" />
                   </div>
                   <div className="space-y-2">
-                    <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-white/40 ">Tudo limpo por aqui</p>
-                    <p className="text-[10px] font-bold text-zinc-600 uppercase max-w-[200px]">Nenhuma nova notificação tática no momento.</p>
+                    <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-theme-text/40">Tudo limpo por aqui</p>
+                    <p className="text-[10px] font-bold text-theme-muted uppercase max-w-[200px]">Nenhuma nova notificação tática no momento.</p>
                   </div>
                 </div>
               ) : (
@@ -130,18 +130,18 @@ export function NotificationBell() {
                       <div className="flex gap-4">
                         <div className="flex-1">
                           <div className="flex justify-between items-start mb-2">
-                            <p className={`text-[12px] font-black uppercase italic tracking-tight ${!notif.read ? 'text-brand-tactical' : 'text-zinc-300'}`}>
+                            <p className={`text-[12px] font-black uppercase italic tracking-tight ${!notif.read ? 'text-brand-tactical' : 'text-theme-subtle'}`}>
                               {notif.title}
                             </p>
-                            <span className="text-[9px] font-bold text-zinc-600 uppercase">
+                            <span className="text-[9px] font-bold text-theme-muted uppercase">
                               {formatDistanceToNow(new Date(notif.createdAt), { addSuffix: true, locale: ptBR })}
                             </span>
                           </div>
-                          <p className="text-[10px] font-medium text-zinc-500 leading-relaxed uppercase tracking-wider line-clamp-2">
+                          <p className="text-[10px] font-medium text-theme-muted leading-relaxed uppercase tracking-wider line-clamp-2">
                             {notif.body}
                           </p>
                         </div>
-                        <div className="flex items-center justify-center w-8 h-8 rounded-full bg-theme-bg-muted text-zinc-600 group-hover:text-brand-tactical group-hover:bg-brand-tactical/10 transition-all self-center">
+                        <div className="flex items-center justify-center w-8 h-8 rounded-full bg-theme-bg-muted text-theme-muted group-hover:text-brand-tactical group-hover:bg-brand-tactical/10 transition-all self-center">
                           <ArrowRight size={14} />
                         </div>
                       </div>
@@ -155,7 +155,7 @@ export function NotificationBell() {
             <div className="p-6 border-t border-white/5 bg-white/[0.01]">
               <button 
                 onClick={() => setIsOpen(false)}
-                className="w-full py-4 text-[10px] font-bold uppercase tracking-[0.3em] text-zinc-500 hover:text-white transition-colors "
+                className="w-full py-4 text-[10px] font-bold uppercase tracking-[0.3em] text-theme-muted hover:text-theme-text transition-colors"
               >
                 — FECHAR CENTRAL —
               </button>

@@ -15,9 +15,11 @@
 
 - EVENTOS
 - Matheus Rocha
+- Brasil x Marrocos - Casa do Baiano
+- Dia de jogo do Brasil
 - ABERTURA D COP 2026
-- Gelin
 - Na loja
+- Gelin
 - RR - Cliente
 - Cianorte em Movimento
 - Em casa
@@ -26,21 +28,19 @@
 - AmoreiraCell - PlayNight
 - Domingou
 - DSJ
-- Lagoa do Mingone
-- BDay Kurió
 
 ## 🔘 Ações e Botões Disponíveis
 
 - **Botão:** `Visão Geral`
 - **Botão:** `Eventos
-9`
+10`
 - **Botão:** `Comercial`
 - **Botão:** `Rede`
 - **Botão:** `Marketing`
 - **Botão:** `Sistema`
-- **Botão:** `57`
+- **Botão:** `58`
 - **Botão:** `ENCERRAR SESSÃO`
-- **Botão:** `Eventos9`
+- **Botão:** `Eventos10`
 - **Botão:** `Encerrar Sessão`
 - **Botão:** `VENDA RÁPIDA (LIVE PRINT)`
 - **Botão:** `NOVO EVENTO`
@@ -50,13 +50,6 @@
 
 ## 🔗 Links de Navegação
 
-- **COPA 2026
-PRÓXIMOS
-EUA
-12/06 · 22:00
-GRP D
-PARAGUAI
-Ver Álbum →** -> `/album-torcida`
 - **VISITAR SITE** -> `/`
 - **Visitar Site** -> `/`
 

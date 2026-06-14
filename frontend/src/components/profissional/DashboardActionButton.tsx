@@ -14,7 +14,7 @@ const colorMap = {
     border: "border-emerald-500/30",
     hoverBorder: "hover:border-emerald-500",
     bg: "bg-emerald-500/10",
-    text: "text-emerald-500",
+    text: "text-theme-brand",
   },
   cyan: {
     border: "border-cyan-400/30",

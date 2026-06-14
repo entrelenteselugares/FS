@@ -36,7 +36,7 @@ export function CalendarView({ events, currentMonth, setCurrentMonth, onSelect, 
       <div className="absolute top-0 right-0 w-32 h-32 bg-brand-tactical/10 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none" />
       <div className="flex items-center justify-between border-b border-theme-border pb-8 relative z-10">
         <div className="flex flex-col md:flex-row gap-6 items-start md:items-center relative z-10">
-          <h3 className="text-2xl font-heading font-bold text-theme-text uppercase tracking-widest ">
+          <h3 className="text-2xl font-heading font-bold text-theme-text uppercase tracking-widest">
             {monthNames[month]} {year}
           </h3>
           <div className="flex gap-4">

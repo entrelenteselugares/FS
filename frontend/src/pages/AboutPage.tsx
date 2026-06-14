@@ -4,10 +4,10 @@ import { ArrowLeft } from "lucide-react";
 
 export function AboutPage() {
   return (
-    <div className="min-h-screen bg-theme-bg text-theme-text font-sans">
+    <div className="min-h-screen bg-theme-bg text-theme-text">
       {/* Header */}
       <header className="fixed top-0 left-0 right-0 h-16 bg-theme-bg/80 backdrop-blur-lg border-b border-theme-border z-50 flex items-center px-4 md:px-8">
-        <Link to="/" className="text-brand-tactical hover:brightness-110 transition-all flex items-center gap-2 text-xs font-bold tracking-widest uppercase ">
+        <Link to="/" className="text-brand-tactical hover:brightness-110 transition-all flex items-center gap-2 text-xs font-bold tracking-widest uppercase">
           <ArrowLeft size={16} /> Voltar
         </Link>
       </header>
@@ -15,7 +15,7 @@ export function AboutPage() {
       {/* Main Content */}
       <main className="pt-24 pb-20 px-3 md:px-6 md:px-12 max-w-3xl mx-auto">
         <div className="mb-16 text-center">
-          <h1 className="text-2xl md:text-4xl md:text-5xl font-heading font-bold text-theme-text uppercase mb-4 ">
+          <h1 className="text-2xl md:text-4xl md:text-5xl font-heading font-bold text-theme-text uppercase mb-4">
             Sobre a <span className="text-brand-tactical">Foto Segundo</span>
           </h1>
           <p className="text-brand-tactical font-bold tracking-[0.2em] uppercase text-xs md:text-sm">
@@ -27,7 +27,7 @@ export function AboutPage() {
         <section className="space-y-12">
           {/* O que é */}
           <div>
-            <h2 className="text-2xl font-bold text-theme-text uppercase mb-4 flex items-center gap-3 ">
+            <h2 className="text-2xl font-bold text-theme-text uppercase mb-4 flex items-center gap-3">
               <span className="w-8 h-1 bg-brand-tactical block"></span> O que é a Foto Segundo
             </h2>
             <div className="space-y-4 text-theme-text-muted leading-relaxed font-normal text-base md:text-lg">
@@ -39,7 +39,7 @@ export function AboutPage() {
 
           {/* O Problema */}
           <div>
-            <h2 className="text-2xl font-bold text-theme-text uppercase mb-4 flex items-center gap-3 ">
+            <h2 className="text-2xl font-bold text-theme-text uppercase mb-4 flex items-center gap-3">
               <span className="w-8 h-1 bg-brand-tactical block"></span> O problema que resolvemos
             </h2>
             <p className="text-theme-text-muted font-normal text-base md:text-lg mb-4">Todo mundo já viveu isso:</p>
@@ -61,7 +61,7 @@ export function AboutPage() {
 
           {/* Como Funciona */}
           <div>
-            <h2 className="text-2xl font-bold text-theme-text uppercase mb-6 flex items-center gap-3 ">
+            <h2 className="text-2xl font-bold text-theme-text uppercase mb-6 flex items-center gap-3">
               <span className="w-8 h-1 bg-brand-tactical block"></span> Como funciona
             </h2>
             
@@ -106,7 +106,7 @@ export function AboutPage() {
           {/* Missão e Tecnologia */}
           <div className="space-y-12">
             <div>
-              <h2 className="text-2xl font-bold text-theme-text uppercase mb-4 flex items-center gap-3 ">
+              <h2 className="text-2xl font-bold text-theme-text uppercase mb-4 flex items-center gap-3">
                 <span className="w-8 h-1 bg-brand-tactical block"></span> Nossa missão
               </h2>
               <p className="text-theme-text-muted font-normal text-base md:text-lg leading-relaxed">
@@ -115,7 +115,7 @@ export function AboutPage() {
             </div>
 
             <div>
-              <h2 className="text-2xl font-bold text-theme-text uppercase mb-4 flex items-center gap-3 ">
+              <h2 className="text-2xl font-bold text-theme-text uppercase mb-4 flex items-center gap-3">
                 <span className="w-8 h-1 bg-brand-tactical block"></span> A tecnologia por trás
               </h2>
               <p className="text-theme-text-muted font-normal text-base md:text-lg leading-relaxed mb-4">
@@ -134,7 +134,7 @@ export function AboutPage() {
               <Link to="/suporte" className="px-4 md:px-8 py-3 bg-theme-bg-muted border border-theme-border text-theme-text font-bold tracking-widest uppercase text-xs rounded-full hover:bg-theme-border/20 transition-all">
                 Central de Ajuda
               </Link>
-              <Link to="/parcerias" className="px-4 md:px-8 py-3 bg-brand-tactical hover:brightness-110 text-white font-bold tracking-widest uppercase text-xs rounded-full transition-all">
+              <Link to="/parcerias" className="px-4 md:px-8 py-3 bg-brand-tactical hover:brightness-110 text-theme-text font-bold tracking-widest uppercase text-xs rounded-full transition-all">
                 Seja um Parceiro
               </Link>
             </div>

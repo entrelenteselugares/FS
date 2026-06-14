@@ -33,7 +33,7 @@ export const AdminConfigsSplits: React.FC<Props> = ({
           <Shield size={32} />
         </div>
         <div className="flex-1 space-y-2">
-          <h4 className="text-[11px] font-bold uppercase tracking-[0.5em] text-theme-text ">Protocolo de Precificação (Markup)</h4>
+          <h4 className="text-[11px] font-bold uppercase tracking-[0.5em] text-theme-text">Protocolo de Precificação (Markup)</h4>
           <p className="text-[9px] text-theme-muted uppercase tracking-widest font-medium leading-relaxed max-w-3xl">
             A plataforma utiliza um modelo de Precificação Bottom-Up. O valor final cobrado do cliente é o custo base somado ao Markup. Do repasse ao profissional, descontamos a Taxa de Intermediação (Take Rate).
           </p>

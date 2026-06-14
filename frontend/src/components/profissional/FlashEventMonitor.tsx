@@ -72,9 +72,9 @@ export function FlashEventMonitor({ eventId }: { eventId: string }) {
         <div className="space-y-1">
           <div className="flex items-center gap-2">
             <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-            <p className="text-[9px] font-bold text-emerald-400 uppercase tracking-[0.4em]">Ao vivo</p>
+            <p className="text-[9px] font-bold text-theme-brand uppercase tracking-[0.4em]">Ao vivo</p>
           </div>
-          <h3 className="text-xl font-bold text-theme-text uppercase ">
+          <h3 className="text-xl font-bold text-theme-text uppercase">
             {stats.event.title}
           </h3>
           <p className="text-[9px] text-theme-muted font-bold uppercase tracking-widest">
@@ -125,7 +125,7 @@ export function FlashEventMonitor({ eventId }: { eventId: string }) {
             { label: "Total",     value: stats.cards.total,   color: "text-theme-text",  bg: "bg-theme-bg" },
             { label: "Não Usados",value: stats.cards.unused,  color: "text-blue-500",    bg: "bg-blue-500" },
             { label: "Utilizados",value: stats.cards.used,    color: "text-brand-tactical", bg: "bg-brand-tactical/10" },
-            { label: "Resgatados",value: stats.cards.claimed, color: "text-emerald-400", bg: "bg-emerald-500/5" },
+            { label: "Resgatados",value: stats.cards.claimed, color: "text-theme-brand", bg: "bg-emerald-500/5" },
           ].map(({ label, value, color, bg }) => (
             <div key={label} className={`p-4 border border-theme-border ${bg} space-y-2`}>
               <p className="text-[10px] font-bold text-theme-muted uppercase tracking-widest">{label}</p>
@@ -169,7 +169,7 @@ export function FlashEventMonitor({ eventId }: { eventId: string }) {
           {[
             { label: "Pendentes",  value: stats.prints.pending,  icon: <Clock size={12} />,        color: "text-amber-400" },
             { label: "Imprimindo", value: stats.prints.printing, icon: <Activity size={12} />,     color: "text-blue-500" },
-            { label: "Concluídas", value: stats.prints.done,     icon: <CheckCircle2 size={12} />, color: "text-emerald-400" },
+            { label: "Concluídas", value: stats.prints.done,     icon: <CheckCircle2 size={12} />, color: "text-theme-brand" },
             { label: "Com Erro",   value: stats.prints.error,    icon: <XCircle size={12} />,      color: "text-red-400" },
           ].map(({ label, value, icon, color }) => (
             <div key={label} className="flex items-center gap-3 p-4 border border-theme-border bg-theme-bg-muted/5">

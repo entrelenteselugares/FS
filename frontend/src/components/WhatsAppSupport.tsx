@@ -28,15 +28,15 @@ const WhatsAppSupport: React.FC<WhatsAppSupportProps> = ({
     >
       <button
         onClick={handleClick}
-        className="flex items-center gap-3 bg-brand-tactical text-black px-6 py-4 rounded-full shadow-[0_10px_30px_rgba(20,184,166,0.3)] hover:bg-white hover:text-black transition-all group"
+        className="flex items-center gap-3 bg-brand-tactical text-theme-text px-6 py-4 rounded-full shadow-[0_10px_30px_rgba(20,184,166,0.3)] hover:bg-white hover:text-theme-text transition-all group"
       >
-        <MessageCircle size={24} className="text-black" strokeWidth={2.5} />
+        <MessageCircle size={24} className="text-theme-text" strokeWidth={2.5} />
         <span className="text-[10px] font-bold uppercase tracking-widest hidden md:inline">
           Dúvidas no Pagamento?
         </span>
         
         {/* Tooltip Mobile */}
-        <div className="absolute -top-12 right-0 bg-white text-black text-[9px] font-bold px-3 py-1.5 rounded-lg shadow-xl opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap md:hidden">
+        <div className="absolute -top-12 right-0 bg-white text-theme-text text-[9px] font-bold px-3 py-1.5 rounded-lg shadow-xl opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap md:hidden">
           Falar com Suporte
         </div>
       </button>

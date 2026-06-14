@@ -65,7 +65,7 @@ export default function CustomServiceForm() {
       <header className="pt-20 pb-10 border-b border-white/5 relative overflow-hidden">
         <button 
           onClick={() => navigate(-1)} 
-          className="absolute top-6 left-6 z-50 flex items-center gap-2 px-5 py-2.5 bg-theme-bg/60 backdrop-blur-md border border-theme-border rounded-full text-theme-text hover:bg-brand-tactical hover:text-black transition-all shadow-xl"
+          className="absolute top-6 left-6 z-50 flex items-center gap-2 px-5 py-2.5 bg-theme-bg/60 backdrop-blur-md border border-theme-border rounded-full text-theme-text hover:bg-brand-tactical hover:text-theme-text transition-all shadow-xl"
         >
           <ChevronLeft size={16} />
           <span className="text-[10px] font-bold uppercase tracking-widest">Voltar</span>
@@ -84,7 +84,7 @@ export default function CustomServiceForm() {
 
       <main className="max-w-[1000px] mx-auto px-4 md:px-6 py-3 md:py-6 md:py-12">
         {success && (
-          <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="mb-8 p-3 md:p-6 bg-green-500/10 border border-green-500/20 text-green-400 flex items-center gap-4">
+          <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="mb-8 p-3 md:p-6 bg-green-500/10 border border-green-500/20 text-theme-brand flex items-center gap-4">
             <Check size={24} />
             <div>
               <h3 className="font-bold uppercase tracking-widest text-sm">Serviço Enviado!</h3>
@@ -107,20 +107,20 @@ export default function CustomServiceForm() {
           
           {/* IDENTIFICAÇÃO */}
           <section className="space-y-6">
-            <h2 className="text-sm font-bold text-white uppercase tracking-widest border-b border-white/5 pb-2">1. Identificação</h2>
+            <h2 className="text-sm font-bold text-theme-text uppercase tracking-widest border-b border-white/5 pb-2">1. Identificação</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-[10px] text-theme-muted uppercase tracking-widest font-bold mb-2">Nome do Serviço *</label>
                 <input required type="text" placeholder="Ex: Cobertura de Casamento, Edição de Reels..."
                   value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})}
-                  className="w-full bg-black border border-white/10 p-3 text-xs text-white outline-none focus:border-brand-tactical transition-colors"
+                  className="w-full bg-black border border-white/10 p-3 text-xs text-theme-text outline-none focus:border-brand-tactical transition-colors"
                 />
               </div>
               <div>
                 <label className="block text-[10px] text-theme-muted uppercase tracking-widest font-bold mb-2">Categoria</label>
                 <input type="text" placeholder="Ex: Casamento, Corporativo, Pós-produção..."
                   value={formData.category} onChange={e => setFormData({...formData, category: e.target.value})}
-                  className="w-full bg-black border border-white/10 p-3 text-xs text-white outline-none focus:border-brand-tactical transition-colors"
+                  className="w-full bg-black border border-white/10 p-3 text-xs text-theme-text outline-none focus:border-brand-tactical transition-colors"
                 />
               </div>
             </div>
@@ -128,14 +128,14 @@ export default function CustomServiceForm() {
               <label className="block text-[10px] text-theme-muted uppercase tracking-widest font-bold mb-2">Descrição / O que está incluso *</label>
               <textarea required placeholder="Detalhe o que será entregue, quantas horas, formato final, etc."
                 value={formData.description} onChange={e => setFormData({...formData, description: e.target.value})}
-                className="w-full bg-black border border-white/10 p-3 text-xs text-white h-24 outline-none focus:border-brand-tactical transition-colors"
+                className="w-full bg-black border border-white/10 p-3 text-xs text-theme-text h-24 outline-none focus:border-brand-tactical transition-colors"
               />
             </div>
           </section>
 
           {/* FORMATO DO TRABALHO */}
           <section className="space-y-6">
-            <h2 className="text-sm font-bold text-white uppercase tracking-widest border-b border-white/5 pb-2">2. Formato de Trabalho</h2>
+            <h2 className="text-sm font-bold text-theme-text uppercase tracking-widest border-b border-white/5 pb-2">2. Formato de Trabalho</h2>
             <div className="flex flex-wrap gap-4 mb-4">
             <label className={`cursor-pointer flex-1 border p-3 flex flex-col items-center justify-center gap-2 transition-colors ${!formData.isRemote ? 'bg-brand-tactical/10 border-brand-tactical text-brand-tactical' : 'bg-black border-white/10 text-theme-muted hover:border-white/30'}`}>
               <input type="radio" name="isRemote" className="hidden" checked={!formData.isRemote} onChange={() => setFormData({...formData, isRemote: false})} />
@@ -154,20 +154,20 @@ export default function CustomServiceForm() {
               </label>
               <input type="text" placeholder={formData.isRemote ? "Ex: Premiere, Lightroom, Mac M1" : "Ex: Sony A7III, Lente 50mm, Flash, Drone"}
                 value={formData.requiredEquipment} onChange={e => setFormData({...formData, requiredEquipment: e.target.value})}
-                className="w-full bg-black border border-white/10 p-3 text-xs text-white outline-none focus:border-brand-tactical transition-colors"
+                className="w-full bg-black border border-white/10 p-3 text-xs text-theme-text outline-none focus:border-brand-tactical transition-colors"
               />
             </div>
           </section>
 
           {/* PRECIFICAÇÃO */}
           <section className="space-y-6">
-            <h2 className="text-sm font-bold text-white uppercase tracking-widest border-b border-white/5 pb-2">3. Precificação</h2>
+            <h2 className="text-sm font-bold text-theme-text uppercase tracking-widest border-b border-white/5 pb-2">3. Precificação</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-[10px] text-theme-muted uppercase tracking-widest font-bold mb-2">Formato de Cobrança</label>
                 <select 
                   value={formData.pricingType} onChange={e => setFormData({...formData, pricingType: e.target.value})}
-                  className="w-full bg-black border border-white/10 p-3 text-xs text-white outline-none focus:border-brand-tactical appearance-none"
+                  className="w-full bg-black border border-white/10 p-3 text-xs text-theme-text outline-none focus:border-brand-tactical appearance-none"
                 >
                   <option value="HOURLY">Por Hora (Valor/Hora)</option>
                   <option value="FIXED">Pacote Fixo (Valor Fechado)</option>
@@ -178,7 +178,7 @@ export default function CustomServiceForm() {
                 <label className="block text-[10px] text-theme-muted uppercase tracking-widest font-bold mb-2">Preço (R$) *</label>
                 <input required type="number" step="0.01" min="0" placeholder="0.00"
                   value={formData.price} onChange={e => setFormData({...formData, price: e.target.value})}
-                  className="w-full bg-black border border-white/10 p-3 text-xs text-white outline-none focus:border-brand-tactical transition-colors"
+                  className="w-full bg-black border border-white/10 p-3 text-xs text-theme-text outline-none focus:border-brand-tactical transition-colors"
                 />
               </div>
               
@@ -187,21 +187,21 @@ export default function CustomServiceForm() {
                 <input type="number" min="0" placeholder={formData.pricingType === "HOURLY" ? "Horas mínimas" : formData.pricingType === "PER_UNIT" ? "Quantidade mínima" : "N/A"}
                   value={formData.minQuantity} onChange={e => setFormData({...formData, minQuantity: e.target.value})}
                   disabled={formData.pricingType === "FIXED"}
-                  className="w-full bg-black border border-white/10 p-3 text-xs text-white outline-none focus:border-brand-tactical transition-colors disabled:opacity-50"
+                  className="w-full bg-black border border-white/10 p-3 text-xs text-theme-text outline-none focus:border-brand-tactical transition-colors disabled:opacity-50"
                 />
               </div>
               <div>
                 <label className="block text-[10px] text-theme-muted uppercase tracking-widest font-bold mb-2">Prazo de Entrega (Dias)</label>
                 <input type="number" min="0" placeholder="Dias úteis para entrega"
                   value={formData.deliveryDays} onChange={e => setFormData({...formData, deliveryDays: e.target.value})}
-                  className="w-full bg-black border border-white/10 p-3 text-xs text-white outline-none focus:border-brand-tactical transition-colors"
+                  className="w-full bg-black border border-white/10 p-3 text-xs text-theme-text outline-none focus:border-brand-tactical transition-colors"
                 />
               </div>
               <div>
                 <label className="block text-[10px] text-theme-muted uppercase tracking-widest font-bold mb-2">Duração Estimada (Minutos)</label>
                 <input type="number" min="0" placeholder="Ex: 60, 120..."
                   value={formData.estimatedMinutes} onChange={e => setFormData({...formData, estimatedMinutes: e.target.value})}
-                  className="w-full bg-black border border-white/10 p-3 text-xs text-white outline-none focus:border-brand-tactical transition-colors"
+                  className="w-full bg-black border border-white/10 p-3 text-xs text-theme-text outline-none focus:border-brand-tactical transition-colors"
                 />
               </div>
             </div>
@@ -209,7 +209,7 @@ export default function CustomServiceForm() {
 
           {/* INFORMAÇÕES INTERNAS */}
           <section className="space-y-6">
-            <h2 className="text-sm font-bold text-white uppercase tracking-widest border-b border-white/5 pb-2">4. Revisão</h2>
+            <h2 className="text-sm font-bold text-theme-text uppercase tracking-widest border-b border-white/5 pb-2">4. Revisão</h2>
             <div className="bg-theme-bg p-4 border border-white/5 flex gap-4">
               <HelpCircle className="text-brand-tactical shrink-0" size={20} />
               <div>
@@ -220,7 +220,7 @@ export default function CustomServiceForm() {
                   <label className="block text-[10px] text-theme-muted uppercase tracking-widest font-bold mb-2">Justificativa / Link de Portfólio (Opcional)</label>
                   <textarea placeholder="Deixe um recado para a curadoria, caso necessário."
                     value={formData.networkJustification} onChange={e => setFormData({...formData, networkJustification: e.target.value})}
-                    className="w-full bg-black border border-white/10 p-3 text-xs text-white h-20 outline-none focus:border-brand-tactical transition-colors"
+                    className="w-full bg-black border border-white/10 p-3 text-xs text-theme-text h-20 outline-none focus:border-brand-tactical transition-colors"
                   />
                 </div>
               </div>

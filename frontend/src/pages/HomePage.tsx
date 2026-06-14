@@ -88,10 +88,10 @@ function EventCard({ event, onClick }: { event: Event; onClick: () => void }) {
 
       {/* Badge de Autoria - Top Left */}
       <div className="absolute top-1.5 left-1.5 md:top-3 md:left-3 z-10 flex items-center gap-1.5">
-        <div className="w-4 h-4 md:w-6 md:h-6 rounded-full bg-emerald-500/90 flex items-center justify-center text-[9px] md:text-[10px] font-bold text-black shadow-lg">
+        <div className="w-4 h-4 md:w-6 md:h-6 rounded-full bg-emerald-500/90 flex items-center justify-center text-[9px] md:text-[10px] font-bold text-theme-text shadow-lg">
           {event.ownerName?.charAt(0)?.toUpperCase() || event.cartorio?.charAt(0)?.toUpperCase() || "F"}
         </div>
-        <span className="hidden md:inline text-[9px] font-bold text-white uppercase tracking-widest truncate max-w-[120px] drop-shadow-md">
+        <span className="hidden md:inline text-[9px] font-bold text-theme-text uppercase tracking-widest truncate max-w-[120px] drop-shadow-md">
           {event.ownerName || event.cartorio || "Foto Segundo"}
         </span>
       </div>
@@ -99,12 +99,12 @@ function EventCard({ event, onClick }: { event: Event; onClick: () => void }) {
       {/* Status Badges - Top Right */}
       <div className="absolute top-1.5 right-1.5 md:top-3 md:right-3 z-10 flex flex-col gap-1 items-end">
         {today && (
-          <span className="px-1.5 py-0.5 bg-emerald-500 text-black text-[9px] md:text-[9px] font-bold uppercase tracking-widest rounded-sm shadow-xl">
+          <span className="px-1.5 py-0.5 bg-emerald-500 text-theme-text text-[9px] md:text-[9px] font-bold uppercase tracking-widest rounded-sm shadow-xl">
             HOJE
           </span>
         )}
         {novo && (
-          <span className="px-2 py-0.5 bg-black/40 backdrop-blur-md text-white text-[9px] md:text-[9px] font-bold uppercase tracking-widest rounded-full border border-white/20 shadow-xl">
+          <span className="px-2 py-0.5 bg-black/40 backdrop-blur-md text-theme-text text-[9px] md:text-[9px] font-bold uppercase tracking-widest rounded-full border border-white/20 shadow-xl">
             NOVO
           </span>
         )}
@@ -112,17 +112,17 @@ function EventCard({ event, onClick }: { event: Event; onClick: () => void }) {
 
       {/* Content Overlay - Always Bottom for better subject visibility */}
       <div className="absolute bottom-0 left-0 w-full p-2 md:p-4 z-10 flex flex-col justify-end">
-        <h3 className="text-[10px] md:text-lg font-heading font-bold text-white uppercase leading-tight drop-shadow-lg line-clamp-2 mb-0.5 md:mb-1.5">
+        <h3 className="text-[10px] md:text-lg font-heading font-bold text-theme-text uppercase leading-tight drop-shadow-lg line-clamp-2 mb-0.5 md:mb-1.5">
           {event.title}
         </h3>
         {/* Metadata */}
-        <div className="flex flex-col gap-0.5 md:gap-1 text-white/70 text-[9px] md:text-[9px] font-bold uppercase tracking-widest mt-0.5 md:mt-1.5">
+        <div className="flex flex-col gap-0.5 md:gap-1 text-theme-text/70 text-[9px] md:text-[9px] font-bold uppercase tracking-widest mt-0.5 md:mt-1.5">
           <div className="flex items-center gap-1">
-            <MapPin className="w-2 h-2 md:w-2.5 md:h-2.5 text-emerald-500 shrink-0" />
+            <MapPin className="w-2 h-2 md:w-2.5 md:h-2.5 text-theme-brand shrink-0" />
             <span className="truncate">{event.city || (event.location?.startsWith("CEP:") ? null : event.location) || "PONTO DESIGNADO"}</span>
           </div>
           <div className="flex items-center gap-1">
-            <Calendar className="w-2 h-2 md:w-2.5 md:h-2.5 text-emerald-500 shrink-0" />
+            <Calendar className="w-2 h-2 md:w-2.5 md:h-2.5 text-theme-brand shrink-0" />
             <span>{formatDate(event.dataEvento)}</span>
           </div>
         </div>
@@ -333,7 +333,7 @@ export const HomePage = () => {
               </form>
               <button 
                 onClick={() => setShowMobileFilters(!showMobileFilters)}
-                className={`shrink-0 p-3.5 rounded-full border transition-all shadow-sm ${showMobileFilters ? 'bg-brand-tactical border-brand-tactical text-black' : 'bg-theme-bg-muted border-theme-border text-theme-text hover:border-brand-tactical/50'}`}
+                className={`shrink-0 p-3.5 rounded-full border transition-all shadow-sm ${showMobileFilters ? 'bg-brand-tactical border-brand-tactical text-theme-text' : 'bg-theme-bg-muted border-theme-border text-theme-text hover:border-brand-tactical/50'}`}
               >
                 <SlidersHorizontal size={16} />
               </button>
@@ -408,7 +408,7 @@ export const HomePage = () => {
                   onChange={e => setQuery(e.target.value)}
                   onKeyDown={e => e.key === "Enter" && fetchEvents(query, 1)}
                   placeholder="Nome do evento ou titular..."
-                  className="w-full bg-theme-bg-muted border border-theme-border pl-12 pr-4 py-4 text-[11px] font-display font-bold uppercase tracking-widest text-theme-text placeholder:text-theme-text placeholder:opacity-40 focus:bg-theme-bg-muted transition-all outline-none "
+                  className="w-full bg-theme-bg-muted border border-theme-border pl-12 pr-4 py-4 text-[11px] font-display font-bold uppercase tracking-widest text-theme-text placeholder:text-theme-text placeholder:opacity-40 focus:bg-theme-bg-muted transition-all outline-none"
                 />
               </form>
 
@@ -462,7 +462,7 @@ export const HomePage = () => {
                   <span className="text-brand-tactical text-xs">⚽</span>
                 </div>
                 <div>
-                  <h2 className="text-xl md:text-2xl font-black font-heading text-white uppercase m-0 leading-tight">Copa do Mundo</h2>
+                  <h2 className="text-xl md:text-2xl font-black font-heading text-theme-text uppercase m-0 leading-tight">Copa do Mundo</h2>
                   <p className="text-[10px] md:text-xs font-bold text-brand-tactical uppercase tracking-widest mt-1">Compartilhe os momentos do jogo!</p>
                 </div>
               </div>
@@ -482,8 +482,8 @@ export const HomePage = () => {
             </div>
           ) : events.length === 0 ? (
             <div className="py-40 text-center opacity-20">
-              <p className="font-heading font-bold text-2xl md:text-4xl text-white uppercase ">Nada encontrado.</p>
-              <p className="text-[10px] text-white font-bold uppercase tracking-widest mt-4">Redefina os filtros ou a busca.</p>
+              <p className="font-heading font-bold text-2xl md:text-4xl text-theme-text uppercase">Nada encontrado.</p>
+              <p className="text-[10px] text-theme-text font-bold uppercase tracking-widest mt-4">Redefina os filtros ou a busca.</p>
             </div>
           ) : (
               <div className="space-y-4 hp-event-grid-container px-0 md:px-8">

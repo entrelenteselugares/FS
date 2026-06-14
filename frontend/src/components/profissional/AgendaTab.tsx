@@ -130,7 +130,7 @@ export function AgendaTab({
                   {/* DATA COL */}
                   <div className="min-w-[60px] flex flex-row md:flex-col items-center md:items-start border-b md:border-b-0 md:border-r border-theme-border pb-2 md:pb-0 md:pr-4 gap-2 md:gap-0 w-full md:w-auto">
                     <div className="text-[9px] font-bold text-theme-muted uppercase tracking-widest hidden md:block mb-1">DATA</div>
-                    <div className="text-xl md:text-2xl font-heading font-bold text-theme-text leading-none uppercase ">
+                    <div className="text-xl md:text-2xl font-heading font-bold text-theme-text leading-none uppercase">
                       {parseDateSafe(ev.dataEvento).toLocaleDateString("pt-BR", { day: "2-digit" })}
                     </div>
                     <div className="text-[9px] md:text-[10px] font-bold text-brand-tactical uppercase tracking-widest mt-0 md:mt-1">
@@ -201,7 +201,7 @@ export function AgendaTab({
                   
                   <div className="min-w-[60px] flex flex-row md:flex-col items-center md:items-start border-b md:border-b-0 md:border-r border-theme-border pb-2 md:pb-0 md:pr-4 gap-2 md:gap-0 w-full md:w-auto">
                     <div className="text-[9px] font-bold text-amber-500 uppercase tracking-widest hidden md:block mb-1">DATA</div>
-                    <div className="text-xl md:text-2xl font-heading font-bold text-amber-500 leading-none uppercase ">
+                    <div className="text-xl md:text-2xl font-heading font-bold text-amber-500 leading-none uppercase">
                       {parseDateSafe(invite.createdAt || new Date().toISOString()).toLocaleDateString("pt-BR", { day: "2-digit" })}
                     </div>
                   </div>
@@ -251,7 +251,7 @@ export function AgendaTab({
                     {/* DATA COL */}
                     <div className="min-w-[60px] flex flex-row md:flex-col items-center md:items-start border-b md:border-b-0 md:border-r border-theme-border pb-2 md:pb-0 md:pr-4 gap-2 md:gap-0 w-full md:w-auto">
                       <div className="text-[9px] font-bold text-theme-muted uppercase tracking-widest hidden md:block mb-1">DATA</div>
-                      <div className="text-xl md:text-2xl font-heading font-bold text-theme-text leading-none uppercase ">
+                      <div className="text-xl md:text-2xl font-heading font-bold text-theme-text leading-none uppercase">
                         {parseDateSafe(ev.dataEvento).toLocaleDateString("pt-BR", { day: "2-digit" })}
                       </div>
                       <div className="text-[9px] md:text-[10px] font-bold text-brand-tactical uppercase tracking-widest mt-0 md:mt-1">

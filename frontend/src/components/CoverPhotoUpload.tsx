@@ -85,19 +85,19 @@ export const CoverPhotoUpload: React.FC<CoverPhotoUploadProps> = ({ currentCover
           ) : (
             <div className="w-full h-full flex flex-col items-center justify-center text-theme-muted gap-2">
               <ImageIcon className="w-8 h-8 opacity-50" />
-              <span className="text-[10px] font-bold uppercase tracking-widest ">Adicionar Capa (Panorâmica)</span>
+              <span className="text-[10px] font-bold uppercase tracking-widest">Adicionar Capa (Panorâmica)</span>
             </div>
           )}
           
           {uploading && (
             <div className="absolute inset-0 bg-black/50 flex items-center justify-center z-10">
-              <Loader2 className="w-6 h-6 text-white animate-spin" />
+              <Loader2 className="w-6 h-6 text-theme-text animate-spin" />
             </div>
           )}
           
-          <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center text-white gap-2">
+          <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center text-theme-text gap-2">
             <Upload className="w-6 h-6" />
-            <span className="text-[10px] font-bold uppercase tracking-widest ">Alterar Foto de Capa</span>
+            <span className="text-[10px] font-bold uppercase tracking-widest">Alterar Foto de Capa</span>
           </div>
           
           <input 
@@ -160,7 +160,7 @@ export const CoverPhotoUpload: React.FC<CoverPhotoUploadProps> = ({ currentCover
                 <button
                   onClick={handleCropSave}
                   disabled={uploading}
-                  className="px-8 py-2 rounded-lg font-bold text-sm bg-brand-tactical text-black uppercase flex items-center justify-center gap-2"
+                  className="px-8 py-2 rounded-lg font-bold text-sm bg-brand-tactical text-theme-text uppercase flex items-center justify-center gap-2"
                 >
                   {uploading ? <Loader2 size={16} className="animate-spin" /> : <Check size={16} />}
                   Salvar Capa

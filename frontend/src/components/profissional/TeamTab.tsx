@@ -77,7 +77,7 @@ export function TeamTab() {
           <Users2 size={120} />
         </div>
         <div className="relative z-10 space-y-6">
-          <h3 className="text-2xl font-heading font-bold text-theme-text uppercase ">Escalabilidade da Rede Técnica</h3>
+          <h3 className="text-2xl font-heading font-bold text-theme-text uppercase">Escalabilidade da Rede Técnica</h3>
           <p className="text-[11px] font-bold text-theme-muted uppercase tracking-[0.2em] leading-relaxed max-w-3xl">
             Otimize sua operação designando profissionais <span className="text-brand-tactical font-bold underline decoration-brand-tactical/30 underline-offset-4">FIXOS</span> para prioridade máxima em seus eventos ou integrando o pool <span className="text-blue-500 font-bold">ROTATIVO</span> para demandas dinâmicas de rede.
           </p>
@@ -141,7 +141,7 @@ export function TeamTab() {
                           {s}
                         </span>
                       )) : (
-                        <span className="text-[10px] font-bold text-theme-muted uppercase ">Perfil em análise Técnica</span>
+                        <span className="text-[10px] font-bold text-theme-muted uppercase">Perfil em análise Técnica</span>
                       )}
                     </div>
 

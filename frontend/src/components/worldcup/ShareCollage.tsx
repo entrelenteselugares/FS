@@ -33,13 +33,13 @@ export const ShareCollage = ({ slots, onClose }: Props) => {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
     >
-      <button onClick={onClose} className="absolute top-4 right-4 p-2 bg-theme-surface rounded-full text-white">
+      <button onClick={onClose} className="absolute top-4 right-4 p-2 bg-theme-surface rounded-full text-theme-text">
         <X />
       </button>
 
       <div className="w-full max-w-sm aspect-[9/16] bg-theme-surface rounded-2xl overflow-hidden shadow-2xl border border-emerald-500 flex flex-col relative">
         <div className="bg-emerald-600 p-4 text-center">
-          <h2 className="text-xl font-bold text-white uppercase tracking-wider">Álbum da Torcida</h2>
+          <h2 className="text-xl font-bold text-theme-text uppercase tracking-wider">Álbum da Torcida</h2>
           <p className="text-emerald-100 text-xs">Brasil vs Sérvia</p>
         </div>
         
@@ -51,7 +51,7 @@ export const ShareCollage = ({ slots, onClose }: Props) => {
                 {slot?.imageUrl ? (
                   <img src={slot.imageUrl} className="w-full h-full object-cover" />
                 ) : (
-                  <div className="w-full h-full flex items-center justify-center text-xs text-gray-600 font-bold opacity-50">
+                  <div className="w-full h-full flex items-center justify-center text-xs text-theme-muted font-bold opacity-50">
                     {i + 1}
                   </div>
                 )}
@@ -61,7 +61,7 @@ export const ShareCollage = ({ slots, onClose }: Props) => {
         </div>
 
         <div className="p-4 text-center bg-theme-surface">
-          <p className="text-xs text-gray-400 mb-2">Gerado no app Foto Segundo</p>
+          <p className="text-xs text-theme-muted mb-2">Gerado no app Foto Segundo</p>
           <div className="text-yellow-400 font-bold flex items-center justify-center gap-2">
             <span>🏆</span> 12/12 Completado! <span>🏆</span>
           </div>
@@ -69,10 +69,10 @@ export const ShareCollage = ({ slots, onClose }: Props) => {
       </div>
 
       <div className="flex gap-4 mt-8">
-        <button onClick={handleShare} className="bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 px-6 rounded-full flex items-center gap-2 transition-colors">
+        <button onClick={handleShare} className="bg-emerald-500 hover:bg-emerald-600 text-theme-text font-bold py-3 px-6 rounded-full flex items-center gap-2 transition-colors">
           <Share2 size={20} /> Compartilhar
         </button>
-        <button className="bg-theme-surface hover:bg-theme-surface/80 border border-theme-border text-white font-bold py-3 px-6 rounded-full flex items-center gap-2 transition-colors">
+        <button className="bg-theme-surface hover:bg-theme-surface/80 border border-theme-border text-theme-text font-bold py-3 px-6 rounded-full flex items-center gap-2 transition-colors">
           <Download size={20} /> Salvar
         </button>
       </div>

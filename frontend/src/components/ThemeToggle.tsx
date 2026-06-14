@@ -17,7 +17,7 @@ export function ThemeToggle() {
         {theme === 'dark' ? (
           <Sun size={14} className="text-brand-tactical" strokeWidth={1.5} />
         ) : (
-          <Moon size={14} className="text-slate-900" strokeWidth={1.5} />
+          <Moon size={14} className="text-theme-text" strokeWidth={1.5} />
         )}
       </div>
       <div className="absolute inset-0 bg-brand-tactical/10 opacity-0 group-hover:opacity-100 transition-opacity" />

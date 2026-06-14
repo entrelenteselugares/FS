@@ -27,10 +27,10 @@
 
 - **COPA 2026
 PRÓXIMOS
-EUA
-12/06 · 22:00
-GRP D
-PARAGUAI
+SUÉCIA
+14/06 · 23:00
+GRP F
+TUNÍSIA
 Ver Álbum →** -> `/album-torcida`
 - **ENVIAR FOTO** -> `http://localhost:3003/captura?eventId=cmpmy7dq20000jo04306mhl5q`
 

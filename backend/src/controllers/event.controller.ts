@@ -92,7 +92,16 @@ export class EventController {
           } },
           captacao: { select: { id: true, nome: true, profileImageUrl: true } },
           edicao: { select: { id: true, nome: true, profileImageUrl: true } },
-          media: true,
+          media: {
+            select: {
+              id: true,
+              url: true,
+              shortId: true,
+              aiTags: true,
+              metadata: true,
+              createdAt: true
+            }
+          },
           teamMembers: {
             include: {
               user: {
