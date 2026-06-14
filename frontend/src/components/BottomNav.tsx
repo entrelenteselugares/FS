@@ -321,7 +321,15 @@ export const BottomNav: React.FC = () => {
               return (
                 <button
                   key={item.label}
-                  onClick={item.onClick}
+                  onClick={(e) => {
+                    if (item.locked) {
+                      e.preventDefault();
+                      return;
+                    }
+                    if (item.onClick) item.onClick();
+                  }}
+                  disabled={item.locked}
+                  style={{ opacity: item.locked ? 0.6 : 1, cursor: item.locked ? "not-allowed" : "pointer" }}
                   className={`w-full flex items-center gap-3 px-5 py-3 text-xs font-medium tracking-wide transition-all border-none text-left mx-2 w-[calc(100%-16px)] rounded-xl ${
                     item.isActive 
                       ? "bg-theme-bg-muted text-theme-text font-black shadow-sm" 
@@ -329,7 +337,15 @@ export const BottomNav: React.FC = () => {
                   }`}
                 >
                   <span className={item.isActive ? "text-brand-tactical" : "text-theme-text-muted opacity-70"}>{item.icon}</span>
-                  {item.label}
+                  <span className="flex-1">{item.label}</span>
+                  {item.locked && (
+                    <span className="shrink-0 text-theme-muted opacity-60">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                      </svg>
+                    </span>
+                  )}
                 </button>
               );
             })

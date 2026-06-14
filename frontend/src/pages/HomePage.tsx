@@ -324,6 +324,7 @@ export const HomePage = () => {
               <form onSubmit={e => { e.preventDefault(); fetchEvents(query, 1); }} className="relative flex-1 group w-full">
                 <Search size={14} className="absolute left-4 top-1/2 -translate-y-1/2 text-theme-text-muted transition-colors" />
                 <input
+                  id="mobile-search-input"
                   value={query}
                   onChange={e => setQuery(e.target.value)}
                   onKeyDown={e => e.key === "Enter" && fetchEvents(query, 1)}
