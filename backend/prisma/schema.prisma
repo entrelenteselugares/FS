@@ -89,6 +89,8 @@ model User {
   worldCupBets          WorldCupBet[]
   worldCupRouletteSpins WorldCupRouletteSpin[]
 
+  sanfonaBatches    AlbumSanfonaBatch[]
+
   @@map("users")
 }
 
@@ -863,6 +865,8 @@ model FranchiseProfile {
   user                    User                @relation(fields: [userId], references: [id])
   prints                  PhygitalPrint[]
 
+  sanfonaBatches          AlbumSanfonaBatch[]
+
   @@map("franchise_profiles")
 }
 
@@ -1148,6 +1152,7 @@ enum SubscriptionStatus {
 enum SubscriptionType {
   VAULT
   PRO
+  ALBUM_SANFONA
 }
 
 model Subscription {
@@ -1499,4 +1504,29 @@ model WorldCupRouletteSpin {
 
   @@unique([userId]) // Garantir 1 giro por usuário na Copa
   @@map("worldcup_roulette_spins")
+}
+
+enum SanfonaBatchStatus {
+  DRAFT
+  SUBMITTED
+  IN_PRODUCTION
+  PRINTED
+  SHIPPED
+}
+
+model AlbumSanfonaBatch {
+  id                  String             @id @default(cuid())
+  userId              String
+  month               String             // e.g. '2026-06'
+  photos              String[]           // Array of photo URLs
+  status              SanfonaBatchStatus @default(DRAFT)
+  assignedFranchiseId String?
+  createdAt           DateTime           @default(now())
+  updatedAt           DateTime           @updatedAt
+
+  user               User               @relation(fields: [userId], references: [id])
+  franchise          FranchiseProfile?  @relation(fields: [assignedFranchiseId], references: [id])
+
+  @@unique([userId, month])
+  @@map("album_sanfona_batches")
 }

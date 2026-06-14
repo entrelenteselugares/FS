@@ -18,6 +18,7 @@ import {
 } from "../components/profissional";
 import { motion, AnimatePresence } from "framer-motion";
 import { WelcomeTour } from "../components/WelcomeTour";
+import { SanfonaPrintQueue } from "../components/SanfonaPrintQueue";
 import { DiscoverySurvey } from "../components/DiscoverySurvey";
 import PortfolioManage from "./profissional/PortfolioManage";
 
@@ -741,6 +742,11 @@ export default function ProfissionalDashboard({
  </div>
  ); })()}
  </div>
+ </div>
+
+ {/* ── FILA ÁLBUM SANFONA ── */}
+ <div className="bg-theme-bg border-2 border-brand-tactical/30 p-4 md:p-8 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300">
+ <SanfonaPrintQueue />
  </div>
 
  {/* ── ATIVIDADE RECENTE ── */}
