@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, Suspense, lazy, useRef } from "react";
+import React, { useState, useEffect, useCallback, Suspense, lazy } from "react";
 import { createPortal } from "react-dom";
 import { useEventStatus } from "../hooks/useEventStatus";
 import { Check, Printer, QrCode, ShoppingCart, Share2, ChevronRight, ChevronLeft, Image as ImageIcon, Camera, MapPin, Clock, ShieldCheck, CheckCircle2, Lock, UserCircle, Search, X, ExternalLink, Download, Archive } from "lucide-react";
@@ -329,13 +329,9 @@ export default function EventPage() {
   const [showPrintKit, setShowPrintKit] = useState(false);
   const [showQrModal, setShowQrModal] = useState(false);
 
-  const photoInputRef = useRef<HTMLInputElement>(null);
-  const handleCameraCapture = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const selectedFiles = Array.from(e.target.files || []);
-    if (selectedFiles.length > 0) {
-      (window as any).fsPendingCaptureFiles = selectedFiles;
-      navigate(`/phygital-capture?e=${event?.id}`);
-    }
+  const startNativeCameraCapture = () => {
+    const eventIdToUse = event?.id || "EVENT_TESTE";
+    navigate(`/phygital-capture?e=${eventIdToUse}&camera=true`);
   };
   const [filterMode, setFilterMode] = useState<"ALL" | "PRO" | "GUEST">("ALL");
   const [searchQuery, setSearchQuery] = useState("");
@@ -366,15 +362,19 @@ export default function EventPage() {
   const durationHours = (event?.eventDays ? event.eventDays * 24 : 0) + (event?.eventHours || 2);
   const eventStatus = useEventStatus(event?.dataEvento, null, durationHours, event?.isExpired, event?.active);
 
+  const eventId = event?.id;
+  const eventTitle = event?.title;
+  const eventCoverPhotoUrl = event?.coverPhotoUrl;
+
   useEffect(() => {
-    if (event) {
+    if (eventId && eventTitle) {
       addAlbum({
-        eventId: event.id,
-        title: event.title,
-        coverUrl: event.coverPhotoUrl || undefined
+        eventId: eventId,
+        title: eventTitle,
+        coverUrl: eventCoverPhotoUrl || undefined
       });
     }
-  }, [event?.id, event?.title, event?.coverPhotoUrl, addAlbum]);
+  }, [eventId, eventTitle, eventCoverPhotoUrl, addAlbum]);
 
   const handleShare = async () => {
     if (access?.accessType === "PRIVATE") {
@@ -473,7 +473,7 @@ export default function EventPage() {
       .then((r) => {
         const eventData = r.data;
         setEvent(eventData);
-        (window as any).fsCurrentEventId = eventData.id;
+        window.fsCurrentEventId = eventData.id;
 
         // Buscar referências técnicas do banco
         api.get(`/events/${eventData.id}/references`)
@@ -734,14 +734,6 @@ export default function EventPage() {
 
 return (
     <div className="min-h-screen bg-theme-bg text-theme-text font-sans selection:bg-brand-tactical/30 overflow-x-hidden selection:text-theme-text" onContextMenu={(e) => e.preventDefault()}>
-      <input 
-        ref={photoInputRef}
-        type="file" 
-        accept="image/*" 
-        capture="environment" 
-        onChange={handleCameraCapture} 
-        className="hidden" 
-      />
       <SEO 
         title={event.title} 
         image={getProxyUrl(event.coverPhotoUrl)}
@@ -761,7 +753,7 @@ return (
           </button>
 
           <button 
-             onClick={() => photoInputRef.current?.click()} 
+             onClick={startNativeCameraCapture} 
              className="absolute top-6 right-6 z-50 flex items-center gap-2 px-5 py-2.5 bg-brand-tactical text-black backdrop-blur-md border border-brand-tactical/50 rounded-full hover:brightness-110 transition-all shadow-[0_0_20px_rgba(133,185,172,0.3)]"
           >
              <Camera size={16} />
@@ -1022,7 +1014,7 @@ return (
                           href={`/phygital-capture?e=${event.id}&auto=1`}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="flex items-center gap-3 px-4 md:px-8 py-5 bg-brand-tactical text-black text-[10px] font-bold uppercase tracking-widest hover:brightness-110 transition-all shadow-lg shadow-brand-tactical/20"
+                          className="hidden md:flex items-center gap-3 px-4 md:px-8 py-5 bg-brand-tactical text-black text-[10px] font-bold uppercase tracking-widest hover:brightness-110 transition-all shadow-lg shadow-brand-tactical/20"
                         >
                           <Camera size={18} /> ABRIR CÂMERA
                         </a>

@@ -88,7 +88,7 @@ const GalleryItem = React.memo(({
           style={{ 
             backgroundImage: "url('/logo.png')", 
             backgroundRepeat: "repeat", 
-            backgroundSize: "60px 60px",
+            backgroundSize: "100px auto",
             filter: "var(--logo-filter) drop-shadow(0px 2px 3px rgba(0,0,0,0.3))"
           }} 
         />
@@ -331,7 +331,7 @@ export const TouchSelectionGallery: React.FC<TouchSelectionGalleryProps> = ({
                 const fmIsUnlocked = allowFreeDownload || (fm && (unlockedIds.includes(fm.shortId) || unlockedIds.includes(fm.id)));
                 const fmDisplayUrl = fm?.url || '';
                 return (
-                  <>
+                  <div className="relative inline-flex max-w-full max-h-full">
                   {fm?.shortId.startsWith('V') || fm?.type === 'VIDEO' ? (
                     <motion.video
                       key={fm?.id}
@@ -374,12 +374,12 @@ export const TouchSelectionGallery: React.FC<TouchSelectionGalleryProps> = ({
                       style={{ 
                         backgroundImage: "url('/logo.png')", 
                         backgroundRepeat: "repeat",
-                        backgroundSize: "100px 100px",
+                        backgroundSize: "150px auto",
                         filter: "var(--logo-filter) drop-shadow(0px 4px 6px rgba(0,0,0,0.4))"
                       }} 
                     />
                   )}
-                </>
+                  </div>
                 );
               })()}
 
