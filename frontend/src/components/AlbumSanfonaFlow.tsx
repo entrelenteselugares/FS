@@ -1,6 +1,9 @@
 import { useState } from "react";
-import { Upload, X, ArrowRight, MapPin, CheckCircle2 } from "lucide-react";
+import { Upload, X, ArrowRight, MapPin, CheckCircle2, Loader2 } from "lucide-react";
 import { useAuth } from "../hooks/useAuth";
+import { API } from "../lib/api";
+import { supabase } from "../lib/supabase";
+import { toast } from "sonner";
 
 export function AlbumSanfonaFlow() {
   const { user } = useAuth();
@@ -25,15 +28,44 @@ export function AlbumSanfonaFlow() {
 
   const handleSubmit = async () => {
     if (files.length !== 10) {
-      alert("Por favor, selecione exatamente 10 fotos para o seu álbum sanfona.");
+      toast.error("Por favor, selecione exatamente 10 fotos para o seu álbum sanfona.");
       return;
     }
     setIsSubmitting(true);
-    // Mock submit delay
-    setTimeout(() => {
-      setIsSubmitting(false);
+    
+    try {
+      const uploadedUrls: string[] = [];
+      const currentMonth = `${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, "0")}`;
+
+      // 1. Faz upload das fotos pro Supabase Storage
+      for (const file of files) {
+        const fileExt = file.name.split(".").pop();
+        const fileName = `${user?.id}/${currentMonth}/${Math.random().toString(36).substring(2)}.${fileExt}`;
+        
+        const { error: uploadError } = await supabase.storage
+          .from("sanfona-uploads")
+          .upload(fileName, file, { upsert: true });
+
+        if (uploadError) throw uploadError;
+
+        const { data: { publicUrl } } = supabase.storage
+          .from("sanfona-uploads")
+          .getPublicUrl(fileName);
+
+        uploadedUrls.push(publicUrl);
+      }
+
+      // 2. Envia as URLs pro Backend
+      await API.post("/sanfona/submit-batch", { photos: uploadedUrls });
+      
+      toast.success("Fotos enviadas com sucesso! Seu álbum já está na fila de impressão.");
       setSuccess(true);
-    }, 2000);
+    } catch (error: any) {
+      console.error(error);
+      toast.error(error.response?.data?.error || "Erro ao enviar fotos. Tente novamente.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   if (success) {
@@ -134,7 +166,7 @@ export function AlbumSanfonaFlow() {
                 : "bg-theme-bg-muted text-theme-muted cursor-not-allowed"
             }`}
           >
-            {isSubmitting ? "Enviando..." : "Confirmar Envio"} <ArrowRight size={14} />
+            {isSubmitting ? <><Loader2 className="animate-spin" size={16} /> Enviando...</> : <>Confirmar Envio <ArrowRight size={14} /></>}
           </button>
         </div>
       </div>
