@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { API } from '../lib/api';
+import { API, getAppUrl } from '../lib/api';
 import { Share2, Users, Banknote, Trophy, Copy, Check, Clock } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -39,7 +39,7 @@ export function AffiliateDashboard() {
 
   const handleCopy = () => {
     if (!data) return;
-    const link = `${window.location.origin}/register?ref=${data.referralCode}`;
+    const link = `${getAppUrl()}/register?ref=${data.referralCode}`;
     navigator.clipboard.writeText(link);
     setCopied(true);
     toast.success("Link copiado!");
@@ -96,7 +96,7 @@ export function AffiliateDashboard() {
             <label className="text-[9px] font-bold uppercase tracking-widest text-theme-text-muted block ">Seu Link de Convite</label>
             <div className="flex items-center gap-2">
               <code className="bg-theme-bg-field px-4 py-2.5 rounded-xl text-theme-text-muted font-mono text-xs border border-theme-border flex items-center min-h-[44px] select-all truncate max-w-xs md:max-w-md">
-                {window.location.host}/register?ref={data.referralCode}
+                {getAppUrl().replace(/^https?:\/\//, '')}/register?ref={data.referralCode}
               </code>
               <button 
                 onClick={handleCopy}

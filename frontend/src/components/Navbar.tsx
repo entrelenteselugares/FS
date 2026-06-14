@@ -36,7 +36,7 @@ export const Navbar: React.FC<NavbarProps> = ({ tenantLogoUrl }) => {
   return (
     <>
       <IncompleteProfileBanner />
-      <nav className="flex items-center justify-between sticky top-0 z-[100]" style={{
+      <nav className="flex items-center justify-between fixed top-0 left-0 right-0 w-full z-[100]" style={{
         paddingTop: "calc(12px + env(safe-area-inset-top))",
         paddingBottom: "12px",
         paddingLeft: "16px",
@@ -120,6 +120,8 @@ export const Navbar: React.FC<NavbarProps> = ({ tenantLogoUrl }) => {
           </button>
         </div>
       </nav>
+      {/* Spacer to compensate for fixed navbar */}
+      <div style={{ height: "calc(57px + env(safe-area-inset-top))", width: "100%" }} aria-hidden="true" />
 
       <CartModal isOpen={cartOpen} onClose={() => setCartOpen(false)} />
     </>

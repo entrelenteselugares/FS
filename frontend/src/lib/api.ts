@@ -8,6 +8,12 @@ export const baseURL = Capacitor.isNativePlatform()
   ? "https://foto-segundo.vercel.app/api" 
   : "/api";
 
+export const getAppUrl = () => {
+  return Capacitor.isNativePlatform()
+    ? "https://foto-segundo.vercel.app"
+    : window.location.origin;
+};
+
 export const API = axios.create({ 
   baseURL,
   withCredentials: true // Serverless-Native: Utiliza HTTP-Only cookies para segurança
