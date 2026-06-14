@@ -615,17 +615,36 @@ export class MarketplaceController {
     const userId = req.user?.userId;
 
     try {
-      // Find the media and include the event to check ownership
+      // Find the media in EventMedia
+      let event = null;
+      let shortId = "";
+      let isPhygital = false;
+
       const media = await prisma.eventMedia.findUnique({
         where: { id: mediaId },
         include: { event: true }
       });
 
-      if (!media || !media.event) {
+      if (media && media.event) {
+        event = media.event;
+        shortId = media.shortId;
+      } else {
+        // If not found in EventMedia, check PhygitalPrint
+        const print = await prisma.phygitalPrint.findUnique({
+          where: { id: mediaId },
+          include: { event: true }
+        });
+        if (print && print.event) {
+          event = print.event;
+          shortId = print.referenceCode;
+          isPhygital = true;
+        }
+      }
+
+      if (!event) {
         return res.status(404).json({ error: "Mídia não encontrada." });
       }
 
-      const event = media.event;
       const isOwner = req.user?.role === "ADMIN" || 
                       event.captacaoId === userId || 
                       event.edicaoId === userId || 
@@ -636,13 +655,15 @@ export class MarketplaceController {
         return res.status(403).json({ error: "Acesso negado. Apenas o responsável do evento pode excluir fotos." });
       }
 
-      await prisma.eventMedia.delete({
-        where: { id: mediaId }
-      });
+      if (isPhygital) {
+        await prisma.phygitalPrint.delete({ where: { id: mediaId } });
+      } else {
+        await prisma.eventMedia.delete({ where: { id: mediaId } });
+      }
 
-      await audit(req, "MEDIA_DELETED", "EventMedia", mediaId, null, {
+      await audit(req, "MEDIA_DELETED", isPhygital ? "PhygitalPrint" : "EventMedia", mediaId, null, {
         eventId: event.id,
-        shortId: media.shortId
+        shortId: shortId
       });
 
       return res.json({ success: true, message: "Foto excluída com sucesso." });

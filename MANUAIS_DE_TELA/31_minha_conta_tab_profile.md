@@ -29,6 +29,7 @@
 - **Botão:** `Encerrar Sessão`
 - **Botão:** `CARREGAR FOTO`
 - **Botão:** `Salvar Alterações`
+- **Botão:** `Menu`
 - **Botão:** `Home`
 - **Botão:** `Buscar`
 - **Botão:** `Compras`
@@ -38,10 +39,10 @@
 
 - **COPA 2026
 PRÓXIMOS
-MÉXICO
-11/06 · 16:00
-GRP A
-ÁFR
+EUA
+12/06 · 22:00
+GRP D
+PARAGUAI
 Ver Álbum →** -> `/album-torcida`
 - **VISITAR SITE** -> `/`
 - **Visitar Site** -> `/`

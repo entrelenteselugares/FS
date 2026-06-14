@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 
-import { API } from "../lib/api";
+import { API, baseURL } from "../lib/api";
 import { QRCodeSVG } from "qrcode.react";
 import { QrCode, Copy, Check, X, Download, Calendar, DollarSign, Settings, Users2, Camera, Star, ShieldCheck, ArrowRight, Share2, MapPin, Phone, Printer, AlertTriangle, Play, RefreshCw, Activity, Link, FileText, ArrowLeft } from "lucide-react";
 import { useAuth } from "../hooks/useAuth";
@@ -725,7 +725,7 @@ export default function UnidadeFixaDashboard({
                               <RefreshCw size={14} className={isSyncing ? "animate-spin" : ""} /> {isSyncing ? "SINCRONIZANDO..." : "SINCRONIZAR AGORA"}
                             </button>
                             <button 
-                              onClick={() => window.open("/api/calendar/connect", "_blank")}
+                              onClick={() => window.open(`${baseURL}/calendar/connect`, "_blank")}
                               className="px-3 md:px-6 py-3 border border-theme-border text-theme-text font-bold text-[10px] uppercase tracking-widest hover:bg-theme-bg-muted transition-all rounded-lg"
                             >
                               RECONECTAR
@@ -739,7 +739,7 @@ export default function UnidadeFixaDashboard({
                         </div>
                         <p className="text-[11px] font-bold text-theme-muted leading-relaxed">Vincule sua agenda do Google para evitar sobreposição de horários.</p>
                         <button 
-                          onClick={() => window.open("/api/calendar/connect", "_blank")}
+                          onClick={() => window.open(`${baseURL}/calendar/connect`, "_blank")}
                           className="w-full py-3.5 bg-brand-tactical text-brand-text font-bold text-[10px] uppercase tracking-[0.2em] hover:bg-brand-tactical/90 transition-all rounded-xl shadow-lg flex items-center justify-center gap-2"
                         >
                           CONECTAR CONTA <ArrowRight size={14} />
@@ -841,7 +841,7 @@ export default function UnidadeFixaDashboard({
                 </div>
                 <div className="flex items-center gap-4">
                   <button 
-                    onClick={() => window.open("/api/unidade-fixa/finance/export", "_blank")}
+                    onClick={() => window.open(`${baseURL}/unidade-fixa/finance/export`, "_blank")}
                     className="flex items-center gap-2 px-3 md:px-4 py-2.5 border border-theme-border text-theme-muted hover:text-theme-text hover:border-brand-tactical hover:bg-brand-tactical/5 transition-all rounded-xl text-[9px] font-bold uppercase tracking-widest"
                   >
                     <Download size={14} /> Fechamento CSV

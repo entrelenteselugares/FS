@@ -22,16 +22,17 @@ VITRINE`
 - **Botão:** `CLIENTE PRIVADO`
 - **Botão:** `PROFISSIONAL DA REDE`
 - **Botão:** `UNIDADE FIXA`
+- **Botão:** `CADASTRAR COM GOOGLE`
 - **Botão:** `CONFIRMAR INSCRIÇÃO`
 
 ## 🔗 Links de Navegação
 
 - **COPA 2026
 PRÓXIMOS
-MÉXICO
-11/06 · 16:00
-GRP A
-ÁFR
+CANADÁ
+12/06 · 16:00
+GRP B
+BÓSNIA
 Ver Álbum →** -> `/album-torcida`
 - **FAZER LOGIN** -> `/login`
 

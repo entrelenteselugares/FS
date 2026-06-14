@@ -65,8 +65,9 @@ app.use(cookieParser());
 app.use(cors({
   origin: (origin, cb) => {
     if (!origin || 
-        origin.startsWith("http://localhost:") || 
-        origin.startsWith("http://127.0.0.1:") ||
+        origin.startsWith("http://localhost") || 
+        origin.startsWith("http://127.0.0.1") ||
+        origin.startsWith("capacitor://") ||
         origin === "https://foto-segundo.vercel.app" ||
         origin === "https://fs-backend-beige.vercel.app" ||
         /^https:\/\/foto-segundo-[a-z0-9]+-.*\.vercel\.app$/.test(origin)) {

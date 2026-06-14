@@ -13,7 +13,7 @@
 
 ## 🌟 Títulos e Seções Encontradas
 
-*Nenhum título H1/H2/H3 detectado.*
+- PEDIDOS
 
 ## 🔘 Ações e Botões Disponíveis
 
@@ -39,15 +39,17 @@
 - **Botão:** `QUITADO`
 - **Botão:** `PARCIAL`
 - **Botão:** `PENDENTE`
+- **Botão:** `Eventos`
+- **Botão:** `Menu`
 
 ## 🔗 Links de Navegação
 
 - **COPA 2026
 PRÓXIMOS
-MÉXICO
-11/06 · 16:00
-GRP A
-ÁFR
+EUA
+12/06 · 22:00
+GRP D
+PARAGUAI
 Ver Álbum →** -> `/album-torcida`
 - **VISITAR SITE** -> `/`
 - **Visitar Site** -> `/`

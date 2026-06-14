@@ -1,6 +1,8 @@
 {
   "title": "Foto Segundo | Suas memórias, entregues agora.",
-  "headings": [],
+  "headings": [
+    "ESTOQUE"
+  ],
   "buttons": [
     "Visão Geral",
     "Eventos\n9",
@@ -23,11 +25,13 @@
     "ALBUM_30X40",
     "ACESSORIOS",
     "QUADROS",
-    "REVELACAO"
+    "REVELACAO",
+    "Eventos",
+    "Menu"
   ],
   "links": [
     {
-      "text": "COPA 2026\nPRÓXIMOS\nMÉXICO\n11/06 · 16:00\nGRP A\nÁFR\nVer Álbum →",
+      "text": "COPA 2026\nPRÓXIMOS\nEUA\n12/06 · 22:00\nGRP D\nPARAGUAI\nVer Álbum →",
       "href": "/album-torcida"
     },
     {

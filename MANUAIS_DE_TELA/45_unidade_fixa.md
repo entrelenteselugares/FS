@@ -26,26 +26,16 @@
 - **Botão:** `ENCERRAR SESSÃO`
 - **Botão:** `Encerrar Sessão`
 - **Botão:** `CONECTAR CONTA`
-- **Botão:** `Home`
-- **Botão:** `Buscar`
-- **Botão:** `Compras`
-- **Botão:** `Meus Álbuns`
-- **Botão:** `Opções`
-- **Botão:** `Histórico de Compras`
-- **Botão:** `Minha Carteira`
-- **Botão:** `Indique e Ganhe`
-- **Botão:** `Meus Dados`
-- **Botão:** `Agenda Unidade`
-- **Botão:** `Configuração Pública`
+- **Botão:** `Menu`
 
 ## 🔗 Links de Navegação
 
 - **COPA 2026
 PRÓXIMOS
-MÉXICO
-11/06 · 16:00
-GRP A
-ÁFR
+EUA
+12/06 · 22:00
+GRP D
+PARAGUAI
 Ver Álbum →** -> `/album-torcida`
 - **VISITAR SITE** -> `/`
 - **Visitar Site** -> `/`

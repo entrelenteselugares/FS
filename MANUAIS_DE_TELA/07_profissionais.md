@@ -46,10 +46,10 @@ PROFISSIONAIS
 
 - **COPA 2026
 PRÓXIMOS
-COR
-11/06 · 23:00
-GRP A
-TCHÉQUIA
+CANADÁ
+12/06 · 16:00
+GRP B
+BÓSNIA
 Ver Álbum →** -> `/album-torcida`
 - **PRO
 RENATA MORAES

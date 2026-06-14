@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { T } from "../lib/theme";
+import { API } from "../lib/api";
 import { motion, AnimatePresence } from "framer-motion";
 import { Camera, QrCode, Ticket, Star, ChevronRight, ChevronLeft, Trophy } from "lucide-react";
 
@@ -88,29 +89,14 @@ export function HeroCarousel() {
 
   useEffect(() => {
 
-    fetch("https://foto-segundo.vercel.app/api/public/banners")
+    API.get("/public/banners")
       .then(res => {
-        if (!res.ok) throw new Error('Network response was not ok');
-        return res.json();
-      })
-      .then(data => {
-        if (data.banners && data.banners.length > 0) {
-          setSlides(data.banners);
+        if (res.data.banners && res.data.banners.length > 0) {
+          setSlides(res.data.banners);
         }
       })
-      .catch(() => {
-        // fetch relative path locally
-        fetch("/api/public/banners")
-          .then(res => {
-            if (!res.ok) throw new Error('Network response was not ok');
-            return res.json();
-          })
-          .then(data => {
-             if (data.banners && data.banners.length > 0) {
-               setSlides(data.banners);
-             }
-          })
-          .catch(e => console.error("[HeroCarousel] Fallback to default slides.", e.message));
+      .catch((error) => {
+        console.error("Erro ao carregar banners:", error);
       });
   }, []);
 

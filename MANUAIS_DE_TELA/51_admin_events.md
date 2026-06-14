@@ -15,10 +15,11 @@
 
 - EVENTOS
 - Matheus Rocha
-- Na loja
+- ABERTURA D COP 2026
 - Gelin
-- Cianorte em Movimento
+- Na loja
 - RR - Cliente
+- Cianorte em Movimento
 - Em casa
 - Renata Moraes
 - Recomendo Media
@@ -27,7 +28,6 @@
 - DSJ
 - Lagoa do Mingone
 - BDay Kurió
-- Joao
 
 ## 🔘 Ações e Botões Disponíveis
 
@@ -45,15 +45,17 @@
 - **Botão:** `VENDA RÁPIDA (LIVE PRINT)`
 - **Botão:** `NOVO EVENTO`
 - **Botão:** `EDITAR`
+- **Botão:** `Eventos`
+- **Botão:** `Menu`
 
 ## 🔗 Links de Navegação
 
 - **COPA 2026
 PRÓXIMOS
-COR
-11/06 · 23:00
-GRP A
-TCHÉQUIA
+EUA
+12/06 · 22:00
+GRP D
+PARAGUAI
 Ver Álbum →** -> `/album-torcida`
 - **VISITAR SITE** -> `/`
 - **Visitar Site** -> `/`

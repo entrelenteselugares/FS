@@ -25,8 +25,10 @@
 - **Botão:** `1`
 - **Botão:** `ENCERRAR SESSÃO`
 - **Botão:** `Encerrar Sessão`
-- **Botão:** `Ver Compra`
-- **Botão:** `Acessar`
+- **Botão:** `PAGAR AGORA`
+- **Botão:** `VER COMPRA`
+- **Botão:** `ACESSAR`
+- **Botão:** `Menu`
 - **Botão:** `Home`
 - **Botão:** `Buscar`
 - **Botão:** `Compras`
@@ -36,10 +38,10 @@
 
 - **COPA 2026
 PRÓXIMOS
-COR
-11/06 · 23:00
-GRP A
-TCHÉQUIA
+CANADÁ
+12/06 · 16:00
+GRP B
+BÓSNIA
 Ver Álbum →** -> `/album-torcida`
 - **VISITAR SITE** -> `/`
 - **Visitar Site** -> `/`

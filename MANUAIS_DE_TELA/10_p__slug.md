@@ -16,8 +16,8 @@
 - MOMENTOS
 Inesquecíveis
 - ÚLTIMOS REGISTROS(8)
+- ABERTURA D COP 2026
 - NA LOJA
-- GELIN
 - CIANORTE EM MOVIMENTO
 - EM CASA
 - RENATA MORAES
@@ -49,10 +49,10 @@ Inesquecíveis
 
 - **COPA 2026
 PRÓXIMOS
-MÉXICO
-11/06 · 16:00
-GRP A
-ÁFR
+EUA
+12/06 · 22:00
+GRP D
+PARAGUAI
 Ver Álbum →** -> `/album-torcida`
 
 ## ⚙️ Observações Técnicas e Fluxo

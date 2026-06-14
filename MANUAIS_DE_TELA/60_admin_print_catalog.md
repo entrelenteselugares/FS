@@ -13,6 +13,7 @@
 
 ## 🌟 Títulos e Seções Encontradas
 
+- CATÁLOGO DE IMPRESSÃO
 - ÁLBUNS ENCADERNADOS
 - ÁLBUNS 30×40
 - ACABAMENTOS E ACESSÓRIOS
@@ -42,15 +43,17 @@
 - **Botão:** `NOVO ITEM`
 - **Botão:** `OCULTAR INATIVOS`
 - **Botão:** `APLICAR`
+- **Botão:** `Eventos`
+- **Botão:** `Menu`
 
 ## 🔗 Links de Navegação
 
 - **COPA 2026
 PRÓXIMOS
-MÉXICO
-11/06 · 16:00
-GRP A
-ÁFR
+EUA
+12/06 · 22:00
+GRP D
+PARAGUAI
 Ver Álbum →** -> `/album-torcida`
 - **VISITAR SITE** -> `/`
 - **Visitar Site** -> `/`

@@ -37,7 +37,11 @@ export const Navbar: React.FC<NavbarProps> = ({ tenantLogoUrl }) => {
     <>
       <IncompleteProfileBanner />
       <nav className="flex items-center justify-between sticky top-0 z-[100]" style={{
-        padding: "12px 16px", borderBottom: `1px solid ${T.border}`,
+        paddingTop: "calc(12px + env(safe-area-inset-top))",
+        paddingBottom: "12px",
+        paddingLeft: "16px",
+        paddingRight: "16px",
+        borderBottom: `1px solid ${T.border}`,
         background: T.bgNav, backdropFilter: "blur(20px)",
       }}>
         <div className="flex items-center gap-4">

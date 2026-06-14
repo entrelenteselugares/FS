@@ -62,7 +62,7 @@ router.get("/logs", requireAuth, requireRole("ADMIN"), adminGetLogs);
 router.post("/orders/manual", requireAuth, requireRole("ADMIN"), adminCreateManualSale);
 
 // ── Admin: Gestão de Eventos
-const refUpload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 4 * 1024 * 1024 } });
+const refUpload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 50 * 1024 * 1024 } });
 router.get("/events", requireAuth, requireRole("ADMIN"), adminListEvents);
 router.get("/events/:id", requireAuth, requireRole("ADMIN"), adminGetEventById);
 router.post("/events", requireAuth, requireRole("ADMIN"), adminCreateEvent);

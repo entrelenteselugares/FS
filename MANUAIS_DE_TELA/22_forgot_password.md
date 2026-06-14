@@ -21,22 +21,18 @@
 - **Botão:** `ENVIAR INSTRUÇÕES`
 - **Botão:** `Home`
 - **Botão:** `Buscar`
-- **Botão:** `Compras`
-- **Botão:** `Meus Álbuns`
 - **Botão:** `Opções`
-- **Botão:** `Histórico de Compras`
-- **Botão:** `Minha Carteira`
-- **Botão:** `Indique e Ganhe`
-- **Botão:** `Meus Dados`
+- **Botão:** `Entrar`
+- **Botão:** `Vitrine de Eventos`
 
 ## 🔗 Links de Navegação
 
 - **COPA 2026
 PRÓXIMOS
-MÉXICO
-11/06 · 16:00
-GRP A
-ÁFR
+CANADÁ
+12/06 · 16:00
+GRP B
+BÓSNIA
 Ver Álbum →** -> `/album-torcida`
 - **VOLTAR AO LOGIN** -> `/login`
 

@@ -1,6 +1,6 @@
 import React, { useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import axios from "axios";
+import { API } from "../lib/api";
 import { motion, AnimatePresence } from "framer-motion";
 import { Lock, Unlock, Camera, Download, UserPlus } from "lucide-react";
 
@@ -43,7 +43,7 @@ const FlashUnlockPage: React.FC = () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await axios.post("/api/flash/unlock", {
+      const response = await API.post("/flash/unlock", {
         shortId,
         pin: fullPin
       });

@@ -89,7 +89,7 @@ function EventCard({ event, onClick }: { event: Event; onClick: () => void }) {
       {/* Badge de Autoria - Top Left */}
       <div className="absolute top-1.5 left-1.5 md:top-3 md:left-3 z-10 flex items-center gap-1.5">
         <div className="w-4 h-4 md:w-6 md:h-6 rounded-full bg-emerald-500/90 flex items-center justify-center text-[7px] md:text-[10px] font-bold text-black shadow-lg">
-          {event.ownerName?.charAt(0).toUpperCase() || event.cartorio?.charAt(0).toUpperCase() || "F"}
+          {event.ownerName?.charAt(0)?.toUpperCase() || event.cartorio?.charAt(0)?.toUpperCase() || "F"}
         </div>
         <span className="hidden md:inline text-[9px] font-bold text-white uppercase tracking-widest truncate max-w-[120px] drop-shadow-md">
           {event.ownerName || event.cartorio || "Foto Segundo"}

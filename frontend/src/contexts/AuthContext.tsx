@@ -2,10 +2,12 @@ import React, { useState, useEffect } from "react";
 import { API } from "../lib/api";
 import { supabase } from "../lib/supabase";
 import { AuthContext, type AuthUser } from "./AuthContextBase";
+import { Capacitor } from '@capacitor/core';
+import { Browser } from '@capacitor/browser';
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<AuthUser | null>(null);
-  const [token, setToken] = useState<string | null>(null);
+  const [token, setToken] = useState<string | null>(() => localStorage.getItem("token"));
   const [loading, setLoading] = useState(true);
   const [activeRole, setActiveRole] = useState<string | null>(() => {
     return localStorage.getItem("fs_active_role");
@@ -17,6 +19,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     } catch {
       // Ignore errors on logout
     }
+    localStorage.removeItem("token");
+    localStorage.removeItem("refreshToken");
     localStorage.removeItem("fs_active_role");
     setToken(null);
     setUser(null);
@@ -24,13 +28,31 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     window.location.href = "/login";
   };
 
+  // Keep localStorage token synchronized with state
+  useEffect(() => {
+    if (token) {
+      localStorage.setItem("token", token);
+    } else {
+      localStorage.removeItem("token");
+    }
+  }, [token]);
+
   useEffect(() => {
     const initAuth = async () => {
+      // Se a URL contiver hashes de autenticação do Supabase (OAuth), pulamos o /auth/me inicial
+      // para evitar que o app conclua o loading como null e cause redirecionamentos desnecessários
+      if (window.location.hash.includes("access_token=") || window.location.href.includes("access_token=")) {
+        return;
+      }
+
       try {
         const r = await API.get("/auth/me");
         if (r.data && r.data.nome) {
           setUser(r.data);
-          setToken("cookie-session");
+          if (!localStorage.getItem("token")) {
+            localStorage.setItem("token", "cookie-session");
+            setToken("cookie-session");
+          }
         }
       } catch (err: unknown) {
         setUser(null);
@@ -42,25 +64,43 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     
     initAuth();
 
-    const { data: authListener } = supabase.auth.onAuthStateChange(async (event, session) => {
-      if (event === "SIGNED_IN" && session?.access_token) {
-        try {
-          // Sync with backend to get the HttpOnly cookie
-          const r = await API.post("/auth/oauth-callback", { access_token: session.access_token });
-          if (r.data && r.data.user) {
-            setUser(r.data.user);
-            setToken("cookie-session");
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        if (event === "SIGNED_IN" && session) {
+          // Quando logar pelo Google (ou magic link), sincroniza com o backend customizado
+          setLoading(true);
+          try {
+            const { data } = await API.post("/auth/oauth-callback", { 
+              access_token: session.access_token 
+            });
+            if (data.token) {
+              localStorage.setItem("token", data.token);
+              localStorage.setItem("refreshToken", data.refreshToken || "");
+              setToken(data.token);
+            } else {
+              localStorage.setItem("token", "cookie-session");
+              localStorage.setItem("refreshToken", "cookie-session");
+              setToken("cookie-session");
+            }
+            setUser(data.user);
+          } catch (e) {
+            console.error("Erro no callback oauth", e);
+          } finally {
+            setLoading(false);
           }
-        } catch (e) {
-          console.error("Failed to sync OAuth with backend", e);
         }
-      } else if (event === "SIGNED_OUT") {
-        // Backend logout handles the rest
+        if (event === "SIGNED_OUT") {
+          localStorage.removeItem("token");
+          localStorage.removeItem("refreshToken");
+          setToken(null);
+          setUser(null);
+          setLoading(false);
+        }
       }
-    });
+    );
 
     return () => {
-      authListener.subscription.unsubscribe();
+      subscription.unsubscribe();
     };
   }, []);
 
@@ -77,57 +117,100 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const login = async (email: string, senha: string) => {
-    await API.post("/auth/login", { email, senha });
+    const res = await API.post("/auth/login", { email, senha });
+    
+    if (res.data.token) {
+      localStorage.setItem("token", res.data.token);
+      localStorage.setItem("refreshToken", res.data.refreshToken || "");
+      setToken(res.data.token);
+    } else {
+      localStorage.setItem("token", "cookie-session");
+      localStorage.setItem("refreshToken", "cookie-session");
+      setToken("cookie-session");
+    }
     
     // Fetch full user object
     const meResponse = await API.get("/auth/me");
     const fullUser = meResponse.data;
     
-    setToken("cookie-session");
     setUser(fullUser);
     return fullUser as AuthUser;
   };
 
   const register = async (email: string, senha: string, nome: string) => {
-    await API.post("/auth/register", { email, senha, nome });
+    const res = await API.post("/auth/register", { email, senha, nome });
     
+    if (res.data.token) {
+      localStorage.setItem("token", res.data.token);
+      localStorage.setItem("refreshToken", res.data.refreshToken || "");
+      setToken(res.data.token);
+    } else {
+      localStorage.setItem("token", "cookie-session");
+      localStorage.setItem("refreshToken", "cookie-session");
+      setToken("cookie-session");
+    }
+
     const meResponse = await API.get("/auth/me");
     const fullUser = meResponse.data;
 
-    setToken("cookie-session");
     setUser(fullUser);
     return fullUser as AuthUser;
   };
 
   const registerExpress = async (email: string, senha: string, nome?: string, whatsapp?: string) => {
-    await API.post("/auth/register-express", { email, senha, nome, whatsapp });
+    const res = await API.post("/auth/register-express", { email, senha, nome, whatsapp });
     
+    if (res.data.token) {
+      localStorage.setItem("token", res.data.token);
+      localStorage.setItem("refreshToken", res.data.refreshToken || "");
+      setToken(res.data.token);
+    } else {
+      localStorage.setItem("token", "cookie-session");
+      localStorage.setItem("refreshToken", "cookie-session");
+      setToken("cookie-session");
+    }
+
     const meResponse = await API.get("/auth/me");
     const fullUser = meResponse.data;
 
-    setToken("cookie-session");
     setUser(fullUser);
     return fullUser as AuthUser;
   };
 
   const loginWithGoogle = async () => {
-    const { error } = await supabase.auth.signInWithOAuth({
+    const isNative = Capacitor.isNativePlatform();
+    const redirectTo = isNative ? "com.fotosegundo.app://auth-callback" : window.location.origin;
+
+    const { data, error } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo: window.location.origin,
+        redirectTo,
+        skipBrowserRedirect: isNative,
       },
     });
     if (error) throw error;
+
+    if (isNative && data?.url) {
+      await Browser.open({ url: data.url });
+    }
   };
 
   const loginWithApple = async () => {
-    const { error } = await supabase.auth.signInWithOAuth({
+    const isNative = Capacitor.isNativePlatform();
+    const redirectTo = isNative ? "com.fotosegundo.app://auth-callback" : window.location.origin;
+
+    const { data, error } = await supabase.auth.signInWithOAuth({
       provider: "apple",
       options: {
-        redirectTo: window.location.origin,
+        redirectTo,
+        skipBrowserRedirect: isNative,
       },
     });
     if (error) throw error;
+
+    if (isNative && data?.url) {
+      await Browser.open({ url: data.url });
+    }
   };
 
   const updateMe = async (data: Partial<AuthUser>) => {

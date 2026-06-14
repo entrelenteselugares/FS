@@ -45,6 +45,15 @@ export class PhygitalService {
         }
       }
 
+      // ── Fallback automático para testes ──
+      if (!foundEvent && !foundVault && eventId === 'EVENT_TESTE') {
+        console.warn(`[PHYGITAL] Recebido EVENT_TESTE. Buscando o último evento criado como fallback.`);
+        foundEvent = await prisma.event.findFirst({ orderBy: { createdAt: 'desc' } });
+        if (foundEvent) {
+           metadata.eventId = foundEvent.id;
+        }
+      }
+
       if (!foundEvent && !foundVault) throw new Error(`Destino ${eventId} não encontrado no sistema.`);
 
       // 2. Gera a Referência Única do Cliente
@@ -338,8 +347,9 @@ export class PhygitalService {
       // Se for um Vault, não criamos registro na PhygitalPrint por enquanto para evitar erro de FK no Event,
       // a menos que queiramos vincular a um evento fantasma ou refatorar o esquema.
       // Por enquanto, focamos no registro da mídia no Vault.
+      // Create PhygitalPrint ONLY if the event actually uses physical printing
       let printJob = null;
-      if (foundEvent) {
+      if (foundEvent && foundEvent.temFotoImpressa) {
         printJob = await prisma.phygitalPrint.create({
           data: {
             referenceCode,

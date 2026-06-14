@@ -49,6 +49,11 @@ export const requireAuth = (req: ExpressRequest, res: Response, next: NextFuncti
   const cookieToken = req.cookies?.token;
   let token: string | undefined;
 
+  console.log(`[AUTH DEBUG] Request to ${req.method} ${req.originalUrl || req.url}`);
+  console.log(`[AUTH DEBUG] Headers keys: ${Object.keys(req.headers).join(", ")}`);
+  console.log(`[AUTH DEBUG] Authorization header: ${authHeader ? (authHeader.substring(0, 15) + "...") : "NOT PRESENT"}`);
+  console.log(`[AUTH DEBUG] Cookies keys: ${req.cookies ? Object.keys(req.cookies).join(", ") : "NO COOKIES"}`);
+
   if (authHeader?.startsWith("Bearer ")) {
     token = authHeader.slice(7);
   } else if (cookieToken) {
@@ -58,6 +63,7 @@ export const requireAuth = (req: ExpressRequest, res: Response, next: NextFuncti
   }
 
   if (!token) {
+    console.warn(`[AUTH WARNING] Blocked request: Token não fornecido`);
     return res.status(401).json({ error: "Token não fornecido" });
   }
 

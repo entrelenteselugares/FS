@@ -19,6 +19,7 @@ DA TORCIDA
 ## 🔘 Ações e Botões Disponíveis
 
 - **Botão:** `JOGOS`
+- **Botão:** `NEWS`
 - **Botão:** `BOLÃO`
 - **Botão:** `GRUPOS`
 - **Botão:** `MEU ÁLBUM`
@@ -40,10 +41,10 @@ DA TORCIDA
 
 - **COPA 2026
 PRÓXIMOS
-COR
-11/06 · 23:00
-GRP A
-TCHÉQUIA
+AUS
+13/06 · 01:00
+GRP D
+TURQUIA
 Ver Álbum →** -> `/album-torcida`
 - **VOLTAR PARA A HOME** -> `/`
 

@@ -13,7 +13,7 @@
 
 ## 🌟 Títulos e Seções Encontradas
 
-*Nenhum título H1/H2/H3 detectado.*
+- APROVAÇÕES
 
 ## 🔘 Ações e Botões Disponíveis
 
@@ -35,15 +35,17 @@
 - **Botão:** `Encerrar Sessão`
 - **Botão:** `VALIDAÇÃO DE EXPERIÊNCIA`
 - **Botão:** `APROVAÇÕES DE ACESSO`
+- **Botão:** `Eventos`
+- **Botão:** `Menu`
 
 ## 🔗 Links de Navegação
 
 - **COPA 2026
 PRÓXIMOS
-MÉXICO
-11/06 · 16:00
-GRP A
-ÁFR
+CANADÁ
+12/06 · 16:00
+GRP B
+BÓSNIA
 Ver Álbum →** -> `/album-torcida`
 - **VISITAR SITE** -> `/`
 - **Visitar Site** -> `/`

@@ -6,7 +6,7 @@ status: Defining requirements
 last_updated: "2026-06-12T14:47:49.208Z"
 last_activity: 2026-06-12 — Milestone v15.0 started
 progress:
-  total_phases: 13
+  total_phases: 12
   completed_phases: 2
   total_plans: 2
   completed_plans: 2

@@ -25,3 +25,8 @@ declare module 'react-window' {
 interface ImportMeta {
   readonly env: ImportMetaEnv;
 }
+
+interface Window {
+  fsPendingCaptureFiles?: File[];
+  fsCurrentEventId?: string;
+}

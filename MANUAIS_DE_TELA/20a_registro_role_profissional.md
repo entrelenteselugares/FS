@@ -22,6 +22,7 @@ VITRINE`
 - **Botão:** `CLIENTE PRIVADO`
 - **Botão:** `PROFISSIONAL DA REDE`
 - **Botão:** `UNIDADE FIXA`
+- **Botão:** `CADASTRAR COM GOOGLE`
 - **Botão:** `FOTO`
 - **Botão:** `VÍDEO`
 - **Botão:** `EDIÇÃO`
@@ -31,22 +32,18 @@ VITRINE`
 - **Botão:** `CONFIRMAR INSCRIÇÃO`
 - **Botão:** `Home`
 - **Botão:** `Buscar`
-- **Botão:** `Compras`
-- **Botão:** `Meus Álbuns`
 - **Botão:** `Opções`
-- **Botão:** `Histórico de Compras`
-- **Botão:** `Minha Carteira`
-- **Botão:** `Indique e Ganhe`
-- **Botão:** `Meus Dados`
+- **Botão:** `Entrar`
+- **Botão:** `Vitrine de Eventos`
 
 ## 🔗 Links de Navegação
 
 - **COPA 2026
 PRÓXIMOS
-MÉXICO
-11/06 · 16:00
-GRP A
-ÁFR
+CANADÁ
+12/06 · 16:00
+GRP B
+BÓSNIA
 Ver Álbum →** -> `/album-torcida`
 - **FAZER LOGIN** -> `/login`
 

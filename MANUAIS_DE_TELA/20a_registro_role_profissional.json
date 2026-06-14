@@ -8,6 +8,7 @@
     "CLIENTE PRIVADO",
     "PROFISSIONAL DA REDE",
     "UNIDADE FIXA",
+    "CADASTRAR COM GOOGLE",
     "FOTO",
     "VÍDEO",
     "EDIÇÃO",
@@ -17,17 +18,13 @@
     "CONFIRMAR INSCRIÇÃO",
     "Home",
     "Buscar",
-    "Compras",
-    "Meus Álbuns",
     "Opções",
-    "Histórico de Compras",
-    "Minha Carteira",
-    "Indique e Ganhe",
-    "Meus Dados"
+    "Entrar",
+    "Vitrine de Eventos"
   ],
   "links": [
     {
-      "text": "COPA 2026\nPRÓXIMOS\nMÉXICO\n11/06 · 16:00\nGRP A\nÁFR\nVer Álbum →",
+      "text": "COPA 2026\nPRÓXIMOS\nCANADÁ\n12/06 · 16:00\nGRP B\nBÓSNIA\nVer Álbum →",
       "href": "/album-torcida"
     },
     {

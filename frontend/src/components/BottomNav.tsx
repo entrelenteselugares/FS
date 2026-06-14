@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useRef } from "react";
+import React, { useState, useMemo } from "react";
 import { useNavigate, useLocation, useSearchParams, Link } from "react-router-dom";
 import { Home, Search, ShoppingBag, Image, Menu, X, Play, Briefcase, DollarSign, Printer, Settings, Lock, Users, User, Wallet, Building2 } from "lucide-react";
 import { useAuth } from "../hooks/useAuth";
@@ -17,14 +17,9 @@ export const BottomNav: React.FC = () => {
 
   const [drawerOpen, setDrawerOpen] = useState(false);
 
-  const photoInputRef = useRef<HTMLInputElement>(null);
-  const handleCameraCapture = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const selectedFiles = Array.from(e.target.files || []);
-    if (selectedFiles.length > 0) {
-      (window as any).fsPendingCaptureFiles = selectedFiles;
-      const currentEventId = (window as any).fsCurrentEventId || "EVENT_TESTE";
-      navigate(`/phygital-capture?e=${currentEventId}`);
-    }
+  const startNativeCameraCapture = () => {
+    const currentEventId = window.fsCurrentEventId || "EVENT_TESTE";
+    navigate(`/phygital-capture?e=${currentEventId}&camera=true`);
   };
 
   const isActive = (path: string) => location.pathname === path;
@@ -123,14 +118,6 @@ export const BottomNav: React.FC = () => {
 
   return (
     <>
-      <input 
-        ref={photoInputRef}
-        type="file" 
-        accept="image/*" 
-        capture="environment" 
-        onChange={handleCameraCapture} 
-        className="hidden" 
-      />
       <div className="md:hidden fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md bg-[var(--bg)]/80 backdrop-blur-xl border-t border-theme-border/10 z-[100] px-3 py-3 flex items-center justify-around pb-safe">
         {isEventPage ? (
           <>
@@ -153,7 +140,7 @@ export const BottomNav: React.FC = () => {
             )}
 
             <button 
-              onClick={() => photoInputRef.current?.click()}
+              onClick={startNativeCameraCapture}
               className="flex flex-col items-center gap-1 transition-all text-brand-tactical"
             >
               <Camera size={20} strokeWidth={1.5} />

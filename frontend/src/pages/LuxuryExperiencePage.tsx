@@ -243,7 +243,7 @@ export default function LuxuryExperiencePage() {
                     {prof.profileImageUrl ? (
                       <img src={prof.profileImageUrl} alt={prof.nome} className="w-full h-full object-cover grayscale opacity-80 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-700" />
                     ) : (
-                      prof.nome.charAt(0).toUpperCase()
+                      prof.nome?.charAt(0)?.toUpperCase() || '?'
                     )}
                   </div>
                   <div className="absolute -bottom-2 -right-2 md:bottom-2 md:right-2 p-3 bg-[#030303] border border-zinc-800 rounded-full text-zinc-400 group-hover:text-emerald-500 group-hover:border-emerald-500/50 transition-all duration-500">

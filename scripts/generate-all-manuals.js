@@ -178,9 +178,13 @@ async function run() {
     const pathUrl = resolvePath(item.rawPath);
     const fullUrl = `${BASE_URL}${pathUrl}`;
     
+    const publicNoAuth = ['/login', '/register', '/registro', '/auth', '/forgot-password', '/reset-password'].some(p => item.rawPath.includes(p));
+    
     // Choose context based on access requirement
     let state = null;
-    if (item.rawPath.startsWith('/admin')) {
+    if (publicNoAuth) {
+      state = null;
+    } else if (item.rawPath.startsWith('/admin')) {
       state = adminState;
     } else if (item.rawPath.startsWith('/profissional') || item.access.includes('PROFISSIONAL')) {
       state = proState;
@@ -219,12 +223,18 @@ async function run() {
         else if (item.rawPath.startsWith('/profissional') || item.access.includes('PROFISSIONAL')) activeRole = 'PROFISSIONAL';
         else if (item.rawPath.startsWith('/unidade-fixa') || item.access.includes('CARTORIO') || item.access.includes('UNIDADE')) activeRole = 'CARTORIO';
         
-        await page.evaluate((role) => {
-          localStorage.setItem('fs_active_role', role);
-          localStorage.setItem('fs_tour_v1_PROFISSIONAL', 'true');
-          localStorage.setItem('fs_tour_v1_CARTORIO', 'true');
-          localStorage.setItem('fs_tour_v1_ADMIN', 'true');
-        }, activeRole);
+        if (publicNoAuth) {
+          await page.evaluate(() => {
+            localStorage.clear();
+          });
+        } else {
+          await page.evaluate((role) => {
+            localStorage.setItem('fs_active_role', role);
+            localStorage.setItem('fs_tour_v1_PROFISSIONAL', 'true');
+            localStorage.setItem('fs_tour_v1_CARTORIO', 'true');
+            localStorage.setItem('fs_tour_v1_ADMIN', 'true');
+          }, activeRole);
+        }
         
         // Reload page to apply forced role
         await page.goto(fullUrl, { waitUntil: 'networkidle', timeout: 30000 });

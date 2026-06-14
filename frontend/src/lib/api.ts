@@ -1,8 +1,12 @@
 import axios from "axios";
+import { Capacitor } from "@capacitor/core";
 
-// Sempre usa caminhos relativos — o vercel.json roteia /api/* para o backend.
-// Isso elimina erros de CORS pois frontend e backend compartilham o mesmo domínio.
-const baseURL = "/api";
+// Sempre usa caminhos relativos na web para roteamento Vercel/Vite.
+// No Capacitor (Nativo), o localhost do celular não possui backend, 
+// então forçamos a URL oficial de produção.
+export const baseURL = Capacitor.isNativePlatform() 
+  ? "https://foto-segundo.vercel.app/api" 
+  : "/api";
 
 export const API = axios.create({ 
   baseURL,
@@ -17,6 +21,24 @@ const onRefreshed = (success: boolean) => {
   refreshSubscribers.forEach((cb) => cb(success));
   refreshSubscribers = [];
 };
+
+// Interceptor de requisição para injetar o token JWT (Fallback para Capacitor)
+API.interceptors.request.use((config) => {
+  const token = localStorage.getItem("token");
+  if (token && token !== "cookie-session") {
+    if (!config.headers) {
+      config.headers = {} as any;
+    }
+    if (typeof config.headers.set === "function") {
+      config.headers.set("Authorization", `Bearer ${token}`);
+    } else {
+      config.headers.Authorization = `Bearer ${token}`;
+      config.headers["Authorization"] = `Bearer ${token}`;
+      config.headers["authorization"] = `Bearer ${token}`;
+    }
+  }
+  return config;
+});
 
 // Interceptor de resposta para tratar expiração (401)
 API.interceptors.response.use(
@@ -44,13 +66,23 @@ API.interceptors.response.use(
       isRefreshing = true;
 
       try {
-        // Tenta renovar os cookies chamando o endpoint de refresh
-        await axios.post(`${baseURL}/auth/refresh`, {}, { withCredentials: true });
+        const localRefreshToken = localStorage.getItem("refreshToken");
+        // Tenta renovar os tokens chamando o endpoint de refresh enviando o refreshToken no body
+        const refreshRes = await axios.post(`${baseURL}/auth/refresh`, {
+          refreshToken: localRefreshToken
+        }, { withCredentials: true });
+        
+        if (refreshRes.data.token) {
+          localStorage.setItem("token", refreshRes.data.token);
+          if (refreshRes.data.refreshToken) {
+            localStorage.setItem("refreshToken", refreshRes.data.refreshToken);
+          }
+        }
         
         isRefreshing = false;
         onRefreshed(true);
         
-        // Repete a requisição original (os novos cookies serão enviados automaticamente)
+        // Repete a requisição original
         return API(originalRequest);
       } catch (refreshError) {
         isRefreshing = false;

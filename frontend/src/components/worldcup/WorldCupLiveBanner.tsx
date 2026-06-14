@@ -182,6 +182,7 @@ export const WorldCupLiveBanner = ({ alwaysShow = false }: { alwaysShow?: boolea
         background: "linear-gradient(90deg, #022c22 0%, #065f46 35%, #064e3b 65%, #022c22 100%)",
         borderBottom: "1px solid rgba(133,185,172,0.4)",
         textDecoration: "none",
+        paddingTop: "env(safe-area-inset-top, 0px)",
       }}
     >
       <div

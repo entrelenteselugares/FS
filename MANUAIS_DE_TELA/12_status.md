@@ -40,10 +40,10 @@ PLATAFORMA
 
 - **COPA 2026
 PRÓXIMOS
-MÉXICO
-11/06 · 16:00
-GRP A
-ÁFR
+EUA
+12/06 · 22:00
+GRP D
+PARAGUAI
 Ver Álbum →** -> `/album-torcida`
 - **VOLTAR PARA O INÍCIO** -> `/`
 - **ACESSAR CONTATO** -> `/contato`

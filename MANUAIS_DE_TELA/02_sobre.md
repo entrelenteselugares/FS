@@ -40,10 +40,10 @@
 
 - **COPA 2026
 PRÓXIMOS
-MÉXICO
-11/06 · 16:00
-GRP A
-ÁFR
+CANADÁ
+12/06 · 16:00
+GRP B
+BÓSNIA
 Ver Álbum →** -> `/album-torcida`
 - **VOLTAR** -> `/`
 - **CENTRAL DE AJUDA** -> `/suporte`

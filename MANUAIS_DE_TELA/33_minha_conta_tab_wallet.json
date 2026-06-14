@@ -11,6 +11,7 @@
     "ENCERRAR SESSÃO",
     "Encerrar Sessão",
     "PEGAR MEU LINK →",
+    "Menu",
     "Home",
     "Buscar",
     "Compras",
@@ -18,7 +19,7 @@
   ],
   "links": [
     {
-      "text": "COPA 2026\nPRÓXIMOS\nMÉXICO\n11/06 · 16:00\nGRP A\nÁFR\nVer Álbum →",
+      "text": "COPA 2026\nPRÓXIMOS\nCANADÁ\n12/06 · 16:00\nGRP B\nBÓSNIA\nVer Álbum →",
       "href": "/album-torcida"
     },
     {

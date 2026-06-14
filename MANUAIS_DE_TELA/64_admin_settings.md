@@ -39,15 +39,17 @@
 - **Botão:** `ORÇAMENTOS (0)`
 - **Botão:** `INFRAESTRUTURA`
 - **Botão:** `SALVAR CONFIGURAÇÕES FINANCEIRAS`
+- **Botão:** `Eventos`
+- **Botão:** `Menu`
 
 ## 🔗 Links de Navegação
 
 - **COPA 2026
 PRÓXIMOS
-COR
-11/06 · 23:00
-GRP A
-TCHÉQUIA
+EUA
+12/06 · 22:00
+GRP D
+PARAGUAI
 Ver Álbum →** -> `/album-torcida`
 - **VISITAR SITE** -> `/`
 - **Visitar Site** -> `/`

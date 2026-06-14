@@ -4,8 +4,8 @@
     "COMMAND CENTER",
     "MONITOR DE INSUMOS",
     "LOGS DE OPERAÇÃO",
-    "MINHA REDE",
-    "COMISSÕES & FECHAMENTO"
+    "COMISSÕES & FECHAMENTO",
+    "MINHA REDE"
   ],
   "buttons": [
     "Histórico de Compras",
@@ -23,8 +23,8 @@
     "REABASTECER CRÉDITOS (PIX)",
     "SOLICITAR KIT FÍSICO",
     "VER TUDO",
-    "SALVAR CUSTOMIZAÇÃO",
     "EXPORTAR CSV",
+    "SALVAR CUSTOMIZAÇÃO",
     "Home",
     "Buscar",
     "Compras",
@@ -38,7 +38,7 @@
   ],
   "links": [
     {
-      "text": "COPA 2026\nPRÓXIMOS\nMÉXICO\n11/06 · 16:00\nGRP A\nÁFR\nVer Álbum →",
+      "text": "COPA 2026\nPRÓXIMOS\nEUA\n12/06 · 22:00\nGRP D\nPARAGUAI\nVer Álbum →",
       "href": "/album-torcida"
     },
     {

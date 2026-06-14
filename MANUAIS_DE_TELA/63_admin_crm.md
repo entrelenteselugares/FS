@@ -13,7 +13,7 @@
 
 ## 🌟 Títulos e Seções Encontradas
 
-*Nenhum título H1/H2/H3 detectado.*
+- CRM & LEADS
 
 ## 🔘 Ações e Botões Disponíveis
 
@@ -37,15 +37,17 @@
 - **Botão:** `Encerrar Sessão`
 - **Botão:** `CARRINHOS ABANDONADOS`
 - **Botão:** `LEADS CAPTURADOS`
+- **Botão:** `Eventos`
+- **Botão:** `Menu`
 
 ## 🔗 Links de Navegação
 
 - **COPA 2026
 PRÓXIMOS
-COR
-11/06 · 23:00
-GRP A
-TCHÉQUIA
+EUA
+12/06 · 22:00
+GRP D
+PARAGUAI
 Ver Álbum →** -> `/album-torcida`
 - **VISITAR SITE** -> `/`
 - **Visitar Site** -> `/`

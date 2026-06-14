@@ -16,8 +16,8 @@
 - COMMAND CENTER
 - MONITOR DE INSUMOS
 - LOGS DE OPERAÇÃO
-- MINHA REDE
 - COMISSÕES & FECHAMENTO
+- MINHA REDE
 
 ## 🔘 Ações e Botões Disponíveis
 
@@ -36,8 +36,8 @@
 - **Botão:** `REABASTECER CRÉDITOS (PIX)`
 - **Botão:** `SOLICITAR KIT FÍSICO`
 - **Botão:** `VER TUDO`
-- **Botão:** `SALVAR CUSTOMIZAÇÃO`
 - **Botão:** `EXPORTAR CSV`
+- **Botão:** `SALVAR CUSTOMIZAÇÃO`
 - **Botão:** `Home`
 - **Botão:** `Buscar`
 - **Botão:** `Compras`
@@ -53,10 +53,10 @@
 
 - **COPA 2026
 PRÓXIMOS
-MÉXICO
-11/06 · 16:00
-GRP A
-ÁFR
+EUA
+12/06 · 22:00
+GRP D
+PARAGUAI
 Ver Álbum →** -> `/album-torcida`
 - **VISITAR SITE** -> `/`
 - **Visitar Site** -> `/`

@@ -1,6 +1,8 @@
 {
   "title": "Foto Segundo | Suas memórias, entregues agora.",
-  "headings": [],
+  "headings": [
+    "APROVAÇÕES"
+  ],
   "buttons": [
     "Visão Geral",
     "Eventos\n9",
@@ -18,11 +20,13 @@
     "Eventos9",
     "Encerrar Sessão",
     "VALIDAÇÃO DE EXPERIÊNCIA",
-    "APROVAÇÕES DE ACESSO"
+    "APROVAÇÕES DE ACESSO",
+    "Eventos",
+    "Menu"
   ],
   "links": [
     {
-      "text": "COPA 2026\nPRÓXIMOS\nMÉXICO\n11/06 · 16:00\nGRP A\nÁFR\nVer Álbum →",
+      "text": "COPA 2026\nPRÓXIMOS\nCANADÁ\n12/06 · 16:00\nGRP B\nBÓSNIA\nVer Álbum →",
       "href": "/album-torcida"
     },
     {

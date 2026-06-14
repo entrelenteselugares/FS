@@ -26,32 +26,15 @@
 - **Botão:** `PREENCHER`
 - **Botão:** `ENCAIXAR`
 - **Botão:** `FULL SCREEN`
-- **Botão:** `Home`
-- **Botão:** `Buscar`
-- **Botão:** `Compras`
-- **Botão:** `Meus Álbuns`
-- **Botão:** `Opções`
-- **Botão:** `Histórico de Compras`
-- **Botão:** `Minha Carteira`
-- **Botão:** `Indique e Ganhe`
-- **Botão:** `Meus Dados`
-- **Botão:** `Minha Agenda`
-- **Botão:** `Meu Portfólio`
-- **Botão:** `Serviços & Preços`
-- **Botão:** `Ficha Técnica & Pix`
-- **Botão:** `Vendas & Ganhos`
-- **Botão:** `Painel da Franquia`
-- **Botão:** `Rede Técnica`
-- **Botão:** `Franquia Print`
 
 ## 🔗 Links de Navegação
 
 - **COPA 2026
 PRÓXIMOS
-MÉXICO
-11/06 · 16:00
-GRP A
-ÁFR
+CANADÁ
+12/06 · 16:00
+GRP B
+BÓSNIA
 Ver Álbum →** -> `/album-torcida`
 
 ## ⚙️ Observações Técnicas e Fluxo
