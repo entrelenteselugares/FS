@@ -1,4 +1,7 @@
-import { BookImage, Star, ArrowRight } from "lucide-react";
+import { BookImage, Star, ArrowRight, Loader2 } from "lucide-react";
+import { useState } from "react";
+import { API } from "../lib/api";
+import { toast } from "sonner";
 
 
 interface Props {
@@ -6,6 +9,23 @@ interface Props {
 }
 
 export function AlbumSanfonaBanner({ isSubscriber }: Props) {
+  const [loading, setLoading] = useState(false);
+
+  const handleSubscribe = async () => {
+    setLoading(true);
+    try {
+      const res = await API.post("/sanfona/subscribe");
+      if (res.data && res.data.initPoint) {
+        window.location.href = res.data.initPoint;
+      }
+    } catch (err: any) {
+      console.error(err);
+      toast.error(err.response?.data?.error || "Erro ao iniciar assinatura");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   if (isSubscriber) {
     return (
       <div className="relative overflow-hidden bg-gradient-to-r from-brand-tactical/20 to-theme-bg border border-brand-tactical/30 p-6 rounded-2xl mb-6 shadow-[0_0_30px_rgba(133,185,172,0.15)] flex items-center justify-between group">
@@ -45,8 +65,12 @@ export function AlbumSanfonaBanner({ isSubscriber }: Props) {
         </div>
       </div>
 
-      <button className="relative z-10 w-full md:w-auto flex items-center justify-center gap-3 bg-brand-tactical text-theme-text px-8 py-3.5 rounded-xl text-[11px] font-bold uppercase tracking-[0.3em] hover:brightness-110 hover:shadow-[0_0_20px_rgba(133,185,172,0.3)] transition-all duration-300">
-        Assinar Agora <ArrowRight size={14} />
+      <button 
+        onClick={handleSubscribe}
+        disabled={loading}
+        className="relative z-10 w-full md:w-auto flex items-center justify-center gap-3 bg-brand-tactical text-theme-text px-8 py-3.5 rounded-xl text-[11px] font-bold uppercase tracking-[0.3em] hover:brightness-110 hover:shadow-[0_0_20px_rgba(133,185,172,0.3)] transition-all duration-300 disabled:opacity-50"
+      >
+        {loading ? <Loader2 size={14} className="animate-spin" /> : "Assinar Agora"} <ArrowRight size={14} />
       </button>
     </div>
   );

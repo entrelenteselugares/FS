@@ -57,6 +57,70 @@ export class SubscriptionService {
   }
 
   /**
+   * Inicializa uma assinatura do Clube do Álbum Sanfona.
+   * Cria o registro PENDING e gera a URL do Preapproval no Mercado Pago.
+   */
+  static async createSanfonaSubscription(userId: string) {
+    // 1. Verifica se já existe uma assinatura Sanfona ativa ou pendente para esse usuário
+    const existing = await prisma.subscription.findFirst({
+      where: { userId, type: "ALBUM_SANFONA", status: { in: ["ACTIVE", "PENDING"] } }
+    });
+
+    if (existing && existing.status === "ACTIVE") {
+      throw new Error("Você já possui uma assinatura ativa do Álbum Sanfona.");
+    }
+
+    const user = await prisma.user.findUnique({ where: { id: userId } });
+    if (!user) throw new Error("Usuário não encontrado.");
+
+    const price = 27.90;
+    let subscriptionId = existing?.id;
+
+    // Se não existe, cria PENDING
+    if (!subscriptionId) {
+      const newSub = await prisma.subscription.create({
+        data: {
+          userId,
+          type: "ALBUM_SANFONA",
+          planLimit: 10,
+          status: "PENDING",
+          planPrice: price
+        }
+      });
+      subscriptionId = newSub.id;
+    }
+
+    const backendUrl = process.env.BACKEND_URL || "http://localhost:3001";
+    const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173";
+
+    // Cria Preapproval
+    const mpResponse = await MercadoPagoService.createPreapproval({
+      reason: "Clube do Álbum Sanfona - Foto Segundo",
+      auto_recurring: {
+        frequency: 1,
+        frequency_type: "months",
+        transaction_amount: price,
+        currency_id: "BRL"
+      },
+      payer_email: user.email,
+      back_url: `${frontendUrl}/minha-conta?tab=files&sanfona=success`,
+      notification_url: `${backendUrl}/api/webhooks/mp-subscription`,
+    });
+
+    // Salva o preapprovalId no banco
+    await prisma.subscription.update({
+      where: { id: subscriptionId },
+      data: { preapprovalId: mpResponse.id }
+    });
+
+    return {
+      subscriptionId,
+      initPoint: mpResponse.init_point,
+      amount: price
+    };
+  }
+
+  /**
    * Processa webhook de Preapproval (Assinaturas)
    */
   static async handlePreapprovalWebhook(preapprovalId: string) {

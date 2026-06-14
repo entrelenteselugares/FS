@@ -313,6 +313,12 @@ export class AuthController {
             gamificationLogs: {
               orderBy: { createdAt: 'desc' },
               take: 20
+            },
+            subscriptions: {
+              where: {
+                type: 'ALBUM_SANFONA',
+                status: 'ACTIVE'
+              }
             }
           }
         });
@@ -321,14 +327,21 @@ export class AuthController {
         // Fallback: tenta buscar sem os includes pesados se falhar
         user = await prisma.user.findUnique({ 
           where: { id: req.user.userId },
-          include: { franchiseProfile: true }
+          include: { 
+            franchiseProfile: true,
+            subscriptions: {
+              where: { type: 'ALBUM_SANFONA', status: 'ACTIVE' }
+            }
+          }
         });
       }
       if (!user) {
         console.warn(`[AUTH ME] Usuário não encontrado no banco: ${req.user.userId}`);
         return res.status(404).json({ error: "Usuário não encontrado" });
       }
-      return res.json(user);
+      
+      const isSanfonaSubscriber = user.subscriptions && user.subscriptions.length > 0;
+      return res.json({ ...user, isSanfonaSubscriber });
     } catch (error) {
       console.error("[AUTH ME ERROR]:", error);
       return res.status(500).json({ error: "Erro ao buscar dados do usuário" });

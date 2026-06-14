@@ -43,12 +43,14 @@ import { professionalRoutes, requireProOrFranchise } from "./professional.routes
 import { PhygitalController } from "../controllers/phygital.controller";
 import worldcupRoutes from "./worldcup.routes";
 import editorContractRoutes from "./editorContract.routes";
+import sanfonaRoutes from "./sanfona.routes";
 
 const router = Router();
 
 // ── ROTAS MODULARIZADAS ──────────────────────────────────────────────────────
 router.use("/admin", adminRoutes);
 router.use("/editor-contracts", editorContractRoutes);
+router.use("/sanfona", sanfonaRoutes);
 router.use("/auth", authRoutes);
 router.use("/auth-drive", driveAuthRoutes); // Aliased the original /auth to /auth-drive since it was in index.ts as router.use("/auth", driveAuthRoutes) -> WAIT, driveAuthRoutes handles google oauth, let's keep it as /auth-drive. Actually, the original index.ts did `router.use("/auth", driveAuthRoutes);` and also defined `/auth/login` manually. So I'll mount driveAuthRoutes to /auth.
 router.use("/checkout", checkoutRoutes);
