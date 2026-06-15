@@ -37,6 +37,7 @@ export interface EventStatusInfo {
  * @param eventHours  Duration of the event in hours (default 2)
  * @param isExpired   Explicit expired flag from the backend
  * @param active      Whether the event is active (backend flag)
+ * @param eventType   Optional event type — FOTO_POINT are treated as perpetually live while active
  */
 export function useEventStatus(
   eventDate?: string | null,
@@ -44,7 +45,8 @@ export function useEventStatus(
   eventHours = 2,
   eventDays = 1,
   isExpired?: boolean,
-  active?: boolean
+  active?: boolean,
+  eventType?: string | null
 ): EventStatusInfo {
   const [now, setNow] = useState(() => Date.now());
 
@@ -93,7 +95,11 @@ export function useEventStatus(
     // --- Decide phase ---
     let phase: EventPhase;
 
-    if (isExpired || active === false) {
+    // FOTO_POINT é um ponto de venda operacional/permanente.
+    // Enquanto active === true e não expirado pelo backend, sempre mostra como "live".
+    if (eventType === 'FOTO_POINT' && !isExpired && active !== false) {
+      phase = "live";
+    } else if (isExpired || active === false) {
       // Backend explicitly says it's over
       phase = msSinceEnd !== null && msSinceEnd > DAY_MS ? "archived" : "ended";
     } else if (msSinceEnd !== null && msSinceEnd > DAY_MS) {

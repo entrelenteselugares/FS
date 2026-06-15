@@ -20,6 +20,7 @@ const PrintStoreModal = lazy(() => import("../components/PrintStoreModal").then(
 const PrintKitModal = lazy(() => import("../components/PrintKitModal").then(m => ({ default: m.PrintKitModal })));
 import { motion, AnimatePresence } from "framer-motion";
 const EventEditPanel = lazy(() => import("../components/profissional/EventEditPanel").then(m => ({ default: m.EventEditPanel })));
+const FotoPointEditModal = lazy(() => import("../components/profissional/FotoPointEditModal").then(m => ({ default: m.FotoPointEditModal })));
 import type { EventItem } from "../components/profissional/types";
 import { TouchSelectionGallery } from "../components/TouchSelectionGallery";
 import { SchoolAuthenticationGate } from "../components/SchoolAuthenticationGate";
@@ -359,7 +360,7 @@ export default function EventPage() {
 
   const { addAlbum } = useRecentAlbums();
 
-  const eventStatus = useEventStatus(event?.dataEvento, null, event?.eventHours || 2, event?.eventDays || 1, event?.isExpired, event?.active);
+  const eventStatus = useEventStatus(event?.dataEvento, null, event?.eventHours || 2, event?.eventDays || 1, event?.isExpired, event?.active, event?.type);
 
   const eventId = event?.id;
   const eventTitle = event?.title;
@@ -1516,13 +1517,23 @@ return (
       </Modal>
       {isEditingEvent && event && (
         <Suspense fallback={<div className="fixed inset-0 z-[300] flex items-center justify-center p-4 bg-theme-bg/80 backdrop-blur-xl"><div className="w-8 h-8 border-4 border-brand-tactical border-t-transparent rounded-full animate-spin"></div></div>}>
-          <EventEditPanel 
-            event={event as unknown as EventItem}
-            onUpdated={(u) => setEvent(prev => prev ? { ...prev, ...u } as EventData : null)}
-            onClose={() => setIsEditingEvent(false)}
-            onNotify={(msg) => alert(msg)}
-            onOpenPrintKit={() => setShowPrintKit(true)}
-          />
+          {event.type === 'FOTO_POINT' ? (
+            <FotoPointEditModal
+              event={event as unknown as EventItem}
+              network={[]}
+              onClose={() => setIsEditingEvent(false)}
+              onSuccess={(updated) => setEvent(prev => prev ? { ...prev, ...updated } as EventData : null)}
+              onError={(msg) => alert(msg)}
+            />
+          ) : (
+            <EventEditPanel 
+              event={event as unknown as EventItem}
+              onUpdated={(u) => setEvent(prev => prev ? { ...prev, ...u } as EventData : null)}
+              onClose={() => setIsEditingEvent(false)}
+              onNotify={(msg) => alert(msg)}
+              onOpenPrintKit={() => setShowPrintKit(true)}
+            />
+          )}
         </Suspense>
       )}
       {/* Download Progress Overlay */}
