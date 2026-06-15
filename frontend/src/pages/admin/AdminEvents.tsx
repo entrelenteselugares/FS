@@ -172,6 +172,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
     temFotoImpressa: boolean;
     coverPhotoUrl: string;
     eventHours: number;
+    eventDays: number;
     isCrowdfund: boolean;
     targetAmount: number;
     lightroomUrl: string;
@@ -200,6 +201,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
     temFoto: true, temVideo: false, temReels: false, temFotoImpressa: false,
     coverPhotoUrl: "",
     eventHours: 2,
+    eventDays: 1,
     isCrowdfund: false,
     targetAmount: 0,
     lightroomUrl: "",
@@ -296,9 +298,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
         priceBase: 200, priceEarly: 190,
         cartorioId: "", captacaoId: "", edicaoId: "",
         temFoto: true, temVideo: false, temReels: false, temFotoImpressa: false,
-        coverPhotoUrl: "", eventHours: 2,
-        isCrowdfund: false,
-        targetAmount: 0,
+        coverPhotoUrl: "", eventHours: 2, eventDays: 1, isCrowdfund: false, targetAmount: 0,
         lightroomUrl: "",
         driveUrl: "",
         previewPhotos: ["", "", ""],
@@ -408,6 +408,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
         temFotoImpressa: data.temFotoImpressa,
         coverPhotoUrl: data.coverPhotoUrl || "",
         eventHours: data.eventHours || 2,
+        eventDays: data.eventDays || 1,
         isCrowdfund: data.isCrowdfund || false,
         targetAmount: Number(data.targetAmount || 0),
         lightroomUrl: data.lightroomUrl || "",
@@ -528,7 +529,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
                   title: "", slug: "", date: "", location: "", city: "", description: "", 
                   priceBase: 200, priceEarly: 190, cartorioId: "", captacaoId: "", edicaoId: "", 
                   temFoto: true, temVideo: false, temReels: false, temFotoImpressa: false, 
-                  coverPhotoUrl: "", eventHours: 2, isCrowdfund: false, targetAmount: 0, 
+                  coverPhotoUrl: "", eventHours: 2, eventDays: 1, isCrowdfund: false, targetAmount: 0, 
                   lightroomUrl: "", driveUrl: "", previewPhotos: ["", "", ""], isPrivate: true,
                   isUnitSale: false, allowFreeDownload: false, priceUnit: 10, type: 'ALBUM_FULL', pricePerPhoto: 15, 
                   clientName: "", clientEmail: "", franchiseeId: "", retentionDays: 15,
@@ -797,9 +798,15 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
                         </select>
                       </div>
                     </div>
-                    <div className="space-y-2">
-                      <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest block mb-2 opacity-60">Horas de Trabalho</label>
-                      <input type="number" required value={formData.eventHours} onChange={e => setFormData({...formData, eventHours: Number(e.target.value)})} className="w-full bg-theme-bg-muted border border-theme-border p-4 text-[10px] text-theme-text font-bold outline-none focus:border-brand-tactical rounded-xl" />
+                    <div className="grid grid-cols-2 gap-3 md:gap-6">
+                      <div className="space-y-2">
+                        <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest block mb-2 opacity-60">Horas (por dia)</label>
+                        <input type="number" required value={formData.eventHours} onChange={e => setFormData({...formData, eventHours: Number(e.target.value)})} className="w-full bg-theme-bg-muted border border-theme-border p-4 text-[10px] text-theme-text font-bold outline-none focus:border-brand-tactical rounded-xl" />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest block mb-2 opacity-60">Dias de Evento</label>
+                        <input type="number" required value={formData.eventDays} onChange={e => setFormData({...formData, eventDays: Number(e.target.value)})} className="w-full bg-theme-bg-muted border border-theme-border p-4 text-[10px] text-theme-text font-bold outline-none focus:border-brand-tactical rounded-xl" />
+                      </div>
                     </div>
                   </div>
 

@@ -70,6 +70,7 @@ MIS.
 0
 
 PTS** -> `/pro/cmpmxqow3000cl804br1kl3zb`
+
 - **LC
 PRO
 LUIZ CARLOS EDUARDO DA SILVA
@@ -91,6 +92,7 @@ MIS.
 0
 
 PTS** -> `/pro/cmpmxr57i000jl804dlbx78wi`
+
 - **R-
 PRO
 RC - PROFISSIONAL
@@ -110,6 +112,7 @@ MIS.
 0
 
 PTS** -> `/pro/cmq49tthk0002js04vyd5uy5x`
+
 - **BP
 PRO
 BR PRO FOTOGRAFO
@@ -125,6 +128,7 @@ MIS.
 0
 
 PTS** -> `/pro/cmq565j720003vz7c4zv1fqap`
+
 - **BP
 PRO
 BR PRO EDITOR
@@ -140,6 +144,7 @@ MIS.
 0
 
 PTS** -> `/pro/cmq565jby0006vz7cqw7xlp3j`
+
 - **BP
 PRO
 BR PRO HIBRIDO
@@ -155,6 +160,7 @@ MIS.
 0
 
 PTS** -> `/pro/cmq565jgd0009vz7cd2h5tdsq`
+
 - **BP
 PRO
 BR PRO MOBILE
@@ -170,6 +176,7 @@ MIS.
 0
 
 PTS** -> `/pro/cmq565jkr000cvz7chrvkciin`
+
 - **BP
 PRO
 BR PRO MOBILE HIBRIDO
@@ -185,6 +192,7 @@ MIS.
 0
 
 PTS** -> `/pro/cmq565jp4000fvz7cr7u8e4lo`
+
 - **FB
 PRO
 FRANQUEADO BRONZE
@@ -200,6 +208,7 @@ MIS.
 0
 
 PTS** -> `/pro/cmq565kbr000xvz7cwamkuony`
+
 - **FO
 PRO
 FRANQUEADO OURO
@@ -215,6 +224,7 @@ MIS.
 0
 
 PTS** -> `/pro/cmq565kg40010vz7cwa7dmvhe`
+
 - **FD
 PRO
 FRANQUEADO DIAMANTE

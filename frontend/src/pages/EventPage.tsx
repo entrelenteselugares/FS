@@ -26,110 +26,13 @@ import { TouchSelectionGallery } from "../components/TouchSelectionGallery";
 import { SchoolAuthenticationGate } from "../components/SchoolAuthenticationGate";
 import { OptimizedImage } from "../components/OptimizedImage";
 import { useRecentAlbums } from "../hooks/useRecentAlbums";
+import { PortfolioCarousel } from "../components/PortfolioCarousel";
 
 const formatDate = (date: string | null | undefined) => {
   if (!date) return "Em breve";
   return new Date(date).toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' });
 };
 
-/**
- * ReferenceCard — suporta IMAGE (upload) e YOUTUBE (embed mudo em loop).
- */
-interface RefItem {
-  id?: string;
-  type?: string;      // 'IMAGE' | 'YOUTUBE' — novo model
-  url: string;
-  thumbnailUrl?: string | null;
-}
-
-function ReferenceCard({ item }: { item: RefItem }) {
-  const [open, setOpen] = useState(false);
-  const [imgError, setImgError] = useState(false);
-
-  const isYoutube = item.type === 'YOUTUBE';
-  const thumb = item.thumbnailUrl || item.url;
-
-  if (isYoutube) {
-    return (
-      <>
-        <div
-          className="aspect-square bg-theme-bg-muted border border-theme-border overflow-hidden rounded-xl relative cursor-pointer group"
-          onClick={() => setOpen(true)}
-        >
-          <OptimizedImage src={thumb} alt="Referência YouTube" className="absolute inset-0 w-full h-full opacity-80 group-hover:opacity-100 transition-opacity" />
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div className="w-10 h-10 rounded-full bg-brand-danger/90 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
-              <span className="text-theme-text text-sm ml-0.5">▶</span>
-            </div>
-          </div>
-        </div>
-        {open && (
-          <div
-            className="fixed inset-0 z-[600] bg-black/90 flex items-center justify-center p-4"
-            onClick={() => setOpen(false)}
-          >
-            <div className="w-full max-w-3xl aspect-video rounded-2xl overflow-hidden" onClick={e => e.stopPropagation()}>
-              <iframe
-                src={item.url}
-                className="w-full h-full"
-                allow="autoplay; encrypted-media"
-                allowFullScreen
-                title="Referência YouTube"
-              />
-            </div>
-          </div>
-        )}
-      </>
-    );
-  }
-
-  // IMAGE / LINK
-  const driveMatch = item.url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
-
-  const displayUrl = (() => {
-    if (/^data:image\//i.test(item.url)) return item.url;
-    if (driveMatch) return `https://drive.google.com/thumbnail?id=${driveMatch[1]}&sz=w600`;
-    // Use thumbnailUrl if explicitly provided (e.g. stored separately)
-    if (thumb && thumb !== item.url) return thumb;
-    // For external URLs (pexels, instagram, etc.) that block hotlinking,
-    // proxy via microlink.io to extract the Open Graph image (free, fast)
-    try {
-      const u = new URL(item.url);
-      const isExternal = !u.hostname.includes('supabase') 
-        && !u.hostname.includes('googleusercontent') 
-        && !u.hostname.includes('cloudinary')
-        && !u.hostname.includes('googleapis');
-      if (isExternal) {
-        // embed=image.url → microlink extracts OG image and redirects to it directly
-        return `https://api.microlink.io/?url=${encodeURIComponent(item.url)}&embed=image.url`;
-      }
-    } catch { /* ignore invalid URL */ }
-    return item.url;
-  })();
-
-  if (!imgError) {
-    return (
-      <div className="aspect-square bg-theme-bg-muted border border-theme-border overflow-hidden rounded-xl relative">
-        <OptimizedImage
-          src={displayUrl}
-          className="absolute inset-0 w-full h-full"
-          alt="Referência"
-          onError={() => setImgError(true)}
-        />
-      </div>
-    );
-  }
-
-  // Fallback
-  let hostname = item.url;
-  try { hostname = new URL(item.url).hostname.replace('www.', ''); } catch { /* ignore */ }
-  return (
-    <div className="aspect-square bg-theme-bg-muted border border-theme-border overflow-hidden rounded-xl flex flex-col items-center justify-center p-4">
-      <ExternalLink size={24} className="mb-3 opacity-50" />
-      <span className="text-[10px] font-bold uppercase tracking-widest break-all line-clamp-3">{hostname}</span>
-    </div>
-  );
-}
 
 function TacticalBenefit({ icon, title, desc }: { icon: React.ReactNode; title: string; desc: string }) {
   return (
@@ -200,6 +103,8 @@ interface EventData {
   eventDays?: number;
   eventHours?: number;
   allowFreeDownload?: boolean;
+  captacao?: { id: string; nome: string; profileImageUrl?: string | null } | null;
+  portfolioPhotos?: { id: string; url: string; thumbnailUrl?: string | null }[];
 }
 
 interface EventMedia {
@@ -961,25 +866,14 @@ return (
                     )}
                   </div>
 
-                  {/* Referências Técnicas — prioridade: DB (eventReferences) → legado (references) */}
-                  {(() => {
-                    // Usar eventReferences do banco se disponível, senão fallback para JSON legado
-                    const dbRefs = event.eventReferences ?? [];
-                    const legacyRefs: RefItem[] = (event.references ?? []).map(url => ({ type: 'IMAGE', url }));
-                    const allRefs: RefItem[] = dbRefs.length > 0 ? dbRefs : legacyRefs;
-                    const filteredRefs = allRefs.filter(r => r.type !== 'YOUTUBE' && !r.url.includes("youtube.com") && !r.url.includes("youtu.be"));
-                    if (filteredRefs.length === 0) return null;
-                    return (
-                      <div className="space-y-4">
-                        <p className="text-[10px] font-bold text-theme-text-muted uppercase tracking-[0.4em]">Referências Técnicas</p>
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                          {filteredRefs.map((r, i) => (
-                            <ReferenceCard key={r.id ?? i} item={r} />
-                          ))}
-                        </div>
-                      </div>
-                    );
-                  })()}
+                  {/* Portfólio do Fotógrafo — substitui Referências Técnicas */}
+                  {(event.portfolioPhotos && event.portfolioPhotos.length > 0) && (
+                    <PortfolioCarousel
+                      photos={event.portfolioPhotos}
+                      photographerName={event.captacao?.nome}
+                    />
+                  )}
+
                 </div>
               )}
 
@@ -1043,7 +937,7 @@ return (
                             <div className="flex flex-col sm:flex-row gap-4">
                               <button 
                                 onClick={() => window.location.reload()}
-                                className="px-4 md:px-8 py-4 border border-theme-border text-[10px] font-bold text-theme-text uppercase tracking-widest hover:border-brand-tactical hover:text-brand-tactical hover:bg-brand-tactical/10 transition-all"
+                                className="px-4 md:px-8 py-4 border border-theme-border text-[10px] font-bold text-brand-text uppercase tracking-widest hover:border-brand-tactical hover:text-brand-tactical hover:bg-brand-tactical/10 transition-all"
                               >
                                 Sincronizar Galeria
                               </button>
@@ -1208,7 +1102,7 @@ return (
                     {(event.isOwner || event.isPrimaryClient || user?.role === 'ADMIN' || user?.role === 'PROFISSIONAL' || user?.role === 'FRANCHISEE' || user?.role === 'CARTORIO' || user?.role === 'UNIDADE') && (
                       <button 
                         onClick={() => setIsEditingEvent(true)}
-                        className="flex-1 h-11 border border-theme-border text-theme-text text-[9px] font-bold uppercase tracking-widest hover:text-brand-tactical hover:border-brand-tactical/40 hover:bg-brand-tactical/5 transition-all flex items-center justify-center gap-1.5"
+                        className="flex-1 h-11 border border-theme-border text-brand-text text-[9px] font-bold uppercase tracking-widest hover:text-brand-tactical hover:border-brand-tactical/40 hover:bg-brand-tactical/5 transition-all flex items-center justify-center gap-1.5"
                       >
                         <Camera size={14} /> Configurar
                       </button>

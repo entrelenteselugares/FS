@@ -331,7 +331,7 @@ export async function adminCreateEvent(req: AuthRequest, res: Response): Promise
     lightroomUrl, driveUrl, previewPhotos, priceBase, priceEarly,
     cartorioId, captacaoId, edicaoId,
     temFoto, temVideo, temReels, temFotoImpressa,
-    eventHours,
+    eventHours, eventDays,
     isCrowdfund, targetAmount,
     type, pricePerPhoto, marketplaceConfigs, verticalConfigs,
     clientEmail, clientName,
@@ -404,6 +404,7 @@ export async function adminCreateEvent(req: AuthRequest, res: Response): Promise
         temReels: temReels ?? false,
         temFotoImpressa: temFotoImpressa ?? false,
         eventHours: eventHours ? Number(eventHours) : 2,
+        eventDays: eventDays ? Number(eventDays) : 1,
         isCrowdfund: isCrowdfund ?? false,
         targetAmount: targetAmount ? Number(targetAmount) : null,
         // @ts-ignore
@@ -506,6 +507,7 @@ export async function adminUpdateEvent(req: AuthRequest, res: Response): Promise
     if (req.body.coverPhotoUrl !== undefined) data.coverPhotoUrl = req.body.coverPhotoUrl || null;
     if (req.body.coverPosition !== undefined) data.coverPosition = req.body.coverPosition || "center";
     if (req.body.eventHours !== undefined) data.eventHours = Number(req.body.eventHours);
+    if (req.body.eventDays !== undefined) data.eventDays = Number(req.body.eventDays);
     if (req.body.isCrowdfund !== undefined) data.isCrowdfund = req.body.isCrowdfund;
     if (req.body.targetAmount !== undefined) data.targetAmount = req.body.targetAmount ? Number(req.body.targetAmount) : null;
     if (req.body.isPrivate !== undefined) {

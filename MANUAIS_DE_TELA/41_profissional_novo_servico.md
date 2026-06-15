@@ -15,9 +15,9 @@
 
 - NOVO SERVIÇO
 - 1. IDENTIFICAÇÃO
-- 2. FORMATO DE TRABALHO
-- 3. PRECIFICAÇÃO
-- 4. REVISÃO
+- 1. FORMATO DE TRABALHO
+- 1. PRECIFICAÇÃO
+- 1. REVISÃO
 
 ## 🔘 Ações e Botões Disponíveis
 

@@ -49,13 +49,13 @@ GRP H
 URUGUAI
 Ver Álbum →** -> `/album-torcida`
 - **VOLTAR PARA O INÍCIO** -> `/`
-- **suporte@fotosegundo.com.br** -> `mailto:suporte@fotosegundo.com.br`
+- **<suporte@fotosegundo.com.br>** -> `mailto:suporte@fotosegundo.com.br`
 - **Central de Ajuda** -> `/suporte`
-- **parcerias@fotosegundo.com.br** -> `mailto:parcerias@fotosegundo.com.br`
+- **<parcerias@fotosegundo.com.br>** -> `mailto:parcerias@fotosegundo.com.br`
 - **CONHECER O PROGRAMA** -> `/parcerias`
-- **profissionais@fotosegundo.com.br** -> `mailto:profissionais@fotosegundo.com.br`
-- **imprensa@fotosegundo.com.br** -> `mailto:imprensa@fotosegundo.com.br`
-- **privacidade@fotosegundo.com.br** -> `mailto:privacidade@fotosegundo.com.br`
+- **<profissionais@fotosegundo.com.br>** -> `mailto:profissionais@fotosegundo.com.br`
+- **<imprensa@fotosegundo.com.br>** -> `mailto:imprensa@fotosegundo.com.br`
+- **<privacidade@fotosegundo.com.br>** -> `mailto:privacidade@fotosegundo.com.br`
 - **LER POLÍTICA DE PRIVACIDADE** -> `/privacidade`
 - **ACESSAR PAINEL DE STATUS** -> `/status`
 

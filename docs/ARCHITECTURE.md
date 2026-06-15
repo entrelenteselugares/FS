@@ -97,7 +97,8 @@ Composição vetorial em iframe invisível no navegador para impressão de moldu
 
 ### 🔄 Camera Stories & Background Upload (Phase 72)
 
-Motor de processamento de fotos em segundo plano para o Phygital Capture (Stories-like). 
+Motor de processamento de fotos em segundo plano para o Phygital Capture (Stories-like).
+
 - **Non-Blocking Capture:** O usuário não é bloqueado por telas de loading; as fotos caem imediatamente numa fila visual na parte inferior da tela e são despachadas paralelamente.
 - **Offline Queue Persistence:** Integração com **IndexedDB** garante que capturas em locais sem internet não sejam perdidas. O upload é retomado automaticamente (Global Background Upload) ao reabrir o PWA ou trocar de aba.
 

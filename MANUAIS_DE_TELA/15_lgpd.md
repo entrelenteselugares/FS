@@ -15,16 +15,23 @@
 
 - PORTAL LGPD
 - 1.
+
 NOSSOS PRINCÍPIOS (ART. 6º)
+
 - FINALIDADE
 - NECESSIDADE
 - LIVRE ACESSO
 - SEGURANÇA
-- 2.
+- 1.
+
 EXERÇA SEUS DIREITOS (ART. 18)
-- 3.
+
+- 1.
+
 ENCARREGADO DE DADOS (DPO)
-- 4.
+
+- 1.
+
 DOCUMENTOS COMPLEMENTARES
 
 ## 🔘 Ações e Botões Disponíveis
@@ -47,6 +54,7 @@ DOCUMENTOS COMPLEMENTARES
 - **Política de Privacidade Completa
 
 Detalhes sobre cookies e retenção de dados.** -> `/privacidade`
+
 - **Termos de Uso
 
 Regras de uso da plataforma Foto Segundo.** -> `/termos`

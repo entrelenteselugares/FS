@@ -15,26 +15,45 @@
 
 - POLÍTICA DE PRIVACIDADE
 - 1.
+
 CONTROLADOR DOS DADOS
-- 2.
+
+- 1.
+
 DADOS QUE COLETAMOS
+
 - FORNECIDOS POR VOCÊ
 - COLETADOS AUTOMATICAMENTE
-- 3.
+- 1.
+
 COMO USAMOS SEUS DADOS
-- 4.
+
+- 1.
+
 ARMAZENAMENTO E RETENÇÃO
-- 5.
+
+- 1.
+
 COMPARTILHAMENTO DE DADOS
-- 6.
+
+- 1.
+
 SEUS DIREITOS (LGPD)
-- 7.
+
+- 1.
+
 COOKIES
-- 8.
+
+- 1.
+
 SEGURANÇA
-- 9.
+
+- 1.
+
 MENORES DE IDADE
-- 10.
+
+- 1.
+
 ALTERAÇÕES
 
 ## 🔘 Ações e Botões Disponíveis
@@ -53,7 +72,7 @@ ALTERAÇÕES
 ## 🔗 Links de Navegação
 
 - **VOLTAR PARA O INÍCIO** -> `/`
-- **privacidade@fotosegundo.com.br** -> `mailto:privacidade@fotosegundo.com.br`
+- **<privacidade@fotosegundo.com.br>** -> `mailto:privacidade@fotosegundo.com.br`
 
 ## ⚙️ Observações Técnicas e Fluxo
 

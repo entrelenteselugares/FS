@@ -90,7 +90,23 @@ export class EventController {
             tenantLogoUrl: true,
             tenantBrandColor: true
           } },
-          captacao: { select: { id: true, nome: true, profileImageUrl: true } },
+          captacao: { select: { id: true, nome: true, profileImageUrl: true, profissional: {
+            select: {
+              albums: {
+                where: { images: { some: { isHidden: false } } },
+                orderBy: { createdAt: 'desc' },
+                take: 3,
+                select: {
+                  images: {
+                    where: { isHidden: false },
+                    orderBy: { createdAt: 'desc' },
+                    take: 4,
+                    select: { id: true, url: true, thumbnailUrl: true }
+                  }
+                }
+              }
+            }
+          } } },
           edicao: { select: { id: true, nome: true, profileImageUrl: true } },
           media: {
             select: {
@@ -294,6 +310,10 @@ export class EventController {
         postSaleEnabled: (event as any).postSaleEnabled ?? true,
         eventHours: event.eventHours,
         eventDays: event.eventDays,
+        portfolioPhotos: (() => {
+          const albums = (event.captacao as any)?.profissional?.albums ?? [];
+          return albums.flatMap((a: any) => a.images).slice(0, 8) as { id: string; url: string; thumbnailUrl: string | null }[];
+        })(),
       };
 
       // Se o acesso for restrito, limpamos campos sensíveis para evitar vazamento

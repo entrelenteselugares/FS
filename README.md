@@ -39,7 +39,7 @@ cd backend && npx prisma generate
 npm run dev
 ```
 
-2. The application will be running with the API and frontend accessible.
+1. The application will be running with the API and frontend accessible.
 
 ## Core Features & Usage Examples
 
@@ -84,7 +84,6 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines on code standards, commit 
 ## License
 
 © 2026 Foto Segundo. All rights reserved.
-
 
 <!-- GSD-DOCS-UPDATE: VERIFIED -->
 _Documentação verificada e atualizada automaticamente via GSD-SDK em 2026-06-14._

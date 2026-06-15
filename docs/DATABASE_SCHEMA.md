@@ -4,7 +4,7 @@ Esta documentação foi gerada de forma automatizada após a auditoria solicitad
 
 ## 1. Integridade do Schema (Supabase x Prisma)
 
-Após a última sincronização (`npx prisma db push`), confirmamos que a base de dados PostgreSQL no **Supabase** encontra-se **100% íntegra e idêntica** ao `schema.prisma`. 
+Após a última sincronização (`npx prisma db push`), confirmamos que a base de dados PostgreSQL no **Supabase** encontra-se **100% íntegra e idêntica** ao `schema.prisma`.
 Todas as tabelas e colunas, incluindo os recém adicionados campos da fase 54 (MVP), estão ativos e operantes em Produção e Local.
 
 ### Auditoria de Nomenclatura (Naming Conventions)
@@ -20,7 +20,9 @@ Todas as tabelas e colunas, incluindo os recém adicionados campos da fase 54 (M
 ## 2. Atualizações Recentes do Schema
 
 ### Gestão de Serviços & Motor Multi-Vertical
+
 Foram adicionadas novas colunas no modelo `ServiceCatalog` e `ProfessionalService` para suporte ao Motor Multi-Vertical e Serviços Personalizados:
+
 - `eventTypes` (String Array) - Para associar pacotes a tipos específicos de eventos (ex: só Casamento, ou só Evento de Esporte).
 - `pricingType` (FIXED, HOURLY, PER_UNIT) - Flexibilização do modelo de preço.
 - `requiredEquipment` - Filtro de hard-requirements (lentes/câmeras).
@@ -28,6 +30,7 @@ Foram adicionadas novas colunas no modelo `ServiceCatalog` e `ProfessionalServic
 - `availableInVault` - Flag para Cross-sell no Cofre de Memórias do cliente.
 
 ### Gestão de Equipe (Múltiplos Profissionais)
+
 - **Tabela `EventTeamMember` (`event_team_members`):** Permite associar múltiplos profissionais a um evento com funções dinâmicas.
   - `id` (String) - Chave primária.
   - `eventId` (String) - ID do evento correspondente (FK para `Event`).
