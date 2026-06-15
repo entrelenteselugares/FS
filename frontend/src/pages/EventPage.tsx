@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback, Suspense, lazy } from "react";
 import { createPortal } from "react-dom";
 import { useEventStatus } from "../hooks/useEventStatus";
-import { Check, Printer, QrCode, ShoppingCart, Share2, ChevronRight, ChevronLeft, Image as ImageIcon, Camera, MapPin, Clock, ShieldCheck, CheckCircle2, Lock, UserCircle, Search, X, ExternalLink, Download, Archive } from "lucide-react";
+import { Check, Printer, QrCode, ShoppingCart, Share2, ChevronRight, ChevronLeft, Image as ImageIcon, Camera, MapPin, Clock, ShieldCheck, CheckCircle2, Lock, UserCircle, Search, X, Download, Archive } from "lucide-react";
 import { QRCodeCanvas } from "qrcode.react";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { API as api } from "../lib/api";
