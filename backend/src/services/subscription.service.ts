@@ -60,7 +60,7 @@ export class SubscriptionService {
    * Inicializa uma assinatura do Clube do Álbum Sanfona.
    * Cria o registro PENDING e gera a URL do Preapproval no Mercado Pago.
    */
-  static async createSanfonaSubscription(userId: string) {
+  static async createSanfonaSubscription(userId: string, cardTokenId?: string) {
     // 1. Verifica se já existe uma assinatura Sanfona ativa ou pendente para esse usuário
     const existing = await prisma.subscription.findFirst({
       where: { userId, type: "ALBUM_SANFONA", status: { in: ["ACTIVE", "PENDING"] } }
@@ -107,6 +107,10 @@ export class SubscriptionService {
       payer_email: user.email,
       back_url: `${frontendUrl}/minha-conta?tab=files&sanfona=success`,
       notification_url: `${backendUrl}/api/webhooks/mp-subscription`,
+      ...(cardTokenId && {
+        card_token_id: cardTokenId,
+        status: "authorized"
+      })
     });
 
     // Salva o preapprovalId no banco

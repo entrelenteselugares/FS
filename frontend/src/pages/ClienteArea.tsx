@@ -55,6 +55,7 @@ interface Pedido {
  title: string;
  dataEvento: string;
  eventHours?: number | null;
+ eventDays?: number | null;
  description?: string | null;
  location: string;
  city: string | null;
@@ -1040,7 +1041,7 @@ function EventGroupRow({ group, onSelectPedido }: {
             </span>
             <p className="text-[10px] text-theme-text-muted">
               Evento: <strong className="text-theme-text">{eventDateFmt} às {timeFmt}</strong>
-              {event.eventHours ? <span className="ml-1">• {event.eventHours}h</span> : null}
+              {event.eventHours ? <span className="ml-1">• {(event.eventDays && event.eventDays > 1) ? `${event.eventDays}D ` : ""}{event.eventHours}h</span> : null}
             </p>
           </div>
           {(() => {

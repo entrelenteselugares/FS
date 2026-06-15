@@ -88,3 +88,13 @@
 
 Plans:
 - [ ] TBD (run /gsd-plan-phase 72 to break down)
+
+### Phase 73: os status estao seguindo o tempo de duração do evento os eventos estao se ideintificando corretamente com duração em dais e horas que o consumidor solicitou
+
+**Goal:** [To be planned]
+**Requirements**: TBD
+**Depends on:** Phase 72
+**Plans:** 0 plans
+
+Plans:
+- [ ] TBD (run /gsd-plan-phase 73 to break down)

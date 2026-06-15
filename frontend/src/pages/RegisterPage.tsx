@@ -161,6 +161,13 @@ export const RegisterPage: React.FC = () => {
     }
   };
 
+  const handleGoogleLogin = () => {
+    const refCode = inviteOwnerRef || searchParams.get("ref") || localStorage.getItem("fs_referral");
+    if (role) localStorage.setItem("fs_pending_role", role);
+    if (refCode) localStorage.setItem("fs_referral", refCode);
+    loginWithGoogle();
+  };
+
   const roles = [
     { id: "CLIENTE",      label: "Cliente Privado",   icon: <UserCircle size={14} /> },
     { id: "PROFISSIONAL", label: "Profissional da Rede", icon: <Camera size={14} /> },
@@ -225,7 +232,7 @@ export const RegisterPage: React.FC = () => {
             <div className="space-y-3">
               <button 
                 type="button" 
-                onClick={loginWithGoogle}
+                onClick={handleGoogleLogin}
                 className="w-full bg-white text-gray-800 hover:bg-gray-100 border border-gray-300 h-12 flex items-center justify-center relative rounded-2xl transition-all"
               >
                 <svg viewBox="0 0 24 24" width="18" height="18" xmlns="http://www.w3.org/2000/svg" className="absolute left-4">
@@ -457,7 +464,7 @@ export const RegisterPage: React.FC = () => {
         {/* Footer */}
         <div className="pt-8 flex flex-col md:flex-row justify-between items-center gap-3 md:gap-6 border-t border-theme-border">
            <p className="text-theme-muted text-[9px] font-bold uppercase tracking-[0.3em]">
-            Já possui acesso? <Link to="/login" className="text-theme-text hover:text-brand-tactical ml-2 transition-all">Fazer Login</Link>
+            Já possui acesso? <Link to={`/login${nextUrl ? `?returnUrl=${encodeURIComponent(nextUrl)}` : ""}`} className="text-theme-text hover:text-brand-tactical ml-2 transition-all">Fazer Login</Link>
           </p>
           <div className="flex items-center gap-4">
              <ShieldCheck size={16} className="text-brand-tactical opacity-50" />

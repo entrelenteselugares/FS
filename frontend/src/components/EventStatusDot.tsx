@@ -4,6 +4,7 @@ interface EventStatusDotProps {
   eventDate?: string | null;
   eventEndTime?: string | null;
   eventHours?: number;
+  eventDays?: number;
   isExpired?: boolean;
   active?: boolean;
   /** dot size tailwind class, default "w-2.5 h-2.5" */
@@ -19,12 +20,13 @@ export function EventStatusDot({
   eventDate,
   eventEndTime,
   eventHours = 2,
+  eventDays = 1,
   isExpired,
   active,
   size = "w-2.5 h-2.5",
   showLabel = false,
 }: EventStatusDotProps) {
-  const status = useEventStatus(eventDate, eventEndTime, eventHours, isExpired, active);
+  const status = useEventStatus(eventDate, eventEndTime, eventHours, eventDays, isExpired, active);
 
   return (
     <div className="flex items-center gap-2">

@@ -27,6 +27,7 @@ const UnidadeFixaDashboard = React.lazy(() => import("./pages/UnidadeFixaDashboa
 const ClienteArea = React.lazy(() => import("./pages/ClienteArea"));
 const QuotePage = React.lazy(() => import("./pages/QuotePage").then(m => ({ default: m.QuotePage })));
 const PackageFlowPage = React.lazy(() => import("./pages/quote/PackageFlowPage").then(m => ({ default: m.PackageFlowPage })));
+const CheckoutSanfonaPage = React.lazy(() => import("./pages/CheckoutSanfonaPage"));
 const PartnerFlowPage = React.lazy(() => import("./pages/quote/PartnerFlowPage").then(m => ({ default: m.PartnerFlowPage })));
 const CustomFlowPage = React.lazy(() => import("./pages/quote/CustomFlowPage").then(m => ({ default: m.CustomFlowPage })));
 const PartnerLP = React.lazy(() => import("./pages/PartnerLP").then(m => ({ default: m.PartnerLP })));
@@ -181,6 +182,7 @@ const AnimatedRoutes = () => {
             <Route path="/cotacao/unidades" element={<ProtectedRoute><PartnerFlowPage /></ProtectedRoute>} />
             <Route path="/cotacao/customizado" element={<ProtectedRoute><CustomFlowPage /></ProtectedRoute>} />
             <Route path="/checkout" element={<ProtectedRoute><CheckoutPage /></ProtectedRoute>} />
+            <Route path="/checkout-sanfona" element={<ProtectedRoute><CheckoutSanfonaPage /></ProtectedRoute>} />
             <Route path="/checkout/:orderId" element={<ProtectedRoute><CheckoutPage /></ProtectedRoute>} />
             <Route path="/delivery/:id" element={<ProtectedRoute><LuxuryExperiencePage /></ProtectedRoute>} />
             <Route path="/captura" element={<ProtectedRoute><PhygitalCapture /></ProtectedRoute>} />
@@ -188,7 +190,7 @@ const AnimatedRoutes = () => {
             <Route path="/negocios" element={<ProtectedRoute><BusinessLanding /></ProtectedRoute>} />
             <Route path="/clube" element={<ProtectedRoute><ClubLandingPage /></ProtectedRoute>} />
             <Route path="/flash/:shortId" element={<ProtectedRoute><FlashUnlockPage /></ProtectedRoute>} />
-            <Route path="/embaixador/:slug" element={<ProtectedRoute><AmbassadorPage /></ProtectedRoute>} />
+            <Route path="/embaixador/:slug" element={<AmbassadorPage />} />
             
             {/* World Cup Gamification */}
             <Route path="/album-torcida" element={<ProtectedRoute><AlbumTorcidaPage /></ProtectedRoute>} />

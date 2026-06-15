@@ -992,8 +992,8 @@ export class VaultController {
       const workerUrl = process.env.WORKER_URL;
       if (!workerUrl) {
         console.warn("[VAULT] WORKER_URL não configurado, usando archiver local para zip");
-        const { ZipArchive } = require('archiver');
-        const archive = new ZipArchive({ zlib: { level: 5 } });
+        const archiver = require('archiver');
+        const archive = archiver('zip', { zlib: { level: 5 } });
         res.setHeader('Content-Type', 'application/zip');
         res.setHeader('Content-Disposition', `attachment; filename="${membership.album.nome.replace(/[^a-z0-9]/gi, '_').toLowerCase()}-fotos.zip"`);
         archive.pipe(res);

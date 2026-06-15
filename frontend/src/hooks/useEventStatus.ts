@@ -42,6 +42,7 @@ export function useEventStatus(
   eventDate?: string | null,
   eventEndTime?: string | null,
   eventHours = 2,
+  eventDays = 1,
   isExpired?: boolean,
   active?: boolean
 ): EventStatusInfo {
@@ -75,8 +76,9 @@ export function useEventStatus(
         endMs = null;
       }
     } else if (startMs !== null) {
-      // Fallback: start + eventHours
-      endMs = startMs + eventHours * 60 * 60 * 1000;
+      // Fallback: start + ((eventDays - 1) * 24 + eventHours)
+      const durationHours = (Math.max(0, eventDays - 1) * 24) + eventHours;
+      endMs = startMs + durationHours * 60 * 60 * 1000;
     }
 
     // --- Derived time deltas ---
@@ -195,5 +197,5 @@ export function useEventStatus(
       .join(" ");
 
     return { phase, dotClass, ...tokens };
-  }, [eventDate, eventEndTime, eventHours, isExpired, active, now]);
+  }, [eventDate, eventEndTime, eventHours, eventDays, isExpired, active, now]);
 }

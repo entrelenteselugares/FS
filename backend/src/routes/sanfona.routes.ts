@@ -12,7 +12,9 @@ router.post("/subscribe", requireAuth, async (req: AuthRequest, res: Response) =
     const userId = req.user?.userId;
     if (!userId) return res.status(401).json({ error: "Não autorizado" });
 
-    const result = await SubscriptionService.createSanfonaSubscription(userId);
+    const { cardTokenId } = req.body;
+
+    const result = await SubscriptionService.createSanfonaSubscription(userId, cardTokenId);
     return res.json(result);
   } catch (error: any) {
     console.error("[SANFONA SUBSCRIBE ERROR]:", error.message);

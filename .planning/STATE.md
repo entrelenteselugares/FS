@@ -87,3 +87,8 @@ Last activity: 2026-06-12 — Milestone v15.0 started
 | 2026-05-22 | fast | Remover os grandes títulos redundantes do topo das páginas do dashboard | x |
 | 2026-05-22 | fast | Corrigir nome e redirecionamento das ordens de cofre na área do Cliente | x |
 | 2026-05-22 | fast | Ocultar menu Profissional/Unidade até aprovação do cadastro | x |
+
+## Accumulated Context
+
+### Roadmap Evolution
+- Phase 73 added: os status estao seguindo o tempo de duração do evento os eventos estao se ideintificando corretamente com duração em dais e horas que o consumidor solicitou

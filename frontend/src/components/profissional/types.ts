@@ -18,6 +18,7 @@ export interface EventItem {
   temReels: boolean;
   temFotoImpressa: boolean;
   eventHours: number | null;
+  eventDays?: number | null;
   captacaoId: string | null;
   captacaoStatus: "PENDING" | "ACCEPTED" | "REJECTED";
   edicaoId: string | null;

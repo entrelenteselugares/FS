@@ -47,6 +47,8 @@ interface Event {
   clientName?: string | null;
   clientEmail?: string | null;
   retentionDays?: number;
+  eventHours?: number;
+  eventDays?: number;
 }
 
 interface EventMediaItem {
@@ -575,7 +577,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
                 <td className="p-2 md:p-3 text-[10px] text-brand-tactical uppercase">#{event.id.slice(-6).toUpperCase()}</td>
                 <td className="p-2 md:p-3">
                   <div className="flex items-center gap-2 mb-1">
-                    <EventStatusDot eventDate={event.date} active={event.active} size="w-1.5 h-1.5" />
+                    <EventStatusDot eventDate={event.date} eventHours={event.eventHours} eventDays={event.eventDays} active={event.active} size="w-1.5 h-1.5" />
                   <div className="text-[12px] font-bold text-theme-text uppercase">{event.title}</div>
                 </div>
                 <div className="text-[9px] text-theme-muted font-bold uppercase">{event.city || (event.location?.startsWith("CEP:") ? null : event.location) || "—"}</div>
@@ -621,7 +623,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
                   <Image size={32} className="text-theme-muted opacity-20" />
                 )}
                 <div className="absolute top-3 right-3 bg-black/60 backdrop-blur-md px-2 py-1 rounded-full border border-white/10 flex items-center gap-1.5">
-                  <EventStatusDot eventDate={event.date} active={event.active} size="w-1.5 h-1.5" showLabel />
+                  <EventStatusDot eventDate={event.date} eventHours={event.eventHours} eventDays={event.eventDays} active={event.active} size="w-1.5 h-1.5" showLabel />
                 </div>
               </div>
               <div className="p-4 flex flex-col gap-3">

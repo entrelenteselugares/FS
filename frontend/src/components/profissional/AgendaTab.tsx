@@ -170,7 +170,7 @@ export function AgendaTab({
                       <div className="flex gap-4 text-[9px] text-theme-muted font-bold uppercase tracking-widest">
                         <span className="flex items-center gap-1.5"><MapPin size={11} className="text-brand-tactical opacity-50" /> {ev.location || "Campo"}</span>
                         <span className="flex items-center gap-1.5"><Briefcase size={11} className="text-brand-tactical opacity-50" /> {ev.captacaoId === userId ? "CAPTAÇÃO" : "EDIÇÃO"}</span>
-                        {ev.eventHours && <span className="flex items-center gap-1.5"><Clock size={11} className="text-brand-tactical opacity-50" /> {ev.eventHours}H</span>}
+                        {ev.eventHours && <span className="flex items-center gap-1.5"><Clock size={11} className="text-brand-tactical opacity-50" /> {(ev.eventDays && ev.eventDays > 1) ? `${ev.eventDays}D ` : ""}{ev.eventHours}H</span>}
                       </div>
                     </div>
                   </div>
@@ -291,7 +291,7 @@ export function AgendaTab({
                         <div className="flex gap-4 text-[9px] text-theme-muted font-bold uppercase tracking-widest">
                           <span className="flex items-center gap-1.5"><MapPin size={11} className="text-brand-tactical opacity-50" /> {ev.location || "Campo"}</span>
                           <span className="flex items-center gap-1.5"><Briefcase size={11} className="text-brand-tactical opacity-50" /> {ev.captacaoId === userId ? "CAPTAÇÃO" : "EDIÇÃO"}</span>
-                          {ev.eventHours && <span className="flex items-center gap-1.5"><Clock size={11} className="text-brand-tactical opacity-50" /> {ev.eventHours}H</span>}
+                          {ev.eventHours && <span className="flex items-center gap-1.5"><Clock size={11} className="text-brand-tactical opacity-50" /> {(ev.eventDays && ev.eventDays > 1) ? `${ev.eventDays}D ` : ""}{ev.eventHours}H</span>}
                         </div>
                       </div>
                     </div>

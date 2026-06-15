@@ -359,8 +359,7 @@ export default function EventPage() {
 
   const { addAlbum } = useRecentAlbums();
 
-  const durationHours = (event?.eventDays ? Math.max(0, event.eventDays - 1) * 24 : 0) + (event?.eventHours || 2);
-  const eventStatus = useEventStatus(event?.dataEvento, null, durationHours, event?.isExpired, event?.active);
+  const eventStatus = useEventStatus(event?.dataEvento, null, event?.eventHours || 2, event?.eventDays || 1, event?.isExpired, event?.active);
 
   const eventId = event?.id;
   const eventTitle = event?.title;

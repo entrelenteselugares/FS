@@ -199,6 +199,8 @@ export class MercadoPagoService {
     payer_email: string;
     back_url: string;
     notification_url: string;
+    card_token_id?: string;
+    status?: string;
   }) {
     try {
       const response = await axios.post(

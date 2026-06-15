@@ -350,8 +350,9 @@ export class AuthController {
 
   static async oauthCallback(req: Request, res: Response) {
     try {
-      const { access_token } = req.body;
+      const { access_token, ref, role } = req.body;
       if (!access_token) return res.status(400).json({ error: "Token ausente" });
+      const cleanRole = (role?.toUpperCase() || "CLIENTE") as "ADMIN" | "PROFISSIONAL" | "CARTORIO" | "CLIENTE";
 
       const { data, error } = await supabaseAdmin.auth.getUser(access_token);
       if (error || !data.user) {
@@ -366,6 +367,12 @@ export class AuthController {
       const result = await prisma.$transaction(async (tx) => {
         let user = await tx.user.findUnique({ where: { email } });
         if (!user) {
+          let referredById: string | null = null;
+          if (ref) {
+            const referrer = await tx.user.findUnique({ where: { referralCode: ref } });
+            if (referrer) referredById = referrer.id;
+          }
+
           const newReferralCode = Array.from({length: 8}, () => 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'[Math.floor(Math.random()*36)]).join('');
           const dummyPassword = crypto.randomBytes(16).toString("hex"); // Temporary random password for OAuth users
           user = await tx.user.create({
@@ -374,13 +381,47 @@ export class AuthController {
               email,
               senha: dummyPassword,
               nome: sbUser.user_metadata?.name || sbUser.user_metadata?.full_name || email.split("@")[0],
-              role: "CLIENTE",
-              referralCode: newReferralCode
+              role: cleanRole,
+              referralCode: newReferralCode,
+              referredById
             }
           });
+
+          // Fetch minimum hourly rate to assign to new professionals
+          const minHourlyConfig = await tx.platformConfig.findUnique({ where: { key: "min_hourly_rate" } });
+          const defaultHourlyRate = minHourlyConfig?.value ? Number(minHourlyConfig.value) : 83.58;
+
+          // Create extended profiles based on the selected role
+          if (cleanRole === "PROFISSIONAL") {
+            await tx.profissional.create({
+              data: {
+                userId: user.id,
+                hourlyRate: defaultHourlyRate,
+                workflowType: ["TRADICIONAL"],
+                services: [],
+                equipment: "",
+                otherHabilities: ""
+              }
+            });
+          } else if (cleanRole === "CARTORIO") {
+            await tx.cartorio.create({
+              data: {
+                userId: user.id,
+                razaoSocial: user.nome,
+                address: "",
+                cidade: "",
+                services: []
+              }
+            });
+          }
         }
         return user;
       });
+
+      if (ref) {
+        ReferralService.linkByCode(result.id, ref).catch((e: unknown) => console.error("[Referral Error]:", e));
+      }
+
 
       const payload = { userId: result.id, role: result.role, nome: result.nome, email: result.email };
       const token = generateToken(payload);

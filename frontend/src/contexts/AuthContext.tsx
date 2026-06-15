@@ -73,9 +73,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           // Quando logar pelo Google (ou magic link), sincroniza com o backend customizado
           setLoading(true);
           try {
+            const pendingRole = localStorage.getItem("fs_pending_role");
+            const pendingRef = localStorage.getItem("fs_referral");
+            
             const { data } = await API.post("/auth/oauth-callback", { 
-              access_token: session.access_token 
+              access_token: session.access_token,
+              role: pendingRole,
+              ref: pendingRef
             });
+            
+            localStorage.removeItem("fs_pending_role");
             if (data.token) {
               localStorage.setItem("token", data.token);
               localStorage.setItem("refreshToken", data.refreshToken || "");

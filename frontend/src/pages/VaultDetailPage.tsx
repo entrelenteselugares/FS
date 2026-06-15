@@ -266,11 +266,20 @@ export default function VaultDetailPage() {
     try {
       const proxyUrl = import.meta.env.VITE_API_URL ? `${import.meta.env.VITE_API_URL.replace(/\/$/, '')}/vaults/media/proxy/${selectedPhoto.fileId}` : `/api/vaults/media/proxy/${selectedPhoto.fileId}`;
       const response = await fetch(proxyUrl);
+      if (!response.ok) {
+        throw new Error(`Erro no download: ${response.statusText}`);
+      }
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
-      link.setAttribute('download', `${selectedPhoto.fileId}.${selectedPhoto.type === 'VIDEO' ? 'mp4' : 'jpg'}`);
+      
+      const ext = selectedPhoto.type === 'VIDEO' ? 'mp4' : 'jpg';
+      const fileName = selectedPhoto.fileId.toLowerCase().endsWith(`.${ext}`) 
+        ? selectedPhoto.fileId 
+        : `${selectedPhoto.fileId}.${ext}`;
+        
+      link.setAttribute('download', fileName);
       document.body.appendChild(link);
       link.click();
       link.parentNode?.removeChild(link);
