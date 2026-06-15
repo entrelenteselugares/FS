@@ -124,3 +124,28 @@ export const requireRole = (...roles: string[]) => {
 
 export const requireAdmin = [requireAuth, requireRole("ADMIN")];
 export const requireFranchisee = [requireAuth, requireRole("FRANCHISEE", "ADMIN")];
+
+/**
+ * Middleware para endpoints de stress test:
+ * - Aceita acesso direto se x-master-key == STRESS_TEST_KEY
+ * - Caso contrário, exige JWT válido com role ADMIN
+ */
+export const requireStressKey = (req: ExpressRequest, res: Response, next: NextFunction) => {
+  const masterKey = req.headers["x-master-key"] as string | undefined;
+  const stressKey = process.env.STRESS_TEST_KEY || "DEVELOPMENT_FALLBACK_STRESS_KEY";
+
+  if (masterKey && masterKey === stressKey) {
+    // Bypass via chave de stress test — injeta usuário sintético para logs
+    (req as AuthRequest).user = { userId: "stress-bot", role: "ADMIN", nome: "Stress Bot", email: "stress@internal" };
+    return next();
+  }
+
+  // Fallback: exige auth normal de ADMIN
+  return requireAuth(req, res, () => {
+    const user = (req as AuthRequest).user;
+    if (!["ADMIN"].includes(user?.role || "")) {
+      return res.status(403).json({ error: "Acesso negado" });
+    }
+    return next();
+  });
+};

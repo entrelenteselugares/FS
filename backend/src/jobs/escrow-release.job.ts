@@ -10,6 +10,7 @@ export async function runEscrowReleaseJob() {
     const bookingsToRelease = await prisma.serviceBooking.findMany({
       where: {
         status: "PAID",
+        hasActiveDispute: false,
         createdAt: {
           lte: sevenDaysAgo
         }

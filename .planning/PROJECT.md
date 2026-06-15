@@ -39,6 +39,7 @@ Shipped **v15.0 Native Mobile Experience**. The platform now supports Google OAu
 **Goal:** (Awaiting next planning phase)
 
 **Target features:**
+
 - TBD
 
 <details>

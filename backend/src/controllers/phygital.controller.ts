@@ -139,14 +139,7 @@ export class PhygitalController {
    */
   static async simulate(req: Request, res: Response) {
     try {
-      // Bypass de segurança para Stress Test usando CRON_SECRET
-      const masterKey = req.headers["x-master-key"];
-      const isMaster = masterKey === "FOTO_SEGUNDO_STRESS_2026";
-
-      if (!isMaster && (!(req as any).user || (req as any).user.role !== 'ADMIN')) {
-        return res.status(401).json({ error: "Token inválido ou Chave Mestra ausente." });
-      }
-
+      // Autenticação/bypass já garantidos pelo middleware requireStressKey
       const { eventId, referenceCode, imageUrl, customerName } = req.body;
       
       if (!eventId || !referenceCode) {

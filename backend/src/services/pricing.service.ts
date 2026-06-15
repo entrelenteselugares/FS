@@ -259,7 +259,15 @@ export class PricingService {
     }
 
     // Matriz fica com o resto — afiliado é deduzido da margem da Matriz
-    const matriz = +(amount - (captacao + edicao + cartorio + franchisee + ambassador + owner + affiliateL1Amount + affiliateL2Amount)).toFixed(2);
+    const MATRIZ_FLOOR_PCT = 0.05; // 5% mínimo para cobrir gateway
+    const matrizRaw = +(amount - (captacao + edicao + cartorio + franchisee + ambassador + owner + affiliateL1Amount + affiliateL2Amount)).toFixed(2);
+    const matrizFloor = +(amount * MATRIZ_FLOOR_PCT).toFixed(2);
+
+    if (matrizRaw < matrizFloor) {
+      throw new Error(`Split inválido: fatia da Matriz (${matrizRaw}) abaixo do piso mínimo (${matrizFloor}). Revise as configurações de afiliados ou embaixador.`);
+    }
+
+    const matriz = matrizRaw;
 
     return { 
       matriz, captacao, edicao, cartorio, franchisee, passiveFranchiseeId, 

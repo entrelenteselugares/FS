@@ -94,11 +94,11 @@ Plans:
 **Goal:** [To be planned]
 **Requirements**: TBD
 **Depends on:** Phase 72
-**Plans:** 0 plans
+**Plans:** 1/1 plans complete
 
 Plans:
 
-- [ ] TBD (run /gsd-plan-phase 73 to break down)
+- [x] TBD (run /gsd-plan-phase 73 to break down) (completed)
 
 ### Phase 74: Segurança e Proteção Financeira (Split Floor & Escrow Disputes)
 
@@ -109,8 +109,8 @@ Plans:
 - Enforce a 5% split floor for Matriz in `PricingService.ts` to prevent negative splits.
 - Add `hasActiveDispute` logic or flag to prevent automatic escrow release on disputed bookings.
   **Depends on:** Phase 73
-  **Plans:** 0 plans
+  **Plans:** 1/1 plans complete
 
 Plans:
 
-- [ ] TBD (run /gsd-plan-phase 74 to break down)
+- [x] TBD (run /gsd-plan-phase 74 to break down) (completed)

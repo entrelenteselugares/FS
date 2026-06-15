@@ -15,13 +15,13 @@ created: 2026-06-12
 
 ## Design System
 
-| Property | Value |
-|----------|-------|
-| Tool | tailwindcss |
-| Preset | none |
-| Component library | custom |
-| Icon library | lucide-react |
-| Font | Outfit (Display) / Inter (Body) |
+| Property          | Value                           |
+| ----------------- | ------------------------------- |
+| Tool              | tailwindcss                     |
+| Preset            | none                            |
+| Component library | custom                          |
+| Icon library      | lucide-react                    |
+| Font              | Outfit (Display) / Inter (Body) |
 
 ---
 
@@ -29,15 +29,15 @@ created: 2026-06-12
 
 Declared values (must be multiples of 4):
 
-| Token | Value | Usage |
-|-------|-------|-------|
-| xs | 4px | Icon gaps, inline padding |
-| sm | 8px | Compact element spacing (Bottom Nav icons) |
-| md | 16px | Default element spacing (Padding for Nav items) |
-| lg | 24px | Section padding |
-| xl | 32px | Layout gaps |
-| 2xl | 48px | Major section breaks |
-| 3xl | 64px | Page-level spacing (Bottom padding to prevent content under BottomNav) |
+| Token | Value | Usage                                                                  |
+| ----- | ----- | ---------------------------------------------------------------------- |
+| xs    | 4px   | Icon gaps, inline padding                                              |
+| sm    | 8px   | Compact element spacing (Bottom Nav icons)                             |
+| md    | 16px  | Default element spacing (Padding for Nav items)                        |
+| lg    | 24px  | Section padding                                                        |
+| xl    | 32px  | Layout gaps                                                            |
+| 2xl   | 48px  | Major section breaks                                                   |
+| 3xl   | 64px  | Page-level spacing (Bottom padding to prevent content under BottomNav) |
 
 Exceptions: none
 
@@ -45,23 +45,23 @@ Exceptions: none
 
 ## Typography
 
-| Role | Size | Weight | Line Height |
-|------|------|--------|-------------|
-| Body | 14px | 400 | 1.5 |
-| Label | 10px | 700 | 1.2 |
-| Heading | 24px | 800 | 1.2 |
-| Display | 32px | 900 | 1.1 |
+| Role    | Size | Weight | Line Height |
+| ------- | ---- | ------ | ----------- |
+| Body    | 14px | 400    | 1.5         |
+| Label   | 10px | 700    | 1.2         |
+| Heading | 24px | 800    | 1.2         |
+| Display | 32px | 900    | 1.1         |
 
 ---
 
 ## Color
 
-| Role | Value | Usage |
-|------|-------|-------|
-| Dominant (60%) | var(--bg-card) | Background, surfaces, BottomNav Background |
-| Secondary (30%) | var(--theme-border) | Cards, sidebar, nav borders |
-| Accent (10%) | #10b981 (Emerald 500) | Active Bottom Nav icons, Primary CTA |
-| Destructive | #ef4444 (Red 500) | Destructive actions only (Logout button) |
+| Role            | Value                 | Usage                                      |
+| --------------- | --------------------- | ------------------------------------------ |
+| Dominant (60%)  | var(--bg-card)        | Background, surfaces, BottomNav Background |
+| Secondary (30%) | var(--theme-border)   | Cards, sidebar, nav borders                |
+| Accent (10%)    | #10b981 (Emerald 500) | Active Bottom Nav icons, Primary CTA       |
+| Destructive     | #ef4444 (Red 500)     | Destructive actions only (Logout button)   |
 
 Accent reserved for: Active Navigation Items, Primary Action Buttons.
 
@@ -69,21 +69,21 @@ Accent reserved for: Active Navigation Items, Primary Action Buttons.
 
 ## Copywriting Contract
 
-| Element | Copy |
-|---------|------|
-| Primary CTA | N/A |
-| Nav Vitrine | Vitrine |
-| Nav Albuns | Álbuns |
+| Element          | Copy                   |
+| ---------------- | ---------------------- |
+| Primary CTA      | N/A                    |
+| Nav Vitrine      | Vitrine                |
+| Nav Albuns       | Álbuns                 |
 | Nav Notificacoes | Alertas / Notificações |
-| Nav Perfil | Menu / Perfil |
+| Nav Perfil       | Menu / Perfil          |
 
 ---
 
 ## Registry Safety
 
-| Registry | Blocks Used | Safety Gate |
-|----------|-------------|-------------|
-| shadcn official | none | not required |
+| Registry        | Blocks Used | Safety Gate  |
+| --------------- | ----------- | ------------ |
+| shadcn official | none        | not required |
 
 ---
 

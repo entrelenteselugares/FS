@@ -1185,6 +1185,7 @@ model ServiceBooking {
   bookingFee     Decimal  @db.Decimal(10, 2)
   packageDesc    String
   paymentId      String?
+  hasActiveDispute Boolean @default(false)
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 

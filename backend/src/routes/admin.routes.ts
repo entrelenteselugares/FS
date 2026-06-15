@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { requireAuth, requireRole } from "../lib/auth";
+import { requireAuth, requireRole, requireStressKey } from "../lib/auth";
 import {
   getDashboardStats,
   adminListEvents,
@@ -150,7 +150,8 @@ router.delete("/banners/:id", requireAuth, requireRole("ADMIN"), BannerControlle
 
 // ── Admin: Phygital
 router.get("/phygital/all", requireAuth, requireRole("ADMIN"), PhygitalController.listAllByEvent);
-router.post("/phygital/simulate", requireAuth, requireRole("ADMIN"), PhygitalController.simulate);
+// Rota de stress test: aceita x-master-key válida OU JWT de admin
+router.post("/phygital/simulate", requireStressKey, PhygitalController.simulate);
 
 // ── Admin: Contests
 router.get("/contests", requireAuth, requireRole("ADMIN"), adminListContests);

@@ -2,10 +2,10 @@
 
 ## Active Requirements
 
-*(Awaiting new requirements)*
+_(Awaiting new requirements)_
 
 ## Traceability
 
-*(Awaiting new phases)*
+_(Awaiting new phases)_
 
 ## Out of Scope
