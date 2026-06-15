@@ -57,7 +57,7 @@ function ReferenceCard({ item }: { item: RefItem }) {
         >
           <OptimizedImage src={thumb} alt="Referência YouTube" className="absolute inset-0 w-full h-full opacity-80 group-hover:opacity-100 transition-opacity" />
           <div className="absolute inset-0 flex items-center justify-center">
-            <div className="w-10 h-10 rounded-full bg-red-600/90 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+            <div className="w-10 h-10 rounded-full bg-brand-danger/90 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
               <span className="text-theme-text text-sm ml-0.5">▶</span>
             </div>
           </div>
@@ -133,7 +133,7 @@ function ReferenceCard({ item }: { item: RefItem }) {
 function TacticalBenefit({ icon, title, desc }: { icon: React.ReactNode; title: string; desc: string }) {
   return (
     <div className="flex gap-4 p-4 bg-theme-bg-muted border border-white/5 hover:border-brand-tactical/20 transition-colors group">
-      <div className="p-2 h-fit bg-theme-bg-muted border border-white/5 text-brand-tactical group-hover:bg-brand-tactical group-hover:text-theme-text transition-all">
+      <div className="p-2 h-fit bg-theme-bg-muted border border-white/5 text-brand-tactical group-hover:bg-brand-tactical group-hover:text-brand-text transition-all">
         {icon}
       </div>
       <div className="space-y-1">
@@ -733,7 +733,7 @@ export default function EventPage() {
   })();
 
 return (
-    <div className="min-h-screen bg-theme-bg text-theme-text selection:bg-brand-tactical/30 selection:text-theme-text" onContextMenu={(e) => e.preventDefault()}>
+    <div className="min-h-screen bg-theme-bg text-brand-text selection:bg-brand-tactical/30 selection:text-brand-text" onContextMenu={(e) => e.preventDefault()}>
       <SEO 
         title={event.title} 
         image={getProxyUrl(event.coverPhotoUrl)}
@@ -746,7 +746,7 @@ return (
         <section className="relative flex flex-col bg-theme-bg lg:overflow-y-auto scrollbar-hide">
           <button 
              onClick={() => navigate(-1)} 
-             className="absolute top-6 left-6 z-50 flex items-center gap-2 px-5 py-2.5 bg-theme-bg/60 backdrop-blur-md border border-theme-border rounded-full text-theme-text hover:bg-brand-tactical hover:text-theme-text transition-all shadow-xl"
+             className="absolute top-6 left-6 z-50 flex items-center gap-2 px-5 py-2.5 bg-theme-bg/60 backdrop-blur-md border border-theme-border rounded-full text-brand-text hover:bg-brand-tactical hover:text-brand-text transition-all shadow-xl"
           >
              <ChevronLeft size={16} />
              <span className="text-[10px] font-bold uppercase tracking-widest hidden md:inline">Voltar</span>
@@ -754,7 +754,7 @@ return (
 
           <button 
              onClick={startNativeCameraCapture} 
-             className="absolute top-6 right-6 z-50 flex items-center gap-2 px-5 py-2.5 bg-brand-tactical text-theme-text backdrop-blur-md border border-brand-tactical/50 rounded-full hover:brightness-110 transition-all shadow-[0_0_20px_rgba(133,185,172,0.3)]"
+             className="absolute top-6 right-6 z-50 flex items-center gap-2 px-5 py-2.5 bg-brand-tactical text-brand-text backdrop-blur-md border border-brand-tactical/50 rounded-full hover:brightness-110 transition-all shadow-[0_0_20px_rgba(133,185,172,0.3)]"
           >
              <Camera size={16} />
              <span className="text-[10px] font-bold uppercase tracking-widest">Câmera</span>
@@ -930,10 +930,10 @@ return (
               </motion.div>
               
               <div className="pt-8 flex items-center gap-4 flex-wrap">
-                <button onClick={handleShare} className="px-3 md:px-6 py-5 border border-brand-tactical/30 text-[10px] font-bold text-brand-tactical uppercase tracking-[0.4em] hover:bg-brand-tactical hover:text-theme-text transition-all flex items-center gap-3 hover-lift">
+                <button onClick={handleShare} className="px-3 md:px-6 py-5 border border-brand-tactical/30 text-[10px] font-bold text-brand-tactical uppercase tracking-[0.4em] hover:bg-brand-tactical hover:text-brand-text transition-all flex items-center gap-3 hover-lift">
                   <Share2 size={16} /> CONVIDAR AMIGOS
                 </button>
-                <button onClick={() => setShowQrModal(true)} className="px-3 md:px-6 py-5 border border-brand-tactical/30 text-[10px] font-bold text-brand-tactical uppercase tracking-[0.4em] hover:bg-brand-tactical hover:text-theme-text transition-all flex items-center gap-3 hover-lift">
+                <button onClick={() => setShowQrModal(true)} className="px-3 md:px-6 py-5 border border-brand-tactical/30 text-[10px] font-bold text-brand-tactical uppercase tracking-[0.4em] hover:bg-brand-tactical hover:text-brand-text transition-all flex items-center gap-3 hover-lift">
                   <QrCode size={16} /> QR CODE DE ACESSO
                 </button>
               </div>
@@ -991,19 +991,19 @@ return (
                       <div className="flex bg-theme-bg-muted border border-white/10 rounded-xl overflow-hidden p-1">
                         <button 
                           onClick={() => setFilterMode("ALL")}
-                          className={`px-3 md:px-6 py-2 text-[10px] font-black uppercase tracking-widest transition-all rounded-lg ${filterMode === "ALL" ? "bg-brand-tactical text-theme-text" : "text-theme-muted hover:text-theme-text"}`}
+                          className={`px-3 md:px-6 py-2 text-[10px] font-black uppercase tracking-widest transition-all rounded-lg ${filterMode === "ALL" ? "bg-brand-tactical text-brand-text" : "text-theme-muted hover:text-brand-text"}`}
                         >
                           TODAS
                         </button>
                         <button 
                           onClick={() => setFilterMode("PRO")}
-                          className={`px-3 md:px-6 py-2 text-[10px] font-black uppercase tracking-widest transition-all rounded-lg flex items-center gap-2 ${filterMode === "PRO" ? "bg-brand-tactical text-theme-text" : "text-theme-muted hover:text-theme-text"}`}
+                          className={`px-3 md:px-6 py-2 text-[10px] font-black uppercase tracking-widest transition-all rounded-lg flex items-center gap-2 ${filterMode === "PRO" ? "bg-brand-tactical text-brand-text" : "text-theme-muted hover:text-brand-text"}`}
                         >
                           <Camera size={12} /> PRO
                         </button>
                         <button 
                           onClick={() => setFilterMode("GUEST")}
-                          className={`px-3 md:px-6 py-2 text-[10px] font-black uppercase tracking-widest transition-all rounded-lg flex items-center gap-2 ${filterMode === "GUEST" ? "bg-brand-tactical text-theme-text" : "text-theme-muted hover:text-theme-text"}`}
+                          className={`px-3 md:px-6 py-2 text-[10px] font-black uppercase tracking-widest transition-all rounded-lg flex items-center gap-2 ${filterMode === "GUEST" ? "bg-brand-tactical text-brand-text" : "text-theme-muted hover:text-brand-text"}`}
                         >
                           <UserCircle size={12} /> CONVIDADOS
                         </button>
@@ -1014,7 +1014,7 @@ return (
                           href={`/phygital-capture?e=${event.id}&auto=1`}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="hidden md:flex items-center gap-3 px-4 md:px-8 py-5 bg-brand-tactical text-theme-text text-[10px] font-bold uppercase tracking-widest hover:brightness-110 transition-all shadow-lg shadow-brand-tactical/20"
+                          className="hidden md:flex items-center gap-3 px-4 md:px-8 py-5 bg-brand-tactical text-brand-text text-[10px] font-bold uppercase tracking-widest hover:brightness-110 transition-all shadow-lg shadow-brand-tactical/20"
                         >
                           <Camera size={18} /> ABRIR CÂMERA
                         </a>
@@ -1043,14 +1043,14 @@ return (
                             <div className="flex flex-col sm:flex-row gap-4">
                               <button 
                                 onClick={() => window.location.reload()}
-                                className="px-4 md:px-8 py-4 border border-theme-border text-[10px] font-bold text-theme-text-muted uppercase tracking-widest hover:border-brand-tactical hover:text-theme-text hover:bg-brand-tactical/10 transition-all"
+                                className="px-4 md:px-8 py-4 border border-theme-border text-[10px] font-bold text-brand-text-muted uppercase tracking-widest hover:border-brand-tactical hover:text-brand-text hover:bg-brand-tactical/10 transition-all"
                               >
                                 Sincronizar Galeria
                               </button>
                               {(isMarketplace && qrOpen) && (
                                 <button 
                                   onClick={() => setShowQrModal(true)}
-                                  className="px-4 md:px-8 py-4 bg-brand-tactical text-theme-text font-bold uppercase tracking-widest text-[10px] shadow-[0_15px_30px_rgba(20,184,166,0.3)] flex items-center gap-3"
+                                  className="px-4 md:px-8 py-4 bg-brand-tactical text-brand-text font-bold uppercase tracking-widest text-[10px] shadow-[0_15px_30px_rgba(20,184,166,0.3)] flex items-center gap-3"
                                 >
                                   <QrCode size={18} /> TRANSMITIR MINHAS FOTOS
                                 </button>
@@ -1063,7 +1063,7 @@ return (
                                       setStep("checkout");
                                     }
                                   }}
-                                  className="px-4 md:px-8 py-4 bg-white text-theme-text font-bold uppercase tracking-widest text-[10px] flex items-center gap-3 hover:bg-brand-tactical transition-colors"
+                                  className="px-4 md:px-8 py-4 bg-white text-gray-800 font-bold uppercase tracking-widest text-[10px] flex items-center gap-3 hover:bg-brand-tactical transition-colors"
                                 >
                                   <ShoppingCart size={18} /> COMPRAR PRÉ-VENDA (ALBUM COMPLETO)
                                 </button>
@@ -1142,7 +1142,7 @@ return (
                                   <button
                                     onClick={handleDownloadAll}
                                     disabled={isDownloading}
-                                    className="px-4 py-2.5 bg-brand-tactical text-theme-text text-[9px] font-bold uppercase tracking-widest hover:brightness-110 transition-all flex items-center gap-2 rounded-xl disabled:opacity-40"
+                                    className="px-4 py-2.5 bg-brand-tactical text-brand-text text-[9px] font-bold uppercase tracking-widest hover:brightness-110 transition-all flex items-center gap-2 rounded-xl disabled:opacity-40"
                                   >
                                     <Archive size={13} /> ÁLBUM COMPLETO ({filteredMedias.length})
                                   </button>
@@ -1200,7 +1200,7 @@ return (
                  <div className="grid grid-cols-2 gap-2">
                     <button 
                       onClick={() => qrOpen && setShowQrModal(true)}
-                      className={`w-full py-4 bg-[var(--bg-card)] border border-brand-tactical/30 text-brand-tactical text-[9px] lg:text-[10px] font-black uppercase tracking-widest transition-all italic flex items-center justify-center gap-2 ${!qrOpen ? 'opacity-30 cursor-not-allowed grayscale' : 'hover:bg-brand-tactical hover:text-theme-text'}`}
+                      className={`w-full py-4 bg-[var(--bg-card)] border border-brand-tactical/30 text-brand-tactical text-[9px] lg:text-[10px] font-black uppercase tracking-widest transition-all italic flex items-center justify-center gap-2 ${!qrOpen ? 'opacity-30 cursor-not-allowed grayscale' : 'hover:bg-brand-tactical hover:text-brand-text'}`}
                       disabled={!qrOpen}
                     >
                       <QrCode size={16} /> {!qrOpen ? 'ENCERRADAS' : 'QR CODE'}
@@ -1236,7 +1236,7 @@ return (
                  {qrOpen && (
                    <button 
                      onClick={() => setShowQrModal(true)}
-                     className="w-full py-4 bg-brand-tactical text-theme-text text-[10px] font-bold uppercase tracking-widest hover:brightness-110 transition-all flex items-center justify-center gap-3"
+                     className="w-full py-4 bg-brand-tactical text-brand-text text-[10px] font-bold uppercase tracking-widest hover:brightness-110 transition-all flex items-center justify-center gap-3"
                    >
                      MOSTRAR QR CODE
                    </button>
@@ -1250,8 +1250,8 @@ return (
                   <div className="space-y-8 bg-zinc-950/80 border border-zinc-800/80 p-4 md:p-8 rounded-2xl relative overflow-hidden backdrop-blur-md shadow-2xl">
                     <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-red-500 via-amber-500 to-red-500" />
                     <div className="flex items-center gap-3">
-                      <Lock size={18} className="text-amber-500 animate-pulse" />
-                      <span className="text-[10px] font-bold text-amber-500 uppercase tracking-widest">Álbum Privado</span>
+                      <Lock size={18} className="text-brand-warning animate-pulse" />
+                      <span className="text-[10px] font-bold text-brand-warning uppercase tracking-widest">Álbum Privado</span>
                     </div>
                     <div className="space-y-4">
                       <h4 className="text-md font-heading font-bold text-theme-text uppercase">Aguardando Liberação</h4>
@@ -1265,7 +1265,7 @@ return (
                       </p>
                       <button 
                         onClick={() => navigate("/login")}
-                        className="w-full h-16 bg-brand-tactical text-theme-text text-[10px] font-bold uppercase tracking-widest text-center hover:brightness-110 transition-all flex items-center justify-center gap-3"
+                        className="w-full h-16 bg-brand-tactical text-brand-text text-[10px] font-bold uppercase tracking-widest text-center hover:brightness-110 transition-all flex items-center justify-center gap-3"
                       >
                         FAZER LOGIN DO CONTRATANTE
                       </button>
@@ -1325,7 +1325,7 @@ return (
                           {!eventPhysicalItems.length ? (
                             <button 
                               onClick={() => setShowPrintStore(true)} 
-                              className="text-[9px] font-bold uppercase text-zinc-950 bg-brand-tactical px-3 py-1.5 hover:bg-white transition-all rounded-md"
+                              className="text-[9px] font-bold uppercase text-zinc-950 bg-brand-tactical px-3 py-1.5 hover:bg-brand-hover transition-all rounded-md"
                             >
                               Adicionar
                             </button>
@@ -1334,7 +1334,7 @@ return (
                               onClick={() => {
                                 eventPhysicalItems.forEach(item => removePhysicalItem(item.productId));
                               }} 
-                              className="text-[9px] font-bold uppercase text-red-500 hover:text-theme-text transition-all"
+                              className="text-[9px] font-bold uppercase text-brand-danger hover:text-theme-text transition-all"
                             >
                               Remover
                             </button>
@@ -1357,7 +1357,7 @@ return (
                       {((isMarketplace || (!event.hasAccess && (event.isPrimaryClient || event.isOwner)) || eventCart.length > 0 || eventPhysicalItems.length > 0) && !event.allowFreeDownload) && (
                         <button 
                           onClick={handleUnlockClick} 
-                          className="group relative w-full h-16 lg:h-24 rounded-xl bg-brand-tactical text-theme-text font-bold uppercase tracking-[0.1em] lg:tracking-[0.4em] text-[9px] lg:text-xs flex items-center justify-center gap-2 lg:gap-5 overflow-hidden transition-all shadow-2xl shadow-brand-tactical/30 hover-lift"
+                          className="group relative w-full h-16 lg:h-24 rounded-xl bg-brand-tactical text-brand-text font-bold uppercase tracking-[0.1em] lg:tracking-[0.4em] text-[9px] lg:text-xs flex items-center justify-center gap-2 lg:gap-5 overflow-hidden transition-all shadow-2xl shadow-brand-tactical/30 hover-lift"
                         >
                           <div className="absolute inset-0 bg-white translate-x-[-100%] group-hover:translate-x-0 transition-transform duration-700 opacity-20" />
                           <span className="relative z-10 text-center px-2 leading-tight">
@@ -1453,7 +1453,7 @@ return (
               <span className="text-sm font-bold text-theme-text-muted/60">,00</span>
             </div>
           </div>
-          <button onClick={handleUnlockClick} className="px-3 md:px-6 md:px-12 py-5 bg-brand-tactical text-theme-text font-bold uppercase tracking-widest text-[11px] shadow-[0_15px_30px_rgba(20,184,166,0.3)]">DESBLOQUEAR</button>
+          <button onClick={handleUnlockClick} className="px-3 md:px-6 md:px-12 py-5 bg-brand-tactical text-brand-text font-bold uppercase tracking-widest text-[11px] shadow-[0_15px_30px_rgba(20,184,166,0.3)]">DESBLOQUEAR</button>
         </motion.div>
       )}
 
@@ -1462,7 +1462,7 @@ return (
         user ? (
           <Modal isOpen={true} onClose={() => setStep("paywall")} title="Álbum Privado">
             <div className="flex flex-col items-center gap-4 md:gap-8 py-5 md:py-10 text-center">
-              <div className="p-4 bg-red-500/10 text-red-500 rounded-full">
+              <div className="p-4 bg-brand-danger/10 text-brand-danger rounded-full">
                 <Lock size={32} />
               </div>
               <div className="space-y-4">
@@ -1472,7 +1472,7 @@ return (
                 <p className="text-[10px] font-bold text-brand-tactical uppercase tracking-widest">Protocolo de Segurança Ativo</p>
               </div>
               <div className="flex flex-col w-full gap-4 pt-6">
-                <a href="https://wa.me/5519981150440" target="_blank" rel="noreferrer" className="w-full py-4 bg-brand-tactical text-theme-text text-[10px] font-bold uppercase tracking-widest text-center shadow-lg shadow-brand-tactical/20">FALAR COM SUPORTE</a>
+                <a href="https://wa.me/5519981150440" target="_blank" rel="noreferrer" className="w-full py-4 bg-brand-tactical text-brand-text text-[10px] font-bold uppercase tracking-widest text-center shadow-lg shadow-brand-tactical/20">FALAR COM SUPORTE</a>
                 <button onClick={() => setStep("paywall")} className="w-full py-4 border border-theme-border text-theme-text-muted text-[10px] font-bold uppercase tracking-widest">VOLTAR</button>
               </div>
             </div>

@@ -717,7 +717,7 @@ const CheckoutPageInner = () => {
             ) : (
               <button 
                 onClick={() => navigate("/")}
-                className="w-full py-5 bg-brand-tactical text-theme-text text-[10px] font-bold uppercase tracking-[0.4em] hover:bg-white transition-all"
+                className="w-full py-5 bg-brand-tactical text-brand-text text-[10px] font-bold uppercase tracking-[0.4em] hover:bg-brand-hover transition-all"
               >
                 Voltar para a Vitrine
               </button>
@@ -797,13 +797,13 @@ const CheckoutPageInner = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <button 
               onClick={() => { clearCart(); navigate("/"); }}
-              className="py-5 border border-white/10 text-[10px] font-bold uppercase tracking-[0.4em] hover:bg-red-500/10 hover:text-red-500 transition-all"
+              className="py-5 border border-white/10 text-[10px] font-bold uppercase tracking-[0.4em] hover:bg-brand-danger/10 hover:text-brand-danger transition-all"
             >
               Limpar e Sair
             </button>
             <button 
               disabled={true}
-              className="py-5 bg-brand-tactical/50 text-theme-text/50 text-[10px] font-bold uppercase tracking-[0.4em] transition-all cursor-not-allowed"
+              className="py-5 bg-brand-tactical/50 text-brand-text/50 text-[10px] font-bold uppercase tracking-[0.4em] transition-all cursor-not-allowed"
             >
               Processando...
             </button>
@@ -816,7 +816,7 @@ const CheckoutPageInner = () => {
   if (error || !order) return (
     <div className="min-h-screen bg-theme-bg flex flex-col items-center justify-center p-4 md:p-8 text-center">
       <div className="space-y-6 max-w-md animate-in fade-in slide-in-from-bottom-8 duration-700">
-        <h2 className="text-2xl md:text-4xl md:text-5xl font-heading font-bold text-red-500 uppercase leading-none">
+        <h2 className="text-2xl md:text-4xl md:text-5xl font-heading font-bold text-brand-danger uppercase leading-none">
           Identidade de <br/> Compra Expirada
         </h2>
         <p className="text-[10px] text-theme-text-muted font-bold uppercase tracking-[0.2em] leading-relaxed max-w-xs mx-auto">
@@ -830,7 +830,7 @@ const CheckoutPageInner = () => {
               localStorage.removeItem('fs_cart_digital');
               navigate('/');
             }}
-            className="w-full px-4 md:px-8 py-4 bg-zinc-800 text-theme-text text-[10px] font-bold uppercase tracking-[0.4em] hover:bg-white hover:text-theme-text transition-all shadow-2xl"
+            className="w-full px-4 md:px-8 py-4 bg-zinc-800 text-gray-800 text-[10px] font-bold uppercase tracking-[0.4em] hover:bg-white hover:text-gray-800 transition-all shadow-2xl"
           >
             Limpar e Voltar para a Vitrine
           </button>
@@ -870,7 +870,7 @@ const CheckoutPageInner = () => {
             <div className="pt-8">
               <button 
                 onClick={() => navigate("/minha-conta")}
-                className="w-full py-5 bg-brand-tactical text-theme-text text-[10px] font-bold uppercase tracking-[0.4em] hover:bg-white transition-all"
+                className="w-full py-5 bg-brand-tactical text-brand-text text-[10px] font-bold uppercase tracking-[0.4em] hover:bg-brand-hover transition-all"
               >
                 Acessar Minha Galeria
               </button>
@@ -1172,7 +1172,7 @@ const CheckoutPageInner = () => {
                        <button 
                          onClick={handleManualCouponSubmit}
                          disabled={applyingCoupon}
-                         className="px-3 md:px-6 bg-brand-tactical text-theme-text text-[10px] font-bold uppercase tracking-widest hover:bg-white transition-all disabled:opacity-50"
+                         className="px-3 md:px-6 bg-brand-tactical text-brand-text text-[10px] font-bold uppercase tracking-widest hover:bg-brand-hover transition-all disabled:opacity-50"
                        >
                          {applyingCoupon ? "Aplicando..." : "Aplicar"}
                        </button>
@@ -1203,7 +1203,7 @@ const CheckoutPageInner = () => {
                          alert((err as { response?: { data?: { error?: string } } }).response?.data?.error || "Erro ao processar cupom.");
                        }
                      }}
-                     className="w-full py-5 bg-brand-tactical text-theme-text text-[12px] font-bold uppercase tracking-[0.4em] hover:bg-white transition-all shadow-2xl rounded-2xl"
+                     className="w-full py-5 bg-brand-tactical text-brand-text text-[12px] font-bold uppercase tracking-[0.4em] hover:bg-brand-hover transition-all shadow-2xl rounded-2xl"
                    >
                      Resgatar Gratuitamente
                    </button>
@@ -1236,7 +1236,7 @@ const CheckoutPageInner = () => {
                            setCopied(true);
                            setTimeout(() => setCopied(false), 2000);
                          }}
-                         className={`w-full py-5 text-[10px] font-black uppercase tracking-widest transition-all border rounded-2xl flex items-center justify-center gap-3 ${copied ? 'bg-emerald-500 border-emerald-500 text-theme-text' : 'bg-zinc-900 border-white/5 text-theme-text hover:border-brand-tactical shadow-2xl'}`}
+                         className={`w-full py-5 text-[10px] font-black uppercase tracking-widest transition-all border rounded-2xl flex items-center justify-center gap-3 ${copied ? 'bg-brand-tactical border-brand-tactical text-brand-text' : 'bg-zinc-900 border-white/5 text-brand-text hover:border-brand-tactical shadow-2xl'}`}
                       >
                          {copied ? <Check size={14} /> : <Copy size={14} />}
                          {copied ? "CÓDIGO COPIADO!" : "COPIAR CÓDIGO PIX"}
@@ -1275,10 +1275,10 @@ const CheckoutPageInner = () => {
                         autoFocus
                       />
                     </div>
-                    {localAuthError && <p className="text-[9px] text-red-500 font-bold mt-4 uppercase tracking-widest">{localAuthError}</p>}
+                    {localAuthError && <p className="text-[9px] text-brand-danger font-bold mt-4 uppercase tracking-widest">{localAuthError}</p>}
                     <button 
                       type="submit"
-                      className="w-full mt-8 py-5 bg-brand-tactical text-theme-text text-[10px] font-bold uppercase tracking-[0.4em] hover:bg-white transition-all rounded-2xl"
+                      className="w-full mt-8 py-5 bg-brand-tactical text-brand-text text-[10px] font-bold uppercase tracking-[0.4em] hover:bg-brand-hover transition-all rounded-2xl"
                     >
                       {authLoading ? "CONECTANDO..." : "Continuar para Pagamento"}
                     </button>
@@ -1302,10 +1302,10 @@ export const CheckoutPage = () => (
   <Sentry.ErrorBoundary 
     fallback={({ resetError }) => (
       <div className="min-h-screen bg-theme-bg flex flex-col items-center justify-center p-8 text-center space-y-6">
-        <ShieldCheck size={48} className="text-red-500" />
+        <ShieldCheck size={48} className="text-brand-danger" />
         <h2 className="text-2xl font-bold text-theme-text uppercase tracking-widest">Falha Crítica Identificada</h2>
         <p className="text-theme-text-muted text-xs uppercase tracking-widest max-w-sm">Nossos sistemas identificaram um erro ao tentar processar o ambiente seguro. A equipe de engenharia já foi notificada. Seu cartão não foi cobrado.</p>
-        <button onClick={resetError} className="px-6 py-3 bg-brand-tactical text-theme-text uppercase tracking-widest text-xs font-bold hover:bg-white transition-all">
+        <button onClick={resetError} className="px-6 py-3 bg-brand-tactical text-brand-text uppercase tracking-widest text-xs font-bold hover:bg-brand-hover transition-all">
           Tentar Novamente
         </button>
       </div>

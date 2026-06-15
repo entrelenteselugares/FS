@@ -100,7 +100,7 @@ export const ClubLandingPage = () => {
               </div>
               <div className="flex gap-4">
                 <div className="mt-1 w-8 h-8 rounded-full bg-theme-bg-muted flex items-center justify-center shrink-0 border border-white/10">
-                  <Package size={16} className="text-blue-500" />
+                  <Package size={16} className="text-brand-info" />
                 </div>
                 <div>
                   <h3 className="text-theme-text font-bold uppercase tracking-wide text-sm">Frete Incluso e Envios Seguros</h3>
@@ -146,7 +146,7 @@ export const ClubLandingPage = () => {
                   <button 
                     onClick={handleSubscribe}
                     disabled={loading}
-                    className="w-full bg-brand-tactical hover:bg-brand-tactical/90 text-theme-text font-bold uppercase tracking-[0.2em] text-[12px] py-5 rounded-xl transition-all shadow-[0_0_40px_rgba(20,184,166,0.3)] hover:shadow-[0_0_60px_rgba(20,184,166,0.5)] active:scale-95 disabled:opacity-50 disabled:active:scale-100 flex items-center justify-center gap-2"
+                    className="w-full bg-brand-tactical hover:bg-brand-tactical/90 text-brand-text font-bold uppercase tracking-[0.2em] text-[12px] py-5 rounded-xl transition-all shadow-[0_0_40px_rgba(20,184,166,0.3)] hover:shadow-[0_0_60px_rgba(20,184,166,0.5)] active:scale-95 disabled:opacity-50 disabled:active:scale-100 flex items-center justify-center gap-2"
                   >
                     {loading ? "Processando..." : "Assinar Agora"}
                     {!loading && <Zap size={16} fill="currentColor" />}

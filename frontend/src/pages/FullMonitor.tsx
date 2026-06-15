@@ -93,7 +93,7 @@ export default function FullMonitor() {
   }
 
   return (
-    <div data-theme="dark" className="h-screen w-screen bg-theme-bg text-theme-text selection:bg-brand-tactical/30 relative overflow-hidden">
+    <div data-theme="dark" className="h-screen w-screen bg-theme-bg text-brand-text selection:bg-brand-tactical/30 relative overflow-hidden">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(20,184,166,0.08),transparent_70%)] pointer-events-none" />
 
 
@@ -255,7 +255,7 @@ export default function FullMonitor() {
             <button
               onClick={handlePrint}
               disabled={selected.length === 0}
-              className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest bg-brand-tactical text-theme-text hover:bg-brand-tactical/80 disabled:opacity-40 disabled:cursor-not-allowed transition-all rounded-full px-4 py-2 shadow-lg shadow-brand-tactical/20"
+              className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest bg-brand-tactical text-brand-text hover:bg-brand-tactical/80 disabled:opacity-40 disabled:cursor-not-allowed transition-all rounded-full px-4 py-2 shadow-lg shadow-brand-tactical/20"
             >
               <Printer size={14} />
               Imprimir ({selected.length})
@@ -307,7 +307,7 @@ export default function FullMonitor() {
                             <Check size={14} className="text-theme-text" strokeWidth={3} />
                           </div>
                         ) : (
-                          <div className="w-7 h-7 rounded-full border-2 border-white/40 bg-black/30 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                          <div className="w-7 h-7 rounded-full border-2 border-white/40 bg-black/30 backdrop-blur-sm flex items-center justify-center opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity duration-200">
                             <div className="w-2 h-2 rounded-full bg-white/60" />
                           </div>
                         )}
@@ -397,7 +397,7 @@ export default function FullMonitor() {
               </div>
               <button
                 onClick={() => { navigator.clipboard.writeText(captureUrl); }}
-                className="w-full mt-4 py-2.5 bg-brand-tactical text-theme-text text-xs font-bold uppercase tracking-widest rounded-xl hover:bg-brand-tactical/80 transition-colors"
+                className="w-full mt-4 py-2.5 bg-brand-tactical text-brand-text text-xs font-bold uppercase tracking-widest rounded-xl hover:bg-brand-tactical/80 transition-colors"
               >
                 Copiar Link
               </button>

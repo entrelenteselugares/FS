@@ -56,7 +56,7 @@ export const QuoteLandingView: React.FC<QuoteLandingViewProps> = ({ selectFlow }
           <div 
             key={i}
             className={`absolute inset-0 bg-cover bg-center mix-blend-luminosity transition-opacity duration-1000 ease-in-out ${
-              i === currentIndex ? 'opacity-40 z-0' : 'opacity-0 -z-10'
+              i === currentIndex ? 'opacity-40 z-0' : 'opacity-0 pointer-events-none -z-10'
             }`}
             style={{ backgroundImage: `url('${cover}')` }}
           />

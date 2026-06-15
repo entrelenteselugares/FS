@@ -119,22 +119,22 @@ export default function AccessTypeModal({ orderId, eventTitle, isPrimaryClient, 
             onClick={() => setSelected("PRIVATE")}
             className={`w-full text-left p-4 border transition-all duration-300 relative group
               ${selected === "PRIVATE" 
-                ? "bg-red-500/5 border-red-500/50 shadow-[0_0_20px_-10px_rgba(239,68,68,0.2)]" 
+                ? "bg-brand-danger/5 border-brand-danger/50 shadow-[0_0_20px_-10px_rgba(239,68,68,0.2)]" 
                 : "bg-theme-bg-muted border-theme-border hover:border-theme-text/30"}`}
           >
             <div className="flex justify-between items-start mb-3">
               <div className="flex items-center gap-3">
                 <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center transition-colors
-                  ${selected === "PRIVATE" ? "border-red-500" : "border-theme-border"}`}>
-                  {selected === "PRIVATE" && <div className="w-2 h-2 rounded-full bg-red-500" />}
+                  ${selected === "PRIVATE" ? "border-brand-danger" : "border-theme-border"}`}>
+                  {selected === "PRIVATE" && <div className="w-2 h-2 rounded-full bg-brand-danger" />}
                 </div>
                 <span className="flex items-center gap-2 text-[12px] font-bold uppercase tracking-[0.2em] text-theme-text">
-                    <Lock size={12} className={selected === "PRIVATE" ? "text-red-500" : "text-theme-muted"} />
+                    <Lock size={12} className={selected === "PRIVATE" ? "text-brand-danger" : "text-theme-muted"} />
                     Privado
                 </span>
               </div>
               <span className={`text-[10px] font-black uppercase tracking-[0.2em] px-2 py-0.5 border transition-colors
-                ${selected === "PRIVATE" ? "bg-red-500/10 border-red-500 text-red-500" : "bg-theme-bg border-theme-border text-theme-muted"}`}>
+                ${selected === "PRIVATE" ? "bg-brand-danger/10 border-brand-danger text-brand-danger" : "bg-theme-bg border-theme-border text-theme-muted"}`}>
                 15 DIAS
               </span>
             </div>
@@ -145,7 +145,7 @@ export default function AccessTypeModal({ orderId, eventTitle, isPrimaryClient, 
             </p>
             {selected === "PRIVATE" && (
                 <div 
-                    className="ml-7 mt-3 p-2 bg-red-500/10 border-l-2 border-red-500 text-[10px] text-red-500 uppercase font-bold tracking-widest leading-relaxed"
+                    className="ml-7 mt-3 p-2 bg-brand-danger/10 border-l-2 border-brand-danger text-[10px] text-brand-danger uppercase font-bold tracking-widest leading-relaxed"
                 >
                     <AlertTriangle size={12} className="inline mr-2" />
                     Após o prazo, os registros serão deletados.
@@ -164,7 +164,7 @@ export default function AccessTypeModal({ orderId, eventTitle, isPrimaryClient, 
           </div>
 
           {error && (
-            <div className="p-3 bg-red-500/10 border border-red-500/30 text-red-500 text-[10px] font-bold uppercase tracking-widest text-center">
+            <div className="p-3 bg-brand-danger/10 border border-brand-danger/30 text-brand-danger text-[10px] font-bold uppercase tracking-widest text-center">
               {error}
             </div>
           )}

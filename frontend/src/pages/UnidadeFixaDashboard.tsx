@@ -409,9 +409,9 @@ export default function UnidadeFixaDashboard({
         {(error || success) && (
           <div className="fixed bottom-10 right-10 z-[100] animate-in slide-in-from-right duration-500">
             {error && (
-              <div className="bg-red-500/10 border border-red-500/20 backdrop-blur-md px-4 md:px-8 py-4 flex items-center gap-4 shadow-2xl">
-                <X size={18} className="text-red-500" />
-                <p className="text-[10px] font-bold text-red-500 uppercase tracking-widest">{error}</p>
+              <div className="bg-brand-danger/10 border border-brand-danger/20 backdrop-blur-md px-4 md:px-8 py-4 flex items-center gap-4 shadow-2xl">
+                <X size={18} className="text-brand-danger" />
+                <p className="text-[10px] font-bold text-brand-danger uppercase tracking-widest">{error}</p>
                 <button onClick={() => setError("")} className="ml-4 opacity-40 hover:opacity-100"><X size={14} /></button>
               </div>
             )}
@@ -487,16 +487,16 @@ export default function UnidadeFixaDashboard({
 
         {/* Alerta de Insumos Phygital */}
         {!loading && user?.franchiseProfile && user.franchiseProfile.printCredits < 500 && (
-          <div className="bg-red-500/10 border border-red-500/30 p-3 md:p-6 flex flex-col md:flex-row md:items-center gap-3 md:gap-6 shadow-2xl relative overflow-hidden group">
-             <AlertTriangle size={24} className="text-red-500 shrink-0 animate-pulse" />
+          <div className="bg-brand-danger/10 border border-brand-danger/30 p-3 md:p-6 flex flex-col md:flex-row md:items-center gap-3 md:gap-6 shadow-2xl relative overflow-hidden group">
+             <AlertTriangle size={24} className="text-brand-danger shrink-0 animate-pulse" />
              <div className="space-y-2 relative z-10 flex-1">
-                <p className="text-[11px] font-bold text-red-500 uppercase tracking-[0.4em]">Alerta Estratégico: Nível Crítico de Insumos</p>
+                <p className="text-[11px] font-bold text-brand-danger uppercase tracking-[0.4em]">Alerta Estratégico: Nível Crítico de Insumos</p>
                 <p className="text-[10px] font-bold text-theme-text/80 uppercase tracking-widest max-w-3xl leading-relaxed">
-                   Atenção Operacional: Sua unidade tem apenas <span className="text-red-400 font-bold">{user.franchiseProfile.printCredits} créditos</span> restantes para impressões Phygital. 
+                   Atenção Operacional: Sua unidade tem apenas <span className="text-brand-danger font-bold">{user.franchiseProfile.printCredits} créditos</span> restantes para impressões Phygital. 
                    A operação será bloqueada ao chegar a zero. Solicite reposição imediata de papel fotográfico e ribbons.
                 </p>
              </div>
-             <button onClick={() => setTab("franquia")} className="px-3 md:px-6 py-3 bg-red-500/10 border border-red-500/40 text-[9px] font-bold text-red-500 uppercase tracking-widest hover:bg-red-500 hover:text-theme-text transition-all whitespace-nowrap">
+             <button onClick={() => setTab("franquia")} className="px-3 md:px-6 py-3 bg-brand-danger/10 border border-brand-danger/40 text-[9px] font-bold text-brand-danger uppercase tracking-widest hover:bg-brand-danger hover:text-white transition-all whitespace-nowrap">
                 Solicitar Reposição
              </button>
              <div className="absolute -right-10 -top-10 opacity-5 pointer-events-none group-hover:scale-110 transition-transform duration-700">
@@ -559,7 +559,7 @@ export default function UnidadeFixaDashboard({
                   </div>
                </div>
                <div className="bg-theme-bg-muted p-4 md:p-6 flex flex-col md:flex-row justify-center items-center gap-3 md:gap-5 text-center md:text-left">
-                  <div className="w-10 h-10 shrink-0 rounded-full bg-blue-500 flex items-center justify-center text-blue-500 border border-blue-500">
+                  <div className="w-10 h-10 shrink-0 rounded-full bg-brand-info flex items-center justify-center text-brand-info border border-brand-info">
                     <Users2 size={18} />
                   </div>
                   <div className="overflow-hidden w-full">
@@ -568,7 +568,7 @@ export default function UnidadeFixaDashboard({
                   </div>
                </div>
                <div className="bg-theme-bg-muted p-4 md:p-6 flex flex-col md:flex-row justify-center items-center gap-3 md:gap-5 text-center md:text-left">
-                  <div className="w-10 h-10 shrink-0 rounded-full bg-amber-500/10 flex items-center justify-center text-amber-500 border border-amber-500/20">
+                  <div className="w-10 h-10 shrink-0 rounded-full bg-brand-warning/10 flex items-center justify-center text-brand-warning border border-brand-warning/20">
                     <ShieldCheck size={18} />
                   </div>
                   <div className="overflow-hidden w-full">
@@ -601,7 +601,7 @@ export default function UnidadeFixaDashboard({
                     </div>
                     <button 
                       onClick={() => navigate(lpSlug ? `/p/${lpSlug}` : "/")} 
-                      className="inline-flex items-center gap-4 px-4 md:px-8 py-3 bg-theme-bg border border-theme-border text-[9px] font-bold uppercase tracking-[0.4em] text-theme-text hover:bg-brand-tactical hover:text-brand-text hover:border-brand-tactical transition-all"
+                      className="inline-flex items-center gap-4 px-4 md:px-8 py-3 bg-theme-bg border border-theme-border text-[9px] font-bold uppercase tracking-[0.4em] text-brand-text hover:bg-brand-tactical hover:text-brand-text hover:border-brand-tactical transition-all"
                     >
                       Ver Vitrine da Rede <ArrowRight size={14} />
                     </button>
@@ -643,13 +643,13 @@ export default function UnidadeFixaDashboard({
                                     ) : (
                                       <div className="space-y-1">
                                         <p className="text-[10px] font-bold text-theme-muted uppercase tracking-[0.2em]">Status de Rede</p>
-                                        <p className="text-[11px] font-bold text-amber-500 uppercase animate-pulse">Aguardando Agente</p>
+                                        <p className="text-[11px] font-bold text-brand-warning uppercase animate-pulse">Aguardando Agente</p>
                                       </div>
                                     )}
                                  </div>
                                  <button 
                                     onClick={() => { setQrModalEvent(ev); setCopied(false); }}
-                                    className="p-5 bg-theme-bg border border-theme-border text-theme-text hover:bg-brand-tactical hover:text-brand-text hover:border-brand-tactical transition-all shadow-xl"
+                                    className="p-5 bg-theme-bg border border-theme-border text-brand-text hover:bg-brand-tactical hover:text-brand-text hover:border-brand-tactical transition-all shadow-xl"
                                  >
                                     <QrCode size={20} />
                                  </button>
@@ -664,7 +664,7 @@ export default function UnidadeFixaDashboard({
                                     <span className="text-[9px] font-bold text-theme-muted uppercase tracking-widest">{ev._count?.orders ?? 0} Transações</span>
                                  </div>
                                  <div className="flex items-center gap-2">
-                                    <ShieldCheck size={12} className="text-blue-500" />
+                                    <ShieldCheck size={12} className="text-brand-info" />
                                     <span className="text-[9px] font-bold text-theme-muted uppercase tracking-widest">Protocolo Ativo</span>
                                  </div>
                               </div>
@@ -699,7 +699,7 @@ export default function UnidadeFixaDashboard({
                   </div>
                   
                   <div className="flex items-center gap-3 shrink-0">
-                     <div className={`w-2 h-2 rounded-full ${calendarStatus?.connected ? 'bg-emerald-500 animate-pulse' : 'bg-red-500'}`} />
+                     <div className={`w-2 h-2 rounded-full ${calendarStatus?.connected ? 'bg-brand-tactical animate-pulse' : 'bg-brand-danger'}`} />
                      <p className="text-[10px] font-bold text-theme-text uppercase tracking-widest">
                        {calendarStatus?.connected ? 'CONECTADO' : 'NÃO VINCULADO'}
                      </p>
@@ -842,7 +842,7 @@ export default function UnidadeFixaDashboard({
                 <div className="flex items-center gap-4">
                   <button 
                     onClick={() => window.open(`${baseURL}/unidade-fixa/finance/export`, "_blank")}
-                    className="flex items-center gap-2 px-3 md:px-4 py-2.5 border border-theme-border text-theme-muted hover:text-theme-text hover:border-brand-tactical hover:bg-brand-tactical/5 transition-all rounded-xl text-[9px] font-bold uppercase tracking-widest"
+                    className="flex items-center gap-2 px-3 md:px-4 py-2.5 border border-theme-border text-theme-muted hover:text-brand-text hover:border-brand-tactical hover:bg-brand-tactical/5 transition-all rounded-xl text-[9px] font-bold uppercase tracking-widest"
                   >
                     <Download size={14} /> Fechamento CSV
                   </button>
@@ -888,7 +888,7 @@ export default function UnidadeFixaDashboard({
                         <span className={`text-[10px] font-black uppercase tracking-[0.2em] px-3 md:px-6 py-2 border rounded-full transition-all shadow-sm ${
                           r.status === "PAID" 
                             ? 'bg-brand-tactical/10 border-brand-tactical/30 text-brand-tactical' 
-                            : 'bg-amber-500/5 border-amber-500/30 text-amber-500 animate-pulse'
+                            : 'bg-brand-warning/5 border-brand-warning/30 text-brand-warning animate-pulse'
                         }`}>
                           {r.status === "PAID" ? "LIQUIDADO" : "PENDENTE"}
                         </span>
@@ -1093,7 +1093,7 @@ export default function UnidadeFixaDashboard({
                                     if (isDisabled) setDisabledServices(prev => prev.filter(id => id !== svc.id));
                                     else setDisabledServices(prev => [...prev, svc.id]);
                                   }}
-                                  className={`p-1.5 sm:p-2 border rounded-md transition-all shrink-0 ${isDisabled ? 'border-theme-border text-theme-text-muted hover:text-brand-tactical' : 'border-brand-tactical/30 text-brand-tactical hover:bg-brand-tactical/10'}`}
+                                  className={`p-1.5 sm:p-2 border rounded-md transition-all shrink-0 ${isDisabled ? 'border-theme-border text-brand-text-muted hover:text-brand-tactical' : 'border-brand-tactical/30 text-brand-tactical hover:bg-brand-tactical/10'}`}
                                   title={isDisabled ? "Ativar Serviço" : "Desativar Serviço"}
                                 >
                                   <Settings size={12} className={isDisabled ? "" : "animate-spin-slow"} />
@@ -1154,7 +1154,7 @@ export default function UnidadeFixaDashboard({
                         }}
                         className={`p-4 border rounded-xl transition-all text-left flex items-center justify-between group ${isSelected ? 'border-brand-tactical bg-brand-tactical/10 shadow-sm' : 'border-theme-border bg-theme-bg hover:bg-theme-bg-muted hover:border-theme-border/80'}`}
                       >
-                        <span className={`text-[10px] font-black uppercase tracking-widest ${isSelected ? 'text-brand-tactical' : 'text-theme-text'}`}>{type.label}</span>
+                        <span className={`text-[10px] font-black uppercase tracking-widest ${isSelected ? 'text-brand-tactical' : 'text-brand-text'}`}>{type.label}</span>
                         <div className={`w-4 h-4 border rounded-md flex items-center justify-center transition-all ${isSelected ? 'border-brand-tactical bg-brand-tactical' : 'border-theme-border'}`}>
                           {isSelected && <Check size={10} className="text-brand-text" />}
                         </div>
@@ -1288,7 +1288,7 @@ export default function UnidadeFixaDashboard({
                                  <span className="text-[10px] font-bold text-theme-text uppercase tracking-widest">{dayNames[day]}</span>
                                  <button 
                                    onClick={() => setWorkingHours({...workingHours, [day]: {...config, closed: !config.closed}})}
-                                   className={`px-3 py-1 text-[10px] font-black uppercase tracking-widest border rounded-full transition-all ${config.closed ? 'bg-theme-border text-theme-text' : 'bg-brand-tactical/10 border-brand-tactical text-brand-tactical'}`}
+                                   className={`px-3 py-1 text-[10px] font-black uppercase tracking-widest border rounded-full transition-all ${config.closed ? 'bg-theme-border text-brand-text' : 'bg-brand-tactical/10 border-brand-tactical text-brand-tactical'}`}
                                  >
                                    {config.closed ? "FECHADO" : "ABERTO"}
                                  </button>
@@ -1366,7 +1366,7 @@ export default function UnidadeFixaDashboard({
                    </div>
                    <p className="text-[9px] font-bold text-theme-muted uppercase tracking-widest">Saldo de Créditos</p>
                  </div>
-                 <p className={`text-3xl md:text-5xl font-heading font-black italic tracking-tighter ${user.franchiseProfile.printCredits < 50 ? 'text-amber-500' : 'text-brand-tactical'}`}>
+                 <p className={`text-3xl md:text-5xl font-heading font-black italic tracking-tighter ${user.franchiseProfile.printCredits < 50 ? 'text-brand-warning' : 'text-brand-tactical'}`}>
                    {user.franchiseProfile.printCredits}
                  </p>
                  <p className="text-[9px] font-bold text-theme-muted uppercase tracking-widest">FOTOS DISPONÍVEIS</p>
@@ -1374,12 +1374,12 @@ export default function UnidadeFixaDashboard({
 
               <div className="bg-theme-bg-muted p-4 md:p-8 space-y-4">
                  <div className="flex items-center gap-3">
-                   <div className="p-2 bg-blue-500 text-blue-500">
+                   <div className="p-2 bg-brand-info text-brand-info">
                      <ShieldCheck size={16} />
                    </div>
                    <p className="text-[9px] font-bold text-theme-muted uppercase tracking-widest">Status da Franquia</p>
                  </div>
-                 <p className={`text-xl font-heading font-black italic tracking-tighter uppercase ${user.franchiseProfile.active ? 'text-theme-brand' : 'text-red-500'}`}>
+                 <p className={`text-xl font-heading font-black italic tracking-tighter uppercase ${user.franchiseProfile.active ? 'text-theme-brand' : 'text-brand-danger'}`}>
                    {user.franchiseProfile.active ? '● OPERACIONAL' : '● INATIVO'}
                  </p>
                  <p className="text-[9px] font-bold text-theme-muted uppercase tracking-widest">VINCULADO À REDE</p>
@@ -1395,7 +1395,7 @@ export default function UnidadeFixaDashboard({
                  <div className="space-y-4">
                     <button 
                       onClick={() => setIsShopModalOpen(true)}
-                      className="w-full py-4 bg-emerald-500 text-theme-text font-display font-bold text-[10px] uppercase tracking-widest hover:brightness-110 transition-all shadow-lg shadow-emerald-500/10"
+                      className="w-full py-4 bg-brand-tactical text-brand-text font-display font-bold text-[10px] uppercase tracking-widest hover:brightness-110 transition-all shadow-lg shadow-emerald-500/10"
                     >
                       LOJA DA FRANQUIA
                     </button>
@@ -1410,10 +1410,10 @@ export default function UnidadeFixaDashboard({
             </div>
 
             {user.franchiseProfile.printCredits < 50 && (
-              <div className="border border-amber-500/30 bg-amber-500/5 p-4 md:p-8 flex items-center gap-3 md:gap-6 shadow-xl">
-                 <AlertTriangle size={24} className="text-amber-500" />
+              <div className="border border-brand-warning/30 bg-brand-warning/5 p-4 md:p-8 flex items-center gap-3 md:gap-6 shadow-xl">
+                 <AlertTriangle size={24} className="text-brand-warning" />
                  <div>
-                    <p className="text-[11px] font-bold text-amber-500 uppercase tracking-widest">ALERTA DE SEGURANÇA: SALDO CRÍTICO</p>
+                    <p className="text-[11px] font-bold text-brand-warning uppercase tracking-widest">ALERTA DE SEGURANÇA: SALDO CRÍTICO</p>
                     <p className="text-[10px] font-bold text-theme-muted uppercase tracking-widest mt-1">Seu saldo está abaixo de 50 impressões. A operação pode ser suspensa automaticamente em breve.</p>
                  </div>
               </div>
@@ -1467,7 +1467,7 @@ export default function UnidadeFixaDashboard({
             {/* Ã¢â€â‚¬Ã¢â€â‚¬ ATIVIDADE RECENTE Ã¢â€â‚¬Ã¢â€â‚¬ */}
              <div className="space-y-6">
                 <div className="flex items-center gap-4">
-                   <div className="h-px w-8 bg-emerald-500" />
+                   <div className="h-px w-8 bg-brand-tactical" />
                    <p className="text-[10px] font-bold text-theme-muted uppercase tracking-[0.5em]">Registro de Atividades</p>
                 </div>
 

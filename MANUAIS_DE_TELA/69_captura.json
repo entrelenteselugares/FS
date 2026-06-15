@@ -2,12 +2,16 @@
   "title": "Foto Segundo | Suas memórias, entregues agora.",
   "headings": [],
   "buttons": [
+    "VOLTAR",
+    "MATHEUS",
+    "ENVIAR DA GALERIA (MÚLTIPLO)",
     "Home",
     "Buscar",
     "Compras",
     "Meus Álbuns",
     "Opções",
     "Histórico de Compras",
+    "Álbum Sanfona",
     "Minha Carteira",
     "Indique e Ganhe",
     "Meus Dados",
@@ -20,10 +24,5 @@
     "Rede Técnica",
     "Franquia Print"
   ],
-  "links": [
-    {
-      "text": "COPA 2026\nPRÓXIMOS\nHOLANDA\n14/06 · 17:00\nGRP F\nJAPÃO\nVer Álbum →",
-      "href": "/album-torcida"
-    }
-  ]
+  "links": []
 }

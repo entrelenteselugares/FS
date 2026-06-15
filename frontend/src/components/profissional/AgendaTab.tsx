@@ -45,8 +45,8 @@ function DeadlineTimer({ event, type }: { event: EventItem; type: "FOTO" | "VIDE
   const timeStr = h > 0 ? `${h}h ${m}m` : `${m}m ${s}s`;
 
   return (
-    <div className={`text-[9px] font-black uppercase tracking-widest italic flex items-center gap-2 px-2 py-1 rounded-xl border ${isOverdue ? "text-red-500 bg-red-500/5 border-red-500/10" : "text-amber-500 bg-amber-500/5 border-amber-500/10"}`}>
-      <div className={`w-1.5 h-1.5 rounded-full ${isOverdue ? "bg-red-500 animate-pulse" : "bg-amber-500"}`} />
+    <div className={`text-[9px] font-black uppercase tracking-widest italic flex items-center gap-2 px-2 py-1 rounded-xl border ${isOverdue ? "text-brand-danger bg-brand-danger/5 border-brand-danger/10" : "text-brand-warning bg-brand-warning/5 border-brand-warning/10"}`}>
+      <div className={`w-1.5 h-1.5 rounded-full ${isOverdue ? "bg-brand-danger animate-pulse" : "bg-brand-warning"}`} />
       {isOverdue ? `ATRASADO ${timeStr}` : `SLA ${timeStr}`}
     </div>
   );
@@ -195,13 +195,13 @@ export function AgendaTab({
               {unitInvites.length > 0 && unitInvites.map((invite) => (
                 <div
                   key={`invite-${invite.id}`}
-                  className="bg-amber-500/5 border border-amber-500/20 p-4 md:p-6 rounded-2xl flex flex-col md:flex-row gap-4 md:gap-6 group relative overflow-hidden shadow-sm"
+                  className="bg-brand-warning/5 border border-brand-warning/20 p-4 md:p-6 rounded-2xl flex flex-col md:flex-row gap-4 md:gap-6 group relative overflow-hidden shadow-sm"
                 >
-                  <div className="absolute left-0 top-0 h-full w-1.5 bg-amber-500" />
+                  <div className="absolute left-0 top-0 h-full w-1.5 bg-brand-warning" />
                   
                   <div className="min-w-[60px] flex flex-row md:flex-col items-center md:items-start border-b md:border-b-0 md:border-r border-theme-border pb-2 md:pb-0 md:pr-4 gap-2 md:gap-0 w-full md:w-auto">
-                    <div className="text-[9px] font-bold text-amber-500 uppercase tracking-widest hidden md:block mb-1">DATA</div>
-                    <div className="text-xl md:text-2xl font-heading font-bold text-amber-500 leading-none uppercase">
+                    <div className="text-[9px] font-bold text-brand-warning uppercase tracking-widest hidden md:block mb-1">DATA</div>
+                    <div className="text-xl md:text-2xl font-heading font-bold text-brand-warning leading-none uppercase">
                       {parseDateSafe(invite.createdAt || new Date().toISOString()).toLocaleDateString("pt-BR", { day: "2-digit" })}
                     </div>
                   </div>
@@ -209,7 +209,7 @@ export function AgendaTab({
                   <div className="flex-grow space-y-3">
                     <div className="flex flex-wrap items-center gap-2 md:gap-4">
                       <h3 className="text-lg md:text-xl font-heading font-bold text-theme-text uppercase leading-none">Convite para Residência</h3>
-                      <div className="px-1.5 py-0.5 text-[10px] font-bold border rounded-md bg-amber-500/10 text-amber-500 border-amber-500/20">
+                      <div className="px-1.5 py-0.5 text-[10px] font-bold border rounded-md bg-brand-warning/10 text-brand-warning border-brand-warning/20">
                         CONVITE
                       </div>
                     </div>
@@ -217,16 +217,16 @@ export function AgendaTab({
                       A unidade <strong>{invite.cartorio.razaoSocial}</strong> te convidou para fazer parte da equipe.
                     </p>
                     <div className="flex gap-4 text-[9px] text-theme-muted font-bold uppercase tracking-widest">
-                      <span className="flex items-center gap-1.5"><MapPin size={11} className="text-amber-500 opacity-50" /> {invite.cartorio.cidade || "N/A"}</span>
+                      <span className="flex items-center gap-1.5"><MapPin size={11} className="text-brand-warning opacity-50" /> {invite.cartorio.cidade || "N/A"}</span>
                     </div>
                   </div>
 
                   <div className="flex flex-col items-start md:items-end gap-2 min-w-[120px] w-full md:w-auto mt-2 md:mt-0 pt-2 md:pt-0 border-t md:border-t-0 border-theme-border justify-center">
                     <div className="flex gap-2 w-full md:w-auto mt-2">
-                      <button onClick={() => onRespondUnit(invite.id, "REJECTED")} className="p-2 border border-red-500/30 text-red-500 rounded-lg hover:bg-red-500/10 transition-all flex-1 md:flex-none flex items-center justify-center" title="Recusar">
+                      <button onClick={() => onRespondUnit(invite.id, "REJECTED")} className="p-2 border border-brand-danger/30 text-brand-danger rounded-lg hover:bg-brand-danger/10 transition-all flex-1 md:flex-none flex items-center justify-center" title="Recusar">
                         <X size={14} />
                       </button>
-                      <button onClick={() => onRespondUnit(invite.id, "ACCEPTED")} className="px-3 py-2 bg-amber-500 text-amber-950 text-[10px] font-bold uppercase tracking-widest rounded-lg hover:bg-amber-400 transition-all flex-1 md:flex-none flex items-center justify-center gap-1">
+                      <button onClick={() => onRespondUnit(invite.id, "ACCEPTED")} className="px-3 py-2 bg-brand-warning text-brand-warning text-[10px] font-bold uppercase tracking-widest rounded-lg hover:bg-brand-warning transition-all flex-1 md:flex-none flex items-center justify-center gap-1">
                         <Check size={12} /> ACEITAR
                       </button>
                     </div>
@@ -246,7 +246,7 @@ export function AgendaTab({
                     onClick={() => onSelectEvent(ev)}
                     className="bg-theme-bg border border-theme-border p-4 md:p-6 rounded-2xl cursor-pointer hover:border-brand-tactical/50 transition-all flex flex-col md:flex-row gap-4 md:gap-6 group relative overflow-hidden shadow-sm hover:shadow-lg"
                   >
-                    <div className={`absolute left-0 top-0 h-full w-1.5 ${ev.captacaoStatus === "PENDING" ? "bg-amber-500" : "bg-brand-tactical"}`} />
+                    <div className={`absolute left-0 top-0 h-full w-1.5 ${ev.captacaoStatus === "PENDING" ? "bg-brand-warning" : "bg-brand-tactical"}`} />
                     
                     {/* DATA COL */}
                     <div className="min-w-[60px] flex flex-row md:flex-col items-center md:items-start border-b md:border-b-0 md:border-r border-theme-border pb-2 md:pb-0 md:pr-4 gap-2 md:gap-0 w-full md:w-auto">
@@ -263,7 +263,7 @@ export function AgendaTab({
                     <div className="flex-grow space-y-3">
                       <div className="flex flex-wrap items-center gap-2 md:gap-4">
                         <h3 className="text-lg md:text-xl font-heading font-bold text-theme-text uppercase leading-none">{ev.title}</h3>
-                        <div className={`px-1.5 py-0.5 text-[10px] font-black border rounded-md ${ev.captacaoStatus === "ACCEPTED" ? "bg-brand-tactical/10 text-brand-tactical border-brand-tactical/20" : "bg-amber-500/10 text-amber-500 border-amber-500/20"}`}>
+                        <div className={`px-1.5 py-0.5 text-[10px] font-black border rounded-md ${ev.captacaoStatus === "ACCEPTED" ? "bg-brand-tactical/10 text-brand-tactical border-brand-tactical/20" : "bg-brand-warning/10 text-brand-warning border-brand-warning/20"}`}>
                           {ev.captacaoStatus === "ACCEPTED" ? "CONFIRMADO" : "PENDENTE"}
                         </div>
                       </div>
@@ -305,7 +305,7 @@ export function AgendaTab({
                       
                       {!isAccepted ? (
                         <div className="flex gap-2 w-full md:w-auto mt-2">
-                          <button onClick={(e) => { e.stopPropagation(); onRespond(ev.id, "REJECTED"); }} className="p-2 border border-red-500/30 text-red-500 rounded-lg hover:bg-red-500/10 transition-all flex-1 md:flex-none flex items-center justify-center" title="Recusar">
+                          <button onClick={(e) => { e.stopPropagation(); onRespond(ev.id, "REJECTED"); }} className="p-2 border border-brand-danger/30 text-brand-danger rounded-lg hover:bg-brand-danger/10 transition-all flex-1 md:flex-none flex items-center justify-center" title="Recusar">
                             <X size={14} />
                           </button>
                           <button onClick={(e) => { e.stopPropagation(); onRespond(ev.id, "ACCEPTED"); }} className="px-3 py-2 bg-brand-tactical text-brand-text text-[10px] font-bold uppercase tracking-widest rounded-lg hover:bg-brand-tactical/90 transition-all flex-1 md:flex-none flex items-center justify-center gap-1">
@@ -314,7 +314,7 @@ export function AgendaTab({
                         </div>
                       ) : (
                         <div className="flex items-center gap-2 w-full md:w-auto justify-end">
-                          <div className="text-[9px] font-bold text-brand-tactical uppercase tracking-[0.2em] opacity-80 md:opacity-0 md:group-hover:opacity-100 transition-opacity">GERENCIAR</div>
+                          <div className="text-[9px] font-bold text-brand-tactical uppercase tracking-[0.2em] opacity-80 md:opacity-0 pointer-events-none md:group-hover:opacity-100 transition-opacity">GERENCIAR</div>
                           <ChevronRight size={16} className="text-brand-tactical transition-all" />
                         </div>
                       )}
@@ -377,7 +377,7 @@ export function AgendaTab({
                       </button>
                       <button 
                         onClick={onDisconnectCalendar}
-                        className="p-2 text-theme-muted hover:text-red-500 hover:bg-red-500/10 border border-theme-border hover:border-red-500/20 rounded-xl transition-all cursor-pointer shrink-0"
+                        className="p-2 text-theme-muted hover:text-brand-danger hover:bg-brand-danger/10 border border-theme-border hover:border-brand-danger/20 rounded-xl transition-all cursor-pointer shrink-0"
                         title="Desconectar"
                       >
                         <LogOut size={14} />

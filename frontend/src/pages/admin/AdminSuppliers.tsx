@@ -199,7 +199,7 @@ export default function AdminSuppliers() {
            {/* STATS DE FÁBRICA */}
            <div className="max-w-6xl mx-auto w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
               <div className="bg-theme-bg border border-theme-border rounded-2xl p-3 md:p-6 space-y-3 group hover:border-brand-tactical/50 transition-all shadow-sm">
-                 <div className="flex justify-between items-start"><span className="text-[10px] font-bold text-theme-muted uppercase tracking-widest">Aguardando Início</span><Clock className="text-amber-600" size={14} /></div>
+                 <div className="flex justify-between items-start"><span className="text-[10px] font-bold text-theme-muted uppercase tracking-widest">Aguardando Início</span><Clock className="text-brand-warning" size={14} /></div>
                  <div className="text-3xl font-heading font-bold text-theme-text">{productionStats.pending}</div>
               </div>
               <div className="bg-theme-bg border border-theme-border rounded-2xl p-3 md:p-6 space-y-3 group hover:border-brand-tactical/50 transition-all shadow-sm">
@@ -207,7 +207,7 @@ export default function AdminSuppliers() {
                  <div className="text-3xl font-heading font-bold text-theme-text">{productionStats.printing}</div>
               </div>
               <div className="bg-theme-bg border border-theme-border rounded-2xl p-3 md:p-6 space-y-3 group hover:border-brand-tactical/50 transition-all shadow-sm">
-                 <div className="flex justify-between items-start"><span className="text-[10px] font-bold text-theme-muted uppercase tracking-widest">Em Trânsito</span><Truck className="text-blue-500" size={14} /></div>
+                 <div className="flex justify-between items-start"><span className="text-[10px] font-bold text-theme-muted uppercase tracking-widest">Em Trânsito</span><Truck className="text-brand-info" size={14} /></div>
                  <div className="text-3xl font-heading font-bold text-theme-text">{productionStats.shipped}</div>
               </div>
            </div>
@@ -243,9 +243,9 @@ export default function AdminSuppliers() {
                       <div className="flex-1 space-y-6">
                          <div className="flex flex-wrap items-center gap-3">
                             <span className={`px-2.5 py-1 text-[10px] font-black uppercase tracking-widest border ${
-                              r.status === 'PENDING' || r.status === 'APROVADO' ? 'border-amber-500 text-amber-500' :
+                              r.status === 'PENDING' || r.status === 'APROVADO' ? 'border-brand-warning text-brand-warning' :
                               r.status === 'PRINTING' ? 'border-brand-tactical text-brand-tactical bg-brand-tactical/10' :
-                              r.status === 'SHIPPED' ? 'border-blue-500 text-blue-500' :
+                              r.status === 'SHIPPED' ? 'border-brand-info text-brand-info' :
                               'border-zinc-500 text-theme-muted'
                             }`}>
                               {r.status}
@@ -412,9 +412,9 @@ export default function AdminSuppliers() {
                       <div className="space-y-1"><span className="text-[9px] font-bold text-theme-muted uppercase tracking-widest">Custo Foto</span><p className="text-sm font-bold text-theme-text">{formatCurrency(s.costPer10x15)}</p></div>
                       <div className="space-y-1"><span className="text-[9px] font-bold text-theme-muted uppercase tracking-widest">Resgates</span><p className="text-sm font-bold text-theme-text">{s._count.redemptions}</p></div>
                    </div>
-                   <div className="pt-6 flex justify-end gap-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                   <div className="pt-6 flex justify-end gap-3 opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity">
                       <button className="p-2 border border-theme-border text-theme-muted hover:text-theme-text transition-all"><Settings size={14}/></button>
-                      <button className="p-2 border border-red-900/30 text-red-900/50 hover:text-red-500 transition-all"><Trash2 size={14}/></button>
+                      <button className="p-2 border border-brand-danger/30 text-brand-danger/50 hover:text-brand-danger transition-all"><Trash2 size={14}/></button>
                    </div>
                 </div>
               ))}

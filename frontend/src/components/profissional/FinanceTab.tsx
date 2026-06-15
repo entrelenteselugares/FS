@@ -80,16 +80,16 @@ export function FinanceTab({
           <div className="relative group flex-1 md:flex-none">
             <button
               onClick={onDownloadTaxReport}
-              className="w-full flex justify-center items-center gap-1.5 px-3 md:px-4 py-2 bg-brand-tactical/10 text-brand-tactical border border-brand-tactical/30 hover:bg-brand-tactical hover:text-theme-text rounded-lg text-[9px] font-bold uppercase tracking-widest transition-all shadow-sm whitespace-nowrap"
+              className="w-full flex justify-center items-center gap-1.5 px-3 md:px-4 py-2 bg-brand-tactical/10 text-brand-tactical border border-brand-tactical/30 hover:bg-brand-tactical hover:text-brand-text rounded-lg text-[9px] font-bold uppercase tracking-widest transition-all shadow-sm whitespace-nowrap"
             >
               <Download size={12} />
               <span className="hidden sm:inline">Relatório de </span>Tributos
             </button>
             <div className="absolute top-full right-0 mt-1 hidden group-hover:flex flex-col bg-theme-bg border border-theme-border shadow-2xl rounded-lg overflow-hidden z-50 min-w-[160px]">
-              <button onClick={() => window.open(`${API.defaults.baseURL}/profissional/finance/tax-report?format=pdf`, '_blank')} className="px-4 py-3 text-[9px] font-bold uppercase text-theme-text hover:bg-brand-tactical/10 flex items-center gap-2 border-b border-theme-border transition-colors">
+              <button onClick={() => window.open(`${API.defaults.baseURL}/profissional/finance/tax-report?format=pdf`, '_blank')} className="px-4 py-3 text-[9px] font-bold uppercase text-brand-text hover:bg-brand-tactical/10 flex items-center gap-2 border-b border-theme-border transition-colors">
                 <FileText size={12} className="text-brand-tactical" /> PDF (MEI)
               </button>
-              <button onClick={() => window.open(`${API.defaults.baseURL}/profissional/finance/tax-report?format=csv`, '_blank')} className="px-4 py-3 text-[9px] font-bold uppercase text-theme-text hover:bg-brand-tactical/10 flex items-center gap-2 transition-colors">
+              <button onClick={() => window.open(`${API.defaults.baseURL}/profissional/finance/tax-report?format=csv`, '_blank')} className="px-4 py-3 text-[9px] font-bold uppercase text-brand-text hover:bg-brand-tactical/10 flex items-center gap-2 transition-colors">
                 <Table size={12} className="text-brand-tactical" /> CSV Excel
               </button>
             </div>
@@ -106,10 +106,10 @@ export function FinanceTab({
             {summary ? formatCurrency(summary.available) : "---"}
           </p>
         </div>
-        <div className="bg-theme-bg-muted border border-theme-border rounded-xl p-4 flex flex-col shadow-sm relative overflow-hidden group hover:border-amber-500/30 transition-all">
+        <div className="bg-theme-bg-muted border border-theme-border rounded-xl p-4 flex flex-col shadow-sm relative overflow-hidden group hover:border-brand-warning/30 transition-all">
           <div className="absolute top-0 right-0 p-3 opacity-10"><Clock size={40} /></div>
           <span className="text-[10px] font-bold text-theme-muted uppercase tracking-widest z-10 line-clamp-1" title="A Receber (Garantia)">A Receber (Garantia)</span>
-          <p className="text-xl md:text-2xl font-heading font-bold text-amber-500 mt-1 z-10 truncate" title={summary ? formatCurrency(summary.pending) : "---"}>
+          <p className="text-xl md:text-2xl font-heading font-bold text-brand-warning mt-1 z-10 truncate" title={summary ? formatCurrency(summary.pending) : "---"}>
             {summary ? formatCurrency(summary.pending) : "---"}
           </p>
         </div>
@@ -156,10 +156,10 @@ export function FinanceTab({
                   <span>Target: R$ {monthlyGoal.toLocaleString("pt-BR")}</span>
                 </div>
              </div>
-             <div className={`w-full md:w-auto shrink-0 border rounded-xl p-3 flex gap-3 items-center ${monthEarnings < monthlyGoal ? 'bg-amber-500/5 border-amber-500/20' : 'bg-brand-tactical/5 border-brand-tactical/20'}`}>
-                <Zap size={20} className={`${monthEarnings < monthlyGoal ? 'text-amber-500 animate-pulse' : 'text-brand-tactical'}`} />
+             <div className={`w-full md:w-auto shrink-0 border rounded-xl p-3 flex gap-3 items-center ${monthEarnings < monthlyGoal ? 'bg-brand-warning/5 border-brand-warning/20' : 'bg-brand-tactical/5 border-brand-tactical/20'}`}>
+                <Zap size={20} className={`${monthEarnings < monthlyGoal ? 'text-brand-warning animate-pulse' : 'text-brand-tactical'}`} />
                 <div>
-                  <div className={`text-[9px] font-black uppercase tracking-widest ${monthEarnings < monthlyGoal ? 'text-amber-500' : 'text-brand-tactical'}`}>
+                  <div className={`text-[9px] font-black uppercase tracking-widest ${monthEarnings < monthlyGoal ? 'text-brand-warning' : 'text-brand-tactical'}`}>
                     {monthEarnings < monthlyGoal ? 'Atenção Tática' : 'Meta Batida'}
                   </div>
                   <p className="text-[9px] text-theme-text font-medium leading-tight mt-0.5 max-w-[160px]">
@@ -182,14 +182,14 @@ export function FinanceTab({
               <div key={p.id} className="flex flex-col p-3 bg-theme-bg-muted border border-theme-border rounded-lg hover:border-brand-tactical/30 transition-all group">
                 <div className="flex justify-between items-start mb-2">
                   <div className="flex items-center gap-2">
-                    <div className={`p-1.5 rounded ${p.status === "PAID" ? "bg-brand-tactical/20 text-brand-tactical" : "bg-amber-500/20 text-amber-500"}`}>
+                    <div className={`p-1.5 rounded ${p.status === "PAID" ? "bg-brand-tactical/20 text-brand-tactical" : "bg-brand-warning/20 text-brand-warning"}`}>
                       {p.status === "PAID" ? <Check size={10} /> : <Clock size={10} />}
                     </div>
                     <div>
                       <p className="text-[9px] font-bold text-theme-text uppercase leading-none">
                         {p.payout?.weekStart ? formatDate(p.payout.weekStart) : "REPASSE"}
                       </p>
-                      <span className={`text-[9px] font-black uppercase tracking-widest ${p.status === "PAID" ? "text-brand-tactical" : "text-amber-500"}`}>
+                      <span className={`text-[9px] font-black uppercase tracking-widest ${p.status === "PAID" ? "text-brand-tactical" : "text-brand-warning"}`}>
                         {p.status === "PAID" ? "LIQUIDADO" : "PENDENTE"}
                       </span>
                     </div>

@@ -276,9 +276,9 @@ export const BottomNav: React.FC = () => {
           {user ? (
             <div className="flex items-center gap-3">
               {user.profileImageUrl ? (
-                <img src={user.profileImageUrl} alt={user.nome} className="w-9 h-9 rounded-full object-cover border border-emerald-500/30" />
+                <img src={user.profileImageUrl} alt={user.nome} className="w-9 h-9 rounded-full object-cover border border-brand-tactical/30" />
               ) : (
-                <div className="w-9 h-9 rounded-full bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center font-display font-bold text-theme-brand">
+                <div className="w-9 h-9 rounded-full bg-brand-tactical/10 border border-brand-tactical/30 flex items-center justify-center font-display font-bold text-theme-brand">
                   {user.nome?.charAt(0)?.toUpperCase() || "?"}
                 </div>
               )}
@@ -294,7 +294,7 @@ export const BottomNav: React.FC = () => {
               <p className="text-[10px] font-bold uppercase tracking-widest text-theme-muted">Acesse sua conta</p>
               <button
                 onClick={() => { navigate("/login"); setDrawerOpen(false); }}
-                className="w-full py-2.5 bg-emerald-500 text-theme-text text-[10px] font-bold uppercase tracking-widest rounded-xl hover:bg-emerald-400 transition-colors flex items-center justify-center gap-2"
+                className="w-full py-2.5 bg-brand-tactical text-brand-text text-[10px] font-bold uppercase tracking-widest rounded-xl hover:bg-brand-tactical transition-colors flex items-center justify-center gap-2"
               >
                 <User size={12} />
                 Entrar

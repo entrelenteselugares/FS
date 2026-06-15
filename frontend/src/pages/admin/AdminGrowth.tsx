@@ -185,7 +185,7 @@ export function AdminGrowth() {
               <button
                 id="btn-novo-cupom"
                 onClick={openModal}
-                className="flex items-center gap-2 px-4 py-2 bg-brand-tactical text-theme-text text-[10px] font-bold uppercase tracking-widest hover:bg-white transition-colors"
+                className="flex items-center gap-2 px-4 py-2 bg-brand-tactical text-brand-text text-[10px] font-bold uppercase tracking-widest hover:bg-white transition-colors"
               >
                 <Plus size={14} /> Novo Cupom
               </button>
@@ -207,17 +207,17 @@ export function AdminGrowth() {
                       </p>
                     </div>
                     <div className="flex items-center gap-3 w-full md:w-auto justify-between md:justify-end">
-                      <span className={`px-2 py-1 text-[10px] font-black uppercase rounded ${c.active ? 'bg-emerald-500/20 text-theme-brand' : 'bg-red-500/20 text-red-400'}`}>
+                      <span className={`px-2 py-1 text-[10px] font-black uppercase rounded ${c.active ? 'bg-brand-tactical/20 text-theme-brand' : 'bg-brand-danger/20 text-brand-danger'}`}>
                         {c.active ? 'Ativo' : 'Inativo'}
                       </span>
-                      <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <div className="flex gap-2 opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity">
                         <button
                           type="button"
                           onClick={() => handleToggleActive(c.id, !c.active)}
                           className={`px-3 py-1.5 text-[10px] font-black uppercase tracking-widest rounded border transition-colors cursor-pointer ${
                             c.active
-                              ? 'bg-amber-500/10 border-amber-500/30 text-amber-400 hover:bg-amber-500/20'
-                              : 'bg-emerald-500/10 border-emerald-500/30 text-theme-brand hover:bg-emerald-500/20'
+                              ? 'bg-brand-warning/10 border-brand-warning/30 text-brand-warning hover:bg-brand-warning/20'
+                              : 'bg-brand-tactical/10 border-brand-tactical/30 text-theme-brand hover:bg-brand-tactical/20'
                           }`}
                         >
                           {c.active ? 'Pausar' : 'Ativar'}
@@ -225,7 +225,7 @@ export function AdminGrowth() {
                         <button
                           type="button"
                           onClick={() => handleDeleteCoupon(c.id)}
-                          className="px-3 py-1.5 bg-red-500/10 border border-red-500/30 text-red-400 hover:bg-red-500/20 text-[10px] font-bold uppercase tracking-widest rounded transition-colors cursor-pointer"
+                          className="px-3 py-1.5 bg-brand-danger/10 border border-brand-danger/30 text-brand-danger hover:bg-brand-danger/20 text-[10px] font-bold uppercase tracking-widest rounded transition-colors cursor-pointer"
                         >
                           Excluir
                         </button>
@@ -240,7 +240,7 @@ export function AdminGrowth() {
           <div className="p-4 md:p-8 border border-theme-border bg-theme-bg-muted rounded-3xl flex flex-col md:flex-row gap-4 md:gap-8 items-center justify-center min-h-[400px]">
             {waStatus?.connected ? (
               <div className="text-center space-y-6">
-                <div className="w-24 h-24 bg-emerald-500/10 rounded-full flex items-center justify-center mx-auto">
+                <div className="w-24 h-24 bg-brand-tactical/10 rounded-full flex items-center justify-center mx-auto">
                   <Phone size={40} className="text-theme-brand" />
                 </div>
                 <div>
@@ -479,7 +479,7 @@ export function AdminGrowth() {
               </div>
 
               {formError && (
-                <p className="text-[10px] text-red-500 font-bold uppercase tracking-widest">{formError}</p>
+                <p className="text-[10px] text-brand-danger font-bold uppercase tracking-widest">{formError}</p>
               )}
 
               {/* Footer */}
@@ -494,7 +494,7 @@ export function AdminGrowth() {
                 <button
                   type="submit"
                   disabled={creating}
-                  className="flex-[2] py-4 bg-brand-tactical text-theme-text text-[10px] font-bold uppercase tracking-widest shadow-2xl shadow-brand-tactical/20 hover:brightness-110 transition-all rounded-[16px] flex items-center justify-center gap-3 disabled:opacity-50"
+                  className="flex-[2] py-4 bg-brand-tactical text-brand-text text-[10px] font-bold uppercase tracking-widest shadow-2xl shadow-brand-tactical/20 hover:brightness-110 transition-all rounded-[16px] flex items-center justify-center gap-3 disabled:opacity-50"
                 >
                   {creating ? "Criando..." : "Criar Cupom"}
                   {!creating && <ArrowRight size={16} />}

@@ -196,7 +196,7 @@ export const AdminOrders: React.FC = () => {
         <div className="bg-theme-bg-muted border border-theme-border p-3 md:p-6 space-y-4 relative overflow-hidden group hover:border-brand-tactical/50 transition-all rounded-2xl">
            <div className="flex justify-between items-start">
               <span className="text-[9px] font-bold text-theme-muted uppercase tracking-[0.3em]">Ticket Médio / Projeto</span>
-              <Zap className="text-amber-500 opacity-30" size={16} />
+              <Zap className="text-brand-warning opacity-30" size={16} />
            </div>
            <div className="text-3xl font-heading font-bold text-theme-text">{formatCurrency(stats.ticketMedio)}</div>
         </div>
@@ -276,7 +276,7 @@ export const AdminOrders: React.FC = () => {
                           </div>
                         )}
                         {group.status === "PARCIAL" && (
-                          <div className="flex items-center justify-center gap-2 px-4 py-2 border border-amber-500 text-amber-500 bg-amber-500/10 text-[10px] md:text-[9px] font-bold uppercase tracking-wider md:tracking-widest">
+                          <div className="flex items-center justify-center gap-2 px-4 py-2 border border-brand-warning text-brand-warning bg-brand-warning/10 text-[10px] md:text-[9px] font-bold uppercase tracking-wider md:tracking-widest">
                              <PieChart size={12} /> {group.status}
                           </div>
                         )}
@@ -324,22 +324,22 @@ export const AdminOrders: React.FC = () => {
                                         </span>
                                       )}
                                       {o.splitCaptacao && (
-                                        <span className="px-2 py-0.5 bg-emerald-500/10 text-[10px] text-theme-brand font-bold rounded-sm border border-emerald-500/20" title="Captação">
+                                        <span className="px-2 py-0.5 bg-brand-tactical/10 text-[10px] text-theme-brand font-bold rounded-sm border border-brand-tactical/20" title="Captação">
                                           CP: {formatCurrency(Number(o.splitCaptacao))}
                                         </span>
                                       )}
                                       {o.splitEdicao && (
-                                        <span className="px-2 py-0.5 bg-amber-500/10 text-[10px] text-amber-500 font-bold rounded-sm border border-amber-500/20" title="Edição">
+                                        <span className="px-2 py-0.5 bg-brand-warning/10 text-[10px] text-brand-warning font-bold rounded-sm border border-brand-warning/20" title="Edição">
                                           ED: {formatCurrency(Number(o.splitEdicao))}
                                         </span>
                                       )}
                                       {o.splitCartorio && (
-                                        <span className="px-2 py-0.5 bg-indigo-500/10 text-[10px] text-indigo-400 font-bold rounded-sm border border-indigo-500/20" title="Unidade Fixa">
+                                        <span className="px-2 py-0.5 bg-brand-info/10 text-[10px] text-brand-info font-bold rounded-sm border border-brand-info/20" title="Unidade Fixa">
                                           UF: {formatCurrency(Number(o.splitCartorio))}
                                         </span>
                                       )}
                                       {o.splitFranchisee && o.splitFranchisee > 0 && (
-                                        <span className="px-2 py-0.5 bg-cyan-500/10 text-[10px] text-cyan-400 font-bold rounded-sm border border-cyan-500/20" title={`Franqueado: ${o.passiveFranchisee || 'N/A'}`}>
+                                        <span className="px-2 py-0.5 bg-brand-info/10 text-[10px] text-brand-info font-bold rounded-sm border border-brand-info/20" title={`Franqueado: ${o.passiveFranchisee || 'N/A'}`}>
                                           FR: {formatCurrency(Number(o.splitFranchisee))}
                                         </span>
                                       )}
@@ -348,7 +348,7 @@ export const AdminOrders: React.FC = () => {
                                <td className="py-5 text-right font-heading font-bold text-theme-text text-lg">{formatCurrency(o.amount)}</td>
                                 <td className="py-5 text-center">
                                    <div className="flex flex-col items-center gap-2">
-                                      <span className={`text-[10px] font-black uppercase tracking-[0.2em] px-3 py-1.5 border ${o.status === 'APROVADO' ? 'border-brand-tactical text-brand-tactical' : 'border-red-900 text-red-500'}`}>
+                                      <span className={`text-[10px] font-black uppercase tracking-[0.2em] px-3 py-1.5 border ${o.status === 'APROVADO' ? 'border-brand-tactical text-brand-tactical' : 'border-brand-danger text-brand-danger'}`}>
                                          {o.status}
                                       </span>
                                       {o.deliveryType === 'SHIPPING' && (
@@ -356,7 +356,7 @@ export const AdminOrders: React.FC = () => {
                                           <select 
                                             value={o.fulfillmentStatus}
                                             onChange={(e) => handleUpdateLogistics(o.id, e.target.value)}
-                                            className={`text-[9px] font-black uppercase px-2 py-0.5 border bg-transparent outline-none cursor-pointer ${o.fulfillmentStatus === 'SHIPPED' ? 'border-green-500 text-theme-brand' : 'border-zinc-600 text-theme-muted hover:border-zinc-400'}`}
+                                            className={`text-[9px] font-black uppercase px-2 py-0.5 border bg-transparent outline-none cursor-pointer ${o.fulfillmentStatus === 'SHIPPED' ? 'border-brand-tactical text-theme-brand' : 'border-zinc-600 text-theme-muted hover:border-zinc-400'}`}
                                           >
                                             <option value="PENDING">PENDENTE</option>
                                             <option value="PROCESSING">PROCESSANDO</option>
@@ -387,7 +387,7 @@ export const AdminOrders: React.FC = () => {
                                       </button>
                                       <button 
                                         onClick={(e) => { e.stopPropagation(); handleDeleteOrder(o.id); }}
-                                        className="p-2 border border-theme-border text-red-500/40 hover:text-red-500 transition-all"
+                                        className="p-2 border border-theme-border text-brand-danger/40 hover:text-brand-danger transition-all"
                                         title="Excluir Pedido"
                                       >
                                         <Trash2 size={12} />
@@ -446,7 +446,7 @@ export const AdminOrders: React.FC = () => {
                 <div className="bg-theme-bg-muted p-3 md:p-6 rounded-[30px] border border-theme-border space-y-4 shadow-inner text-right">
                   <span className="block text-[10px] font-bold text-theme-muted uppercase tracking-widest opacity-40">Temporalidade & Status</span>
                   <div className="space-y-1">
-                    <div className={`text-xs font-black uppercase tracking-[0.2em] italic ${selectedOrderForDetails.status === 'APROVADO' ? 'text-brand-tactical' : 'text-amber-500'}`}>
+                    <div className={`text-xs font-black uppercase tracking-[0.2em] italic ${selectedOrderForDetails.status === 'APROVADO' ? 'text-brand-tactical' : 'text-brand-warning'}`}>
                       {selectedOrderForDetails.status}
                     </div>
                     <div className="text-[10px] text-theme-muted font-bold opacity-60">{new Date(selectedOrderForDetails.createdAt).toLocaleString("pt-BR")}</div>

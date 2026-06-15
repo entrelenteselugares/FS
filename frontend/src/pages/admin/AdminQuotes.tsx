@@ -24,12 +24,12 @@ interface EquipBreakdown { ID?: string; id?: string; QTY?: number; qty?: number;
 interface BudgetBreakdown { STAFF?: StaffBreakdown[]; EQUIPMENT?: EquipBreakdown[]; MARGIN?: number; margin?: number; }
 
 const KANBAN_COLUMNS = [
-  { id: "PENDING",   label: "Novos Leads",       color: "amber",   border: "border-amber-500/40",   text: "text-amber-500",   badge: "bg-amber-500/10 text-amber-500 border-amber-500/30" },
-  { id: "PRICED",    label: "Em Análise",         color: "blue",    border: "border-blue-500",    text: "text-blue-500",    badge: "bg-blue-500 text-blue-500 border-blue-500" },
-  { id: "APPROVED",  label: "Proposta Enviada",   color: "emerald", border: "border-emerald-500/40", text: "text-theme-brand", badge: "bg-emerald-500/10 text-theme-brand border-emerald-500/30" },
-  { id: "CONVERTED", label: "Convertidos",        color: "teal",    border: "border-teal-500/40",    text: "text-theme-brand",    badge: "bg-teal-500/10 text-theme-brand border-teal-500/30" },
+  { id: "PENDING",   label: "Novos Leads",       color: "amber",   border: "border-brand-warning/40",   text: "text-brand-warning",   badge: "bg-brand-warning/10 text-brand-warning border-brand-warning/30" },
+  { id: "PRICED",    label: "Em Análise",         color: "blue",    border: "border-brand-info",    text: "text-brand-info",    badge: "bg-brand-info text-brand-info border-brand-info" },
+  { id: "APPROVED",  label: "Proposta Enviada",   color: "emerald", border: "border-brand-tactical/40", text: "text-theme-brand", badge: "bg-brand-tactical/10 text-theme-brand border-brand-tactical/30" },
+  { id: "CONVERTED", label: "Convertidos",        color: "teal",    border: "border-brand-tactical/40",    text: "text-theme-brand",    badge: "bg-brand-tactical/10 text-theme-brand border-brand-tactical/30" },
   { id: "ARCHIVED",  label: "Arquivados",         color: "zinc",    border: "border-zinc-500/40",    text: "text-theme-muted",    badge: "bg-zinc-500/10 text-theme-muted border-zinc-500/30" },
-  { id: "REJECTED",  label: "Recusados",          color: "red",     border: "border-red-500/40",     text: "text-red-500",     badge: "bg-red-500/10 text-red-500 border-red-500/30" },
+  { id: "REJECTED",  label: "Recusados",          color: "red",     border: "border-brand-danger/40",     text: "text-brand-danger",     badge: "bg-brand-danger/10 text-brand-danger border-brand-danger/30" },
 ] as const;
 
 export const AdminQuotes: React.FC = () => {
@@ -236,11 +236,11 @@ export const AdminQuotes: React.FC = () => {
         onClick={onClick}
         className={`p-4 border rounded-lg cursor-pointer transition-colors relative overflow-hidden ${selectedQuote?.id===quote.id?"border-brand-tactical bg-brand-tactical/10 shadow-[0_0_20px_rgba(133,185,172,0.15)]":"border-theme-border bg-theme-card/60 hover:border-theme-border-2 hover:bg-theme-card"}`}
       >
-        {quote.urgency==="HIGH"&&<div className="absolute top-0 left-0 w-1 h-full bg-red-500"/>}
+        {quote.urgency==="HIGH"&&<div className="absolute top-0 left-0 w-1 h-full bg-brand-danger"/>}
         <div className="space-y-3 pl-1">
           <div className="flex items-start justify-between gap-2">
             <h4 className="text-sm font-bold text-theme-text uppercase leading-tight flex-1">{quote.title}</h4>
-            {quote.urgency==="HIGH"&&<div className="flex items-center gap-1 bg-red-500/10 px-2 py-0.5 border border-red-500/20 rounded shrink-0"><Flame size={9} className="text-red-500"/><span className="text-[10px] font-bold text-red-500 uppercase">Urgente</span></div>}
+            {quote.urgency==="HIGH"&&<div className="flex items-center gap-1 bg-brand-danger/10 px-2 py-0.5 border border-brand-danger/20 rounded shrink-0"><Flame size={9} className="text-brand-danger"/><span className="text-[10px] font-bold text-brand-danger uppercase">Urgente</span></div>}
           </div>
           <div className="flex items-center justify-between">
             <span className="text-[10px] text-theme-text-muted font-bold truncate max-w-[60%]">{quote.clientName||"—"}</span>
@@ -253,7 +253,7 @@ export const AdminQuotes: React.FC = () => {
               {quote.temReels&&<Smartphone size={11} className="text-theme-text-muted opacity-60"/>}
               <span className={`text-[10px] font-black uppercase px-1.5 py-0.5 border rounded ${col.badge}`}>{effectiveStatus}</span>
               {quote.pedidos && quote.pedidos.length > 0 && (
-                <span className="text-[10px] font-black uppercase px-1.5 py-0.5 bg-emerald-500 text-theme-text rounded animate-pulse font-bold">PAGO</span>
+                <span className="text-[10px] font-black uppercase px-1.5 py-0.5 bg-brand-tactical text-brand-text rounded animate-pulse font-bold">PAGO</span>
               )}
             </div>
             <div className="flex items-center gap-2">
@@ -284,7 +284,7 @@ export const AdminQuotes: React.FC = () => {
                 className="bg-theme-bg-muted border border-theme-border pl-9 pr-4 py-3 text-[10px] text-theme-text uppercase tracking-widest outline-none focus:border-brand-tactical transition-all font-bold rounded-lg w-56"/>
             </div>
             <button onClick={()=>setIsNewQuoteModalOpen(true)}
-              className="bg-brand-tactical text-theme-text font-display font-bold uppercase tracking-[0.2em] px-3 md:px-6 py-3 text-[10px] flex items-center gap-2 hover:brightness-110 shadow-xl transition-all rounded-lg whitespace-nowrap">
+              className="bg-brand-tactical text-brand-text font-display font-bold uppercase tracking-[0.2em] px-3 md:px-6 py-3 text-[10px] flex items-center gap-2 hover:brightness-110 shadow-xl transition-all rounded-lg whitespace-nowrap">
               <Plus size={16}/> Novo Orçamento
             </button>
           </div>
@@ -293,7 +293,7 @@ export const AdminQuotes: React.FC = () => {
 
       {/* Stats */}
       <div className="grid grid-cols-3 gap-4 md:hidden">
-        {[{l:"Pendentes",v:stats.pending,c:"text-amber-500"},{l:"Alta Prior.",v:stats.highUrgency,c:"text-red-500"},{l:"Volume",v:`R${(stats.totalValue/1000).toFixed(1)}k`,c:"text-brand-tactical"}].map(s=>(
+        {[{l:"Pendentes",v:stats.pending,c:"text-brand-warning"},{l:"Alta Prior.",v:stats.highUrgency,c:"text-brand-danger"},{l:"Volume",v:`R${(stats.totalValue/1000).toFixed(1)}k`,c:"text-brand-tactical"}].map(s=>(
           <div key={s.l} className="bg-theme-card border border-theme-border rounded-lg p-3 text-center">
             <p className={`text-2xl font-heading font-black italic ${s.c}`}>{s.v}</p>
             <p className="text-[10px] text-theme-text-muted uppercase tracking-widest mt-1">{s.l}</p>
@@ -310,10 +310,10 @@ export const AdminQuotes: React.FC = () => {
             if (col.id==="REJECTED") return (
               <div key={col.id} className="flex-shrink-0 w-10">
                 <button onClick={()=>setArchivedOpen(o=>!o)}
-                  className={`h-full w-10 flex flex-col items-center justify-center gap-3 border rounded-lg bg-theme-card/30 border-theme-border hover:border-red-500/30 transition-colors group`}>
-                  {archivedOpen?<ChevronRight size={14} className="text-red-500"/>:<ChevronDown size={14} className="text-red-500 rotate-90"/>}
-                  <span className="text-[9px] font-bold text-red-500/60 uppercase tracking-widest" style={{writingMode:"vertical-rl",transform:"rotate(180deg)"}}>Arquivados</span>
-                  <span className="text-[9px] font-bold text-red-500 bg-red-500/10 px-1.5 py-0.5 rounded border border-red-500/20">{getColQuotes("REJECTED").length}</span>
+                  className={`h-full w-10 flex flex-col items-center justify-center gap-3 border rounded-lg bg-theme-card/30 border-theme-border hover:border-brand-danger/30 transition-colors group`}>
+                  {archivedOpen?<ChevronRight size={14} className="text-brand-danger"/>:<ChevronDown size={14} className="text-brand-danger rotate-90"/>}
+                  <span className="text-[9px] font-bold text-brand-danger/60 uppercase tracking-widest" style={{writingMode:"vertical-rl",transform:"rotate(180deg)"}}>Arquivados</span>
+                  <span className="text-[9px] font-bold text-brand-danger bg-brand-danger/10 px-1.5 py-0.5 rounded border border-brand-danger/20">{getColQuotes("REJECTED").length}</span>
                 </button>
               </div>
             );
@@ -338,9 +338,9 @@ export const AdminQuotes: React.FC = () => {
           {/* Arquivados expanded */}
           {archivedOpen&&(
             <div className="flex-shrink-0 w-72 flex flex-col gap-3 animate-in slide-in-from-right-4 duration-300">
-              <div className="border-t-2 border-red-500/40 pt-3 flex items-center justify-between">
-                <span className="text-[10px] font-bold uppercase tracking-widest text-red-500">Arquivados</span>
-                <span className="text-[9px] font-bold px-2 py-0.5 border rounded bg-red-500/10 text-red-500 border-red-500/20">{getColQuotes("REJECTED").length}</span>
+              <div className="border-t-2 border-brand-danger/40 pt-3 flex items-center justify-between">
+                <span className="text-[10px] font-bold uppercase tracking-widest text-brand-danger">Arquivados</span>
+                <span className="text-[9px] font-bold px-2 py-0.5 border rounded bg-brand-danger/10 text-brand-danger border-brand-danger/20">{getColQuotes("REJECTED").length}</span>
               </div>
               <div className="flex flex-col gap-3 overflow-y-auto" style={{maxHeight:"68vh"}}>
                 {getColQuotes("REJECTED").map(q=><QuoteCard key={q.id} quote={q} onClick={()=>setSelectedQuote(q)}/>)}
@@ -446,9 +446,9 @@ export const AdminQuotes: React.FC = () => {
                     <div className="grid grid-cols-2 gap-2">
                       {STAFF_ROLES.map(role=>{const n=selectedStaff.filter(s=>s.id===role.id).length;return(
                         <button key={role.id} onClick={()=>addStaffPreset(role.id)}
-                          className={`px-3 py-2 text-[10px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest border rounded-lg flex items-center justify-between transition-all ${n>0?"border-brand-tactical bg-brand-tactical/10 text-brand-tactical":"border-theme-border text-theme-text-muted hover:border-brand-tactical/50"}`}>
+                          className={`px-3 py-2 text-[10px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest border rounded-lg flex items-center justify-between transition-all ${n>0?"border-brand-tactical bg-brand-tactical/10 text-brand-tactical":"border-theme-border text-brand-text-muted hover:border-brand-tactical/50"}`}>
                           <span className="truncate">{role.name}</span>
-                          <div className="flex items-center gap-1">{n>0&&<span className="bg-brand-tactical text-theme-text px-1.5 py-0.5 rounded text-[10px]">{n}</span>}<Plus size={10}/></div>
+                          <div className="flex items-center gap-1">{n>0&&<span className="bg-brand-tactical text-brand-text px-1.5 py-0.5 rounded text-[10px]">{n}</span>}<Plus size={10}/></div>
                         </button>
                       );})}
                       <button onClick={()=>addStaffPreset("custom")} className="px-3 py-2 text-[10px] md:text-[9px] font-bold uppercase tracking-wider md:tracking-widest border border-theme-border text-theme-text-muted hover:border-brand-tactical hover:text-brand-tactical rounded-lg flex items-center justify-between transition-all">OUTROS <Plus size={10}/></button>
@@ -479,7 +479,7 @@ export const AdminQuotes: React.FC = () => {
                                 className="w-full bg-theme-bg-muted border border-theme-border p-1.5 pl-6 text-[9px] font-bold text-brand-tactical outline-none rounded-lg"/>
                             </div>
 
-                            <button onClick={()=>removeStaffInstance(s.instanceId)} className="p-2 text-theme-text-muted hover:text-red-500 hover:bg-red-500/10 rounded-lg transition-all flex items-center justify-center shrink-0">
+                            <button onClick={()=>removeStaffInstance(s.instanceId)} className="p-2 text-white-muted hover:text-brand-danger hover:bg-brand-danger/10 rounded-lg transition-all flex items-center justify-center shrink-0">
                               <X size={12}/>
                             </button>
                           </div>
@@ -507,9 +507,9 @@ export const AdminQuotes: React.FC = () => {
                             <div className="flex items-center gap-2">
                               {isSelected&&(
                                 <div className="flex items-center bg-black/20 rounded-lg p-0.5 border border-brand-tactical/20">
-                                  <button onClick={()=>{if(selection.qty>1){setSelectedEquip(prev=>prev.map(e=>e.id===item.id?{...e,qty:e.qty-1}:e));}else{setSelectedEquip(prev=>prev.filter(e=>e.id!==item.id));}}} className="w-6 h-6 flex items-center justify-center text-brand-tactical hover:bg-brand-tactical hover:text-theme-text rounded transition-all"><X size={10}/></button>
+                                  <button onClick={()=>{if(selection.qty>1){setSelectedEquip(prev=>prev.map(e=>e.id===item.id?{...e,qty:e.qty-1}:e));}else{setSelectedEquip(prev=>prev.filter(e=>e.id!==item.id));}}} className="w-6 h-6 flex items-center justify-center text-brand-tactical hover:bg-brand-tactical hover:text-brand-text rounded transition-all"><X size={10}/></button>
                                   <span className="w-8 text-center text-[10px] font-bold text-brand-tactical">{selection.qty}</span>
-                                  <button onClick={()=>addEquip(item.id)} className="w-6 h-6 flex items-center justify-center text-brand-tactical hover:bg-brand-tactical hover:text-theme-text rounded transition-all"><Plus size={10}/></button>
+                                  <button onClick={()=>addEquip(item.id)} className="w-6 h-6 flex items-center justify-center text-brand-tactical hover:bg-brand-tactical hover:text-brand-text rounded transition-all"><Plus size={10}/></button>
                                 </div>
                               )}
                               {!isSelected&&(
@@ -552,10 +552,10 @@ export const AdminQuotes: React.FC = () => {
               </div>
               {/* Modal Footer */}
               <div className="p-4 md:p-8 md:p-10 bg-theme-bg-muted border-t border-theme-border flex gap-4 shrink-0 rounded-2xl">
-                <button onClick={handleReject} className="py-5 px-3 md:px-6 border border-red-500/20 text-red-500 text-[9px] font-bold uppercase tracking-[0.2em] hover:bg-red-500 hover:text-theme-text transition-all rounded-[20px]">Recusar</button>
+                <button onClick={handleReject} className="py-5 px-3 md:px-6 border border-brand-danger/20 text-brand-danger text-[9px] font-bold uppercase tracking-[0.2em] hover:bg-brand-danger hover:text-white transition-all rounded-[20px]">Recusar</button>
                 
                 {selectedQuote.quoteStatus === "CONVERTED" && (
-                  <button onClick={handleArchive} className="flex-1 py-5 bg-zinc-800 text-theme-text text-[11px] font-bold uppercase tracking-[0.3em] hover:bg-zinc-700 transition-all rounded-[20px] flex items-center justify-center gap-4">
+                  <button onClick={handleArchive} className="flex-1 py-5 bg-zinc-800 text-zinc-100 text-[11px] font-bold uppercase tracking-[0.3em] hover:bg-zinc-700 transition-all rounded-[20px] flex items-center justify-center gap-4">
                     Finalizar Entrega & Arquivar
                   </button>
                 )}
@@ -647,7 +647,7 @@ export const AdminQuotes: React.FC = () => {
                       key={u} 
                       type="button" 
                       onClick={() => setNewQuoteData({...newQuoteData, urgency: u})} 
-                      className={`py-4 border text-[10px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest rounded-xl transition-all italic ${newQuoteData.urgency === u ? "border-brand-tactical bg-brand-tactical text-theme-text shadow-lg shadow-brand-tactical/20" : "border-theme-border text-theme-muted hover:border-theme-text"}`}
+                      className={`py-4 border text-[10px] md:text-[9px] font-black uppercase tracking-wider md:tracking-widest rounded-xl transition-all italic ${newQuoteData.urgency === u ? "border-brand-tactical bg-brand-tactical text-brand-text shadow-lg shadow-brand-tactical/20" : "border-theme-border text-theme-muted hover:border-theme-text"}`}
                     >
                       {u === "HIGH" ? "Urgente" : u === "MEDIUM" ? "Normal" : "Baixa"}
                     </button>
@@ -689,12 +689,12 @@ export const AdminQuotes: React.FC = () => {
       {/* NOTIFICATION */}
       {notification&&(
         <div className="fixed bottom-10 right-10 z-[300] animate-in slide-in-from-right-10 duration-500">
-          <div className={`p-5 border ${notification.type==="success"?"border-brand-tactical bg-theme-bg shadow-2xl":"border-red-900 bg-theme-bg"} min-w-[300px] relative overflow-hidden rounded-xl`}>
+          <div className={`p-5 border ${notification.type==="success"?"border-brand-tactical bg-theme-bg shadow-2xl":"border-brand-danger bg-theme-bg"} min-w-[300px] relative overflow-hidden rounded-xl`}>
             <div className="flex flex-col gap-1">
-              <span className={`text-[10px] font-black uppercase tracking-widest ${notification.type==="success"?"text-brand-tactical":"text-red-500"}`}>Protocolo Administrativo</span>
+              <span className={`text-[10px] font-black uppercase tracking-widest ${notification.type==="success"?"text-brand-tactical":"text-brand-danger"}`}>Protocolo Administrativo</span>
               <p className="text-sm font-bold text-theme-text uppercase mt-1">{notification.message}</p>
             </div>
-            <div className={`absolute bottom-0 left-0 h-1 ${notification.type==="success"?"bg-brand-tactical":"bg-red-500"} animate-out fade-out duration-[5000ms] w-full`}/>
+            <div className={`absolute bottom-0 left-0 h-1 ${notification.type==="success"?"bg-brand-tactical":"bg-brand-danger"} animate-out fade-out duration-[5000ms] w-full`}/>
           </div>
         </div>
       )}

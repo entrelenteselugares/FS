@@ -329,19 +329,19 @@ export function PrintKitModal({
               <div className="grid grid-cols-3 gap-2">
                 <button
                   onClick={() => setTemplate('TABLE_TENT')}
-                  className={`p-3 rounded-xl border text-xs font-black uppercase tracking-widest transition-all flex flex-col items-center justify-center gap-2 ${template === 'TABLE_TENT' ? 'border-brand-tactical bg-brand-tactical/10 text-brand-tactical' : 'border-theme-border bg-theme-bg-muted text-theme-muted hover:text-theme-text hover:border-theme-border'}`}
+                  className={`p-3 rounded-xl border text-xs font-black uppercase tracking-widest transition-all flex flex-col items-center justify-center gap-2 ${template === 'TABLE_TENT' ? 'border-brand-tactical bg-brand-tactical/10 text-brand-tactical' : 'border-theme-border bg-theme-bg-muted text-theme-muted hover:text-brand-text hover:border-theme-border'}`}
                 >
                   <FileText size={16} /> Display
                 </button>
                 <button
                   onClick={() => setTemplate('POSTER')}
-                  className={`p-3 rounded-xl border text-xs font-black uppercase tracking-widest transition-all flex flex-col items-center justify-center gap-2 ${template === 'POSTER' ? 'border-brand-tactical bg-brand-tactical/10 text-brand-tactical' : 'border-theme-border bg-theme-bg-muted text-theme-muted hover:text-theme-text hover:border-theme-border'}`}
+                  className={`p-3 rounded-xl border text-xs font-black uppercase tracking-widest transition-all flex flex-col items-center justify-center gap-2 ${template === 'POSTER' ? 'border-brand-tactical bg-brand-tactical/10 text-brand-tactical' : 'border-theme-border bg-theme-bg-muted text-theme-muted hover:text-brand-text hover:border-theme-border'}`}
                 >
                   <FileText size={16} /> Pôster A4
                 </button>
                 <button
                   onClick={() => setTemplate('CARDS')}
-                  className={`p-3 rounded-xl border text-xs font-black uppercase tracking-widest transition-all flex flex-col items-center justify-center gap-2 ${template === 'CARDS' ? 'border-brand-tactical bg-brand-tactical/10 text-brand-tactical' : 'border-theme-border bg-theme-bg-muted text-theme-muted hover:text-theme-text hover:border-theme-border'}`}
+                  className={`p-3 rounded-xl border text-xs font-black uppercase tracking-widest transition-all flex flex-col items-center justify-center gap-2 ${template === 'CARDS' ? 'border-brand-tactical bg-brand-tactical/10 text-brand-tactical' : 'border-theme-border bg-theme-bg-muted text-theme-muted hover:text-brand-text hover:border-theme-border'}`}
                 >
                   <FileText size={16} /> Cartões
                 </button>

@@ -5,18 +5,18 @@ import SEO from "../components/SEO";
 
 export function StatusPage() {
   const components = [
-    { name: "PWA / Frontend", icon: <Smartphone size={16} />, status: "Operacional", color: "text-theme-brand", bg: "bg-emerald-500/10" },
-    { name: "API / Backend", icon: <Server size={16} />, status: "Operacional", color: "text-theme-brand", bg: "bg-emerald-500/10" },
-    { name: "Autenticação", icon: <Key size={16} />, status: "Operacional", color: "text-theme-brand", bg: "bg-emerald-500/10" },
-    { name: "Upload de Fotos (Vault)", icon: <UploadCloud size={16} />, status: "Operacional", color: "text-theme-brand", bg: "bg-emerald-500/10" },
-    { name: "Pagamentos (Mercado Pago)", icon: <CreditCard size={16} />, status: "Operacional", color: "text-theme-brand", bg: "bg-emerald-500/10" },
-    { name: "Webhooks de Confirmação", icon: <RefreshCcw size={16} />, status: "Operacional", color: "text-theme-brand", bg: "bg-emerald-500/10" },
-    { name: "Notificações", icon: <Bell size={16} />, status: "Operacional", color: "text-theme-brand", bg: "bg-emerald-500/10" },
-    { name: "Armazenamento de Mídia", icon: <Database size={16} />, status: "Operacional", color: "text-theme-brand", bg: "bg-emerald-500/10" }
+    { name: "PWA / Frontend", icon: <Smartphone size={16} />, status: "Operacional", color: "text-theme-brand", bg: "bg-brand-tactical/10" },
+    { name: "API / Backend", icon: <Server size={16} />, status: "Operacional", color: "text-theme-brand", bg: "bg-brand-tactical/10" },
+    { name: "Autenticação", icon: <Key size={16} />, status: "Operacional", color: "text-theme-brand", bg: "bg-brand-tactical/10" },
+    { name: "Upload de Fotos (Vault)", icon: <UploadCloud size={16} />, status: "Operacional", color: "text-theme-brand", bg: "bg-brand-tactical/10" },
+    { name: "Pagamentos (Mercado Pago)", icon: <CreditCard size={16} />, status: "Operacional", color: "text-theme-brand", bg: "bg-brand-tactical/10" },
+    { name: "Webhooks de Confirmação", icon: <RefreshCcw size={16} />, status: "Operacional", color: "text-theme-brand", bg: "bg-brand-tactical/10" },
+    { name: "Notificações", icon: <Bell size={16} />, status: "Operacional", color: "text-theme-brand", bg: "bg-brand-tactical/10" },
+    { name: "Armazenamento de Mídia", icon: <Database size={16} />, status: "Operacional", color: "text-theme-brand", bg: "bg-brand-tactical/10" }
   ];
 
   return (
-    <div className="min-h-screen bg-theme-bg text-theme-text selection:bg-brand-tactical/30">
+    <div className="min-h-screen bg-theme-bg text-brand-text selection:bg-brand-tactical/30">
       <SEO title="Status do Sistema | Foto Segundo" description="Verifique o status operacional da plataforma Foto Segundo em tempo real." />
       <Navbar />
       
@@ -39,8 +39,8 @@ export function StatusPage() {
           </h1>
 
           {/* Status Geral */}
-          <div className="bg-emerald-500/5 border border-emerald-500/30 p-4 md:p-8 rounded-3xl flex flex-col items-center">
-            <div className="w-16 h-16 bg-emerald-500/20 rounded-full flex items-center justify-center mb-6">
+          <div className="bg-brand-tactical/5 border border-brand-tactical/30 p-4 md:p-8 rounded-3xl flex flex-col items-center">
+            <div className="w-16 h-16 bg-brand-tactical/20 rounded-full flex items-center justify-center mb-6">
               <CheckCircle2 size={32} className="text-theme-brand" />
             </div>
             <h2 className="text-2xl font-bold text-theme-brand uppercase tracking-widest mb-2">
@@ -67,7 +67,7 @@ export function StatusPage() {
                   <span className="font-bold text-theme-text">{comp.name}</span>
                 </div>
                 <div className="flex items-center gap-2 px-4 py-2 bg-theme-bg border border-theme-border rounded-full w-full sm:w-auto justify-center">
-                  <span className={`w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(133,185,172,0.8)] animate-pulse`} />
+                  <span className={`w-2 h-2 rounded-full bg-brand-tactical shadow-[0_0_8px_rgba(133,185,172,0.8)] animate-pulse`} />
                   <span className="text-xs font-bold uppercase tracking-widest text-theme-brand">{comp.status}</span>
                 </div>
               </div>
@@ -99,7 +99,7 @@ export function StatusPage() {
               <li className="flex gap-2"><span>2.</span> Verifique sua conexão com a internet</li>
               <li className="flex gap-2"><span>3.</span> Se o problema persistir, entre em contato descrevendo o erro e o horário.</li>
             </ul>
-            <Link to="/contato" className="inline-block px-3 md:px-6 py-3 bg-brand-tactical text-theme-text font-bold uppercase tracking-widest text-[10px] hover:brightness-110 transition-all shadow-xl shadow-brand-tactical/20">
+            <Link to="/contato" className="inline-block px-3 md:px-6 py-3 bg-brand-tactical text-brand-text font-bold uppercase tracking-widest text-[10px] hover:brightness-110 transition-all shadow-xl shadow-brand-tactical/20">
               Acessar Contato
             </Link>
           </section>

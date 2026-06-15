@@ -10,7 +10,7 @@ import { PushNotificationManager } from "./components/PushNotificationManager";
 import { UploadQueueProvider } from "./contexts/UploadQueueContext";
 
 import React, { Suspense } from "react";
-import { WorldCupLiveBanner } from "./components/worldcup/WorldCupLiveBanner";
+
 
 // ─── Lazy Loaded Routes ───
 const EventPage = React.lazy(() => import("./pages/EventPage"));
@@ -188,7 +188,6 @@ const AnimatedRoutes = () => {
             <Route path="/negocios" element={<ProtectedRoute><BusinessLanding /></ProtectedRoute>} />
             <Route path="/clube" element={<ProtectedRoute><ClubLandingPage /></ProtectedRoute>} />
             <Route path="/flash/:shortId" element={<ProtectedRoute><FlashUnlockPage /></ProtectedRoute>} />
-            <Route path="/suporte" element={<ProtectedRoute><HelpPage /></ProtectedRoute>} />
             <Route path="/embaixador/:slug" element={<ProtectedRoute><AmbassadorPage /></ProtectedRoute>} />
             
             {/* World Cup Gamification */}
@@ -198,9 +197,6 @@ const AnimatedRoutes = () => {
             {/* Redireciona para o painel correto */}
             <Route path="/dashboard" element={<DashboardRedirect />} />
             
-            {/* 404 Catcher */}
-            <Route path="*" element={<NotFoundPage />} />
-
             {/* Painel do Admin */}
             <Route path="/admin/*" element={
               <ProtectedRoute roles={["ADMIN"]}>
@@ -295,7 +291,6 @@ function App() {
           <UploadQueueProvider>
             <HelmetProvider>
               <Router>
-                <WorldCupLiveBanner />
                 <AnimatedRoutes />
                 <BottomNav />
                 <PushNotificationManager />

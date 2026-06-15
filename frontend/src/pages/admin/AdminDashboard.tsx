@@ -213,7 +213,7 @@ export const AdminDashboard: React.FC = () => {
         {/* Tab Content */}
         {loading && activeTab === "overview" ? (
            <div className="py-40 flex flex-col items-center justify-center gap-4 md:gap-8 relative overflow-hidden">
-             <div className="absolute inset-0 bg-emerald-500/5 blur-[120px] rounded-full -m-64 opacity-20" />
+             <div className="absolute inset-0 bg-brand-tactical/5 blur-[120px] rounded-full -m-64 opacity-20" />
              <div className="w-px h-16 bg-gradient-to-b from-transparent via-emerald-500 to-transparent" />
              <img src="/logo.png" alt="Logo" className="h-6 object-contain opacity-50 grayscale brightness-200" />
              <div className="text-[9px] font-bold uppercase tracking-[0.4em] text-theme-brand animate-pulse mt-2">Sincronizando Ativos Globais</div>

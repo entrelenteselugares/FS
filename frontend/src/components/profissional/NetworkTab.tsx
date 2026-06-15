@@ -27,20 +27,20 @@ export function NetworkTab({ network, networkSearch, searchResults, residentUnit
         {residentUnits.length > 0 && (
           <div className="space-y-6 animate-in slide-in-from-left-4 duration-500">
             <div className="flex items-center gap-4">
-              <div className="h-1 w-12 bg-cyan-400" />
+              <div className="h-1 w-12 bg-brand-info" />
               <h4 className="text-sm font-bold text-theme-text uppercase tracking-widest">Unidades que Sou Residente</h4>
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {residentUnits.map((u) => (
-                <div key={u.id} className="bg-theme-bg-muted border border-cyan-400/20 rounded-xl p-3 md:p-5 relative group hover:border-cyan-400/50 transition-all">
-                  <div className="absolute top-0 left-0 w-full h-[1px] bg-cyan-400/30" />
+                <div key={u.id} className="bg-theme-bg-muted border border-brand-info/20 rounded-xl p-3 md:p-5 relative group hover:border-brand-info/50 transition-all">
+                  <div className="absolute top-0 left-0 w-full h-[1px] bg-brand-info/30" />
                   <div className="space-y-4">
                     <div className="flex justify-between items-start">
-                      <div className="px-3 py-1 bg-cyan-400/10 border border-cyan-400/30 rounded-xl text-[10px] font-bold text-cyan-400 uppercase tracking-widest">
+                      <div className="px-3 py-1 bg-brand-info/10 border border-brand-info/30 rounded-xl text-[10px] font-bold text-brand-info uppercase tracking-widest">
                         Parceria Ativa
                       </div>
-                      <div className="text-cyan-400/20 group-hover:text-cyan-400/50 transition-colors">
+                      <div className="text-brand-info/20 group-hover:text-brand-info/50 transition-colors">
                         <Users size={20} />
                       </div>
                     </div>
@@ -54,7 +54,7 @@ export function NetworkTab({ network, networkSearch, searchResults, residentUnit
                     </div>
                     <div className="pt-4 border-t border-theme-border">
                       <div className="flex items-center gap-2">
-                        <div className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
+                        <div className="w-1.5 h-1.5 rounded-full bg-brand-info animate-pulse" />
                         <span className="text-[10px] font-bold text-theme-muted uppercase tracking-widest block">Sincronizado com Vitrine Oficial</span>
                       </div>
                     </div>
@@ -137,7 +137,7 @@ export function NetworkTab({ network, networkSearch, searchResults, residentUnit
                     </div>
                     <button
                       onClick={() => onToggleFavorite(p.id)}
-                      className="p-3 text-red-500/40 hover:text-red-500 transition-colors"
+                      className="p-3 text-brand-danger/40 hover:text-brand-danger transition-colors"
                       title="Remover da Rede"
                     >
                       <X size={20} />

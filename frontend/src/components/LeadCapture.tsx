@@ -73,7 +73,7 @@ const LeadCapture: React.FC<LeadCaptureProps> = ({ eventId }) => {
           <button 
             type="submit"
             disabled={loading}
-            className="w-full py-4 rounded-xl bg-theme-text text-theme-bg text-[10px] font-bold uppercase tracking-widest hover:bg-brand-tactical hover:text-theme-text hover:scale-[1.02] transition-all duration-300 flex items-center justify-center gap-2 shadow-lg"
+            className="w-full py-4 rounded-xl bg-theme-text text-theme-bg text-[10px] font-bold uppercase tracking-widest hover:bg-brand-tactical hover:text-brand-text hover:scale-[1.02] transition-all duration-300 flex items-center justify-center gap-2 shadow-lg"
           >
             {loading ? "PROCESSANDO..." : "GARANTIR ACESSO VIP"}
             <ArrowRight size={14} />

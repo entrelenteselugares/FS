@@ -5,7 +5,7 @@ import SEO from "../components/SEO";
 
 export function BusinessLanding() {
   return (
-    <div className="min-h-screen bg-theme-bg text-theme-text selection:bg-brand-tactical/30">
+    <div className="min-h-screen bg-theme-bg text-brand-text selection:bg-brand-tactical/30">
       <SEO title="Negócios | Foto Segundo" description="Faça parte da maior rede de audiovisual do Brasil como fotógrafo ou videomaker." />
       <Navbar />
       
@@ -45,8 +45,8 @@ export function BusinessLanding() {
         <section className="mb-24">
           <div className="grid lg:grid-cols-2 gap-4 md:gap-8">
             {/* Problema */}
-            <div className="border border-red-500/30 bg-red-500/5 p-4 md:p-8 md:p-10 rounded-3xl">
-              <h2 className="text-xl font-bold text-red-500 uppercase mb-6">
+            <div className="border border-brand-danger/30 bg-brand-danger/5 p-4 md:p-8 md:p-10 rounded-3xl">
+              <h2 className="text-xl font-bold text-brand-danger uppercase mb-6">
                 O problema que resolvemos
               </h2>
               <ul className="space-y-4">
@@ -57,7 +57,7 @@ export function BusinessLanding() {
                   "Gerenciar agenda, contratos e entregas em ferramentas separadas é caótico"
                 ].map((item, i) => (
                   <li key={i} className="flex items-start gap-3 text-theme-text-muted font-normal text-sm md:text-base leading-relaxed">
-                    <span className="text-red-500 mt-1">✗</span> {item}
+                    <span className="text-brand-danger mt-1">✗</span> {item}
                   </li>
                 ))}
               </ul>
@@ -134,7 +134,7 @@ export function BusinessLanding() {
             </div>
           </div>
 
-          <div className="bg-brand-tactical text-theme-text rounded-3xl p-4 md:p-8 md:p-10 relative overflow-hidden">
+          <div className="bg-brand-tactical text-brand-text rounded-3xl p-4 md:p-8 md:p-10 relative overflow-hidden">
             <DollarSign className="absolute -right-8 -top-8 text-theme-text/5" size={200} />
             <div className="relative z-10">
               <h2 className="text-2xl font-bold uppercase mb-6">
@@ -181,7 +181,7 @@ export function BusinessLanding() {
           <p className="text-theme-text-muted font-normal mb-10 max-w-lg mx-auto">
             Entre em contato com nossa equipe com o assunto <strong className="text-theme-text">&quot;Quero ser profissional da rede&quot;</strong> e não se esqueça de incluir o link do seu portfólio.
           </p>
-          <Link to="/contato" className="inline-block px-3 md:px-6 md:px-12 py-5 bg-brand-tactical text-theme-text font-bold uppercase tracking-[0.3em] text-[10px] hover:brightness-110 transition-all shadow-2xl shadow-brand-tactical/20">
+          <Link to="/contato" className="inline-block px-3 md:px-6 md:px-12 py-5 bg-brand-tactical text-brand-text font-bold uppercase tracking-[0.3em] text-[10px] hover:brightness-110 transition-all shadow-2xl shadow-brand-tactical/20">
             Acessar Contato
           </Link>
         </section>

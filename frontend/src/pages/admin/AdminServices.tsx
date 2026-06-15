@@ -61,17 +61,17 @@ const PackageModal: React.FC<{ onClose: () => void, onSave: (data: any) => void,
         <div className="space-y-4">
           <div>
             <label className="text-[10px] font-bold uppercase text-theme-muted">Nome do Pacote</label>
-            <input className="w-full bg-theme-bg p-3 rounded-lg text-theme-text text-sm outline-none border border-theme-border focus:border-amber-500" value={name} onChange={e => setName(e.target.value)} />
+            <input className="w-full bg-theme-bg p-3 rounded-lg text-theme-text text-sm outline-none border border-theme-border focus:border-brand-warning" value={name} onChange={e => setName(e.target.value)} />
           </div>
           <div>
             <label className="text-[10px] font-bold uppercase text-theme-muted">Descrição</label>
-            <textarea className="w-full bg-theme-bg p-3 rounded-lg text-theme-text text-sm outline-none border border-theme-border focus:border-amber-500 h-20" value={description} onChange={e => setDescription(e.target.value)} />
+            <textarea className="w-full bg-theme-bg p-3 rounded-lg text-theme-text text-sm outline-none border border-theme-border focus:border-brand-warning h-20" value={description} onChange={e => setDescription(e.target.value)} />
           </div>
           <div>
             <label className="text-[10px] font-bold uppercase text-theme-muted block mb-2">Serviços Inclusos no Pacote</label>
             <div className="grid grid-cols-2 gap-2 max-h-48 overflow-y-auto pr-2">
               {availableServices.map(s => (
-                <label key={s.id} className="flex items-center gap-2 p-3 border border-theme-border rounded-lg bg-theme-bg cursor-pointer hover:border-amber-500/50">
+                <label key={s.id} className="flex items-center gap-2 p-3 border border-theme-border rounded-lg bg-theme-bg cursor-pointer hover:border-brand-warning/50">
                   <input type="checkbox" className="accent-amber-500" checked={selectedItems.includes(s.id)} onChange={(e) => {
                     if (e.target.checked) setSelectedItems(prev => [...prev, s.id]);
                     else setSelectedItems(prev => prev.filter(id => id !== s.id));
@@ -91,10 +91,10 @@ const PackageModal: React.FC<{ onClose: () => void, onSave: (data: any) => void,
              </div>
              <div>
                 <label className="text-[10px] font-bold uppercase text-theme-muted">Preço Final do Pacote</label>
-                <input type="number" className="w-full bg-theme-bg p-3 rounded-lg text-amber-500 font-bold text-lg outline-none border border-theme-border focus:border-amber-500" value={basePrice} onChange={e => setBasePrice(Number(e.target.value))} />
+                <input type="number" className="w-full bg-theme-bg p-3 rounded-lg text-brand-warning font-bold text-lg outline-none border border-theme-border focus:border-brand-warning" value={basePrice} onChange={e => setBasePrice(Number(e.target.value))} />
              </div>
           </div>
-          <button disabled={saving || !name || selectedItems.length === 0} onClick={() => onSave({ name, description, basePrice, packageItems: selectedItems, category: 'PACOTE' })} className="w-full py-4 bg-amber-500 text-theme-text font-bold uppercase tracking-widest rounded-lg mt-4 disabled:opacity-50">
+          <button disabled={saving || !name || selectedItems.length === 0} onClick={() => onSave({ name, description, basePrice, packageItems: selectedItems, category: 'PACOTE' })} className="w-full py-4 bg-brand-warning text-zinc-900 font-bold uppercase tracking-widest rounded-lg mt-4 disabled:opacity-50">
             {saving ? 'Salvando...' : 'Salvar Pacote'}
           </button>
         </div>
@@ -243,7 +243,7 @@ export const AdminServices: React.FC = () => {
           <p className="text-[10px] text-theme-muted uppercase tracking-[0.5em] mt-2 font-bold">Gestão de catálogo, portfólio de serviços e aprovações</p>
         </div>
         {activeTab === "PACOTES" ? (
-          <button onClick={() => { setEditingPackage(null); setIsPackageModalOpen(true); }} className="px-4 md:px-8 py-4 bg-amber-500 text-theme-text text-[9px] font-bold uppercase tracking-[0.4em] shadow-xl hover:brightness-110 transition-all flex items-center gap-3">
+          <button onClick={() => { setEditingPackage(null); setIsPackageModalOpen(true); }} className="px-4 md:px-8 py-4 bg-brand-warning text-zinc-900 text-[9px] font-bold uppercase tracking-[0.4em] shadow-xl hover:brightness-110 transition-all flex items-center gap-3">
             <Layers size={14} /> MONTAR PACOTE
           </button>
         ) : (
@@ -258,12 +258,12 @@ export const AdminServices: React.FC = () => {
         <button onClick={() => setActiveTab("CATALOGO")} className={`text-[11px] font-black uppercase tracking-widest px-4 py-2 rounded-2xl transition-all ${activeTab === "CATALOGO" ? "bg-brand-tactical text-[var(--brand-text)]" : "text-theme-muted hover:bg-theme-bg-muted"}`}>
           Catálogo Global
         </button>
-        <button onClick={() => setActiveTab("PACOTES")} className={`text-[11px] font-black uppercase tracking-widest px-4 py-2 rounded-2xl transition-all flex items-center gap-2 ${activeTab === "PACOTES" ? "bg-amber-500 text-theme-text" : "text-theme-muted hover:bg-theme-bg-muted"}`}>
+        <button onClick={() => setActiveTab("PACOTES")} className={`text-[11px] font-black uppercase tracking-widest px-4 py-2 rounded-2xl transition-all flex items-center gap-2 ${activeTab === "PACOTES" ? "bg-brand-warning text-theme-text" : "text-theme-muted hover:bg-theme-bg-muted"}`}>
           Pacotes (Combos)
         </button>
         <button onClick={() => setActiveTab("PENDENTES")} className={`text-[11px] font-black uppercase tracking-widest px-4 py-2 rounded-2xl transition-all flex items-center gap-2 ${activeTab === "PENDENTES" ? "bg-brand-tactical text-[var(--brand-text)]" : "text-theme-muted hover:bg-theme-bg-muted"}`}>
           Aprovações Pendentes
-          {pendingServices.length > 0 && <span className="bg-red-500 text-theme-text px-2 py-0.5 rounded-full text-[10px]">{pendingServices.length}</span>}
+          {pendingServices.length > 0 && <span className="bg-brand-danger text-white px-2 py-0.5 rounded-full text-[10px]">{pendingServices.length}</span>}
         </button>
       </div>
 
@@ -336,7 +336,7 @@ export const AdminServices: React.FC = () => {
                         </div>
                         <div className="flex flex-wrap gap-2 mt-1">
                           {s.allowProfessional && <span className="px-2 py-0.5 bg-brand-tactical/15 border border-brand-tactical/25 text-[9px] font-bold uppercase tracking-widest text-brand-tactical rounded-2xl">PROFISSIONAL: {formatCurrency(s.priceProfessional || 0)}</span>}
-                          {s.allowMobile && <span className="px-2 py-0.5 bg-amber-500/15 border border-amber-500/25 text-[9px] font-bold uppercase tracking-widest text-amber-400 rounded-2xl">MOBILE: {formatCurrency(s.priceMobile || 0)}</span>}
+                          {s.allowMobile && <span className="px-2 py-0.5 bg-brand-warning/15 border border-brand-warning/25 text-[9px] font-bold uppercase tracking-widest text-brand-warning rounded-2xl">MOBILE: {formatCurrency(s.priceMobile || 0)}</span>}
                         </div>
                         <p className="text-[10px] text-theme-muted uppercase tracking-widest font-medium max-w-xl leading-relaxed opacity-80 mt-1">{s.description}</p>
                       </div>
@@ -346,11 +346,11 @@ export const AdminServices: React.FC = () => {
                         <span className="text-[10px] font-bold text-theme-muted uppercase tracking-widest block mb-1">Preço Sugerido</span>
                         <span className="text-xl font-heading font-bold text-theme-text">{formatCurrency(s.basePrice)}</span>
                       </div>
-                      <div className="flex gap-3 opacity-0 group-hover:opacity-100 transition-all">
+                      <div className="flex gap-3 opacity-0 pointer-events-none group-hover:opacity-100 transition-all">
                         <button onClick={() => { if ((s as any).isPackage) { setEditingPackage(s); setIsPackageModalOpen(true); } else { setEditingService(s); setIsModalOpen(true); } }} className="p-3 border border-theme-border text-theme-muted hover:text-brand-tactical hover:border-brand-tactical transition-all">
                           <Edit3 size={14} />
                         </button>
-                        <button onClick={() => setConfirmDelete(s.id)} className="p-3 border border-red-900/30 text-red-900/40 hover:text-red-500 hover:border-red-500 transition-all">
+                        <button onClick={() => setConfirmDelete(s.id)} className="p-3 border border-brand-danger/30 text-brand-danger/40 hover:text-brand-danger hover:border-brand-danger transition-all">
                           <Trash2 size={14} />
                         </button>
                       </div>
@@ -395,10 +395,10 @@ export const AdminServices: React.FC = () => {
                 <button onClick={() => handleReviewAction(ps.id, "EXCLUSIVE")} className="px-4 py-2 border border-brand-tactical text-brand-tactical text-[9px] font-bold uppercase tracking-widest rounded-2xl hover:bg-brand-tactical/10">
                   Aprovar Exclusivo
                 </button>
-                <button onClick={() => { const r = prompt("Motivo para ajuste:"); if (r) handleReviewAction(ps.id, "NEEDS_ADJUSTMENT", r); }} className="px-4 py-2 border border-amber-500 text-amber-500 text-[9px] font-bold uppercase tracking-widest rounded-2xl hover:bg-amber-500/10">
+                <button onClick={() => { const r = prompt("Motivo para ajuste:"); if (r) handleReviewAction(ps.id, "NEEDS_ADJUSTMENT", r); }} className="px-4 py-2 border border-brand-warning text-brand-warning text-[9px] font-bold uppercase tracking-widest rounded-2xl hover:bg-brand-warning/10">
                   Solicitar Ajuste
                 </button>
-                <button onClick={() => handleReviewAction(ps.id, "REJECTED")} className="px-4 py-2 border border-red-500 text-red-500 text-[9px] font-bold uppercase tracking-widest rounded-2xl flex items-center justify-center gap-2 hover:bg-red-500/10">
+                <button onClick={() => handleReviewAction(ps.id, "REJECTED")} className="px-4 py-2 border border-brand-danger text-brand-danger text-[9px] font-bold uppercase tracking-widest rounded-2xl flex items-center justify-center gap-2 hover:bg-brand-danger/10">
                   <Ban size={14} /> Rejeitar
                 </button>
               </div>
@@ -422,17 +422,17 @@ export const AdminServices: React.FC = () => {
       {/* MODAL: Confirm Delete */}
       {confirmDelete && (
         <div className="fixed inset-0 z-[600] flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-red-950/40 backdrop-blur-xl animate-in fade-in duration-300" onClick={() => setConfirmDelete(null)} />
-          <div className="relative w-full max-w-md bg-theme-card border border-red-500/20 rounded-2xl overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300">
+          <div className="absolute inset-0 bg-brand-danger/40 backdrop-blur-xl animate-in fade-in duration-300" onClick={() => setConfirmDelete(null)} />
+          <div className="relative w-full max-w-md bg-theme-card border border-brand-danger/20 rounded-2xl overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300">
             <div className="p-5 md:p-10 space-y-8 text-center">
-              <div className="w-20 h-20 bg-red-500/10 rounded-2xl flex items-center justify-center border border-red-500/20 mx-auto mb-6"><Trash2 className="text-red-500" size={32} /></div>
+              <div className="w-20 h-20 bg-brand-danger/10 rounded-2xl flex items-center justify-center border border-brand-danger/20 mx-auto mb-6"><Trash2 className="text-brand-danger" size={32} /></div>
               <div className="space-y-2">
                 <h3 className="text-2xl font-bold uppercase text-theme-text">Remover Serviço?</h3>
                 <p className="text-[11px] font-bold text-brand-tactical uppercase tracking-[0.4em]">{activeTab === "PACOTES" ? "Catálogo de Pacotes" : "Tabela de Preços e Serviços"}</p>
               </div>
               <p className="text-[11px] uppercase tracking-[0.2em] leading-relaxed text-theme-muted">ESTA AÇÃO IRÁ REMOVER PERMANENTEMENTE O ITEM DO GERADOR DE ORÇAMENTOS DA REDE.</p>
               <div className="grid grid-cols-1 gap-4 pt-4">
-                <button onClick={executeDelete} className="w-full py-5 bg-red-600 text-theme-text text-[11px] font-bold uppercase tracking-[0.4em] hover:bg-red-700 transition-all rounded-2xl shadow-lg">REMOVER AGORA</button>
+                <button onClick={executeDelete} className="w-full py-5 bg-brand-danger text-white text-[11px] font-bold uppercase tracking-[0.4em] hover:bg-brand-danger transition-all rounded-2xl shadow-lg">REMOVER AGORA</button>
                 <button onClick={() => setConfirmDelete(null)} className="w-full py-5 border border-theme-border text-theme-muted text-[11px] font-bold uppercase tracking-[0.4em] hover:text-theme-text transition-all rounded-2xl">ABORTAR MISSÃO</button>
               </div>
             </div>

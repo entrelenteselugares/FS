@@ -175,7 +175,7 @@ export const WorldCupLiveBanner = ({ alwaysShow = false }: { alwaysShow?: boolea
   if (!match) return null;
 
   const isLive = match.status === "LIVE" || match.status === "HALF_TIME";
-  const statusColor = { LIVE: "#22c55e", HALF_TIME: "#f59e0b", FINISHED: "#6b7280", SCHEDULED: "#93c5fd" }[match.status];
+  const statusColor = { LIVE: "#22c55e", HALF_TIME: "#f59e0b", FINISHED: "var(--text-muted)", SCHEDULED: "#93c5fd" }[match.status];
 
   return (
     <Link
@@ -183,8 +183,8 @@ export const WorldCupLiveBanner = ({ alwaysShow = false }: { alwaysShow?: boolea
       id="worldcup-live-banner"
       className="block w-full hover:brightness-110 transition-all"
       style={{
-        background: "linear-gradient(90deg, #022c22 0%, #065f46 35%, #064e3b 65%, #022c22 100%)",
-        borderBottom: "1px solid rgba(133,185,172,0.4)",
+        background: "linear-gradient(90deg, #0a1a18 0%, #0f766e 35%, #134e48 65%, #0a1a18 100%)",
+        borderBottom: "1px solid rgba(133, 185, 172, 0.4)",
         textDecoration: "none",
         paddingTop: "env(safe-area-inset-top, 0px)",
       }}
@@ -195,8 +195,8 @@ export const WorldCupLiveBanner = ({ alwaysShow = false }: { alwaysShow?: boolea
       >
         {/* LEFT — Brand */}
         <div className="flex items-center gap-2 shrink-0">
-          <Trophy size={13} style={{ color: "#fbbf24" }} />
-          <span className="hidden sm:inline" style={{ fontSize: 9, fontWeight: 900, color: "#fbbf24", letterSpacing: "0.15em", fontStyle: "italic", textTransform: "uppercase" }}>
+          <Trophy size={13} style={{ color: "#F59E0B" }} />
+          <span className="hidden sm:inline" style={{ fontSize: 9, fontWeight: 900, color: "#F59E0B", letterSpacing: "0.15em", fontStyle: "italic", textTransform: "uppercase" }}>
             Copa 2026
           </span>
           {isLive && (
@@ -223,7 +223,7 @@ export const WorldCupLiveBanner = ({ alwaysShow = false }: { alwaysShow?: boolea
               {match.home.length > 8 ? match.home.substring(0, 3).toUpperCase() : match.home}
             </span>
             {match.status !== "SCHEDULED" && (
-              <span style={{ fontSize: 13, fontWeight: 900, color: "#fbbf24" }}>{match.homeScore}</span>
+              <span style={{ fontSize: 13, fontWeight: 900, color: "#F59E0B" }}>{match.homeScore}</span>
             )}
           </div>
 
@@ -231,8 +231,8 @@ export const WorldCupLiveBanner = ({ alwaysShow = false }: { alwaysShow?: boolea
           <div className="text-center shrink-0" style={{ minWidth: 72 }}>
             {match.status === "SCHEDULED" ? (
               <div className="flex items-center gap-1 justify-center">
-                <Clock size={9} style={{ color: "#6b7280" }} />
-                <span style={{ fontSize: 8.5, color: "#9ca3af", fontWeight: 700 }}>{match.label}</span>
+                <Clock size={9} style={{ color: "var(--text-muted)" }} />
+                <span style={{ fontSize: 8.5, color: "var(--text-muted)", fontWeight: 700 }}>{match.label}</span>
               </div>
             ) : (
               <span style={{ fontSize: 9, fontWeight: 900, color: statusColor, letterSpacing: "0.05em" }}>
@@ -240,14 +240,14 @@ export const WorldCupLiveBanner = ({ alwaysShow = false }: { alwaysShow?: boolea
               </span>
             )}
             {match.group && (
-              <div style={{ fontSize: 7, color: "#4b5563", letterSpacing: "0.05em" }}>GRP {match.group}</div>
+              <div style={{ fontSize: 7, color: "var(--text-disabled)", letterSpacing: "0.05em" }}>GRP {match.group}</div>
             )}
           </div>
 
           {/* Away */}
           <div className="flex items-center gap-1.5 shrink-1 overflow-hidden">
             {match.status !== "SCHEDULED" && (
-              <span style={{ fontSize: 13, fontWeight: 900, color: "#fbbf24" }}>{match.awayScore}</span>
+              <span style={{ fontSize: 13, fontWeight: 900, color: "#F59E0B" }}>{match.awayScore}</span>
             )}
             <span className="truncate" style={{ fontSize: 11, fontWeight: 900, color: "white", fontStyle: "italic", textTransform: "uppercase", letterSpacing: "0.04em" }}>
               {match.away.length > 8 ? match.away.substring(0, 3).toUpperCase() : match.away}
@@ -269,8 +269,8 @@ export const WorldCupLiveBanner = ({ alwaysShow = false }: { alwaysShow?: boolea
                 onClick={(e) => { e.preventDefault(); setActive(i); }}
                 style={{
                   width: i === active ? 14 : 4, height: 4,
-                  background: i === active ? "#85b9ac" : "#064e3b",
-                  border: "1px solid #85b9ac",
+                  background: i === active ? "var(--brand)" : "var(--bg-field)",
+                  border: "1px solid var(--brand)",
                   borderRadius: 2, cursor: "pointer",
                   transition: "width 0.2s ease",
                 }}

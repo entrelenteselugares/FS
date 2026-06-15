@@ -15,7 +15,8 @@
 
 - MOMENTOS
 Inesquecíveis
-- ÚLTIMOS REGISTROS(8)
+- ÚLTIMOS REGISTROS(9)
+- GRAFITTI GELIN -
 - BRASIL X MARROCOS - CASA DO BAIANO
 - DIA DE JOGO DO BRASIL
 - ABERTURA D COP 2026
@@ -41,6 +42,7 @@ Inesquecíveis
 - **Botão:** `Meus Álbuns`
 - **Botão:** `Opções`
 - **Botão:** `Histórico de Compras`
+- **Botão:** `Álbum Sanfona`
 - **Botão:** `Minha Carteira`
 - **Botão:** `Indique e Ganhe`
 - **Botão:** `Meus Dados`
@@ -49,10 +51,10 @@ Inesquecíveis
 
 - **COPA 2026
 PRÓXIMOS
-SUÉCIA
-14/06 · 23:00
-GRP F
-TUNÍSIA
+ARÁ
+15/06 · 19:00
+GRP H
+URUGUAI
 Ver Álbum →** -> `/album-torcida`
 
 ## ⚙️ Observações Técnicas e Fluxo

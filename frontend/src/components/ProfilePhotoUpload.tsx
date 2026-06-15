@@ -89,7 +89,7 @@ export const ProfilePhotoUpload: React.FC<ProfilePhotoUploadProps> = ({ currentP
             ) : (
               currentNome ? currentNome.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2) : "FS"
             )}
-            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+            <div className="absolute inset-0 bg-black/40 opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity flex items-center justify-center">
               <Upload className="w-6 h-6 text-theme-text" />
             </div>
           </div>
@@ -172,7 +172,7 @@ export const ProfilePhotoUpload: React.FC<ProfilePhotoUploadProps> = ({ currentP
                 <button
                   onClick={handleCropSave}
                   disabled={uploading}
-                  className="flex-1 py-2 rounded-lg font-bold text-sm bg-brand-tactical text-theme-text uppercase flex items-center justify-center gap-2"
+                  className="flex-1 py-2 rounded-lg font-bold text-sm bg-brand-tactical text-brand-text uppercase flex items-center justify-center gap-2"
                 >
                   {uploading ? <Loader2 size={16} className="animate-spin" /> : <Check size={16} />}
                   Salvar

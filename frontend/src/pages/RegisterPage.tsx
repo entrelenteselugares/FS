@@ -199,7 +199,7 @@ export const RegisterPage: React.FC = () => {
           </div>
 
           {error && (
-            <div className="bg-red-500/10 text-red-500 text-[9px] font-bold uppercase tracking-[0.2em] p-5 text-center border border-red-500/20 rounded-2xl">
+            <div className="bg-brand-danger/10 text-brand-danger text-[9px] font-bold uppercase tracking-[0.2em] p-5 text-center border border-brand-danger/20 rounded-2xl">
               {error}
             </div>
           )}
@@ -212,7 +212,7 @@ export const RegisterPage: React.FC = () => {
                 type="button"
                 onClick={() => updateRole(r.id)}
                 className={`flex flex-col items-center justify-center py-3 md:py-6 px-4 rounded-3xl transition-all duration-500 border ${
-                  role === r.id ? "bg-brand-tactical border-brand-tactical text-theme-text shadow-[0_15px_30px_rgba(133,185,172,0.2)]" : "bg-theme-bg-muted border-theme-border text-theme-text-muted hover:border-theme-border hover:text-theme-text"
+                  role === r.id ? "bg-brand-tactical border-brand-tactical text-brand-text shadow-[0_15px_30px_rgba(133,185,172,0.2)]" : "bg-theme-bg-muted border-theme-border text-brand-text-muted hover:border-theme-border hover:text-brand-text"
                 }`}
               >
                 <div className="mb-2">{r.icon}</div>
@@ -226,7 +226,7 @@ export const RegisterPage: React.FC = () => {
               <button 
                 type="button" 
                 onClick={loginWithGoogle}
-                className="w-full bg-white text-theme-text hover:bg-gray-100 border border-gray-300 h-12 flex items-center justify-center relative rounded-2xl transition-all"
+                className="w-full bg-white text-gray-800 hover:bg-gray-100 border border-gray-300 h-12 flex items-center justify-center relative rounded-2xl transition-all"
               >
                 <svg viewBox="0 0 24 24" width="18" height="18" xmlns="http://www.w3.org/2000/svg" className="absolute left-4">
                   <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
@@ -306,7 +306,7 @@ export const RegisterPage: React.FC = () => {
                                setFormData({ ...formData, habilidades: next });
                              }}
                              className={`px-5 py-3 text-[10px] font-black uppercase tracking-widest border rounded-xl transition-all ${
-                               formData.habilidades.includes(skill) ? "bg-brand-tactical border-brand-tactical text-theme-text" : "border-white/10 text-theme-muted hover:border-white/20"
+                               formData.habilidades.includes(skill) ? "bg-brand-tactical border-brand-tactical text-brand-text" : "border-white/10 text-theme-muted hover:border-white/20"
                              }`}
                            >
                              {skill}
@@ -447,7 +447,7 @@ export const RegisterPage: React.FC = () => {
             <button
               type="submit"
               disabled={loading || !formData.acceptedTerms || !formData.acceptedPrivacy}
-              className="w-full bg-brand-tactical text-theme-text hover:bg-white font-bold uppercase tracking-[0.5em] text-[10px] py-5 transition-all flex items-center justify-center gap-4 group disabled:opacity-30 rounded-2xl"
+              className="w-full bg-brand-tactical text-brand-text hover:bg-white font-bold uppercase tracking-[0.5em] text-[10px] py-5 transition-all flex items-center justify-center gap-4 group disabled:opacity-30 rounded-2xl"
             >
               {loading ? "PROCESSANDO..." : "Confirmar Inscrição"}
             </button>

@@ -15,6 +15,7 @@
 
 - EVENTOS
 - Matheus Rocha
+- Grafitti Gelin -
 - Brasil x Marrocos - Casa do Baiano
 - Dia de jogo do Brasil
 - ABERTURA D COP 2026
@@ -27,7 +28,6 @@
 - Recomendo Media
 - AmoreiraCell - PlayNight
 - Domingou
-- DSJ
 
 ## 🔘 Ações e Botões Disponíveis
 

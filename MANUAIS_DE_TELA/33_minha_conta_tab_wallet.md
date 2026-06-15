@@ -19,6 +19,7 @@
 
 - **Botão:** `Histórico de Compras`
 - **Botão:** `Meus Álbuns`
+- **Botão:** `Álbum Sanfona`
 - **Botão:** `Minha Carteira`
 - **Botão:** `Indique e Ganhe`
 - **Botão:** `Meus Dados`

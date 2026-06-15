@@ -163,16 +163,16 @@ export const ServiceModal: React.FC<Props> = ({ onClose, onSave, initialData, sa
                   )}
                 </div>
                 {/* Mobile */}
-                <div className={`p-3 md:p-6 border rounded-2xl transition-all ${form.allowMobile ? "border-amber-500/40 bg-amber-500/5" : "border-theme-border bg-theme-bg"}`}>
+                <div className={`p-3 md:p-6 border rounded-2xl transition-all ${form.allowMobile ? "border-brand-warning/40 bg-brand-warning/5" : "border-theme-border bg-theme-bg"}`}>
                   <label className="flex items-center gap-3 cursor-pointer select-none mb-4">
-                    <input type="checkbox" checked={form.allowMobile} onChange={e => update({ allowMobile: e.target.checked })} className="w-4 h-4 text-amber-500 border-theme-border bg-theme-bg-muted rounded" />
+                    <input type="checkbox" checked={form.allowMobile} onChange={e => update({ allowMobile: e.target.checked })} className="w-4 h-4 text-brand-warning border-theme-border bg-theme-bg-muted rounded" />
                     <span className="text-[10px] font-bold uppercase tracking-widest text-theme-text">Mobile</span>
                   </label>
                   {form.allowMobile && (
                     <div className="space-y-2 animate-in fade-in slide-in-from-top-2 duration-300">
                       <span className={labelClass}>Preço Mobile (R$)</span>
                       <div className="relative">
-                        <DollarSign className="absolute left-4 top-1/2 -translate-y-1/2 text-amber-500" size={14} strokeWidth={1.5} />
+                        <DollarSign className="absolute left-4 top-1/2 -translate-y-1/2 text-brand-warning" size={14} strokeWidth={1.5} />
                         <input required={form.allowMobile} type="number" step="0.01" className={`${inputClass} pl-10`} value={form.priceMobile} onChange={e => update({ priceMobile: parseFloat(e.target.value) || 0 })} placeholder="0,00" />
                       </div>
                     </div>

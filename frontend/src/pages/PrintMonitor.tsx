@@ -222,7 +222,7 @@ export default function PrintMonitor() {
   }
 
   return (
-    <div className="min-h-screen bg-theme-bg text-theme-text selection:bg-brand-tactical/30">
+    <div className="min-h-screen bg-theme-bg text-brand-text selection:bg-brand-tactical/30">
       <div className="print:hidden">
         {/* Header Fixo */}
         <div className="sticky top-0 z-50 bg-zinc-950/80 backdrop-blur-xl border-b border-theme-border px-4 md:px-6 py-4 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
@@ -267,13 +267,13 @@ export default function PrintMonitor() {
           />
           <button 
             onClick={() => document.getElementById('manual-upload')?.click()}
-            className="hidden md:flex items-center gap-2 px-3 md:px-6 py-2.5 rounded-full text-[9px] font-bold uppercase tracking-widest bg-brand-tactical text-theme-text border border-brand-tactical hover:brightness-110 transition-all"
+            className="hidden md:flex items-center gap-2 px-3 md:px-6 py-2.5 rounded-full text-[9px] font-bold uppercase tracking-widest bg-brand-tactical text-brand-text border border-brand-tactical hover:brightness-110 transition-all"
           >
             <ExternalLink size={12} /> Enviar Fotos
           </button>
 
           <div className="hidden md:flex items-center gap-2 px-4 py-2 bg-theme-card border border-theme-border rounded-full">
-            <div className={`w-1.5 h-1.5 rounded-full ${autoPrint ? 'bg-emerald-500 animate-pulse' : 'bg-zinc-600'}`} />
+            <div className={`w-1.5 h-1.5 rounded-full ${autoPrint ? 'bg-brand-tactical animate-pulse' : 'bg-zinc-600'}`} />
             <span className="text-[9px] font-bold uppercase tracking-widest">{autoPrint ? 'Auto-Print Ativo' : 'Manual'}</span>
           </div>
           <button 
@@ -288,7 +288,7 @@ export default function PrintMonitor() {
             className={`flex items-center gap-2 px-3 md:px-6 py-2.5 rounded-full text-[9px] font-black uppercase tracking-widest transition-all ${
               autoPrint 
                 ? 'bg-brand-tactical text-zinc-950 shadow-[0_0_15px_rgba(133,185,172,0.4)] ring-2 ring-brand-tactical/50' 
-                : 'bg-theme-bg-muted hover:bg-white/10 text-theme-text/90'
+                : 'bg-theme-bg-muted hover:bg-white/10 text-brand-text/90'
             }`}
           >
             <Play size={12} /> Auto-Print {autoPrint ? 'ON' : 'OFF'}
@@ -318,13 +318,13 @@ export default function PrintMonitor() {
         <div className="flex-shrink-0 flex items-center gap-1 bg-theme-bg border border-theme-border p-1 rounded-full">
             <button
               onClick={() => setOrientation('portrait')}
-              className={`px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-all ${orientation === 'portrait' ? 'bg-brand-tactical text-zinc-950 shadow' : 'text-theme-muted hover:text-theme-text'}`}
+              className={`px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-all ${orientation === 'portrait' ? 'bg-brand-tactical text-zinc-950 shadow' : 'text-theme-muted hover:text-brand-text'}`}
             >
               Retrato
             </button>
             <button
               onClick={() => setOrientation('landscape')}
-              className={`px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-all ${orientation === 'landscape' ? 'bg-brand-tactical text-zinc-950 shadow' : 'text-theme-muted hover:text-theme-text'}`}
+              className={`px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-all ${orientation === 'landscape' ? 'bg-brand-tactical text-zinc-950 shadow' : 'text-theme-muted hover:text-brand-text'}`}
             >
               Paisagem
             </button>
@@ -333,13 +333,13 @@ export default function PrintMonitor() {
         <div className="flex-shrink-0 flex items-center gap-1 bg-theme-bg border border-theme-border p-1 rounded-full">
           <button
             onClick={() => setPrintFit('cover')}
-            className={`px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-all ${printFit === 'cover' ? 'bg-brand-tactical text-zinc-950 shadow' : 'text-theme-muted hover:text-theme-text'}`}
+            className={`px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-all ${printFit === 'cover' ? 'bg-brand-tactical text-zinc-950 shadow' : 'text-theme-muted hover:text-brand-text'}`}
           >
             Preencher
           </button>
           <button
             onClick={() => setPrintFit('contain')}
-            className={`px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-all ${printFit === 'contain' ? 'bg-brand-tactical text-zinc-950 shadow' : 'text-theme-muted hover:text-theme-text'}`}
+            className={`px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-all ${printFit === 'contain' ? 'bg-brand-tactical text-zinc-950 shadow' : 'text-theme-muted hover:text-brand-text'}`}
           >
             Encaixar
           </button>
@@ -447,7 +447,7 @@ export default function PrintMonitor() {
                         <Check size={12} className="text-theme-text" strokeWidth={3} />
                       </div>
                     ) : (
-                      <div className="w-6 h-6 rounded-full border-2 border-white/40 bg-black/30 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                      <div className="w-6 h-6 rounded-full border-2 border-white/40 bg-black/30 backdrop-blur-sm flex items-center justify-center opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity duration-200">
                         <div className="w-2 h-2 rounded-full bg-white/60" />
                       </div>
                     )}

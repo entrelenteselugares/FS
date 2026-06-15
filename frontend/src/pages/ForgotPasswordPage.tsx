@@ -89,7 +89,7 @@ export default function ForgotPasswordPage() {
                 </div>
 
                 {message.text && message.type === "error" && (
-                  <div className="p-4 flex items-center gap-3 bg-red-400/10 border border-red-400/20 text-red-400 animate-in fade-in zoom-in-95 duration-300">
+                  <div className="p-4 flex items-center gap-3 bg-brand-danger/10 border border-brand-danger/20 text-brand-danger animate-in fade-in zoom-in-95 duration-300">
                     <AlertTriangle size={16} />
                     <p className="text-[10px] font-bold uppercase tracking-widest">{message.text}</p>
                   </div>

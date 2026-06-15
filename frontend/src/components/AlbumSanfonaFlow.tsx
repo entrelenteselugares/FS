@@ -82,7 +82,7 @@ export function AlbumSanfonaFlow() {
         </div>
         <button 
           onClick={() => { setSuccess(false); setFiles([]); }}
-          className="px-6 py-3 border border-theme-border text-theme-text text-[10px] font-bold uppercase tracking-widest hover:bg-white/5 transition-all"
+          className="px-6 py-3 border border-theme-border text-gray-800 text-[10px] font-bold uppercase tracking-widest hover:bg-white/5 transition-all"
         >
           Voltar
         </button>
@@ -118,7 +118,7 @@ export function AlbumSanfonaFlow() {
               multiple 
               accept="image/*" 
               onChange={handleFileChange} 
-              className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+              className="absolute inset-0 w-full h-full opacity-0 pointer-events-none cursor-pointer"
             />
           </div>
 
@@ -133,7 +133,7 @@ export function AlbumSanfonaFlow() {
                   />
                   <button 
                     onClick={() => removeFile(i)}
-                    className="absolute top-1 right-1 p-1 bg-black/60 rounded-lg text-white hover:bg-red-500 transition-colors"
+                    className="absolute top-1 right-1 p-1 bg-black/60 rounded-lg text-white hover:bg-brand-danger transition-colors"
                   >
                     <X size={12} />
                   </button>
@@ -162,7 +162,7 @@ export function AlbumSanfonaFlow() {
             disabled={files.length !== 10 || isSubmitting}
             className={`w-full flex items-center justify-center gap-3 px-6 py-4 rounded-xl text-[11px] font-bold uppercase tracking-[0.2em] transition-all duration-300 ${
               files.length === 10 && !isSubmitting
-                ? "bg-brand-tactical text-theme-text hover:brightness-110 shadow-[0_0_20px_rgba(133,185,172,0.2)]" 
+                ? "bg-brand-tactical text-brand-text hover:brightness-110 shadow-[0_0_20px_rgba(133,185,172,0.2)]" 
                 : "bg-theme-bg-muted text-theme-muted cursor-not-allowed"
             }`}
           >

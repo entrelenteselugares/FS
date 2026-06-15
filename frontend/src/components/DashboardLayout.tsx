@@ -197,7 +197,7 @@ const SidebarContent: React.FC<SidebarContentProps & { currentPath: string }> = 
                           <Link key={subItem.label} to={subItem.to} className={className} onClick={handleClick}>
                             <span>{subItem.label}</span>
                             {subItem.badge !== undefined && subItem.badge !== 0 && (
-                              <span className="bg-brand-tactical text-theme-text text-[9px] font-bold px-1.5 py-0.5 rounded text-center">
+                              <span className="bg-brand-tactical text-brand-text text-[9px] font-bold px-1.5 py-0.5 rounded text-center">
                                 {subItem.badge}
                               </span>
                             )}
@@ -209,7 +209,7 @@ const SidebarContent: React.FC<SidebarContentProps & { currentPath: string }> = 
                         <button key={subItem.label} className={className} onClick={handleClick}>
                           <span>{subItem.label}</span>
                           {subItem.badge !== undefined && subItem.badge !== 0 && (
-                            <span className="bg-brand-tactical text-theme-text text-[9px] font-bold px-1.5 py-0.5 rounded text-center">
+                            <span className="bg-brand-tactical text-brand-text text-[9px] font-bold px-1.5 py-0.5 rounded text-center">
                               {subItem.badge}
                             </span>
                           )}
@@ -254,7 +254,7 @@ const SidebarContent: React.FC<SidebarContentProps & { currentPath: string }> = 
                   </span>
                 )}
                 {item.badge !== undefined && item.badge !== 0 && (
-                  <span className="bg-brand-tactical text-theme-text text-[10px] font-bold px-2 py-0.5 rounded-sm min-w-[16px] text-center">
+                  <span className="bg-brand-tactical text-brand-text text-[10px] font-bold px-2 py-0.5 rounded-sm min-w-[16px] text-center">
                     {item.badge}
                   </span>
                 )}
@@ -279,7 +279,7 @@ const SidebarContent: React.FC<SidebarContentProps & { currentPath: string }> = 
                 </span>
               )}
               {item.badge !== undefined && item.badge !== 0 && (
-                <span className="bg-brand-tactical text-theme-text text-[9px] font-bold px-1.5 py-0.5 rounded-sm min-w-[16px] text-center">
+                <span className="bg-brand-tactical text-brand-text text-[9px] font-bold px-1.5 py-0.5 rounded-sm min-w-[16px] text-center">
                   {item.badge}
                 </span>
               )}

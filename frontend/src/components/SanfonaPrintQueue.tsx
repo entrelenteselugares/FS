@@ -107,10 +107,10 @@ export const SanfonaPrintQueue: React.FC = () => {
                     LOTE {batch.month}
                   </span>
                   <span className={`text-[9px] font-bold px-2 py-1 uppercase tracking-widest rounded ${
-                    batch.status === 'SUBMITTED' ? 'bg-amber-500/10 text-amber-500' :
-                    batch.status === 'IN_PRODUCTION' ? 'bg-blue-500/10 text-blue-500' :
+                    batch.status === 'SUBMITTED' ? 'bg-brand-warning/10 text-brand-warning' :
+                    batch.status === 'IN_PRODUCTION' ? 'bg-brand-info/10 text-brand-info' :
                     batch.status === 'PRINTED' ? 'bg-purple-500/10 text-purple-500' :
-                    'bg-green-500/10 text-green-500'
+                    'bg-brand-tactical/10 text-brand-tactical'
                   }`}>
                     {batch.status}
                   </span>
@@ -129,7 +129,7 @@ export const SanfonaPrintQueue: React.FC = () => {
                   </button>
                 )}
                 {batch.status === 'IN_PRODUCTION' && (
-                  <button onClick={() => handleUpdateStatus(batch.id, 'PRINTED')} className="flex items-center justify-center gap-2 bg-blue-500 text-white font-bold text-[10px] uppercase tracking-widest py-3 px-4 rounded-lg hover:bg-blue-600 transition-all w-full">
+                  <button onClick={() => handleUpdateStatus(batch.id, 'PRINTED')} className="flex items-center justify-center gap-2 bg-brand-info text-white font-bold text-[10px] uppercase tracking-widest py-3 px-4 rounded-lg hover:bg-brand-info transition-all w-full">
                     <Printer size={14} /> Marcar como Impresso
                   </button>
                 )}
@@ -139,7 +139,7 @@ export const SanfonaPrintQueue: React.FC = () => {
                   </button>
                 )}
                 {batch.status === 'SHIPPED' && (
-                  <div className="flex items-center justify-center gap-2 text-green-500 font-bold text-[10px] uppercase tracking-widest py-3 px-4 bg-green-500/10 rounded-lg w-full">
+                  <div className="flex items-center justify-center gap-2 text-brand-tactical font-bold text-[10px] uppercase tracking-widest py-3 px-4 bg-brand-tactical/10 rounded-lg w-full">
                     <CheckCircle2 size={14} /> Concluído
                   </div>
                 )}

@@ -143,10 +143,10 @@ export function ProfileModal({ profile, onClose, onUpdated }: ProfileModalProps)
                       />
                       {formData.firstJobUrl && (
                         <div className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center gap-2">
-                           <span className={`text-[10px] font-black uppercase tracking-widest ${profile.isExperienceValidated ? "text-brand-tactical" : "text-amber-500"}`}>
+                           <span className={`text-[10px] font-black uppercase tracking-widest ${profile.isExperienceValidated ? "text-brand-tactical" : "text-brand-warning"}`}>
                              {profile.isExperienceValidated ? "AUTENTICADO" : "EM ANÁLISE"}
                            </span>
-                           {profile.isExperienceValidated ? <Check size={12} className="text-brand-tactical" /> : <div className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />}
+                           {profile.isExperienceValidated ? <Check size={12} className="text-brand-tactical" /> : <div className="w-2 h-2 rounded-full bg-brand-warning animate-pulse" />}
                         </div>
                       )}
                     </div>
@@ -268,7 +268,7 @@ export function ProfileModal({ profile, onClose, onUpdated }: ProfileModalProps)
                         />
                         <div className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] font-bold text-theme-muted/40 uppercase">BRL</div>
                       </div>
-                      <button onClick={() => removeEquipment(i)} className="p-4 bg-red-500/5 text-red-500/40 hover:text-red-500 hover:bg-red-500/10 transition-all">
+                      <button onClick={() => removeEquipment(i)} className="p-4 bg-brand-danger/5 text-brand-danger/40 hover:text-brand-danger hover:bg-brand-danger/10 transition-all">
                         <X size={16} />
                       </button>
                     </div>

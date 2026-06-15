@@ -72,8 +72,8 @@ const FranchiseDashboard: React.FC = () => {
       { label: "Meus Dados", onClick: () => navigate("/minha-conta?tab=profile"), isActive: false, icon: <User size={18} /> },
     ];
 
-    const isProOrFranchise = (user?.role === "PROFISSIONAL" || user?.role === "FRANCHISEE" || !!user?.franchiseProfile) && user?.role !== "UNIDADE" && user?.role !== "CARTORIO";
-    const isVerified = (user?.verificationStatus === "APPROVED" || user?.isVerified || !!user?.franchiseProfile) && user?.role !== "UNIDADE" && user?.role !== "CARTORIO";
+    const isProOrFranchise = (user?.role === "PROFISSIONAL" || user?.role === "FRANCHISEE");
+    const isVerified = (user?.verificationStatus === "APPROVED" || user?.isVerified || !!user?.franchiseProfile);
 
     if (isProOrFranchise && isVerified) {
       const proSubItems: NavItem[] = [
@@ -227,28 +227,28 @@ const FranchiseDashboard: React.FC = () => {
 
         <div className="grid grid-cols-2 md:flex gap-4 w-full md:w-auto">
           {/* PRINTER STATUS WIDGET */}
-          <div className={`flex items-center gap-4 px-4 py-3 sm:px-6 sm:py-4 border border-theme-border bg-theme-bg-muted transition-all ${printerStatus === 'ONLINE' ? 'border-brand-tactical/30' : 'border-red-500/30'}`}>
+          <div className={`flex items-center gap-4 px-4 py-3 sm:px-6 sm:py-4 border border-theme-border bg-theme-bg-muted transition-all ${printerStatus === 'ONLINE' ? 'border-brand-tactical/30' : 'border-brand-danger/30'}`}>
             <div className="relative">
-              <Printer size={20} className={printerStatus === 'ONLINE' ? 'text-brand-tactical' : 'text-red-500'} />
-              <div className={`absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full animate-ping ${printerStatus === 'ONLINE' ? 'bg-brand-tactical' : 'bg-red-500'}`} />
+              <Printer size={20} className={printerStatus === 'ONLINE' ? 'text-brand-tactical' : 'text-brand-danger'} />
+              <div className={`absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full animate-ping ${printerStatus === 'ONLINE' ? 'bg-brand-tactical' : 'bg-brand-danger'}`} />
             </div>
             <div className="space-y-0.5">
               <span className="text-[10px] font-bold text-theme-muted uppercase tracking-widest block opacity-60">Status Agent</span>
-              <span className={`text-xs sm:text-sm font-black uppercase italic ${printerStatus === 'ONLINE' ? 'text-brand-tactical' : 'text-red-500'}`}>
+              <span className={`text-xs sm:text-sm font-black uppercase italic ${printerStatus === 'ONLINE' ? 'text-brand-tactical' : 'text-brand-danger'}`}>
                 {printerStatus}
               </span>
             </div>
           </div>
 
           {/* REVENUE STATUS WIDGET */}
-          <div className="flex items-center gap-4 px-4 py-3 sm:px-6 sm:py-4 border border-theme-border bg-theme-bg-muted border-blue-500">
+          <div className="flex items-center gap-4 px-4 py-3 sm:px-6 sm:py-4 border border-theme-border bg-theme-bg-muted border-brand-info">
             <div className="relative">
-              <DollarSign size={20} className="text-blue-500" />
-              <div className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-blue-500 animate-pulse" />
+              <DollarSign size={20} className="text-brand-info" />
+              <div className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-brand-info animate-pulse" />
             </div>
             <div className="space-y-0.5">
               <span className="text-[10px] font-bold text-theme-muted uppercase tracking-widest block opacity-60">Renda Passiva</span>
-              <span className="text-xs sm:text-sm font-bold uppercase text-blue-500">
+              <span className="text-xs sm:text-sm font-bold uppercase text-brand-info">
                 {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(finance.totalEarned)}
               </span>
             </div>
@@ -276,18 +276,18 @@ const FranchiseDashboard: React.FC = () => {
                 <div className="space-y-4">
                   <div className="flex justify-between items-end">
                     <span className="text-[11px] font-bold text-theme-muted uppercase tracking-widest">Créditos de Foto</span>
-                    <span className={`text-lg font-black italic ${inventory.isLow ? 'text-red-500' : 'text-theme-text'}`}>
+                    <span className={`text-lg font-black italic ${inventory.isLow ? 'text-brand-danger' : 'text-theme-text'}`}>
                       {inventory.available} <span className="text-xs opacity-40">disponíveis</span>
                     </span>
                   </div>
                   <div className="h-1.5 w-full bg-theme-border/20 rounded-full overflow-hidden">
                     <div 
-                      className={`h-full transition-all duration-1000 ${inventory.isLow ? 'bg-red-500' : 'bg-brand-tactical'}`}
+                      className={`h-full transition-all duration-1000 ${inventory.isLow ? 'bg-brand-danger' : 'bg-brand-tactical'}`}
                       style={{ width: `${Math.min(100, (inventory.available / (inventory.threshold * 4)) * 100)}%` }}
                     />
                   </div>
                   {inventory.isLow && (
-                    <div className="flex items-center gap-2 text-red-500 animate-pulse">
+                    <div className="flex items-center gap-2 text-brand-danger animate-pulse">
                       <AlertTriangle size={14} />
                       <span className="text-[9px] font-bold uppercase tracking-widest">Nível Crítico: Reposição Necessária</span>
                     </div>
@@ -363,7 +363,7 @@ const FranchiseDashboard: React.FC = () => {
               <h3 className="text-sm font-bold text-theme-text uppercase tracking-widest">Comissões & Fechamento</h3>
               <button 
                 onClick={handleExportCSV}
-                className="text-[9px] font-bold text-brand-tactical border border-brand-tactical/30 px-3 py-1.5 uppercase tracking-widest hover:bg-brand-tactical hover:text-theme-text transition-colors"
+                className="text-[9px] font-bold text-brand-tactical border border-brand-tactical/30 px-3 py-1.5 uppercase tracking-widest hover:bg-brand-tactical hover:text-brand-text transition-colors"
               >
                 Exportar CSV
               </button>
@@ -396,7 +396,7 @@ const FranchiseDashboard: React.FC = () => {
                 <div key={c.id} className="flex flex-col gap-1 py-3 border-b border-theme-border/10 last:border-0">
                   <div className="flex justify-between items-start">
                     <span className="text-[10px] font-bold text-theme-text uppercase truncate max-w-[140px]">{c.eventTitle}</span>
-                    <span className="text-[11px] font-bold text-blue-500">+{new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(c.amount)}</span>
+                    <span className="text-[11px] font-bold text-brand-info">+{new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(c.amount)}</span>
                   </div>
                   <span className="text-[10px] font-bold text-theme-muted uppercase opacity-40">{new Date(c.date).toLocaleDateString('pt-BR')}</span>
                 </div>
@@ -471,7 +471,7 @@ const FranchiseDashboard: React.FC = () => {
                     value={branding.logoUrl}
                     onChange={(e) => setBranding(prev => ({...prev, logoUrl: e.target.value}))}
                     placeholder="https://sua-logo.com/img.png"
-                    className="w-full bg-black/40 border border-theme-border p-3 text-[10px] font-bold text-theme-text focus:border-brand-tactical transition-colors outline-none"
+                    className="w-full bg-black/40 border border-theme-border p-3 text-[10px] font-bold text-zinc-100 focus:border-brand-tactical transition-colors outline-none"
                   />
                 </div>
                 <div>
@@ -487,7 +487,7 @@ const FranchiseDashboard: React.FC = () => {
                       type="text" 
                       value={branding.brandColor}
                       onChange={(e) => setBranding(prev => ({...prev, brandColor: e.target.value}))}
-                      className="flex-1 bg-black/40 border border-theme-border p-3 text-[10px] font-bold text-theme-text focus:border-brand-tactical transition-colors outline-none"
+                      className="flex-1 bg-black/40 border border-theme-border p-3 text-[10px] font-bold text-zinc-100 focus:border-brand-tactical transition-colors outline-none"
                     />
                   </div>
                 </div>

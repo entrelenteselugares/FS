@@ -599,7 +599,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
                   <button onClick={() => { setQrModalEvent(event); setCopied(false); }} className="p-2 border border-theme-border text-theme-muted hover:text-theme-text hover:bg-theme-bg-muted rounded-md transition-all" title="QR Codes"><QrCode size={12} /></button>
                   <button onClick={() => setPhygitalQueueEvent(event)} className="p-2 border border-theme-border text-brand-tactical hover:bg-brand-tactical/10 rounded-md transition-all" title="Radar Phygital"><Radar size={12} /></button>
                   <button onClick={() => handleEditOpen(event)} className="px-4 py-2 border border-theme-border text-[9px] font-bold uppercase tracking-widest text-theme-text hover:bg-theme-bg-muted rounded-md transition-all">Editar</button>
-                  <button onClick={() => setConfirmDelete(event)} className="p-2 border border-theme-border text-red-500/40 hover:text-red-500 hover:bg-red-500/10 rounded-md transition-all"><Trash2 size={12} /></button>
+                  <button onClick={() => setConfirmDelete(event)} className="p-2 border border-theme-border text-brand-danger/40 hover:text-brand-danger hover:bg-brand-danger/10 rounded-md transition-all"><Trash2 size={12} /></button>
                 </td>
               </tr>
             ))}
@@ -642,7 +642,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
                 <div className="flex gap-2 pt-2 border-t border-theme-border/50" onClick={(e) => e.stopPropagation()}>
                   <button onClick={() => { setQrModalEvent(event); setCopied(false); }} className="flex-1 flex items-center justify-center p-3 border border-theme-border text-theme-muted rounded-xl hover:bg-theme-bg-muted"><QrCode size={16} /></button>
                   <button onClick={() => setPhygitalQueueEvent(event)} className="flex-1 flex items-center justify-center p-3 border border-theme-border text-brand-tactical rounded-xl hover:bg-brand-tactical/10"><Radar size={16} /></button>
-                  <button onClick={() => setConfirmDelete(event)} className="flex-1 flex items-center justify-center p-3 border border-theme-border text-red-500/60 rounded-xl hover:bg-red-500/10"><Trash2 size={16} /></button>
+                  <button onClick={() => setConfirmDelete(event)} className="flex-1 flex items-center justify-center p-3 border border-theme-border text-brand-danger/60 rounded-xl hover:bg-brand-danger/10"><Trash2 size={16} /></button>
                 </div>
               </div>
             </div>
@@ -690,7 +690,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
                         {coverPreview ? (
                           <>
                             <img src={coverPreview} alt="Preview" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" style={{ objectPosition: formData.coverPosition || 'center' }} />
-                            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-2 bg-black/60 backdrop-blur-md p-2 rounded-full border border-white/10 opacity-0 group-hover:opacity-100 transition-all z-10" onClick={(e) => e.stopPropagation()}>
+                            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-2 bg-black/60 backdrop-blur-md p-2 rounded-full border border-white/10 opacity-0 pointer-events-none group-hover:opacity-100 transition-all z-10" onClick={(e) => e.stopPropagation()}>
                               {[
                                 { id: 'top', label: 'Superior' },
                                 { id: 'center', label: 'Centro' },
@@ -700,7 +700,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
                                   key={pos.id}
                                   type="button"
                                   onClick={() => setFormData({ ...formData, coverPosition: pos.id })}
-                                  className={`px-4 py-1.5 text-[10px] font-black uppercase tracking-widest rounded-full transition-all ${formData.coverPosition === pos.id || (!formData.coverPosition && pos.id === 'center') ? "bg-brand-tactical text-theme-text" : "text-theme-text hover:bg-white/10"}`}
+                                  className={`px-4 py-1.5 text-[10px] font-black uppercase tracking-widest rounded-full transition-all ${formData.coverPosition === pos.id || (!formData.coverPosition && pos.id === 'center') ? "bg-brand-tactical text-brand-text" : "text-brand-text hover:bg-white/10"}`}
                                 >
                                   {pos.label}
                                 </button>
@@ -713,7 +713,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
                             <div className="text-[9px] uppercase tracking-[0.4em] text-theme-muted font-bold">Enviar Capa</div>
                           </div>
                         )}
-                        {isUploading && <div className="absolute inset-0 bg-black/80 flex items-center justify-center text-[10px] text-theme-text uppercase tracking-widest animate-pulse font-bold">Processando...</div>}
+                        {isUploading && <div className="absolute inset-0 bg-black/80 flex items-center justify-center text-[10px] text-zinc-100 uppercase tracking-widest animate-pulse font-bold">Processando...</div>}
                       </div>
                       <input type="file" ref={fileInputRef} hidden accept="image/*" onChange={handleFileChange} />
                     </div>
@@ -947,7 +947,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
                             alt={m.shortId} 
                             className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 opacity-80 group-hover:opacity-100" 
                           />
-                          <div className="absolute top-2 left-2 px-2 py-1 bg-black/60 backdrop-blur-md rounded text-[10px] text-theme-text border border-white/10 uppercase">{m.shortId}</div>
+                          <div className="absolute top-2 left-2 px-2 py-1 bg-black/60 backdrop-blur-md rounded text-[10px] text-zinc-100 border border-white/10 uppercase">{m.shortId}</div>
                         </div>
                         <div className="p-3 space-y-3 bg-theme-card">
                           <div className="space-y-1">
@@ -989,7 +989,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
                 <div className="animate-in fade-in duration-500 space-y-8">
                   <div className="flex items-center justify-between border-b border-theme-border pb-4">
                     <h3 className="text-sm font-bold uppercase tracking-widest text-theme-text">Referências Técnicas</h3>
-                    <span className={`text-[10px] font-black uppercase tracking-widest ${eventRefs.length >= 6 ? 'text-red-500' : 'text-theme-muted'}`}>{eventRefs.length}/6</span>
+                    <span className={`text-[10px] font-black uppercase tracking-widest ${eventRefs.length >= 6 ? 'text-brand-danger' : 'text-theme-muted'}`}>{eventRefs.length}/6</span>
                   </div>
 
                   {/* Not-saved hint */}
@@ -1080,7 +1080,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
                               />
                               {/* YouTube badge */}
                               {ref.type === 'YOUTUBE' && (
-                                <div className="absolute top-2 left-2 bg-red-600 text-theme-text text-[9px] font-bold uppercase px-2 py-0.5 rounded tracking-widest flex items-center gap-1">
+                                <div className="absolute top-2 left-2 bg-brand-danger text-white text-[9px] font-bold uppercase px-2 py-0.5 rounded tracking-widest flex items-center gap-1">
                                   ▶ YouTube
                                 </div>
                               )}
@@ -1088,7 +1088,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
                               <button
                                 type="button"
                                 onClick={() => handleRemoveRef(ref.id)}
-                                className="absolute top-2 right-2 w-7 h-7 bg-black/80 rounded-full flex items-center justify-center text-red-400 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-500/20"
+                                className="absolute top-2 right-2 w-7 h-7 bg-black/80 rounded-full flex items-center justify-center text-brand-danger opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity hover:bg-brand-danger/20"
                               >
                                 <X size={12} />
                               </button>
@@ -1394,12 +1394,12 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
             {/* Header */}
             <div className="p-4 md:p-8 md:p-10 border-b border-theme-border flex items-center justify-between shrink-0">
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-red-500/10 rounded-2xl flex items-center justify-center border border-red-500/20">
-                  <Trash2 className="text-red-500" size={24} strokeWidth={1.5} />
+                <div className="w-12 h-12 bg-brand-danger/10 rounded-2xl flex items-center justify-center border border-brand-danger/20">
+                  <Trash2 className="text-brand-danger" size={24} strokeWidth={1.5} />
                 </div>
                 <div>
                   <h2 className="text-2xl font-bold uppercase text-theme-text">Eliminar Evento</h2>
-                  <p className="text-[10px] font-bold uppercase tracking-[0.2em] opacity-40 text-red-500/60">Protocolo de Purga Permanente</p>
+                  <p className="text-[10px] font-bold uppercase tracking-[0.2em] opacity-40 text-brand-danger/60">Protocolo de Purga Permanente</p>
                 </div>
               </div>
               <button onClick={() => setConfirmDelete(null)} className="p-3 hover:bg-theme-bg-muted rounded-full transition-all text-theme-muted"><X size={24} /></button>
@@ -1409,7 +1409,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
             <div className="p-4 md:p-8 md:p-10 space-y-6">
               <p className="text-[9px] sm:text-[11px] font-bold text-brand-tactical uppercase tracking-[0.2em] sm:tracking-[0.4em] truncate max-w-[80vw]">VOCÊ ESTÁ PRESTES A EXCLUIR O EVENTO <span className="text-theme-text font-bold underline decoration-red-500/50 decoration-4 underline-offset-4">{confirmDelete.title}</span>.</p>
               
-              <div className="bg-red-500/5 border border-red-500/20 p-3 md:p-6 rounded-[24px]">
+              <div className="bg-brand-danger/5 border border-brand-danger/20 p-3 md:p-6 rounded-[24px]">
                 <p className="text-[9px] sm:text-[11px] font-bold text-brand-tactical uppercase tracking-[0.2em] sm:tracking-[0.4em] truncate max-w-[80vw]">⚠ SE HOUVER PEDIDOS APROVADOS, O EVENTO SERÁ APENAS DESATIVADO PARA PRESERVAÇÃO DE DADOS. CASO CONTRÁRIO, SERÁ REMOVIDO PERMANENTEMENTE DO CORE.</p>
               </div>
             </div>
@@ -1419,7 +1419,7 @@ export const AdminEvents: React.FC<AdminEventsProps> = ({ initialEditEventId }) 
               <button onClick={() => setConfirmDelete(null)} className="flex-1 py-5 border border-theme-border text-[11px] font-bold uppercase tracking-[0.3em] text-theme-muted hover:text-theme-text transition-all rounded-[20px]">Cancelar</button>
               <button 
                 onClick={() => handleDelete(confirmDelete.id)}
-                className="flex-[2] py-5 bg-red-600 text-theme-text text-[11px] font-bold uppercase tracking-[0.3em] shadow-2xl shadow-red-600/20 hover:bg-red-500 transition-all rounded-[20px] flex items-center justify-center gap-4"
+                className="flex-[2] py-5 bg-brand-danger text-white text-[11px] font-bold uppercase tracking-[0.3em] shadow-2xl shadow-red-600/20 hover:bg-brand-danger transition-all rounded-[20px] flex items-center justify-center gap-4"
               >
                 Confirmar Exclusão
                 <Trash2 size={18} strokeWidth={1.5} />

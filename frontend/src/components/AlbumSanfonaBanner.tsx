@@ -68,7 +68,7 @@ export function AlbumSanfonaBanner({ isSubscriber }: Props) {
       <button 
         onClick={handleSubscribe}
         disabled={loading}
-        className="relative z-10 w-full md:w-auto flex items-center justify-center gap-3 bg-brand-tactical text-theme-text px-8 py-3.5 rounded-xl text-[11px] font-bold uppercase tracking-[0.3em] hover:brightness-110 hover:shadow-[0_0_20px_rgba(133,185,172,0.3)] transition-all duration-300 disabled:opacity-50"
+        className="relative z-10 w-full md:w-auto flex items-center justify-center gap-3 bg-brand-tactical text-brand-text px-8 py-3.5 rounded-xl text-[11px] font-bold uppercase tracking-[0.3em] hover:brightness-110 hover:shadow-[0_0_20px_rgba(133,185,172,0.3)] transition-all duration-300 disabled:opacity-50"
       >
         {loading ? <Loader2 size={14} className="animate-spin" /> : "Assinar Agora"} <ArrowRight size={14} />
       </button>

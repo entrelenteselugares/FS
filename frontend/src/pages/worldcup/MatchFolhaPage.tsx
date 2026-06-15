@@ -219,7 +219,7 @@ export const MatchFolhaPage = () => {
   if (loading) {
     return (
       <div className="min-h-screen bg-theme-bg flex items-center justify-center">
-        <div className="w-8 h-8 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin" />
+        <div className="w-8 h-8 border-4 border-brand-tactical border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
@@ -228,8 +228,8 @@ export const MatchFolhaPage = () => {
     return (
       <div className="min-h-screen bg-theme-bg flex items-center justify-center text-theme-text p-4">
         <div className="text-center">
-          <p className="text-lg font-bold text-red-500">Erro ao carregar folha do jogo.</p>
-          <Link to="/album-torcida" className="mt-4 inline-block px-4 py-2 bg-emerald-500 text-theme-text font-bold rounded-xl text-sm">
+          <p className="text-lg font-bold text-brand-danger">Erro ao carregar folha do jogo.</p>
+          <Link to="/album-torcida" className="mt-4 inline-block px-4 py-2 bg-brand-tactical text-brand-text font-bold rounded-xl text-sm">
             Voltar para o Álbum
           </Link>
         </div>
@@ -263,7 +263,7 @@ export const MatchFolhaPage = () => {
         {/* Progress Bar */}
         <div className="max-w-4xl mx-auto mt-4 h-2 bg-theme-surface rounded-full overflow-hidden">
           <motion.div 
-            className="h-full bg-emerald-500"
+            className="h-full bg-brand-tactical"
             initial={{ width: 0 }}
             animate={{ width: `${(filledCount / 12) * 100}%` }}
           />
@@ -293,7 +293,7 @@ export const MatchFolhaPage = () => {
                 className={`aspect-[3/4] rounded-xl overflow-hidden relative cursor-pointer transition-transform hover:scale-[1.02] active:scale-95 ${
                   slot.imageUrl 
                     ? '' 
-                    : 'border-2 border-dashed border-theme-border hover:border-emerald-500/50 bg-theme-surface flex items-center justify-center text-theme-muted'
+                    : 'border-2 border-dashed border-theme-border hover:border-brand-tactical/50 bg-theme-surface flex items-center justify-center text-theme-muted'
                 }`}
               >
                 {slot.imageUrl ? (
@@ -397,7 +397,7 @@ export const MatchFolhaPage = () => {
                       value={commentText}
                       onChange={(e) => setCommentText(e.target.value)}
                       placeholder="Escreva algo sobre este momento marcante..."
-                      className="flex-1 bg-theme-surface border border-theme-border rounded-xl px-3 py-2 text-sm text-theme-text focus:border-emerald-500 outline-none"
+                      className="flex-1 bg-theme-surface border border-theme-border rounded-xl px-3 py-2 text-sm text-theme-text focus:border-brand-tactical outline-none"
                     />
                     <button
                       onClick={async () => {
@@ -418,7 +418,7 @@ export const MatchFolhaPage = () => {
                           toast.error("Erro ao salvar legenda.", { id: toastId });
                         }
                       }}
-                      className="px-4 py-2 bg-emerald-500 text-theme-text font-bold rounded-xl text-xs hover:bg-emerald-400 transition-colors"
+                      className="px-4 py-2 bg-brand-tactical text-brand-text font-bold rounded-xl text-xs hover:bg-brand-tactical transition-colors"
                     >
                       Salvar
                     </button>
@@ -451,11 +451,11 @@ export const MatchFolhaPage = () => {
                     value={newCommentText}
                     onChange={(e) => setNewCommentText(e.target.value)}
                     placeholder="Adicione um comentário..."
-                    className="flex-1 bg-theme-surface border border-theme-border rounded-xl px-3 py-2 text-sm text-theme-text focus:border-emerald-500 outline-none"
+                    className="flex-1 bg-theme-surface border border-theme-border rounded-xl px-3 py-2 text-sm text-theme-text focus:border-brand-tactical outline-none"
                   />
                   <button
                     onClick={handleAddComment}
-                    className="px-4 py-2 bg-emerald-500 text-theme-text font-bold rounded-xl text-sm hover:bg-emerald-400 transition-colors"
+                    className="px-4 py-2 bg-brand-tactical text-brand-text font-bold rounded-xl text-sm hover:bg-brand-tactical transition-colors"
                   >
                     Enviar
                   </button>

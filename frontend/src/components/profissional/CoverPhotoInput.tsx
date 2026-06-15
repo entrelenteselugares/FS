@@ -132,13 +132,13 @@ export function CoverPhotoInput({ currentUrl, currentPosition, onChange, onPosit
           <button
             type="button"
             onClick={handleRemove}
-            className="absolute top-4 right-4 bg-black/60 backdrop-blur-md text-theme-text p-2 rounded-full opacity-0 group-hover:opacity-100 transition-all hover:text-red-500 shadow-xl"
+            className="absolute top-4 right-4 bg-black/60 backdrop-blur-md text-zinc-100 p-2 rounded-full opacity-0 pointer-events-none group-hover:opacity-100 transition-all hover:text-brand-danger shadow-xl"
           >
             <X size={18} />
           </button>
 
           {/* Seletor de Posição flutuante */}
-          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-2 bg-black/60 backdrop-blur-md p-2 rounded-full border border-white/10 opacity-0 group-hover:opacity-100 transition-all">
+          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-2 bg-black/60 backdrop-blur-md p-2 rounded-full border border-white/10 opacity-0 pointer-events-none group-hover:opacity-100 transition-all">
             {[
               { id: 'top', label: 'Superior' },
               { id: 'center', label: 'Centro' },
@@ -148,7 +148,7 @@ export function CoverPhotoInput({ currentUrl, currentPosition, onChange, onPosit
                 key={pos.id}
                 type="button"
                 onClick={() => onPositionChange?.(pos.id)}
-                className={`px-4 py-1.5 text-[10px] font-black uppercase tracking-widest rounded-full transition-all ${currentPosition === pos.id || (!currentPosition && pos.id === 'center') ? "bg-brand-tactical text-theme-text" : "text-theme-text hover:bg-white/10"}`}
+                className={`px-4 py-1.5 text-[10px] font-black uppercase tracking-widest rounded-full transition-all ${currentPosition === pos.id || (!currentPosition && pos.id === 'center') ? "bg-brand-tactical text-brand-text" : "text-brand-text hover:bg-white/10"}`}
               >
                 {pos.label}
               </button>

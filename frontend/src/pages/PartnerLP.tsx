@@ -67,7 +67,7 @@ export const PartnerLP: React.FC = () => {
 
   if (loading || !data) return (
     <div className="min-h-screen flex flex-col items-center justify-center gap-3 md:gap-6 relative overflow-hidden bg-theme-bg">
-      <div className="absolute inset-0 bg-emerald-500/5 blur-[120px] rounded-full -m-64 opacity-20" />
+      <div className="absolute inset-0 bg-brand-tactical/5 blur-[120px] rounded-full -m-64 opacity-20" />
       <div className="relative z-10 flex flex-col items-center gap-4 md:gap-8">
         <div className="w-px h-16 bg-gradient-to-b from-transparent via-emerald-500 to-transparent" />
         <div className="text-[18px] font-display font-bold uppercase tracking-[0.8em] text-theme-text">FOTO SEGUNDO</div>
@@ -88,13 +88,13 @@ export const PartnerLP: React.FC = () => {
   const hasSchedule = workingHours && Object.keys(workingHours).length > 0;
 
   return (
-    <div className="min-h-screen bg-theme-bg text-theme-text transition-colors duration-500 overflow-x-hidden selection:bg-emerald-500/30">
+    <div className="min-h-screen bg-theme-bg text-brand-text transition-colors duration-500 overflow-x-hidden selection:bg-brand-tactical/30">
 
       {/* Navigation */}
       <nav className="fixed top-0 left-0 w-full z-50 p-3 md:p-6 flex justify-between items-center pointer-events-none">
         <button
           onClick={() => navigate("/")}
-          className="pointer-events-auto flex items-center gap-3 text-[10px] font-bold uppercase tracking-[0.3em] text-theme-muted hover:text-theme-text transition-all bg-black/80 backdrop-blur-xl px-3 md:px-6 py-3 border border-theme-border"
+          className="pointer-events-auto flex items-center gap-3 text-[10px] font-bold uppercase tracking-[0.3em] text-theme-muted hover:text-zinc-100 transition-all bg-black/80 backdrop-blur-xl px-3 md:px-6 py-3 border border-theme-border"
         >
           <ArrowLeft size={14} /> Vitrine
         </button>
@@ -152,7 +152,7 @@ export const PartnerLP: React.FC = () => {
               "Sincronização imediata de álbuns digitais"
             ].map(feat => (
               <div key={feat} className="flex items-center gap-5 text-[10px] font-bold uppercase tracking-[0.25em] text-theme-muted group">
-                <div className="w-2 h-[1px] bg-emerald-500 transition-all group-hover:w-8" />
+                <div className="w-2 h-[1px] bg-brand-tactical transition-all group-hover:w-8" />
                 {feat}
               </div>
             ))}
@@ -175,7 +175,7 @@ export const PartnerLP: React.FC = () => {
           </p>
           <button
             onClick={() => navigate(`/cotacao?partner=${partner.slug}`)}
-            className="w-full py-3 md:py-6 bg-white text-theme-text text-[11px] font-bold uppercase tracking-[0.4em] hover:bg-emerald-500 transition-all relative z-10"
+            className="w-full py-3 md:py-6 bg-white text-gray-800 text-[11px] font-bold uppercase tracking-[0.4em] hover:bg-brand-tactical transition-all relative z-10"
           >
             INICIAR ORÇAMENTO EXPRESS
           </button>
@@ -312,7 +312,7 @@ export const PartnerLP: React.FC = () => {
                   alt={evt.title}
                   style={{ objectPosition: evt.coverPosition || 'center' }}
                 />
-                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                <div className="absolute inset-0 bg-black/40 opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity flex items-center justify-center">
                   <span className="text-theme-text text-[10px] font-bold uppercase tracking-[0.5em] border border-theme-border-2 px-3 md:px-6 py-3 backdrop-blur-md">Ver Galeria</span>
                 </div>
               </div>
@@ -330,7 +330,7 @@ export const PartnerLP: React.FC = () => {
           <h2 className="text-3xl sm:text-4xl md:text-6xl font-display font-bold mb-10 leading-none uppercase text-theme-text">Dúvidas sobre o Local?</h2>
           <p className="text-theme-muted text-[11px] font-bold uppercase tracking-[0.2em] sm:tracking-[0.3em] leading-relaxed mb-12">Entre em contato direto com a administração da unidade para suporte logístico e agendamento de visitas técnicas.</p>
           <div className="flex flex-col gap-4">
-            <button className="px-3 md:px-6 md:px-12 py-3 md:py-6 bg-emerald-500 text-theme-text text-[11px] font-bold uppercase tracking-[0.4em] hover:bg-white transition-all">WhatsApp Unidade</button>
+            <button className="px-3 md:px-6 md:px-12 py-3 md:py-6 bg-brand-tactical text-brand-text text-[11px] font-bold uppercase tracking-[0.4em] hover:bg-brand-hover transition-all">WhatsApp Unidade</button>
             <button onClick={() => navigate("/")} className="text-[10px] font-bold uppercase tracking-[0.8em] text-theme-subtle hover:text-theme-text transition-colors mt-8">Voltar para Vitrine Global</button>
           </div>
         </div>

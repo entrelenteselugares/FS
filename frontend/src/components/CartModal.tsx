@@ -92,7 +92,7 @@ export const CartModal: React.FC<{ isOpen: boolean, onClose: () => void }> = ({ 
                         </div>
                         <button 
                           onClick={() => removeFromCart(item.eventId, item.shortId)} 
-                          className="p-2 text-theme-muted hover:text-red-500 hover:bg-red-500/10 rounded-lg transition-all"
+                          className="p-2 text-theme-muted hover:text-brand-danger hover:bg-brand-danger/10 rounded-lg transition-all"
                         >
                           <Trash2 size={14} />
                         </button>
@@ -107,11 +107,11 @@ export const CartModal: React.FC<{ isOpen: boolean, onClose: () => void }> = ({ 
                 <div className="space-y-4">
                   <div className="flex items-center justify-between border-b border-white/5 pb-2">
                     <h3 className="text-[10px] font-bold uppercase tracking-widest text-theme-muted">Impressos</h3>
-                    <span className="px-2 py-0.5 bg-emerald-500/10 text-theme-brand text-[9px] font-bold rounded-full">{physicalItems.length}</span>
+                    <span className="px-2 py-0.5 bg-brand-tactical/10 text-theme-brand text-[9px] font-bold rounded-full">{physicalItems.length}</span>
                   </div>
                   <div className="space-y-2">
                     {physicalItems.map((item) => (
-                      <div key={item.productId} className="group flex items-center justify-between p-3 bg-theme-bg-muted rounded-2xl border border-white/5 hover:border-emerald-500/30 transition-all">
+                      <div key={item.productId} className="group flex items-center justify-between p-3 bg-theme-bg-muted rounded-2xl border border-white/5 hover:border-brand-tactical/30 transition-all">
                         <div className="flex items-center gap-3">
                           <div className="w-10 h-10 bg-theme-bg-field rounded-xl flex items-center justify-center border border-theme-border">
                             <span className="text-lg">📦</span>
@@ -125,7 +125,7 @@ export const CartModal: React.FC<{ isOpen: boolean, onClose: () => void }> = ({ 
                         </div>
                         <button 
                           onClick={() => removePhysicalItem(item.productId)} 
-                          className="p-2 text-theme-muted hover:text-red-500 hover:bg-red-500/10 rounded-lg transition-all"
+                          className="p-2 text-theme-muted hover:text-brand-danger hover:bg-brand-danger/10 rounded-lg transition-all"
                         >
                           <Trash2 size={14} />
                         </button>
@@ -150,7 +150,7 @@ export const CartModal: React.FC<{ isOpen: boolean, onClose: () => void }> = ({ 
                 onClose();
                 navigate("/checkout");
               }}
-              className="w-full md:w-auto px-10 py-5 bg-brand-tactical text-theme-text text-[11px] font-bold uppercase tracking-[0.3em] hover:bg-white hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-4 shadow-2xl shadow-brand-tactical/20"
+              className="w-full md:w-auto px-10 py-5 bg-brand-tactical text-brand-text text-[11px] font-bold uppercase tracking-[0.3em] hover:bg-white hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-4 shadow-2xl shadow-brand-tactical/20"
             >
               Confirmar e Pagar
               <ArrowRight size={18} />

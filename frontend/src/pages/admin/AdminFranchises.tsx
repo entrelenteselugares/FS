@@ -249,13 +249,13 @@ export default function AdminFranchises() {
                   </div>
                 </td>
                 <td className="p-3 md:p-6 text-center">
-                  <span className={`px-3 py-1 text-[10px] font-black uppercase rounded-full ${f.franchiseProfile?.active ? 'bg-emerald-500/10 text-theme-brand' : 'bg-red-500/10 text-red-500'}`}>
+                  <span className={`px-3 py-1 text-[10px] font-black uppercase rounded-full ${f.franchiseProfile?.active ? 'bg-brand-tactical/10 text-theme-brand' : 'bg-brand-danger/10 text-brand-danger'}`}>
                     {f.franchiseProfile?.active ? 'Ativo' : 'Inativo'}
                   </span>
                 </td>
                 <td className="p-3 md:p-6 text-center">
                   <div className="flex flex-col items-center">
-                    <span className={`text-xl font-black ${(f.franchiseProfile?.printCredits || 0) < 50 ? 'text-amber-500' : 'text-theme-text'}`}>
+                    <span className={`text-xl font-black ${(f.franchiseProfile?.printCredits || 0) < 50 ? 'text-brand-warning' : 'text-theme-text'}`}>
                       {f.franchiseProfile?.printCredits || 0}
                     </span>
                     <span className="text-[10px] text-theme-muted font-bold uppercase">Fotos Disponíveis</span>
@@ -277,14 +277,14 @@ export default function AdminFranchises() {
                         </button>
                         <button
                           onClick={() => handleToggleActive(f.franchiseProfile?.id || '', f.franchiseProfile?.active || false)}
-                          className={`p-3 border border-theme-border transition-all ${f.franchiseProfile?.active ? 'text-amber-500 hover:bg-amber-500/10' : 'text-theme-brand hover:bg-emerald-500/10'}`}
+                          className={`p-3 border border-theme-border transition-all ${f.franchiseProfile?.active ? 'text-brand-warning hover:bg-brand-warning/10' : 'text-theme-brand hover:bg-brand-tactical/10'}`}
                           title={f.franchiseProfile?.active ? 'Desativar' : 'Reativar'}
                         >
                           {f.franchiseProfile?.active ? <PowerOff size={16} /> : <Power size={16} />}
                         </button>
                         <button
                           onClick={() => handleRemoveFranchise(f.franchiseProfile?.id || '', f.nome)}
-                          className="p-3 border border-theme-border text-red-500 hover:bg-red-500/10 transition-all"
+                          className="p-3 border border-theme-border text-brand-danger hover:bg-brand-danger/10 transition-all"
                           title="Remover Franquia"
                         >
                           <Trash2 size={16} />
@@ -349,9 +349,9 @@ export default function AdminFranchises() {
                   </td>
                   <td className="p-4 text-right">
                     <span className={`text-[10px] font-black px-2 py-1 rounded-sm uppercase tracking-tighter ${
-                      order.status === 'PAID' ? 'bg-emerald-500/10 text-theme-brand' : 
-                      order.status === 'SHIPPED' ? 'bg-blue-500 text-blue-500' :
-                      order.status === 'PENDING' ? 'bg-amber-500/10 text-amber-500' : 'bg-zinc-800 text-theme-muted'
+                      order.status === 'PAID' ? 'bg-brand-tactical/10 text-theme-brand' : 
+                      order.status === 'SHIPPED' ? 'bg-brand-info text-brand-info' :
+                      order.status === 'PENDING' ? 'bg-brand-warning/10 text-brand-warning' : 'bg-zinc-800 text-theme-muted'
                     }`}>
                       {order.status === 'PAID' ? 'Pago' : order.status === 'SHIPPED' ? 'Enviado' : order.status === 'PENDING' ? 'Pendente' : order.status}
                     </span>
@@ -361,14 +361,14 @@ export default function AdminFranchises() {
                       <button
                         onClick={() => setFulfillModal({ orderId: order.id, franchisee: order.franchisee?.nome })}
                         disabled={fulfillingOrder === order.id}
-                        className="text-[10px] font-bold uppercase tracking-widest px-3 py-1.5 bg-emerald-500 hover:bg-emerald-400 text-theme-text rounded-sm transition-all disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
+                        className="text-[10px] font-bold uppercase tracking-widest px-3 py-1.5 bg-brand-tactical hover:bg-brand-tactical text-brand-text rounded-sm transition-all disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
                       >
                         {fulfillingOrder === order.id ? 'Processando...' : '✓ Enviar & Creditar'}
                       </button>
                     )}
                     {order.status === 'SHIPPED' && (
                       <div className="flex flex-col items-end gap-1">
-                        <span className="text-[10px] text-blue-500 font-bold uppercase tracking-widest">✓ Enviado</span>
+                        <span className="text-[10px] text-brand-info font-bold uppercase tracking-widest">✓ Enviado</span>
                         {order.trackingCode && (
                           <span className="text-[10px] text-theme-muted">{order.trackingCode}</span>
                         )}
@@ -454,7 +454,7 @@ export default function AdminFranchises() {
             {/* Header */}
             <div className="p-4 md:p-8 md:p-10 border-b border-theme-border flex items-center justify-between shrink-0">
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-emerald-500/10 rounded-2xl flex items-center justify-center border border-emerald-500/20">
+                <div className="w-12 h-12 bg-brand-tactical/10 rounded-2xl flex items-center justify-center border border-brand-tactical/20">
                   <CreditCard className="text-theme-brand" size={24} strokeWidth={1.5} />
                 </div>
                 <div>
@@ -475,7 +475,7 @@ export default function AdminFranchises() {
               <div className="flex items-center justify-between bg-theme-bg-muted p-4 md:p-8 border border-theme-border rounded-[30px] shadow-inner">
                 <button 
                   onClick={() => setCreditsToAdd(Math.max(0, creditsToAdd - 100))} 
-                  className="w-12 h-12 bg-theme-bg border border-theme-border text-theme-text text-2xl font-bold rounded-2xl flex items-center justify-center hover:bg-brand-tactical hover:text-theme-text hover:border-brand-tactical transition-all"
+                  className="w-12 h-12 bg-theme-bg border border-theme-border text-brand-text text-2xl font-bold rounded-2xl flex items-center justify-center hover:bg-brand-tactical hover:text-brand-text hover:border-brand-tactical transition-all"
                 >
                   -
                 </button>
@@ -485,7 +485,7 @@ export default function AdminFranchises() {
                 </div>
                 <button 
                   onClick={() => setCreditsToAdd(creditsToAdd + 100)} 
-                  className="w-12 h-12 bg-theme-bg border border-theme-border text-theme-text text-2xl font-bold rounded-2xl flex items-center justify-center hover:bg-brand-tactical hover:text-theme-text hover:border-brand-tactical transition-all"
+                  className="w-12 h-12 bg-theme-bg border border-theme-border text-brand-text text-2xl font-bold rounded-2xl flex items-center justify-center hover:bg-brand-tactical hover:text-brand-text hover:border-brand-tactical transition-all"
                 >
                   +
                 </button>
@@ -497,7 +497,7 @@ export default function AdminFranchises() {
               <button onClick={() => setShowCreditModal(null)} className="flex-1 py-5 border border-theme-border text-[11px] font-bold uppercase tracking-[0.3em] text-theme-muted hover:text-theme-text transition-all rounded-[20px]">Cancelar</button>
               <button 
                 onClick={handleAddCredits} 
-                className="flex-[2] py-5 bg-emerald-500 text-zinc-950 text-[11px] font-bold uppercase tracking-[0.3em] shadow-2xl shadow-emerald-500/20 hover:brightness-110 transition-all rounded-[20px] flex items-center justify-center gap-4"
+                className="flex-[2] py-5 bg-brand-tactical text-zinc-950 text-[11px] font-bold uppercase tracking-[0.3em] shadow-2xl shadow-emerald-500/20 hover:brightness-110 transition-all rounded-[20px] flex items-center justify-center gap-4"
               >
                 Confirmar Recarga
                 <ArrowRight size={18} strokeWidth={1.5} />
@@ -516,7 +516,7 @@ export default function AdminFranchises() {
             {/* Header */}
             <div className="p-4 md:p-8 md:p-10 border-b border-theme-border flex items-center justify-between shrink-0">
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-emerald-500/10 rounded-2xl flex items-center justify-center border border-emerald-500/20">
+                <div className="w-12 h-12 bg-brand-tactical/10 rounded-2xl flex items-center justify-center border border-brand-tactical/20">
                   <ShieldCheck className="text-theme-brand" size={24} strokeWidth={1.5} />
                 </div>
                 <div>
@@ -568,7 +568,7 @@ export default function AdminFranchises() {
               <button 
                 onClick={fulfillOrder}
                 disabled={fulfillingOrder !== null}
-                className="flex-[2] py-5 bg-emerald-500 text-zinc-950 text-[11px] font-bold uppercase tracking-[0.3em] shadow-2xl shadow-emerald-500/20 hover:brightness-110 transition-all rounded-[20px] flex items-center justify-center gap-4 disabled:opacity-50"
+                className="flex-[2] py-5 bg-brand-tactical text-zinc-950 text-[11px] font-bold uppercase tracking-[0.3em] shadow-2xl shadow-emerald-500/20 hover:brightness-110 transition-all rounded-[20px] flex items-center justify-center gap-4 disabled:opacity-50"
               >
                 {fulfillingOrder ? 'Processando...' : 'Confirmar Envio'}
                 <ArrowRight size={18} strokeWidth={1.5} />

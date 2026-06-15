@@ -45,11 +45,11 @@ export function CalendarView({ events, currentMonth, setCurrentMonth, onSelect, 
               <span className="text-[10px] font-bold text-theme-muted uppercase tracking-widest">Confirmado</span>
             </div>
             <div className="flex items-center gap-1.5">
-              <div className="w-2 h-2 bg-amber-500" />
+              <div className="w-2 h-2 bg-brand-warning" />
               <span className="text-[10px] font-bold text-theme-muted uppercase tracking-widest">Pendente</span>
             </div>
             <div className="flex items-center gap-1.5">
-              <div className="w-2 h-2 bg-blue-500" />
+              <div className="w-2 h-2 bg-brand-info" />
               <span className="text-[10px] font-bold text-theme-muted uppercase tracking-widest">Chamada Aberta</span>
             </div>
           </div>
@@ -95,8 +95,8 @@ export function CalendarView({ events, currentMonth, setCurrentMonth, onSelect, 
                     const isOpportunity = ev.isPublicCall && !ev.captacaoId;
                     
                     let bgColor = "bg-brand-tactical";
-                    if (isOpportunity) bgColor = "bg-blue-500";
-                    else if (!isAccepted) bgColor = "bg-amber-500";
+                    if (isOpportunity) bgColor = "bg-brand-info";
+                    else if (!isAccepted) bgColor = "bg-brand-warning";
 
                     return (
                       <button

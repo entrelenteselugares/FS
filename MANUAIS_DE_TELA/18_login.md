@@ -22,13 +22,6 @@
 
 ## 🔗 Links de Navegação
 
-- **COPA 2026
-PRÓXIMOS
-SUÉCIA
-14/06 · 23:00
-GRP F
-TUNÍSIA
-Ver Álbum →** -> `/album-torcida`
 - **ESQUECI A SENHA →** -> `/forgot-password`
 - **SOLICITAR CADASTRO** -> `/registro`
 - **← VOLTAR PARA A VITRINE** -> `/`

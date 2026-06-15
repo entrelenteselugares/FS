@@ -134,7 +134,7 @@ export function AboutPage() {
               <Link to="/suporte" className="px-4 md:px-8 py-3 bg-theme-bg-muted border border-theme-border text-theme-text font-bold tracking-widest uppercase text-xs rounded-full hover:bg-theme-border/20 transition-all">
                 Central de Ajuda
               </Link>
-              <Link to="/parcerias" className="px-4 md:px-8 py-3 bg-brand-tactical hover:brightness-110 text-theme-text font-bold tracking-widest uppercase text-xs rounded-full transition-all">
+              <Link to="/parcerias" className="px-4 md:px-8 py-3 bg-brand-tactical hover:brightness-110 text-brand-text font-bold tracking-widest uppercase text-xs rounded-full transition-all">
                 Seja um Parceiro
               </Link>
             </div>

@@ -104,7 +104,7 @@ export function VaultSettingsModal({ isOpen, onClose, vault, onUpdate, sortConfi
             {/* Header */}
             <div className="flex items-center justify-between px-6 py-4 border-b border-white/5">
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-full bg-emerald-500/10 flex items-center justify-center">
+                <div className="w-8 h-8 rounded-full bg-brand-tactical/10 flex items-center justify-center">
                   <Settings size={16} className="text-theme-brand" />
                 </div>
                 <div>
@@ -124,7 +124,7 @@ export function VaultSettingsModal({ isOpen, onClose, vault, onUpdate, sortConfi
                   key={tab}
                   onClick={() => setActiveTab(tab)}
                   className={`flex-1 py-3 text-[10px] font-black uppercase tracking-widest transition-colors ${
-                    activeTab === tab ? "text-theme-brand border-b-2 border-emerald-500 bg-emerald-500/5" : "text-theme-muted hover:text-theme-subtle"
+                    activeTab === tab ? "text-theme-brand border-b-2 border-brand-tactical bg-brand-tactical/5" : "text-theme-muted hover:text-theme-subtle"
                   }`}
                 >
                   {tab}
@@ -143,7 +143,7 @@ export function VaultSettingsModal({ isOpen, onClose, vault, onUpdate, sortConfi
                       type="text" 
                       value={nome}
                       onChange={e => setNome(e.target.value)}
-                      className="w-full h-12 bg-black/50 border border-white/10 rounded-lg px-4 text-sm text-theme-text focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all"
+                      className="w-full h-12 bg-black/50 border border-white/10 rounded-lg px-4 text-sm text-zinc-100 focus:outline-none focus:border-brand-tactical focus:ring-1 focus:ring-brand-tactical transition-all"
                       placeholder="Ex: Férias 2024"
                     />
                   </div>
@@ -155,7 +155,7 @@ export function VaultSettingsModal({ isOpen, onClose, vault, onUpdate, sortConfi
                       type="url" 
                       value={externalVideoLink}
                       onChange={e => setExternalVideoLink(e.target.value)}
-                      className="w-full h-12 bg-black/50 border border-white/10 rounded-lg px-4 text-sm text-theme-text focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all"
+                      className="w-full h-12 bg-black/50 border border-white/10 rounded-lg px-4 text-sm text-zinc-100 focus:outline-none focus:border-brand-tactical focus:ring-1 focus:ring-brand-tactical transition-all"
                       placeholder="https://drive.google.com/drive/folders/..."
                     />
                     <p className="text-[9px] text-theme-muted mt-2 leading-relaxed">
@@ -175,15 +175,15 @@ export function VaultSettingsModal({ isOpen, onClose, vault, onUpdate, sortConfi
                           onClick={() => setGoalPoses(preset.qty)}
                           className={`flex flex-col items-start p-4 rounded-xl border transition-all text-left ${
                             goalPoses === preset.qty
-                              ? "bg-emerald-500/10 border-emerald-500/60 ring-1 ring-emerald-500/40"
+                              ? "bg-brand-tactical/10 border-brand-tactical/60 ring-1 ring-brand-tactical/40"
                               : "bg-black/30 border-white/5 hover:bg-theme-bg-muted hover:border-white/15"
                           }`}
                         >
                           <div className="flex items-center gap-2 mb-2">
                             <div className={`w-3.5 h-3.5 rounded-full border flex items-center justify-center ${
-                              goalPoses === preset.qty ? "border-emerald-500" : "border-zinc-600"
+                              goalPoses === preset.qty ? "border-brand-tactical" : "border-zinc-600"
                             }`}>
-                              {goalPoses === preset.qty && <div className="w-2 h-2 rounded-full bg-emerald-500" />}
+                              {goalPoses === preset.qty && <div className="w-2 h-2 rounded-full bg-brand-tactical" />}
                             </div>
                             <span className={`text-[13px] font-black ${goalPoses === preset.qty ? "text-theme-brand" : "text-theme-text"}`}>
                               {preset.label}
@@ -208,8 +208,8 @@ export function VaultSettingsModal({ isOpen, onClose, vault, onUpdate, sortConfi
 
                     {/* Custom qty warning if current goalPoses doesn't match a preset */}
                     {!selectedPreset && (
-                      <div className="mt-3 p-3 bg-yellow-500/10 rounded-lg border border-yellow-500/20">
-                        <p className="text-[10px] text-yellow-400 font-bold">
+                      <div className="mt-3 p-3 bg-brand-warning/10 rounded-lg border border-brand-warning/20">
+                        <p className="text-[10px] text-brand-warning font-bold">
                           Meta atual: {goalPoses} fotos (personalizada). Selecione um pacote acima para alterar.
                         </p>
                       </div>
@@ -219,7 +219,7 @@ export function VaultSettingsModal({ isOpen, onClose, vault, onUpdate, sortConfi
                   <button 
                     onClick={handleSave}
                     disabled={loading || !hasChanges || !nome.trim()}
-                    className="w-full h-12 bg-emerald-500 hover:bg-emerald-400 text-theme-text text-[11px] font-bold uppercase tracking-widest rounded-lg transition-colors flex items-center justify-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed shadow-lg shadow-emerald-500/20"
+                    className="w-full h-12 bg-brand-tactical hover:bg-brand-tactical text-brand-text text-[11px] font-bold uppercase tracking-widest rounded-lg transition-colors flex items-center justify-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed shadow-lg shadow-emerald-500/20"
                   >
                     {loading ? <Loader2 size={16} className="animate-spin" /> : "Salvar Alterações"}
                   </button>
@@ -241,12 +241,12 @@ export function VaultSettingsModal({ isOpen, onClose, vault, onUpdate, sortConfi
                       { id: "ORIENTATION_HORZ", label: "Orientação (Horizontais primeiro)" }
                     ].map(opt => (
                       <label key={opt.id} className={`flex items-center gap-3 p-4 rounded-xl border cursor-pointer transition-all ${
-                        sortConfig === opt.id ? "bg-emerald-500/10 border-emerald-500/50" : "bg-black/20 border-white/5 hover:bg-theme-bg-muted"
+                        sortConfig === opt.id ? "bg-brand-tactical/10 border-brand-tactical/50" : "bg-black/20 border-white/5 hover:bg-theme-bg-muted"
                       }`}>
                         <div className={`w-4 h-4 rounded-full border flex items-center justify-center ${
-                          sortConfig === opt.id ? "border-emerald-500" : "border-zinc-600"
+                          sortConfig === opt.id ? "border-brand-tactical" : "border-zinc-600"
                         }`}>
-                          {sortConfig === opt.id && <div className="w-2 h-2 rounded-full bg-emerald-500" />}
+                          {sortConfig === opt.id && <div className="w-2 h-2 rounded-full bg-brand-tactical" />}
                         </div>
                         <span className={`text-[12px] font-bold ${sortConfig === opt.id ? "text-theme-brand" : "text-theme-subtle"}`}>
                           {opt.label}
@@ -260,10 +260,10 @@ export function VaultSettingsModal({ isOpen, onClose, vault, onUpdate, sortConfi
 
               {activeTab === "Acesso" && (
                 <div className="space-y-4">
-                  <div className="flex items-center justify-between bg-blue-500 p-3 rounded-lg border border-blue-500 mb-4">
+                  <div className="flex items-center justify-between bg-brand-info p-3 rounded-lg border border-brand-info mb-4">
                     <div className="flex items-center gap-3">
-                      <Info size={16} className="text-blue-500" />
-                      <p className="text-[10px] text-blue-500">Apenas o proprietário pode remover membros convidados.</p>
+                      <Info size={16} className="text-brand-info" />
+                      <p className="text-[10px] text-brand-info">Apenas o proprietário pode remover membros convidados.</p>
                     </div>
                   </div>
 
@@ -278,13 +278,13 @@ export function VaultSettingsModal({ isOpen, onClose, vault, onUpdate, sortConfi
                         {member.role !== "OWNER" && (
                           <button 
                             onClick={() => handleRemoveMember(member.userId)}
-                            className="p-2 text-red-500/70 hover:text-red-500 hover:bg-red-500/10 rounded-lg transition-colors"
+                            className="p-2 text-brand-danger/70 hover:text-brand-danger hover:bg-brand-danger/10 rounded-lg transition-colors"
                           >
                             <Trash2 size={16} />
                           </button>
                         )}
                         {member.role === "OWNER" && (
-                          <div className="px-3 py-1 bg-emerald-500/20 text-theme-brand text-[9px] font-bold uppercase tracking-widest rounded-full">
+                          <div className="px-3 py-1 bg-brand-tactical/20 text-theme-brand text-[9px] font-bold uppercase tracking-widest rounded-full">
                             Dono
                           </div>
                         )}

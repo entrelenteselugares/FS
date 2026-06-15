@@ -30,7 +30,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
             id={inputId}
             ref={ref}
             className={`fs-input ${leftIcon ? '!pl-10' : ''} ${rightIcon ? '!pr-10' : ''} ${
-              hasError ? 'border-red-500 focus:border-red-500 focus:shadow-[0_0_0_3px_rgba(239,68,68,0.2)]' : ''
+              hasError ? 'border-brand-danger focus:border-brand-danger focus:shadow-[0_0_0_3px_rgba(239,68,68,0.2)]' : ''
             }`}
             {...props}
           />
@@ -41,7 +41,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
           )}
         </div>
         {(error || helperText) && (
-          <span className={`text-caption mt-1 ${error ? 'text-red-500' : ''}`}>
+          <span className={`text-caption mt-1 ${error ? 'text-brand-danger' : ''}`}>
             {error || helperText}
           </span>
         )}

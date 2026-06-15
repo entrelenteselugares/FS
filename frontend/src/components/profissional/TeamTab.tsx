@@ -79,7 +79,7 @@ export function TeamTab() {
         <div className="relative z-10 space-y-6">
           <h3 className="text-2xl font-heading font-bold text-theme-text uppercase">Escalabilidade da Rede Técnica</h3>
           <p className="text-[11px] font-bold text-theme-muted uppercase tracking-[0.2em] leading-relaxed max-w-3xl">
-            Otimize sua operação designando profissionais <span className="text-brand-tactical font-bold underline decoration-brand-tactical/30 underline-offset-4">FIXOS</span> para prioridade máxima em seus eventos ou integrando o pool <span className="text-blue-500 font-bold">ROTATIVO</span> para demandas dinâmicas de rede.
+            Otimize sua operação designando profissionais <span className="text-brand-tactical font-bold underline decoration-brand-tactical/30 underline-offset-4">FIXOS</span> para prioridade máxima em seus eventos ou integrando o pool <span className="text-brand-info font-bold">ROTATIVO</span> para demandas dinâmicas de rede.
           </p>
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-2">
               <div className="px-4 py-3 bg-theme-bg border border-theme-border rounded-xl flex items-center gap-3">
@@ -117,7 +117,7 @@ export function TeamTab() {
                       ) : vinculo === "FIXO" ? (
                         <Star size={24} className="text-brand-tactical fill-brand-tactical animate-in zoom-in duration-500" />
                       ) : vinculo === "ROTATIVO" ? (
-                        <Users2 size={24} className="text-blue-500 opacity-60" />
+                        <Users2 size={24} className="text-brand-info opacity-60" />
                       ) : (
                         <UserCircle size={24} className="text-theme-muted/40" />
                       )}
@@ -154,8 +154,8 @@ export function TeamTab() {
                               onClick={() => setTeamChanges(prev => ({ ...prev, [p.id]: tipo }))}
                               className={`py-2 text-[10px] sm:text-[9px] font-black uppercase tracking-widest rounded-lg transition-all duration-300 relative overflow-hidden truncate px-1 ${
                                 vinculo === tipo 
-                                  ? tipo === "FIXO" ? "bg-brand-tactical text-brand-text shadow-lg shadow-brand-tactical/20" : tipo === "ROTATIVO" ? "bg-blue-500 text-theme-text shadow-md shadow-blue-500/20" : "bg-theme-border text-theme-text shadow-sm"
-                                  : "text-theme-muted hover:text-theme-text hover:bg-theme-border/20"
+                                  ? tipo === "FIXO" ? "bg-brand-tactical text-brand-text shadow-lg shadow-brand-tactical/20" : tipo === "ROTATIVO" ? "bg-brand-info text-brand-text shadow-md shadow-blue-500/20" : "bg-theme-border text-brand-text shadow-sm"
+                                  : "text-theme-muted hover:text-brand-text hover:bg-theme-border/20"
                               }`}
                             >
                               <span className="relative z-10">

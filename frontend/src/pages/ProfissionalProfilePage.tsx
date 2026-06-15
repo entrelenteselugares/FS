@@ -95,7 +95,7 @@ function BookingModal({
           <div>
             <label className="text-[9px] font-bold text-theme-muted uppercase tracking-widest block mb-2">Seu WhatsApp</label>
             <input
-              className="w-full bg-white/5 border border-white/10 rounded-xl p-3.5 text-sm text-theme-text placeholder-zinc-600 focus:border-brand-tactical/50 outline-none transition-colors"
+              className="w-full bg-white/5 border border-white/10 rounded-xl p-3.5 text-sm text-gray-800 placeholder-zinc-600 focus:border-brand-tactical/50 outline-none transition-colors"
               placeholder="(11) 99999-9999"
               value={state.phone}
               onChange={e => onChange("phone", e.target.value)}
@@ -122,7 +122,7 @@ function BookingModal({
           <button
             onClick={onSubmit}
             disabled={state.loading || !state.phone}
-            className="flex-[2] px-4 py-3.5 bg-brand-tactical text-theme-text rounded-xl text-[10px] font-bold uppercase tracking-widest hover:brightness-110 disabled:opacity-40 transition-all"
+            className="flex-[2] px-4 py-3.5 bg-brand-tactical text-brand-text rounded-xl text-[10px] font-bold uppercase tracking-widest hover:brightness-110 disabled:opacity-40 transition-all"
           >
             {state.loading ? "PROCESSANDO..." : `PAGAR R$ ${fee}`}
           </button>
@@ -231,7 +231,7 @@ export default function ProfissionalProfilePage() {
         <div className="absolute top-4 left-4">
           <Link
             to="/profissionais"
-            className="inline-flex items-center gap-1.5 text-[9px] font-bold text-theme-text/70 uppercase tracking-widest bg-black/40 backdrop-blur-sm border border-white/10 px-3 py-2 rounded-full hover:text-brand-tactical transition-colors"
+            className="inline-flex items-center gap-1.5 text-[9px] font-bold text-zinc-100/70 uppercase tracking-widest bg-black/40 backdrop-blur-sm border border-white/10 px-3 py-2 rounded-full hover:text-brand-tactical transition-colors"
           >
             <ChevronLeft size={12} /> Diretório
           </Link>
@@ -394,7 +394,7 @@ export default function ProfissionalProfilePage() {
                       {user ? (
                         <button
                           onClick={() => setBooking({ open: true, service: svc, phone: "", loading: false, checkoutUrl: null })}
-                          className="w-full py-1.5 md:py-3 bg-brand-tactical text-theme-text text-[9px] md:text-[9px] font-bold uppercase tracking-widest rounded-lg md:rounded-xl hover:brightness-110 transition-all flex items-center justify-center gap-1 md:gap-2 group-hover:gap-3"
+                          className="w-full py-1.5 md:py-3 bg-brand-tactical text-brand-text text-[9px] md:text-[9px] font-bold uppercase tracking-widest rounded-lg md:rounded-xl hover:brightness-110 transition-all flex items-center justify-center gap-1 md:gap-2 group-hover:gap-3"
                         >
                           <span className="hidden md:inline">Reservar por R$ {fee}</span>
                           <span className="md:hidden text-center leading-tight">Reservar</span>
@@ -429,7 +429,7 @@ export default function ProfissionalProfilePage() {
               {albums.flatMap(album => (album.images || []).map((img: any) => (
                 <div key={img.id} className="break-inside-avoid relative group overflow-hidden rounded-xl bg-zinc-900 border border-zinc-800/50">
                   <img src={img.watermarkedUrl || img.url} alt="Portfolio" className="w-full object-cover" />
-                  <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
+                  <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/80 to-transparent opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity">
                     <p className="text-[10px] font-bold text-theme-text uppercase tracking-widest truncate">{album.title}</p>
                   </div>
                 </div>

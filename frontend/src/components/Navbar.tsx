@@ -7,6 +7,7 @@ import { ThemeToggle } from "./ThemeToggle";
 import { ShoppingBag } from "lucide-react";
 import { CartModal } from "./CartModal";
 import { IncompleteProfileBanner } from "./IncompleteProfileBanner";
+import { WorldCupLiveBanner } from "./worldcup/WorldCupLiveBanner";
 
 interface NavbarProps {
   tenantLogoUrl?: string | null;
@@ -35,15 +36,17 @@ export const Navbar: React.FC<NavbarProps> = ({ tenantLogoUrl }) => {
 
   return (
     <>
-      <header className="sticky top-0 z-[100] w-full flex flex-col">
+      <div className="w-full flex flex-col relative z-[90]">
+        <WorldCupLiveBanner />
         <IncompleteProfileBanner />
+      </div>
+      <header className="sticky top-0 z-[100] w-full flex flex-col" style={{ background: "var(--theme-bg-nav)", backdropFilter: "blur(20px)" }}>
         <nav className="flex items-center justify-between w-full" style={{
           paddingTop: "calc(12px + env(safe-area-inset-top))",
           paddingBottom: "12px",
           paddingLeft: "16px",
           paddingRight: "16px",
           borderBottom: `1px solid ${T.border}`,
-          background: T.bgNav, backdropFilter: "blur(20px)",
         }}>
           <div className="flex items-center gap-4">
             <div onClick={() => navigate("/")} style={{ cursor: "pointer", display: "flex", alignItems: "center" }}>
@@ -75,7 +78,7 @@ export const Navbar: React.FC<NavbarProps> = ({ tenantLogoUrl }) => {
             >
               <ShoppingBag size={18} strokeWidth={1.5} />
               {totalItems > 0 && (
-                <span className="absolute -top-1 -right-1 w-4 h-4 bg-brand-tactical text-theme-text text-[9px] font-bold flex items-center justify-center rounded-sm animate-pulse-soft">
+                <span className="absolute -top-1 -right-1 w-4 h-4 bg-brand-tactical text-brand-text text-[9px] font-bold flex items-center justify-center rounded-sm animate-pulse-soft">
                   {totalItems}
                 </span>
               )}

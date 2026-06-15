@@ -37,10 +37,10 @@ function VaultCard({ vault, onClick }: { vault: Vault; onClick: () => void }) {
         </div>
         <span className={`text-[6px] md:text-[10px] font-black uppercase tracking-widest px-1.5 md:px-2 py-0.5 md:py-1 rounded md:rounded-md mt-1 shrink-0 ${
           vault.subscriptionStatus === "ACTIVE"
-            ? "text-theme-brand bg-emerald-500/10 border border-emerald-500/20"
+            ? "text-theme-brand bg-brand-tactical/10 border border-brand-tactical/20"
             : vault.subscriptionStatus === "TRIAL"
-            ? "text-yellow-500 bg-yellow-500/10 border border-yellow-500/20"
-            : "text-red-500 bg-red-500/10 border border-red-500/20"
+            ? "text-brand-warning bg-brand-warning/10 border border-brand-warning/20"
+            : "text-brand-danger bg-brand-danger/10 border border-brand-danger/20"
         }`}>
           {vault.subscriptionStatus === "ACTIVE" ? "Premium" : vault.subscriptionStatus === "TRIAL" ? "Grátis" : "Bloqueado"}
         </span>
@@ -169,7 +169,7 @@ function NewVaultModal({ onClose, onCreated }: { onClose: () => void; onCreated:
             </div>
           </div>
 
-          {error && <p className="text-red-400 text-[11px] font-bold">{error}</p>}
+          {error && <p className="text-brand-danger text-[11px] font-bold">{error}</p>}
 
           <div className="flex gap-3 pt-4 border-t border-theme-border mt-auto shrink-0">
             <button
@@ -184,7 +184,7 @@ function NewVaultModal({ onClose, onCreated }: { onClose: () => void; onCreated:
               id="btn-confirmar-criar-album"
               type="submit"
               disabled={loading}
-              className="flex-1 py-3 bg-brand-tactical hover:bg-brand-tactical/90 disabled:opacity-50 text-theme-text text-[11px] font-bold uppercase tracking-widest rounded-xl transition-colors flex items-center justify-center gap-2"
+              className="flex-1 py-3 bg-brand-tactical hover:bg-brand-tactical/90 disabled:opacity-50 text-brand-text text-[11px] font-bold uppercase tracking-widest rounded-xl transition-colors flex items-center justify-center gap-2"
             >
               {loading ? <Loader2 size={14} className="animate-spin" /> : <Plus size={14} />}
               Criar Álbum
@@ -239,8 +239,8 @@ export default function VaultsPage() {
       { label: "Meus Dados", onClick: () => navigate("/minha-conta?tab=profile"), isActive: false, icon: <User size={18} /> },
     ];
 
-    const isProOrFranchise = (user?.role === "PROFISSIONAL" || user?.role === "FRANCHISEE" || !!user?.franchiseProfile) && user?.role !== "UNIDADE" && user?.role !== "CARTORIO";
-    const isVerified = (user?.verificationStatus === "APPROVED" || user?.isVerified || !!user?.franchiseProfile) && user?.role !== "UNIDADE" && user?.role !== "CARTORIO";
+    const isProOrFranchise = (user?.role === "PROFISSIONAL" || user?.role === "FRANCHISEE");
+    const isVerified = (user?.verificationStatus === "APPROVED" || user?.isVerified || !!user?.franchiseProfile);
 
     if (isProOrFranchise && isVerified) {
       const proSubItems = [
@@ -326,7 +326,7 @@ export default function VaultsPage() {
           <button
             id="btn-novo-album"
             onClick={() => setShowModal(true)}
-            className="flex items-center gap-2 bg-brand-tactical hover:bg-brand-tactical/90 text-theme-text text-[11px] font-bold uppercase tracking-widest px-4 md:px-6 py-2.5 md:py-4 rounded-xl transition-all active:scale-95 shadow-lg shadow-brand-tactical/20"
+            className="flex items-center gap-2 bg-brand-tactical hover:bg-brand-tactical/90 text-brand-text text-[11px] font-bold uppercase tracking-widest px-4 md:px-6 py-2.5 md:py-4 rounded-xl transition-all active:scale-95 shadow-lg shadow-brand-tactical/20"
           >
             <Plus size={14} />
             NOVO ÁLBUM

@@ -53,15 +53,15 @@ export function ServicesTab({ profile, catalogServices, onAddService, onRemoveSe
   const getStatusBadge = (status?: string, note?: string | null) => {
     switch (status) {
       case "PENDING_REVIEW":
-        return <span className="px-2 py-0.5 rounded-md bg-yellow-500/10 text-yellow-500 border border-yellow-500/20 text-[10px] font-bold uppercase tracking-widest flex items-center gap-1" title="Em Análise"><Clock size={10} /> Em Análise</span>;
+        return <span className="px-2 py-0.5 rounded-md bg-brand-warning/10 text-brand-warning border border-brand-warning/20 text-[10px] font-bold uppercase tracking-widest flex items-center gap-1" title="Em Análise"><Clock size={10} /> Em Análise</span>;
       case "NETWORK":
-        return <span className="px-2 py-0.5 rounded-md bg-blue-500 text-blue-500 border border-blue-500 text-[10px] font-bold uppercase tracking-widest flex items-center gap-1" title="Rede Global"><ShieldCheck size={10} /> Rede Global</span>;
+        return <span className="px-2 py-0.5 rounded-md bg-brand-info text-brand-info border border-brand-info text-[10px] font-bold uppercase tracking-widest flex items-center gap-1" title="Rede Global"><ShieldCheck size={10} /> Rede Global</span>;
       case "EXCLUSIVE":
         return <span className="px-2 py-0.5 rounded-md bg-purple-500/10 text-purple-500 border border-purple-500/20 text-[10px] font-bold uppercase tracking-widest flex items-center gap-1" title="Exclusivo"><Briefcase size={10} /> Exclusivo</span>;
       case "REJECTED":
-        return <span className="px-2 py-0.5 rounded-md bg-red-500/10 text-red-500 border border-red-500/20 text-[10px] font-bold uppercase tracking-widest flex items-center gap-1" title={note || "Recusado"}><X size={10} /> Recusado</span>;
+        return <span className="px-2 py-0.5 rounded-md bg-brand-danger/10 text-brand-danger border border-brand-danger/20 text-[10px] font-bold uppercase tracking-widest flex items-center gap-1" title={note || "Recusado"}><X size={10} /> Recusado</span>;
       case "NEEDS_ADJUSTMENT":
-        return <span className="px-2 py-0.5 rounded-md bg-orange-500/10 text-orange-500 border border-orange-500/20 text-[10px] font-bold uppercase tracking-widest flex items-center gap-1" title={note || "Requer Ajustes"}><AlertCircle size={10} /> Requer Ajustes</span>;
+        return <span className="px-2 py-0.5 rounded-md bg-brand-warning/10 text-brand-warning border border-brand-warning/20 text-[10px] font-bold uppercase tracking-widest flex items-center gap-1" title={note || "Requer Ajustes"}><AlertCircle size={10} /> Requer Ajustes</span>;
       case "APPROVED":
         return null;
       default:
@@ -160,7 +160,7 @@ export function ServicesTab({ profile, catalogServices, onAddService, onRemoveSe
                     <div className="text-[9px] text-theme-muted uppercase tracking-[0.2em] font-bold max-w-xl">{svc.description}</div>
                   )}
                   {svc.reviewStatus === "NEEDS_ADJUSTMENT" && svc.reviewNote && (
-                     <div className="text-[10px] text-orange-500 mt-2">
+                     <div className="text-[10px] text-brand-warning mt-2">
                        Nota da Admin: {svc.reviewNote}
                      </div>
                   )}
@@ -196,7 +196,7 @@ export function ServicesTab({ profile, catalogServices, onAddService, onRemoveSe
                         </button>
                       </div>
                       {localError && (
-                        <p className="text-[10px] text-red-500 font-bold uppercase tracking-widest text-right max-w-[200px]">
+                        <p className="text-[10px] text-brand-danger font-bold uppercase tracking-widest text-right max-w-[200px]">
                           {localError}
                         </p>
                       )}
@@ -224,7 +224,7 @@ export function ServicesTab({ profile, catalogServices, onAddService, onRemoveSe
                       </div>
                       <button
                         onClick={() => onRemoveService(svc.id)}
-                        className="p-3 sm:p-4 bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-brand-text transition-all rounded-xl border border-red-500/20 cursor-pointer"
+                        className="p-3 sm:p-4 bg-brand-danger/10 text-brand-danger hover:bg-brand-danger hover:text-brand-text transition-all rounded-xl border border-brand-danger/20 cursor-pointer"
                         title="Remover Serviço"
                       >
                         <X size={18} />

@@ -159,7 +159,7 @@ export const LoginPage: React.FC = () => {
 
           {/* Error */}
           {error && (
-            <div className="bg-red-500/10 text-red-400 text-[9px] font-bold uppercase tracking-[0.2em] p-4 text-center border border-red-500/20 rounded-xl">
+            <div className="bg-brand-danger/10 text-brand-danger text-[9px] font-bold uppercase tracking-[0.2em] p-4 text-center border border-brand-danger/20 rounded-xl">
               {error}
             </div>
           )}
@@ -172,7 +172,7 @@ export const LoginPage: React.FC = () => {
                 onClick={loginWithGoogle}
                 variant="secondary"
                 fullWidth
-                className="bg-white text-theme-text hover:bg-gray-100 border-gray-300 h-12 flex items-center justify-center relative"
+                className="bg-white text-gray-800 hover:text-gray-900 hover:bg-gray-100 border-gray-300 h-12 flex items-center justify-center relative"
               >
                 <svg viewBox="0 0 24 24" width="18" height="18" xmlns="http://www.w3.org/2000/svg" className="absolute left-4">
                   <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>

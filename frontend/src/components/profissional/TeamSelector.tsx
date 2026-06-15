@@ -57,7 +57,7 @@ export function TeamSelector({ label, onSelect, network }: TeamSelectorProps) {
         <button
           type="button"
           onClick={() => handleModeChange("direct")}
-          className={`p-3 border text-center transition-all flex flex-col items-center justify-center gap-1 ${mode === "direct" ? "border-cyan-400 bg-cyan-400/10 text-cyan-400" : "border-theme-border bg-theme-bg-muted text-theme-muted"}`}
+          className={`p-3 border text-center transition-all flex flex-col items-center justify-center gap-1 ${mode === "direct" ? "border-brand-info bg-brand-info/10 text-brand-info" : "border-theme-border bg-theme-bg-muted text-theme-muted"}`}
         >
           <UserPlus size={14} />
           <span className="text-[10px] font-bold uppercase tracking-widest leading-none">Minha Rede</span>
@@ -65,7 +65,7 @@ export function TeamSelector({ label, onSelect, network }: TeamSelectorProps) {
         <button
           type="button"
           onClick={() => handleModeChange("public")}
-          className={`p-3 border text-center transition-all flex flex-col items-center justify-center gap-1 ${mode === "public" ? "border-yellow-400 bg-yellow-400/10 text-yellow-400" : "border-theme-border bg-theme-bg-muted text-theme-muted"}`}
+          className={`p-3 border text-center transition-all flex flex-col items-center justify-center gap-1 ${mode === "public" ? "border-brand-warning bg-brand-warning/10 text-brand-warning" : "border-theme-border bg-theme-bg-muted text-theme-muted"}`}
         >
           <Globe size={14} />
           <span className="text-[10px] font-bold uppercase tracking-widest leading-none">Solicitar</span>
@@ -73,7 +73,7 @@ export function TeamSelector({ label, onSelect, network }: TeamSelectorProps) {
         <button
           type="button"
           onClick={() => handleModeChange("none")}
-          className={`p-3 border text-center transition-all flex flex-col items-center justify-center gap-1 ${mode === "none" ? "border-red-500 bg-red-500/10 text-red-500 shadow-[0_0_15px_rgba(239,68,68,0.1)]" : "border-theme-border bg-theme-bg-muted text-theme-muted"}`}
+          className={`p-3 border text-center transition-all flex flex-col items-center justify-center gap-1 ${mode === "none" ? "border-brand-danger bg-brand-danger/10 text-brand-danger shadow-[0_0_15px_rgba(239,68,68,0.1)]" : "border-theme-border bg-theme-bg-muted text-theme-muted"}`}
         >
           <X size={14} />
           <span className="text-[10px] font-bold uppercase tracking-widest leading-none">Nenhum</span>
@@ -89,7 +89,7 @@ export function TeamSelector({ label, onSelect, network }: TeamSelectorProps) {
               placeholder="Buscar em minha rede..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full bg-theme-bg-muted border border-theme-border p-3 pl-10 text-[10px] font-bold text-theme-text outline-none focus:border-cyan-400/50"
+              className="w-full bg-theme-bg-muted border border-theme-border p-3 pl-10 text-[10px] font-bold text-theme-text outline-none focus:border-brand-info/50"
             />
           </div>
           <div className="grid grid-cols-1 gap-2 max-h-[160px] overflow-y-auto no-scrollbar">
@@ -99,13 +99,13 @@ export function TeamSelector({ label, onSelect, network }: TeamSelectorProps) {
                   key={p.id}
                   type="button"
                   onClick={() => handlePartnerSelect(p.id)}
-                  className={`flex items-center justify-between p-3 border transition-all ${selectedPartnerId === p.id ? "border-cyan-400 bg-cyan-400/5" : "border-theme-border hover:border-cyan-400/30"}`}
+                  className={`flex items-center justify-between p-3 border transition-all ${selectedPartnerId === p.id ? "border-brand-info bg-brand-info/5" : "border-theme-border hover:border-brand-info/30"}`}
                 >
                   <div className="text-left">
                     <p className="text-[10px] font-bold text-theme-text uppercase">{p.nome}</p>
                     <p className="text-[10px] text-theme-muted uppercase font-bold tracking-widest">{p.email}</p>
                   </div>
-                  {selectedPartnerId === p.id && <ShieldCheck size={14} className="text-cyan-400" />}
+                  {selectedPartnerId === p.id && <ShieldCheck size={14} className="text-brand-info" />}
                 </button>
               ))
             ) : (
@@ -116,8 +116,8 @@ export function TeamSelector({ label, onSelect, network }: TeamSelectorProps) {
       )}
 
       {mode === "public" && (
-        <div className="p-4 bg-yellow-400/5 border border-yellow-400/20 space-y-2 animate-in slide-in-from-top-2 duration-300">
-          <p className="text-[9px] font-bold text-yellow-400 uppercase tracking-widest flex items-center gap-2">
+        <div className="p-4 bg-brand-warning/5 border border-brand-warning/20 space-y-2 animate-in slide-in-from-top-2 duration-300">
+          <p className="text-[9px] font-bold text-brand-warning uppercase tracking-widest flex items-center gap-2">
              <Globe size={12} /> Chamada Aberta na Plataforma
           </p>
           <p className="text-[10px] text-theme-muted uppercase font-bold leading-relaxed">

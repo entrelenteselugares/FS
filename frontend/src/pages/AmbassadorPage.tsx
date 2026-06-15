@@ -61,11 +61,11 @@ export default function AmbassadorPage() {
   const name = info?.ownerName || slug?.split('-')[0] || "Um Embaixador";
 
   return (
-    <div className="min-h-screen bg-[#050505] text-theme-text selection:bg-brand-tactical/30 selection:text-theme-text overflow-x-hidden">
+    <div className="min-h-screen bg-[#050505] text-brand-text selection:bg-brand-tactical/30 selection:text-brand-text overflow-x-hidden">
       {/* Ambient Background */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-brand-tactical/10 blur-[150px] rounded-full opacity-30 animate-pulse-slow" />
-        <div className="absolute bottom-0 right-1/4 w-[400px] h-[400px] bg-blue-500 blur-[120px] rounded-full opacity-20" />
+        <div className="absolute bottom-0 right-1/4 w-[400px] h-[400px] bg-brand-info blur-[120px] rounded-full opacity-20" />
       </div>
 
       <main className="relative z-10 max-w-5xl mx-auto px-3 md:px-6 pt-20 pb-32 flex flex-col items-center text-center">
@@ -124,7 +124,7 @@ export default function AmbassadorPage() {
               transition={{ delay: 0.3 + (i * 0.1) }}
               className="p-4 md:p-8 bg-zinc-900/40 border border-zinc-800/50 backdrop-blur-xl flex flex-col items-center text-center space-y-4 group hover:border-brand-tactical/40 transition-all"
             >
-              <div className="text-brand-tactical p-3 bg-brand-tactical/10 rounded-2xl group-hover:bg-brand-tactical group-hover:text-theme-text transition-all">
+              <div className="text-brand-tactical p-3 bg-brand-tactical/10 rounded-2xl group-hover:bg-brand-tactical group-hover:text-brand-text transition-all">
                 {f.icon}
               </div>
               <h3 className="text-sm font-bold uppercase tracking-widest text-theme-text">{f.title}</h3>
@@ -142,7 +142,7 @@ export default function AmbassadorPage() {
         >
           <button
             onClick={handleStart}
-            className="w-full py-3 md:py-6 bg-brand-tactical text-theme-text font-bold uppercase tracking-[0.4em] text-[12px] hover:bg-white transition-all shadow-[0_0_60px_rgba(133,185,172,0.2)] active:scale-95 flex items-center justify-center gap-4"
+            className="w-full py-3 md:py-6 bg-brand-tactical text-brand-text font-bold uppercase tracking-[0.4em] text-[12px] hover:bg-brand-hover transition-all shadow-[0_0_60px_rgba(133,185,172,0.2)] active:scale-95 flex items-center justify-center gap-4"
           >
             Aceitar Convite e Começar
             <ArrowRight size={18} />

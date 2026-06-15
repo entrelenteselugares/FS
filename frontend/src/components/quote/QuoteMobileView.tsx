@@ -35,7 +35,7 @@ export const QuoteMobileView = (props: any) => {
   if (props.createdQuoteId) {
     return (
       <div className="min-h-[100dvh] flex flex-col items-center justify-center px-6 text-center bg-zinc-950">
-        <div className="w-16 h-16 bg-emerald-500/10 rounded-full flex items-center justify-center mb-6 border border-emerald-500/20">
+        <div className="w-16 h-16 bg-brand-tactical/10 rounded-full flex items-center justify-center mb-6 border border-brand-tactical/20">
           <CheckCircle2 size={32} className="text-theme-brand" />
         </div>
         <h2 className="text-2xl font-bold uppercase text-theme-text mb-2">Orçamento Enviado!</h2>
@@ -52,7 +52,7 @@ export const QuoteMobileView = (props: any) => {
         <div className="flex flex-col gap-3 w-full max-w-xs mt-8">
           <button
             onClick={() => window.open('https://wa.me/5519981150440', '_blank')}
-            className="w-full py-3.5 bg-emerald-500 text-theme-text text-[11px] font-bold uppercase tracking-widest rounded-full"
+            className="w-full py-3.5 bg-brand-tactical text-brand-text text-[11px] font-bold uppercase tracking-widest rounded-full"
           >
             Falar no WhatsApp
           </button>
@@ -68,7 +68,7 @@ export const QuoteMobileView = (props: any) => {
   }
 
   return (
-    <div className="min-h-[100dvh] flex flex-col font-b selection:bg-emerald-500 selection:text-theme-text pb-24" style={{ backgroundColor: THEME.bg, color: THEME.text }}>
+    <div className="min-h-[100dvh] flex flex-col font-b selection:bg-brand-tactical selection:text-brand-text pb-24" style={{ backgroundColor: THEME.bg, color: THEME.text }}>
       {/* Header Compacto */}
       <div className="sticky top-0 z-50 bg-zinc-950/80 backdrop-blur-md px-4 py-3 flex items-center border-b border-white/5">
         {step > 1 && (
@@ -88,7 +88,7 @@ export const QuoteMobileView = (props: any) => {
       </div>
 
       {flowType && (
-        <div className="bg-emerald-500/10 border-b border-emerald-500/20 px-4 py-3 flex items-center justify-between shadow-xl">
+        <div className="bg-brand-tactical/10 border-b border-brand-tactical/20 px-4 py-3 flex items-center justify-between shadow-xl">
           <div className="flex items-center gap-2">
             <span className="text-theme-brand text-sm">⭐</span>
             <div>
@@ -129,9 +129,9 @@ export const QuoteMobileView = (props: any) => {
                         <button
                           key={p.id}
                           onClick={() => setSelectedPartnerId(p.id)}
-                          className={`flex items-center gap-3 p-3 rounded-lg border text-left transition-all ${selectedPartnerId === p.id ? "bg-emerald-500/10 border-emerald-500/50" : "bg-zinc-900/30 border-white/5"}`}
+                          className={`flex items-center gap-3 p-3 rounded-lg border text-left transition-all ${selectedPartnerId === p.id ? "bg-brand-tactical/10 border-brand-tactical/50" : "bg-zinc-900/30 border-white/5"}`}
                         >
-                          <div className={`w-8 h-8 rounded-full flex items-center justify-center ${selectedPartnerId === p.id ? "bg-emerald-500/20 text-theme-brand" : "bg-zinc-800 text-theme-muted"}`}>
+                          <div className={`w-8 h-8 rounded-full flex items-center justify-center ${selectedPartnerId === p.id ? "bg-brand-tactical/20 text-theme-brand" : "bg-zinc-800 text-theme-muted"}`}>
                             {selectedPartnerId === p.id ? <CheckCircle2 size={16} /> : <Building2 size={16} />}
                           </div>
                           <div className="flex-1">
@@ -152,7 +152,7 @@ export const QuoteMobileView = (props: any) => {
                       placeholder="00000-000"
                       value={customCep}
                       onChange={(e) => handleCepChange(e.target.value)}
-                      className="w-full bg-zinc-900/80 border border-white/20 rounded-lg p-3 text-sm text-theme-text focus:outline-none focus:border-emerald-500/50"
+                      className="w-full bg-zinc-900/80 border border-white/20 rounded-lg p-3 text-sm text-zinc-100 focus:outline-none focus:border-brand-tactical/50"
                     />
                     {addressData.logradouro && (
                       <div className="text-[10px] text-theme-muted px-1">{addressData.logradouro}, {addressData.cidade}-{addressData.uf}</div>
@@ -166,7 +166,7 @@ export const QuoteMobileView = (props: any) => {
                     type="date"
                     value={eventDate}
                     onChange={(e) => setEventDate(e.target.value)}
-                    className="w-full bg-zinc-900/80 border border-white/20 rounded-lg p-3 text-sm text-theme-text focus:outline-none focus:border-emerald-500/50"
+                    className="w-full bg-zinc-900/80 border border-white/20 rounded-lg p-3 text-sm text-zinc-100 focus:outline-none focus:border-brand-tactical/50"
                   />
                 </div>
               </div>
@@ -183,7 +183,7 @@ export const QuoteMobileView = (props: any) => {
                         <button
                           key={type}
                           onClick={() => setCategory(type)}
-                          className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-all ${category === type ? "bg-emerald-500 text-theme-text border-emerald-500" : "bg-zinc-900 border-zinc-800 text-theme-muted"}`}
+                          className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-all ${category === type ? "bg-brand-tactical text-brand-text border-brand-tactical" : "bg-zinc-900 border-zinc-800 text-theme-muted"}`}
                         >
                           {type}
                         </button>
@@ -198,7 +198,7 @@ export const QuoteMobileView = (props: any) => {
                         <button
                           key={type}
                           onClick={() => setCategory(type)}
-                          className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-all ${category === type ? "bg-emerald-500 text-theme-text border-emerald-500" : "bg-zinc-900 border-zinc-800 text-theme-muted"}`}
+                          className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-all ${category === type ? "bg-brand-tactical text-brand-text border-brand-tactical" : "bg-zinc-900 border-zinc-800 text-theme-muted"}`}
                         >
                           {type}
                         </button>
@@ -223,9 +223,9 @@ export const QuoteMobileView = (props: any) => {
                                 prev.includes(svc.id) ? prev.filter(id => id !== svc.id) : [...prev, svc.id]
                               );
                             }}
-                            className={`flex items-center gap-3 p-3 rounded-lg border text-left transition-all ${isSelected ? "bg-emerald-500/10 border-emerald-500/50" : "bg-zinc-900/30 border-white/5"}`}
+                            className={`flex items-center gap-3 p-3 rounded-lg border text-left transition-all ${isSelected ? "bg-brand-tactical/10 border-brand-tactical/50" : "bg-zinc-900/30 border-white/5"}`}
                           >
-                            <div className={`w-6 h-6 rounded flex items-center justify-center shrink-0 border ${isSelected ? "bg-emerald-500 border-emerald-500 text-theme-text" : "bg-zinc-900 border-zinc-700 text-transparent"}`}>
+                            <div className={`w-6 h-6 rounded flex items-center justify-center shrink-0 border ${isSelected ? "bg-brand-tactical border-brand-tactical text-brand-text" : "bg-zinc-900 border-zinc-700 text-transparent"}`}>
                               <CheckCircle2 size={14} />
                             </div>
                             <div className="flex-1 flex flex-col justify-center">
@@ -260,7 +260,7 @@ export const QuoteMobileView = (props: any) => {
                       <button
                         key={opt}
                         onClick={() => setAttendees(opt)}
-                        className={`p-2 text-xs font-medium rounded-lg border text-center ${attendees === opt ? "bg-emerald-500/20 border-emerald-500/50 text-theme-brand" : "bg-zinc-900/50 border-white/5 text-theme-muted"}`}
+                        className={`p-2 text-xs font-medium rounded-lg border text-center ${attendees === opt ? "bg-brand-tactical/20 border-brand-tactical/50 text-theme-brand" : "bg-zinc-900/50 border-white/5 text-theme-muted"}`}
                       >
                         {opt}
                       </button>
@@ -279,7 +279,7 @@ export const QuoteMobileView = (props: any) => {
                     type="text"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    className="w-full bg-zinc-900/80 border border-white/20 rounded-lg p-3 text-sm text-theme-text focus:outline-none focus:border-emerald-500/50"
+                    className="w-full bg-zinc-900/80 border border-white/20 rounded-lg p-3 text-sm text-zinc-100 focus:outline-none focus:border-brand-tactical/50"
                   />
                 </div>
                 <div className="space-y-1.5">
@@ -288,7 +288,7 @@ export const QuoteMobileView = (props: any) => {
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full bg-zinc-900/80 border border-white/20 rounded-lg p-3 text-sm text-theme-text focus:outline-none focus:border-emerald-500/50"
+                    className="w-full bg-zinc-900/80 border border-white/20 rounded-lg p-3 text-sm text-zinc-100 focus:outline-none focus:border-brand-tactical/50"
                   />
                 </div>
                 <div className="space-y-1.5">
@@ -297,7 +297,7 @@ export const QuoteMobileView = (props: any) => {
                     type="tel"
                     value={whatsapp}
                     onChange={(e) => setWhatsapp(e.target.value)}
-                    className="w-full bg-zinc-900/80 border border-white/20 rounded-lg p-3 text-sm text-theme-text focus:outline-none focus:border-emerald-500/50"
+                    className="w-full bg-zinc-900/80 border border-white/20 rounded-lg p-3 text-sm text-zinc-100 focus:outline-none focus:border-brand-tactical/50"
                   />
                 </div>
                 <div className="space-y-1.5">
@@ -307,7 +307,7 @@ export const QuoteMobileView = (props: any) => {
                     placeholder="https://sympla.com/..."
                     value={ticketUrl || ''}
                     onChange={(e) => setTicketUrl(e.target.value)}
-                    className="w-full bg-zinc-900/80 border border-white/20 rounded-lg p-3 text-sm text-theme-text focus:outline-none focus:border-emerald-500/50"
+                    className="w-full bg-zinc-900/80 border border-white/20 rounded-lg p-3 text-sm text-zinc-100 focus:outline-none focus:border-brand-tactical/50"
                   />
                 </div>
                 <div className="space-y-1.5">
@@ -317,7 +317,7 @@ export const QuoteMobileView = (props: any) => {
                     placeholder="EX: FOTOSEGUNDO10"
                     value={fotoSegundoPromoCode || ''}
                     onChange={(e) => setFotoSegundoPromoCode(e.target.value.toUpperCase())}
-                    className="w-full bg-zinc-900/80 border border-white/20 rounded-lg p-3 text-sm text-theme-text focus:outline-none focus:border-emerald-500/50"
+                    className="w-full bg-zinc-900/80 border border-white/20 rounded-lg p-3 text-sm text-zinc-100 focus:outline-none focus:border-brand-tactical/50"
                   />
                 </div>
               </div>
@@ -339,7 +339,7 @@ export const QuoteMobileView = (props: any) => {
           <button
             onClick={step < 4 ? nextStep : handleSubmit}
             disabled={submitting || (step === 1 && locationType === "PARTNER" && !selectedPartnerId) || (step === 2 && selectedServices.length === 0)}
-            className="flex-1 bg-emerald-500 hover:bg-emerald-400 text-theme-text font-bold py-3.5 px-6 rounded-lg flex items-center justify-center gap-2 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex-1 bg-brand-tactical hover:bg-brand-tactical text-brand-text font-bold py-3.5 px-6 rounded-lg flex items-center justify-center gap-2 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {submitting ? (
               <span className="text-sm">Enviando...</span>

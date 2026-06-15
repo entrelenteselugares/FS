@@ -180,8 +180,8 @@ export default function ClienteArea() {
   { label: "Meus Dados", onClick: () => handleTabChange("profile"), isActive: activeTab === "profile", icon: <User size={18} /> },
  ];
 
-  const isProOrFranchise = (user?.role === "PROFISSIONAL" || user?.role === "FRANCHISEE" || !!user?.franchiseProfile) && user?.role !== "UNIDADE" && user?.role !== "CARTORIO";
-  const isVerified = (user?.verificationStatus === "APPROVED" || !!user?.franchiseProfile) && user?.role !== "UNIDADE" && user?.role !== "CARTORIO";
+  const isProOrFranchise = (user?.role === "PROFISSIONAL" || user?.role === "FRANCHISEE");
+  const isVerified = (user?.verificationStatus === "APPROVED" || !!user?.franchiseProfile);
 
   if (isProOrFranchise && isVerified) {
     const proSubItems: NavItem[] = [
@@ -503,7 +503,7 @@ export default function ClienteArea() {
  });
  if (!exp.length) return null;
  return (
- <div className="flex items-center gap-4 px-3 md:px-6 py-4 bg-amber-500/10 border border-amber-500/30 text-amber-400">
+ <div className="flex items-center gap-4 px-3 md:px-6 py-4 bg-brand-warning/10 border border-brand-warning/30 text-brand-warning">
  <AlertTriangle size={16} />
  <p className="text-[10px] font-bold uppercase tracking-widest">Atenção: {exp.length} álbum(ns) expiram em menos de 7 dias. Faça o download agora.</p>
  </div>
@@ -539,7 +539,7 @@ export default function ClienteArea() {
  <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-white/5 to-transparent rotate-45 translate-x-12 -translate-y-12" />
  <div className="relative z-10 space-y-3 sm:space-y-4">
  <div className="flex items-center gap-2 sm:gap-3">
- <div className={`p-1.5 sm:p-2 rounded-lg ${m.highlight ? 'bg-brand-tactical text-theme-text shadow-lg shadow-brand-tactical/20' : 'bg-theme-bg-muted text-theme-text-muted border border-white/5'}`}>
+ <div className={`p-1.5 sm:p-2 rounded-lg ${m.highlight ? 'bg-brand-tactical text-brand-text shadow-lg shadow-brand-tactical/20' : 'bg-theme-bg-muted text-brand-text-muted border border-white/5'}`}>
  {m.icon}
  </div>
  <p className="text-[10px] sm:text-[9px] font-bold text-theme-text-muted uppercase tracking-widest">{m.label}</p>
@@ -594,7 +594,7 @@ export default function ClienteArea() {
   </div>
   <button 
   onClick={() => handleTabChange("affiliate")}
-  className="relative z-10 self-start text-[10px] sm:text-[9px] font-bold uppercase tracking-[0.2em] text-brand-tactical border border-brand-tactical/30 px-3 sm:px-6 py-2 sm:py-3 hover:bg-brand-tactical hover:text-theme-text transition-all duration-300"
+  className="relative z-10 self-start text-[10px] sm:text-[9px] font-bold uppercase tracking-[0.2em] text-brand-tactical border border-brand-tactical/30 px-3 sm:px-6 py-2 sm:py-3 hover:bg-brand-tactical hover:text-brand-text transition-all duration-300"
   >
   Pegar meu Link →
   </button>
@@ -834,7 +834,7 @@ export default function ClienteArea() {
  </div>
  </form>
  <div className="pt-4 md:pt-6 border-t border-theme-border space-y-3 md:space-y-4">
- <h3 className="text-[10px] md:text-[9px] font-bold text-red-400 uppercase tracking-[0.3em]">Zona de Suporte</h3>
+ <h3 className="text-[10px] md:text-[9px] font-bold text-brand-danger uppercase tracking-[0.3em]">Zona de Suporte</h3>
  <p className="text-[10px] md:text-[11px] text-theme-muted">Para redefinir sua senha ou solicitar exclusão de dados, entre em contato com nosso suporte.</p>
  <a href="https://wa.me/5519981150440" target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 text-[10px] font-bold text-theme-text uppercase tracking-widest hover:text-brand-tactical transition-colors">
  Falar com Suporte <ArrowRight size={12} />
@@ -847,7 +847,7 @@ export default function ClienteArea() {
  <div className="lux-card p-5 md:p-10 max-w-2xl border-l-4 border-l-emerald-500 bg-theme-bg">
  <div className="space-y-4 md:space-y-6">
  <div className="flex items-center gap-4">
- <div className="p-3 bg-emerald-500/10 text-theme-brand border border-emerald-500/20">
+ <div className="p-3 bg-brand-tactical/10 text-theme-brand border border-brand-tactical/20">
  <Briefcase size={24} />
  </div>
  <div className="space-y-1">
@@ -857,8 +857,8 @@ export default function ClienteArea() {
  </div>
 
  {user?.verificationStatus === "PENDING" ? (
- <div className="p-3 md:p-6 bg-amber-500/10 border border-amber-500/20 space-y-3">
- <div className="flex items-center gap-3 text-amber-500">
+ <div className="p-3 md:p-6 bg-brand-warning/10 border border-brand-warning/20 space-y-3">
+ <div className="flex items-center gap-3 text-brand-warning">
  <Clock size={16} className="animate-pulse" />
  <p className="text-[10px] font-bold uppercase tracking-widest">Perfil em Análise Técnica</p>
  </div>
@@ -887,7 +887,7 @@ export default function ClienteArea() {
  setIsApplying(false);
  }
  }}
- className="p-3 md:p-6 border-2 border-theme-border hover:border-emerald-500/60 transition-all text-left space-y-3 group bg-theme-bg/20"
+ className="p-3 md:p-6 border-2 border-theme-border hover:border-brand-tactical/60 transition-all text-left space-y-3 group bg-theme-bg/20"
  >
  <Camera size={20} className="text-theme-muted group-hover:text-theme-brand transition-colors" />
  <div className="space-y-1">
@@ -909,7 +909,7 @@ export default function ClienteArea() {
  setIsApplying(false);
  }
  }}
- className="p-3 md:p-6 border-2 border-theme-border hover:border-emerald-500/60 transition-all text-left space-y-3 group bg-theme-bg/20"
+ className="p-3 md:p-6 border-2 border-theme-border hover:border-brand-tactical/60 transition-all text-left space-y-3 group bg-theme-bg/20"
  >
  <Building2 size={20} className="text-theme-muted group-hover:text-theme-brand transition-colors" />
  <div className="space-y-1">
@@ -1030,12 +1030,12 @@ function EventGroupRow({ group, onSelectPedido }: {
       </h3>
 
       <div className={`relative bg-[var(--bg-card)] border transition-all duration-300 rounded-xl overflow-hidden shadow-sm ${
-        hasPendente ? 'border-amber-500/40' : 'border-theme-border'
+        hasPendente ? 'border-brand-warning/40' : 'border-theme-border'
       }`}>
         {/* Status Header */}
         <div className="px-4 py-3 border-b border-theme-border/50 bg-black/10">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
-            <span className={`text-[10px] font-black uppercase tracking-widest ${hasAprovado ? 'text-theme-brand' : 'text-amber-500'}`}>
+            <span className={`text-[10px] font-black uppercase tracking-widest ${hasAprovado ? 'text-theme-brand' : 'text-brand-warning'}`}>
               {hasAprovado ? 'Acesso Liberado' : 'Pagamento Pendente'}
             </span>
             <p className="text-[10px] text-theme-text-muted">
@@ -1108,7 +1108,7 @@ function EventGroupRow({ group, onSelectPedido }: {
               <>
                 <button 
                   onClick={() => onSelectPedido(latestAprovado!)} 
-                  className="w-full px-2 py-2 bg-brand-tactical text-theme-text rounded-lg text-[9px] sm:text-[10px] font-bold uppercase tracking-wider hover:brightness-110 transition-all text-center"
+                  className="w-full px-2 py-2 bg-brand-tactical text-brand-text rounded-lg text-[9px] sm:text-[10px] font-bold uppercase tracking-wider hover:brightness-110 transition-all text-center"
                 >
                   Ver Compra
                 </button>
@@ -1122,7 +1122,7 @@ function EventGroupRow({ group, onSelectPedido }: {
             ) : (
               <button 
                 onClick={() => firstPendente && navigate(`/checkout?orderId=${firstPendente.id}`)} 
-                className="w-full px-2 py-2 bg-amber-500 text-theme-text rounded-lg text-[9px] sm:text-[10px] font-bold uppercase tracking-wider hover:brightness-110 transition-all text-center"
+                className="w-full px-2 py-2 bg-brand-warning text-zinc-900 rounded-lg text-[9px] sm:text-[10px] font-bold uppercase tracking-wider hover:brightness-110 transition-all text-center"
               >
                 Pagar Agora
               </button>
@@ -1310,7 +1310,7 @@ function PedidoDetalhe({ pedido, loading, onGoToEvent, onChangePrivacy, onRefres
  type="button"
  onClick={() => fileInputRef.current?.click()}
  disabled={isUploading}
- className="fs-btn bg-brand-tactical text-theme-text min-w-[90px] !py-3"
+ className="fs-btn bg-brand-tactical text-brand-text min-w-[90px] !py-3"
  >
  {isUploading ? (
  <div className="w-4 h-4 border-2 border-black/30 border-t-black rounded-full animate-spin" />
@@ -1359,7 +1359,7 @@ function PedidoDetalhe({ pedido, loading, onGoToEvent, onChangePrivacy, onRefres
  <button 
  onClick={handleSave} 
  disabled={isSaving} 
- className="fs-btn bg-brand-tactical text-theme-text flex-1 shadow-lg shadow-brand-tactical/20"
+ className="fs-btn bg-brand-tactical text-brand-text flex-1 shadow-lg shadow-brand-tactical/20"
  >
  {isSaving ? "Salvando..." : "Salvar Alterações"}
  </button>
@@ -1384,7 +1384,7 @@ function PedidoDetalhe({ pedido, loading, onGoToEvent, onChangePrivacy, onRefres
  </p>
  </div>
  </div>
- <span className={`px-3 py-1 text-[10px] font-black uppercase tracking-widest border ${pedido.hasPaid ? 'border-emerald-500/50 text-theme-brand bg-emerald-500/5' : 'border-amber-500/50 text-amber-400 bg-amber-500/5'}`}>
+ <span className={`px-3 py-1 text-[10px] font-black uppercase tracking-widest border ${pedido.hasPaid ? 'border-brand-tactical/50 text-theme-brand bg-brand-tactical/5' : 'border-brand-warning/50 text-brand-warning bg-brand-warning/5'}`}>
  {pedido.hasPaid ? "Liberado" : "Pagar Agora"}
  </span>
  </div>
@@ -1490,7 +1490,7 @@ function PedidoDetalhe({ pedido, loading, onGoToEvent, onChangePrivacy, onRefres
  </div>
  <button 
  onClick={() => navigate(`/checkout?orderId=${pedido.id}`)}
- className="px-3 md:px-6 py-3 bg-brand-tactical text-theme-text text-[10px] font-bold uppercase tracking-[0.2em] shadow-lg hover:scale-105 transition-all"
+ className="px-3 md:px-6 py-3 bg-brand-tactical text-brand-text text-[10px] font-bold uppercase tracking-[0.2em] shadow-lg hover:scale-105 transition-all"
  >
  Pagar
  </button>
@@ -1504,7 +1504,7 @@ function PedidoDetalhe({ pedido, loading, onGoToEvent, onChangePrivacy, onRefres
    {pedido.hasPaid && (
      <button
        onClick={onGoToEvent}
-       className="w-full py-3.5 bg-brand-tactical text-theme-text text-[10px] font-bold uppercase tracking-[0.2em] hover:bg-brand-tactical/90 transition-all active:scale-95 flex items-center justify-center gap-2"
+       className="w-full py-3.5 bg-brand-tactical text-brand-text text-[10px] font-bold uppercase tracking-[0.2em] hover:bg-brand-tactical/90 transition-all active:scale-95 flex items-center justify-center gap-2"
      >
        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
        Ver Álbum com Fotos Compradas
@@ -1520,7 +1520,7 @@ function PedidoDetalhe({ pedido, loading, onGoToEvent, onChangePrivacy, onRefres
      <button
        onClick={onChangePrivacy}
        disabled={!pedido.hasPaid}
-       className="flex-1 py-3 border border-theme-border text-[9px] font-bold uppercase tracking-[0.2em] text-theme-text hover:border-amber-500 hover:text-amber-500 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+       className="flex-1 py-3 border border-theme-border text-[9px] font-bold uppercase tracking-[0.2em] text-theme-text hover:border-brand-warning hover:text-brand-warning transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
      >
        Privacidade
      </button>
@@ -1574,7 +1574,7 @@ function MediaActionCard({ icon, title, subtitle, url, disabled, bgImage }: {
   
   <div className="relative z-10 w-full flex items-center justify-between">
    <div className="flex flex-col gap-2">
-    <div className="w-10 h-10 bg-brand-tactical/20 backdrop-blur-sm rounded-lg flex items-center justify-center text-brand-tactical group-hover:bg-brand-tactical group-hover:text-theme-text transition-all duration-500 shadow-xl shadow-brand-tactical/10">
+    <div className="w-10 h-10 bg-brand-tactical/20 backdrop-blur-sm rounded-lg flex items-center justify-center text-brand-tactical group-hover:bg-brand-tactical group-hover:text-brand-text transition-all duration-500 shadow-xl shadow-brand-tactical/10">
     {icon}
     </div>
     <div>
@@ -1582,7 +1582,7 @@ function MediaActionCard({ icon, title, subtitle, url, disabled, bgImage }: {
     <p className="text-[10px] text-theme-subtle uppercase font-bold tracking-[0.2em]">{subtitle}</p>
     </div>
    </div>
-   <div className="w-8 h-8 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center group-hover:bg-brand-tactical group-hover:text-theme-text text-theme-text transition-all duration-500">
+   <div className="w-8 h-8 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center group-hover:bg-brand-tactical group-hover:text-brand-text text-brand-text transition-all duration-500">
     <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
    </div>
   </div>

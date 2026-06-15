@@ -123,7 +123,7 @@ export const AdminAmbassadors: React.FC = () => {
           </div>
           <button 
             onClick={() => setIsModalOpen(true)}
-            className="px-4 md:px-8 py-4 bg-brand-tactical text-theme-text text-[10px] font-bold uppercase tracking-widest flex items-center gap-3 hover:bg-white transition-all shadow-2xl whitespace-nowrap"
+            className="px-4 md:px-8 py-4 bg-brand-tactical text-brand-text text-[10px] font-bold uppercase tracking-widest flex items-center gap-3 hover:bg-brand-hover transition-all shadow-2xl whitespace-nowrap"
           >
             <Plus size={16} /> Nova Campanha
           </button>
@@ -201,7 +201,7 @@ export const AdminAmbassadors: React.FC = () => {
                   <span className="text-sm font-bold text-theme-brand">{c._count.conversions}</span>
                 </td>
                 <td className="p-3 md:p-6">
-                  <span className={`px-2 py-1 text-[10px] font-black uppercase tracking-widest ${c.active ? 'bg-emerald-500/10 text-theme-brand' : 'bg-red-500/10 text-red-500'}`}>
+                  <span className={`px-2 py-1 text-[10px] font-black uppercase tracking-widest ${c.active ? 'bg-brand-tactical/10 text-theme-brand' : 'bg-brand-danger/10 text-brand-danger'}`}>
                     {c.active ? 'Ativa' : 'Inativa'}
                   </span>
                 </td>
@@ -212,7 +212,7 @@ export const AdminAmbassadors: React.FC = () => {
                       title={c.active ? 'Desativar campanha' : 'Ativar campanha'}
                       className={`p-2 rounded-lg transition-all ${
                         c.active
-                          ? 'text-theme-brand hover:bg-emerald-500/10'
+                          ? 'text-theme-brand hover:bg-brand-tactical/10'
                           : 'text-theme-muted hover:bg-theme-bg-muted'
                       }`}
                     >
@@ -221,7 +221,7 @@ export const AdminAmbassadors: React.FC = () => {
                     <button
                       onClick={() => handleDelete(c.id, c.name)}
                       title="Excluir campanha permanentemente"
-                      className="p-2 rounded-lg text-red-500 hover:bg-red-500/10 transition-all"
+                      className="p-2 rounded-lg text-brand-danger hover:bg-brand-danger/10 transition-all"
                     >
                       <Trash2 size={14} />
                     </button>
@@ -361,7 +361,7 @@ export const AdminAmbassadors: React.FC = () => {
                           className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${
                             isCategorySelected 
                               ? 'bg-brand-tactical text-zinc-950' 
-                              : 'border border-theme-border text-theme-muted hover:text-theme-text'
+                              : 'border border-theme-border text-theme-muted hover:text-brand-text'
                           }`}
                         >
                           {isCategorySelected ? 'CATEGORIA SELECIONADA' : 'SELECIONAR CATEGORIA'}

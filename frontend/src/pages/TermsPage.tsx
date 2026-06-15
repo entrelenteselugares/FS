@@ -4,7 +4,7 @@ import SEO from "../components/SEO";
 
 export function TermsPage() {
   return (
-    <div className="min-h-screen bg-theme-bg text-theme-text selection:bg-brand-tactical/30">
+    <div className="min-h-screen bg-theme-bg text-brand-text selection:bg-brand-tactical/30">
       <SEO title="Termos de Uso | Foto Segundo" description="Termos de Uso da plataforma Foto Segundo." />
       
       {/* Header Minimalista */}
@@ -108,8 +108,8 @@ export function TermsPage() {
                   ))}
                 </ul>
               </div>
-              <div className="border border-red-500/30 bg-red-500/5 p-3 md:p-6 rounded-xl">
-                <h3 className="text-sm font-bold text-red-500 uppercase tracking-widest mb-4 flex items-center gap-2">
+              <div className="border border-brand-danger/30 bg-brand-danger/5 p-3 md:p-6 rounded-xl">
+                <h3 className="text-sm font-bold text-brand-danger uppercase tracking-widest mb-4 flex items-center gap-2">
                   <X size={18} /> É proibido
                 </h3>
                 <ul className="space-y-3">
@@ -121,7 +121,7 @@ export function TermsPage() {
                     "Fazer upload de conteúdo com nudez, violência ou infrações legais"
                   ].map((item, i) => (
                     <li key={i} className="flex items-start gap-2 text-sm text-theme-text-muted font-normal">
-                      <span className="text-red-500 mt-0.5">•</span> {item}
+                      <span className="text-brand-danger mt-0.5">•</span> {item}
                     </li>
                   ))}
                 </ul>

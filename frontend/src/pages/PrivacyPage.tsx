@@ -4,7 +4,7 @@ import SEO from "../components/SEO";
 
 export function PrivacyPage() {
   return (
-    <div className="min-h-screen bg-theme-bg text-theme-text selection:bg-brand-tactical/30">
+    <div className="min-h-screen bg-theme-bg text-brand-text selection:bg-brand-tactical/30">
       <SEO title="Política de Privacidade | Foto Segundo" description="Política de Privacidade e Proteção de Dados da plataforma Foto Segundo (LGPD)." />
       
       {/* Header Minimalista */}
@@ -171,7 +171,7 @@ export function PrivacyPage() {
                 </div>
               ))}
             </div>
-            <p className="text-sm text-theme-text bg-brand-tactical/10 p-4 rounded-lg border border-brand-tactical/20">
+            <p className="text-sm text-brand-text bg-brand-tactical/10 p-4 rounded-lg border border-brand-tactical/20">
               Para exercer seus direitos, acesse <strong className="font-bold">Meus Dados</strong> no painel ou entre em contato pelo e-mail de privacidade.
             </p>
           </section>

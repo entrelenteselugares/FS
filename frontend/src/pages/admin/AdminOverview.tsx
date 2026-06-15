@@ -75,7 +75,7 @@ export const AdminOverview: React.FC<OverviewProps> = ({ stats, recentOrders = [
           { label: "Membros", icon: <Users size={24} />, route: "/admin/users" },
         ].map((action, i) => (
           <button key={i} onClick={() => navigate(action.route)}
-            className="flex flex-col items-center justify-center p-3 md:p-6 bg-theme-bg border border-theme-border rounded-2xl gap-3 text-theme-muted hover:text-theme-brand hover:border-emerald-500/50 transition-all active:scale-95"
+            className="flex flex-col items-center justify-center p-3 md:p-6 bg-theme-bg border border-theme-border rounded-2xl gap-3 text-theme-muted hover:text-theme-brand hover:border-brand-tactical/50 transition-all active:scale-95"
           >
             {action.icon}
             <span className="text-[10px] font-bold uppercase tracking-widest">{action.label}</span>

@@ -11,22 +11,22 @@ interface DashboardActionButtonProps {
 
 const colorMap = {
   emerald: {
-    border: "border-emerald-500/30",
-    hoverBorder: "hover:border-emerald-500",
-    bg: "bg-emerald-500/10",
+    border: "border-brand-tactical/30",
+    hoverBorder: "hover:border-brand-tactical",
+    bg: "bg-brand-tactical/10",
     text: "text-theme-brand",
   },
   cyan: {
-    border: "border-cyan-400/30",
-    hoverBorder: "hover:border-cyan-400",
-    bg: "bg-cyan-400/10",
-    text: "text-cyan-400",
+    border: "border-brand-info/30",
+    hoverBorder: "hover:border-brand-info",
+    bg: "bg-brand-info/10",
+    text: "text-brand-info",
   },
   amber: {
-    border: "border-amber-400/30",
-    hoverBorder: "hover:border-amber-400",
-    bg: "bg-amber-400/10",
-    text: "text-amber-400",
+    border: "border-brand-warning/30",
+    hoverBorder: "hover:border-brand-warning",
+    bg: "bg-brand-warning/10",
+    text: "text-brand-warning",
   }
 };
 
@@ -41,7 +41,7 @@ export function DashboardActionButton({
 
   return (
     <div className="relative group h-full">
-      <div className={`absolute inset-0 ${styles.bg} blur-xl opacity-0 group-hover:opacity-100 transition-all duration-700`} />
+      <div className={`absolute inset-0 ${styles.bg} blur-xl opacity-0 pointer-events-none group-hover:opacity-100 transition-all duration-700`} />
       <button
         onClick={onClick}
         className={`relative w-full h-full bg-theme-bg-muted border ${styles.border} rounded-xl p-2 md:p-5 flex flex-col items-center justify-center gap-1.5 md:gap-3 ${styles.hoverBorder} transition-all overflow-hidden shadow-lg group text-center cursor-pointer`}

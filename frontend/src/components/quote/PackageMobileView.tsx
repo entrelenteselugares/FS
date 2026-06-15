@@ -42,7 +42,7 @@ export const PackageMobileView = (props: any) => {
   if (createdQuoteId) {
     return (
       <div className="min-h-[100dvh] flex flex-col items-center justify-center px-6 text-center bg-zinc-950">
-        <div className="w-16 h-16 bg-emerald-500/10 rounded-full flex items-center justify-center mb-6 border border-emerald-500/20">
+        <div className="w-16 h-16 bg-brand-tactical/10 rounded-full flex items-center justify-center mb-6 border border-brand-tactical/20">
           <CheckCircle2 size={32} className="text-theme-brand" />
         </div>
         <h2 className="text-2xl font-bold uppercase text-theme-text mb-2">Orçamento Enviado!</h2>
@@ -51,7 +51,7 @@ export const PackageMobileView = (props: any) => {
         </p>
         <button
           onClick={() => window.location.href = "/"}
-          className="mt-8 px-8 py-3.5 bg-emerald-500 text-theme-text text-[11px] font-bold uppercase tracking-widest rounded-full"
+          className="mt-8 px-8 py-3.5 bg-brand-tactical text-brand-text text-[11px] font-bold uppercase tracking-widest rounded-full"
         >
           Voltar ao Início
         </button>
@@ -60,7 +60,7 @@ export const PackageMobileView = (props: any) => {
   }
 
   return (
-    <div className="min-h-[100dvh] flex flex-col bg-zinc-950 text-theme-text pb-28">
+    <div className="min-h-[100dvh] flex flex-col bg-zinc-950 text-zinc-100 pb-28">
 
       {/* ── Header ── */}
       <div className="sticky top-0 z-50 bg-zinc-950/90 backdrop-blur-md border-b border-white/5 px-4 py-3 flex items-center gap-3">
@@ -80,7 +80,7 @@ export const PackageMobileView = (props: any) => {
           {STEPS.map((_, i) => (
             <div
               key={i}
-              className={`h-1.5 rounded-full transition-all ${i === currentStepIndex ? "w-5 bg-emerald-500" : i < currentStepIndex ? "w-1.5 bg-emerald-500/40" : "w-1.5 bg-zinc-700"}`}
+              className={`h-1.5 rounded-full transition-all ${i === currentStepIndex ? "w-5 bg-brand-tactical" : i < currentStepIndex ? "w-1.5 bg-brand-tactical/40" : "w-1.5 bg-zinc-700"}`}
             />
           ))}
         </div>
@@ -114,13 +114,13 @@ export const PackageMobileView = (props: any) => {
                           onClick={() => setSelectedPackageId(pkg.id)}
                           className={`relative text-left p-4 rounded-2xl border transition-all active:scale-[0.99] ${
                             isSelected
-                              ? "bg-emerald-500/10 border-emerald-500/50 shadow-lg shadow-emerald-500/10"
+                              ? "bg-brand-tactical/10 border-brand-tactical/50 shadow-lg shadow-emerald-500/10"
                               : "bg-zinc-900/60 border-zinc-800 hover:border-zinc-600"
                           }`}
                         >
                           <div className="flex items-start justify-between gap-3">
                             <div className="flex items-center gap-3">
-                              <div className={`w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 transition-colors ${isSelected ? "bg-emerald-500 text-theme-text" : "bg-zinc-800 text-theme-muted"}`}>
+                              <div className={`w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 transition-colors ${isSelected ? "bg-brand-tactical text-brand-text" : "bg-zinc-800 text-theme-muted"}`}>
                                 {PACKAGE_ICONS[pkg.id] || <Camera size={18} />}
                               </div>
                               <div>
@@ -143,7 +143,7 @@ export const PackageMobileView = (props: any) => {
                           {highlights.length > 0 && (
                             <div className="mt-3 flex flex-wrap gap-1.5">
                               {highlights.map((h: string) => (
-                                <span key={h} className={`text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full transition-colors ${isSelected ? "bg-emerald-500/15 text-theme-brand" : "bg-zinc-800 text-theme-muted"}`}>
+                                <span key={h} className={`text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full transition-colors ${isSelected ? "bg-brand-tactical/15 text-theme-brand" : "bg-zinc-800 text-theme-muted"}`}>
                                   {h}
                                 </span>
                               ))}
@@ -167,7 +167,7 @@ export const PackageMobileView = (props: any) => {
                       placeholder="00000-000"
                       value={customCep}
                       onChange={(e) => handleCepChange(e.target.value)}
-                      className="w-full bg-zinc-900/60 border border-zinc-800 focus:border-emerald-500/50 rounded-xl p-3.5 text-sm text-theme-text placeholder-zinc-600 outline-none transition-colors"
+                      className="w-full bg-zinc-900/60 border border-zinc-800 focus:border-brand-tactical/50 rounded-xl p-3.5 text-sm text-zinc-100 placeholder-zinc-600 outline-none transition-colors"
                     />
                     {isCepLoading && (
                       <Loader2 size={14} className="absolute right-4 top-1/2 -translate-y-1/2 text-theme-brand animate-spin" />
@@ -189,7 +189,7 @@ export const PackageMobileView = (props: any) => {
                     type="date"
                     value={eventDate}
                     onChange={(e) => setEventDate(e.target.value)}
-                    className="w-full bg-zinc-900/60 border border-zinc-800 focus:border-emerald-500/50 rounded-xl p-3.5 text-sm text-theme-text outline-none transition-colors"
+                    className="w-full bg-zinc-900/60 border border-zinc-800 focus:border-brand-tactical/50 rounded-xl p-3.5 text-sm text-zinc-100 outline-none transition-colors"
                   />
                 </div>
               </>
@@ -199,8 +199,8 @@ export const PackageMobileView = (props: any) => {
             {step === 3 && (
               <>
                 {/* Package summary */}
-                <div className="bg-emerald-500/5 border border-emerald-500/20 rounded-2xl p-4 flex items-center gap-3">
-                  <div className="w-10 h-10 bg-emerald-500/15 rounded-xl flex items-center justify-center text-theme-brand flex-shrink-0">
+                <div className="bg-brand-tactical/5 border border-brand-tactical/20 rounded-2xl p-4 flex items-center gap-3">
+                  <div className="w-10 h-10 bg-brand-tactical/15 rounded-xl flex items-center justify-center text-theme-brand flex-shrink-0">
                     {PACKAGE_ICONS[selectedPackageId] || <Camera size={18} />}
                   </div>
                   <div className="flex-1 min-w-0">
@@ -227,7 +227,7 @@ export const PackageMobileView = (props: any) => {
                         value={field.value}
                         onChange={(e) => field.setter(e.target.value)}
                         placeholder={field.placeholder}
-                        className="w-full bg-zinc-900/60 border border-zinc-800 focus:border-emerald-500/50 rounded-xl p-3.5 text-sm text-theme-text placeholder-zinc-600 outline-none transition-colors"
+                        className="w-full bg-zinc-900/60 border border-zinc-800 focus:border-brand-tactical/50 rounded-xl p-3.5 text-sm text-zinc-100 placeholder-zinc-600 outline-none transition-colors"
                       />
                     </div>
                   ))}
@@ -239,7 +239,7 @@ export const PackageMobileView = (props: any) => {
                       onChange={(e) => setDescription(e.target.value)}
                       placeholder="Tipo de evento, estilo, detalhes especiais..."
                       rows={3}
-                      className="w-full bg-zinc-900/60 border border-zinc-800 focus:border-emerald-500/50 rounded-xl p-3.5 text-sm text-theme-text placeholder-zinc-600 outline-none transition-colors resize-none"
+                      className="w-full bg-zinc-900/60 border border-zinc-800 focus:border-brand-tactical/50 rounded-xl p-3.5 text-sm text-zinc-100 placeholder-zinc-600 outline-none transition-colors resize-none"
                     />
                   </div>
                   <div className="space-y-1.5">
@@ -249,7 +249,7 @@ export const PackageMobileView = (props: any) => {
                       placeholder="https://sympla.com/..."
                       value={ticketUrl || ''}
                       onChange={(e) => setTicketUrl(e.target.value)}
-                      className="w-full bg-zinc-900/60 border border-zinc-800 focus:border-emerald-500/50 rounded-xl p-3.5 text-sm text-theme-text placeholder-zinc-600 outline-none transition-colors"
+                      className="w-full bg-zinc-900/60 border border-zinc-800 focus:border-brand-tactical/50 rounded-xl p-3.5 text-sm text-zinc-100 placeholder-zinc-600 outline-none transition-colors"
                     />
                   </div>
                   <div className="space-y-1.5">
@@ -259,13 +259,13 @@ export const PackageMobileView = (props: any) => {
                       placeholder="EX: FOTOSEGUNDO10"
                       value={fotoSegundoPromoCode || ''}
                       onChange={(e) => setFotoSegundoPromoCode(e.target.value.toUpperCase())}
-                      className="w-full bg-zinc-900/60 border border-zinc-800 focus:border-emerald-500/50 rounded-xl p-3.5 text-sm text-theme-text placeholder-zinc-600 outline-none transition-colors"
+                      className="w-full bg-zinc-900/60 border border-zinc-800 focus:border-brand-tactical/50 rounded-xl p-3.5 text-sm text-zinc-100 placeholder-zinc-600 outline-none transition-colors"
                     />
                   </div>
                 </div>
 
                 {submitError && (
-                  <div className="px-4 py-3 bg-red-500/10 border border-red-500/20 rounded-xl text-[10px] font-bold text-red-400 uppercase tracking-wider">
+                  <div className="px-4 py-3 bg-brand-danger/10 border border-brand-danger/20 rounded-xl text-[10px] font-bold text-brand-danger uppercase tracking-wider">
                     {submitError}
                   </div>
                 )}
@@ -290,7 +290,7 @@ export const PackageMobileView = (props: any) => {
           <button
             onClick={step === 1 ? nextStep : handleSubmit}
             disabled={submitting}
-            className={`${step === 1 ? "flex-1" : "w-full"} bg-emerald-500 hover:bg-emerald-400 disabled:opacity-50 text-theme-text font-black text-[11px] uppercase tracking-widest py-4 rounded-2xl flex items-center justify-center gap-2 transition-all active:scale-[0.98]`}
+            className={`${step === 1 ? "flex-1" : "w-full"} bg-brand-tactical hover:bg-brand-tactical disabled:opacity-50 text-brand-text font-black text-[11px] uppercase tracking-widest py-4 rounded-2xl flex items-center justify-center gap-2 transition-all active:scale-[0.98]`}
           >
             {submitting ? (
               <><Loader2 size={16} className="animate-spin" /> Enviando...</>

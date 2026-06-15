@@ -76,7 +76,7 @@ export const AdminConfigsSplits: React.FC<Props> = ({
             onClick={onSave}
             disabled={saving || !splitsValid}
             className={`w-full py-5 text-[9px] font-black uppercase tracking-[0.4em] flex items-center justify-center gap-3 shadow-xl transition-all italic ${
-              saved ? "bg-green-600 text-theme-text" : splitsValid ? "bg-theme-text text-theme-bg" : "bg-theme-bg-muted text-theme-muted cursor-not-allowed opacity-50"
+              saved ? "bg-brand-tactical text-brand-text" : splitsValid ? "bg-theme-text text-theme-bg" : "bg-theme-bg-muted text-theme-muted cursor-not-allowed opacity-50"
             }`}
           >
             {saved ? <CheckCircle size={14} /> : <Save size={14} />}

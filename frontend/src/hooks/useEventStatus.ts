@@ -118,7 +118,7 @@ export function useEventStatus(
     // --- Map phase → visual tokens ---
     const MAP: Record<EventPhase, Omit<EventStatusInfo, "phase" | "dotClass">> = {
       scheduled: {
-        bg: "bg-blue-500",
+        bg: "bg-brand-info",
         color: "#3b82f6",
         glow: "shadow-[0_0_15px_rgba(59,130,246,0.7)]",
         label: "Agendado",
@@ -129,7 +129,7 @@ export function useEventStatus(
       approaching: {
         // interpolates visually from blue → teal → green as days pass
         // We use teal as a midpoint colour
-        bg: "bg-teal-400",
+        bg: "bg-brand-tactical",
         color: "#2dd4bf",
         glow: "shadow-[0_0_15px_rgba(45,212,191,0.6)]",
         label: "Em Breve",
@@ -138,7 +138,7 @@ export function useEventStatus(
         qrOpen: false,
       },
       live: {
-        bg: "bg-emerald-500",
+        bg: "bg-brand-tactical",
         color: "#85b9ac",
         glow: "shadow-[0_0_15px_rgba(133,185,172,0.7)]",
         label: "Ao Vivo",
@@ -147,7 +147,7 @@ export function useEventStatus(
         qrOpen: true,
       },
       closing: {
-        bg: "bg-yellow-400",
+        bg: "bg-brand-warning",
         color: "#facc15",
         glow: "shadow-[0_0_15px_rgba(250,204,21,0.7)]",
         label: "Encerrando",
@@ -156,7 +156,7 @@ export function useEventStatus(
         qrOpen: true,
       },
       critical: {
-        bg: "bg-orange-500",
+        bg: "bg-brand-warning",
         color: "#f97316",
         glow: "shadow-[0_0_15px_rgba(249,115,22,0.7)]",
         label: "Últimos Minutos",
@@ -165,7 +165,7 @@ export function useEventStatus(
         qrOpen: true,
       },
       ended: {
-        bg: "bg-red-500",
+        bg: "bg-brand-danger",
         color: "#ef4444",
         glow: "shadow-[0_0_15px_rgba(239,68,68,0.7)]",
         label: "Encerrado",

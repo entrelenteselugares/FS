@@ -87,7 +87,7 @@ export function OptimizedImage({
             if (props.onError) props.onError(e);
           }}
           className={`w-full h-full transition-opacity duration-500 ease-in-out ${
-            isLoaded ? 'opacity-100' : 'opacity-0'
+            isLoaded ? 'opacity-100' : 'opacity-0 pointer-events-none'
           }`}
           {...props}
           style={{ objectFit, ...props.style }}

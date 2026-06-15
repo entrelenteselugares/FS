@@ -13,18 +13,21 @@
 
 ## 🌟 Títulos e Seções Encontradas
 
+- CLUBE DO ÁLBUM SANFONA
 - 7 DE JUNHO
 
 ## 🔘 Ações e Botões Disponíveis
 
 - **Botão:** `Histórico de Compras`
 - **Botão:** `Meus Álbuns`
+- **Botão:** `Álbum Sanfona`
 - **Botão:** `Minha Carteira`
 - **Botão:** `Indique e Ganhe`
 - **Botão:** `Meus Dados`
 - **Botão:** `1`
 - **Botão:** `ENCERRAR SESSÃO`
 - **Botão:** `Encerrar Sessão`
+- **Botão:** `ASSINAR AGORA`
 - **Botão:** `PAGAR AGORA`
 - **Botão:** `VER COMPRA`
 - **Botão:** `ACESSAR`

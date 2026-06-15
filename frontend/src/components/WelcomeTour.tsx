@@ -104,7 +104,7 @@ export const WelcomeTour: React.FC<WelcomeTourProps> = ({ role, onComplete }) =>
               
               <button 
                 onClick={handleNext} 
-                className="fs-btn bg-brand-tactical text-theme-text flex items-center gap-3 px-6 py-3"
+                className="fs-btn bg-brand-tactical text-brand-text flex items-center gap-3 px-6 py-3"
               >
                 {currentStep === steps.length - 1 ? "Começar Agora" : "Próximo"} <ArrowRight size={14} />
               </button>

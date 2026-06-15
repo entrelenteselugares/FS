@@ -26,6 +26,7 @@
 - **Botão:** `Meus Álbuns`
 - **Botão:** `Opções`
 - **Botão:** `Histórico de Compras`
+- **Botão:** `Álbum Sanfona`
 - **Botão:** `Minha Carteira`
 - **Botão:** `Indique e Ganhe`
 - **Botão:** `Meus Dados`
@@ -40,13 +41,7 @@
 
 ## 🔗 Links de Navegação
 
-- **COPA 2026
-PRÓXIMOS
-SUÉCIA
-14/06 · 23:00
-GRP F
-TUNÍSIA
-Ver Álbum →** -> `/album-torcida`
+*Nenhum link de navigation detectado.*
 
 ## ⚙️ Observações Técnicas e Fluxo
 

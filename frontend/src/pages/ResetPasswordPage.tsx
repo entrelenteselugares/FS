@@ -69,7 +69,7 @@ export default function ResetPasswordPage() {
         <div className="lux-card p-5 md:p-10 space-y-8 border-l-4 border-l-brand-tactical bg-theme-bg-muted/5 backdrop-blur-sm">
           {!token ? (
             <div className="text-center space-y-6">
-              <div className="flex justify-center text-red-400">
+              <div className="flex justify-center text-brand-danger">
                 <AlertTriangle size={48} />
               </div>
               <p className="text-[11px] font-bold text-theme-muted uppercase tracking-widest leading-relaxed">
@@ -123,7 +123,7 @@ export default function ResetPasswordPage() {
 
                 {message.text && (
                   <div className={`p-4 flex items-center gap-3 animate-in fade-in zoom-in-95 duration-300 ${
-                    message.type === "error" ? 'bg-red-400/10 border border-red-400/20 text-red-400' : 'bg-brand-tactical/10 border border-brand-tactical/20 text-brand-tactical'
+                    message.type === "error" ? 'bg-brand-danger/10 border border-brand-danger/20 text-brand-danger' : 'bg-brand-tactical/10 border border-brand-tactical/20 text-brand-tactical'
                   }`}>
                     {message.type === "error" ? <AlertTriangle size={16} /> : <CheckCircle2 size={16} />}
                     <p className="text-[10px] font-bold uppercase tracking-widest">{message.text}</p>

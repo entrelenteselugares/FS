@@ -334,8 +334,8 @@ export function EventEditPanel({ event, onUpdated, onClose, onNotify, onOpenPrin
                 onClick={() => setActiveTab(tab)}
                 className={`flex-1 py-2.5 text-[9px] sm:text-[10px] font-black uppercase tracking-widest rounded-xl transition-all ${
                   activeTab === tab
-                    ? "bg-brand-tactical text-theme-text"
-                    : "text-theme-muted hover:text-theme-text bg-theme-bg-muted"
+                    ? "bg-brand-tactical text-brand-text"
+                    : "text-theme-muted hover:text-brand-text bg-theme-bg-muted"
                 }`}
               >
                 {tab === "SETUP" ? "📋 Setup" : tab === "DESIGNER" ? "🎨 Designer" : tab === "TEAM" ? "👥 Equipe" : "🖨️ Imprimir"}
@@ -373,8 +373,8 @@ export function EventEditPanel({ event, onUpdated, onClose, onNotify, onOpenPrin
                   <div className="p-4 bg-theme-bg-muted rounded-2xl border border-theme-border space-y-3">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-xl bg-blue-500 flex items-center justify-center shrink-0">
-                          <Layers size={18} className="text-blue-500" />
+                        <div className="w-10 h-10 rounded-xl bg-brand-info flex items-center justify-center shrink-0">
+                          <Layers size={18} className="text-brand-info" />
                         </div>
                         <div>
                           <p className="text-[9px] font-bold uppercase tracking-widest opacity-50">Lightroom / Portfolio</p>
@@ -393,7 +393,7 @@ export function EventEditPanel({ event, onUpdated, onClose, onNotify, onOpenPrin
                         )}
                         <button
                           onClick={() => setEditingLr(!editingLr)}
-                          className={`px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-wider transition-all ${editingLr ? "bg-brand-tactical text-theme-text" : "bg-theme-bg text-theme-muted hover:text-theme-text border border-theme-border"}`}
+                          className={`px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-wider transition-all ${editingLr ? "bg-brand-tactical text-brand-text" : "bg-theme-bg text-theme-muted hover:text-brand-text border border-theme-border"}`}
                         >
                           {editingLr ? "OK" : "Editar"}
                         </button>
@@ -415,7 +415,7 @@ export function EventEditPanel({ event, onUpdated, onClose, onNotify, onOpenPrin
                   <div className="p-4 bg-theme-bg-muted rounded-2xl border border-theme-border space-y-3">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-xl bg-green-500/10 flex items-center justify-center shrink-0">
+                        <div className="w-10 h-10 rounded-xl bg-brand-tactical/10 flex items-center justify-center shrink-0">
                           <FolderOpen size={18} className="text-theme-brand" />
                         </div>
                         <div>
@@ -435,7 +435,7 @@ export function EventEditPanel({ event, onUpdated, onClose, onNotify, onOpenPrin
                         )}
                         <button
                           onClick={() => setEditingDr(!editingDr)}
-                          className={`px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-wider transition-all ${editingDr ? "bg-brand-tactical text-theme-text" : "bg-theme-bg text-theme-muted hover:text-theme-text border border-theme-border"}`}
+                          className={`px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-wider transition-all ${editingDr ? "bg-brand-tactical text-brand-text" : "bg-theme-bg text-theme-muted hover:text-brand-text border border-theme-border"}`}
                         >
                           {editingDr ? "OK" : "Editar"}
                         </button>
@@ -478,8 +478,8 @@ export function EventEditPanel({ event, onUpdated, onClose, onNotify, onOpenPrin
               {/* ── Venda de Fotos ── */}
               <div className="p-4 bg-theme-bg-muted rounded-2xl border border-theme-border flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-colors ${sellPhotos ? "bg-green-500/10" : "bg-red-500/10"}`}>
-                    <Check size={18} className={sellPhotos ? "text-theme-brand" : "text-red-400 opacity-50"} />
+                  <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-colors ${sellPhotos ? "bg-brand-tactical/10" : "bg-brand-danger/10"}`}>
+                    <Check size={18} className={sellPhotos ? "text-theme-brand" : "text-brand-danger opacity-50"} />
                   </div>
                   <div>
                     <p className="text-[9px] font-bold uppercase tracking-widest opacity-50">Venda de Fotos</p>
@@ -490,7 +490,7 @@ export function EventEditPanel({ event, onUpdated, onClose, onNotify, onOpenPrin
                 </div>
                 <button
                   onClick={() => setSellPhotos(!sellPhotos)}
-                  className={`w-12 h-6 rounded-full relative transition-colors ${sellPhotos ? "bg-green-500/50" : "bg-theme-border"}`}
+                  className={`w-12 h-6 rounded-full relative transition-colors ${sellPhotos ? "bg-brand-tactical/50" : "bg-theme-border"}`}
                 >
                   <div className={`absolute top-1 w-4 h-4 rounded-full bg-white transition-all ${sellPhotos ? "left-7" : "left-1"}`} />
                 </button>
@@ -523,7 +523,7 @@ export function EventEditPanel({ event, onUpdated, onClose, onNotify, onOpenPrin
                       </div>
                       <button
                         onClick={handleSuggest}
-                        className="px-5 self-end py-3 bg-brand-tactical text-theme-text text-[10px] font-bold uppercase tracking-widest rounded-xl hover:brightness-110 active:scale-[0.98] transition-all h-[44px]"
+                        className="px-5 self-end py-3 bg-brand-tactical text-brand-text text-[10px] font-bold uppercase tracking-widest rounded-xl hover:brightness-110 active:scale-[0.98] transition-all h-[44px]"
                       >
                         Sugerir
                       </button>
@@ -597,8 +597,8 @@ export function EventEditPanel({ event, onUpdated, onClose, onNotify, onOpenPrin
                             disabled={!votingStatus.suggestions?.owner}
                             className={`py-2 px-3 text-[9px] font-black uppercase rounded-lg border transition-all ${
                               votingStatus.votes[user?.id || ""] === "OWNER"
-                                ? "bg-brand-tactical border-brand-tactical text-theme-text animate-pulse"
-                                : "bg-theme-bg border-theme-border text-theme-text hover:border-theme-muted disabled:opacity-30"
+                                ? "bg-brand-tactical border-brand-tactical text-brand-text animate-pulse"
+                                : "bg-theme-bg border-theme-border text-brand-text hover:border-theme-muted disabled:opacity-30"
                             }`}
                           >
                             Contratante
@@ -608,8 +608,8 @@ export function EventEditPanel({ event, onUpdated, onClose, onNotify, onOpenPrin
                             disabled={!votingStatus.suggestions?.pro}
                             className={`py-2 px-3 text-[9px] font-black uppercase rounded-lg border transition-all ${
                               votingStatus.votes[user?.id || ""] === "PRO"
-                                ? "bg-brand-tactical border-brand-tactical text-theme-text animate-pulse"
-                                : "bg-theme-bg border-theme-border text-theme-text hover:border-theme-muted disabled:opacity-30"
+                                ? "bg-brand-tactical border-brand-tactical text-brand-text animate-pulse"
+                                : "bg-theme-bg border-theme-border text-brand-text hover:border-theme-muted disabled:opacity-30"
                             }`}
                           >
                             Equipe
@@ -619,8 +619,8 @@ export function EventEditPanel({ event, onUpdated, onClose, onNotify, onOpenPrin
                             disabled={!votingStatus.suggestions?.system}
                             className={`py-2 px-3 text-[9px] font-black uppercase rounded-lg border transition-all ${
                               votingStatus.votes[user?.id || ""] === "SYSTEM"
-                                ? "bg-brand-tactical border-brand-tactical text-theme-text animate-pulse"
-                                : "bg-theme-bg border-theme-border text-theme-text hover:border-theme-muted disabled:opacity-30"
+                                ? "bg-brand-tactical border-brand-tactical text-brand-text animate-pulse"
+                                : "bg-theme-bg border-theme-border text-brand-text hover:border-theme-muted disabled:opacity-30"
                             }`}
                           >
                             Recomendado
@@ -676,7 +676,7 @@ export function EventEditPanel({ event, onUpdated, onClose, onNotify, onOpenPrin
                   </div>
                   <button
                     onClick={() => copyText(luxuryUrl, "luxury")}
-                    className="flex items-center gap-1.5 px-3 py-2 bg-brand-tactical text-theme-text text-[9px] font-bold uppercase rounded-xl hover:brightness-110 transition-all shrink-0"
+                    className="flex items-center gap-1.5 px-3 py-2 bg-brand-tactical text-brand-text text-[9px] font-bold uppercase rounded-xl hover:brightness-110 transition-all shrink-0"
                   >
                     {copiedField === "luxury" ? <Check size={13} /> : <Share2 size={13} />}
                     {copiedField === "luxury" ? "Copiado!" : "Copiar"}
@@ -741,8 +741,8 @@ export function EventEditPanel({ event, onUpdated, onClose, onNotify, onOpenPrin
               {/* Logo do Cliente */}
               <div className="p-4 bg-theme-bg-muted rounded-2xl border border-theme-border space-y-3">
                 <div className="flex items-center gap-3 mb-1">
-                  <div className="w-10 h-10 rounded-xl bg-blue-500 flex items-center justify-center shrink-0">
-                    <Layers size={18} className="text-blue-500" />
+                  <div className="w-10 h-10 rounded-xl bg-brand-info flex items-center justify-center shrink-0">
+                    <Layers size={18} className="text-brand-info" />
                   </div>
                   <div>
                     <p className="text-[9px] font-bold uppercase tracking-widest opacity-50">Logo do Cliente / Patrocinador</p>
@@ -796,7 +796,7 @@ export function EventEditPanel({ event, onUpdated, onClose, onNotify, onOpenPrin
                       </div>
                       <button
                         onClick={() => { setEdicaoId(null); setEditorName(""); }}
-                        className="p-2 text-theme-muted hover:text-red-400 hover:bg-red-500/10 transition-all rounded-xl"
+                        className="p-2 text-theme-muted hover:text-brand-danger hover:bg-brand-danger/10 transition-all rounded-xl"
                         title="Remover editor"
                       >
                         <UserMinus size={16} />
@@ -822,7 +822,7 @@ export function EventEditPanel({ event, onUpdated, onClose, onNotify, onOpenPrin
                               </div>
                               <button
                                 onClick={() => setPaymentModalService(svc)}
-                                className="px-3 py-1.5 bg-brand-tactical text-theme-text text-[9px] font-bold uppercase tracking-wider rounded-lg hover:brightness-110 transition-all"
+                                className="px-3 py-1.5 bg-brand-tactical text-brand-text text-[9px] font-bold uppercase tracking-wider rounded-lg hover:brightness-110 transition-all"
                               >
                                 Contratar
                               </button>
@@ -910,7 +910,7 @@ export function EventEditPanel({ event, onUpdated, onClose, onNotify, onOpenPrin
                         </div>
                         <button
                           onClick={() => handleRemoveTeamMember(member.id)}
-                          className="p-2 text-theme-muted hover:text-red-400 hover:bg-red-500/10 transition-all rounded-xl"
+                          className="p-2 text-theme-muted hover:text-brand-danger hover:bg-brand-danger/10 transition-all rounded-xl"
                           title="Remover membro"
                         >
                           <UserMinus size={16} />
@@ -1005,7 +1005,7 @@ export function EventEditPanel({ event, onUpdated, onClose, onNotify, onOpenPrin
                     onClose();
                     if (onOpenPrintKit) onOpenPrintKit();
                   }}
-                  className="w-full py-4 mt-2 bg-brand-tactical text-theme-text text-[10px] font-bold uppercase tracking-widest rounded-xl hover:brightness-110 transition-all flex items-center justify-center gap-2"
+                  className="w-full py-4 mt-2 bg-brand-tactical text-brand-text text-[10px] font-bold uppercase tracking-widest rounded-xl hover:brightness-110 transition-all flex items-center justify-center gap-2"
                 >
                   <Printer size={16} /> Abrir Estúdio de Impressão
                 </button>
@@ -1023,7 +1023,7 @@ export function EventEditPanel({ event, onUpdated, onClose, onNotify, onOpenPrin
           <button
             onClick={handleSave}
             disabled={saving}
-            className="flex-1 py-3.5 bg-brand-tactical text-theme-text text-[11px] font-bold uppercase tracking-[0.2em] hover:brightness-110 active:scale-[0.98] transition-all flex items-center justify-center gap-3 shadow-lg shadow-brand-tactical/20 rounded-xl disabled:opacity-60"
+            className="flex-1 py-3.5 bg-brand-tactical text-brand-text text-[11px] font-bold uppercase tracking-[0.2em] hover:brightness-110 active:scale-[0.98] transition-all flex items-center justify-center gap-3 shadow-lg shadow-brand-tactical/20 rounded-xl disabled:opacity-60"
           >
             {saving ? "Salvando…" : "Salvar Painel"}
             {!saving && <ArrowRight size={16} />}
@@ -1070,7 +1070,7 @@ export function EventEditPanel({ event, onUpdated, onClose, onNotify, onOpenPrin
             <div className="flex gap-2">
               <button
                 onClick={() => setPaymentModalService(null)}
-                className="flex-1 py-3 text-[10px] font-bold uppercase tracking-widest text-theme-muted hover:text-theme-text bg-theme-bg-muted hover:bg-black/20 rounded-xl transition-all"
+                className="flex-1 py-3 text-[10px] font-bold uppercase tracking-widest text-theme-muted hover:text-zinc-100 bg-theme-bg-muted hover:bg-black/20 rounded-xl transition-all"
                 disabled={hiring}
               >
                 Cancelar
@@ -1078,7 +1078,7 @@ export function EventEditPanel({ event, onUpdated, onClose, onNotify, onOpenPrin
               <button
                 onClick={handleHireService}
                 disabled={hiring}
-                className="flex-1 py-3 bg-brand-tactical text-theme-text text-[10px] font-bold uppercase tracking-widest rounded-xl hover:brightness-110 transition-all disabled:opacity-50"
+                className="flex-1 py-3 bg-brand-tactical text-brand-text text-[10px] font-bold uppercase tracking-widest rounded-xl hover:brightness-110 transition-all disabled:opacity-50"
               >
                 {hiring ? "Processando..." : "Confirmar"}
               </button>

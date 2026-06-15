@@ -192,10 +192,10 @@ export function ProfileTab({ profile, onUpdated, onNotify }: ProfileTabProps) {
                 />
                 {formData.firstJobUrl && (
                   <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1.5">
-                    <span className={`text-[10px] font-black uppercase tracking-widest ${profile.isExperienceValidated ? "text-brand-tactical" : "text-amber-500"}`}>
+                    <span className={`text-[10px] font-black uppercase tracking-widest ${profile.isExperienceValidated ? "text-brand-tactical" : "text-brand-warning"}`}>
                       {profile.isExperienceValidated ? "AUTENTICADO" : "ANÁLISE"}
                     </span>
-                    {profile.isExperienceValidated ? <Check size={12} className="text-brand-tactical" /> : <div className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />}
+                    {profile.isExperienceValidated ? <Check size={12} className="text-brand-tactical" /> : <div className="w-1.5 h-1.5 rounded-full bg-brand-warning animate-pulse" />}
                   </div>
                 )}
               </div>
@@ -445,7 +445,7 @@ export function ProfileTab({ profile, onUpdated, onNotify }: ProfileTabProps) {
                     />
                     <span className="absolute right-1 top-1/2 -translate-y-1/2 text-[10px] text-theme-muted font-bold">R$</span>
                   </div>
-                  <button onClick={() => removeEquipment(i)} className="p-1.5 text-red-500/60 hover:text-red-500 hover:bg-red-500/10 rounded-md transition-colors">
+                  <button onClick={() => removeEquipment(i)} className="p-1.5 text-brand-danger/60 hover:text-brand-danger hover:bg-brand-danger/10 rounded-md transition-colors">
                     <X size={14} />
                   </button>
                 </div>

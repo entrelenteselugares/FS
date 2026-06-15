@@ -5,7 +5,7 @@ import SEO from "../components/SEO";
 
 export function ContactPage() {
   return (
-    <div className="min-h-screen bg-theme-bg text-theme-text selection:bg-brand-tactical/30">
+    <div className="min-h-screen bg-theme-bg text-brand-text selection:bg-brand-tactical/30">
       <SEO title="Contato | Foto Segundo" description="Fale com a Foto Segundo. Suporte, parcerias, profissionais e imprensa." />
       <Navbar />
       

@@ -158,16 +158,16 @@ export default function AdminInventory() {
       {/* Grid de Alertas */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {filteredProducts.filter(p => p.stockLevel < 10 && p.stockType !== 'FORNECEDOR').map(p => (
-          <div key={p.id} className="bg-red-500/5 border border-red-500/20 p-3 md:p-6 flex items-center gap-4 animate-pulse">
-            <AlertCircle className="text-red-500" size={20} />
+          <div key={p.id} className="bg-brand-danger/5 border border-brand-danger/20 p-3 md:p-6 flex items-center gap-4 animate-pulse">
+            <AlertCircle className="text-brand-danger" size={20} />
             <div>
-              <p className="text-[9px] font-bold text-red-500 uppercase tracking-widest">Crítico: {p.name}</p>
+              <p className="text-[9px] font-bold text-brand-danger uppercase tracking-widest">Crítico: {p.name}</p>
               <p className="text-xl font-bold text-theme-text">{p.stockLevel} em estoque</p>
             </div>
           </div>
         ))}
         {filteredProducts.filter(p => p.stockLevel < 10 && p.stockType !== 'FORNECEDOR').length === 0 && (
-          <div className="bg-emerald-500/5 border border-emerald-500/20 p-3 md:p-6 col-span-4 flex items-center gap-4">
+          <div className="bg-brand-tactical/5 border border-brand-tactical/20 p-3 md:p-6 col-span-4 flex items-center gap-4">
             <Package className="text-theme-brand" size={20} />
             <div>
               <p className="text-[9px] font-bold text-theme-brand uppercase tracking-widest">Status do Inventário</p>
@@ -215,9 +215,9 @@ export default function AdminInventory() {
                 </td>
                 <td className="p-3 md:p-6 text-center">
                   <span className={`text-[9px] font-black px-3 py-1 uppercase tracking-widest ${
-                    p.stockType === 'PROPRIO' ? 'bg-theme-bg-muted text-theme-text border border-theme-border' :
-                    p.stockType === 'FORNECEDOR' ? 'bg-amber-500/10 text-amber-500 border border-amber-500/20' :
-                    'bg-emerald-500/10 text-theme-brand border border-emerald-500/20'
+                    p.stockType === 'PROPRIO' ? 'bg-theme-bg-muted text-brand-text border border-theme-border' :
+                    p.stockType === 'FORNECEDOR' ? 'bg-brand-warning/10 text-brand-warning border border-brand-warning/20' :
+                    'bg-brand-tactical/10 text-theme-brand border border-brand-tactical/20'
                   }`}>
                     {p.stockType === 'PROPRIO' ? 'Próprio' : p.stockType === 'FORNECEDOR' ? 'Fornecedor (Drop)' : 'Híbrido (Ambos)'}
                   </span>
@@ -227,7 +227,7 @@ export default function AdminInventory() {
                     <div className="text-sm font-bold text-theme-muted uppercase">Sob Demanda</div>
                   ) : (
                     <>
-                      <div className={`text-2xl font-black italic ${p.stockLevel < 10 ? 'text-red-500' : p.stockLevel < 30 ? 'text-amber-500' : 'text-theme-text'}`}>
+                      <div className={`text-2xl font-black italic ${p.stockLevel < 10 ? 'text-brand-danger' : p.stockLevel < 30 ? 'text-brand-warning' : 'text-theme-text'}`}>
                         {p.stockLevel}
                       </div>
                       <span className="text-[10px] text-theme-muted font-bold uppercase">Unidades</span>
@@ -388,9 +388,9 @@ export default function AdminInventory() {
 
               <div className="bg-theme-bg-muted p-4 md:p-8 border border-theme-border text-center space-y-4 rounded-2xl">
                 <div className="flex items-center justify-between max-w-[200px] mx-auto">
-                  <button onClick={() => setAdjustData({...adjustData, quantity: Math.max(1, adjustData.quantity - 1)})} className="text-theme-text text-3xl font-bold w-12 h-12 bg-theme-bg-muted rounded-full hover:bg-white/10 transition-colors">-</button>
+                  <button onClick={() => setAdjustData({...adjustData, quantity: Math.max(1, adjustData.quantity - 1)})} className="text-gray-800 text-3xl font-bold w-12 h-12 bg-theme-bg-muted rounded-full hover:bg-white/10 transition-colors">-</button>
                   <div className="text-2xl md:text-4xl font-bold text-theme-text">{adjustData.quantity}</div>
-                  <button onClick={() => setAdjustData({...adjustData, quantity: adjustData.quantity + 1})} className="text-theme-text text-3xl font-bold w-12 h-12 bg-theme-bg-muted rounded-full hover:bg-white/10 transition-colors">+</button>
+                  <button onClick={() => setAdjustData({...adjustData, quantity: adjustData.quantity + 1})} className="text-gray-800 text-3xl font-bold w-12 h-12 bg-theme-bg-muted rounded-full hover:bg-white/10 transition-colors">+</button>
                 </div>
                 <p className="text-[9px] text-theme-muted font-bold uppercase tracking-widest">Unidades para movimentar</p>
               </div>

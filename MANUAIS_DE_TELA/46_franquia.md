@@ -42,6 +42,7 @@
 - **Botão:** `Buscar`
 - **Botão:** `Compras`
 - **Botão:** `Opções`
+- **Botão:** `Álbum Sanfona`
 - **Botão:** `Minha Agenda`
 - **Botão:** `Meu Portfólio`
 - **Botão:** `Serviços & Preços`

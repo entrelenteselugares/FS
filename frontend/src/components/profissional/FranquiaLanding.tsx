@@ -35,7 +35,7 @@ export function FranquiaLanding() {
         </div>
         
         <div className="relative z-20 h-full flex flex-col justify-center px-12 md:px-20 space-y-6">
-          <div className="inline-flex items-center gap-4 bg-brand-tactical text-theme-text px-4 py-1 self-start rounded-md">
+          <div className="inline-flex items-center gap-4 bg-brand-tactical text-brand-text px-4 py-1 self-start rounded-md">
             <span className="text-[10px] font-bold uppercase tracking-[0.3em]">Business Opportunity</span>
           </div>
           <h1 className="text-6xl md:text-8xl font-display font-bold text-theme-text uppercase leading-[0.8] max-w-2xl">
@@ -47,7 +47,7 @@ export function FranquiaLanding() {
           <div className="flex flex-wrap gap-4 pt-4">
             <button 
               onClick={() => safeOpen("https://wa.me/5519981150440?text=Ol%C3%A1! Tenho interesse em me tornar uma Franquia Print.")}
-              className="px-8 py-4 bg-brand-tactical text-theme-text font-display font-bold text-xs uppercase tracking-widest hover:brightness-110 transition-all flex items-center gap-3 shadow-xl shadow-brand-tactical/20 rounded-xl"
+              className="px-8 py-4 bg-brand-tactical text-brand-text font-display font-bold text-xs uppercase tracking-widest hover:brightness-110 transition-all flex items-center gap-3 shadow-xl shadow-brand-tactical/20 rounded-xl"
             >
               QUERO SER FRANQUIA <Rocket size={16} />
             </button>
@@ -160,7 +160,7 @@ export function FranquiaLanding() {
                 </div>
 
                 {/* Result Card */}
-                <div className="bg-brand-tactical p-12 text-theme-text flex flex-col justify-between rounded-2xl shadow-xl">
+                <div className="bg-brand-tactical p-12 text-brand-text flex flex-col justify-between rounded-2xl shadow-xl">
                   <div className="space-y-8">
                     <div className="flex items-center gap-6">
                       <PieChart size={24} />
@@ -172,7 +172,7 @@ export function FranquiaLanding() {
                       <p className="text-[10px] font-bold uppercase tracking-[0.3em]">Payback Estimado</p>
                       <div className="text-7xl font-display font-bold leading-none">
                         {roi.months === null ? (
-                          <span className="text-3xl text-red-400">Inviável</span>
+                          <span className="text-3xl text-brand-danger">Inviável</span>
                         ) : (
                           <>{roi.months}<span className="text-2xl uppercase not- tracking-normal ml-2">Meses</span></>
                         )}
@@ -191,7 +191,7 @@ export function FranquiaLanding() {
                     </div>
                     <button 
                       onClick={() => safeOpen("https://wa.me/5519981150440?text=Ol%C3%A1! Gostaria de saber mais sobre como me tornar uma Franquia Print Hub.")}
-                      className="w-full bg-black text-theme-text py-4 font-display font-bold text-[10px] uppercase tracking-widest hover:brightness-125 transition-all flex items-center justify-center gap-3 rounded-xl"
+                      className="w-full bg-black text-zinc-100 py-4 font-display font-bold text-[10px] uppercase tracking-widest hover:brightness-125 transition-all flex items-center justify-center gap-3 rounded-xl"
                     >
                       SOLICITAR PROPOSTA COMERCIAL <ArrowRight size={14} />
                     </button>
@@ -217,7 +217,7 @@ export function FranquiaLanding() {
         <div className="flex flex-wrap justify-center gap-4">
           <button
             onClick={() => safeOpen("https://wa.me/5519981150440?text=Ol%C3%A1! Gostaria de receber o book da Franquia Print.")}
-            className="px-12 py-5 bg-brand-tactical text-theme-text font-display font-bold text-[11px] uppercase tracking-widest hover:brightness-110 transition-all shadow-xl shadow-brand-tactical/20 rounded-xl"
+            className="px-12 py-5 bg-brand-tactical text-brand-text font-display font-bold text-[11px] uppercase tracking-widest hover:brightness-110 transition-all shadow-xl shadow-brand-tactical/20 rounded-xl"
           >
             BAIXAR BOOK DE FRANQUIA
           </button>

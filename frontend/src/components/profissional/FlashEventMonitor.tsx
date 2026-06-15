@@ -52,9 +52,9 @@ export function FlashEventMonitor({ eventId }: { eventId: string }) {
   );
 
   if (isError || !stats) return (
-    <div className="p-12 text-center border border-red-500/20 bg-red-500/5">
-      <AlertTriangle size={32} className="mx-auto text-red-500/60 mb-3" />
-      <p className="text-[10px] font-bold text-red-400 uppercase tracking-widest">Erro ao carregar dados do evento.</p>
+    <div className="p-12 text-center border border-brand-danger/20 bg-brand-danger/5">
+      <AlertTriangle size={32} className="mx-auto text-brand-danger/60 mb-3" />
+      <p className="text-[10px] font-bold text-brand-danger uppercase tracking-widest">Erro ao carregar dados do evento.</p>
     </div>
   );
 
@@ -71,7 +71,7 @@ export function FlashEventMonitor({ eventId }: { eventId: string }) {
       <div className="flex items-start justify-between gap-4">
         <div className="space-y-1">
           <div className="flex items-center gap-2">
-            <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+            <div className="w-2 h-2 rounded-full bg-brand-tactical animate-pulse" />
             <p className="text-[9px] font-bold text-theme-brand uppercase tracking-[0.4em]">Ao vivo</p>
           </div>
           <h3 className="text-xl font-bold text-theme-text uppercase">
@@ -103,7 +103,7 @@ export function FlashEventMonitor({ eventId }: { eventId: string }) {
         {/* Mini funnel */}
         <div className="ml-auto hidden md:flex items-end gap-1 h-10">
           {[
-            { h: 100, color: "bg-blue-500", label: `${stats.cards.total} total` },
+            { h: 100, color: "bg-brand-info", label: `${stats.cards.total} total` },
             { h: stats.cards.total > 0 ? (stats.cards.used / stats.cards.total) * 100 : 0, color: "bg-brand-tactical", label: `${stats.cards.used} usados` },
           ].map((b, i) => (
             <div key={i} className="flex flex-col items-center gap-1">
@@ -123,9 +123,9 @@ export function FlashEventMonitor({ eventId }: { eventId: string }) {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           {[
             { label: "Total",     value: stats.cards.total,   color: "text-theme-text",  bg: "bg-theme-bg" },
-            { label: "Não Usados",value: stats.cards.unused,  color: "text-blue-500",    bg: "bg-blue-500" },
+            { label: "Não Usados",value: stats.cards.unused,  color: "text-brand-info",    bg: "bg-brand-info" },
             { label: "Utilizados",value: stats.cards.used,    color: "text-brand-tactical", bg: "bg-brand-tactical/10" },
-            { label: "Resgatados",value: stats.cards.claimed, color: "text-theme-brand", bg: "bg-emerald-500/5" },
+            { label: "Resgatados",value: stats.cards.claimed, color: "text-theme-brand", bg: "bg-brand-tactical/5" },
           ].map(({ label, value, color, bg }) => (
             <div key={label} className={`p-4 border border-theme-border ${bg} space-y-2`}>
               <p className="text-[10px] font-bold text-theme-muted uppercase tracking-widest">{label}</p>
@@ -141,7 +141,7 @@ export function FlashEventMonitor({ eventId }: { eventId: string }) {
           <Printer size={13} className="text-theme-muted" />
           <p className="text-[9px] font-bold text-theme-muted uppercase tracking-[0.3em]">Fila de Impressão</p>
           {stats.prints.printing > 0 && (
-            <span className="ml-auto text-[10px] font-bold text-amber-400 uppercase tracking-widest animate-pulse">
+            <span className="ml-auto text-[10px] font-bold text-brand-warning uppercase tracking-widest animate-pulse">
               {stats.prints.printing} imprimindo
             </span>
           )}
@@ -156,7 +156,7 @@ export function FlashEventMonitor({ eventId }: { eventId: string }) {
             </div>
             <div className="h-1.5 bg-theme-bg-muted w-full overflow-hidden">
               <motion.div
-                className="h-full bg-emerald-500"
+                className="h-full bg-brand-tactical"
                 initial={{ width: 0 }}
                 animate={{ width: `${printDonePct}%` }}
                 transition={{ duration: 0.8 }}
@@ -167,10 +167,10 @@ export function FlashEventMonitor({ eventId }: { eventId: string }) {
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           {[
-            { label: "Pendentes",  value: stats.prints.pending,  icon: <Clock size={12} />,        color: "text-amber-400" },
-            { label: "Imprimindo", value: stats.prints.printing, icon: <Activity size={12} />,     color: "text-blue-500" },
+            { label: "Pendentes",  value: stats.prints.pending,  icon: <Clock size={12} />,        color: "text-brand-warning" },
+            { label: "Imprimindo", value: stats.prints.printing, icon: <Activity size={12} />,     color: "text-brand-info" },
             { label: "Concluídas", value: stats.prints.done,     icon: <CheckCircle2 size={12} />, color: "text-theme-brand" },
-            { label: "Com Erro",   value: stats.prints.error,    icon: <XCircle size={12} />,      color: "text-red-400" },
+            { label: "Com Erro",   value: stats.prints.error,    icon: <XCircle size={12} />,      color: "text-brand-danger" },
           ].map(({ label, value, icon, color }) => (
             <div key={label} className="flex items-center gap-3 p-4 border border-theme-border bg-theme-bg-muted/5">
               <div className={color}>{icon}</div>
@@ -190,10 +190,10 @@ export function FlashEventMonitor({ eventId }: { eventId: string }) {
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0 }}
-            className="flex items-center gap-3 p-4 border border-red-500/30 bg-red-500/5"
+            className="flex items-center gap-3 p-4 border border-brand-danger/30 bg-brand-danger/5"
           >
-            <AlertTriangle size={14} className="text-red-400 flex-shrink-0" />
-            <p className="text-[9px] font-bold text-red-400 uppercase tracking-wide">
+            <AlertTriangle size={14} className="text-brand-danger flex-shrink-0" />
+            <p className="text-[9px] font-bold text-brand-danger uppercase tracking-wide">
               {stats.prints.error} impressão(ões) com erro — verifique a fila e reinicie o agente de impressão.
             </p>
           </motion.div>

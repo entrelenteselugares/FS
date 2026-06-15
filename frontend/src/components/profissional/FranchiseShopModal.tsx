@@ -151,7 +151,7 @@ export function FranchiseShopModal({ onClose, onSuccess, availableBalance, userA
         {/* Header */}
         <div className="p-8 border-b border-white/5 flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-theme-brand rounded-xl">
+            <div className="w-12 h-12 bg-brand-tactical/10 border border-brand-tactical/20 flex items-center justify-center text-theme-brand rounded-xl">
               <ShoppingBag size={24} />
             </div>
             <div>
@@ -174,7 +174,7 @@ export function FranchiseShopModal({ onClose, onSuccess, availableBalance, userA
           ].map((s, idx) => (
             <div key={s.id} className="flex items-center gap-3">
               <div className={`flex items-center gap-2 ${step === s.id ? 'text-theme-brand' : 'text-theme-muted'}`}>
-                <div className={`w-6 h-6 rounded-full border flex items-center justify-center text-[10px] font-black ${step === s.id ? 'border-emerald-500 bg-emerald-500/10' : 'border-zinc-800 bg-zinc-800'}`}>
+                <div className={`w-6 h-6 rounded-full border flex items-center justify-center text-[10px] font-black ${step === s.id ? 'border-brand-tactical bg-brand-tactical/10' : 'border-zinc-800 bg-zinc-800'}`}>
                   {idx + 1}
                 </div>
                 <span className="text-[9px] font-bold tracking-widest hidden sm:block">{s.label}</span>
@@ -190,7 +190,7 @@ export function FranchiseShopModal({ onClose, onSuccess, availableBalance, userA
             <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-500">
               <div className="space-y-4">
                 {PRODUCTS.map(p => (
-                  <div key={p.id} className="bg-zinc-800/50 border border-white/5 p-5 flex items-center justify-between group hover:border-emerald-500/30 transition-all rounded-2xl">
+                  <div key={p.id} className="bg-zinc-800/50 border border-white/5 p-5 flex items-center justify-between group hover:border-brand-tactical/30 transition-all rounded-2xl">
                     <div className="space-y-1">
                       <h4 className="text-sm font-bold text-theme-text uppercase">{p.name}</h4>
                       <p className="text-[10px] text-theme-muted uppercase tracking-widest leading-relaxed">{p.description}</p>
@@ -223,11 +223,11 @@ export function FranchiseShopModal({ onClose, onSuccess, availableBalance, userA
                 <label className="text-[10px] font-bold text-theme-muted uppercase tracking-[0.2em]">Ponto de Recebimento</label>
                 <div 
                   onClick={() => setDeliveryType("SHIPPING")}
-                  className={`p-6 border transition-all cursor-pointer flex flex-col gap-4 group rounded-2xl ${deliveryType === "SHIPPING" ? 'bg-emerald-500/5 border-emerald-500' : 'bg-zinc-800/50 border-white/5 hover:border-zinc-700'}`}
+                  className={`p-6 border transition-all cursor-pointer flex flex-col gap-4 group rounded-2xl ${deliveryType === "SHIPPING" ? 'bg-brand-tactical/5 border-brand-tactical' : 'bg-zinc-800/50 border-white/5 hover:border-zinc-700'}`}
                 >
                   <div className="flex items-center justify-between w-full">
                     <div className="flex items-center gap-5">
-                      <div className={`p-3 border rounded-xl ${deliveryType === "SHIPPING" ? 'bg-emerald-500/10 border-emerald-500/20 text-theme-brand' : 'bg-zinc-900 border-zinc-800 text-theme-muted'}`}>
+                      <div className={`p-3 border rounded-xl ${deliveryType === "SHIPPING" ? 'bg-brand-tactical/10 border-brand-tactical/20 text-theme-brand' : 'bg-zinc-900 border-zinc-800 text-theme-muted'}`}>
                         <MapPin size={20} />
                       </div>
                       <div className="space-y-1 text-left">
@@ -235,8 +235,8 @@ export function FranchiseShopModal({ onClose, onSuccess, availableBalance, userA
                         <p className="text-[9px] text-theme-muted font-bold uppercase tracking-widest">Entrega via Logística Regional</p>
                       </div>
                     </div>
-                    <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${deliveryType === "SHIPPING" ? 'border-emerald-500' : 'border-zinc-800'}`}>
-                      {deliveryType === "SHIPPING" && <div className="w-2.5 h-2.5 bg-emerald-500 rounded-full" />}
+                    <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${deliveryType === "SHIPPING" ? 'border-brand-tactical' : 'border-zinc-800'}`}>
+                      {deliveryType === "SHIPPING" && <div className="w-2.5 h-2.5 bg-brand-tactical rounded-full" />}
                     </div>
                   </div>
 
@@ -248,7 +248,7 @@ export function FranchiseShopModal({ onClose, onSuccess, availableBalance, userA
                           value={shippingData.cep}
                           onBlur={handleCepBlur}
                           onChange={e => setShippingData({...shippingData, cep: e.target.value})}
-                          className="w-full bg-zinc-900 border border-white/10 p-2 text-[10px] text-theme-text rounded-xl"
+                          className="w-full bg-zinc-900 border border-white/10 p-2 text-[10px] text-zinc-100 rounded-xl"
                         />
                       </div>
                       <div className="col-span-4">
@@ -256,7 +256,7 @@ export function FranchiseShopModal({ onClose, onSuccess, availableBalance, userA
                           placeholder="Logradouro" 
                           value={shippingData.street}
                           onChange={e => setShippingData({...shippingData, street: e.target.value})}
-                          className="w-full bg-zinc-900 border border-white/10 p-2 text-[10px] text-theme-text rounded-xl"
+                          className="w-full bg-zinc-900 border border-white/10 p-2 text-[10px] text-zinc-100 rounded-xl"
                         />
                       </div>
                       <div className="col-span-1">
@@ -264,7 +264,7 @@ export function FranchiseShopModal({ onClose, onSuccess, availableBalance, userA
                           placeholder="Nº" 
                           value={shippingData.number}
                           onChange={e => setShippingData({...shippingData, number: e.target.value})}
-                          className="w-full bg-zinc-900 border border-white/10 p-2 text-[10px] text-theme-text rounded-xl"
+                          className="w-full bg-zinc-900 border border-white/10 p-2 text-[10px] text-zinc-100 rounded-xl"
                         />
                       </div>
                       <div className="col-span-2">
@@ -272,7 +272,7 @@ export function FranchiseShopModal({ onClose, onSuccess, availableBalance, userA
                           placeholder="Bairro" 
                           value={shippingData.neighborhood}
                           onChange={e => setShippingData({...shippingData, neighborhood: e.target.value})}
-                          className="w-full bg-zinc-900 border border-white/10 p-2 text-[10px] text-theme-text rounded-xl"
+                          className="w-full bg-zinc-900 border border-white/10 p-2 text-[10px] text-zinc-100 rounded-xl"
                         />
                       </div>
                       <div className="col-span-2">
@@ -280,7 +280,7 @@ export function FranchiseShopModal({ onClose, onSuccess, availableBalance, userA
                           placeholder="Cidade" 
                           value={shippingData.city}
                           readOnly
-                          className="w-full bg-zinc-900 border border-white/10 p-2 text-[10px] text-theme-text opacity-50 rounded-xl"
+                          className="w-full bg-zinc-900 border border-white/10 p-2 text-[10px] text-zinc-100 opacity-50 rounded-xl"
                         />
                       </div>
                       <div className="col-span-1">
@@ -288,7 +288,7 @@ export function FranchiseShopModal({ onClose, onSuccess, availableBalance, userA
                           placeholder="UF" 
                           value={shippingData.state}
                           readOnly
-                          className="w-full bg-zinc-900 border border-white/10 p-2 text-[10px] text-theme-text opacity-50 rounded-xl"
+                          className="w-full bg-zinc-900 border border-white/10 p-2 text-[10px] text-zinc-100 opacity-50 rounded-xl"
                         />
                       </div>
                     </div>
@@ -297,10 +297,10 @@ export function FranchiseShopModal({ onClose, onSuccess, availableBalance, userA
 
                 <div 
                   onClick={() => setDeliveryType("MATRIZ")}
-                  className={`p-6 border transition-all cursor-pointer flex items-center justify-between group rounded-2xl ${deliveryType === "MATRIZ" ? 'bg-emerald-500/5 border-emerald-500' : 'bg-zinc-800/50 border-white/5 hover:border-zinc-700'}`}
+                  className={`p-6 border transition-all cursor-pointer flex items-center justify-between group rounded-2xl ${deliveryType === "MATRIZ" ? 'bg-brand-tactical/5 border-brand-tactical' : 'bg-zinc-800/50 border-white/5 hover:border-zinc-700'}`}
                 >
                   <div className="flex items-center gap-5">
-                    <div className={`p-3 border rounded-xl ${deliveryType === "MATRIZ" ? 'bg-emerald-500/10 border-emerald-500/20 text-theme-brand' : 'bg-zinc-900 border-zinc-800 text-theme-muted'}`}>
+                    <div className={`p-3 border rounded-xl ${deliveryType === "MATRIZ" ? 'bg-brand-tactical/10 border-brand-tactical/20 text-theme-brand' : 'bg-zinc-900 border-zinc-800 text-theme-muted'}`}>
                       <Package size={20} />
                     </div>
                     <div className="space-y-1 text-left">
@@ -308,8 +308,8 @@ export function FranchiseShopModal({ onClose, onSuccess, availableBalance, userA
                       <p className="text-[9px] text-theme-muted font-bold uppercase tracking-widest">Sem custo de frete · Disponível em 24h</p>
                     </div>
                   </div>
-                  <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${deliveryType === "MATRIZ" ? 'border-emerald-500' : 'border-zinc-800'}`}>
-                    {deliveryType === "MATRIZ" && <div className="w-2.5 h-2.5 bg-emerald-500 rounded-full" />}
+                  <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${deliveryType === "MATRIZ" ? 'border-brand-tactical' : 'border-zinc-800'}`}>
+                    {deliveryType === "MATRIZ" && <div className="w-2.5 h-2.5 bg-brand-tactical rounded-full" />}
                   </div>
                 </div>
               </div>
@@ -323,10 +323,10 @@ export function FranchiseShopModal({ onClose, onSuccess, availableBalance, userA
                 
                 <div 
                   onClick={() => canPayWithBalance && setPaymentMethod("BALANCE")}
-                  className={`p-6 border transition-all flex items-center justify-between group rounded-2xl ${!canPayWithBalance ? 'opacity-40 cursor-not-allowed grayscale' : 'cursor-pointer'} ${paymentMethod === "BALANCE" ? 'bg-emerald-500/5 border-emerald-500' : 'bg-zinc-800/50 border-white/5 hover:border-zinc-700'}`}
+                  className={`p-6 border transition-all flex items-center justify-between group rounded-2xl ${!canPayWithBalance ? 'opacity-40 cursor-not-allowed grayscale' : 'cursor-pointer'} ${paymentMethod === "BALANCE" ? 'bg-brand-tactical/5 border-brand-tactical' : 'bg-zinc-800/50 border-white/5 hover:border-zinc-700'}`}
                 >
                   <div className="flex items-center gap-5">
-                    <div className={`p-3 border rounded-xl ${paymentMethod === "BALANCE" ? 'bg-emerald-500/10 border-emerald-500/20 text-theme-brand' : 'bg-zinc-900 border-zinc-800 text-theme-muted'}`}>
+                    <div className={`p-3 border rounded-xl ${paymentMethod === "BALANCE" ? 'bg-brand-tactical/10 border-brand-tactical/20 text-theme-brand' : 'bg-zinc-900 border-zinc-800 text-theme-muted'}`}>
                       <Wallet size={20} />
                     </div>
                     <div className="space-y-1 text-left">
@@ -334,17 +334,17 @@ export function FranchiseShopModal({ onClose, onSuccess, availableBalance, userA
                       <p className="text-[9px] text-theme-muted font-bold uppercase tracking-widest">Saldo Disponível: R$ {availableBalance.toFixed(2)}</p>
                     </div>
                   </div>
-                  <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${paymentMethod === "BALANCE" ? 'border-emerald-500' : 'border-zinc-800'}`}>
-                    {paymentMethod === "BALANCE" && <div className="w-2.5 h-2.5 bg-emerald-500 rounded-full" />}
+                  <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${paymentMethod === "BALANCE" ? 'border-brand-tactical' : 'border-zinc-800'}`}>
+                    {paymentMethod === "BALANCE" && <div className="w-2.5 h-2.5 bg-brand-tactical rounded-full" />}
                   </div>
                 </div>
 
                 <div 
                   onClick={() => setPaymentMethod("CHECKOUT")}
-                  className={`p-6 border transition-all cursor-pointer flex items-center justify-between group rounded-2xl ${paymentMethod === "CHECKOUT" ? 'bg-emerald-500/5 border-emerald-500' : 'bg-zinc-800/50 border-white/5 hover:border-zinc-700'}`}
+                  className={`p-6 border transition-all cursor-pointer flex items-center justify-between group rounded-2xl ${paymentMethod === "CHECKOUT" ? 'bg-brand-tactical/5 border-brand-tactical' : 'bg-zinc-800/50 border-white/5 hover:border-zinc-700'}`}
                 >
                   <div className="flex items-center gap-5">
-                    <div className={`p-3 border rounded-xl ${paymentMethod === "CHECKOUT" ? 'bg-emerald-500/10 border-emerald-500/20 text-theme-brand' : 'bg-zinc-900 border-zinc-800 text-theme-muted'}`}>
+                    <div className={`p-3 border rounded-xl ${paymentMethod === "CHECKOUT" ? 'bg-brand-tactical/10 border-brand-tactical/20 text-theme-brand' : 'bg-zinc-900 border-zinc-800 text-theme-muted'}`}>
                       <CreditCard size={20} />
                     </div>
                     <div className="space-y-1 text-left">
@@ -352,8 +352,8 @@ export function FranchiseShopModal({ onClose, onSuccess, availableBalance, userA
                       <p className="text-[9px] text-theme-muted font-bold uppercase tracking-widest">Pagamento via Checkout Seguro</p>
                     </div>
                   </div>
-                  <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${paymentMethod === "CHECKOUT" ? 'border-emerald-500' : 'border-zinc-800'}`}>
-                    {paymentMethod === "CHECKOUT" && <div className="w-2.5 h-2.5 bg-emerald-500 rounded-full" />}
+                  <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${paymentMethod === "CHECKOUT" ? 'border-brand-tactical' : 'border-zinc-800'}`}>
+                    {paymentMethod === "CHECKOUT" && <div className="w-2.5 h-2.5 bg-brand-tactical rounded-full" />}
                   </div>
                 </div>
               </div>
@@ -362,7 +362,7 @@ export function FranchiseShopModal({ onClose, onSuccess, availableBalance, userA
 
           {step === "confirm" && (
             <div className="space-y-8 animate-in fade-in slide-in-from-right-4 duration-500 text-center py-4">
-              <div className="w-20 h-20 bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-theme-brand mx-auto rounded-full mb-6">
+              <div className="w-20 h-20 bg-brand-tactical/10 border border-brand-tactical/20 flex items-center justify-center text-theme-brand mx-auto rounded-full mb-6">
                 <ShoppingBag size={32} />
               </div>
               <div className="space-y-2">
@@ -419,7 +419,7 @@ export function FranchiseShopModal({ onClose, onSuccess, availableBalance, userA
               <button 
                 disabled={total === 0}
                 onClick={handleNext}
-                className="px-10 py-4 bg-emerald-500 text-theme-text text-[10px] font-bold uppercase tracking-widest hover:brightness-110 transition-all disabled:opacity-40 flex items-center gap-2 rounded-xl"
+                className="px-10 py-4 bg-brand-tactical text-brand-text text-[10px] font-bold uppercase tracking-widest hover:brightness-110 transition-all disabled:opacity-40 flex items-center gap-2 rounded-xl"
               >
                 Próximo Passo <ArrowRight size={14} />
               </button>
@@ -427,7 +427,7 @@ export function FranchiseShopModal({ onClose, onSuccess, availableBalance, userA
               <button 
                 disabled={isProcessing}
                 onClick={handleFinish}
-                className="px-12 py-4 bg-emerald-500 text-theme-text text-[11px] font-bold uppercase tracking-widest hover:brightness-110 transition-all shadow-xl shadow-emerald-500/20 flex items-center gap-3 rounded-xl"
+                className="px-12 py-4 bg-brand-tactical text-brand-text text-[11px] font-bold uppercase tracking-widest hover:brightness-110 transition-all shadow-xl shadow-emerald-500/20 flex items-center gap-3 rounded-xl"
               >
                 {isProcessing ? "PROCESSANDO..." : <><CheckCircle2 size={16} /> FINALIZAR PEDIDO</>}
               </button>

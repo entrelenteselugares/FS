@@ -2,7 +2,6 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AlertCircle, ArrowRight } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
-import { motion, AnimatePresence } from 'framer-motion';
 
 export const IncompleteProfileBanner: React.FC = () => {
   const { user } = useAuth();
@@ -11,34 +10,64 @@ export const IncompleteProfileBanner: React.FC = () => {
   if (!user || user.profileComplete) return null;
 
   return (
-    <AnimatePresence>
-      <motion.div 
-        initial={{ height: 0, opacity: 0 }}
-        animate={{ height: 'auto', opacity: 1 }}
-        exit={{ height: 0, opacity: 0 }}
-        className="bg-blue-500 text-theme-text px-4 py-2 flex flex-col md:flex-row items-center justify-center gap-2 md:gap-4 relative overflow-hidden shadow-lg z-50"
-      >
-        <div className="flex items-center gap-2">
-          <AlertCircle size={16} className="shrink-0" />
-          <span className="text-[10px] md:text-xs font-bold uppercase tracking-widest text-center">
-            Seu perfil está incompleto! Complete agora e ganhe um cupom de FRETE GRÁTIS.
-          </span>
-        </div>
-        
-        <button 
-          onClick={() => navigate('/minha-conta?s=menu')}
-          className="bg-white text-blue-500 px-3 py-1.5 rounded-full text-[9px] font-black uppercase flex items-center gap-1 hover:scale-105 transition-transform"
-        >
-          COMPLETAR <ArrowRight size={12} />
-        </button>
+    <div
+      style={{
+        background: '#2563EB',
+        color: '#FFFFFF',
+        padding: '8px 16px',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: 16,
+        flexWrap: 'wrap',
+        position: 'relative',
+        overflow: 'hidden',
+        zIndex: 50,
+        width: '100%',
+      }}
+    >
+      {/* Shimmer via CSS animation */}
+      <span
+        aria-hidden="true"
+        style={{
+          position: 'absolute',
+          inset: 0,
+          background: 'linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.12) 50%, transparent 100%)',
+          animation: 'shimmer-banner 3s linear infinite',
+          pointerEvents: 'none',
+        }}
+      />
 
-        {/* Subtle animated background pulse */}
-        <motion.div 
-          animate={{ x: ['-100%', '100%'] }}
-          transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
-          className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent pointer-events-none"
-        />
-      </motion.div>
-    </AnimatePresence>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8, zIndex: 1 }}>
+        <AlertCircle size={15} />
+        <span style={{ fontSize: 10, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+          Seu perfil está incompleto! Complete agora e ganhe um cupom de FRETE GRÁTIS.
+        </span>
+      </div>
+
+      <button
+        onClick={() => navigate('/minha-conta?s=menu')}
+        style={{
+          position: 'relative',
+          zIndex: 1,
+          background: '#FFFFFF',
+          color: '#1E3A5F',
+          padding: '5px 14px',
+          borderRadius: 9999,
+          fontSize: 9,
+          fontWeight: 900,
+          textTransform: 'uppercase',
+          border: 'none',
+          cursor: 'pointer',
+          display: 'flex',
+          alignItems: 'center',
+          gap: 4,
+          whiteSpace: 'nowrap',
+          flexShrink: 0,
+        }}
+      >
+        COMPLETAR <ArrowRight size={11} />
+      </button>
+    </div>
   );
 };

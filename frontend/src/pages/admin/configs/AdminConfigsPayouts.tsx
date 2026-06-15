@@ -68,7 +68,7 @@ export const AdminConfigsPayouts: React.FC<Props> = ({ payouts, onOpenPayoutModa
                 <span className={`text-[10px] font-black px-3 py-1 border uppercase tracking-widest italic ${
                   payout.status === "PAID"
                     ? "border-brand-tactical text-brand-tactical bg-brand-tactical/10"
-                    : "border-amber-600 text-amber-600 bg-amber-600/5"
+                    : "border-brand-warning text-brand-warning bg-brand-warning/5"
                 }`}>
                   {payout.status === "PAID" ? "LIQUIDADO" : "PENDENTE"}
                 </span>

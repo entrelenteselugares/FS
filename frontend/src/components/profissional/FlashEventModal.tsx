@@ -83,11 +83,11 @@ export function FlashEventModal({ onClose, onSuccess, onError, network }: FlashE
         {/* Header */}
         <div className="p-8 md:p-10 border-b flex items-center justify-between shrink-0" style={{ borderColor: "var(--theme-border)" }}>
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 bg-yellow-400/10 rounded-2xl flex items-center justify-center border border-yellow-400/20">
-              < Zap className="text-yellow-400" size={24} />
+            <div className="w-12 h-12 bg-brand-warning/10 rounded-2xl flex items-center justify-center border border-brand-warning/20">
+              < Zap className="text-brand-warning" size={24} />
             </div>
             <div>
-              <div className="text-[9px] font-bold text-yellow-400 uppercase tracking-[0.4em] opacity-60">Acesso Instantâneo</div>
+              <div className="text-[9px] font-bold text-brand-warning uppercase tracking-[0.4em] opacity-60">Acesso Instantâneo</div>
               <h2 className="text-2xl font-bold uppercase text-theme-text leading-none">Foto Print Live</h2>
             </div>
           </div>
@@ -107,20 +107,20 @@ export function FlashEventModal({ onClose, onSuccess, onError, network }: FlashE
                 placeholder="Ex: Ensaio no Parque, Festa do João..."
                 value={name}
                 onChange={e => setName(e.target.value)}
-                className="w-full bg-theme-bg-muted border border-theme-border p-4 text-theme-text outline-none focus:border-yellow-400/50 transition-all font-medium"
+                className="w-full bg-theme-bg-muted border border-theme-border p-4 text-theme-text outline-none focus:border-brand-warning/50 transition-all font-medium"
               />
             </div>
 
             <div className="space-y-2">
               <label className="text-[10px] font-bold text-theme-muted uppercase tracking-widest">Preço de Venda (Por Foto R$)</label>
               <div className="relative">
-                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-yellow-400 font-bold text-sm">R$</span>
+                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-brand-warning font-bold text-sm">R$</span>
                 <input
                   type="number"
                   required
                   value={price}
                   onChange={e => setPrice(e.target.value)}
-                  className="w-full bg-theme-bg-muted border border-theme-border p-4 pl-12 text-theme-text outline-none focus:border-yellow-400/50 transition-all font-bold text-xl"
+                  className="w-full bg-theme-bg-muted border border-theme-border p-4 pl-12 text-theme-text outline-none focus:border-brand-warning/50 transition-all font-bold text-xl"
                 />
               </div>
             </div>
@@ -135,7 +135,7 @@ export function FlashEventModal({ onClose, onSuccess, onError, network }: FlashE
                     setUf(e.target.value);
                     setCity("");
                   }}
-                  className="w-full bg-theme-bg-muted border border-theme-border p-4 text-theme-text outline-none focus:border-yellow-400/50 transition-all font-medium appearance-none"
+                  className="w-full bg-theme-bg-muted border border-theme-border p-4 text-theme-text outline-none focus:border-brand-warning/50 transition-all font-medium appearance-none"
                 >
                   <option value="">UF</option>
                   {statesList.map(state => (
@@ -150,7 +150,7 @@ export function FlashEventModal({ onClose, onSuccess, onError, network }: FlashE
                   disabled={!uf || citiesList.length === 0}
                   value={city}
                   onChange={e => setCity(e.target.value)}
-                  className="w-full bg-theme-bg-muted border border-theme-border p-4 text-theme-text outline-none focus:border-yellow-400/50 transition-all font-medium appearance-none disabled:opacity-50"
+                  className="w-full bg-theme-bg-muted border border-theme-border p-4 text-theme-text outline-none focus:border-brand-warning/50 transition-all font-medium appearance-none disabled:opacity-50"
                 >
                   <option value="">Selecione...</option>
                   {citiesList.map(c => (
@@ -170,7 +170,7 @@ export function FlashEventModal({ onClose, onSuccess, onError, network }: FlashE
                   required
                   value={date}
                   onChange={e => setDate(e.target.value)}
-                  className="w-full bg-theme-bg-muted border border-theme-border p-4 text-theme-text outline-none focus:border-yellow-400/50 transition-all font-bold text-xs"
+                  className="w-full bg-theme-bg-muted border border-theme-border p-4 text-theme-text outline-none focus:border-brand-warning/50 transition-all font-bold text-xs"
                 />
               </div>
 
@@ -183,7 +183,7 @@ export function FlashEventModal({ onClose, onSuccess, onError, network }: FlashE
                   required
                   value={startTime}
                   onChange={e => setStartTime(e.target.value)}
-                  className="w-full bg-theme-bg-muted border border-theme-border p-4 text-theme-text outline-none focus:border-yellow-400/50 transition-all font-bold text-xs"
+                  className="w-full bg-theme-bg-muted border border-theme-border p-4 text-theme-text outline-none focus:border-brand-warning/50 transition-all font-bold text-xs"
                 />
               </div>
 
@@ -196,7 +196,7 @@ export function FlashEventModal({ onClose, onSuccess, onError, network }: FlashE
                   required
                   value={endTime}
                   onChange={e => setEndTime(e.target.value)}
-                  className="w-full bg-theme-bg-muted border border-theme-border p-4 text-theme-text outline-none focus:border-yellow-400/50 transition-all font-bold text-xs"
+                  className="w-full bg-theme-bg-muted border border-theme-border p-4 text-theme-text outline-none focus:border-brand-warning/50 transition-all font-bold text-xs"
                 />
               </div>
             </div>
@@ -231,7 +231,7 @@ export function FlashEventModal({ onClose, onSuccess, onError, network }: FlashE
             <button
               type="submit"
               disabled={loading || !name}
-              className="w-full py-5 bg-yellow-400 text-theme-text text-[11px] font-bold uppercase tracking-[0.3em] hover:bg-white hover:scale-[1.01] active:scale-[0.98] transition-all flex items-center justify-center gap-4 shadow-2xl shadow-yellow-400/20 disabled:opacity-40"
+              className="w-full py-5 bg-brand-warning text-gray-800 text-[11px] font-bold uppercase tracking-[0.3em] hover:bg-white hover:scale-[1.01] active:scale-[0.98] transition-all flex items-center justify-center gap-4 shadow-2xl shadow-yellow-400/20 disabled:opacity-40"
             >
               {loading ? (
                 "GERANDO SISTEMA..."

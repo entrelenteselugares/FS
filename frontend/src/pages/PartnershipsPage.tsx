@@ -4,7 +4,7 @@ import SEO from "../components/SEO";
 
 export function PartnershipsPage() {
   return (
-    <div className="min-h-screen bg-theme-bg text-theme-text selection:bg-brand-tactical/30">
+    <div className="min-h-screen bg-theme-bg text-brand-text selection:bg-brand-tactical/30">
       <SEO title="Parcerias e Afiliados | Foto Segundo" description="Seja um ponto autorizado da rede Foto Segundo e gere receita passiva." />
       
       {/* Header Minimalista */}
@@ -102,7 +102,7 @@ export function PartnershipsPage() {
         </section>
 
         {/* Vantagens */}
-        <section className="mb-24 bg-brand-tactical text-theme-text rounded-3xl p-4 md:p-8 md:p-12">
+        <section className="mb-24 bg-brand-tactical text-brand-text rounded-3xl p-4 md:p-8 md:p-12">
           <h2 className="text-3xl font-bold uppercase mb-10">
             Vantagens da Rede
           </h2>
@@ -151,7 +151,7 @@ export function PartnershipsPage() {
           <p className="text-theme-text-muted font-normal mb-10 max-w-lg mx-auto">
             Preencha o formulário de interesse e nossa equipe entrará em contato em até 2 dias úteis com o seu link de ativação.
           </p>
-          <Link to="/contato" className="inline-block px-3 md:px-6 md:px-12 py-5 bg-brand-tactical text-theme-text font-bold uppercase tracking-[0.3em] text-[10px] hover:brightness-110 transition-all shadow-2xl shadow-brand-tactical/20">
+          <Link to="/contato" className="inline-block px-3 md:px-6 md:px-12 py-5 bg-brand-tactical text-brand-text font-bold uppercase tracking-[0.3em] text-[10px] hover:brightness-110 transition-all shadow-2xl shadow-brand-tactical/20">
             Preencher Formulário de Interesse
           </Link>
         </section>

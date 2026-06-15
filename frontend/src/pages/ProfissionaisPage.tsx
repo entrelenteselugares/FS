@@ -156,8 +156,8 @@ export default function ProfissionaisPage() {
                 title="Perto de Mim"
                 className={`absolute right-1 p-1 rounded-full transition-all ${
                   nearby
-                    ? "bg-brand-tactical text-theme-text shadow-[0_0_10px_rgba(133,185,172,0.5)]"
-                    : "text-theme-text-muted hover:text-theme-text hover:bg-theme-bg-muted"
+                    ? "bg-brand-tactical text-brand-text shadow-[0_0_10px_rgba(133,185,172,0.5)]"
+                    : "text-brand-text-muted hover:text-brand-text hover:bg-theme-bg-muted"
                 }`}
               >
                 <MapPin size={10} className={nearby ? "animate-pulse" : ""} />

@@ -28,7 +28,7 @@ export class ErrorBoundary extends Component<Props, State> {
       return (
         <div className="min-h-screen bg-[#050505] flex items-center justify-center p-6 text-center">
           <div className="max-w-md w-full bg-black/40 backdrop-blur-xl p-10 border border-white/5 shadow-2xl">
-            <h1 className="text-2xl font-bold uppercase tracking-widest text-red-500 mb-4">
+            <h1 className="text-2xl font-bold uppercase tracking-widest text-brand-danger mb-4">
               Erro de Sincronização
             </h1>
             <p className="text-theme-muted text-sm leading-relaxed mb-6">
@@ -42,7 +42,7 @@ export class ErrorBoundary extends Component<Props, State> {
             </div>
             <button
               onClick={() => window.location.reload()}
-              className="w-full py-4 bg-brand-tactical hover:brightness-110 text-theme-text font-bold uppercase tracking-[0.4em] transition-all rounded-none text-[10px]"
+              className="w-full py-4 bg-brand-tactical hover:brightness-110 text-brand-text font-bold uppercase tracking-[0.4em] transition-all rounded-none text-[10px]"
             >
               RESTAURAR CONEXÃO
             </button>

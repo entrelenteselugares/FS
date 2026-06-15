@@ -46,8 +46,8 @@ export function OpportunitiesModal({
             </div>
           )}
           {opportunitiesCount > 0 && (
-            <div className="bg-yellow-400/5 p-6 border border-yellow-400/20 hover:border-yellow-400/40 transition-all">
-              <div className="text-[9px] font-bold text-yellow-400 uppercase tracking-[0.2em] mb-2">Chamada Aberta</div>
+            <div className="bg-brand-warning/5 p-6 border border-brand-warning/20 hover:border-brand-warning/40 transition-all">
+              <div className="text-[9px] font-bold text-brand-warning uppercase tracking-[0.2em] mb-2">Chamada Aberta</div>
               <div className="text-xl font-heading font-bold text-theme-text leading-none">
                 {opportunitiesCount} {opportunitiesCount === 1 ? "OPORTUNIDADE DISPONÍVEL" : "OPORTUNIDADES DISPONÍVEIS"}
               </div>

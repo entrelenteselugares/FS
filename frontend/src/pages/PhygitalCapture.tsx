@@ -239,7 +239,7 @@ export default function PhygitalCapture() {
               <span className="text-[9px] font-bold uppercase tracking-widest text-theme-subtle">
                 {formData.customerName.split(' ')[0] || 'Convidado'}
               </span>
-              <LogOut size={10} className="text-theme-muted hover:text-red-400 ml-1" />
+              <LogOut size={10} className="text-theme-muted hover:text-brand-danger ml-1" />
             </button>
           )}
         </div>
@@ -249,7 +249,7 @@ export default function PhygitalCapture() {
           <div className="text-[18px] font-bold uppercase tracking-[0.8em] mb-1 text-theme-text">
             FOTO SEGUNDO
           </div>
-          <div className="h-px w-10 bg-emerald-400 mx-auto mb-2" />
+          <div className="h-px w-10 bg-brand-tactical mx-auto mb-2" />
           <p className="text-[10px] uppercase tracking-[0.3em] font-bold opacity-30 text-theme-text">
             Phygital Capture
           </p>
@@ -282,7 +282,7 @@ export default function PhygitalCapture() {
                 name="customerName"
                 value={formData.customerName}
                 onChange={handleInputChange}
-                className="w-full bg-black/40 border border-zinc-800 p-3 rounded-xl text-xs focus:border-emerald-500/50 outline-none text-theme-text transition-colors"
+                className="w-full bg-black/40 border border-zinc-800 p-3 rounded-xl text-xs focus:border-brand-tactical/50 outline-none text-zinc-100 transition-colors"
                 placeholder="Seu nome"
               />
             </div>
@@ -297,7 +297,7 @@ export default function PhygitalCapture() {
                 name="customerEmail"
                 value={formData.customerEmail}
                 onChange={handleInputChange}
-                className="w-full bg-black/40 border border-zinc-800 p-3 rounded-xl text-xs focus:border-emerald-500/50 outline-none text-theme-text transition-colors"
+                className="w-full bg-black/40 border border-zinc-800 p-3 rounded-xl text-xs focus:border-brand-tactical/50 outline-none text-zinc-100 transition-colors"
                 placeholder="seu@email.com"
               />
             </div>
@@ -311,14 +311,14 @@ export default function PhygitalCapture() {
                 name="customerPhone"
                 value={formData.customerPhone}
                 onChange={handleInputChange}
-                className="w-full bg-black/40 border border-zinc-800 p-3 rounded-xl text-xs focus:border-emerald-500/50 outline-none text-theme-text transition-colors"
+                className="w-full bg-black/40 border border-zinc-800 p-3 rounded-xl text-xs focus:border-brand-tactical/50 outline-none text-zinc-100 transition-colors"
                 placeholder="(00) 00000-0000"
               />
             </div>
 
             <button
               type="submit"
-              className="w-full bg-emerald-500 text-zinc-950 font-bold uppercase tracking-widest text-[11px] py-4 rounded-xl flex items-center justify-center gap-2 active:scale-[0.98] transition-transform hover:bg-emerald-400"
+              className="w-full bg-brand-tactical text-zinc-950 font-bold uppercase tracking-widest text-[11px] py-4 rounded-xl flex items-center justify-center gap-2 active:scale-[0.98] transition-transform hover:bg-brand-tactical"
             >
               <Camera size={16} />
               Começar a Fotografar
@@ -345,14 +345,14 @@ export default function PhygitalCapture() {
                   onMouseUp={handleEnd}
                   onMouseLeave={handleCancel}
                   onContextMenu={e => e.preventDefault()}
-                  className="w-28 h-28 rounded-full border-4 border-emerald-500/35 bg-zinc-900/40 flex items-center justify-center hover:border-emerald-500/60 shadow-lg shadow-emerald-500/5 transition-all select-none active:scale-95 touch-none"
+                  className="w-28 h-28 rounded-full border-4 border-brand-tactical/35 bg-zinc-900/40 flex items-center justify-center hover:border-brand-tactical/60 shadow-lg shadow-emerald-500/5 transition-all select-none active:scale-95 touch-none"
                   aria-label="Capturar foto (pressionar) ou vídeo (segurar)"
                 >
                   <div
                     className={`w-20 h-20 rounded-full flex items-center justify-center transition-all duration-300 ${
                       isLongPressing
-                        ? 'bg-red-500 scale-110 shadow-lg shadow-red-500/20'
-                        : 'bg-emerald-500 scale-100 hover:scale-[1.03] shadow-md shadow-emerald-500/25'
+                        ? 'bg-brand-danger scale-110 shadow-lg shadow-red-500/20'
+                        : 'bg-brand-tactical scale-100 hover:scale-[1.03] shadow-md shadow-emerald-500/25'
                     }`}
                   >
                     {isLongPressing ? (
@@ -368,7 +368,7 @@ export default function PhygitalCapture() {
               <button
                 type="button"
                 onClick={() => galleryInputRef.current?.click()}
-                className="w-full flex items-center justify-center gap-3 py-3 border border-dashed border-white/10 hover:border-emerald-500/30 rounded-xl bg-white/[0.01] hover:bg-white/[0.03] transition-all active:scale-[0.99] text-theme-muted"
+                className="w-full flex items-center justify-center gap-3 py-3 border border-dashed border-white/10 hover:border-brand-tactical/30 rounded-xl bg-white/[0.01] hover:bg-white/[0.03] transition-all active:scale-[0.99] text-theme-muted"
               >
                 <ImageIcon size={16} />
                 <span className="text-[9px] font-bold uppercase tracking-widest">
@@ -420,7 +420,7 @@ export default function PhygitalCapture() {
                             onClick={() => {
                               retryUpload(item.id);
                             }}
-                            className="bg-red-500/90 text-theme-text p-2 rounded-full hover:bg-red-500 active:scale-95 shadow-xl border border-red-400 flex flex-col items-center gap-1"
+                            className="bg-brand-danger/90 text-white p-2 rounded-full hover:bg-brand-danger active:scale-95 shadow-xl border border-brand-danger flex flex-col items-center gap-1"
                             title="Tentar novamente"
                           >
                             <RefreshCcw size={16} />

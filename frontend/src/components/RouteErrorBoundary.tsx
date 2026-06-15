@@ -39,8 +39,8 @@ export class RouteErrorBoundary extends Component<Props, State> {
     if (this.state.hasError) {
       return (
         <div className="flex flex-col items-center justify-center min-h-[60vh] gap-6 p-8 text-center">
-          <div className="w-16 h-16 rounded-2xl bg-red-500/10 border border-red-500/20 flex items-center justify-center">
-            <AlertTriangle className="w-8 h-8 text-red-500" />
+          <div className="w-16 h-16 rounded-2xl bg-brand-danger/10 border border-brand-danger/20 flex items-center justify-center">
+            <AlertTriangle className="w-8 h-8 text-brand-danger" />
           </div>
           <div className="max-w-sm">
             <h2 className="text-lg font-bold uppercase tracking-widest text-theme-text mb-2">
@@ -49,13 +49,13 @@ export class RouteErrorBoundary extends Component<Props, State> {
             <p className="text-sm text-theme-muted leading-relaxed mb-4">
               Este painel encontrou um erro e não pôde ser renderizado. Os outros menus continuam funcionando normalmente.
             </p>
-            <pre className="text-[10px] text-red-400/70 bg-black/40 border border-white/5 p-3 rounded-lg overflow-auto max-h-24 text-left mb-6">
+            <pre className="text-[10px] text-brand-danger/70 bg-black/40 border border-white/5 p-3 rounded-lg overflow-auto max-h-24 text-left mb-6">
               {this.state.error?.message ?? "Erro desconhecido"}
             </pre>
           </div>
           <button
             onClick={() => this.setState({ hasError: false, error: undefined })}
-            className="flex items-center gap-2 px-6 py-3 bg-theme-bg-muted hover:bg-white/10 border border-white/10 rounded-xl text-xs font-bold uppercase tracking-widest text-theme-text transition-all"
+            className="flex items-center gap-2 px-6 py-3 bg-theme-bg-muted hover:bg-white/10 border border-white/10 rounded-xl text-xs font-bold uppercase tracking-widest text-gray-800 transition-all"
           >
             <RefreshCw className="w-4 h-4" />
             Tentar Novamente

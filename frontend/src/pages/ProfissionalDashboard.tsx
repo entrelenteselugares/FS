@@ -571,7 +571,7 @@ export default function ProfissionalDashboard({
  <div className="bg-theme-bg border-2 border-theme-border p-5 md:p-10 relative overflow-hidden group rounded-2xl shadow-sm hover:shadow-md transition-all duration-300">
  <div className="absolute top-0 left-0 w-full h-1 bg-brand-tactical/20 group-hover:bg-brand-tactical transition-colors" />
  <label className="text-[9px] font-bold text-theme-muted uppercase tracking-widest block mb-4">Saldo Disponível</label>
- <div className={`text-7xl font-display font-black tracking-tighter ${user.franchiseProfile.printCredits < 50 ? 'text-amber-500' : 'text-brand-tactical'}`}>
+ <div className={`text-7xl font-display font-black tracking-tighter ${user.franchiseProfile.printCredits < 50 ? 'text-brand-warning' : 'text-brand-tactical'}`}>
  {user.franchiseProfile.printCredits}
  </div>
  <p className="text-[10px] text-theme-muted font-bold uppercase tracking-[0.2em] mt-2">Fotos para Impressão</p>
@@ -579,11 +579,11 @@ export default function ProfissionalDashboard({
  
  <div className="bg-theme-bg border border-theme-border p-5 md:p-10 relative group rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300">
  <label className="text-[9px] font-bold text-theme-muted uppercase tracking-widest block mb-4">Status do Terminal</label>
- <div className={`text-xl font-display font-black uppercase tracking-widest ${user.franchiseProfile.active ? 'text-brand-tactical' : 'text-red-500'}`}>
+ <div className={`text-xl font-display font-black uppercase tracking-widest ${user.franchiseProfile.active ? 'text-brand-tactical' : 'text-brand-danger'}`}>
  {user.franchiseProfile.active ? 'Terminal Ativo' : 'Terminal Inativo'}
  </div>
  <div className="mt-4 flex items-center gap-2">
- <div className={`w-2 h-2 rounded-full ${user.franchiseProfile.active ? 'bg-brand-tactical animate-pulse' : 'bg-red-500'}`} />
+ <div className={`w-2 h-2 rounded-full ${user.franchiseProfile.active ? 'bg-brand-tactical animate-pulse' : 'bg-brand-danger'}`} />
  <span className="text-[9px] text-theme-muted font-bold uppercase tracking-widest">Sincronizado com a Nuvem</span>
  </div>
  </div>
@@ -598,7 +598,7 @@ export default function ProfissionalDashboard({
  <div className="space-y-4 mt-6">
  <button 
  onClick={() => setIsShopModalOpen(true)}
- className="w-full py-4 bg-brand-tactical text-theme-text font-display font-bold text-[10px] uppercase tracking-widest hover:bg-brand-tactical/90 hover:scale-[1.02] hover:shadow-xl hover:shadow-brand-tactical/20 transition-all shadow-lg shadow-brand-tactical/10 rounded-xl cursor-pointer"
+ className="w-full py-4 bg-brand-tactical text-brand-text font-display font-bold text-[10px] uppercase tracking-widest hover:bg-brand-tactical/90 hover:scale-[1.02] hover:shadow-xl hover:shadow-brand-tactical/20 transition-all shadow-lg shadow-brand-tactical/10 rounded-xl cursor-pointer"
  >
  LOJA DA FRANQUIA
  </button>
@@ -651,7 +651,7 @@ export default function ProfissionalDashboard({
  <td className="py-4 px-2">
  <span className={`text-[10px] font-black px-2 py-1 rounded-md uppercase tracking-widest ${
  order.status === 'PAID' ? 'bg-brand-tactical/10 text-brand-tactical' : 
- order.status === 'PENDING' ? 'bg-amber-500/10 text-amber-500' : 'bg-zinc-800 text-theme-muted'
+ order.status === 'PENDING' ? 'bg-brand-warning/10 text-brand-warning' : 'bg-zinc-800 text-theme-muted'
  }`}>
  {order.status === 'PAID' ? 'Pago' : order.status === 'PENDING' ? 'Pendente' : order.status}
  </span>
@@ -664,10 +664,10 @@ export default function ProfissionalDashboard({
  )}
  </div>
  {user.franchiseProfile.printCredits < 50 && (
- <div className="border border-amber-500/30 bg-amber-500/5 p-3 md:p-6 flex items-start gap-4 rounded-2xl shadow-lg">
- <div className="text-amber-500 text-2xl">⚠</div>
+ <div className="border border-brand-warning/30 bg-brand-warning/5 p-3 md:p-6 flex items-start gap-4 rounded-2xl shadow-lg">
+ <div className="text-brand-warning text-2xl">⚠</div>
  <div>
- <p className="text-xs font-bold text-amber-500 uppercase tracking-widest">Saldo Baixo</p>
+ <p className="text-xs font-bold text-brand-warning uppercase tracking-widest">Saldo Baixo</p>
  <p className="text-[10px] text-theme-muted font-bold mt-1">Seu saldo está abaixo de 50 fotos. Solicite recarga ao administrador para não interromper a operação.</p>
  </div>
  </div>
@@ -696,7 +696,7 @@ export default function ProfissionalDashboard({
  <span className="text-[10px] font-bold text-theme-text uppercase">{tx.description || "Consumo Phygital"}</span>
  </td>
  <td className="p-4 text-right">
- <span className="text-[10px] font-bold text-red-500">{tx.amount}</span>
+ <span className="text-[10px] font-bold text-brand-danger">{tx.amount}</span>
  </td>
  </tr>
  )) || (

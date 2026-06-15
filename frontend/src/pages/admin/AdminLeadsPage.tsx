@@ -108,7 +108,7 @@ export const AdminLeadsPage: React.FC = () => {
         </div>
 
         <div className="bg-theme-bg-muted border border-theme-border rounded-2xl p-4 md:p-8 space-y-4 shadow-sm">
-          <div className="flex items-center gap-3 text-orange-500">
+          <div className="flex items-center gap-3 text-brand-warning">
             <ShoppingBag size={16} />
             <span className="text-[10px] font-bold uppercase tracking-widest">Abandono de Checkout</span>
           </div>
@@ -208,7 +208,7 @@ export const AdminLeadsPage: React.FC = () => {
                       )}
                       <button 
                         onClick={() => window.open(`mailto:${item.cliente?.email || item.buyerEmail}?subject=${encodeURIComponent('Seu pedido no Foto Segundo')}`, '_blank')}
-                        className="p-2 bg-brand-tactical/10 text-brand-tactical hover:bg-brand-tactical hover:text-theme-text transition-all rounded-lg"
+                        className="p-2 bg-brand-tactical/10 text-brand-tactical hover:bg-brand-tactical hover:text-brand-text transition-all rounded-lg"
                       >
                         <Mail size={14} />
                       </button>

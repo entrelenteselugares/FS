@@ -35,7 +35,7 @@ export const ProfileStepper: React.FC<ProfileStepperProps> = ({ user, profile })
         <div className="space-y-1">
           <div className="flex items-center gap-3">
              <h3 className="text-xl font-heading font-bold text-theme-text uppercase">Status do Perfil</h3>
-             <span className={`px-2 py-0.5 text-[10px] font-black uppercase tracking-widest ${percentage === 100 ? 'bg-brand-tactical text-theme-text' : 'bg-amber-500/10 text-amber-500 border border-amber-500/20'}`}>
+             <span className={`px-2 py-0.5 text-[10px] font-black uppercase tracking-widest ${percentage === 100 ? 'bg-brand-tactical text-brand-text' : 'bg-brand-warning/10 text-brand-warning border border-brand-warning/20'}`}>
                {percentage === 100 ? "PRONTO PARA MISSÕES" : "PERFIL INCOMPLETO"}
              </span>
           </div>

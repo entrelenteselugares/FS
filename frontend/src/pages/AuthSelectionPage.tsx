@@ -70,7 +70,7 @@ export const AuthSelectionPage: React.FC = () => {
             </p>
             
             <button 
-              className="lux-button-ghost w-full py-5 text-[10px] font-bold uppercase tracking-[0.5em] group-hover:bg-brand-tactical group-hover:text-theme-text group-hover:border-brand-tactical transition-all duration-500"
+              className="lux-button-ghost w-full py-5 text-[10px] font-bold uppercase tracking-[0.5em] group-hover:bg-brand-tactical group-hover:text-brand-text group-hover:border-brand-tactical transition-all duration-500"
             >
               {opt.label}
             </button>

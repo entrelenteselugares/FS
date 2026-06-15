@@ -17,12 +17,16 @@
 
 ## 🔘 Ações e Botões Disponíveis
 
+- **Botão:** `VOLTAR`
+- **Botão:** `MATHEUS`
+- **Botão:** `ENVIAR DA GALERIA (MÚLTIPLO)`
 - **Botão:** `Home`
 - **Botão:** `Buscar`
 - **Botão:** `Compras`
 - **Botão:** `Meus Álbuns`
 - **Botão:** `Opções`
 - **Botão:** `Histórico de Compras`
+- **Botão:** `Álbum Sanfona`
 - **Botão:** `Minha Carteira`
 - **Botão:** `Indique e Ganhe`
 - **Botão:** `Meus Dados`
@@ -37,13 +41,7 @@
 
 ## 🔗 Links de Navegação
 
-- **COPA 2026
-PRÓXIMOS
-HOLANDA
-14/06 · 17:00
-GRP F
-JAPÃO
-Ver Álbum →** -> `/album-torcida`
+*Nenhum link de navigation detectado.*
 
 ## ⚙️ Observações Técnicas e Fluxo
 

@@ -4,7 +4,7 @@ import SEO from "../components/SEO";
 
 export function LgpdPage() {
   return (
-    <div className="min-h-screen bg-theme-bg text-theme-text selection:bg-brand-tactical/30">
+    <div className="min-h-screen bg-theme-bg text-brand-text selection:bg-brand-tactical/30">
       <SEO title="Portal LGPD | Foto Segundo" description="Portal de Transparência e conformidade com a Lei Geral de Proteção de Dados (LGPD) da Foto Segundo." />
       
       {/* Header Minimalista */}

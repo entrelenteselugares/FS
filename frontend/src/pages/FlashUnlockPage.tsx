@@ -64,8 +64,8 @@ const FlashUnlockPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-theme-text flex flex-col items-center justify-center p-3 md:p-6 relative overflow-hidden">
       {/* Background Decor */}
-      <div className="absolute top-[-10%] right-[-10%] w-96 h-96 bg-emerald-500/10 rounded-full blur-[120px]" />
-      <div className="absolute bottom-[-10%] left-[-10%] w-96 h-96 bg-emerald-500/5 rounded-full blur-[120px]" />
+      <div className="absolute top-[-10%] right-[-10%] w-96 h-96 bg-brand-tactical/10 rounded-full blur-[120px]" />
+      <div className="absolute bottom-[-10%] left-[-10%] w-96 h-96 bg-brand-tactical/5 rounded-full blur-[120px]" />
 
       <AnimatePresence mode="wait">
         {!unlocked ? (
@@ -77,7 +77,7 @@ const FlashUnlockPage: React.FC = () => {
             className="w-full max-w-md text-center z-10"
           >
             <div className="mb-8 flex justify-center">
-              <div className="w-20 h-20 bg-emerald-500/10 rounded-full flex items-center justify-center border border-emerald-500/20">
+              <div className="w-20 h-20 bg-brand-tactical/10 rounded-full flex items-center justify-center border border-brand-tactical/20">
                 <Lock className="w-10 h-10 text-theme-brand" />
               </div>
             </div>
@@ -100,7 +100,7 @@ const FlashUnlockPage: React.FC = () => {
                   value={digit}
                   onChange={(e) => handlePinChange(idx, e.target.value)}
                   onKeyDown={(e) => handleKeyDown(idx, e)}
-                  className="w-12 h-16 bg-[#1a1a1a] border border-white/10 rounded-xl text-center text-2xl font-bold focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all outline-none"
+                  className="w-12 h-16 bg-[#1a1a1a] border border-white/10 rounded-xl text-center text-2xl font-bold focus:border-brand-tactical focus:ring-1 focus:ring-brand-tactical transition-all outline-none"
                 />
               ))}
             </div>
@@ -109,7 +109,7 @@ const FlashUnlockPage: React.FC = () => {
               <motion.p 
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                className="text-red-400 mb-4 font-medium"
+                className="text-brand-danger mb-4 font-medium"
               >
                 {error}
               </motion.p>
@@ -117,7 +117,7 @@ const FlashUnlockPage: React.FC = () => {
 
             {loading && (
               <div className="flex justify-center mb-4">
-                <div className="w-6 h-6 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin" />
+                <div className="w-6 h-6 border-2 border-brand-tactical border-t-transparent rounded-full animate-spin" />
               </div>
             )}
 
@@ -133,7 +133,7 @@ const FlashUnlockPage: React.FC = () => {
             animate={{ opacity: 1, scale: 1 }}
             className="w-full max-w-2xl z-10 flex flex-col items-center"
           >
-            <div className="mb-6 flex items-center gap-3 bg-emerald-500/10 px-4 py-2 rounded-full border border-emerald-500/20">
+            <div className="mb-6 flex items-center gap-3 bg-brand-tactical/10 px-4 py-2 rounded-full border border-brand-tactical/20">
               <Unlock className="w-5 h-5 text-theme-brand" />
               <span className="text-theme-brand font-bold tracking-widest text-sm">DESBLOQUEADO</span>
             </div>
@@ -164,7 +164,7 @@ const FlashUnlockPage: React.FC = () => {
             <div className="w-full mt-8 space-y-4">
               <button 
                 onClick={() => navigate("/register?claim=" + shortId)}
-                className="w-full py-4 bg-emerald-500 hover:bg-emerald-400 text-theme-text font-bold rounded-xl transition-all transform active:scale-[0.98] flex items-center justify-center gap-3 shadow-[0_0_20px_rgba(133,185,172,0.3)]"
+                className="w-full py-4 bg-brand-tactical hover:bg-brand-tactical text-brand-text font-bold rounded-xl transition-all transform active:scale-[0.98] flex items-center justify-center gap-3 shadow-[0_0_20px_rgba(133,185,172,0.3)]"
               >
                 <Download className="w-6 h-6" />
                 REMOVER MARCA D&apos;ÁGUA E SALVAR
@@ -172,7 +172,7 @@ const FlashUnlockPage: React.FC = () => {
               
               <button 
                 onClick={() => navigate("/login")}
-                className="w-full py-4 bg-theme-bg-muted hover:bg-white/10 text-theme-text font-bold rounded-xl transition-all flex items-center justify-center gap-3"
+                className="w-full py-4 bg-theme-bg-muted hover:bg-white/10 text-gray-800 font-bold rounded-xl transition-all flex items-center justify-center gap-3"
               >
                 <UserPlus className="w-5 h-5" />
                 JÁ TENHO CONTA

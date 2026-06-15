@@ -37,10 +37,10 @@ export const ShareCollage = ({ slots, onClose }: Props) => {
         <X />
       </button>
 
-      <div className="w-full max-w-sm aspect-[9/16] bg-theme-surface rounded-2xl overflow-hidden shadow-2xl border border-emerald-500 flex flex-col relative">
-        <div className="bg-emerald-600 p-4 text-center">
+      <div className="w-full max-w-sm aspect-[9/16] bg-theme-surface rounded-2xl overflow-hidden shadow-2xl border border-brand-tactical flex flex-col relative">
+        <div className="bg-brand-tactical p-4 text-center">
           <h2 className="text-xl font-bold text-theme-text uppercase tracking-wider">Álbum da Torcida</h2>
-          <p className="text-emerald-100 text-xs">Brasil vs Sérvia</p>
+          <p className="text-brand-tactical text-xs">Brasil vs Sérvia</p>
         </div>
         
         <div className="flex-1 p-2 grid grid-cols-3 gap-1 bg-theme-bg">
@@ -62,14 +62,14 @@ export const ShareCollage = ({ slots, onClose }: Props) => {
 
         <div className="p-4 text-center bg-theme-surface">
           <p className="text-xs text-theme-muted mb-2">Gerado no app Foto Segundo</p>
-          <div className="text-yellow-400 font-bold flex items-center justify-center gap-2">
+          <div className="text-brand-warning font-bold flex items-center justify-center gap-2">
             <span>🏆</span> 12/12 Completado! <span>🏆</span>
           </div>
         </div>
       </div>
 
       <div className="flex gap-4 mt-8">
-        <button onClick={handleShare} className="bg-emerald-500 hover:bg-emerald-600 text-theme-text font-bold py-3 px-6 rounded-full flex items-center gap-2 transition-colors">
+        <button onClick={handleShare} className="bg-brand-tactical hover:bg-brand-tactical text-brand-text font-bold py-3 px-6 rounded-full flex items-center gap-2 transition-colors">
           <Share2 size={20} /> Compartilhar
         </button>
         <button className="bg-theme-surface hover:bg-theme-surface/80 border border-theme-border text-theme-text font-bold py-3 px-6 rounded-full flex items-center gap-2 transition-colors">

@@ -121,9 +121,9 @@ export const AdminApprovalHub: React.FC = () => {
             <p className="text-[10px] font-bold uppercase tracking-[0.5em] text-theme-muted mt-2">Central de aprovações pendentes do sistema</p>
           </div>
           {totalPending > 0 && (
-            <div className="px-4 py-2 bg-amber-500/10 border border-amber-500/30 rounded-xl flex items-center gap-2">
-              <Clock size={14} className="text-amber-500" />
-              <span className="text-amber-500 text-[10px] font-bold uppercase tracking-widest">
+            <div className="px-4 py-2 bg-brand-warning/10 border border-brand-warning/30 rounded-xl flex items-center gap-2">
+              <Clock size={14} className="text-brand-warning" />
+              <span className="text-brand-warning text-[10px] font-bold uppercase tracking-widest">
                 {totalPending} PENDENTE{totalPending > 1 ? "S" : ""}
               </span>
             </div>
@@ -151,7 +151,7 @@ export const AdminApprovalHub: React.FC = () => {
             {tab.count > 0 && (
               <span className={`px-2 py-0.5 rounded-full text-[10px] font-black ${
                 activeTab === tab.key
-                  ? "bg-brand-tactical text-theme-text"
+                  ? "bg-brand-tactical text-brand-text"
                   : "bg-theme-border text-theme-muted"
               }`}>
                 {tab.count}
@@ -204,7 +204,7 @@ export const AdminApprovalHub: React.FC = () => {
                             <p className="text-[10px] text-theme-muted">{v.user.email}</p>
                           </div>
                         </div>
-                        <div className="bg-amber-500/10 border border-amber-500/30 text-amber-500 text-[9px] font-bold uppercase px-3 py-1.5 rounded-xl tracking-widest flex items-center gap-1.5">
+                        <div className="bg-brand-warning/10 border border-brand-warning/30 text-brand-warning text-[9px] font-bold uppercase px-3 py-1.5 rounded-xl tracking-widest flex items-center gap-1.5">
                           <Clock size={10} />
                           {v.experienceYears} ANO{v.experienceYears !== 1 ? "S" : ""} DECLARADOS
                         </div>
@@ -235,14 +235,14 @@ export const AdminApprovalHub: React.FC = () => {
                         <button
                           onClick={() => handleReviewExperience(v.id, false)}
                           disabled={processingId === v.id}
-                          className="flex-1 h-10 border border-theme-border text-theme-muted hover:text-red-500 hover:border-red-500/50 hover:bg-red-500/10 rounded-xl flex items-center justify-center gap-2 transition-all text-[10px] font-bold uppercase tracking-widest"
+                          className="flex-1 h-10 border border-theme-border text-theme-muted hover:text-brand-danger hover:border-brand-danger/50 hover:bg-brand-danger/10 rounded-xl flex items-center justify-center gap-2 transition-all text-[10px] font-bold uppercase tracking-widest"
                         >
                           <X size={14} /> Reprovar
                         </button>
                         <button
                           onClick={() => handleReviewExperience(v.id, true)}
                           disabled={processingId === v.id}
-                          className="flex-[2] h-10 bg-brand-tactical hover:bg-brand-tactical/90 disabled:opacity-50 text-theme-text text-[10px] font-bold uppercase tracking-widest rounded-xl flex items-center justify-center gap-2 transition-all shadow-lg shadow-brand-tactical/20"
+                          className="flex-[2] h-10 bg-brand-tactical hover:bg-brand-tactical/90 disabled:opacity-50 text-brand-text text-[10px] font-bold uppercase tracking-widest rounded-xl flex items-center justify-center gap-2 transition-all shadow-lg shadow-brand-tactical/20"
                         >
                           {processingId === v.id ? "..." : <><Check size={14} /> Validar Experiência</>}
                         </button>
@@ -338,14 +338,14 @@ export const AdminApprovalHub: React.FC = () => {
                         <button
                           onClick={() => handleAction(app.id, 'reject')}
                           disabled={processingId === app.id}
-                          className="flex-1 h-9 border border-theme-border text-theme-muted hover:text-red-500 hover:border-red-500/50 hover:bg-red-500/10 rounded-lg flex items-center justify-center gap-2 transition-all text-[10px] font-bold uppercase tracking-widest"
+                          className="flex-1 h-9 border border-theme-border text-theme-muted hover:text-brand-danger hover:border-brand-danger/50 hover:bg-brand-danger/10 rounded-lg flex items-center justify-center gap-2 transition-all text-[10px] font-bold uppercase tracking-widest"
                         >
                           <X size={14} /> Reprovar
                         </button>
                         <button
                           onClick={() => handleAction(app.id, 'approve')}
                           disabled={processingId === app.id}
-                          className="flex-1 h-9 bg-brand-tactical hover:bg-brand-tactical/90 disabled:opacity-50 text-theme-text text-[10px] font-bold uppercase tracking-widest rounded-lg flex items-center justify-center gap-2 transition-all shadow-lg shadow-brand-tactical/20"
+                          className="flex-1 h-9 bg-brand-tactical hover:bg-brand-tactical/90 disabled:opacity-50 text-brand-text text-[10px] font-bold uppercase tracking-widest rounded-lg flex items-center justify-center gap-2 transition-all shadow-lg shadow-brand-tactical/20"
                         >
                           {processingId === app.id ? "..." : <><Check size={14} /> Aprovar</>}
                         </button>

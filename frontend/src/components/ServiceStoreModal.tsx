@@ -66,7 +66,7 @@ export function ServiceStoreModal({ vaultId, vaultName, onClose }: ServiceStoreM
 
   const getIcon = (category: string) => {
     const cat = category?.toUpperCase() || "";
-    if (cat.includes("VIDEO") || cat.includes("REELS")) return <Video className="text-blue-500" size={24} />;
+    if (cat.includes("VIDEO") || cat.includes("REELS")) return <Video className="text-brand-info" size={24} />;
     if (cat.includes("RETOQUE") || cat.includes("TRATAMENTO") || cat.includes("EDIÇÃO")) return <Wand2 className="text-purple-400" size={24} />;
     return <Sparkles className="text-theme-brand" size={24} />;
   };
@@ -103,7 +103,7 @@ export function ServiceStoreModal({ vaultId, vaultName, onClose }: ServiceStoreM
           </div>
           <button 
             onClick={onClose}
-            className="p-2 bg-theme-bg-muted hover:bg-white/10 rounded-full transition-colors text-theme-text"
+            className="p-2 bg-theme-bg-muted hover:bg-white/10 rounded-full transition-colors text-gray-800"
           >
             <X size={20} />
           </button>
@@ -139,7 +139,7 @@ export function ServiceStoreModal({ vaultId, vaultName, onClose }: ServiceStoreM
                 <label className="block text-[10px] text-theme-muted uppercase tracking-widest font-bold mb-2">Link de Referência (Opcional)</label>
                 <input type="text" placeholder="Ex: Link do Google Drive, YouTube, Pinterest..."
                   value={referenceUrl} onChange={e => setReferenceUrl(e.target.value)}
-                  className="w-full bg-black border border-white/10 p-3 text-sm text-theme-text outline-none focus:border-emerald-500 transition-colors rounded-lg"
+                  className="w-full bg-black border border-white/10 p-3 text-sm text-zinc-100 outline-none focus:border-brand-tactical transition-colors rounded-lg"
                 />
                 <p className="text-[10px] text-theme-muted mt-1">Insira um link para mostrar como deseja que o material fique.</p>
               </div>
@@ -148,7 +148,7 @@ export function ServiceStoreModal({ vaultId, vaultName, onClose }: ServiceStoreM
                 <label className="block text-[10px] text-theme-muted uppercase tracking-widest font-bold mb-2">Sugestão de Trilha Sonora (Opcional)</label>
                 <input type="text" placeholder="Ex: Nome da música, artista, link do Spotify..."
                   value={soundtrackSuggestion} onChange={e => setSoundtrackSuggestion(e.target.value)}
-                  className="w-full bg-black border border-white/10 p-3 text-sm text-theme-text outline-none focus:border-emerald-500 transition-colors rounded-lg"
+                  className="w-full bg-black border border-white/10 p-3 text-sm text-zinc-100 outline-none focus:border-brand-tactical transition-colors rounded-lg"
                 />
               </div>
 
@@ -156,7 +156,7 @@ export function ServiceStoreModal({ vaultId, vaultName, onClose }: ServiceStoreM
                 <label className="block text-[10px] text-theme-muted uppercase tracking-widest font-bold mb-2">Observações e Orientações (Opcional)</label>
                 <textarea placeholder="Escreva aqui detalhes importantes para a edição, como cores, cortes, estilos..."
                   value={internalNotes} onChange={e => setInternalNotes(e.target.value)}
-                  className="w-full bg-black border border-white/10 p-3 text-sm text-theme-text outline-none focus:border-emerald-500 transition-colors rounded-lg min-h-[100px]"
+                  className="w-full bg-black border border-white/10 p-3 text-sm text-zinc-100 outline-none focus:border-brand-tactical transition-colors rounded-lg min-h-[100px]"
                 />
               </div>
 
@@ -170,7 +170,7 @@ export function ServiceStoreModal({ vaultId, vaultName, onClose }: ServiceStoreM
                  <button
                     onClick={() => handleBuy(selectedService)}
                     disabled={buying !== null}
-                    className="bg-emerald-500 hover:bg-emerald-400 disabled:opacity-50 text-theme-text px-6 py-2 rounded-lg font-bold uppercase tracking-widest text-xs transition-all flex items-center gap-2 active:scale-95"
+                    className="bg-brand-tactical hover:bg-brand-tactical disabled:opacity-50 text-brand-text px-6 py-2 rounded-lg font-bold uppercase tracking-widest text-xs transition-all flex items-center gap-2 active:scale-95"
                  >
                     {buying === selectedService.id ? (
                       <Loader2 size={16} className="animate-spin" />
@@ -185,7 +185,7 @@ export function ServiceStoreModal({ vaultId, vaultName, onClose }: ServiceStoreM
               {services.map((service) => (
                 <div 
                   key={service.id}
-                  className="bg-zinc-800/50 border border-white/10 rounded-xl p-5 hover:border-emerald-500/50 hover:bg-zinc-800 transition-all group flex flex-col"
+                  className="bg-zinc-800/50 border border-white/10 rounded-xl p-5 hover:border-brand-tactical/50 hover:bg-zinc-800 transition-all group flex flex-col"
                 >
                   <div className="flex items-start justify-between mb-3">
                     <div className="w-12 h-12 bg-black/40 rounded-xl flex items-center justify-center border border-white/5 group-hover:scale-110 transition-transform">
@@ -209,7 +209,7 @@ export function ServiceStoreModal({ vaultId, vaultName, onClose }: ServiceStoreM
                     
                     <button
                       onClick={() => setSelectedService(service)}
-                      className="bg-emerald-500 hover:bg-emerald-400 text-theme-text px-4 py-2 rounded-lg font-bold uppercase tracking-widest text-[10px] transition-all flex items-center gap-2 active:scale-95"
+                      className="bg-brand-tactical hover:bg-brand-tactical text-brand-text px-4 py-2 rounded-lg font-bold uppercase tracking-widest text-[10px] transition-all flex items-center gap-2 active:scale-95"
                     >
                       <Plus size={14} />
                       Contratar

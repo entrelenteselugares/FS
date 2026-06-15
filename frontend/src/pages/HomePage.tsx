@@ -88,10 +88,10 @@ function EventCard({ event, onClick }: { event: Event; onClick: () => void }) {
 
       {/* Badge de Autoria - Top Left */}
       <div className="absolute top-1.5 left-1.5 md:top-3 md:left-3 z-10 flex items-center gap-1.5">
-        <div className="w-4 h-4 md:w-6 md:h-6 rounded-full bg-emerald-500/90 flex items-center justify-center text-[9px] md:text-[10px] font-bold text-theme-text shadow-lg">
+        <div className="w-4 h-4 md:w-6 md:h-6 rounded-full bg-brand-tactical/90 flex items-center justify-center text-[9px] md:text-[10px] font-bold text-white shadow-lg">
           {event.ownerName?.charAt(0)?.toUpperCase() || event.cartorio?.charAt(0)?.toUpperCase() || "F"}
         </div>
-        <span className="hidden md:inline text-[9px] font-bold text-theme-text uppercase tracking-widest truncate max-w-[120px] drop-shadow-md">
+        <span className="hidden md:inline text-[9px] font-bold text-white uppercase tracking-widest truncate max-w-[120px] drop-shadow-md">
           {event.ownerName || event.cartorio || "Foto Segundo"}
         </span>
       </div>
@@ -99,12 +99,12 @@ function EventCard({ event, onClick }: { event: Event; onClick: () => void }) {
       {/* Status Badges - Top Right */}
       <div className="absolute top-1.5 right-1.5 md:top-3 md:right-3 z-10 flex flex-col gap-1 items-end">
         {today && (
-          <span className="px-1.5 py-0.5 bg-emerald-500 text-theme-text text-[9px] md:text-[9px] font-bold uppercase tracking-widest rounded-sm shadow-xl">
+          <span className="px-1.5 py-0.5 bg-brand-tactical text-white text-[9px] md:text-[9px] font-bold uppercase tracking-widest rounded-sm shadow-xl">
             HOJE
           </span>
         )}
         {novo && (
-          <span className="px-2 py-0.5 bg-black/40 backdrop-blur-md text-theme-text text-[9px] md:text-[9px] font-bold uppercase tracking-widest rounded-full border border-white/20 shadow-xl">
+          <span className="px-2 py-0.5 bg-black/40 backdrop-blur-md text-white text-[9px] md:text-[9px] font-bold uppercase tracking-widest rounded-full border border-white/20 shadow-xl">
             NOVO
           </span>
         )}
@@ -112,11 +112,11 @@ function EventCard({ event, onClick }: { event: Event; onClick: () => void }) {
 
       {/* Content Overlay - Always Bottom for better subject visibility */}
       <div className="absolute bottom-0 left-0 w-full p-2 md:p-4 z-10 flex flex-col justify-end">
-        <h3 className="text-[10px] md:text-lg font-heading font-bold text-theme-text uppercase leading-tight drop-shadow-lg line-clamp-2 mb-0.5 md:mb-1.5">
+        <h3 className="text-[10px] md:text-lg font-heading font-bold text-white uppercase leading-tight drop-shadow-lg line-clamp-2 mb-0.5 md:mb-1.5">
           {event.title}
         </h3>
         {/* Metadata */}
-        <div className="flex flex-col gap-0.5 md:gap-1 text-theme-text/70 text-[9px] md:text-[9px] font-bold uppercase tracking-widest mt-0.5 md:mt-1.5">
+        <div className="flex flex-col gap-0.5 md:gap-1 text-white/90 text-[9px] md:text-[9px] font-bold uppercase tracking-widest mt-0.5 md:mt-1.5">
           <div className="flex items-center gap-1">
             <MapPin className="w-2 h-2 md:w-2.5 md:h-2.5 text-theme-brand shrink-0" />
             <span className="truncate">{event.city || (event.location?.startsWith("CEP:") ? null : event.location) || "PONTO DESIGNADO"}</span>
@@ -334,7 +334,7 @@ export const HomePage = () => {
               </form>
               <button 
                 onClick={() => setShowMobileFilters(!showMobileFilters)}
-                className={`shrink-0 p-3.5 rounded-full border transition-all shadow-sm ${showMobileFilters ? 'bg-brand-tactical border-brand-tactical text-theme-text' : 'bg-theme-bg-muted border-theme-border text-theme-text hover:border-brand-tactical/50'}`}
+                className={`shrink-0 p-3.5 rounded-full border transition-all shadow-sm ${showMobileFilters ? 'bg-brand-tactical border-brand-tactical text-brand-text' : 'bg-theme-bg-muted border-theme-border text-brand-text hover:border-brand-tactical/50'}`}
               >
                 <SlidersHorizontal size={16} />
               </button>

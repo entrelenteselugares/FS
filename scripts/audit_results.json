@@ -1,0 +1,3303 @@
+{
+  "routes": [
+    "/login",
+    "/reset-password",
+    "/forgot-password",
+    "/registro",
+    "/register",
+    "/auth",
+    "/invitation/:code",
+    "/",
+    "/sobre",
+    "/parcerias",
+    "/termos",
+    "/privacidade",
+    "/lgpd",
+    "/contato",
+    "/status",
+    "/vitrine",
+    "/profissionais",
+    "/pro/:id",
+    "/p/:slug",
+    "/suporte",
+    "/e/:slug",
+    "/cotacao",
+    "/cotacao/pacotes",
+    "/cotacao/unidades",
+    "/cotacao/customizado",
+    "/checkout",
+    "/checkout/:orderId",
+    "/delivery/:id",
+    "/captura",
+    "/phygital-capture",
+    "/negocios",
+    "/clube",
+    "/flash/:shortId",
+    "/suporte",
+    "/embaixador/:slug",
+    "/album-torcida",
+    "/album-torcida/match/:matchId",
+    "/dashboard",
+    "*",
+    "/admin/*",
+    "/profissional",
+    "/profissional/novo-servico",
+    "/profissional/portfolio",
+    "/profissional/monitor/:eventId",
+    "/profissional/monitor/:eventId/full",
+    "/profissional/monitor/:eventId/fullscreen",
+    "/unidade-fixa",
+    "/franquia",
+    "/minha-conta",
+    "/meus-albuns",
+    "/meus-albuns/:vaultId",
+    "/404",
+    "*"
+  ],
+  "brokenLinks": [],
+  "hardcodedColors": [
+    {
+      "file": "components\\AuthModal.tsx",
+      "match": "#ccc"
+    },
+    {
+      "file": "components\\AuthModal.tsx",
+      "match": "#4285F4"
+    },
+    {
+      "file": "components\\AuthModal.tsx",
+      "match": "#34A853"
+    },
+    {
+      "file": "components\\AuthModal.tsx",
+      "match": "#FBBC05"
+    },
+    {
+      "file": "components\\AuthModal.tsx",
+      "match": "#EA4335"
+    },
+    {
+      "file": "components\\AuthModal.tsx",
+      "match": "#ff4040"
+    },
+    {
+      "file": "components\\ErrorBoundary.tsx",
+      "match": "#050505"
+    },
+    {
+      "file": "components\\NativePrintLayout.tsx",
+      "match": "#c8c8c8"
+    },
+    {
+      "file": "components\\NativePrintLayout.tsx",
+      "match": "#c0c0c0"
+    },
+    {
+      "file": "components\\NativePrintLayout.tsx",
+      "match": "#c0c0c0"
+    },
+    {
+      "file": "components\\NativePrintLayout.tsx",
+      "match": "#c0c0c0"
+    },
+    {
+      "file": "components\\NativePrintLayout.tsx",
+      "match": "#c0c0c0"
+    },
+    {
+      "file": "components\\NativePrintLayout.tsx",
+      "match": "#c0c0c0"
+    },
+    {
+      "file": "components\\NativePrintLayout.tsx",
+      "match": "#c0c0c0"
+    },
+    {
+      "file": "components\\NativePrintLayout.tsx",
+      "match": "#c0c0c0"
+    },
+    {
+      "file": "components\\NativePrintLayout.tsx",
+      "match": "#c0c0c0"
+    },
+    {
+      "file": "components\\NativePrintLayout.tsx",
+      "match": "#18181b"
+    },
+    {
+      "file": "components\\NativePrintLayout.tsx",
+      "match": "#71717a"
+    },
+    {
+      "file": "components\\notifications\\NotificationBell.tsx",
+      "match": "#0a0a0a"
+    },
+    {
+      "file": "components\\PrintKitModal.tsx",
+      "match": "#09090b"
+    },
+    {
+      "file": "components\\PrintKitModal.tsx",
+      "match": "#09090b"
+    },
+    {
+      "file": "components\\PrintKitModal.tsx",
+      "match": "#e4e4e7"
+    },
+    {
+      "file": "components\\PrintKitModal.tsx",
+      "match": "#18181b"
+    },
+    {
+      "file": "components\\PrintKitModal.tsx",
+      "match": "#27272a"
+    },
+    {
+      "file": "components\\PrintKitModal.tsx",
+      "match": "#f4f4f5"
+    },
+    {
+      "file": "components\\PrintKitModal.tsx",
+      "match": "#e4e4e7"
+    },
+    {
+      "file": "components\\PrintKitModal.tsx",
+      "match": "#14b8a6"
+    },
+    {
+      "file": "components\\PrintKitModal.tsx",
+      "match": "#09090b"
+    },
+    {
+      "file": "components\\PrintKitModal.tsx",
+      "match": "#09090b"
+    },
+    {
+      "file": "components\\PrintKitModal.tsx",
+      "match": "#09090b"
+    },
+    {
+      "file": "components\\PrintKitModal.tsx",
+      "match": "#27272a"
+    },
+    {
+      "file": "components\\PrintKitModal.tsx",
+      "match": "#e4e4e7"
+    },
+    {
+      "file": "components\\PrintKitModal.tsx",
+      "match": "#09090b"
+    },
+    {
+      "file": "components\\PrintKitModal.tsx",
+      "match": "#18181b"
+    },
+    {
+      "file": "components\\PrintKitModal.tsx",
+      "match": "#f4f4f5"
+    },
+    {
+      "file": "components\\PrintKitModal.tsx",
+      "match": "#3f3f46"
+    },
+    {
+      "file": "components\\PrintKitModal.tsx",
+      "match": "#d4d4d8"
+    },
+    {
+      "file": "components\\PrintKitModal.tsx",
+      "match": "#09090b"
+    },
+    {
+      "file": "components\\PrintStoreModal.tsx",
+      "match": "#AED9E0"
+    },
+    {
+      "file": "components\\PrintStoreModal.tsx",
+      "match": "#7FD1B9"
+    },
+    {
+      "file": "components\\PrintStoreModal.tsx",
+      "match": "#0AD3FF"
+    },
+    {
+      "file": "components\\PrintStoreModal.tsx",
+      "match": "#B3E59F"
+    },
+    {
+      "file": "components\\PrintStoreModal.tsx",
+      "match": "#008080"
+    },
+    {
+      "file": "components\\PrintStoreModal.tsx",
+      "match": "#F7E181"
+    },
+    {
+      "file": "components\\PrintStoreModal.tsx",
+      "match": "#FBC3BC"
+    },
+    {
+      "file": "components\\PrintStoreModal.tsx",
+      "match": "#F28482"
+    },
+    {
+      "file": "components\\PrintStoreModal.tsx",
+      "match": "#D1495B"
+    },
+    {
+      "file": "components\\PrintStoreModal.tsx",
+      "match": "#E63946"
+    },
+    {
+      "file": "components\\PrintStoreModal.tsx",
+      "match": "#E8C7DE"
+    },
+    {
+      "file": "components\\PrintStoreModal.tsx",
+      "match": "#B5838D"
+    },
+    {
+      "file": "components\\PrintStoreModal.tsx",
+      "match": "#6B2D5C"
+    },
+    {
+      "file": "components\\PrintStoreModal.tsx",
+      "match": "#1C1A27"
+    },
+    {
+      "file": "components\\PrintStoreModal.tsx",
+      "match": "#EED7C5"
+    },
+    {
+      "file": "components\\PrintStoreModal.tsx",
+      "match": "#F7D6C8"
+    },
+    {
+      "file": "components\\PrintStoreModal.tsx",
+      "match": "#C68B59"
+    },
+    {
+      "file": "components\\PrintStoreModal.tsx",
+      "match": "#E2D4C9"
+    },
+    {
+      "file": "components\\PrintStoreModal.tsx",
+      "match": "#A5A5A5"
+    },
+    {
+      "file": "components\\PrintStoreModal.tsx",
+      "match": "#D3B69C"
+    },
+    {
+      "file": "components\\profissional\\CashflowChart.tsx",
+      "match": "#666"
+    },
+    {
+      "file": "components\\profissional\\CashflowChart.tsx",
+      "match": "#666"
+    },
+    {
+      "file": "components\\profissional\\CashflowChart.tsx",
+      "match": "#14b8a6"
+    },
+    {
+      "file": "components\\profissional\\CashflowChart.tsx",
+      "match": "#14b8a6"
+    },
+    {
+      "file": "components\\quote\\QuoteDesktopView.tsx",
+      "match": "#85B9AC"
+    },
+    {
+      "file": "components\\quote\\QuoteDesktopView.tsx",
+      "match": "#333"
+    },
+    {
+      "file": "components\\quote\\QuoteDesktopView.tsx",
+      "match": "#666"
+    },
+    {
+      "file": "components\\quote\\QuoteMobileView.tsx",
+      "match": "#09090b"
+    },
+    {
+      "file": "components\\quote\\QuoteMobileView.tsx",
+      "match": "#18181b"
+    },
+    {
+      "file": "components\\quote\\QuoteMobileView.tsx",
+      "match": "#85b9ac"
+    },
+    {
+      "file": "components\\quote\\QuoteMobileView.tsx",
+      "match": "#fafafa"
+    },
+    {
+      "file": "components\\quote\\QuoteMobileView.tsx",
+      "match": "#a1a1aa"
+    },
+    {
+      "file": "components\\VaultSettingsModal.tsx",
+      "match": "#111"
+    },
+    {
+      "file": "components\\worldcup\\AlbumMissionsTab.tsx",
+      "match": "#85b9ac"
+    },
+    {
+      "file": "components\\worldcup\\AlbumMissionsTab.tsx",
+      "match": "#85b9ac"
+    },
+    {
+      "file": "components\\worldcup\\AlbumMissionsTab.tsx",
+      "match": "#9ca3af"
+    },
+    {
+      "file": "components\\worldcup\\AlbumMissionsTab.tsx",
+      "match": "#85b9ac"
+    },
+    {
+      "file": "components\\worldcup\\AlbumMissionsTab.tsx",
+      "match": "#d1d5db"
+    },
+    {
+      "file": "components\\worldcup\\AlbumMissionsTab.tsx",
+      "match": "#85b9ac"
+    },
+    {
+      "file": "components\\worldcup\\AlbumMissionsTab.tsx",
+      "match": "#ef4444"
+    },
+    {
+      "file": "components\\worldcup\\AlbumMissionsTab.tsx",
+      "match": "#fbbf24"
+    },
+    {
+      "file": "components\\worldcup\\AlbumMissionsTab.tsx",
+      "match": "#9ca3af"
+    },
+    {
+      "file": "components\\worldcup\\AlbumMissionsTab.tsx",
+      "match": "#4b5563"
+    },
+    {
+      "file": "components\\worldcup\\AlbumMissionsTab.tsx",
+      "match": "#9ca3af"
+    },
+    {
+      "file": "components\\worldcup\\AlbumMissionsTab.tsx",
+      "match": "#85b9ac"
+    },
+    {
+      "file": "components\\worldcup\\AlbumMissionsTab.tsx",
+      "match": "#6b7280"
+    },
+    {
+      "file": "components\\worldcup\\AlbumMissionsTab.tsx",
+      "match": "#6b7280"
+    },
+    {
+      "file": "components\\worldcup\\AlbumMissionsTab.tsx",
+      "match": "#85b9ac"
+    },
+    {
+      "file": "components\\worldcup\\AlbumMissionsTab.tsx",
+      "match": "#fbbf24"
+    },
+    {
+      "file": "components\\worldcup\\AlbumMissionsTab.tsx",
+      "match": "#fbbf24"
+    },
+    {
+      "file": "components\\worldcup\\AlbumMissionsTab.tsx",
+      "match": "#fbbf24"
+    },
+    {
+      "file": "components\\worldcup\\AlbumMissionsTab.tsx",
+      "match": "#d1d5db"
+    },
+    {
+      "file": "components\\worldcup\\AlbumMissionsTab.tsx",
+      "match": "#fbbf24"
+    },
+    {
+      "file": "components\\worldcup\\AlbumMissionsTab.tsx",
+      "match": "#6b7280"
+    },
+    {
+      "file": "components\\worldcup\\AlbumMissionsTab.tsx",
+      "match": "#9ca3af"
+    },
+    {
+      "file": "components\\worldcup\\AlbumMissionsTab.tsx",
+      "match": "#85b9ac"
+    },
+    {
+      "file": "components\\worldcup\\AlbumMissionsTab.tsx",
+      "match": "#85b9ac"
+    },
+    {
+      "file": "components\\worldcup\\AlbumMissionsTab.tsx",
+      "match": "#fbbf24"
+    },
+    {
+      "file": "components\\worldcup\\AlbumMissionsTab.tsx",
+      "match": "#ef4444"
+    },
+    {
+      "file": "components\\worldcup\\AlbumMissionsTab.tsx",
+      "match": "#85b9ac"
+    },
+    {
+      "file": "components\\worldcup\\WorldCupBracket.tsx",
+      "match": "#85b9ac"
+    },
+    {
+      "file": "components\\worldcup\\WorldCupBracket.tsx",
+      "match": "#ef4444"
+    },
+    {
+      "file": "components\\worldcup\\WorldCupBracket.tsx",
+      "match": "#85b9ac"
+    },
+    {
+      "file": "components\\worldcup\\WorldCupBracket.tsx",
+      "match": "#9ca3af"
+    },
+    {
+      "file": "components\\worldcup\\WorldCupBracket.tsx",
+      "match": "#6b7280"
+    },
+    {
+      "file": "components\\worldcup\\WorldCupBracket.tsx",
+      "match": "#85b9ac"
+    },
+    {
+      "file": "components\\worldcup\\WorldCupBracket.tsx",
+      "match": "#85b9ac"
+    },
+    {
+      "file": "components\\worldcup\\WorldCupLiveBanner.tsx",
+      "match": "#22c55e"
+    },
+    {
+      "file": "components\\worldcup\\WorldCupLiveBanner.tsx",
+      "match": "#f59e0b"
+    },
+    {
+      "file": "components\\worldcup\\WorldCupLiveBanner.tsx",
+      "match": "#6b7280"
+    },
+    {
+      "file": "components\\worldcup\\WorldCupLiveBanner.tsx",
+      "match": "#93c5fd"
+    },
+    {
+      "file": "components\\worldcup\\WorldCupLiveBanner.tsx",
+      "match": "#022c22"
+    },
+    {
+      "file": "components\\worldcup\\WorldCupLiveBanner.tsx",
+      "match": "#065f46"
+    },
+    {
+      "file": "components\\worldcup\\WorldCupLiveBanner.tsx",
+      "match": "#064e3b"
+    },
+    {
+      "file": "components\\worldcup\\WorldCupLiveBanner.tsx",
+      "match": "#022c22"
+    },
+    {
+      "file": "components\\worldcup\\WorldCupLiveBanner.tsx",
+      "match": "#fbbf24"
+    },
+    {
+      "file": "components\\worldcup\\WorldCupLiveBanner.tsx",
+      "match": "#fbbf24"
+    },
+    {
+      "file": "components\\worldcup\\WorldCupLiveBanner.tsx",
+      "match": "#22c55e"
+    },
+    {
+      "file": "components\\worldcup\\WorldCupLiveBanner.tsx",
+      "match": "#3b82f6"
+    },
+    {
+      "file": "components\\worldcup\\WorldCupLiveBanner.tsx",
+      "match": "#fbbf24"
+    },
+    {
+      "file": "components\\worldcup\\WorldCupLiveBanner.tsx",
+      "match": "#6b7280"
+    },
+    {
+      "file": "components\\worldcup\\WorldCupLiveBanner.tsx",
+      "match": "#9ca3af"
+    },
+    {
+      "file": "components\\worldcup\\WorldCupLiveBanner.tsx",
+      "match": "#4b5563"
+    },
+    {
+      "file": "components\\worldcup\\WorldCupLiveBanner.tsx",
+      "match": "#fbbf24"
+    },
+    {
+      "file": "components\\worldcup\\WorldCupLiveBanner.tsx",
+      "match": "#3b82f6"
+    },
+    {
+      "file": "components\\worldcup\\WorldCupLiveBanner.tsx",
+      "match": "#85b9ac"
+    },
+    {
+      "file": "components\\worldcup\\WorldCupLiveBanner.tsx",
+      "match": "#064e3b"
+    },
+    {
+      "file": "components\\worldcup\\WorldCupLiveBanner.tsx",
+      "match": "#85b9ac"
+    },
+    {
+      "file": "hooks\\useEventStatus.ts",
+      "match": "#3b82f6"
+    },
+    {
+      "file": "hooks\\useEventStatus.ts",
+      "match": "#2dd4bf"
+    },
+    {
+      "file": "hooks\\useEventStatus.ts",
+      "match": "#85b9ac"
+    },
+    {
+      "file": "hooks\\useEventStatus.ts",
+      "match": "#facc15"
+    },
+    {
+      "file": "hooks\\useEventStatus.ts",
+      "match": "#f97316"
+    },
+    {
+      "file": "hooks\\useEventStatus.ts",
+      "match": "#ef4444"
+    },
+    {
+      "file": "hooks\\useEventStatus.ts",
+      "match": "#52525b"
+    },
+    {
+      "file": "lib\\theme.ts",
+      "match": "#0a0a0a"
+    },
+    {
+      "file": "lib\\theme.ts",
+      "match": "#111111"
+    },
+    {
+      "file": "lib\\theme.ts",
+      "match": "#0c0c0c"
+    },
+    {
+      "file": "lib\\theme.ts",
+      "match": "#1c1c1c"
+    },
+    {
+      "file": "lib\\theme.ts",
+      "match": "#2a2a2a"
+    },
+    {
+      "file": "lib\\theme.ts",
+      "match": "#f0ede8"
+    },
+    {
+      "file": "lib\\theme.ts",
+      "match": "#999999"
+    },
+    {
+      "file": "lib\\theme.ts",
+      "match": "#555555"
+    },
+    {
+      "file": "lib\\theme.ts",
+      "match": "#8a9a5b"
+    },
+    {
+      "file": "lib\\theme.ts",
+      "match": "#85B9AC"
+    },
+    {
+      "file": "lib\\theme.ts",
+      "match": "#0d1f1d"
+    },
+    {
+      "file": "lib\\theme.ts",
+      "match": "#1a3530"
+    },
+    {
+      "file": "lib\\theme.ts",
+      "match": "#0a0a0a"
+    },
+    {
+      "file": "lib\\theme.ts",
+      "match": "#f59e0b"
+    },
+    {
+      "file": "lib\\theme.ts",
+      "match": "#f87171"
+    },
+    {
+      "file": "lib\\theme.ts",
+      "match": "#818cf8"
+    },
+    {
+      "file": "pages\\admin\\AdminBanners.tsx",
+      "match": "#333"
+    },
+    {
+      "file": "pages\\admin\\AdminBanners.tsx",
+      "match": "#85b9ac"
+    },
+    {
+      "file": "pages\\admin\\AdminBanners.tsx",
+      "match": "#ef4444"
+    },
+    {
+      "file": "pages\\admin\\AdminConfigs.tsx",
+      "match": "#0a0a0a"
+    },
+    {
+      "file": "pages\\admin\\AdminConfigs.tsx",
+      "match": "#85B9AC"
+    },
+    {
+      "file": "pages\\admin\\AdminEvents.tsx",
+      "match": "#289a8e"
+    },
+    {
+      "file": "pages\\admin\\AdminEvents.tsx",
+      "match": "#289a8e"
+    },
+    {
+      "file": "pages\\admin\\AdminLeadsPage.tsx",
+      "match": "#25D366"
+    },
+    {
+      "file": "pages\\admin\\AdminLeadsPage.tsx",
+      "match": "#25D366"
+    },
+    {
+      "file": "pages\\admin\\AdminLeadsPage.tsx",
+      "match": "#25D366"
+    },
+    {
+      "file": "pages\\admin\\AdminOverview.tsx",
+      "match": "#333"
+    },
+    {
+      "file": "pages\\admin\\AdminOverview.tsx",
+      "match": "#666"
+    },
+    {
+      "file": "pages\\admin\\AdminOverview.tsx",
+      "match": "#111"
+    },
+    {
+      "file": "pages\\admin\\AdminOverview.tsx",
+      "match": "#333"
+    },
+    {
+      "file": "pages\\admin\\AdminOverview.tsx",
+      "match": "#FF4D00"
+    },
+    {
+      "file": "pages\\admin\\AdminOverview.tsx",
+      "match": "#FF4D00"
+    },
+    {
+      "file": "pages\\admin\\AdminPrintCatalog.tsx",
+      "match": "#85B9AC"
+    },
+    {
+      "file": "pages\\admin\\AdminPrintCatalog.tsx",
+      "match": "#a78bfa"
+    },
+    {
+      "file": "pages\\admin\\AdminPrintCatalog.tsx",
+      "match": "#f59e0b"
+    },
+    {
+      "file": "pages\\admin\\AdminPrintCatalog.tsx",
+      "match": "#60a5fa"
+    },
+    {
+      "file": "pages\\admin\\AdminPrintCatalog.tsx",
+      "match": "#f87171"
+    },
+    {
+      "file": "pages\\AmbassadorPage.tsx",
+      "match": "#050505"
+    },
+    {
+      "file": "pages\\AmbassadorPage.tsx",
+      "match": "#050505"
+    },
+    {
+      "file": "pages\\CheckoutPage.tsx",
+      "match": "#1a1a1a"
+    },
+    {
+      "file": "pages\\ClienteArea.tsx",
+      "match": "#111"
+    },
+    {
+      "file": "pages\\ClienteArea.tsx",
+      "match": "#111"
+    },
+    {
+      "file": "pages\\ClienteArea.tsx",
+      "match": "#111"
+    },
+    {
+      "file": "pages\\FlashUnlockPage.tsx",
+      "match": "#0a0a0a"
+    },
+    {
+      "file": "pages\\FlashUnlockPage.tsx",
+      "match": "#1a1a1a"
+    },
+    {
+      "file": "pages\\FlashUnlockPage.tsx",
+      "match": "#1a1a1a"
+    },
+    {
+      "file": "pages\\franchise\\FranchiseDashboard.tsx",
+      "match": "#14b8a6"
+    },
+    {
+      "file": "pages\\LoginPage.tsx",
+      "match": "#4285F4"
+    },
+    {
+      "file": "pages\\LoginPage.tsx",
+      "match": "#34A853"
+    },
+    {
+      "file": "pages\\LoginPage.tsx",
+      "match": "#FBBC05"
+    },
+    {
+      "file": "pages\\LoginPage.tsx",
+      "match": "#EA4335"
+    },
+    {
+      "file": "pages\\LuxuryExperiencePage.tsx",
+      "match": "#050505"
+    },
+    {
+      "file": "pages\\LuxuryExperiencePage.tsx",
+      "match": "#050505"
+    },
+    {
+      "file": "pages\\LuxuryExperiencePage.tsx",
+      "match": "#030303"
+    },
+    {
+      "file": "pages\\LuxuryExperiencePage.tsx",
+      "match": "#030303"
+    },
+    {
+      "file": "pages\\LuxuryExperiencePage.tsx",
+      "match": "#030303"
+    },
+    {
+      "file": "pages\\LuxuryExperiencePage.tsx",
+      "match": "#030303"
+    },
+    {
+      "file": "pages\\LuxuryExperiencePage.tsx",
+      "match": "#030303"
+    },
+    {
+      "file": "pages\\LuxuryExperiencePage.tsx",
+      "match": "#030303"
+    },
+    {
+      "file": "pages\\LuxuryExperiencePage.tsx",
+      "match": "#030303"
+    },
+    {
+      "file": "pages\\LuxuryExperiencePage.tsx",
+      "match": "#030303"
+    },
+    {
+      "file": "pages\\PhygitalCapture.tsx",
+      "match": "#0a0a0a"
+    },
+    {
+      "file": "pages\\RegisterPage.tsx",
+      "match": "#4285F4"
+    },
+    {
+      "file": "pages\\RegisterPage.tsx",
+      "match": "#34A853"
+    },
+    {
+      "file": "pages\\RegisterPage.tsx",
+      "match": "#FBBC05"
+    },
+    {
+      "file": "pages\\RegisterPage.tsx",
+      "match": "#EA4335"
+    },
+    {
+      "file": "pages\\UnidadeFixaDashboard.tsx",
+      "match": "#85b9ac"
+    },
+    {
+      "file": "pages\\UnidadeFixaDashboard.tsx",
+      "match": "#85b9ac"
+    },
+    {
+      "file": "pages\\UnidadeFixaDashboard.tsx",
+      "match": "#85b9ac"
+    },
+    {
+      "file": "pages\\VaultsPage.tsx",
+      "match": "#2a2a2a"
+    },
+    {
+      "file": "pages\\worldcup\\AlbumTorcidaPage.tsx",
+      "match": "#85b9ac"
+    },
+    {
+      "file": "pages\\worldcup\\AlbumTorcidaPage.tsx",
+      "match": "#85b9ac"
+    },
+    {
+      "file": "pages\\worldcup\\AlbumTorcidaPage.tsx",
+      "match": "#85b9ac"
+    },
+    {
+      "file": "pages\\worldcup\\AlbumTorcidaPage.tsx",
+      "match": "#85b9ac"
+    },
+    {
+      "file": "pages\\worldcup\\AlbumTorcidaPage.tsx",
+      "match": "#4b5563"
+    },
+    {
+      "file": "pages\\worldcup\\AlbumTorcidaPage.tsx",
+      "match": "#f59e0b"
+    },
+    {
+      "file": "pages\\worldcup\\AlbumTorcidaPage.tsx",
+      "match": "#4b5563"
+    },
+    {
+      "file": "pages\\worldcup\\AlbumTorcidaPage.tsx",
+      "match": "#9ca3af"
+    },
+    {
+      "file": "pages\\worldcup\\AlbumTorcidaPage.tsx",
+      "match": "#374151"
+    },
+    {
+      "file": "pages\\worldcup\\AlbumTorcidaPage.tsx",
+      "match": "#6b7280"
+    },
+    {
+      "file": "pages\\worldcup\\AlbumTorcidaPage.tsx",
+      "match": "#050e08"
+    },
+    {
+      "file": "pages\\worldcup\\AlbumTorcidaPage.tsx",
+      "match": "#022c22"
+    },
+    {
+      "file": "pages\\worldcup\\AlbumTorcidaPage.tsx",
+      "match": "#064e3b"
+    },
+    {
+      "file": "pages\\worldcup\\AlbumTorcidaPage.tsx",
+      "match": "#050e08"
+    },
+    {
+      "file": "pages\\worldcup\\AlbumTorcidaPage.tsx",
+      "match": "#85b9ac"
+    },
+    {
+      "file": "pages\\worldcup\\AlbumTorcidaPage.tsx",
+      "match": "#fbbf24"
+    },
+    {
+      "file": "pages\\worldcup\\AlbumTorcidaPage.tsx",
+      "match": "#fbbf24"
+    },
+    {
+      "file": "pages\\worldcup\\AlbumTorcidaPage.tsx",
+      "match": "#85b9ac"
+    },
+    {
+      "file": "pages\\worldcup\\AlbumTorcidaPage.tsx",
+      "match": "#9ca3af"
+    },
+    {
+      "file": "pages\\worldcup\\AlbumTorcidaPage.tsx",
+      "match": "#85b9ac"
+    },
+    {
+      "file": "pages\\worldcup\\AlbumTorcidaPage.tsx",
+      "match": "#85b9ac"
+    },
+    {
+      "file": "pages\\worldcup\\AlbumTorcidaPage.tsx",
+      "match": "#85b9ac"
+    },
+    {
+      "file": "pages\\worldcup\\AlbumTorcidaPage.tsx",
+      "match": "#85b9ac"
+    },
+    {
+      "file": "pages\\worldcup\\AlbumTorcidaPage.tsx",
+      "match": "#85b9ac"
+    },
+    {
+      "file": "pages\\worldcup\\AlbumTorcidaPage.tsx",
+      "match": "#85b9ac"
+    },
+    {
+      "file": "pages\\worldcup\\AlbumTorcidaPage.tsx",
+      "match": "#6b7280"
+    },
+    {
+      "file": "pages\\worldcup\\AlbumTorcidaPage.tsx",
+      "match": "#6b7280"
+    },
+    {
+      "file": "pages\\worldcup\\AlbumTorcidaPage.tsx",
+      "match": "#050e08"
+    },
+    {
+      "file": "pages\\worldcup\\AlbumTorcidaPage.tsx",
+      "match": "#85b9ac"
+    },
+    {
+      "file": "pages\\worldcup\\AlbumTorcidaPage.tsx",
+      "match": "#85b9ac"
+    },
+    {
+      "file": "pages\\worldcup\\AlbumTorcidaPage.tsx",
+      "match": "#4b5563"
+    },
+    {
+      "file": "pages\\worldcup\\AlbumTorcidaPage.tsx",
+      "match": "#85b9ac"
+    },
+    {
+      "file": "pages\\worldcup\\AlbumTorcidaPage.tsx",
+      "match": "#6b7280"
+    },
+    {
+      "file": "pages\\worldcup\\AlbumTorcidaPage.tsx",
+      "match": "#4b5563"
+    },
+    {
+      "file": "pages\\worldcup\\AlbumTorcidaPage.tsx",
+      "match": "#f59e0b"
+    },
+    {
+      "file": "pages\\worldcup\\AlbumTorcidaPage.tsx",
+      "match": "#f59e0b"
+    },
+    {
+      "file": "pages\\worldcup\\AlbumTorcidaPage.tsx",
+      "match": "#85b9ac"
+    },
+    {
+      "file": "pages\\worldcup\\AlbumTorcidaPage.tsx",
+      "match": "#4b5563"
+    },
+    {
+      "file": "pages\\worldcup\\AlbumTorcidaPage.tsx",
+      "match": "#9ca3af"
+    },
+    {
+      "file": "pages\\worldcup\\AlbumTorcidaPage.tsx",
+      "match": "#0ea5e9"
+    },
+    {
+      "file": "pages\\worldcup\\AlbumTorcidaPage.tsx",
+      "match": "#fbbf24"
+    },
+    {
+      "file": "pages\\worldcup\\AlbumTorcidaPage.tsx",
+      "match": "#fbbf24"
+    },
+    {
+      "file": "pages\\worldcup\\AlbumTorcidaPage.tsx",
+      "match": "#6b7280"
+    },
+    {
+      "file": "pages\\worldcup\\AlbumTorcidaPage.tsx",
+      "match": "#6b7280"
+    },
+    {
+      "file": "pages\\worldcup\\AlbumTorcidaPage.tsx",
+      "match": "#85b9ac"
+    },
+    {
+      "file": "pages\\worldcup\\AlbumTorcidaPage.tsx",
+      "match": "#60a5fa"
+    },
+    {
+      "file": "pages\\worldcup\\AlbumTorcidaPage.tsx",
+      "match": "#6b7280"
+    },
+    {
+      "file": "pages\\worldcup\\AlbumTorcidaPage.tsx",
+      "match": "#6b7280"
+    },
+    {
+      "file": "pages\\worldcup\\AlbumTorcidaPage.tsx",
+      "match": "#4b5563"
+    },
+    {
+      "file": "pages\\worldcup\\AlbumTorcidaPage.tsx",
+      "match": "#6b7280"
+    },
+    {
+      "file": "pages\\worldcup\\AlbumTorcidaPage.tsx",
+      "match": "#374151"
+    },
+    {
+      "file": "pages\\worldcup\\AlbumTorcidaPage.tsx",
+      "match": "#374151"
+    },
+    {
+      "file": "pages\\worldcup\\AlbumTorcidaPage.tsx",
+      "match": "#9ca3af"
+    },
+    {
+      "file": "pages\\worldcup\\AlbumTorcidaPage.tsx",
+      "match": "#85b9ac"
+    },
+    {
+      "file": "pages\\worldcup\\AlbumTorcidaPage.tsx",
+      "match": "#ef4444"
+    },
+    {
+      "file": "pages\\worldcup\\AlbumTorcidaPage.tsx",
+      "match": "#6b7280"
+    },
+    {
+      "file": "pages\\worldcup\\AlbumTorcidaPage.tsx",
+      "match": "#4b5563"
+    },
+    {
+      "file": "pages\\worldcup\\AlbumTorcidaPage.tsx",
+      "match": "#065f46"
+    },
+    {
+      "file": "pages\\worldcup\\AlbumTorcidaPage.tsx",
+      "match": "#85b9ac"
+    },
+    {
+      "file": "pages\\worldcup\\AlbumTorcidaPage.tsx",
+      "match": "#85b9ac"
+    },
+    {
+      "file": "pages\\worldcup\\AlbumTorcidaPage.tsx",
+      "match": "#85b9ac"
+    },
+    {
+      "file": "pages\\worldcup\\AlbumTorcidaPage.tsx",
+      "match": "#85b9ac"
+    },
+    {
+      "file": "pages\\worldcup\\AlbumTorcidaPage.tsx",
+      "match": "#85b9ac"
+    },
+    {
+      "file": "pages\\worldcup\\AlbumTorcidaPage.tsx",
+      "match": "#fbbf24"
+    },
+    {
+      "file": "pages\\worldcup\\AlbumTorcidaPage.tsx",
+      "match": "#6b7280"
+    },
+    {
+      "file": "pages\\worldcup\\AlbumTorcidaPage.tsx",
+      "match": "#85b9ac"
+    },
+    {
+      "file": "pages\\worldcup\\AlbumTorcidaPage.tsx",
+      "match": "#4b5563"
+    },
+    {
+      "file": "pages\\worldcup\\AlbumTorcidaPage.tsx",
+      "match": "#6b7280"
+    },
+    {
+      "file": "pages\\worldcup\\AlbumTorcidaPage.tsx",
+      "match": "#85b9ac"
+    },
+    {
+      "file": "pages\\worldcup\\AlbumTorcidaPage.tsx",
+      "match": "#85b9ac"
+    },
+    {
+      "file": "pages\\worldcup\\AlbumTorcidaPage.tsx",
+      "match": "#9ca3af"
+    },
+    {
+      "file": "pages\\worldcup\\AlbumTorcidaPage.tsx",
+      "match": "#85b9ac"
+    },
+    {
+      "file": "pages\\worldcup\\AlbumTorcidaPage.tsx",
+      "match": "#6b7280"
+    },
+    {
+      "file": "pages\\worldcup\\AlbumTorcidaPage.tsx",
+      "match": "#85b9ac"
+    },
+    {
+      "file": "pages\\worldcup\\AlbumTorcidaPage.tsx",
+      "match": "#85b9ac"
+    },
+    {
+      "file": "pages\\worldcup\\AlbumTorcidaPage.tsx",
+      "match": "#4b5563"
+    },
+    {
+      "file": "pages\\worldcup\\AlbumTorcidaPage.tsx",
+      "match": "#6b7280"
+    },
+    {
+      "file": "pages\\worldcup\\AlbumTorcidaPage.tsx",
+      "match": "#85b9ac"
+    },
+    {
+      "file": "pages\\worldcup\\AlbumTorcidaPage.tsx",
+      "match": "#85b9ac"
+    },
+    {
+      "file": "pages\\worldcup\\AlbumTorcidaPage.tsx",
+      "match": "#fbbf24"
+    },
+    {
+      "file": "pages\\worldcup\\AlbumTorcidaPage.tsx",
+      "match": "#9ca3af"
+    },
+    {
+      "file": "pages\\worldcup\\AlbumTorcidaPage.tsx",
+      "match": "#fbbf24"
+    },
+    {
+      "file": "pages\\worldcup\\AlbumTorcidaPage.tsx",
+      "match": "#85b9ac"
+    },
+    {
+      "file": "pages\\worldcup\\AlbumTorcidaPage.tsx",
+      "match": "#85b9ac"
+    },
+    {
+      "file": "pages\\worldcup\\AlbumTorcidaPage.tsx",
+      "match": "#9ca3af"
+    },
+    {
+      "file": "pages\\worldcup\\AlbumTorcidaPage.tsx",
+      "match": "#94a3b8"
+    },
+    {
+      "file": "pages\\worldcup\\AlbumTorcidaPage.tsx",
+      "match": "#94a3b8"
+    },
+    {
+      "file": "pages\\worldcup\\AlbumTorcidaPage.tsx",
+      "match": "#94a3b8"
+    },
+    {
+      "file": "pages\\worldcup\\AlbumTorcidaPage.tsx",
+      "match": "#475569"
+    },
+    {
+      "file": "pages\\worldcup\\AlbumTorcidaPage.tsx",
+      "match": "#1e293b"
+    },
+    {
+      "file": "pages\\worldcup\\AlbumTorcidaPage.tsx",
+      "match": "#94a3b8"
+    },
+    {
+      "file": "pages\\worldcup\\AlbumTorcidaPage.tsx",
+      "match": "#fbbf24"
+    },
+    {
+      "file": "pages\\worldcup\\AlbumTorcidaPage.tsx",
+      "match": "#fbbf24"
+    },
+    {
+      "file": "pages\\worldcup\\AlbumTorcidaPage.tsx",
+      "match": "#fbbf24"
+    },
+    {
+      "file": "pages\\worldcup\\AlbumTorcidaPage.tsx",
+      "match": "#d97706"
+    },
+    {
+      "file": "pages\\worldcup\\AlbumTorcidaPage.tsx",
+      "match": "#1e293b"
+    },
+    {
+      "file": "pages\\worldcup\\AlbumTorcidaPage.tsx",
+      "match": "#fbbf24"
+    },
+    {
+      "file": "pages\\worldcup\\AlbumTorcidaPage.tsx",
+      "match": "#b45309"
+    },
+    {
+      "file": "pages\\worldcup\\AlbumTorcidaPage.tsx",
+      "match": "#b45309"
+    },
+    {
+      "file": "pages\\worldcup\\AlbumTorcidaPage.tsx",
+      "match": "#b45309"
+    },
+    {
+      "file": "pages\\worldcup\\AlbumTorcidaPage.tsx",
+      "match": "#78350f"
+    },
+    {
+      "file": "pages\\worldcup\\AlbumTorcidaPage.tsx",
+      "match": "#1e293b"
+    },
+    {
+      "file": "pages\\worldcup\\AlbumTorcidaPage.tsx",
+      "match": "#b45309"
+    },
+    {
+      "file": "pages\\worldcup\\AlbumTorcidaPage.tsx",
+      "match": "#6b7280"
+    },
+    {
+      "file": "pages\\worldcup\\AlbumTorcidaPage.tsx",
+      "match": "#fbbf24"
+    },
+    {
+      "file": "pages\\worldcup\\AlbumTorcidaPage.tsx",
+      "match": "#4b5563"
+    },
+    {
+      "file": "pages\\worldcup\\AlbumTorcidaPage.tsx",
+      "match": "#85b9ac"
+    },
+    {
+      "file": "pages\\worldcup\\AlbumTorcidaPage.tsx",
+      "match": "#fbbf24"
+    },
+    {
+      "file": "pages\\worldcup\\AlbumTorcidaPage.tsx",
+      "match": "#fbbf24"
+    },
+    {
+      "file": "pages\\worldcup\\AlbumTorcidaPage.tsx",
+      "match": "#9ca3af"
+    },
+    {
+      "file": "pages\\worldcup\\AlbumTorcidaPage.tsx",
+      "match": "#85b9ac"
+    },
+    {
+      "file": "pages\\worldcup\\AlbumTorcidaPage.tsx",
+      "match": "#85b9ac"
+    },
+    {
+      "file": "pages\\worldcup\\AlbumTorcidaPage.tsx",
+      "match": "#9ca3af"
+    },
+    {
+      "file": "pages\\worldcup\\AlbumTorcidaPage.tsx",
+      "match": "#85b9ac"
+    },
+    {
+      "file": "pages\\worldcup\\AlbumTorcidaPage.tsx",
+      "match": "#85b9ac"
+    },
+    {
+      "file": "pages\\worldcup\\AlbumTorcidaPage.tsx",
+      "match": "#85b9ac"
+    },
+    {
+      "file": "pages\\worldcup\\AlbumTorcidaPage.tsx",
+      "match": "#6b7280"
+    },
+    {
+      "file": "pages\\worldcup\\AlbumTorcidaPage.tsx",
+      "match": "#85b9ac"
+    },
+    {
+      "file": "pages\\worldcup\\AlbumTorcidaPage.tsx",
+      "match": "#85b9ac"
+    },
+    {
+      "file": "pages\\worldcup\\AlbumTorcidaPage.tsx",
+      "match": "#85b9ac"
+    },
+    {
+      "file": "pages\\worldcup\\AlbumTorcidaPage.tsx",
+      "match": "#9ca3af"
+    },
+    {
+      "file": "pages\\worldcup\\AlbumTorcidaPage.tsx",
+      "match": "#6b7280"
+    },
+    {
+      "file": "pages\\worldcup\\AlbumTorcidaPage.tsx",
+      "match": "#6b7280"
+    },
+    {
+      "file": "pages\\worldcup\\AlbumTorcidaPage.tsx",
+      "match": "#85b9ac"
+    },
+    {
+      "file": "pages\\worldcup\\AlbumTorcidaPage.tsx",
+      "match": "#9ca3af"
+    },
+    {
+      "file": "pages\\worldcup\\AlbumTorcidaPage.tsx",
+      "match": "#ef4444"
+    },
+    {
+      "file": "pages\\worldcup\\AlbumTorcidaPage.tsx",
+      "match": "#ef4444"
+    },
+    {
+      "file": "pages\\worldcup\\AlbumTorcidaPage.tsx",
+      "match": "#9ca3af"
+    },
+    {
+      "file": "pages\\worldcup\\AlbumTorcidaPage.tsx",
+      "match": "#050e08"
+    },
+    {
+      "file": "pages\\worldcup\\AlbumTorcidaPage.tsx",
+      "match": "#9ca3af"
+    },
+    {
+      "file": "pages\\worldcup\\AlbumTorcidaPage.tsx",
+      "match": "#85b9ac"
+    },
+    {
+      "file": "pages\\worldcup\\AlbumTorcidaPage.tsx",
+      "match": "#85b9ac"
+    },
+    {
+      "file": "pages\\worldcup\\AlbumTorcidaPage.tsx",
+      "match": "#85b9ac"
+    },
+    {
+      "file": "pages\\worldcup\\AlbumTorcidaPage.tsx",
+      "match": "#6b7280"
+    },
+    {
+      "file": "pages\\worldcup\\MatchFolhaPage.tsx",
+      "match": "#fbbf24"
+    },
+    {
+      "file": "pages\\worldcup\\MatchFolhaPage.tsx",
+      "match": "#064e3b"
+    },
+    {
+      "file": "pages\\worldcup\\MatchFolhaPage.tsx",
+      "match": "#022c22"
+    },
+    {
+      "file": "pages\\worldcup\\MatchFolhaPage.tsx",
+      "match": "#fbbf24"
+    },
+    {
+      "file": "pages\\worldcup\\MatchFolhaPage.tsx",
+      "match": "#fbbf24"
+    },
+    {
+      "file": "pages\\worldcup\\MatchFolhaPage.tsx",
+      "match": "#ef4444"
+    },
+    {
+      "file": "pages\\worldcup\\MatchFolhaPage.tsx",
+      "match": "#ef4444"
+    }
+  ],
+  "genericColors": [
+    {
+      "file": "components\\AccessTypeModal.tsx",
+      "match": "bg-red-500"
+    },
+    {
+      "file": "components\\AccessTypeModal.tsx",
+      "match": "border-red-500"
+    },
+    {
+      "file": "components\\AccessTypeModal.tsx",
+      "match": "border-red-500"
+    },
+    {
+      "file": "components\\AccessTypeModal.tsx",
+      "match": "bg-red-500"
+    },
+    {
+      "file": "components\\AccessTypeModal.tsx",
+      "match": "text-red-500"
+    },
+    {
+      "file": "components\\AccessTypeModal.tsx",
+      "match": "bg-red-500"
+    },
+    {
+      "file": "components\\AccessTypeModal.tsx",
+      "match": "border-red-500"
+    },
+    {
+      "file": "components\\AccessTypeModal.tsx",
+      "match": "text-red-500"
+    },
+    {
+      "file": "components\\AccessTypeModal.tsx",
+      "match": "bg-red-500"
+    },
+    {
+      "file": "components\\AccessTypeModal.tsx",
+      "match": "border-red-500"
+    },
+    {
+      "file": "components\\AccessTypeModal.tsx",
+      "match": "text-red-500"
+    },
+    {
+      "file": "components\\AccessTypeModal.tsx",
+      "match": "bg-red-500"
+    },
+    {
+      "file": "components\\AccessTypeModal.tsx",
+      "match": "border-red-500"
+    },
+    {
+      "file": "components\\AccessTypeModal.tsx",
+      "match": "text-red-500"
+    },
+    {
+      "file": "components\\AffiliateDashboard.tsx",
+      "match": "bg-purple-500"
+    },
+    {
+      "file": "components\\AffiliateDashboard.tsx",
+      "match": "text-purple-400"
+    },
+    {
+      "file": "components\\AffiliateDashboard.tsx",
+      "match": "border-purple-500"
+    },
+    {
+      "file": "components\\AlbumSanfonaFlow.tsx",
+      "match": "bg-red-500"
+    },
+    {
+      "file": "components\\CartModal.tsx",
+      "match": "text-red-500"
+    },
+    {
+      "file": "components\\CartModal.tsx",
+      "match": "bg-red-500"
+    },
+    {
+      "file": "components\\CartModal.tsx",
+      "match": "text-red-500"
+    },
+    {
+      "file": "components\\CartModal.tsx",
+      "match": "bg-red-500"
+    },
+    {
+      "file": "components\\ErrorBoundary.tsx",
+      "match": "text-red-500"
+    },
+    {
+      "file": "components\\IncompleteProfileBanner.tsx",
+      "match": "bg-blue-500"
+    },
+    {
+      "file": "components\\IncompleteProfileBanner.tsx",
+      "match": "text-blue-500"
+    },
+    {
+      "file": "components\\PrintStoreModal.tsx",
+      "match": "bg-red-500"
+    },
+    {
+      "file": "components\\PrintStoreModal.tsx",
+      "match": "border-red-500"
+    },
+    {
+      "file": "components\\PrintStoreModal.tsx",
+      "match": "text-red-500"
+    },
+    {
+      "file": "components\\profissional\\AgendaTab.tsx",
+      "match": "text-red-500"
+    },
+    {
+      "file": "components\\profissional\\AgendaTab.tsx",
+      "match": "bg-red-500"
+    },
+    {
+      "file": "components\\profissional\\AgendaTab.tsx",
+      "match": "border-red-500"
+    },
+    {
+      "file": "components\\profissional\\AgendaTab.tsx",
+      "match": "bg-red-500"
+    },
+    {
+      "file": "components\\profissional\\AgendaTab.tsx",
+      "match": "border-red-500"
+    },
+    {
+      "file": "components\\profissional\\AgendaTab.tsx",
+      "match": "text-red-500"
+    },
+    {
+      "file": "components\\profissional\\AgendaTab.tsx",
+      "match": "bg-red-500"
+    },
+    {
+      "file": "components\\profissional\\AgendaTab.tsx",
+      "match": "border-red-500"
+    },
+    {
+      "file": "components\\profissional\\AgendaTab.tsx",
+      "match": "text-red-500"
+    },
+    {
+      "file": "components\\profissional\\AgendaTab.tsx",
+      "match": "bg-red-500"
+    },
+    {
+      "file": "components\\profissional\\AgendaTab.tsx",
+      "match": "text-red-500"
+    },
+    {
+      "file": "components\\profissional\\AgendaTab.tsx",
+      "match": "bg-red-500"
+    },
+    {
+      "file": "components\\profissional\\AgendaTab.tsx",
+      "match": "border-red-500"
+    },
+    {
+      "file": "components\\profissional\\CalendarView.tsx",
+      "match": "bg-blue-500"
+    },
+    {
+      "file": "components\\profissional\\CalendarView.tsx",
+      "match": "bg-blue-500"
+    },
+    {
+      "file": "components\\profissional\\CoverPhotoInput.tsx",
+      "match": "text-red-500"
+    },
+    {
+      "file": "components\\profissional\\EventEditPanel.tsx",
+      "match": "bg-blue-500"
+    },
+    {
+      "file": "components\\profissional\\EventEditPanel.tsx",
+      "match": "text-blue-500"
+    },
+    {
+      "file": "components\\profissional\\EventEditPanel.tsx",
+      "match": "bg-green-500"
+    },
+    {
+      "file": "components\\profissional\\EventEditPanel.tsx",
+      "match": "bg-purple-500"
+    },
+    {
+      "file": "components\\profissional\\EventEditPanel.tsx",
+      "match": "text-purple-400"
+    },
+    {
+      "file": "components\\profissional\\EventEditPanel.tsx",
+      "match": "bg-green-500"
+    },
+    {
+      "file": "components\\profissional\\EventEditPanel.tsx",
+      "match": "bg-red-500"
+    },
+    {
+      "file": "components\\profissional\\EventEditPanel.tsx",
+      "match": "text-red-400"
+    },
+    {
+      "file": "components\\profissional\\EventEditPanel.tsx",
+      "match": "bg-green-500"
+    },
+    {
+      "file": "components\\profissional\\EventEditPanel.tsx",
+      "match": "bg-blue-500"
+    },
+    {
+      "file": "components\\profissional\\EventEditPanel.tsx",
+      "match": "text-blue-500"
+    },
+    {
+      "file": "components\\profissional\\EventEditPanel.tsx",
+      "match": "text-red-400"
+    },
+    {
+      "file": "components\\profissional\\EventEditPanel.tsx",
+      "match": "bg-red-500"
+    },
+    {
+      "file": "components\\profissional\\EventEditPanel.tsx",
+      "match": "text-red-400"
+    },
+    {
+      "file": "components\\profissional\\EventEditPanel.tsx",
+      "match": "bg-red-500"
+    },
+    {
+      "file": "components\\profissional\\ExpressSaleModal.tsx",
+      "match": "text-red-500"
+    },
+    {
+      "file": "components\\profissional\\FlashEventModal.tsx",
+      "match": "bg-yellow-400"
+    },
+    {
+      "file": "components\\profissional\\FlashEventModal.tsx",
+      "match": "border-yellow-400"
+    },
+    {
+      "file": "components\\profissional\\FlashEventModal.tsx",
+      "match": "text-yellow-400"
+    },
+    {
+      "file": "components\\profissional\\FlashEventModal.tsx",
+      "match": "text-yellow-400"
+    },
+    {
+      "file": "components\\profissional\\FlashEventModal.tsx",
+      "match": "border-yellow-400"
+    },
+    {
+      "file": "components\\profissional\\FlashEventModal.tsx",
+      "match": "text-yellow-400"
+    },
+    {
+      "file": "components\\profissional\\FlashEventModal.tsx",
+      "match": "border-yellow-400"
+    },
+    {
+      "file": "components\\profissional\\FlashEventModal.tsx",
+      "match": "border-yellow-400"
+    },
+    {
+      "file": "components\\profissional\\FlashEventModal.tsx",
+      "match": "border-yellow-400"
+    },
+    {
+      "file": "components\\profissional\\FlashEventModal.tsx",
+      "match": "border-yellow-400"
+    },
+    {
+      "file": "components\\profissional\\FlashEventModal.tsx",
+      "match": "border-yellow-400"
+    },
+    {
+      "file": "components\\profissional\\FlashEventModal.tsx",
+      "match": "border-yellow-400"
+    },
+    {
+      "file": "components\\profissional\\FlashEventModal.tsx",
+      "match": "bg-yellow-400"
+    },
+    {
+      "file": "components\\profissional\\FlashEventMonitor.tsx",
+      "match": "border-red-500"
+    },
+    {
+      "file": "components\\profissional\\FlashEventMonitor.tsx",
+      "match": "bg-red-500"
+    },
+    {
+      "file": "components\\profissional\\FlashEventMonitor.tsx",
+      "match": "text-red-500"
+    },
+    {
+      "file": "components\\profissional\\FlashEventMonitor.tsx",
+      "match": "text-red-400"
+    },
+    {
+      "file": "components\\profissional\\FlashEventMonitor.tsx",
+      "match": "bg-blue-500"
+    },
+    {
+      "file": "components\\profissional\\FlashEventMonitor.tsx",
+      "match": "text-blue-500"
+    },
+    {
+      "file": "components\\profissional\\FlashEventMonitor.tsx",
+      "match": "bg-blue-500"
+    },
+    {
+      "file": "components\\profissional\\FlashEventMonitor.tsx",
+      "match": "text-blue-500"
+    },
+    {
+      "file": "components\\profissional\\FlashEventMonitor.tsx",
+      "match": "text-red-400"
+    },
+    {
+      "file": "components\\profissional\\FlashEventMonitor.tsx",
+      "match": "border-red-500"
+    },
+    {
+      "file": "components\\profissional\\FlashEventMonitor.tsx",
+      "match": "bg-red-500"
+    },
+    {
+      "file": "components\\profissional\\FlashEventMonitor.tsx",
+      "match": "text-red-400"
+    },
+    {
+      "file": "components\\profissional\\FlashEventMonitor.tsx",
+      "match": "text-red-400"
+    },
+    {
+      "file": "components\\profissional\\FotoPointEditModal.tsx",
+      "match": "bg-red-500"
+    },
+    {
+      "file": "components\\profissional\\FotoPointEditModal.tsx",
+      "match": "border-red-500"
+    },
+    {
+      "file": "components\\profissional\\FotoPointEditModal.tsx",
+      "match": "text-red-400"
+    },
+    {
+      "file": "components\\profissional\\FotoPointEditModal.tsx",
+      "match": "text-red-400"
+    },
+    {
+      "file": "components\\profissional\\FotoPointModal.tsx",
+      "match": "border-green-400"
+    },
+    {
+      "file": "components\\profissional\\FotoPointModal.tsx",
+      "match": "border-green-400"
+    },
+    {
+      "file": "components\\profissional\\FranquiaLanding.tsx",
+      "match": "text-red-400"
+    },
+    {
+      "file": "components\\profissional\\NetworkTab.tsx",
+      "match": "text-red-500"
+    },
+    {
+      "file": "components\\profissional\\NetworkTab.tsx",
+      "match": "text-red-500"
+    },
+    {
+      "file": "components\\profissional\\OpportunitiesModal.tsx",
+      "match": "bg-yellow-400"
+    },
+    {
+      "file": "components\\profissional\\OpportunitiesModal.tsx",
+      "match": "border-yellow-400"
+    },
+    {
+      "file": "components\\profissional\\OpportunitiesModal.tsx",
+      "match": "border-yellow-400"
+    },
+    {
+      "file": "components\\profissional\\OpportunitiesModal.tsx",
+      "match": "text-yellow-400"
+    },
+    {
+      "file": "components\\profissional\\ProfessionalBadgesShowcase.tsx",
+      "match": "border-yellow-500"
+    },
+    {
+      "file": "components\\profissional\\ProfileModal.tsx",
+      "match": "bg-red-500"
+    },
+    {
+      "file": "components\\profissional\\ProfileModal.tsx",
+      "match": "text-red-500"
+    },
+    {
+      "file": "components\\profissional\\ProfileModal.tsx",
+      "match": "text-red-500"
+    },
+    {
+      "file": "components\\profissional\\ProfileModal.tsx",
+      "match": "bg-red-500"
+    },
+    {
+      "file": "components\\profissional\\ProfileTab.tsx",
+      "match": "text-red-500"
+    },
+    {
+      "file": "components\\profissional\\ProfileTab.tsx",
+      "match": "text-red-500"
+    },
+    {
+      "file": "components\\profissional\\ProfileTab.tsx",
+      "match": "bg-red-500"
+    },
+    {
+      "file": "components\\profissional\\ServicesTab.tsx",
+      "match": "bg-yellow-500"
+    },
+    {
+      "file": "components\\profissional\\ServicesTab.tsx",
+      "match": "text-yellow-500"
+    },
+    {
+      "file": "components\\profissional\\ServicesTab.tsx",
+      "match": "border-yellow-500"
+    },
+    {
+      "file": "components\\profissional\\ServicesTab.tsx",
+      "match": "bg-blue-500"
+    },
+    {
+      "file": "components\\profissional\\ServicesTab.tsx",
+      "match": "text-blue-500"
+    },
+    {
+      "file": "components\\profissional\\ServicesTab.tsx",
+      "match": "border-blue-500"
+    },
+    {
+      "file": "components\\profissional\\ServicesTab.tsx",
+      "match": "bg-purple-500"
+    },
+    {
+      "file": "components\\profissional\\ServicesTab.tsx",
+      "match": "text-purple-500"
+    },
+    {
+      "file": "components\\profissional\\ServicesTab.tsx",
+      "match": "border-purple-500"
+    },
+    {
+      "file": "components\\profissional\\ServicesTab.tsx",
+      "match": "bg-red-500"
+    },
+    {
+      "file": "components\\profissional\\ServicesTab.tsx",
+      "match": "text-red-500"
+    },
+    {
+      "file": "components\\profissional\\ServicesTab.tsx",
+      "match": "border-red-500"
+    },
+    {
+      "file": "components\\profissional\\ServicesTab.tsx",
+      "match": "bg-orange-500"
+    },
+    {
+      "file": "components\\profissional\\ServicesTab.tsx",
+      "match": "text-orange-500"
+    },
+    {
+      "file": "components\\profissional\\ServicesTab.tsx",
+      "match": "border-orange-500"
+    },
+    {
+      "file": "components\\profissional\\ServicesTab.tsx",
+      "match": "text-orange-500"
+    },
+    {
+      "file": "components\\profissional\\ServicesTab.tsx",
+      "match": "text-red-500"
+    },
+    {
+      "file": "components\\profissional\\ServicesTab.tsx",
+      "match": "bg-red-500"
+    },
+    {
+      "file": "components\\profissional\\ServicesTab.tsx",
+      "match": "text-red-500"
+    },
+    {
+      "file": "components\\profissional\\ServicesTab.tsx",
+      "match": "bg-red-500"
+    },
+    {
+      "file": "components\\profissional\\ServicesTab.tsx",
+      "match": "border-red-500"
+    },
+    {
+      "file": "components\\profissional\\TeamSelector.tsx",
+      "match": "border-yellow-400"
+    },
+    {
+      "file": "components\\profissional\\TeamSelector.tsx",
+      "match": "bg-yellow-400"
+    },
+    {
+      "file": "components\\profissional\\TeamSelector.tsx",
+      "match": "text-yellow-400"
+    },
+    {
+      "file": "components\\profissional\\TeamSelector.tsx",
+      "match": "border-red-500"
+    },
+    {
+      "file": "components\\profissional\\TeamSelector.tsx",
+      "match": "bg-red-500"
+    },
+    {
+      "file": "components\\profissional\\TeamSelector.tsx",
+      "match": "text-red-500"
+    },
+    {
+      "file": "components\\profissional\\TeamSelector.tsx",
+      "match": "bg-yellow-400"
+    },
+    {
+      "file": "components\\profissional\\TeamSelector.tsx",
+      "match": "border-yellow-400"
+    },
+    {
+      "file": "components\\profissional\\TeamSelector.tsx",
+      "match": "text-yellow-400"
+    },
+    {
+      "file": "components\\profissional\\TeamTab.tsx",
+      "match": "text-blue-500"
+    },
+    {
+      "file": "components\\profissional\\TeamTab.tsx",
+      "match": "text-blue-500"
+    },
+    {
+      "file": "components\\profissional\\TeamTab.tsx",
+      "match": "bg-blue-500"
+    },
+    {
+      "file": "components\\quote\\PackageMobileView.tsx",
+      "match": "bg-red-500"
+    },
+    {
+      "file": "components\\quote\\PackageMobileView.tsx",
+      "match": "border-red-500"
+    },
+    {
+      "file": "components\\quote\\PackageMobileView.tsx",
+      "match": "text-red-400"
+    },
+    {
+      "file": "components\\quote\\QuoteDesktopView.tsx",
+      "match": "bg-red-500"
+    },
+    {
+      "file": "components\\quote\\QuoteDesktopView.tsx",
+      "match": "border-red-500"
+    },
+    {
+      "file": "components\\quote\\QuoteDesktopView.tsx",
+      "match": "text-red-400"
+    },
+    {
+      "file": "components\\RouteErrorBoundary.tsx",
+      "match": "bg-red-500"
+    },
+    {
+      "file": "components\\RouteErrorBoundary.tsx",
+      "match": "border-red-500"
+    },
+    {
+      "file": "components\\RouteErrorBoundary.tsx",
+      "match": "text-red-500"
+    },
+    {
+      "file": "components\\RouteErrorBoundary.tsx",
+      "match": "text-red-400"
+    },
+    {
+      "file": "components\\SanfonaPrintQueue.tsx",
+      "match": "bg-blue-500"
+    },
+    {
+      "file": "components\\SanfonaPrintQueue.tsx",
+      "match": "text-blue-500"
+    },
+    {
+      "file": "components\\SanfonaPrintQueue.tsx",
+      "match": "bg-purple-500"
+    },
+    {
+      "file": "components\\SanfonaPrintQueue.tsx",
+      "match": "text-purple-500"
+    },
+    {
+      "file": "components\\SanfonaPrintQueue.tsx",
+      "match": "bg-green-500"
+    },
+    {
+      "file": "components\\SanfonaPrintQueue.tsx",
+      "match": "text-green-500"
+    },
+    {
+      "file": "components\\SanfonaPrintQueue.tsx",
+      "match": "bg-blue-500"
+    },
+    {
+      "file": "components\\SanfonaPrintQueue.tsx",
+      "match": "bg-blue-600"
+    },
+    {
+      "file": "components\\SanfonaPrintQueue.tsx",
+      "match": "bg-purple-500"
+    },
+    {
+      "file": "components\\SanfonaPrintQueue.tsx",
+      "match": "bg-purple-600"
+    },
+    {
+      "file": "components\\SanfonaPrintQueue.tsx",
+      "match": "text-green-500"
+    },
+    {
+      "file": "components\\SanfonaPrintQueue.tsx",
+      "match": "bg-green-500"
+    },
+    {
+      "file": "components\\ServiceStoreModal.tsx",
+      "match": "text-blue-500"
+    },
+    {
+      "file": "components\\ServiceStoreModal.tsx",
+      "match": "text-purple-400"
+    },
+    {
+      "file": "components\\TouchSelectionGallery.tsx",
+      "match": "border-red-500"
+    },
+    {
+      "file": "components\\TouchSelectionGallery.tsx",
+      "match": "text-red-400"
+    },
+    {
+      "file": "components\\TouchSelectionGallery.tsx",
+      "match": "bg-red-500"
+    },
+    {
+      "file": "components\\TouchSelectionGallery.tsx",
+      "match": "border-red-500"
+    },
+    {
+      "file": "components\\UI\\Input.tsx",
+      "match": "border-red-500"
+    },
+    {
+      "file": "components\\UI\\Input.tsx",
+      "match": "border-red-500"
+    },
+    {
+      "file": "components\\UI\\Input.tsx",
+      "match": "text-red-500"
+    },
+    {
+      "file": "components\\VaultSettingsModal.tsx",
+      "match": "bg-yellow-500"
+    },
+    {
+      "file": "components\\VaultSettingsModal.tsx",
+      "match": "border-yellow-500"
+    },
+    {
+      "file": "components\\VaultSettingsModal.tsx",
+      "match": "text-yellow-400"
+    },
+    {
+      "file": "components\\VaultSettingsModal.tsx",
+      "match": "bg-blue-500"
+    },
+    {
+      "file": "components\\VaultSettingsModal.tsx",
+      "match": "border-blue-500"
+    },
+    {
+      "file": "components\\VaultSettingsModal.tsx",
+      "match": "text-blue-500"
+    },
+    {
+      "file": "components\\VaultSettingsModal.tsx",
+      "match": "text-blue-500"
+    },
+    {
+      "file": "components\\VaultSettingsModal.tsx",
+      "match": "text-red-500"
+    },
+    {
+      "file": "components\\VaultSettingsModal.tsx",
+      "match": "text-red-500"
+    },
+    {
+      "file": "components\\VaultSettingsModal.tsx",
+      "match": "bg-red-500"
+    },
+    {
+      "file": "components\\worldcup\\ShareCollage.tsx",
+      "match": "text-yellow-400"
+    },
+    {
+      "file": "hooks\\useEventStatus.ts",
+      "match": "bg-blue-500"
+    },
+    {
+      "file": "hooks\\useEventStatus.ts",
+      "match": "bg-teal-400"
+    },
+    {
+      "file": "hooks\\useEventStatus.ts",
+      "match": "bg-yellow-400"
+    },
+    {
+      "file": "hooks\\useEventStatus.ts",
+      "match": "bg-orange-500"
+    },
+    {
+      "file": "hooks\\useEventStatus.ts",
+      "match": "bg-red-500"
+    },
+    {
+      "file": "pages\\admin\\AdminAmbassadors.tsx",
+      "match": "bg-red-500"
+    },
+    {
+      "file": "pages\\admin\\AdminAmbassadors.tsx",
+      "match": "text-red-500"
+    },
+    {
+      "file": "pages\\admin\\AdminAmbassadors.tsx",
+      "match": "text-red-500"
+    },
+    {
+      "file": "pages\\admin\\AdminAmbassadors.tsx",
+      "match": "bg-red-500"
+    },
+    {
+      "file": "pages\\admin\\AdminAnalytics.tsx",
+      "match": "bg-green-500"
+    },
+    {
+      "file": "pages\\admin\\AdminAnalytics.tsx",
+      "match": "bg-red-500"
+    },
+    {
+      "file": "pages\\admin\\AdminAnalytics.tsx",
+      "match": "text-red-500"
+    },
+    {
+      "file": "pages\\admin\\AdminApprovalHub.tsx",
+      "match": "text-red-500"
+    },
+    {
+      "file": "pages\\admin\\AdminApprovalHub.tsx",
+      "match": "border-red-500"
+    },
+    {
+      "file": "pages\\admin\\AdminApprovalHub.tsx",
+      "match": "bg-red-500"
+    },
+    {
+      "file": "pages\\admin\\AdminApprovalHub.tsx",
+      "match": "text-red-500"
+    },
+    {
+      "file": "pages\\admin\\AdminApprovalHub.tsx",
+      "match": "border-red-500"
+    },
+    {
+      "file": "pages\\admin\\AdminApprovalHub.tsx",
+      "match": "bg-red-500"
+    },
+    {
+      "file": "pages\\admin\\AdminContests.tsx",
+      "match": "bg-red-500"
+    },
+    {
+      "file": "pages\\admin\\AdminContests.tsx",
+      "match": "border-red-500"
+    },
+    {
+      "file": "pages\\admin\\AdminContests.tsx",
+      "match": "text-red-400"
+    },
+    {
+      "file": "pages\\admin\\AdminContests.tsx",
+      "match": "bg-red-500"
+    },
+    {
+      "file": "pages\\admin\\AdminContests.tsx",
+      "match": "bg-red-500"
+    },
+    {
+      "file": "pages\\admin\\AdminContests.tsx",
+      "match": "border-red-500"
+    },
+    {
+      "file": "pages\\admin\\AdminContests.tsx",
+      "match": "text-red-500"
+    },
+    {
+      "file": "pages\\admin\\AdminContests.tsx",
+      "match": "bg-red-500"
+    },
+    {
+      "file": "pages\\admin\\AdminEvents.tsx",
+      "match": "text-red-500"
+    },
+    {
+      "file": "pages\\admin\\AdminEvents.tsx",
+      "match": "text-red-500"
+    },
+    {
+      "file": "pages\\admin\\AdminEvents.tsx",
+      "match": "bg-red-500"
+    },
+    {
+      "file": "pages\\admin\\AdminEvents.tsx",
+      "match": "text-red-500"
+    },
+    {
+      "file": "pages\\admin\\AdminEvents.tsx",
+      "match": "bg-red-500"
+    },
+    {
+      "file": "pages\\admin\\AdminEvents.tsx",
+      "match": "text-red-500"
+    },
+    {
+      "file": "pages\\admin\\AdminEvents.tsx",
+      "match": "bg-red-600"
+    },
+    {
+      "file": "pages\\admin\\AdminEvents.tsx",
+      "match": "text-red-400"
+    },
+    {
+      "file": "pages\\admin\\AdminEvents.tsx",
+      "match": "bg-red-500"
+    },
+    {
+      "file": "pages\\admin\\AdminEvents.tsx",
+      "match": "bg-red-500"
+    },
+    {
+      "file": "pages\\admin\\AdminEvents.tsx",
+      "match": "border-red-500"
+    },
+    {
+      "file": "pages\\admin\\AdminEvents.tsx",
+      "match": "text-red-500"
+    },
+    {
+      "file": "pages\\admin\\AdminEvents.tsx",
+      "match": "text-red-500"
+    },
+    {
+      "file": "pages\\admin\\AdminEvents.tsx",
+      "match": "bg-red-500"
+    },
+    {
+      "file": "pages\\admin\\AdminEvents.tsx",
+      "match": "border-red-500"
+    },
+    {
+      "file": "pages\\admin\\AdminEvents.tsx",
+      "match": "bg-red-600"
+    },
+    {
+      "file": "pages\\admin\\AdminEvents.tsx",
+      "match": "bg-red-500"
+    },
+    {
+      "file": "pages\\admin\\AdminFinance.tsx",
+      "match": "border-red-500"
+    },
+    {
+      "file": "pages\\admin\\AdminFinance.tsx",
+      "match": "text-red-500"
+    },
+    {
+      "file": "pages\\admin\\AdminFinance.tsx",
+      "match": "text-red-500"
+    },
+    {
+      "file": "pages\\admin\\AdminFinance.tsx",
+      "match": "text-red-500"
+    },
+    {
+      "file": "pages\\admin\\AdminFinance.tsx",
+      "match": "text-red-500"
+    },
+    {
+      "file": "pages\\admin\\AdminFinance.tsx",
+      "match": "text-red-500"
+    },
+    {
+      "file": "pages\\admin\\AdminFinance.tsx",
+      "match": "bg-red-500"
+    },
+    {
+      "file": "pages\\admin\\AdminFinance.tsx",
+      "match": "text-red-500"
+    },
+    {
+      "file": "pages\\admin\\AdminFranchises.tsx",
+      "match": "bg-red-500"
+    },
+    {
+      "file": "pages\\admin\\AdminFranchises.tsx",
+      "match": "text-red-500"
+    },
+    {
+      "file": "pages\\admin\\AdminFranchises.tsx",
+      "match": "text-red-500"
+    },
+    {
+      "file": "pages\\admin\\AdminFranchises.tsx",
+      "match": "bg-red-500"
+    },
+    {
+      "file": "pages\\admin\\AdminFranchises.tsx",
+      "match": "bg-blue-500"
+    },
+    {
+      "file": "pages\\admin\\AdminFranchises.tsx",
+      "match": "text-blue-500"
+    },
+    {
+      "file": "pages\\admin\\AdminFranchises.tsx",
+      "match": "text-blue-500"
+    },
+    {
+      "file": "pages\\admin\\AdminGrowth.tsx",
+      "match": "bg-red-500"
+    },
+    {
+      "file": "pages\\admin\\AdminGrowth.tsx",
+      "match": "text-red-400"
+    },
+    {
+      "file": "pages\\admin\\AdminGrowth.tsx",
+      "match": "bg-red-500"
+    },
+    {
+      "file": "pages\\admin\\AdminGrowth.tsx",
+      "match": "border-red-500"
+    },
+    {
+      "file": "pages\\admin\\AdminGrowth.tsx",
+      "match": "text-red-400"
+    },
+    {
+      "file": "pages\\admin\\AdminGrowth.tsx",
+      "match": "bg-red-500"
+    },
+    {
+      "file": "pages\\admin\\AdminGrowth.tsx",
+      "match": "text-red-500"
+    },
+    {
+      "file": "pages\\admin\\AdminInventory.tsx",
+      "match": "bg-red-500"
+    },
+    {
+      "file": "pages\\admin\\AdminInventory.tsx",
+      "match": "border-red-500"
+    },
+    {
+      "file": "pages\\admin\\AdminInventory.tsx",
+      "match": "text-red-500"
+    },
+    {
+      "file": "pages\\admin\\AdminInventory.tsx",
+      "match": "text-red-500"
+    },
+    {
+      "file": "pages\\admin\\AdminInventory.tsx",
+      "match": "text-red-500"
+    },
+    {
+      "file": "pages\\admin\\AdminLeadsPage.tsx",
+      "match": "text-orange-500"
+    },
+    {
+      "file": "pages\\admin\\AdminOrders.tsx",
+      "match": "bg-indigo-500"
+    },
+    {
+      "file": "pages\\admin\\AdminOrders.tsx",
+      "match": "text-indigo-400"
+    },
+    {
+      "file": "pages\\admin\\AdminOrders.tsx",
+      "match": "border-indigo-500"
+    },
+    {
+      "file": "pages\\admin\\AdminOrders.tsx",
+      "match": "border-red-900"
+    },
+    {
+      "file": "pages\\admin\\AdminOrders.tsx",
+      "match": "text-red-500"
+    },
+    {
+      "file": "pages\\admin\\AdminOrders.tsx",
+      "match": "border-green-500"
+    },
+    {
+      "file": "pages\\admin\\AdminOrders.tsx",
+      "match": "text-red-500"
+    },
+    {
+      "file": "pages\\admin\\AdminOrders.tsx",
+      "match": "text-red-500"
+    },
+    {
+      "file": "pages\\admin\\AdminPrintCatalog.tsx",
+      "match": "text-blue-500"
+    },
+    {
+      "file": "pages\\admin\\AdminQuotes.tsx",
+      "match": "border-blue-500"
+    },
+    {
+      "file": "pages\\admin\\AdminQuotes.tsx",
+      "match": "text-blue-500"
+    },
+    {
+      "file": "pages\\admin\\AdminQuotes.tsx",
+      "match": "bg-blue-500"
+    },
+    {
+      "file": "pages\\admin\\AdminQuotes.tsx",
+      "match": "text-blue-500"
+    },
+    {
+      "file": "pages\\admin\\AdminQuotes.tsx",
+      "match": "border-blue-500"
+    },
+    {
+      "file": "pages\\admin\\AdminQuotes.tsx",
+      "match": "border-teal-500"
+    },
+    {
+      "file": "pages\\admin\\AdminQuotes.tsx",
+      "match": "bg-teal-500"
+    },
+    {
+      "file": "pages\\admin\\AdminQuotes.tsx",
+      "match": "border-teal-500"
+    },
+    {
+      "file": "pages\\admin\\AdminQuotes.tsx",
+      "match": "border-red-500"
+    },
+    {
+      "file": "pages\\admin\\AdminQuotes.tsx",
+      "match": "text-red-500"
+    },
+    {
+      "file": "pages\\admin\\AdminQuotes.tsx",
+      "match": "bg-red-500"
+    },
+    {
+      "file": "pages\\admin\\AdminQuotes.tsx",
+      "match": "text-red-500"
+    },
+    {
+      "file": "pages\\admin\\AdminQuotes.tsx",
+      "match": "border-red-500"
+    },
+    {
+      "file": "pages\\admin\\AdminQuotes.tsx",
+      "match": "bg-red-500"
+    },
+    {
+      "file": "pages\\admin\\AdminQuotes.tsx",
+      "match": "bg-red-500"
+    },
+    {
+      "file": "pages\\admin\\AdminQuotes.tsx",
+      "match": "border-red-500"
+    },
+    {
+      "file": "pages\\admin\\AdminQuotes.tsx",
+      "match": "text-red-500"
+    },
+    {
+      "file": "pages\\admin\\AdminQuotes.tsx",
+      "match": "text-red-500"
+    },
+    {
+      "file": "pages\\admin\\AdminQuotes.tsx",
+      "match": "text-red-500"
+    },
+    {
+      "file": "pages\\admin\\AdminQuotes.tsx",
+      "match": "border-red-500"
+    },
+    {
+      "file": "pages\\admin\\AdminQuotes.tsx",
+      "match": "text-red-500"
+    },
+    {
+      "file": "pages\\admin\\AdminQuotes.tsx",
+      "match": "text-red-500"
+    },
+    {
+      "file": "pages\\admin\\AdminQuotes.tsx",
+      "match": "text-red-500"
+    },
+    {
+      "file": "pages\\admin\\AdminQuotes.tsx",
+      "match": "text-red-500"
+    },
+    {
+      "file": "pages\\admin\\AdminQuotes.tsx",
+      "match": "bg-red-500"
+    },
+    {
+      "file": "pages\\admin\\AdminQuotes.tsx",
+      "match": "border-red-500"
+    },
+    {
+      "file": "pages\\admin\\AdminQuotes.tsx",
+      "match": "border-red-500"
+    },
+    {
+      "file": "pages\\admin\\AdminQuotes.tsx",
+      "match": "text-red-500"
+    },
+    {
+      "file": "pages\\admin\\AdminQuotes.tsx",
+      "match": "bg-red-500"
+    },
+    {
+      "file": "pages\\admin\\AdminQuotes.tsx",
+      "match": "text-red-500"
+    },
+    {
+      "file": "pages\\admin\\AdminQuotes.tsx",
+      "match": "border-red-500"
+    },
+    {
+      "file": "pages\\admin\\AdminQuotes.tsx",
+      "match": "text-red-500"
+    },
+    {
+      "file": "pages\\admin\\AdminQuotes.tsx",
+      "match": "bg-red-500"
+    },
+    {
+      "file": "pages\\admin\\AdminQuotes.tsx",
+      "match": "border-red-500"
+    },
+    {
+      "file": "pages\\admin\\AdminQuotes.tsx",
+      "match": "text-red-500"
+    },
+    {
+      "file": "pages\\admin\\AdminQuotes.tsx",
+      "match": "bg-red-500"
+    },
+    {
+      "file": "pages\\admin\\AdminQuotes.tsx",
+      "match": "border-red-900"
+    },
+    {
+      "file": "pages\\admin\\AdminQuotes.tsx",
+      "match": "text-red-500"
+    },
+    {
+      "file": "pages\\admin\\AdminQuotes.tsx",
+      "match": "bg-red-500"
+    },
+    {
+      "file": "pages\\admin\\AdminServices.tsx",
+      "match": "bg-red-500"
+    },
+    {
+      "file": "pages\\admin\\AdminServices.tsx",
+      "match": "border-red-900"
+    },
+    {
+      "file": "pages\\admin\\AdminServices.tsx",
+      "match": "text-red-900"
+    },
+    {
+      "file": "pages\\admin\\AdminServices.tsx",
+      "match": "text-red-500"
+    },
+    {
+      "file": "pages\\admin\\AdminServices.tsx",
+      "match": "border-red-500"
+    },
+    {
+      "file": "pages\\admin\\AdminServices.tsx",
+      "match": "border-red-500"
+    },
+    {
+      "file": "pages\\admin\\AdminServices.tsx",
+      "match": "text-red-500"
+    },
+    {
+      "file": "pages\\admin\\AdminServices.tsx",
+      "match": "bg-red-500"
+    },
+    {
+      "file": "pages\\admin\\AdminServices.tsx",
+      "match": "border-red-500"
+    },
+    {
+      "file": "pages\\admin\\AdminServices.tsx",
+      "match": "bg-red-500"
+    },
+    {
+      "file": "pages\\admin\\AdminServices.tsx",
+      "match": "border-red-500"
+    },
+    {
+      "file": "pages\\admin\\AdminServices.tsx",
+      "match": "text-red-500"
+    },
+    {
+      "file": "pages\\admin\\AdminServices.tsx",
+      "match": "bg-red-600"
+    },
+    {
+      "file": "pages\\admin\\AdminServices.tsx",
+      "match": "bg-red-700"
+    },
+    {
+      "file": "pages\\admin\\AdminSuppliers.tsx",
+      "match": "text-blue-500"
+    },
+    {
+      "file": "pages\\admin\\AdminSuppliers.tsx",
+      "match": "border-blue-500"
+    },
+    {
+      "file": "pages\\admin\\AdminSuppliers.tsx",
+      "match": "text-blue-500"
+    },
+    {
+      "file": "pages\\admin\\AdminSuppliers.tsx",
+      "match": "border-red-900"
+    },
+    {
+      "file": "pages\\admin\\AdminSuppliers.tsx",
+      "match": "text-red-900"
+    },
+    {
+      "file": "pages\\admin\\AdminSuppliers.tsx",
+      "match": "text-red-500"
+    },
+    {
+      "file": "pages\\admin\\AdminUsers.tsx",
+      "match": "bg-red-500"
+    },
+    {
+      "file": "pages\\admin\\AdminUsers.tsx",
+      "match": "border-red-500"
+    },
+    {
+      "file": "pages\\admin\\AdminUsers.tsx",
+      "match": "text-red-500"
+    },
+    {
+      "file": "pages\\admin\\AdminUsers.tsx",
+      "match": "bg-red-500"
+    },
+    {
+      "file": "pages\\admin\\AdminUsers.tsx",
+      "match": "bg-blue-500"
+    },
+    {
+      "file": "pages\\admin\\AdminUsers.tsx",
+      "match": "text-blue-500"
+    },
+    {
+      "file": "pages\\admin\\AdminUsers.tsx",
+      "match": "border-blue-500"
+    },
+    {
+      "file": "pages\\admin\\AdminUsers.tsx",
+      "match": "bg-yellow-500"
+    },
+    {
+      "file": "pages\\admin\\AdminUsers.tsx",
+      "match": "border-yellow-500"
+    },
+    {
+      "file": "pages\\admin\\AdminUsers.tsx",
+      "match": "text-yellow-500"
+    },
+    {
+      "file": "pages\\admin\\AdminUsers.tsx",
+      "match": "text-red-500"
+    },
+    {
+      "file": "pages\\admin\\AdminUsers.tsx",
+      "match": "text-red-500"
+    },
+    {
+      "file": "pages\\admin\\AdminUsers.tsx",
+      "match": "bg-red-500"
+    },
+    {
+      "file": "pages\\admin\\AdminUsers.tsx",
+      "match": "bg-yellow-500"
+    },
+    {
+      "file": "pages\\admin\\AdminUsers.tsx",
+      "match": "border-yellow-500"
+    },
+    {
+      "file": "pages\\admin\\AdminUsers.tsx",
+      "match": "text-yellow-500"
+    },
+    {
+      "file": "pages\\admin\\AdminUsers.tsx",
+      "match": "bg-yellow-500"
+    },
+    {
+      "file": "pages\\admin\\AdminUsers.tsx",
+      "match": "border-red-500"
+    },
+    {
+      "file": "pages\\admin\\AdminUsers.tsx",
+      "match": "bg-red-500"
+    },
+    {
+      "file": "pages\\admin\\AdminUsers.tsx",
+      "match": "border-red-500"
+    },
+    {
+      "file": "pages\\admin\\AdminUsers.tsx",
+      "match": "text-red-500"
+    },
+    {
+      "file": "pages\\admin\\AdminUsers.tsx",
+      "match": "bg-red-600"
+    },
+    {
+      "file": "pages\\admin\\AdminUsers.tsx",
+      "match": "bg-red-700"
+    },
+    {
+      "file": "pages\\admin\\configs\\AdminConfigsSplits.tsx",
+      "match": "bg-green-600"
+    },
+    {
+      "file": "pages\\AmbassadorPage.tsx",
+      "match": "bg-blue-500"
+    },
+    {
+      "file": "pages\\BusinessLanding.tsx",
+      "match": "border-red-500"
+    },
+    {
+      "file": "pages\\BusinessLanding.tsx",
+      "match": "bg-red-500"
+    },
+    {
+      "file": "pages\\BusinessLanding.tsx",
+      "match": "text-red-500"
+    },
+    {
+      "file": "pages\\BusinessLanding.tsx",
+      "match": "text-red-500"
+    },
+    {
+      "file": "pages\\CheckoutPage.tsx",
+      "match": "bg-red-500"
+    },
+    {
+      "file": "pages\\CheckoutPage.tsx",
+      "match": "text-red-500"
+    },
+    {
+      "file": "pages\\CheckoutPage.tsx",
+      "match": "text-red-500"
+    },
+    {
+      "file": "pages\\CheckoutPage.tsx",
+      "match": "text-red-500"
+    },
+    {
+      "file": "pages\\CheckoutPage.tsx",
+      "match": "text-red-500"
+    },
+    {
+      "file": "pages\\ClienteArea.tsx",
+      "match": "text-red-400"
+    },
+    {
+      "file": "pages\\ClubLandingPage.tsx",
+      "match": "text-blue-500"
+    },
+    {
+      "file": "pages\\EventPage.tsx",
+      "match": "bg-red-600"
+    },
+    {
+      "file": "pages\\EventPage.tsx",
+      "match": "text-red-500"
+    },
+    {
+      "file": "pages\\EventPage.tsx",
+      "match": "bg-red-500"
+    },
+    {
+      "file": "pages\\EventPage.tsx",
+      "match": "text-red-500"
+    },
+    {
+      "file": "pages\\FlashUnlockPage.tsx",
+      "match": "text-red-400"
+    },
+    {
+      "file": "pages\\ForgotPasswordPage.tsx",
+      "match": "bg-red-400"
+    },
+    {
+      "file": "pages\\ForgotPasswordPage.tsx",
+      "match": "border-red-400"
+    },
+    {
+      "file": "pages\\ForgotPasswordPage.tsx",
+      "match": "text-red-400"
+    },
+    {
+      "file": "pages\\franchise\\FranchiseDashboard.tsx",
+      "match": "border-red-500"
+    },
+    {
+      "file": "pages\\franchise\\FranchiseDashboard.tsx",
+      "match": "text-red-500"
+    },
+    {
+      "file": "pages\\franchise\\FranchiseDashboard.tsx",
+      "match": "bg-red-500"
+    },
+    {
+      "file": "pages\\franchise\\FranchiseDashboard.tsx",
+      "match": "text-red-500"
+    },
+    {
+      "file": "pages\\franchise\\FranchiseDashboard.tsx",
+      "match": "border-blue-500"
+    },
+    {
+      "file": "pages\\franchise\\FranchiseDashboard.tsx",
+      "match": "text-blue-500"
+    },
+    {
+      "file": "pages\\franchise\\FranchiseDashboard.tsx",
+      "match": "bg-blue-500"
+    },
+    {
+      "file": "pages\\franchise\\FranchiseDashboard.tsx",
+      "match": "text-blue-500"
+    },
+    {
+      "file": "pages\\franchise\\FranchiseDashboard.tsx",
+      "match": "text-red-500"
+    },
+    {
+      "file": "pages\\franchise\\FranchiseDashboard.tsx",
+      "match": "bg-red-500"
+    },
+    {
+      "file": "pages\\franchise\\FranchiseDashboard.tsx",
+      "match": "text-red-500"
+    },
+    {
+      "file": "pages\\franchise\\FranchiseDashboard.tsx",
+      "match": "text-blue-500"
+    },
+    {
+      "file": "pages\\InvitationPage.tsx",
+      "match": "text-red-500"
+    },
+    {
+      "file": "pages\\LoginPage.tsx",
+      "match": "bg-red-500"
+    },
+    {
+      "file": "pages\\LoginPage.tsx",
+      "match": "text-red-400"
+    },
+    {
+      "file": "pages\\LoginPage.tsx",
+      "match": "border-red-500"
+    },
+    {
+      "file": "pages\\PhygitalCapture.tsx",
+      "match": "text-red-400"
+    },
+    {
+      "file": "pages\\PhygitalCapture.tsx",
+      "match": "bg-red-500"
+    },
+    {
+      "file": "pages\\PhygitalCapture.tsx",
+      "match": "bg-red-500"
+    },
+    {
+      "file": "pages\\PhygitalCapture.tsx",
+      "match": "bg-red-500"
+    },
+    {
+      "file": "pages\\PhygitalCapture.tsx",
+      "match": "border-red-400"
+    },
+    {
+      "file": "pages\\profissional\\CustomServiceForm.tsx",
+      "match": "bg-green-500"
+    },
+    {
+      "file": "pages\\profissional\\CustomServiceForm.tsx",
+      "match": "border-green-500"
+    },
+    {
+      "file": "pages\\profissional\\CustomServiceForm.tsx",
+      "match": "bg-red-500"
+    },
+    {
+      "file": "pages\\profissional\\CustomServiceForm.tsx",
+      "match": "border-red-500"
+    },
+    {
+      "file": "pages\\profissional\\CustomServiceForm.tsx",
+      "match": "text-red-400"
+    },
+    {
+      "file": "pages\\profissional\\PortfolioManage.tsx",
+      "match": "border-red-500"
+    },
+    {
+      "file": "pages\\profissional\\PortfolioManage.tsx",
+      "match": "bg-red-500"
+    },
+    {
+      "file": "pages\\profissional\\PortfolioManage.tsx",
+      "match": "text-red-500"
+    },
+    {
+      "file": "pages\\profissional\\PortfolioManage.tsx",
+      "match": "bg-red-500"
+    },
+    {
+      "file": "pages\\profissional\\PortfolioManage.tsx",
+      "match": "bg-red-600"
+    },
+    {
+      "file": "pages\\profissional\\PortfolioManage.tsx",
+      "match": "text-red-500"
+    },
+    {
+      "file": "pages\\profissional\\PortfolioManage.tsx",
+      "match": "text-red-500"
+    },
+    {
+      "file": "pages\\profissional\\PortfolioManage.tsx",
+      "match": "bg-red-500"
+    },
+    {
+      "file": "pages\\profissional\\PortfolioManage.tsx",
+      "match": "bg-red-500"
+    },
+    {
+      "file": "pages\\profissional\\PortfolioManage.tsx",
+      "match": "text-red-400"
+    },
+    {
+      "file": "pages\\ProfissionalDashboard.tsx",
+      "match": "text-red-500"
+    },
+    {
+      "file": "pages\\ProfissionalDashboard.tsx",
+      "match": "bg-red-500"
+    },
+    {
+      "file": "pages\\ProfissionalDashboard.tsx",
+      "match": "text-red-500"
+    },
+    {
+      "file": "pages\\RegisterPage.tsx",
+      "match": "bg-red-500"
+    },
+    {
+      "file": "pages\\RegisterPage.tsx",
+      "match": "text-red-500"
+    },
+    {
+      "file": "pages\\RegisterPage.tsx",
+      "match": "border-red-500"
+    },
+    {
+      "file": "pages\\ResetPasswordPage.tsx",
+      "match": "text-red-400"
+    },
+    {
+      "file": "pages\\ResetPasswordPage.tsx",
+      "match": "bg-red-400"
+    },
+    {
+      "file": "pages\\ResetPasswordPage.tsx",
+      "match": "border-red-400"
+    },
+    {
+      "file": "pages\\ResetPasswordPage.tsx",
+      "match": "text-red-400"
+    },
+    {
+      "file": "pages\\TermsPage.tsx",
+      "match": "border-red-500"
+    },
+    {
+      "file": "pages\\TermsPage.tsx",
+      "match": "bg-red-500"
+    },
+    {
+      "file": "pages\\TermsPage.tsx",
+      "match": "text-red-500"
+    },
+    {
+      "file": "pages\\TermsPage.tsx",
+      "match": "text-red-500"
+    },
+    {
+      "file": "pages\\UnidadeFixaDashboard.tsx",
+      "match": "bg-red-500"
+    },
+    {
+      "file": "pages\\UnidadeFixaDashboard.tsx",
+      "match": "border-red-500"
+    },
+    {
+      "file": "pages\\UnidadeFixaDashboard.tsx",
+      "match": "text-red-500"
+    },
+    {
+      "file": "pages\\UnidadeFixaDashboard.tsx",
+      "match": "text-red-500"
+    },
+    {
+      "file": "pages\\UnidadeFixaDashboard.tsx",
+      "match": "bg-red-500"
+    },
+    {
+      "file": "pages\\UnidadeFixaDashboard.tsx",
+      "match": "border-red-500"
+    },
+    {
+      "file": "pages\\UnidadeFixaDashboard.tsx",
+      "match": "text-red-500"
+    },
+    {
+      "file": "pages\\UnidadeFixaDashboard.tsx",
+      "match": "text-red-500"
+    },
+    {
+      "file": "pages\\UnidadeFixaDashboard.tsx",
+      "match": "text-red-400"
+    },
+    {
+      "file": "pages\\UnidadeFixaDashboard.tsx",
+      "match": "bg-red-500"
+    },
+    {
+      "file": "pages\\UnidadeFixaDashboard.tsx",
+      "match": "border-red-500"
+    },
+    {
+      "file": "pages\\UnidadeFixaDashboard.tsx",
+      "match": "text-red-500"
+    },
+    {
+      "file": "pages\\UnidadeFixaDashboard.tsx",
+      "match": "bg-red-500"
+    },
+    {
+      "file": "pages\\UnidadeFixaDashboard.tsx",
+      "match": "bg-blue-500"
+    },
+    {
+      "file": "pages\\UnidadeFixaDashboard.tsx",
+      "match": "text-blue-500"
+    },
+    {
+      "file": "pages\\UnidadeFixaDashboard.tsx",
+      "match": "border-blue-500"
+    },
+    {
+      "file": "pages\\UnidadeFixaDashboard.tsx",
+      "match": "text-blue-500"
+    },
+    {
+      "file": "pages\\UnidadeFixaDashboard.tsx",
+      "match": "bg-red-500"
+    },
+    {
+      "file": "pages\\UnidadeFixaDashboard.tsx",
+      "match": "bg-blue-500"
+    },
+    {
+      "file": "pages\\UnidadeFixaDashboard.tsx",
+      "match": "text-blue-500"
+    },
+    {
+      "file": "pages\\UnidadeFixaDashboard.tsx",
+      "match": "text-red-500"
+    },
+    {
+      "file": "pages\\VaultDetailPage.tsx",
+      "match": "text-red-500"
+    },
+    {
+      "file": "pages\\VaultDetailPage.tsx",
+      "match": "bg-blue-500"
+    },
+    {
+      "file": "pages\\VaultDetailPage.tsx",
+      "match": "bg-blue-500"
+    },
+    {
+      "file": "pages\\VaultDetailPage.tsx",
+      "match": "border-blue-500"
+    },
+    {
+      "file": "pages\\VaultDetailPage.tsx",
+      "match": "bg-yellow-500"
+    },
+    {
+      "file": "pages\\VaultDetailPage.tsx",
+      "match": "border-yellow-500"
+    },
+    {
+      "file": "pages\\VaultDetailPage.tsx",
+      "match": "text-yellow-500"
+    },
+    {
+      "file": "pages\\VaultDetailPage.tsx",
+      "match": "bg-red-500"
+    },
+    {
+      "file": "pages\\VaultDetailPage.tsx",
+      "match": "border-red-500"
+    },
+    {
+      "file": "pages\\VaultDetailPage.tsx",
+      "match": "text-red-500"
+    },
+    {
+      "file": "pages\\VaultDetailPage.tsx",
+      "match": "text-red-500"
+    },
+    {
+      "file": "pages\\VaultDetailPage.tsx",
+      "match": "bg-red-500"
+    },
+    {
+      "file": "pages\\VaultDetailPage.tsx",
+      "match": "border-red-500"
+    },
+    {
+      "file": "pages\\VaultDetailPage.tsx",
+      "match": "text-red-500"
+    },
+    {
+      "file": "pages\\VaultDetailPage.tsx",
+      "match": "bg-yellow-500"
+    },
+    {
+      "file": "pages\\VaultDetailPage.tsx",
+      "match": "text-blue-500"
+    },
+    {
+      "file": "pages\\VaultDetailPage.tsx",
+      "match": "text-blue-500"
+    },
+    {
+      "file": "pages\\VaultDetailPage.tsx",
+      "match": "bg-yellow-500"
+    },
+    {
+      "file": "pages\\VaultDetailPage.tsx",
+      "match": "bg-yellow-400"
+    },
+    {
+      "file": "pages\\VaultDetailPage.tsx",
+      "match": "bg-red-500"
+    },
+    {
+      "file": "pages\\VaultDetailPage.tsx",
+      "match": "bg-red-500"
+    },
+    {
+      "file": "pages\\VaultsPage.tsx",
+      "match": "text-yellow-500"
+    },
+    {
+      "file": "pages\\VaultsPage.tsx",
+      "match": "bg-yellow-500"
+    },
+    {
+      "file": "pages\\VaultsPage.tsx",
+      "match": "border-yellow-500"
+    },
+    {
+      "file": "pages\\VaultsPage.tsx",
+      "match": "text-red-500"
+    },
+    {
+      "file": "pages\\VaultsPage.tsx",
+      "match": "bg-red-500"
+    },
+    {
+      "file": "pages\\VaultsPage.tsx",
+      "match": "border-red-500"
+    },
+    {
+      "file": "pages\\VaultsPage.tsx",
+      "match": "text-red-400"
+    },
+    {
+      "file": "pages\\worldcup\\MatchFolhaPage.tsx",
+      "match": "text-red-500"
+    }
+  ],
+  "hiddenElements": [],
+  "duplicateRoutes": [
+    "/suporte",
+    "*"
+  ]
+}

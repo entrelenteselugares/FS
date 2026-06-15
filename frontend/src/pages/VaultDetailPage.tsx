@@ -538,7 +538,7 @@ export default function VaultDetailPage() {
   if (!vault) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center p-3 md:p-6 text-center" style={{ background: T.bg, color: T.text }}>
-        <Lock size={48} className="text-red-500/30 mb-4" />
+        <Lock size={48} className="text-brand-danger/30 mb-4" />
         <h1 className="text-2xl font-bold uppercase">Álbum não encontrado</h1>
         <button onClick={() => navigate("/meus-albuns")} className="mt-6 text-brand-tactical font-bold uppercase tracking-widest text-[11px]">
           Voltar para meus álbuns
@@ -619,7 +619,7 @@ export default function VaultDetailPage() {
                 href={vault.externalVideoLink}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="hidden md:flex fs-btn items-center justify-center gap-2 bg-blue-500 hover:bg-blue-500 text-theme-text border-2 border-blue-500 text-[10px] font-bold uppercase tracking-widest px-4 transition-all shadow-lg shadow-blue-500/20"
+                className="hidden md:flex fs-btn items-center justify-center gap-2 bg-brand-info hover:bg-brand-info text-white border-2 border-brand-info text-[10px] font-bold uppercase tracking-widest px-4 transition-all shadow-lg shadow-blue-500/20"
               >
                 <Video size={14} />
                 Acessar Vídeos Brutos
@@ -667,8 +667,8 @@ export default function VaultDetailPage() {
 
       {/* Warning Banner se faltam poucos dias */}
       {!isBlocked && vault.subscriptionStatus === "TRIAL" && daysLeft !== null && daysLeft <= 5 && (
-        <div className="bg-yellow-500/20 border-b border-yellow-500/30 px-4 py-3 text-center">
-          <p className="text-yellow-500 text-[11px] font-bold uppercase tracking-widest">
+        <div className="bg-brand-warning/20 border-b border-brand-warning/30 px-4 py-3 text-center">
+          <p className="text-brand-warning text-[11px] font-bold uppercase tracking-widest">
             Atenção: O período gratuito deste cofre acaba em {daysLeft} dia{daysLeft !== 1 ? 's' : ''}.{' '}
             {vault.myRole === 'OWNER' ? (
               <button onClick={handleSubscribe} className="underline ml-1">Assine agora</button>
@@ -682,10 +682,10 @@ export default function VaultDetailPage() {
       {/* Blocked Screen */}
       {isBlocked ? (
         <main className="flex-1 flex flex-col items-center justify-center p-3 md:p-6 text-center">
-          <div className="w-24 h-24 bg-red-500/10 rounded-full flex items-center justify-center mb-6 border border-red-500/20">
-            <Lock size={40} className="text-red-500" />
+          <div className="w-24 h-24 bg-brand-danger/10 rounded-full flex items-center justify-center mb-6 border border-brand-danger/20">
+            <Lock size={40} className="text-brand-danger" />
           </div>
-          <h2 className="text-3xl font-bold uppercase text-red-500 mb-4">Cofre Bloqueado</h2>
+          <h2 className="text-3xl font-bold uppercase text-brand-danger mb-4">Cofre Bloqueado</h2>
           <p className="text-theme-muted max-w-md mx-auto mb-8 text-[14px]">
             O período gratuito de 30 dias para o cofre <strong>{vault.nome}</strong> expirou. Suas fotos estão seguras, mas o acesso está suspenso. {vault.myRole === 'OWNER' ? 'Para reativar o cofre imediatamente, inicie uma assinatura.' : 'Fale com o proprietário do cofre para reativar o acesso.'}
           </p>
@@ -693,13 +693,13 @@ export default function VaultDetailPage() {
             <button 
               onClick={handleSubscribe}
               disabled={checkingOut}
-              className="bg-emerald-500 hover:bg-emerald-400 text-theme-text font-bold uppercase tracking-widest text-[13px] px-5 md:px-10 py-4 rounded-full transition-all shadow-xl shadow-emerald-500/20 active:scale-95 flex items-center gap-2"
+              className="bg-brand-tactical hover:bg-brand-tactical text-brand-text font-bold uppercase tracking-widest text-[13px] px-5 md:px-10 py-4 rounded-full transition-all shadow-xl shadow-emerald-500/20 active:scale-95 flex items-center gap-2"
             >
               {checkingOut ? <Loader2 size={18} className="animate-spin" /> : <Zap size={18} fill="currentColor" />}
               Reativar Cofre Agora
             </button>
           ) : (
-            <div className="px-3 md:px-6 py-3 bg-red-500/10 border border-red-500/20 text-red-500 text-[11px] font-bold uppercase tracking-widest">
+            <div className="px-3 md:px-6 py-3 bg-brand-danger/10 border border-brand-danger/20 text-brand-danger text-[11px] font-bold uppercase tracking-widest">
               Apenas o proprietário pode reativar o cofre.
             </div>
           )}
@@ -710,7 +710,7 @@ export default function VaultDetailPage() {
           {(!vault.subscription || vault.subscription.status !== 'ACTIVE') ? (
             vault.myRole === 'OWNER' && (
               <div className="mb-8 hidden">
-                <div className="bg-gradient-to-r from-emerald-600/20 to-teal-600/20 border border-emerald-500/30 rounded-2xl p-4 md:p-8 md:p-10 flex flex-col md:flex-row items-center justify-between gap-4 md:gap-8 backdrop-blur-md">
+                <div className="bg-gradient-to-r from-emerald-600/20 to-teal-600/20 border border-brand-tactical/30 rounded-2xl p-4 md:p-8 md:p-10 flex flex-col md:flex-row items-center justify-between gap-4 md:gap-8 backdrop-blur-md">
                   <div className="flex items-center gap-3 md:gap-6">
                     <div className="w-14 h-14 bg-brand-tactical rounded-full flex items-center justify-center shadow-[0_0_20px_rgba(133,185,172,0.4)]">
                       <Printer className="text-theme-text" size={24} />
@@ -724,7 +724,7 @@ export default function VaultDetailPage() {
                   </div>
                   <button 
                     onClick={() => setIsPrintStoreOpen(true)}
-                    className="w-full md:w-auto bg-emerald-500 hover:bg-emerald-400 text-theme-text font-bold uppercase tracking-widest text-[11px] px-4 md:px-8 py-3.5 rounded-full transition-all shadow-xl shadow-emerald-500/20 active:scale-95 flex items-center justify-center gap-2"
+                    className="w-full md:w-auto bg-brand-tactical hover:bg-brand-tactical text-brand-text font-bold uppercase tracking-widest text-[11px] px-4 md:px-8 py-3.5 rounded-full transition-all shadow-xl shadow-emerald-500/20 active:scale-95 flex items-center justify-center gap-2"
                   >
                     <Printer size={16} />
                     Materializar Álbum
@@ -734,15 +734,15 @@ export default function VaultDetailPage() {
             )
           ) : (
             <div className="mb-8">
-              <div className="bg-zinc-900/50 border border-emerald-500/10 rounded-2xl p-3 md:p-6 flex items-center justify-between gap-3 md:gap-6">
+              <div className="bg-zinc-900/50 border border-brand-tactical/10 rounded-2xl p-3 md:p-6 flex items-center justify-between gap-3 md:gap-6">
                 <div className="flex items-center gap-4">
-                  <div className="w-8 h-8 bg-emerald-500/10 rounded-full flex items-center justify-center">
+                  <div className="w-8 h-8 bg-brand-tactical/10 rounded-full flex items-center justify-center">
                     <Star className="text-brand-tactical" size={16} fill="currentColor" />
                   </div>
                   <div>
                     <div className="flex items-center gap-2">
                       <span className="text-[10px] font-bold uppercase">Assinatura Ativa</span>
-                      <span className="px-2 py-0.5 bg-emerald-500 text-theme-text text-[10px] font-bold rounded-full uppercase">Premium</span>
+                      <span className="px-2 py-0.5 bg-brand-tactical text-brand-text text-[10px] font-bold rounded-full uppercase">Premium</span>
                     </div>
                     <p className="text-[9px] text-theme-muted uppercase tracking-widest">
                       Próximo ciclo: {vault.subscription.nextBillingDate ? new Date(vault.subscription.nextBillingDate).toLocaleDateString() : '—'}
@@ -756,7 +756,7 @@ export default function VaultDetailPage() {
             </div>
           )}
           {uploading && (
-          <div className="mb-6 p-3 md:p-6 bg-emerald-500/10 border border-emerald-500/20 rounded-xl flex items-center gap-3 md:gap-6 animate-pulse">
+          <div className="mb-6 p-3 md:p-6 bg-brand-tactical/10 border border-brand-tactical/20 rounded-xl flex items-center gap-3 md:gap-6 animate-pulse">
             <Loader2 className="animate-spin text-brand-tactical" size={24} />
             <div className="flex-1">
               <div className="flex justify-between text-[10px] font-bold uppercase tracking-widest mb-1">
@@ -764,7 +764,7 @@ export default function VaultDetailPage() {
                 <span>{uploadProgress}%</span>
               </div>
               <div className="w-full h-1 bg-theme-bg-muted rounded-full overflow-hidden">
-                <div className="h-full bg-emerald-500" style={{ width: `${uploadProgress}%` }} />
+                <div className="h-full bg-brand-tactical" style={{ width: `${uploadProgress}%` }} />
               </div>
             </div>
           </div>
@@ -772,7 +772,7 @@ export default function VaultDetailPage() {
 
         {media.length === 0 && !uploading ? (
           <div className="py-32 flex flex-col items-center justify-center text-center px-3 md:px-6">
-            <label className="w-20 h-20 bg-emerald-500/5 hover:bg-emerald-500/10 rounded-full flex items-center justify-center mb-6 border border-emerald-500/10 hover:border-emerald-500/30 transition-all cursor-pointer shadow-[0_0_15px_rgba(133,185,172,0.1)] hover:shadow-[0_0_25px_rgba(133,185,172,0.2)]">
+            <label className="w-20 h-20 bg-brand-tactical/5 hover:bg-brand-tactical/10 rounded-full flex items-center justify-center mb-6 border border-brand-tactical/10 hover:border-brand-tactical/30 transition-all cursor-pointer shadow-[0_0_15px_rgba(133,185,172,0.1)] hover:shadow-[0_0_25px_rgba(133,185,172,0.2)]">
               <Camera size={32} className="text-brand-tactical/50" />
               <input type="file" className="hidden" onChange={handleFileUpload} accept={vault.subscriptionStatus === "ACTIVE" ? "image/*,video/mp4,video/quicktime,video/webm" : "image/*"} multiple capture="environment" />
             </label>
@@ -793,7 +793,7 @@ export default function VaultDetailPage() {
                   transition={{ delay: Math.min(i * 0.02, 0.3) }}
                   onClick={() => setSelectedPhoto(item)}
                   className={`relative aspect-square bg-zinc-900 overflow-hidden group cursor-pointer transition-all duration-300 ${
-                    item.votedByMe ? 'ring-4 ring-emerald-500 scale-95 rounded-xl' : 'hover:opacity-90 rounded-none'
+                    item.votedByMe ? 'ring-4 ring-brand-tactical scale-95 rounded-xl' : 'hover:opacity-90 rounded-none'
                   } ${
                     item.status === 'PENDING' ? 'opacity-60' : ''
                   }`}
@@ -830,7 +830,7 @@ export default function VaultDetailPage() {
 
                   {/* Pending badge (visible only to owner) */}
                   {item.status === 'PENDING' && vault.myRole === 'OWNER' && (
-                    <div className="absolute top-2 left-2 z-20 px-2 py-0.5 bg-yellow-500 text-theme-text text-[10px] font-bold uppercase tracking-widest rounded-full">
+                    <div className="absolute top-2 left-2 z-20 px-2 py-0.5 bg-brand-warning text-zinc-900 text-[10px] font-bold uppercase tracking-widest rounded-full">
                       Pendente
                     </div>
                   )}
@@ -890,9 +890,9 @@ export default function VaultDetailPage() {
             onClick={() => setIsPrintStoreOpen(true)}
             className={`flex-1 max-w-[220px] mx-4 rounded-full py-3 px-4 flex items-center justify-center gap-2 shadow-xl transition-all active:scale-95 disabled:opacity-50 ${
               media.filter(m => m.votedByMe).length > 0
-                ? "bg-emerald-500 text-theme-text shadow-emerald-500/40"
+                ? "bg-brand-tactical text-brand-text shadow-emerald-500/40"
                 : media.length >= vault.goalPoses
-                  ? "bg-emerald-500/50 text-theme-text"
+                  ? "bg-brand-tactical/50 text-brand-text"
                   : "bg-zinc-800 text-theme-muted"
             }`}
           >
@@ -915,7 +915,7 @@ export default function VaultDetailPage() {
               href={vault.externalVideoLink}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex flex-col items-center gap-1 text-blue-500 hover:text-blue-500 transition-colors mr-4"
+              className="flex flex-col items-center gap-1 text-brand-info hover:text-brand-info transition-colors mr-4"
             >
               <Video size={20} />
               <span className="text-[9px] font-bold uppercase tracking-widest text-center">Vídeos<br/>Brutos</span>
@@ -972,7 +972,7 @@ export default function VaultDetailPage() {
             {/* Prev Button */}
             <button
               onClick={(e) => handleNavigateMedia('prev', e)}
-              className="absolute left-2 md:left-10 z-[210] p-2 md:p-4 bg-white/10 hover:bg-white/20 border border-white/20 hover:border-white/50 text-theme-text rounded-full backdrop-blur-md transition-all shadow-xl"
+              className="absolute left-2 md:left-10 z-[210] p-2 md:p-4 bg-white/10 hover:bg-white/20 border border-white/20 hover:border-white/50 text-gray-800 rounded-full backdrop-blur-md transition-all shadow-xl"
             >
               <ChevronLeft size={32} />
             </button>
@@ -980,7 +980,7 @@ export default function VaultDetailPage() {
             {/* Next Button */}
             <button
               onClick={(e) => handleNavigateMedia('next', e)}
-              className="absolute right-2 md:right-10 z-[210] p-2 md:p-4 bg-white/10 hover:bg-white/20 border border-white/20 hover:border-white/50 text-theme-text rounded-full backdrop-blur-md transition-all shadow-xl"
+              className="absolute right-2 md:right-10 z-[210] p-2 md:p-4 bg-white/10 hover:bg-white/20 border border-white/20 hover:border-white/50 text-gray-800 rounded-full backdrop-blur-md transition-all shadow-xl"
             >
               <ChevronRight size={32} />
             </button>
@@ -1041,14 +1041,14 @@ export default function VaultDetailPage() {
                   <div className="absolute top-3 right-3 flex flex-col gap-2">
                     <button
                       onClick={(e) => { e.stopPropagation(); handleRotateMedia(selectedPhoto.id, 'LEFT'); }}
-                      className="p-2 bg-black/60 hover:bg-black text-theme-text rounded-full transition-all"
+                      className="p-2 bg-black/60 hover:bg-black text-zinc-100 rounded-full transition-all"
                       title="Rotacionar para a esquerda"
                     >
                       <RotateCcw size={16} />
                     </button>
                     <button
                       onClick={(e) => { e.stopPropagation(); handleRotateMedia(selectedPhoto.id, 'RIGHT'); }}
-                      className="p-2 bg-black/60 hover:bg-black text-theme-text rounded-full transition-all"
+                      className="p-2 bg-black/60 hover:bg-black text-zinc-100 rounded-full transition-all"
                       title="Rotacionar para a direita"
                     >
                       <RotateCw size={16} />
@@ -1062,7 +1062,7 @@ export default function VaultDetailPage() {
                 <button 
                   onClick={() => { handleVote(selectedPhoto.id); setSelectedPhoto(prev => prev ? { ...prev, votedByMe: !prev.votedByMe, _count: { votes: prev.votedByMe ? prev._count.votes - 1 : prev._count.votes + 1 } } : null); }}
                   className={`flex items-center gap-2 px-5 py-2.5 rounded-full font-black uppercase tracking-wider text-[11px] transition-all whitespace-nowrap ${
-                    selectedPhoto.votedByMe ? 'bg-emerald-500 text-theme-text' : 'bg-white/10 text-theme-text hover:bg-white/20 border border-white/20'
+                    selectedPhoto.votedByMe ? 'bg-brand-tactical text-brand-text' : 'bg-white/10 text-brand-text hover:bg-white/20 border border-white/20'
                   }`}
                 >
                   <Heart size={15} fill={selectedPhoto.votedByMe ? "currentColor" : "none"} />
@@ -1075,15 +1075,15 @@ export default function VaultDetailPage() {
                       onClick={() => handleApproveMedia(selectedPhoto.id, selectedPhoto.status || 'PENDING')}
                       className={`flex items-center gap-2 px-5 py-2.5 rounded-full font-black uppercase tracking-wider text-[11px] transition-all whitespace-nowrap ${
                         selectedPhoto.status === 'APPROVED'
-                          ? 'bg-emerald-500/30 text-theme-brand border border-emerald-500/40'
-                          : 'bg-yellow-500 text-theme-text hover:bg-yellow-400'
+                          ? 'bg-brand-tactical/30 text-theme-brand border border-brand-tactical/40'
+                          : 'bg-brand-warning text-brand-text hover:bg-brand-warning'
                       }`}
                     >
                       {selectedPhoto.status === 'APPROVED' ? '✓ Aprovada' : '✓ Aprovar'}
                     </button>
                     <button
                       onClick={() => handleDeleteMedia(selectedPhoto.id)}
-                      className="flex items-center gap-2 px-5 py-2.5 rounded-full font-bold uppercase tracking-wider text-[11px] bg-red-500/80 hover:bg-red-500 text-theme-text transition-all whitespace-nowrap"
+                      className="flex items-center gap-2 px-5 py-2.5 rounded-full font-bold uppercase tracking-wider text-[11px] bg-brand-danger/80 hover:bg-brand-danger text-white transition-all whitespace-nowrap"
                     >
                       🗑 Excluir
                     </button>

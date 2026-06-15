@@ -15,11 +15,15 @@ export default {
           offwhite: '#fafafa'
         },
         brand: {
-          dark: 'var(--brand-dark)',
+          dark:    'var(--brand-dark)',
           primary: 'var(--brand-tactical)', // Unified Premium Teal
           tactical: 'var(--brand-tactical)', // Aliased for consistency
-          frost: '#ffffff',
+          text:    'var(--brand-text)',      // Contrast text on brand bg
+          frost:   '#ffffff',
           emerald: '#064e3b',
+          danger:  'var(--brand-danger)',
+          warning: 'var(--brand-warning)',
+          info:    'var(--brand-info)',
         },
         // ── Semantic theme tokens (driven by CSS variables) ──
         theme: {

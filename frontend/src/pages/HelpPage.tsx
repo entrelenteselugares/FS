@@ -128,7 +128,7 @@ const HelpPage: React.FC = () => {
   const currentFaqs = faqData[activeCategory] || [];
 
   return (
-    <div className="min-h-screen bg-theme-bg text-theme-text selection:bg-brand-tactical/30">
+    <div className="min-h-screen bg-theme-bg text-brand-text selection:bg-brand-tactical/30">
       <SEO title="Central de Ajuda | Foto Segundo" description="Encontre respostas rápidas para as dúvidas mais comuns." />
       <Navbar />
 
@@ -155,8 +155,8 @@ const HelpPage: React.FC = () => {
                 onClick={() => { setActiveCategory(cat.id); setOpenItem(null); }}
                 className={`flex items-center gap-2 px-4 py-3 rounded-xl transition-all duration-300 font-bold uppercase tracking-widest text-[10px] ${
                   activeCategory === cat.id 
-                    ? "bg-brand-tactical text-theme-text shadow-lg shadow-brand-tactical/20" 
-                    : "bg-theme-bg border border-theme-border text-theme-text hover:border-brand-tactical/40"
+                    ? "bg-brand-tactical text-brand-text shadow-lg shadow-brand-tactical/20" 
+                    : "bg-theme-bg border border-theme-border text-brand-text hover:border-brand-tactical/40"
                 }`}
               >
                 {cat.icon}
@@ -232,7 +232,7 @@ const HelpPage: React.FC = () => {
                 Entre em contato com nossa equipe pela página de contato. Respondemos em até 24 horas úteis.
               </p>
             </div>
-            <Link to="/contato" className="inline-block px-3 md:px-6 md:px-12 py-4 bg-brand-tactical text-theme-text font-bold uppercase tracking-[0.3em] text-[10px] hover:brightness-110 transition-all shadow-xl shadow-brand-tactical/20 rounded-full">
+            <Link to="/contato" className="inline-block px-3 md:px-6 md:px-12 py-4 bg-brand-tactical text-brand-text font-bold uppercase tracking-[0.3em] text-[10px] hover:brightness-110 transition-all shadow-xl shadow-brand-tactical/20 rounded-full">
               Falar com o Suporte
             </Link>
           </div>

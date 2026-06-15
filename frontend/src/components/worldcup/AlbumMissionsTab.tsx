@@ -76,7 +76,7 @@ export function AlbumMissionsTab() {
   };
 
   if (loading) {
-    return <div style={{ textAlign: "center", padding: 40, color: "#85b9ac" }}>Carregando missões...</div>;
+    return <div style={{ textAlign: "center", padding: 40, color: "var(--brand)" }}>Carregando missões...</div>;
   }
 
   return (
@@ -84,14 +84,14 @@ export function AlbumMissionsTab() {
       
       {/* SEÇÃO COMUNIDADE */}
       {pendingCommunity.length > 0 && (
-        <div style={{ background: "rgba(133,185,172,0.05)", border: "1px solid rgba(133,185,172,0.3)", borderRadius: 8, padding: 20 }}>
+        <div style={{ background: "rgba(var(--brand-rgb, 133, 185, 172),0.05)", border: "1px solid rgba(var(--brand-rgb, 133, 185, 172),0.3)", borderRadius: 8, padding: 20 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 16 }}>
-            <Users size={20} color="#85b9ac" />
+            <Users size={20} color="var(--brand)" />
             <h3 style={{ fontSize: 16, fontWeight: 900, color: "white", textTransform: "uppercase", fontStyle: "italic", margin: 0 }}>
               Ajudar a Comunidade
             </h3>
           </div>
-          <p style={{ fontSize: 12, color: "#9ca3af", marginBottom: 16, lineHeight: 1.5 }}>
+          <p style={{ fontSize: 12, color: "var(--text-muted)", marginBottom: 16, lineHeight: 1.5 }}>
             Ganhe pontos validando as fotos de outros torcedores. A foto abaixo cumpre a missão requerida?
           </p>
           
@@ -104,12 +104,12 @@ export function AlbumMissionsTab() {
                 </div>
                 <img src={pc.imageUrl} alt="" style={{ width: "100%", height: 180, objectFit: "cover" }} />
                 <div style={{ padding: 12 }}>
-                  <div style={{ fontSize: 10, color: "#85b9ac", fontWeight: 900, textTransform: "uppercase", marginBottom: 4 }}>
+                  <div style={{ fontSize: 10, color: "var(--brand)", fontWeight: 900, textTransform: "uppercase", marginBottom: 4 }}>
                     Missão: {pc.missionTitle}
                   </div>
                   <div style={{ fontSize: 11, color: "#d1d5db", marginBottom: 12 }}>{pc.missionDesc}</div>
                   <div style={{ display: "flex", gap: 8 }}>
-                    <button onClick={() => handleCommunityVote(pc.id, true)} style={{ flex: 1, padding: "8px", background: "rgba(133,185,172,0.1)", color: "#85b9ac", border: "1px solid rgba(133,185,172,0.3)", borderRadius: 4, display: "flex", alignItems: "center", justifyContent: "center", gap: 6, cursor: "pointer", fontWeight: 700 }}>
+                    <button onClick={() => handleCommunityVote(pc.id, true)} style={{ flex: 1, padding: "8px", background: "rgba(var(--brand-rgb, 133, 185, 172),0.1)", color: "var(--brand)", border: "1px solid rgba(var(--brand-rgb, 133, 185, 172),0.3)", borderRadius: 4, display: "flex", alignItems: "center", justifyContent: "center", gap: 6, cursor: "pointer", fontWeight: 700 }}>
                       <ThumbsUp size={14} /> Sim
                     </button>
                     <button onClick={() => handleCommunityVote(pc.id, false)} style={{ flex: 1, padding: "8px", background: "rgba(239,68,68,0.1)", color: "#ef4444", border: "1px solid rgba(239,68,68,0.3)", borderRadius: 4, display: "flex", alignItems: "center", justifyContent: "center", gap: 6, cursor: "pointer", fontWeight: 700 }}>
@@ -126,20 +126,20 @@ export function AlbumMissionsTab() {
       {/* MISSÕES DO USUÁRIO */}
       <div>
         <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 16 }}>
-          <Target size={20} color="#fbbf24" />
+          <Target size={20} color="#F59E0B" />
           <h3 style={{ fontSize: 16, fontWeight: 900, color: "white", textTransform: "uppercase", fontStyle: "italic", margin: 0 }}>
             Suas Missões
           </h3>
         </div>
-        <p style={{ fontSize: 12, color: "#9ca3af", marginBottom: 24, lineHeight: 1.5 }}>
+        <p style={{ fontSize: 12, color: "var(--text-muted)", marginBottom: 24, lineHeight: 1.5 }}>
           Responda aos Quizzes para liberar as missões. Após o envio, a comunidade irá validar a sua foto. Cada foto aprovada rende pontos!
         </p>
 
         {progress.length === 0 ? (
           <div style={{ textAlign: "center", padding: "40px 20px", background: "rgba(255,255,255,0.03)", borderRadius: 8, border: "1px dashed rgba(255,255,255,0.1)" }}>
-            <Target size={32} color="#4b5563" style={{ margin: "0 auto 16px" }} />
+            <Target size={32} color="var(--text-disabled)" style={{ margin: "0 auto 16px" }} />
             <h4 style={{ fontSize: 16, color: "white", marginBottom: 8, fontStyle: "italic", fontWeight: 900 }}>Nenhum Jogo Ativo</h4>
-            <p style={{ fontSize: 13, color: "#9ca3af" }}>
+            <p style={{ fontSize: 13, color: "var(--text-muted)" }}>
               As missões são ativadas durante os jogos do Brasil. Volte quando o próximo jogo começar para desbloquear os quizzes e enviar suas fotos!
             </p>
           </div>
@@ -160,15 +160,15 @@ export function AlbumMissionsTab() {
                 overflow: "hidden"
               }}>
                 {status === "APPROVED" && (
-                  <div style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0, background: "rgba(133,185,172,0.1)", pointerEvents: "none" }} />
+                  <div style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0, background: "rgba(var(--brand-rgb, 133, 185, 172),0.1)", pointerEvents: "none" }} />
                 )}
 
                 <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
-                  <div style={{ fontSize: 10, fontWeight: 900, color: status === "APPROVED" ? "#85b9ac" : "#6b7280", textTransform: "uppercase" }}>
+                  <div style={{ fontSize: 10, fontWeight: 900, color: status === "APPROVED" ? "var(--brand)" : "var(--text-muted)", textTransform: "uppercase" }}>
                     Slot {idx + 1}
                   </div>
-                  {status === "LOCKED" && !quizPassed && <Lock size={14} color="#6b7280" />}
-                  {status === "APPROVED" && <CheckCircle2 size={16} color="#85b9ac" />}
+                  {status === "LOCKED" && !quizPassed && <Lock size={14} color="var(--text-muted)" />}
+                  {status === "APPROVED" && <CheckCircle2 size={16} color="var(--brand)" />}
                 </div>
 
                 <div style={{ fontSize: 14, fontWeight: 900, color: "white", marginBottom: 4, fontStyle: "italic" }}>
@@ -178,7 +178,7 @@ export function AlbumMissionsTab() {
                 {!quizPassed ? (
                   // STATE 1: QUIZ
                   <div style={{ marginTop: 16, padding: 12, background: "rgba(0,0,0,0.3)", borderRadius: 4 }}>
-                    <div style={{ fontSize: 11, color: "#fbbf24", fontWeight: 700, marginBottom: 8 }}>QUIZ PARA DESBLOQUEAR:</div>
+                    <div style={{ fontSize: 11, color: "#F59E0B", fontWeight: 700, marginBottom: 8 }}>QUIZ PARA DESBLOQUEAR:</div>
                     <div style={{ fontSize: 12, color: "white", marginBottom: 12 }}>{mission.quiz}</div>
                     <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
                       {mission.options.map((opt: string, oIdx: number) => (
@@ -189,8 +189,8 @@ export function AlbumMissionsTab() {
                             padding: "8px 12px",
                             textAlign: "left",
                             background: selectedAnswers[idx] === oIdx ? "rgba(251,191,36,0.2)" : "rgba(255,255,255,0.05)",
-                            border: `1px solid ${selectedAnswers[idx] === oIdx ? "#fbbf24" : "transparent"}`,
-                            color: selectedAnswers[idx] === oIdx ? "#fbbf24" : "#d1d5db",
+                            border: `1px solid ${selectedAnswers[idx] === oIdx ? "#F59E0B" : "transparent"}`,
+                            color: selectedAnswers[idx] === oIdx ? "#F59E0B" : "#d1d5db",
                             borderRadius: 4,
                             fontSize: 11,
                             cursor: "pointer"
@@ -204,8 +204,8 @@ export function AlbumMissionsTab() {
                       onClick={() => slot ? handleQuizSubmit(slot.id, selectedAnswers[idx]!, idx) : null}
                       disabled={selectedAnswers[idx] == null || !slot}
                       style={{
-                        marginTop: 12, width: "100%", padding: 10, background: selectedAnswers[idx] != null ? "#fbbf24" : "rgba(255,255,255,0.1)",
-                        color: selectedAnswers[idx] != null ? "black" : "#6b7280", border: "none", borderRadius: 4,
+                        marginTop: 12, width: "100%", padding: 10, background: selectedAnswers[idx] != null ? "#F59E0B" : "rgba(255,255,255,0.1)",
+                        color: selectedAnswers[idx] != null ? "black" : "var(--text-muted)", border: "none", borderRadius: 4,
                         fontWeight: 900, textTransform: "uppercase", fontSize: 10, cursor: selectedAnswers[idx] != null ? "pointer" : "not-allowed"
                       }}
                     >
@@ -215,19 +215,19 @@ export function AlbumMissionsTab() {
                 ) : (
                   // QUIZ PASSED
                   <div style={{ marginTop: 12 }}>
-                    <div style={{ fontSize: 11, color: "#9ca3af", marginBottom: 12 }}>
+                    <div style={{ fontSize: 11, color: "var(--text-muted)", marginBottom: 12 }}>
                       <strong style={{ color: "white" }}>Missão:</strong> {mission.missionDesc}
                     </div>
 
                     {status === "APPROVED" && slot?.imageUrl ? (
                        <div style={{ position: "relative" }}>
-                         <img src={slot.imageUrl} alt="" style={{ width: "100%", height: 160, objectFit: "cover", borderRadius: 4, border: "2px solid #85b9ac" }} />
-                         <div style={{ position: "absolute", bottom: 8, right: 8, background: "#85b9ac", color: "black", padding: "4px 8px", borderRadius: 4, fontSize: 10, fontWeight: 900 }}>APROVADO</div>
+                         <img src={slot.imageUrl} alt="" style={{ width: "100%", height: 160, objectFit: "cover", borderRadius: 4, border: "2px solid var(--brand)" }} />
+                         <div style={{ position: "absolute", bottom: 8, right: 8, background: "var(--brand)", color: "black", padding: "4px 8px", borderRadius: 4, fontSize: 10, fontWeight: 900 }}>APROVADO</div>
                        </div>
                     ) : status === "AWAITING_VALIDATION" && slot?.imageUrl ? (
                        <div style={{ position: "relative" }}>
                          <img src={slot.imageUrl} alt="" style={{ width: "100%", height: 160, objectFit: "cover", borderRadius: 4, opacity: 0.5 }} />
-                         <div style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)", background: "rgba(0,0,0,0.8)", padding: "8px 12px", borderRadius: 4, fontSize: 10, color: "#fbbf24", fontWeight: 900, textAlign: "center", width: "80%" }}>
+                         <div style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)", background: "rgba(0,0,0,0.8)", padding: "8px 12px", borderRadius: 4, fontSize: 10, color: "#F59E0B", fontWeight: 900, textAlign: "center", width: "80%" }}>
                            AGUARDANDO<br/>COMUNIDADE
                          </div>
                        </div>
@@ -241,8 +241,8 @@ export function AlbumMissionsTab() {
                         )}
                         <label style={{
                           display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
-                          height: 120, border: "1px dashed rgba(133,185,172,0.5)", background: "rgba(133,185,172,0.05)",
-                          borderRadius: 4, cursor: "pointer", color: "#85b9ac", gap: 8
+                          height: 120, border: "1px dashed rgba(var(--brand-rgb, 133, 185, 172),0.5)", background: "rgba(var(--brand-rgb, 133, 185, 172),0.05)",
+                          borderRadius: 4, cursor: "pointer", color: "var(--brand)", gap: 8
                         }}>
                           <Camera size={24} />
                           <span style={{ fontSize: 10, fontWeight: 700, textTransform: "uppercase" }}>Enviar Foto</span>

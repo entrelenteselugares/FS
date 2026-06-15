@@ -77,14 +77,14 @@ export function FotoPointEditModal({ event, onClose, onSuccess, onError, network
         <form onSubmit={handleSubmit} className="p-8 md:p-12 space-y-10 overflow-y-auto custom-scrollbar">
           <div className="flex justify-between items-start">
             <div className="space-y-1">
-              <div className="text-[10px] font-bold text-cyan-400 uppercase tracking-[0.4em] mb-2">
+              <div className="text-[10px] font-bold text-brand-info uppercase tracking-[0.4em] mb-2">
                 Painel de Gestão • Foto Point
               </div>
               <h3 className="text-3xl font-heading font-bold text-theme-text uppercase leading-none">
                 Editar {event.title}
               </h3>
             </div>
-            <button type="button" onClick={onClose} className="p-2 hover:bg-theme-bg-muted text-theme-muted hover:text-cyan-400 transition-all">
+            <button type="button" onClick={onClose} className="p-2 hover:bg-theme-bg-muted text-theme-muted hover:text-brand-info transition-all">
               <X size={24} />
             </button>
           </div>
@@ -93,12 +93,12 @@ export function FotoPointEditModal({ event, onClose, onSuccess, onError, network
             <div className="space-y-3">
               <label className="text-[9px] font-bold text-theme-muted uppercase tracking-widest opacity-60">Nome do Ponto / Evento</label>
               <div className="relative group">
-                <Camera size={16} className="absolute left-5 top-1/2 -translate-y-1/2 text-cyan-400/50 group-focus-within:text-cyan-400 transition-colors" />
+                <Camera size={16} className="absolute left-5 top-1/2 -translate-y-1/2 text-brand-info/50 group-focus-within:text-brand-info transition-colors" />
                 <input
                   required
                   value={formData.title}
                   onChange={e => setFormData({ ...formData, title: e.target.value })}
-                  className="w-full bg-theme-bg-muted border border-white/10 p-5 pl-14 text-theme-text outline-none focus:border-cyan-400/50 transition-all text-xs font-bold"
+                  className="w-full bg-theme-bg-muted border border-white/10 p-5 pl-14 text-theme-text outline-none focus:border-brand-info/50 transition-all text-xs font-bold"
                   placeholder="Ex: Foto Point Morumbi"
                 />
               </div>
@@ -107,13 +107,13 @@ export function FotoPointEditModal({ event, onClose, onSuccess, onError, network
             <div className="space-y-3">
               <label className="text-[9px] font-bold text-theme-muted uppercase tracking-widest opacity-60">Valor por Click (Digital)</label>
               <div className="relative group">
-                <DollarSign size={16} className="absolute left-5 top-1/2 -translate-y-1/2 text-cyan-400/50 group-focus-within:text-cyan-400 transition-colors" />
+                <DollarSign size={16} className="absolute left-5 top-1/2 -translate-y-1/2 text-brand-info/50 group-focus-within:text-brand-info transition-colors" />
                 <input
                   type="number"
                   required
                   value={formData.priceUnit}
                   onChange={e => setFormData({ ...formData, priceUnit: Number(e.target.value) })}
-                  className="w-full bg-theme-bg-muted border border-white/10 p-5 pl-14 text-theme-text outline-none focus:border-cyan-400/50 transition-all text-xs font-bold"
+                  className="w-full bg-theme-bg-muted border border-white/10 p-5 pl-14 text-theme-text outline-none focus:border-brand-info/50 transition-all text-xs font-bold"
                   placeholder="R$ 20,00"
                 />
               </div>
@@ -122,12 +122,12 @@ export function FotoPointEditModal({ event, onClose, onSuccess, onError, network
             <div className="space-y-3">
               <label className="text-[9px] font-bold text-theme-muted uppercase tracking-widest opacity-60">Ponto de Encontro / Local</label>
               <div className="relative group">
-                <MapPin size={16} className="absolute left-5 top-1/2 -translate-y-1/2 text-cyan-400/50 group-focus-within:text-cyan-400 transition-colors" />
+                <MapPin size={16} className="absolute left-5 top-1/2 -translate-y-1/2 text-brand-info/50 group-focus-within:text-brand-info transition-colors" />
                 <input
                   required
                   value={formData.location}
                   onChange={e => setFormData({ ...formData, location: e.target.value })}
-                  className="w-full bg-theme-bg-muted border border-white/10 p-5 pl-14 text-theme-text outline-none focus:border-cyan-400/50 transition-all text-xs font-bold"
+                  className="w-full bg-theme-bg-muted border border-white/10 p-5 pl-14 text-theme-text outline-none focus:border-brand-info/50 transition-all text-xs font-bold"
                   placeholder="Ex: Em frente ao Portal Principal"
                 />
               </div>
@@ -142,7 +142,7 @@ export function FotoPointEditModal({ event, onClose, onSuccess, onError, network
                 required
                 value={formData.dataEvento}
                 onChange={e => setFormData({ ...formData, dataEvento: e.target.value })}
-                className="w-full bg-theme-bg-muted border border-white/10 p-5 text-theme-text outline-none focus:border-cyan-400/50 transition-all text-xs font-bold"
+                className="w-full bg-theme-bg-muted border border-white/10 p-5 text-theme-text outline-none focus:border-brand-info/50 transition-all text-xs font-bold"
               />
             </div>
 
@@ -152,7 +152,7 @@ export function FotoPointEditModal({ event, onClose, onSuccess, onError, network
                 <button
                   type="button"
                   onClick={() => setFormData({ ...formData, isPrivate: !formData.isPrivate })}
-                  className={`flex-1 p-5 border text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-3 transition-all ${!formData.isPrivate ? "bg-cyan-400 text-theme-text border-cyan-400" : "bg-theme-bg-muted border-white/10 text-theme-muted hover:text-theme-text"}`}
+                  className={`flex-1 p-5 border text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-3 transition-all ${!formData.isPrivate ? "bg-brand-info text-theme-text border-brand-info" : "bg-theme-bg-muted border-white/10 text-theme-muted hover:text-theme-text"}`}
                 >
                   {formData.isPrivate ? <EyeOff size={16} /> : <Eye size={16} />}
                   {formData.isPrivate ? "Privado" : "Público"}
@@ -160,7 +160,7 @@ export function FotoPointEditModal({ event, onClose, onSuccess, onError, network
                 <button
                   type="button"
                   onClick={() => setFormData({ ...formData, active: !formData.active })}
-                  className={`flex-1 p-5 border text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-3 transition-all ${formData.active ? "bg-emerald-500 text-theme-text border-emerald-500" : "bg-red-500/20 border-red-500/30 text-red-400"}`}
+                  className={`flex-1 p-5 border text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-3 transition-all ${formData.active ? "bg-brand-tactical text-brand-text border-brand-tactical" : "bg-brand-danger/20 border-brand-danger/30 text-brand-danger"}`}
                 >
                   <Check size={16} />
                   {formData.active ? "Ativo" : "Inativo"}
@@ -171,12 +171,12 @@ export function FotoPointEditModal({ event, onClose, onSuccess, onError, network
             <div className="md:col-span-2 space-y-3">
               <label className="text-[9px] font-bold text-theme-muted uppercase tracking-widest opacity-60">Roteiro da Sessão (O que será entregue?)</label>
               <div className="relative group">
-                <ListChecks size={16} className="absolute left-5 top-6 text-cyan-400/50 group-focus-within:text-cyan-400 transition-colors" />
+                <ListChecks size={16} className="absolute left-5 top-6 text-brand-info/50 group-focus-within:text-brand-info transition-colors" />
                 <textarea
                   required
                   value={formData.itinerary}
                   onChange={e => setFormData({ ...formData, itinerary: e.target.value })}
-                  className="w-full bg-theme-bg-muted border border-white/10 p-5 pl-14 text-theme-text outline-none focus:border-cyan-400/50 transition-all text-xs font-bold min-h-[100px]"
+                  className="w-full bg-theme-bg-muted border border-white/10 p-5 pl-14 text-theme-text outline-none focus:border-brand-info/50 transition-all text-xs font-bold min-h-[100px]"
                   placeholder="Ex: 5 fotos posadas, entrega digital em 24h..."
                 />
               </div>
@@ -188,22 +188,22 @@ export function FotoPointEditModal({ event, onClose, onSuccess, onError, network
                 <input
                   value={newRef}
                   onChange={e => setNewRef(e.target.value)}
-                  className="flex-1 bg-theme-bg-muted border border-white/10 p-4 text-theme-text outline-none focus:border-cyan-400/50 transition-all text-xs"
+                  className="flex-1 bg-theme-bg-muted border border-white/10 p-4 text-theme-text outline-none focus:border-brand-info/50 transition-all text-xs"
                   placeholder="Ex: Estilo P&B, Pose Dramática..."
                 />
                 <button
                   type="button"
                   onClick={addRef}
-                  className="px-6 bg-white/10 text-theme-text text-[10px] font-bold uppercase tracking-widest hover:bg-cyan-400 hover:text-theme-text transition-all"
+                  className="px-6 bg-white/10 text-gray-800 text-[10px] font-bold uppercase tracking-widest hover:bg-brand-info hover:text-gray-800 transition-all"
                 >
                   Adicionar
                 </button>
               </div>
               <div className="flex flex-wrap gap-2">
                 {formData.references.map((ref: string, i: number) => (
-                  <div key={i} className="flex items-center gap-2 bg-cyan-400/10 border border-cyan-400/20 px-3 py-2 text-[10px] font-bold text-cyan-400 uppercase">
+                  <div key={i} className="flex items-center gap-2 bg-brand-info/10 border border-brand-info/20 px-3 py-2 text-[10px] font-bold text-brand-info uppercase">
                     {ref}
-                    <button type="button" onClick={() => removeRef(i)} className="hover:text-red-400 transition-colors"><Trash2 size={12} /></button>
+                    <button type="button" onClick={() => removeRef(i)} className="hover:text-brand-danger transition-colors"><Trash2 size={12} /></button>
                   </div>
                 ))}
               </div>
@@ -241,7 +241,7 @@ export function FotoPointEditModal({ event, onClose, onSuccess, onError, network
             <button
               type="submit"
               disabled={loading}
-              className="flex-[2] py-5 bg-cyan-400 text-theme-text text-[11px] font-bold uppercase tracking-[0.3em] hover:brightness-110 disabled:opacity-40 transition-all shadow-xl shadow-cyan-400/20"
+              className="flex-[2] py-5 bg-brand-info text-white text-[11px] font-bold uppercase tracking-[0.3em] hover:brightness-110 disabled:opacity-40 transition-all shadow-xl shadow-cyan-400/20"
             >
               {loading ? "SALVANDO..." : "SALVAR ALTERAÇÕES"}
             </button>

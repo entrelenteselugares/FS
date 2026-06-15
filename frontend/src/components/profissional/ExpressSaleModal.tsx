@@ -329,7 +329,7 @@ export function ExpressSaleModal({ network, onClose, onSuccess, onError }: Expre
                             <span className="text-[10px] font-bold text-theme-text uppercase">{item.name}</span>
                             <span className="text-[11px] font-bold text-brand-tactical">R$ {Number(item.price).toFixed(2)}</span>
                           </div>
-                          <button onClick={() => removeFromCart(item.id, item.price)} className="text-theme-muted hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100 p-2">
+                          <button onClick={() => removeFromCart(item.id, item.price)} className="text-theme-muted hover:text-brand-danger transition-colors opacity-0 pointer-events-none group-hover:opacity-100 p-2">
                             <X size={14} />
                           </button>
                         </div>
@@ -432,7 +432,7 @@ export function ExpressSaleModal({ network, onClose, onSuccess, onError }: Expre
           {/* PHASE 5: Success & Share */}
           {step === 5 && successData && (
             <div className="space-y-8 animate-in zoom-in-95 duration-500 text-center py-10">
-              <div className="w-20 h-20 bg-emerald-500/10 rounded-full flex items-center justify-center mx-auto border border-emerald-500/20">
+              <div className="w-20 h-20 bg-brand-tactical/10 rounded-full flex items-center justify-center mx-auto border border-brand-tactical/20">
                 <ShoppingBag className="text-theme-brand" size={32} />
               </div>
               <div className="space-y-2">
@@ -474,7 +474,7 @@ export function ExpressSaleModal({ network, onClose, onSuccess, onError }: Expre
                       navigator.clipboard.writeText(successData.checkoutUrl || "");
                       onSuccess("Link de pagamento copiado com sucesso!");
                     }}
-                    className="w-full py-3 bg-theme-bg-muted border border-white/10 text-theme-text text-[9px] font-bold uppercase tracking-widest rounded-xl hover:bg-white/10 transition-all text-center font-bold"
+                    className="w-full py-3 bg-theme-bg-muted border border-white/10 text-gray-800 text-[9px] font-bold uppercase tracking-widest rounded-xl hover:bg-white/10 transition-all text-center font-bold"
                   >
                     COPIAR LINK DE PAGAMENTO
                   </button>
@@ -506,7 +506,7 @@ export function ExpressSaleModal({ network, onClose, onSuccess, onError }: Expre
 
               <button 
                 onClick={onClose}
-                className="w-full py-5 bg-theme-bg-muted border border-white/10 text-theme-text text-[11px] font-bold uppercase tracking-[0.3em] hover:bg-white/10 transition-all rounded-xl"
+                className="w-full py-5 bg-theme-bg-muted border border-white/10 text-gray-800 text-[11px] font-bold uppercase tracking-[0.3em] hover:bg-white/10 transition-all rounded-xl"
               >
                 FECHAR UNIDADE DE VENDA
               </button>
@@ -521,7 +521,7 @@ export function ExpressSaleModal({ network, onClose, onSuccess, onError }: Expre
               <button
                 disabled={!form.customerEmail}
                 onClick={() => setStep(2)}
-                className="w-full py-5 bg-brand-tactical text-theme-text text-[11px] font-bold uppercase tracking-[0.3em] hover:bg-white hover:scale-[1.01] active:scale-[0.98] transition-all flex items-center justify-center gap-4 shadow-2xl shadow-brand-tactical/20 disabled:opacity-40"
+                className="w-full py-5 bg-brand-tactical text-brand-text text-[11px] font-bold uppercase tracking-[0.3em] hover:bg-white hover:scale-[1.01] active:scale-[0.98] transition-all flex items-center justify-center gap-4 shadow-2xl shadow-brand-tactical/20 disabled:opacity-40"
               >
                 CONTINUAR OPERAÇÃO
               </button>
@@ -529,14 +529,14 @@ export function ExpressSaleModal({ network, onClose, onSuccess, onError }: Expre
               <div className="flex gap-4 w-full">
                 <button
                   onClick={() => setStep((step - 1) as 1 | 2 | 3 | 4 | 5)}
-                  className="flex-1 py-5 bg-theme-bg-muted border border-white/10 rounded-2xl text-theme-text text-[10px] font-bold uppercase tracking-widest hover:bg-white/10 transition-all"
+                  className="flex-1 py-5 bg-theme-bg-muted border border-white/10 rounded-2xl text-gray-800 text-[10px] font-bold uppercase tracking-widest hover:bg-white/10 transition-all"
                 >
                   Voltar
                 </button>
                 <button
                   onClick={() => (step === 4 ? handleSubmit() : setStep((step + 1) as 1 | 2 | 3 | 4 | 5))}
                   disabled={loading}
-                  className="flex-[2] py-5 bg-brand-tactical text-theme-text text-[11px] font-bold uppercase tracking-[0.3em] hover:bg-white hover:scale-[1.01] active:scale-[0.98] transition-all flex items-center justify-center gap-4 shadow-2xl shadow-brand-tactical/20"
+                  className="flex-[2] py-5 bg-brand-tactical text-brand-text text-[11px] font-bold uppercase tracking-[0.3em] hover:bg-white hover:scale-[1.01] active:scale-[0.98] transition-all flex items-center justify-center gap-4 shadow-2xl shadow-brand-tactical/20"
                 >
                   {loading
                     ? "PROCESSANDO..."

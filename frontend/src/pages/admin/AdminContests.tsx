@@ -208,7 +208,7 @@ export const AdminContests: React.FC = () => {
         {loading ? (
           <div className="py-24 text-center border border-theme-border bg-theme-bg animate-pulse text-[10px] text-theme-muted uppercase tracking-[0.5em] font-bold rounded-2xl">Sincronizando Concursos da Rede...</div>
         ) : contests.length === 0 ? (
-          <div className="py-20 text-center text-[10px] text-theme-text uppercase tracking-widest border border-theme-border bg-black/10">Nenhum concurso programado.</div>
+          <div className="py-20 text-center text-[10px] text-zinc-100 uppercase tracking-widest border border-theme-border bg-black/10">Nenhum concurso programado.</div>
         ) : (
           contests.map(c => (
             <div key={c.id} className="border border-theme-border p-5 bg-theme-bg group hover:border-brand-tactical/30 transition-all shadow-sm rounded-2xl">
@@ -234,7 +234,7 @@ export const AdminContests: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="flex flex-wrap gap-2 items-center opacity-0 group-hover:opacity-100 transition-opacity">
+                <div className="flex flex-wrap gap-2 items-center opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity">
                   {c.status !== "FINISHED" && (
                     <button 
                       onClick={() => handleEditClick(c)} 
@@ -256,13 +256,13 @@ export const AdminContests: React.FC = () => {
                     <>
                       <button 
                         onClick={() => updateStatus(c.id, "DRAFT")} 
-                        className="px-3 py-1.5 bg-amber-500/20 border border-amber-500/40 text-amber-400 hover:bg-amber-500/30 text-[10px] font-bold cursor-pointer transition-all rounded"
+                        className="px-3 py-1.5 bg-brand-warning/20 border border-brand-warning/40 text-brand-warning hover:bg-brand-warning/30 text-[10px] font-bold cursor-pointer transition-all rounded"
                       >
                         PAUSAR
                       </button>
                       <button 
                         onClick={() => updateStatus(c.id, "FINISHED")} 
-                        className="px-3 py-1.5 bg-red-500/20 border border-red-500/40 text-red-400 hover:bg-red-500/30 text-[10px] font-bold cursor-pointer transition-all rounded"
+                        className="px-3 py-1.5 bg-brand-danger/20 border border-brand-danger/40 text-brand-danger hover:bg-brand-danger/30 text-[10px] font-bold cursor-pointer transition-all rounded"
                       >
                         ENCERRAR
                       </button>
@@ -271,7 +271,7 @@ export const AdminContests: React.FC = () => {
 
                   <button 
                     onClick={() => handleDelete(c.id)} 
-                    className="px-3 py-1.5 bg-red-500/10 border border-red-500/20 text-red-500 hover:bg-red-500/20 text-[10px] font-bold cursor-pointer transition-all rounded"
+                    className="px-3 py-1.5 bg-brand-danger/10 border border-brand-danger/20 text-brand-danger hover:bg-brand-danger/20 text-[10px] font-bold cursor-pointer transition-all rounded"
                   >
                     EXCLUIR
                   </button>

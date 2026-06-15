@@ -122,7 +122,7 @@ export default function AdminPhygitalQueue({ eventId, eventTitle, onClose }: Pro
                           <span className="text-[10px] md:text-[9px] font-bold uppercase tracking-wider md:tracking-widest">Impresso</span>
                         </div>
                       ) : (
-                        <div className="flex items-center gap-1.5 text-amber-500">
+                        <div className="flex items-center gap-1.5 text-brand-warning">
                           <Clock size={12} className="animate-pulse" />
                           <span className="text-[10px] md:text-[9px] font-bold uppercase tracking-wider md:tracking-widest">Na Fila</span>
                         </div>
@@ -162,7 +162,7 @@ export default function AdminPhygitalQueue({ eventId, eventTitle, onClose }: Pro
               <span className="text-[9px] font-bold text-theme-muted uppercase tracking-[0.2em] block">Impressas</span>
             </div>
             <div className="text-center">
-              <span className="text-[24px] font-bold text-amber-500">{jobs.filter(j => j.status === 'PENDING_PRINT').length}</span>
+              <span className="text-[24px] font-bold text-brand-warning">{jobs.filter(j => j.status === 'PENDING_PRINT').length}</span>
               <span className="text-[9px] font-bold text-theme-muted uppercase tracking-[0.2em] block">Pendente</span>
             </div>
           </div>

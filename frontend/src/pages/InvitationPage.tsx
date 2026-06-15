@@ -73,9 +73,9 @@ export default function InvitationPage() {
   if (error) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center p-3 md:p-6 text-center" style={{ background: T.bg, color: T.text }}>
-        <Shield size={48} className="text-red-500/30 mb-4" />
+        <Shield size={48} className="text-brand-danger/30 mb-4" />
         <h1 className="text-2xl font-bold uppercase">Ops! {error}</h1>
-        <button onClick={() => navigate("/")} className="mt-8 text-theme-brand font-bold uppercase tracking-widest text-[11px] border border-emerald-500/20 px-3 md:px-6 py-3 rounded-full hover:bg-emerald-500/5 transition-all">
+        <button onClick={() => navigate("/")} className="mt-8 text-theme-brand font-bold uppercase tracking-widest text-[11px] border border-brand-tactical/20 px-3 md:px-6 py-3 rounded-full hover:bg-brand-tactical/5 transition-all">
           Voltar para Início
         </button>
       </div>
@@ -90,7 +90,7 @@ export default function InvitationPage() {
       <Navbar />
 
       <main className="max-w-xl mx-auto px-3 md:px-6 py-20 flex flex-col items-center text-center">
-        <div className="w-24 h-24 bg-emerald-500/10 border border-emerald-500/20 rounded-full flex items-center justify-center mb-8 shadow-[0_0_50px_rgba(133,185,172,0.1)]">
+        <div className="w-24 h-24 bg-brand-tactical/10 border border-brand-tactical/20 rounded-full flex items-center justify-center mb-8 shadow-[0_0_50px_rgba(133,185,172,0.1)]">
           <Lock size={40} className="text-theme-brand" />
         </div>
 
@@ -119,7 +119,7 @@ export default function InvitationPage() {
         <button
           onClick={handleAccept}
           disabled={accepting}
-          className="w-full py-5 bg-emerald-500 hover:bg-emerald-400 text-theme-text font-bold uppercase tracking-[0.2em] rounded-2xl transition-all shadow-xl shadow-emerald-500/20 flex items-center justify-center gap-3 group"
+          className="w-full py-5 bg-brand-tactical hover:bg-brand-tactical text-brand-text font-bold uppercase tracking-[0.2em] rounded-2xl transition-all shadow-xl shadow-emerald-500/20 flex items-center justify-center gap-3 group"
         >
           {accepting ? <Loader2 className="animate-spin" size={20} /> : (
             <>

@@ -158,21 +158,21 @@ export function HeroCarousel() {
                 {currentSlide.icon !== "trophy" && currentSlide.icon !== "qrcode" && currentSlide.icon !== "ticket" && currentSlide.icon !== "star" && <Camera className="w-8 h-8 md:w-10 md:h-10" />}
               </div>
               
-              <h1 className="text-2xl md:text-5xl lg:text-6xl font-bold text-theme-text leading-none mb-1 md:mb-2 text-center md:text-left w-full">
+              <h1 className="text-2xl md:text-5xl lg:text-6xl font-bold text-white leading-none mb-1 md:mb-2 text-center md:text-left w-full">
                 <span className="block">{currentSlide.title}</span>
                 <span className="text-theme-brand block mt-1">
                   {currentSlide.subtitle}
                 </span>
               </h1>
               
-              <p className="text-theme-subtle text-xs md:text-base font-medium max-w-md md:max-w-lg mx-auto md:mx-0 mt-3 md:mt-6 text-center md:text-left" style={{ fontFamily: T.fontD, textWrap: "balance" }}>
+              <p className="text-white/80 text-xs md:text-base font-medium max-w-md md:max-w-lg mx-auto md:mx-0 mt-3 md:mt-6 text-center md:text-left" style={{ fontFamily: T.fontD, textWrap: "balance" }}>
                 {currentSlide.description || currentSlide.desc}
               </p>
 
               <div className="flex flex-wrap justify-center md:justify-start gap-4 mt-4 md:mt-8 w-full">
                 <button 
                   onClick={() => navigate(currentSlide.primaryAction)}
-                  className="px-6 py-2.5 md:px-8 md:py-4 bg-emerald-500 text-theme-text text-[10px] md:text-[11px] font-bold uppercase tracking-[0.2em] hover:bg-emerald-400 transition-colors rounded-full shadow-[0_0_20px_rgba(133,185,172,0.3)]"
+                  className="px-6 py-2.5 md:px-8 md:py-4 bg-brand-tactical text-white text-[10px] md:text-[11px] font-bold uppercase tracking-[0.2em] hover:bg-brand-tactical transition-colors rounded-full shadow-[0_0_20px_rgba(133,185,172,0.3)]"
                 >
                   {currentSlide.primaryBtn}
                 </button>
@@ -185,13 +185,13 @@ export function HeroCarousel() {
       {/* Navigation Arrows (Visible on Desktop Hover) */}
       <button 
         onClick={handlePrev}
-        className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-black/40 hover:bg-emerald-500/80 hover:text-theme-text text-theme-text rounded-full flex items-center justify-center backdrop-blur-md transition-all opacity-0 group-hover:opacity-100 z-20 hidden md:flex"
+        className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-black/40 hover:bg-brand-tactical/80 hover:text-white text-white rounded-full flex items-center justify-center backdrop-blur-md transition-all opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto z-20 hidden md:flex"
       >
         <ChevronLeft size={24} />
       </button>
       <button 
         onClick={handleNext}
-        className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-black/40 hover:bg-emerald-500/80 hover:text-theme-text text-theme-text rounded-full flex items-center justify-center backdrop-blur-md transition-all opacity-0 group-hover:opacity-100 z-20 hidden md:flex"
+        className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-black/40 hover:bg-brand-tactical/80 hover:text-white text-white rounded-full flex items-center justify-center backdrop-blur-md transition-all opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto z-20 hidden md:flex"
       >
         <ChevronRight size={24} />
       </button>
@@ -202,7 +202,7 @@ export function HeroCarousel() {
           <button 
             key={i} 
             onClick={() => setCurrentIndex(i)}
-            className={`h-1.5 rounded-full transition-all duration-300 ${i === currentIndex ? 'w-8 bg-emerald-500' : 'w-2 bg-white/30 hover:bg-white/50'}`}
+            className={`h-1.5 rounded-full transition-all duration-300 ${i === currentIndex ? 'w-8 bg-brand-tactical' : 'w-2 bg-white/30 hover:bg-white/50'}`}
             aria-label={`Ir para o slide ${i + 1}`}
           />
         ))}

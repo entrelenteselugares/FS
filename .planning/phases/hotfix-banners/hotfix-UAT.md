@@ -13,10 +13,12 @@ updated: 2026-06-14T23:47:00Z
 ## Tests
 
 ### 1. 7 Banners na Vitrine
+
 expected: O carrossel principal da home deve exibir os 7 banners configurados em sequência.
 result: pass
 
 ### 2. Navegação do Carrossel
+
 expected: Você consegue deslizar ou clicar nas setas (se houver) para navegar entre todos os 7 banners sem quebrar o layout.
 result: pass
 

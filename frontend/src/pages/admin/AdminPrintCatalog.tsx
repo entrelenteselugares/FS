@@ -314,7 +314,7 @@ export const AdminPrintCatalog: React.FC = () => {
                                  </div>
 
                                  <div className="text-right">
-                                    <span className={`text-[12px] font-black font-heading tracking-tighter ${saving === p.id ? 'animate-pulse' : ''} ${p.sellingPrice ? 'text-blue-500' : 'text-theme-text'}`}>
+                                    <span className={`text-[12px] font-black font-heading tracking-tighter ${saving === p.id ? 'animate-pulse' : ''} ${p.sellingPrice ? 'text-brand-info' : 'text-theme-text'}`}>
                                        {formatCurrency(p.finalPrice)}
                                     </span>
                                  </div>

@@ -150,7 +150,7 @@ function AlbumPhotoGrid({ medias, selectedAlbumPhotos, toggleAlbumPhoto }: {
               className="w-full h-full object-cover"
             />
             {isSelected && (
-              <div className="absolute top-2 right-2 bg-brand-tactical text-theme-text w-5 h-5 flex items-center justify-center text-[10px] font-bold">✓</div>
+              <div className="absolute top-2 right-2 bg-brand-tactical text-brand-text w-5 h-5 flex items-center justify-center text-[10px] font-bold">✓</div>
             )}
           </div>
         );
@@ -333,7 +333,7 @@ export function PrintStoreModal({ eventId, eventTitle, medias = [], unlockedMedi
                   { id: 'delivery', label: 'Logística', icon: <Truck size={14} />, status: step === 'delivery' ? 'active' : (step === 'processing' ? 'completed' : 'pending') },
                 ].map((s, idx) => (
                   <div key={s.id} className="flex items-center gap-4 group">
-                     <div className={`w-8 h-8 flex items-center justify-center border transition-all ${s.status === 'active' ? 'border-brand-tactical bg-brand-tactical text-theme-text shadow-[0_0_15px_rgba(20,184,166,0.4)]' : (s.status === 'completed' ? 'border-brand-tactical text-brand-tactical' : 'border-theme-border text-theme-text-muted')}`}>
+                     <div className={`w-8 h-8 flex items-center justify-center border transition-all ${s.status === 'active' ? 'border-brand-tactical bg-brand-tactical text-brand-text shadow-[0_0_15px_rgba(20,184,166,0.4)]' : (s.status === 'completed' ? 'border-brand-tactical text-brand-tactical' : 'border-theme-border text-brand-text-muted')}`}>
                         {s.status === 'completed' ? <Check size={14} /> : s.icon}
                      </div>
                      <span className={`text-[11px] font-black uppercase tracking-widest italic ${s.status === 'active' ? 'text-theme-text' : 'text-theme-text-muted'}`}>{s.label}</span>
@@ -368,7 +368,7 @@ export function PrintStoreModal({ eventId, eventTitle, medias = [], unlockedMedi
           <div className="flex-1 flex flex-col bg-theme-bg overflow-hidden relative">
              <div className="flex-1 overflow-y-auto p-4 md:p-8 lg:p-10 xl:p-14 scrollbar-hide">
                 {error && (
-                  <div className="mb-6 lg:mb-10 p-6 bg-red-500/10 border border-red-500 text-red-500 text-[10px] font-bold uppercase tracking-widest flex items-center justify-between">
+                  <div className="mb-6 lg:mb-10 p-6 bg-brand-danger/10 border border-brand-danger text-brand-danger text-[10px] font-bold uppercase tracking-widest flex items-center justify-between">
                     <span>{error}</span>
                     <button onClick={() => setError("")}><Share2 size={14} className="rotate-45" /></button>
                   </div>
@@ -380,7 +380,7 @@ export function PrintStoreModal({ eventId, eventTitle, medias = [], unlockedMedi
                         <button
                           key={cat}
                           onClick={() => setActiveCategory(cat)}
-                          className={`shrink-0 snap-start px-5 py-2.5 lg:px-8 lg:py-3 text-[9px] lg:text-[10px] font-black uppercase tracking-[0.15em] lg:tracking-[0.2em] transition-all italic whitespace-nowrap rounded-sm ${activeCategory === cat ? 'bg-brand-tactical text-theme-text shadow-[0_5px_15px_rgba(20,184,166,0.3)]' : 'border border-theme-border text-theme-text-muted hover:border-brand-tactical hover:text-brand-tactical'}`}
+                          className={`shrink-0 snap-start px-5 py-2.5 lg:px-8 lg:py-3 text-[9px] lg:text-[10px] font-black uppercase tracking-[0.15em] lg:tracking-[0.2em] transition-all italic whitespace-nowrap rounded-sm ${activeCategory === cat ? 'bg-brand-tactical text-brand-text shadow-[0_5px_15px_rgba(20,184,166,0.3)]' : 'border border-theme-border text-brand-text-muted hover:border-brand-tactical hover:text-brand-tactical'}`}
                         >
                           {CATEGORY_LABELS[cat] || cat}
                         </button>
@@ -425,7 +425,7 @@ export function PrintStoreModal({ eventId, eventTitle, medias = [], unlockedMedi
                                      <span className="text-xl md:text-3xl font-bold text-theme-text">{product.finalPrice.toFixed(0)}</span>
                                      <span className="text-[9px] md:text-xs text-theme-text-muted font-bold uppercase">,00</span>
                                   </div>
-                                  <button className="p-2.5 md:p-4 bg-brand-tactical/10 border border-brand-tactical/30 text-brand-tactical group-hover:bg-brand-tactical group-hover:text-theme-text transition-all">
+                                  <button className="p-2.5 md:p-4 bg-brand-tactical/10 border border-brand-tactical/30 text-brand-tactical group-hover:bg-brand-tactical group-hover:text-brand-text transition-all">
                                      <Plus size={16} className="md:w-5 md:h-5" />
                                   </button>
                                </div>
@@ -510,8 +510,8 @@ export function PrintStoreModal({ eventId, eventTitle, medias = [], unlockedMedi
                             <h2 className="text-[10px] font-bold text-theme-text uppercase tracking-[0.4em]">Mídias de Captura</h2>
                             {(isOwner || availableMedias.length > 0) && (
                               <div className="flex p-1 bg-theme-bg-muted border border-theme-border">
-                                 <button onClick={() => setPhotoSource('album')} className={`px-4 py-2 text-[10px] font-black uppercase tracking-widest italic transition-all ${photoSource === 'album' ? 'bg-brand-tactical text-theme-text' : 'text-theme-text-muted'}`}>ÁLBUM</button>
-                                 <button onClick={() => setPhotoSource('upload')} className={`px-4 py-2 text-[10px] font-black uppercase tracking-widest italic transition-all ${photoSource === 'upload' ? 'bg-brand-tactical text-theme-text' : 'text-theme-text-muted'}`}>UPLOAD</button>
+                                 <button onClick={() => setPhotoSource('album')} className={`px-4 py-2 text-[10px] font-black uppercase tracking-widest italic transition-all ${photoSource === 'album' ? 'bg-brand-tactical text-brand-text' : 'text-brand-text-muted'}`}>ÁLBUM</button>
+                                 <button onClick={() => setPhotoSource('upload')} className={`px-4 py-2 text-[10px] font-black uppercase tracking-widest italic transition-all ${photoSource === 'upload' ? 'bg-brand-tactical text-brand-text' : 'text-brand-text-muted'}`}>UPLOAD</button>
                               </div>
                             )}
                           </div>
@@ -565,7 +565,7 @@ export function PrintStoreModal({ eventId, eventTitle, medias = [], unlockedMedi
                     <div className="pt-10 flex justify-end">
                        <button 
                         onClick={() => setStep('delivery')}
-                        className="px-12 py-5 bg-brand-tactical text-theme-text text-[11px] font-bold uppercase tracking-[0.4em] shadow-[0_20px_50px_rgba(20,184,166,0.3)] hover:scale-105 transition-all"
+                        className="px-12 py-5 bg-brand-tactical text-brand-text text-[11px] font-bold uppercase tracking-[0.4em] shadow-[0_20px_50px_rgba(20,184,166,0.3)] hover:scale-105 transition-all"
                        >
                           Prosseguir para Entrega
                        </button>
@@ -590,7 +590,7 @@ export function PrintStoreModal({ eventId, eventTitle, medias = [], unlockedMedi
                               onClick={() => setDeliveryMethod('LOCAL_PICKUP')}
                               className={`p-10 border text-left transition-all space-y-6 relative overflow-hidden group ${deliveryMethod === 'LOCAL_PICKUP' ? 'border-brand-tactical bg-brand-tactical/10' : 'border-theme-border hover:border-zinc-700'}`}
                             >
-                               <div className={`w-12 h-12 flex items-center justify-center border transition-all ${deliveryMethod === 'LOCAL_PICKUP' ? 'bg-brand-tactical text-theme-text' : 'text-theme-text-muted'}`}><MapPin size={24} /></div>
+                               <div className={`w-12 h-12 flex items-center justify-center border transition-all ${deliveryMethod === 'LOCAL_PICKUP' ? 'bg-brand-tactical text-brand-text' : 'text-brand-text-muted'}`}><MapPin size={24} /></div>
                                <div className="space-y-2">
                                   <p className="text-[11px] font-bold text-theme-text uppercase tracking-widest">Retirada no Ponto</p>
                                   <p className="text-[9px] text-theme-text-muted uppercase">Sem custo adicional • Retirada no local do evento ou sede.</p>
@@ -602,7 +602,7 @@ export function PrintStoreModal({ eventId, eventTitle, medias = [], unlockedMedi
                               onClick={() => setDeliveryMethod('SHIPPING')}
                               className={`p-10 border text-left transition-all space-y-6 relative overflow-hidden group ${deliveryMethod === 'SHIPPING' ? 'border-brand-tactical bg-brand-tactical/10' : 'border-theme-border hover:border-zinc-700'}`}
                             >
-                               <div className={`w-12 h-12 flex items-center justify-center border transition-all ${deliveryMethod === 'SHIPPING' ? 'bg-brand-tactical text-theme-text' : 'text-theme-text-muted'}`}><Truck size={24} /></div>
+                               <div className={`w-12 h-12 flex items-center justify-center border transition-all ${deliveryMethod === 'SHIPPING' ? 'bg-brand-tactical text-brand-text' : 'text-brand-text-muted'}`}><Truck size={24} /></div>
                                <div className="space-y-2">
                                   <p className="text-[11px] font-bold text-theme-text uppercase tracking-widest">Envio por Transportadora</p>
                                   <p className="text-[9px] text-theme-text-muted uppercase">Taxa tática calculada no checkout • Entrega em domicílio.</p>
@@ -626,7 +626,7 @@ export function PrintStoreModal({ eventId, eventTitle, medias = [], unlockedMedi
                         <button 
                           onClick={handleAddToCart}
                           disabled={submitting}
-                          className="w-full py-6 bg-brand-tactical text-theme-text text-[12px] font-bold uppercase tracking-[0.5em] shadow-[0_30px_60px_rgba(20,184,166,0.3)] hover:scale-[1.02] transition-all flex items-center justify-center gap-4"
+                          className="w-full py-6 bg-brand-tactical text-brand-text text-[12px] font-bold uppercase tracking-[0.5em] shadow-[0_30px_60px_rgba(20,184,166,0.3)] hover:scale-[1.02] transition-all flex items-center justify-center gap-4"
                         >
                            {submitting ? "Sincronizando Carrinho..." : <><ShoppingCart size={20} /> ADICIONAR AO MEU CARRINHO</>}
                         </button>

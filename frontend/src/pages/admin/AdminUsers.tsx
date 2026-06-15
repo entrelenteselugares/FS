@@ -81,11 +81,11 @@ export const AdminUsers: React.FC = () => {
 
   const getRoleStyle = (role: string) => {
     switch(role) {
-      case 'ADMIN': return { bg: 'bg-red-500/10', border: 'border-red-500/30', text: 'text-red-500' };
+      case 'ADMIN': return { bg: 'bg-brand-danger/10', border: 'border-brand-danger/30', text: 'text-brand-danger' };
       case 'PROFISSIONAL': return { bg: 'bg-brand-tactical/10', border: 'border-brand-tactical/30', text: 'text-brand-tactical' };
       case 'CARTORIO': 
       case 'UNIDADE_FIXA': return { bg: 'bg-slate-500/10', border: 'border-slate-500/30', text: 'text-theme-muted' };
-      case 'FRANCHISEE': return { bg: 'bg-amber-500/10', border: 'border-amber-500/30', text: 'text-amber-500' };
+      case 'FRANCHISEE': return { bg: 'bg-brand-warning/10', border: 'border-brand-warning/30', text: 'text-brand-warning' };
       default: return { bg: 'bg-zinc-500/10', border: 'border-zinc-500/30', text: 'text-theme-muted' };
     }
   };
@@ -234,7 +234,7 @@ export const AdminUsers: React.FC = () => {
                 <div key={u.id} className="bg-theme-bg-muted border border-theme-border rounded-2xl hover:border-brand-tactical/30 transition-all group shadow-sm">
                   <div className="grid grid-cols-1 md:grid-cols-12 gap-3 md:gap-4 items-center px-4 md:px-5 py-2.5">
                     <div className="col-span-1 flex items-center justify-center md:justify-start">
-                      <div className={`w-2.5 h-2.5 rounded-full ${u.active ? 'bg-brand-tactical shadow-[0_0_10px_rgba(133,185,172,0.4)]' : 'bg-red-500 shadow-[0_0_10px_rgba(239,68,68,0.4)]'} ${u.active ? 'animate-pulse' : ''}`} />
+                      <div className={`w-2.5 h-2.5 rounded-full ${u.active ? 'bg-brand-tactical shadow-[0_0_10px_rgba(133,185,172,0.4)]' : 'bg-brand-danger shadow-[0_0_10px_rgba(239,68,68,0.4)]'} ${u.active ? 'animate-pulse' : ''}`} />
                     </div>
                     <div className="col-span-4 flex items-center gap-5">
                       <div className="w-10 h-10 bg-theme-border border border-theme-border rounded-xl flex items-center justify-center text-[12px] font-bold text-theme-text">
@@ -245,7 +245,7 @@ export const AdminUsers: React.FC = () => {
                         <div className="text-[10px] text-theme-muted font-bold uppercase mt-1.5 opacity-60 tracking-wider flex items-center gap-2 truncate">
                           {u.email}
                           {u.role === 'PROFISSIONAL' && u.profissional?.workflowType && u.profissional.workflowType.map(wt => (
-                            <span key={wt} className={`px-1.5 py-0.5 rounded-sm text-[9px] font-black tracking-tighter ${wt === 'MOBILE' ? 'bg-amber-500/20 text-amber-500 border border-amber-500/20' : 'bg-blue-500 text-blue-500 border border-blue-500'}`}>
+                            <span key={wt} className={`px-1.5 py-0.5 rounded-sm text-[9px] font-black tracking-tighter ${wt === 'MOBILE' ? 'bg-brand-warning/20 text-brand-warning border border-brand-warning/20' : 'bg-brand-info text-brand-info border border-brand-info'}`}>
                               {wt === 'MOBILE' ? 'MOBILE' : 'PC'}
                             </span>
                           ))}
@@ -267,7 +267,7 @@ export const AdminUsers: React.FC = () => {
                         </span>
                       )}
                       {u.affiliateTier === 'VIP' && (
-                        <span className="px-2 py-1 bg-yellow-500/10 border border-yellow-500/30 text-yellow-500 text-[9px] font-bold uppercase tracking-widest flex items-center gap-1 rounded-lg">
+                        <span className="px-2 py-1 bg-brand-warning/10 border border-brand-warning/30 text-brand-warning text-[9px] font-bold uppercase tracking-widest flex items-center gap-1 rounded-lg">
                           AFILIADO VIP
                         </span>
                       )}
@@ -287,7 +287,7 @@ export const AdminUsers: React.FC = () => {
                       </button>
                       <button 
                         onClick={() => setConfirmDelete(u)} 
-                        className="text-red-500/40 hover:text-red-500 transition-colors p-2 hover:bg-red-500/10 rounded-xl"
+                        className="text-brand-danger/40 hover:text-brand-danger transition-colors p-2 hover:bg-brand-danger/10 rounded-xl"
                         title="BANIR"
                       >
                         <Trash2 size={14} />
@@ -470,15 +470,15 @@ export const AdminUsers: React.FC = () => {
                   </div>
                 )}
 
-                <div className="flex items-center justify-between bg-yellow-500/5 p-3 md:p-6 rounded-2xl border border-yellow-500/20">
+                <div className="flex items-center justify-between bg-brand-warning/5 p-3 md:p-6 rounded-2xl border border-brand-warning/20">
                   <div className="space-y-1">
-                    <label className="text-[10px] font-bold text-yellow-500 uppercase tracking-widest">Afiliado VIP (L2)</label>
+                    <label className="text-[10px] font-bold text-brand-warning uppercase tracking-widest">Afiliado VIP (L2)</label>
                     <p className="text-[10px] text-theme-muted uppercase font-bold opacity-40">Ativa ganhos de comissão passiva sobre indicados (Regra dos 50)</p>
                   </div>
                   <button
                     type="button"
                     onClick={() => setFormData({...formData, affiliateTier: formData.affiliateTier === 'VIP' ? 'STANDARD' : 'VIP'})}
-                    className={`w-14 h-7 rounded-full transition-all relative ${formData.affiliateTier === 'VIP' ? 'bg-yellow-500 shadow-lg shadow-yellow-500/30' : 'bg-theme-border'}`}
+                    className={`w-14 h-7 rounded-full transition-all relative ${formData.affiliateTier === 'VIP' ? 'bg-brand-warning shadow-lg shadow-yellow-500/30' : 'bg-theme-border'}`}
                   >
                     <div className={`absolute top-1 w-5 h-5 rounded-full bg-white transition-all ${formData.affiliateTier === 'VIP' ? 'left-8' : 'left-1'}`} />
                   </button>
@@ -505,12 +505,12 @@ export const AdminUsers: React.FC = () => {
       {/* CONFIRM DELETE MODAL */}
       {confirmDelete && (
         <div className="fixed inset-0 z-[600] flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-red-950/40 backdrop-blur-xl animate-in fade-in duration-300" onClick={() => setConfirmDelete(null)} />
+          <div className="absolute inset-0 bg-brand-danger/40 backdrop-blur-xl animate-in fade-in duration-300" onClick={() => setConfirmDelete(null)} />
           
-          <div className="relative w-full max-w-md bg-theme-card border border-red-500/20 rounded-[40px] overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300">
+          <div className="relative w-full max-w-md bg-theme-card border border-brand-danger/20 rounded-[40px] overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300">
             <div className="p-5 md:p-10 space-y-8 text-center">
-              <div className="w-20 h-20 bg-red-500/10 rounded-2xl flex items-center justify-center border border-red-500/20 mx-auto mb-6">
-                <Trash2 className="text-red-500" size={32} strokeWidth={1.5} />
+              <div className="w-20 h-20 bg-brand-danger/10 rounded-2xl flex items-center justify-center border border-brand-danger/20 mx-auto mb-6">
+                <Trash2 className="text-brand-danger" size={32} strokeWidth={1.5} />
               </div>
               
               <div className="space-y-2">
@@ -525,7 +525,7 @@ export const AdminUsers: React.FC = () => {
               <div className="grid grid-cols-1 gap-4 pt-4">
                 <button 
                   onClick={() => handleDelete(confirmDelete.id)}
-                  className="w-full py-5 bg-red-600 text-theme-text text-[11px] font-bold uppercase tracking-[0.4em] hover:bg-red-700 transition-all rounded-xl shadow-lg shadow-red-600/20"
+                  className="w-full py-5 bg-brand-danger text-white text-[11px] font-bold uppercase tracking-[0.4em] hover:bg-brand-danger transition-all rounded-xl shadow-lg shadow-red-600/20"
                 >
                   BANIR AGORA
                 </button>

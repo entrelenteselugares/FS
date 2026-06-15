@@ -177,8 +177,8 @@ export const AdminFinance: React.FC = () => {
            <div className="flex justify-between items-start"><span className="text-[10px] font-bold text-theme-muted uppercase tracking-widest">Receita Bruta (Matriz)</span><ArrowUpCircle className="text-brand-tactical" size={14} strokeWidth={1.5} /></div>
            <div className="text-2xl md:text-3xl font-heading font-bold text-theme-text">{formatCurrency(financialData.grossRevenue)}</div>
         </div>
-        <div className="bg-theme-bg-muted border border-theme-border p-5 space-y-3 group hover:border-red-500/50 transition-all rounded-2xl">
-           <div className="flex justify-between items-start"><span className="text-[10px] font-bold text-theme-muted uppercase tracking-widest">Custo Operacional</span><ArrowDownCircle className="text-red-500" size={14} strokeWidth={1.5} /></div>
+        <div className="bg-theme-bg-muted border border-theme-border p-5 space-y-3 group hover:border-brand-danger/50 transition-all rounded-2xl">
+           <div className="flex justify-between items-start"><span className="text-[10px] font-bold text-theme-muted uppercase tracking-widest">Custo Operacional</span><ArrowDownCircle className="text-brand-danger" size={14} strokeWidth={1.5} /></div>
            <div className="text-2xl md:text-3xl font-heading font-bold text-theme-text">{formatCurrency(financialData.totalExpenses)}</div>
         </div>
         <div className="bg-theme-bg-muted border border-theme-border p-5 space-y-3 group hover:border-brand-tactical transition-all rounded-2xl">
@@ -186,7 +186,7 @@ export const AdminFinance: React.FC = () => {
            <div className="text-2xl md:text-3xl font-heading font-bold text-brand-tactical">{formatCurrency(financialData.netProfit)}</div>
         </div>
         <div className="bg-theme-bg-muted border border-theme-border p-5 space-y-3 group transition-all rounded-2xl">
-           <div className="flex justify-between items-start"><span className="text-[10px] font-bold text-theme-muted uppercase tracking-widest">Margem Operacional</span><BarChart3 className="text-amber-500" size={14} strokeWidth={1.5} /></div>
+           <div className="flex justify-between items-start"><span className="text-[10px] font-bold text-theme-muted uppercase tracking-widest">Margem Operacional</span><BarChart3 className="text-brand-warning" size={14} strokeWidth={1.5} /></div>
            <div className="text-2xl md:text-3xl font-heading font-bold text-theme-text">{financialData.margin.toFixed(1)}%</div>
         </div>
       </div>
@@ -439,9 +439,9 @@ export const AdminFinance: React.FC = () => {
                             <td className="p-4 text-center">
                                <span className="text-[10px] font-bold px-2 py-1 border border-theme-border text-theme-muted uppercase group-hover:border-zinc-500">{exp.category}</span>
                             </td>
-                            <td className="p-4 text-right text-[12px] font-bold text-red-500">{formatCurrency(exp.amount)}</td>
+                            <td className="p-4 text-right text-[12px] font-bold text-brand-danger">{formatCurrency(exp.amount)}</td>
                             <td className="p-4 text-right">
-                               <button onClick={() => deleteExpense(exp.id)} className="text-theme-muted hover:text-red-500 p-0.5 transition-all"><Trash2 size={14} /></button>
+                               <button onClick={() => deleteExpense(exp.id)} className="text-theme-muted hover:text-brand-danger p-0.5 transition-all"><Trash2 size={14} /></button>
                             </td>
                          </tr>
                        ))}
@@ -461,9 +461,9 @@ export const AdminFinance: React.FC = () => {
                           <span className="text-[10px] font-bold px-2 py-0.5 border border-theme-border rounded-md text-theme-muted uppercase">{exp.category}</span>
                         </div>
                         <div className="text-sm font-bold text-theme-text uppercase truncate">{exp.description}</div>
-                        <div className="text-sm font-bold text-red-500 mt-1">{formatCurrency(exp.amount)}</div>
+                        <div className="text-sm font-bold text-brand-danger mt-1">{formatCurrency(exp.amount)}</div>
                       </div>
-                      <button onClick={() => deleteExpense(exp.id)} className="p-3 text-theme-muted hover:text-red-500 hover:bg-red-500/10 rounded-xl transition-all"><Trash2 size={16} /></button>
+                      <button onClick={() => deleteExpense(exp.id)} className="p-3 text-theme-muted hover:text-brand-danger hover:bg-brand-danger/10 rounded-xl transition-all"><Trash2 size={16} /></button>
                     </div>
                   ))}
                </div>
@@ -485,7 +485,7 @@ export const AdminFinance: React.FC = () => {
                     <span className="text-[11px] font-bold text-theme-muted uppercase tracking-widest">Receita Bruta (Matriz)</span>
                     <span className="text-xl font-heading font-bold text-theme-text">{formatCurrency(financialData.grossRevenue)}</span>
                  </div>
-                 <div className="flex justify-between items-center border-b border-theme-border pb-4 text-red-500">
+                 <div className="flex justify-between items-center border-b border-theme-border pb-4 text-brand-danger">
                     <span className="text-[11px] font-bold uppercase tracking-widest">(-) Despesas Totais</span>
                     <span className="text-xl font-heading font-bold">{formatCurrency(financialData.totalExpenses)}</span>
                  </div>

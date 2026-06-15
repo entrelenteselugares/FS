@@ -113,7 +113,7 @@ export const PushNotificationManager: React.FC = () => {
 
           <button
             onClick={subscribe}
-            className="w-full bg-brand-tactical text-theme-text font-bold uppercase tracking-[0.2em] text-[10px] py-3 rounded-xl hover:bg-white transition-all"
+            className="w-full bg-brand-tactical text-brand-text font-bold uppercase tracking-[0.2em] text-[10px] py-3 rounded-xl hover:bg-brand-hover transition-all"
           >
             Ativar Agora
           </button>

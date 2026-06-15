@@ -53,7 +53,7 @@ export function NotificationBell() {
       >
         <Bell className="w-5 h-5" />
         {unreadCount > 0 && (
-          <span className="absolute top-0.5 right-0.5 inline-flex items-center justify-center w-4 h-4 text-[10px] font-bold text-theme-text bg-brand-tactical rounded-full">
+          <span className="absolute top-0.5 right-0.5 inline-flex items-center justify-center w-4 h-4 text-[10px] font-bold text-brand-text bg-brand-tactical rounded-full">
             {unreadCount > 99 ? '99+' : unreadCount}
           </span>
         )}
@@ -88,7 +88,7 @@ export function NotificationBell() {
                 )}
                 <button 
                   onClick={() => setIsOpen(false)} 
-                  className="w-10 h-10 rounded-full bg-theme-bg-muted flex items-center justify-center text-theme-muted hover:text-theme-text hover:bg-white/10 transition-all"
+                  className="w-10 h-10 rounded-full bg-theme-bg-muted flex items-center justify-center text-theme-muted hover:text-gray-800 hover:bg-white/10 transition-all"
                 >
                   <X className="w-5 h-5" />
                 </button>

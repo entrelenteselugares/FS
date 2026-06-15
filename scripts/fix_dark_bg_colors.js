@@ -1,0 +1,43 @@
+const fs = require('fs');
+const path = require('path');
+
+function getAllTsxFiles(dir) {
+  const results = [];
+  const entries = fs.readdirSync(dir, { withFileTypes: true });
+  for (const entry of entries) {
+    const fullPath = path.join(dir, entry.name);
+    if (entry.isDirectory()) {
+      results.push(...getAllTsxFiles(fullPath));
+    } else if (entry.name.endsWith('.tsx')) {
+      results.push(fullPath);
+    }
+  }
+  return results;
+}
+
+const srcDir = path.join('c:', 'foto-segundo', 'frontend', 'src');
+const files = getAllTsxFiles(srcDir);
+let totalFixed = 0;
+
+files.forEach(function(filePath) {
+  let content = fs.readFileSync(filePath, 'utf8');
+  const original = content;
+
+  // Fix className strings containing dark backgrounds: replace text-theme-text with text-zinc-100
+  content = content.replace(/className=(?:"|{`)([^"`}]*)(?:"|`})/g, function(match, inner) {
+    if ((inner.match(/bg-(zinc|gray|slate|neutral|black)-?(800|900|950|black)/) || inner.indexOf('bg-black') !== -1)
+        && inner.indexOf('text-theme-text') !== -1) {
+      return match.replace(/text-theme-text/g, 'text-zinc-100');
+    }
+    return match;
+  });
+
+  if (content !== original) {
+    fs.writeFileSync(filePath, content);
+    const rel = path.relative(srcDir, filePath);
+    console.log('Fixed: ' + rel);
+    totalFixed++;
+  }
+});
+
+console.log('\nTotal files fixed: ' + totalFixed);

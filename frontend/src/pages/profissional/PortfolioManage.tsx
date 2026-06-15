@@ -37,10 +37,10 @@ function ConfirmModal({
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="w-full max-w-sm bg-theme-surface border border-red-500/20 rounded-2xl p-4 md:p-8 space-y-6"
+        className="w-full max-w-sm bg-theme-surface border border-brand-danger/20 rounded-2xl p-4 md:p-8 space-y-6"
       >
         <div className="flex flex-col items-center gap-3 text-center">
-          <div className="w-12 h-12 rounded-full bg-red-500/10 flex items-center justify-center text-red-500">
+          <div className="w-12 h-12 rounded-full bg-brand-danger/10 flex items-center justify-center text-brand-danger">
             <AlertTriangle size={24} />
           </div>
           <p className="text-sm text-theme-text font-bold">{message}</p>
@@ -54,7 +54,7 @@ function ConfirmModal({
           </button>
           <button
             onClick={onConfirm}
-            className="flex-1 py-3 bg-red-500 rounded-xl text-[10px] font-bold uppercase tracking-widest text-theme-text hover:bg-red-600 transition-all"
+            className="flex-1 py-3 bg-brand-danger rounded-xl text-[10px] font-bold uppercase tracking-widest text-white hover:bg-brand-danger transition-all"
           >
             Confirmar
           </button>
@@ -214,7 +214,7 @@ export default function PortfolioManage({ isTab = false }: PortfolioManageProps)
             </div>
             <button
               onClick={() => setIsCreating(true)}
-              className="self-start px-4 md:px-6 py-2 md:py-3 bg-brand-tactical text-theme-text text-[10px] font-bold uppercase tracking-widest flex items-center gap-2 hover:brightness-110 transition-all"
+              className="self-start px-4 md:px-6 py-2 md:py-3 bg-brand-tactical text-brand-text text-[10px] font-bold uppercase tracking-widest flex items-center gap-2 hover:brightness-110 transition-all"
             >
               <Plus size={14} /> Novo Álbum
             </button>
@@ -232,7 +232,7 @@ export default function PortfolioManage({ isTab = false }: PortfolioManageProps)
           </div>
           <button
             onClick={() => setIsCreating(true)}
-            className="self-start px-4 md:px-6 py-2 md:py-3 bg-brand-tactical text-theme-text text-[10px] font-bold uppercase tracking-widest flex items-center gap-2 hover:brightness-110 transition-all rounded-xl"
+            className="self-start px-4 md:px-6 py-2 md:py-3 bg-brand-tactical text-brand-text text-[10px] font-bold uppercase tracking-widest flex items-center gap-2 hover:brightness-110 transition-all rounded-xl"
           >
             <Plus size={14} /> Novo Álbum
           </button>
@@ -263,24 +263,24 @@ export default function PortfolioManage({ isTab = false }: PortfolioManageProps)
                   placeholder="Título do Álbum"
                   value={newAlbum.title}
                   onChange={e => setNewAlbum({ ...newAlbum, title: e.target.value })}
-                  className="w-full bg-black border border-white/10 rounded-xl p-3 text-xs text-theme-text outline-none focus:border-brand-tactical"
+                  className="w-full bg-black border border-white/10 rounded-xl p-3 text-xs text-zinc-100 outline-none focus:border-brand-tactical"
                 />
                 <input
                   type="text"
                   placeholder="Categoria (Ex: Casamento, Formatura)"
                   value={newAlbum.category}
                   onChange={e => setNewAlbum({ ...newAlbum, category: e.target.value })}
-                  className="w-full bg-black border border-white/10 rounded-xl p-3 text-xs text-theme-text outline-none focus:border-brand-tactical"
+                  className="w-full bg-black border border-white/10 rounded-xl p-3 text-xs text-zinc-100 outline-none focus:border-brand-tactical"
                 />
               </div>
               <textarea
                 placeholder="Descrição"
                 value={newAlbum.description}
                 onChange={e => setNewAlbum({ ...newAlbum, description: e.target.value })}
-                className="w-full bg-black border border-white/10 rounded-xl p-3 text-xs text-theme-text h-24 outline-none focus:border-brand-tactical"
+                className="w-full bg-black border border-white/10 rounded-xl p-3 text-xs text-zinc-100 h-24 outline-none focus:border-brand-tactical"
               />
               <div className="flex gap-4">
-                <button type="submit" className="px-3 md:px-6 py-2 bg-brand-tactical text-theme-text text-xs font-bold uppercase tracking-widest rounded-xl">
+                <button type="submit" className="px-3 md:px-6 py-2 bg-brand-tactical text-brand-text text-xs font-bold uppercase tracking-widest rounded-xl">
                   Salvar
                 </button>
                 <button type="button" onClick={() => setIsCreating(false)} className="px-3 md:px-6 py-2 border border-white/10 text-theme-text text-xs font-bold uppercase tracking-widest rounded-xl">
@@ -322,7 +322,7 @@ export default function PortfolioManage({ isTab = false }: PortfolioManageProps)
                       </span>
                       <span className="text-[9px] text-brand-tactical font-bold uppercase">{visibleCount} visíveis</span>
                       {hiddenCount > 0 && (
-                        <span className="text-[9px] text-amber-500 font-bold uppercase">{hiddenCount} ocultas</span>
+                        <span className="text-[9px] text-brand-warning font-bold uppercase">{hiddenCount} ocultas</span>
                       )}
                     </div>
                   </div>
@@ -330,7 +330,7 @@ export default function PortfolioManage({ isTab = false }: PortfolioManageProps)
                   {/* Actions */}
                   <div className="flex items-center gap-2 flex-shrink-0">
                     {/* Upload button */}
-                    <label className="cursor-pointer px-3 py-2 bg-brand-tactical/10 border border-brand-tactical/30 text-brand-tactical text-[9px] font-bold uppercase tracking-widest rounded-lg flex items-center gap-1.5 hover:bg-brand-tactical hover:text-theme-text transition-all">
+                    <label className="cursor-pointer px-3 py-2 bg-brand-tactical/10 border border-brand-tactical/30 text-brand-tactical text-[9px] font-bold uppercase tracking-widest rounded-lg flex items-center gap-1.5 hover:bg-brand-tactical hover:text-brand-text transition-all">
                       {uploading === album.id ? (
                         <Loader2 size={12} className="animate-spin" />
                       ) : (
@@ -351,7 +351,7 @@ export default function PortfolioManage({ isTab = false }: PortfolioManageProps)
                     {/* Delete album */}
                     <button
                       onClick={() => handleDeleteAlbum(album.id, album.title)}
-                      className="p-2 rounded-lg text-red-500/40 hover:text-red-500 hover:bg-red-500/10 transition-all"
+                      className="p-2 rounded-lg text-brand-danger/40 hover:text-brand-danger hover:bg-brand-danger/10 transition-all"
                       title="Excluir álbum"
                     >
                       <Trash2 size={14} />
@@ -394,13 +394,13 @@ export default function PortfolioManage({ isTab = false }: PortfolioManageProps)
 
                                 {/* Hidden badge */}
                                 {img.isHidden && (
-                                  <div className="absolute top-1.5 left-1.5 bg-amber-500/90 text-theme-text text-[9px] font-bold uppercase px-1.5 py-0.5 rounded tracking-widest flex items-center gap-1">
+                                  <div className="absolute top-1.5 left-1.5 bg-brand-warning/90 text-zinc-900 text-[9px] font-bold uppercase px-1.5 py-0.5 rounded tracking-widest flex items-center gap-1">
                                     <EyeOff size={8} /> Oculta
                                   </div>
                                 )}
 
                                 {/* Hover overlay */}
-                                <div className="absolute inset-0 bg-black/70 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                                <div className="absolute inset-0 bg-black/70 opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
                                   {processingImage === img.id ? (
                                     <Loader2 size={20} className="text-theme-text animate-spin" />
                                   ) : (
@@ -409,7 +409,7 @@ export default function PortfolioManage({ isTab = false }: PortfolioManageProps)
                                       <button
                                         onClick={() => handleToggleHide(img.id, img.isHidden)}
                                         title={img.isHidden ? "Tornar visível" : "Ocultar da vitrine"}
-                                        className="p-2 rounded-lg bg-white/10 hover:bg-amber-500/30 text-theme-text hover:text-amber-400 transition-all"
+                                        className="p-2 rounded-lg bg-white/10 hover:bg-brand-warning/30 text-gray-800 hover:text-brand-warning transition-all"
                                       >
                                         {img.isHidden ? <Eye size={16} /> : <EyeOff size={16} />}
                                       </button>
@@ -418,7 +418,7 @@ export default function PortfolioManage({ isTab = false }: PortfolioManageProps)
                                       <button
                                         onClick={() => handleDeleteImage(img.id)}
                                         title="Excluir permanentemente"
-                                        className="p-2 rounded-lg bg-white/10 hover:bg-red-500/30 text-theme-text hover:text-red-400 transition-all"
+                                        className="p-2 rounded-lg bg-white/10 hover:bg-brand-danger/30 text-gray-800 hover:text-brand-danger transition-all"
                                       >
                                         <Trash2 size={16} />
                                       </button>

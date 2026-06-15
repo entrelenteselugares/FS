@@ -132,7 +132,7 @@ export const AdminConfigs: React.FC = () => {
             key={t}
             onClick={() => setTab(t)}
             className={`px-4 md:px-8 py-3 text-[10px] md:text-[9px] font-black uppercase tracking-wider transition-all rounded-xl ${
-              tab === t ? "bg-brand-tactical text-zinc-950 shadow-md" : "text-theme-muted hover:text-theme-text"
+              tab === t ? "bg-brand-tactical text-zinc-950 shadow-md" : "text-theme-muted hover:text-brand-text"
             }`}
           >
             {t === "splits" ? "Divisão de Split" : t === "payouts" ? `Orçamentos (${payouts.length})` : "Infraestrutura"}

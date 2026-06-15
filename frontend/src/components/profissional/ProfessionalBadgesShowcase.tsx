@@ -35,22 +35,22 @@ const tierStyles = {
   BRONZE: {
     glowColor: "rgba(245, 158, 11, 0.3)",
     textGradient: "from-amber-400 to-amber-700",
-    borderGlow: "group-hover:border-amber-600/50 group-hover:shadow-[inset_0_0_20px_rgba(245,158,11,0.15)]",
+    borderGlow: "group-hover:border-brand-warning/50 group-hover:shadow-[inset_0_0_20px_rgba(245,158,11,0.15)]",
   },
   SILVER: {
     glowColor: "rgba(148, 163, 184, 0.4)",
     textGradient: "from-slate-300 to-slate-500",
-    borderGlow: "group-hover:border-cyan-400/50 group-hover:shadow-[inset_0_0_30px_rgba(34,211,238,0.15)]",
+    borderGlow: "group-hover:border-brand-info/50 group-hover:shadow-[inset_0_0_30px_rgba(34,211,238,0.15)]",
   },
   GOLD: {
     glowColor: "rgba(234, 179, 8, 0.4)",
     textGradient: "from-yellow-300 to-yellow-600",
-    borderGlow: "group-hover:border-yellow-500/50 group-hover:shadow-[inset_0_0_30px_rgba(234,179,8,0.2)]",
+    borderGlow: "group-hover:border-brand-warning/50 group-hover:shadow-[inset_0_0_30px_rgba(234,179,8,0.2)]",
   },
   DIAMOND: {
     glowColor: "rgba(34, 211, 238, 0.5)",
     textGradient: "from-cyan-300 to-purple-500",
-    borderGlow: "group-hover:border-cyan-500/50 group-hover:shadow-[inset_0_0_40px_rgba(34,211,238,0.3)]",
+    borderGlow: "group-hover:border-brand-info/50 group-hover:shadow-[inset_0_0_40px_rgba(34,211,238,0.3)]",
   }
 };
 

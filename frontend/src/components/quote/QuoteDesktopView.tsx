@@ -79,7 +79,7 @@ function DateTimePicker({ value, onChange, workingHours }: { value: string; onCh
       <div onClick={() => setOpen(o => !o)} className="relative flex items-center cursor-pointer group">
         <Calendar size={18} className="absolute left-6 text-theme-brand z-10 group-hover:scale-110 transition-transform" />
         <div
-          className="fs-input w-full !pl-16 text-[11px] font-bold uppercase tracking-widest min-h-[64px] flex items-center border border-theme-border bg-theme-bg-muted hover:border-emerald-500/40 transition-colors"
+          className="fs-input w-full !pl-16 text-[11px] font-bold uppercase tracking-widest min-h-[64px] flex items-center border border-theme-border bg-theme-bg-muted hover:border-brand-tactical/40 transition-colors"
           style={{
             color: displayValue ? "var(--text)" : "var(--text-3)"
           }}
@@ -243,10 +243,10 @@ export const QuoteDesktopView = (props: any) => {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-theme-bg text-theme-text font-b selection:bg-emerald-500 selection:text-theme-text py-10 md:py-20 px-4">
+    <div className="min-h-screen bg-theme-bg text-brand-text font-b selection:bg-brand-tactical selection:text-brand-text py-10 md:py-20 px-4">
       {loading && (
         <div className="fixed inset-0 z-[100] flex flex-col items-center justify-center gap-6 bg-theme-bg">
-          <div className="absolute inset-0 bg-emerald-500/5 blur-[120px] rounded-full -m-64 opacity-20" />
+          <div className="absolute inset-0 bg-brand-tactical/5 blur-[120px] rounded-full -m-64 opacity-20" />
           <div className="relative z-10 flex flex-col items-center gap-8">
             <div className="w-px h-16 bg-gradient-to-b from-transparent via-emerald-500 to-transparent" />
             <div className="text-[18px] font-display font-bold uppercase tracking-[0.8em] text-theme-text">FOTO SEGUNDO</div>
@@ -313,9 +313,9 @@ export const QuoteDesktopView = (props: any) => {
         </header>
 
         {flowType && flowType !== "PACKAGE" && (
-          <div className="mb-8 p-4 bg-emerald-500/10 border border-emerald-500/20 rounded-xl flex items-center justify-between shadow-xl">
+          <div className="mb-8 p-4 bg-brand-tactical/10 border border-brand-tactical/20 rounded-xl flex items-center justify-between shadow-xl">
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-full bg-emerald-500/20 flex items-center justify-center">
+              <div className="w-8 h-8 rounded-full bg-brand-tactical/20 flex items-center justify-center">
                 <span className="text-theme-brand">⭐</span>
               </div>
               <div>
@@ -347,13 +347,13 @@ export const QuoteDesktopView = (props: any) => {
                   onClick={() => props.setSelectedPackageId(pkg.id)}
                   className={`p-5 rounded-xl border cursor-pointer transition-all ${
                     props.selectedPackageId === pkg.id 
-                      ? "bg-emerald-500/10 border-emerald-500 shadow-[0_0_20px_rgba(133,185,172,0.15)] scale-[1.02]" 
-                      : "bg-theme-bg-muted border-theme-border hover:border-emerald-500/50 hover:bg-theme-bg"
+                      ? "bg-brand-tactical/10 border-brand-tactical shadow-[0_0_20px_rgba(133,185,172,0.15)] scale-[1.02]" 
+                      : "bg-theme-bg-muted border-theme-border hover:border-brand-tactical/50 hover:bg-theme-bg"
                   }`}
                 >
                   <div className="flex items-start justify-between mb-2">
                     <h4 className="text-sm font-bold uppercase tracking-widest text-theme-text">{pkg.name}</h4>
-                    {props.selectedPackageId === pkg.id && <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />}
+                    {props.selectedPackageId === pkg.id && <div className="w-2 h-2 rounded-full bg-brand-tactical animate-pulse" />}
                   </div>
                   <div className="text-[10px] text-theme-text-muted mb-4 uppercase tracking-widest leading-relaxed">
                     {pkg.desc}
@@ -782,7 +782,7 @@ export const QuoteDesktopView = (props: any) => {
                       }
                     }}
                     style={{ flex: 1 }}
-                    className="px-8 py-4 bg-brand-tactical text-theme-text font-display font-bold text-[11px] uppercase tracking-widest hover:bg-white transition-all shadow-[0_0_20px_rgba(133,185,172,0.4)] rounded-lg"
+                    className="px-8 py-4 bg-brand-tactical text-brand-text font-display font-bold text-[11px] uppercase tracking-widest hover:bg-brand-hover transition-all shadow-[0_0_20px_rgba(133,185,172,0.4)] rounded-lg"
                   >CONTINUAR &rarr;</button>
                 </div>
               </div>
@@ -869,7 +869,7 @@ export const QuoteDesktopView = (props: any) => {
                 </button>
 
                 {submitError && (
-                  <div className="p-4 bg-red-500/10 border border-red-500/20 text-red-400 flex items-center justify-center gap-3 mt-4 text-xs font-bold uppercase tracking-widest text-center">
+                  <div className="p-4 bg-brand-danger/10 border border-brand-danger/20 text-brand-danger flex items-center justify-center gap-3 mt-4 text-xs font-bold uppercase tracking-widest text-center">
                     <ShieldCheck size={16} />
                     <span>{submitError}</span>
                   </div>
@@ -881,7 +881,7 @@ export const QuoteDesktopView = (props: any) => {
         {/* ─── PASSO 4: Confirmação ─── */}
         {step === 4 && (
           <div style={{ textAlign: "center", padding: "80px 40px", background: "var(--theme-bg-muted)", border: "1px solid var(--theme-border)" }} className="relative overflow-hidden">
-            <div className="absolute inset-0 bg-emerald-500/5 blur-[100px] rounded-full opacity-30" />
+            <div className="absolute inset-0 bg-brand-tactical/5 blur-[100px] rounded-full opacity-30" />
             
             <div className="relative z-10">
               <div style={{ width: 80, height: 80, background: "var(--theme-bg)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 30px", border: "1px solid var(--theme-border)" }}>
@@ -903,7 +903,7 @@ export const QuoteDesktopView = (props: any) => {
               <div className="flex flex-col gap-4 max-w-sm mx-auto">
                 <button 
                   onClick={() => window.open('https://wa.me/5519981150440', '_blank')}
-                  className="w-full py-6 bg-emerald-500 text-theme-text font-display font-bold text-xs uppercase tracking-[0.3em] hover:bg-white transition-all shadow-2xl shadow-emerald-500/20"
+                  className="w-full py-6 bg-brand-tactical text-brand-text font-display font-bold text-xs uppercase tracking-[0.3em] hover:bg-brand-hover transition-all shadow-2xl shadow-emerald-500/20"
                 >
                   FALAR COM ESPECIALISTA
                 </button>
