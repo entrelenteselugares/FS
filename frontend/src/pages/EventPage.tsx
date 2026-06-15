@@ -1043,7 +1043,7 @@ return (
                             <div className="flex flex-col sm:flex-row gap-4">
                               <button 
                                 onClick={() => window.location.reload()}
-                                className="px-4 md:px-8 py-4 border border-theme-border text-[10px] font-bold text-brand-text-muted uppercase tracking-widest hover:border-brand-tactical hover:text-brand-text hover:bg-brand-tactical/10 transition-all"
+                                className="px-4 md:px-8 py-4 border border-theme-border text-[10px] font-bold text-theme-text uppercase tracking-widest hover:border-brand-tactical hover:text-brand-tactical hover:bg-brand-tactical/10 transition-all"
                               >
                                 Sincronizar Galeria
                               </button>
@@ -1197,22 +1197,20 @@ return (
                     <ShieldCheck size={16} className="text-brand-tactical" />
                     <span className="text-[10px] font-bold text-brand-tactical uppercase tracking-widest">Gestão Tática do Evento</span>
                  </div>
-                 <div className="grid grid-cols-2 gap-2">
+                 <div className="flex gap-2">
                     <button 
                       onClick={() => qrOpen && setShowQrModal(true)}
-                      className={`w-full py-4 bg-[var(--bg-card)] border border-brand-tactical/30 text-brand-tactical text-[9px] lg:text-[10px] font-black uppercase tracking-widest transition-all italic flex items-center justify-center gap-2 ${!qrOpen ? 'opacity-30 cursor-not-allowed grayscale' : 'hover:bg-brand-tactical hover:text-brand-text'}`}
+                      className={`flex-1 h-11 bg-[var(--bg-card)] border border-brand-tactical/30 text-brand-tactical text-[9px] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-1.5 ${!qrOpen ? 'opacity-30 cursor-not-allowed grayscale' : 'hover:bg-brand-tactical hover:text-brand-text'}`}
                       disabled={!qrOpen}
                     >
-                      <QrCode size={16} /> {!qrOpen ? 'ENCERRADAS' : 'QR CODE'}
+                      <QrCode size={14} /> {!qrOpen ? 'CAPTURAS\nENCERRADAS' : 'QR CODE'}
                     </button>
                     {(event.isOwner || event.isPrimaryClient || user?.role === 'ADMIN' || user?.role === 'PROFISSIONAL' || user?.role === 'FRANCHISEE' || user?.role === 'CARTORIO' || user?.role === 'UNIDADE') && (
                       <button 
-                        onClick={() => {
-                          setIsEditingEvent(true);
-                        }}
-                        className="w-full py-4 border border-theme-border text-theme-text-muted text-[9px] lg:text-[10px] font-bold uppercase tracking-widest hover:text-theme-text hover:border-theme-border hover:bg-theme-bg-muted transition-all flex items-center justify-center gap-2"
+                        onClick={() => setIsEditingEvent(true)}
+                        className="flex-1 h-11 border border-theme-border text-theme-text text-[9px] font-bold uppercase tracking-widest hover:text-brand-tactical hover:border-brand-tactical/40 hover:bg-brand-tactical/5 transition-all flex items-center justify-center gap-1.5"
                       >
-                        <Camera size={16} /> CONFIGURAÇÕES
+                        <Camera size={14} /> Configurar
                       </button>
                     )}
                  </div>
