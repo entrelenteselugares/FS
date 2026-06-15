@@ -78,16 +78,16 @@
 
 ## Backlog (v16.0 TBD)
 
-
 ### Phase 72: Camera Stories & Background Upload
 
 **Goal:** [To be planned]
 **Requirements**: TBD
 **Depends on:** Phase 71
-**Plans:** 0 plans
+**Plans:** 1/1 plans complete
 
 Plans:
-- [ ] TBD (run /gsd-plan-phase 72 to break down)
+
+- [x] TBD (run /gsd-plan-phase 72 to break down) (completed 2026-06-15)
 
 ### Phase 73: os status estao seguindo o tempo de duração do evento os eventos estao se ideintificando corretamente com duração em dais e horas que o consumidor solicitou
 
@@ -97,4 +97,20 @@ Plans:
 **Plans:** 0 plans
 
 Plans:
+
 - [ ] TBD (run /gsd-plan-phase 73 to break down)
+
+### Phase 74: Segurança e Proteção Financeira (Split Floor & Escrow Disputes)
+
+**Goal:** Implement critical safety checks including removing the hardcoded stress key, enforcing a 5% platform fee floor, and adding escrow dispute hooks.
+**Requirements**:
+
+- Remove hardcoded `"FOTO_SEGUNDO_STRESS_2026"` from `phygital.controller.ts` and use `process.env.STRESS_TEST_KEY`.
+- Enforce a 5% split floor for Matriz in `PricingService.ts` to prevent negative splits.
+- Add `hasActiveDispute` logic or flag to prevent automatic escrow release on disputed bookings.
+  **Depends on:** Phase 73
+  **Plans:** 0 plans
+
+Plans:
+
+- [ ] TBD (run /gsd-plan-phase 74 to break down)
