@@ -98,8 +98,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             if (isOAuthRedirect) {
               window.history.replaceState(null, "", window.location.pathname + window.location.search);
             }
-          } catch (e) {
+          } catch (e: any) {
             console.error("Erro no callback oauth", e);
+            const msg = e.response?.data?.error || "Erro ao fazer login com o Google.";
+            alert(msg);
             setUser(null);
             setToken(null);
           } finally {

@@ -365,7 +365,15 @@ export class AuthController {
       if (!email) return res.status(400).json({ error: "Email não fornecido pelo provedor" });
 
       const result = await prisma.$transaction(async (tx) => {
-        let user = await tx.user.findUnique({ where: { email } });
+        // 1 & 2. Try finding by ID first, then fallback to case-insensitive email
+        let user = await tx.user.findUnique({ where: { id: sbUser.id } });
+        if (!user) {
+          user = await tx.user.findUnique({ where: { email } });
+        }
+        if (!user) {
+          user = await tx.user.findFirst({ where: { email: { equals: email, mode: 'insensitive' } } });
+        }
+
         if (!user) {
           let referredById: string | null = null;
           if (ref) {
@@ -373,19 +381,36 @@ export class AuthController {
             if (referrer) referredById = referrer.id;
           }
 
-          const newReferralCode = Array.from({length: 8}, () => 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'[Math.floor(Math.random()*36)]).join('');
+          // 3. Unique referralCode retry loop
+          let newReferralCode = "";
+          let codeExists = true;
+          while (codeExists) {
+            newReferralCode = Array.from({length: 8}, () => 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'[Math.floor(Math.random()*36)]).join('');
+            const exists = await tx.user.findUnique({ where: { referralCode: newReferralCode } });
+            if (!exists) codeExists = false;
+          }
+
           const dummyPassword = crypto.randomBytes(16).toString("hex"); // Temporary random password for OAuth users
-          user = await tx.user.create({
-            data: {
-              id: sbUser.id,
-              email,
-              senha: dummyPassword,
-              nome: sbUser.user_metadata?.name || sbUser.user_metadata?.full_name || email.split("@")[0],
-              role: cleanRole,
-              referralCode: newReferralCode,
-              referredById
+          
+          try {
+            user = await tx.user.create({
+              data: {
+                id: sbUser.id,
+                email,
+                senha: dummyPassword,
+                nome: sbUser.user_metadata?.name || sbUser.user_metadata?.full_name || email.split("@")[0],
+                role: cleanRole,
+                referralCode: newReferralCode,
+                referredById
+              }
+            });
+          } catch (e: any) {
+            if (e.code === 'P2002') {
+              console.error("[OAUTH PRISMA ERROR]: Unique constraint violation", e.meta);
+              throw new Error("CONFLICT_USER_EXISTS");
             }
-          });
+            throw e;
+          }
 
           // Fetch minimum hourly rate to assign to new professionals
           const minHourlyConfig = await tx.platformConfig.findUnique({ where: { key: "min_hourly_rate" } });
@@ -438,7 +463,10 @@ export class AuthController {
       res.cookie('refreshToken', refreshToken, { ...cookieOptions, maxAge: 30 * 24 * 60 * 60 * 1000 });
 
       return res.json({ token, refreshToken, user: result });
-    } catch (e: unknown) {
+    } catch (e: any) {
+      if (e.message === "CONFLICT_USER_EXISTS") {
+        return res.status(409).json({ error: "Usuário já existe com este identificador. Tente fazer login usando seu e-mail e senha." });
+      }
       console.error("[OAUTH CALLBACK ERROR]:", e);
       return res.status(500).json({ error: "Erro interno no callback OAuth" });
     }
