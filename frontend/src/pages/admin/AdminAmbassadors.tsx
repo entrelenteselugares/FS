@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { API } from "../../lib/api";
-import { Users, Plus, TrendingUp, MousePointer2, Award, Search, X, ArrowRight, Trash2, Power } from "lucide-react";
+import { Users, Plus, TrendingUp, MousePointer2, Award, Search, X, ArrowRight, Trash2, Power, Copy } from "lucide-react";
 
 interface Campaign {
   id: string;
@@ -90,6 +90,12 @@ export const AdminAmbassadors: React.FC = () => {
     } catch {
       toast.error("Erro ao excluir campanha.");
     }
+  };
+
+  const handleCopyLink = (slug: string) => {
+    const url = `${window.location.origin}/embaixador/${slug}`;
+    navigator.clipboard.writeText(url);
+    toast.success("Link do embaixador copiado! 🔗");
   };
 
   const filtered = campaigns.filter(c => 
@@ -207,6 +213,13 @@ export const AdminAmbassadors: React.FC = () => {
                 </td>
                 <td className="p-3 md:p-6">
                   <div className="flex items-center justify-center gap-2">
+                    <button
+                      onClick={() => handleCopyLink(c.slug)}
+                      title="Copiar link do embaixador"
+                      className="p-2 rounded-lg text-theme-muted hover:text-theme-text hover:bg-theme-bg-muted transition-all"
+                    >
+                      <Copy size={14} />
+                    </button>
                     <button
                       onClick={() => handleToggle(c.id)}
                       title={c.active ? 'Desativar campanha' : 'Ativar campanha'}
