@@ -14,14 +14,43 @@ interface MPBrickSettings {
     payer?: { email?: string; entityType?: string };
   };
   customization: {
-    paymentMethods: { creditCard: string; bankTransfer?: any; maxInstallments: number; mercadoPago?: string };
+    paymentMethods: { creditCard: string; bankTransfer?: string; maxInstallments: number; mercadoPago?: string };
     visual?: { style?: { theme?: string } };
   };
   callbacks: {
     onReady: () => void;
-    onSubmit: (data: { selectedPaymentMethod: string; formData: any }) => Promise<void>;
+    onSubmit: (data: { 
+      selectedPaymentMethod: string; 
+      formData: {
+        payer?: { identification?: { number?: string } };
+        token?: string;
+        installments?: number;
+        payment_method_id?: string;
+        [key: string]: unknown;
+      } 
+    }) => Promise<void>;
     onError: (error: unknown) => void;
   };
+}
+
+interface CheckoutOrder {
+  id: string;
+  amount: number | string;
+  buyerEmail?: string;
+  clienteId?: string;
+  eventId?: string;
+  status?: string;
+  event?: {
+    id: string;
+    title: string;
+    slug: string;
+  };
+  items?: Array<{
+    id: string;
+    quantity: number;
+    price: number | string;
+    media?: { shortId?: string };
+  }>;
 }
 
 export default function CheckoutSanfonaPage() {
@@ -35,7 +64,7 @@ export default function CheckoutSanfonaPage() {
   const [pixData, setPixData] = useState<{ qr_code: string; qr_code_base64: string; ticket_url?: string; orderId: string } | null>(null);
   
   // Order state
-  const [order, setOrder] = useState<any>(null);
+  const [order, setOrder] = useState<CheckoutOrder | null>(null);
   const [orderLoading, setOrderLoading] = useState(!!orderId);
   const [orderError, setOrderError] = useState("");
 
@@ -229,6 +258,7 @@ export default function CheckoutSanfonaPage() {
       else if (brickController.current) brickController.current.unmount();
       brickController.current = null;
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [paymentSuccess, showBrick, price, userEmail, isSubscription, order, orderLoading, navigate]);
 
   if (orderError) {
@@ -366,7 +396,7 @@ export default function CheckoutSanfonaPage() {
                    </div>
                  </>
                )}
-               {order?.items?.map((item: any) => (
+               {(order?.items as Array<{ id: string; quantity: number; price: number; media?: { shortId?: string } }>)?.map((item) => (
                  <div key={item.id} className="flex justify-between text-sm text-theme-text-muted">
                    <span>{item.quantity}x {item.media?.shortId || "Produto"}</span>
                    <span className="text-theme-text">R$ {Number(item.price).toFixed(2)}</span>
