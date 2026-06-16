@@ -20,7 +20,7 @@ const PrintStoreModal = lazy(() => import("../components/PrintStoreModal").then(
 const PrintKitModal = lazy(() => import("../components/PrintKitModal").then(m => ({ default: m.PrintKitModal })));
 import { motion, AnimatePresence } from "framer-motion";
 const EventEditPanel = lazy(() => import("../components/profissional/EventEditPanel").then(m => ({ default: m.EventEditPanel })));
-const FotoPointEditModal = lazy(() => import("../components/profissional/FotoPointEditModal").then(m => ({ default: m.FotoPointEditModal })));
+// const FotoPointEditModal = lazy(() => import("../components/profissional/FotoPointEditModal").then(m => ({ default: m.FotoPointEditModal })));
 import type { EventItem } from "../components/profissional/types";
 import { TouchSelectionGallery } from "../components/TouchSelectionGallery";
 import { SchoolAuthenticationGate } from "../components/SchoolAuthenticationGate";
@@ -205,7 +205,7 @@ export default function EventPage() {
   const [medias, setMedias] = useState<EventMedia[]>([]);
   const [step, setStep] = useState<"paywall" | "auth" | "choice" | "upsell" | "checkout" | "processing" | "countdown" | "denied" | "success">("paywall");
   const [access, setAccess] = useState<AccessData | null>(null);
-  const [currentBannerIndex, setCurrentBannerIndex] = useState(0);
+  // const [currentBannerIndex, setCurrentBannerIndex] = useState(0);
   const [orderId, setOrderId] = useState<string | null>(null);
   const [needsAccessChoice, setNeedsAccessChoice] = useState(false);
   const [authenticatedStudent, setAuthenticatedStudent] = useState<string | null>(null);
