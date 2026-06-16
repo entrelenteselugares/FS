@@ -28,6 +28,10 @@ const config: CapacitorConfig = {
       'fs-backend-beige.vercel.app',
       '*.r2.cloudflarestorage.com',
       '*.supabase.co',
+      'sdk.mercadopago.com',
+      'www.mercadopago.com.br',
+      '*.google-analytics.com',
+      '*.googletagmanager.com',
     ],
   },
 };

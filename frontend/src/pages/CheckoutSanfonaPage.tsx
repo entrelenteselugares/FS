@@ -328,7 +328,7 @@ export default function CheckoutSanfonaPage() {
   }
 
   return (
-    <div className="min-h-screen bg-theme-bg text-theme-text flex flex-col">
+    <div className="min-h-screen bg-theme-bg text-theme-text flex flex-col pb-safe">
       <Helmet>
         <title>Checkout - {title} | Foto Segundo</title>
       </Helmet>
