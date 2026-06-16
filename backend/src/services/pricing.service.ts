@@ -264,10 +264,19 @@ export class PricingService {
     const matrizFloor = +(amount * MATRIZ_FLOOR_PCT).toFixed(2);
 
     if (matrizRaw < matrizFloor) {
-      throw new Error(`Split inválido: fatia da Matriz (${matrizRaw}) abaixo do piso mínimo (${matrizFloor}). Revise as configurações de afiliados ou embaixador.`);
+      console.error(`[Pricing] AVISO: Split inválido! Matriz (${matrizRaw}) abaixo do piso (${matrizFloor}). Ajustando split da Captação para compensar.`);
+      const deficit = matrizFloor - matrizRaw;
+      if (captacao >= deficit) {
+        captacao = +(captacao - deficit).toFixed(2);
+      } else if (edicao >= deficit) {
+        edicao = +(edicao - deficit).toFixed(2);
+      } else if (owner >= deficit) {
+        owner = +(owner - deficit).toFixed(2);
+      }
+      // Se não houver saldo suficiente em nenhum parceiro, a Matriz absorve o prejuízo
     }
 
-    const matriz = matrizRaw;
+    const matriz = +(amount - (captacao + edicao + cartorio + franchisee + ambassador + owner + affiliateL1Amount + affiliateL2Amount)).toFixed(2);
 
     return { 
       matriz, captacao, edicao, cartorio, franchisee, passiveFranchiseeId, 

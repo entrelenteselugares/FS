@@ -111,7 +111,8 @@ Rastreamento de conversão via cookie `fs_referral`. Se o preço cai para R$0 co
 ## 6. Segurança e Integridade (Defesa em Profundidade)
 
 - **Auth (Anti-XSS):** JWT (Acesso) via **`httpOnly`, `Secure` e `SameSite=Strict` Cookies**.
-- **Rate Limit (Anti-DDoS):** Upstash Redis / Vercel Edge Middleware.
+- **Rate Limit (Anti-DDoS):** Upstash Redis configurado nativamente no backend via `express-rate-limit` protegendo rotas críticas (`/auth`, `/checkout`) e rotas públicas de evento (`/api/public`) com limites restritivos (ex: 150 req/min).
+- **Compliance Legal (LGPD/Direitos):** Componentes de captura passiva (como o Phygital Capture) possuem travamento lógico no frontend exigindo "opt-in" explícito com aceite da Política de Privacidade antes de envio de payloads.
 - **Cron Security:** Endpoints protegidos por `CRON_SECRET` e `Bearer` token.
 - **Audit:** `GamificationLedger` registra ações críticas no backend e front.
 
@@ -165,6 +166,18 @@ graph TD
 
 ---
 
+## 9. Directory Structure Rationale
+
+O projeto é organizado para isolar o front-end (app web e PWA), o back-end (motor transacional e integração com Supabase/Vercel) e os agentes periféricos.
+
+- `frontend/` — Aplicação principal (React/Vite) empacotada também via Capacitor para mobile. Contém UI, estados e a lógica de PWA.
+- `backend/` — API híbrida (Hono/Express) lidando com Supabase, pagamentos e processamento de dados.
+- `printer-agent/` — Microsserviço local (IoT) em Node.js responsável por escutar pedidos via webhooks e disparar impressões em hardware físico.
+- `docs/` — Documentação técnica, arquitetura e manuais operacionais.
+- `scripts/` — Utilitários de migração, limpeza de banco e automações soltas.
+
+---
+
 ## 9. Key Abstractions
 
 - **Drive Sync Engine (`backend/src/controllers/marketplace.controller.ts`):** Ingestão massiva em lote e extração Regex.
@@ -176,4 +189,4 @@ graph TD
 
 <!-- GSD-DOCS-UPDATE: SUPPLEMENTED -->
 
-_Documentação verificada e atualizada automaticamente via GSD-SDK em 2026-06-14._
+_Documentação verificada e atualizada automaticamente via GSD-SDK em 2026-06-15._

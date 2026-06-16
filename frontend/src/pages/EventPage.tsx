@@ -381,11 +381,13 @@ export default function EventPage() {
         window.fsCurrentEventId = eventData.id;
 
         // Buscar referências técnicas do banco
-        api.get(`/events/${eventData.id}/references`)
-          .then(refRes => {
-            setEvent(prev => prev ? { ...prev, eventReferences: refRes.data || [] } : null);
-          })
-          .catch(() => { /* referências são opcionais */ });
+        if (user) {
+          api.get(`/events/${eventData.id}/references`)
+            .then(refRes => {
+              setEvent(prev => prev ? { ...prev, eventReferences: refRes.data || [] } : null);
+            })
+            .catch(() => { /* referências são opcionais */ });
+        }
 
 
         const now = new Date();
@@ -451,8 +453,8 @@ export default function EventPage() {
     api.get('/public/service-catalog').then(res => setServiceCatalog(res.data || [])).catch(err => console.error(err));
 
     // Cycle banner index every 5s (only affects photo banners — YouTube iframe is rendered outside AnimatePresence so it never remounts)
-    const interval = setInterval(() => setCurrentBannerIndex(prev => (prev + 1) % 3), 5000);
-    return () => clearInterval(interval);
+    // const interval = setInterval(() => setCurrentBannerIndex(prev => (prev + 1) % 3), 5000);
+    // return () => clearInterval(interval);
   }, [slug, navigate, user, searchParams]);
 
   const handleAutoConfirmChoice = useCallback(async (oid: string) => {
@@ -469,8 +471,9 @@ export default function EventPage() {
       const token = searchParams.get("token");
       try {
         const { data } = await api.get(`/orders/${oid}/access-status`, { 
-          params: token ? { guestToken: token } : {} 
-        });
+          params: token ? { guestToken: token } : {},
+          _retry: true
+        } as any);
         if (data.status === "PENDING_CHOICE") {
           setStep("success");
           if (event?.isPrimaryClient) setNeedsAccessChoice(true);
@@ -679,7 +682,7 @@ return (
             {!youtubeEmbedUrl && (
             <AnimatePresence mode="wait">
               <motion.div 
-                key={currentBannerIndex}
+                key="cover-banner"
                 initial={{ opacity: 0, scale: 1.05 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0 }}
@@ -806,7 +809,7 @@ return (
                       </div>
                       <button onClick={() => setShowQrModal(false)} className="text-theme-muted hover:text-theme-text"><Check size={20} className="rotate-45" /></button>
                     </div>
-                    <div className="bg-white p-4 rounded-xl mb-6">
+                    <div className="bg-theme-card border border-theme-border p-4 rounded-xl mb-6 shadow-sm">
                       <QRCodeCanvas value={`${window.location.origin}/phygital-capture?e=${event.id}`} size={240} level="H" />
                     </div>
                     <p className="text-[9px] text-theme-muted uppercase font-bold text-center leading-relaxed">
@@ -925,14 +928,14 @@ return (
                                 <Camera size={40} className="text-brand-tactical group-hover:scale-110 transition-transform duration-700" />
                               </div>
                             </div>
-                            <p className="text-[10px] font-bold text-brand-tactical uppercase tracking-[0.6em] mb-4">Transmissão Tática</p>
+                            <p className="text-[10px] font-bold text-brand-tactical uppercase tracking-[0.6em] mb-4">{isEventOver ? "Álbum" : "Ao Vivo"}</p>
                             <h3 className="text-3xl font-heading font-bold text-theme-text uppercase mb-4">
-                              {isEventOver ? "Operação Encerrada" : "Galeria em Formação"}
+                              {isEventOver ? "Período de envio encerrado" : "As fotos ainda estão chegando"}
                             </h3>
                             <p className="max-w-md text-xs text-theme-text-muted uppercase tracking-widest leading-relaxed mb-6">
                               {isEventOver 
-                                ? "O período de capturas ao vivo para este evento foi concluído. A galeria agora está em modo de exposição e venda."
-                                : "Nossa equipe técnica está processando as capturas deste ponto em tempo real. As memórias aparecerão aqui instantaneamente."}
+                                ? "O evento acabou, mas você ainda pode ver e comprar as fotos abaixo."
+                                : "As fotos aparecem aqui assim que são tiradas. Aguarde um instante ☕"}
                             </p>
                             <div className="flex flex-col sm:flex-row gap-4">
                               <button 
@@ -946,7 +949,7 @@ return (
                                   onClick={() => setShowQrModal(true)}
                                   className="px-4 md:px-8 py-4 bg-brand-tactical text-brand-text font-bold uppercase tracking-widest text-[10px] shadow-[0_15px_30px_rgba(20,184,166,0.3)] flex items-center gap-3"
                                 >
-                                  <QrCode size={18} /> TRANSMITIR MINHAS FOTOS
+                                  <QrCode size={18} /> ENVIAR MINHA FOTO
                                 </button>
                               )}
                               {event.preSaleEnabled && !isAlbumInCart && (
@@ -957,7 +960,7 @@ return (
                                       setStep("checkout");
                                     }
                                   }}
-                                  className="px-4 md:px-8 py-4 bg-white text-gray-800 font-bold uppercase tracking-widest text-[10px] flex items-center gap-3 hover:bg-brand-tactical transition-colors"
+                                  className="px-4 md:px-8 py-4 bg-theme-card border border-theme-border text-theme-text font-bold uppercase tracking-widest text-[10px] flex items-center gap-3 hover:bg-brand-tactical hover:text-brand-text transition-colors"
                                 >
                                   <ShoppingCart size={18} /> COMPRAR PRÉ-VENDA (ALBUM COMPLETO)
                                 </button>
@@ -1070,7 +1073,7 @@ return (
           <div className="relative z-10 flex-1 lg:overflow-y-auto p-4 lg:p-8 space-y-8 lg:space-y-14 scrollbar-hide">
             <div className="flex items-center justify-between border-b border-theme-border pb-6 lg:pb-12">
               <div className="space-y-1">
-                <p className="text-[10px] text-theme-text-muted uppercase font-bold tracking-[0.5em]">Membro Exclusive</p>
+                <p className="text-[10px] text-theme-text-muted uppercase font-bold tracking-[0.5em]">Acesso Exclusivo</p>
                 <div className="h-0.5 w-12 bg-brand-tactical" />
               </div>
               <div className="flex items-center gap-3 px-4 py-2 bg-theme-bg border border-theme-border">
@@ -1116,14 +1119,14 @@ return (
               <div className="p-3 md:p-6 bg-theme-bg-muted border border-theme-border space-y-4">
                  <div className="flex items-center gap-2">
                     <QrCode size={16} className={!qrOpen ? "text-theme-muted" : "text-brand-tactical"} />
-                    <span className="text-[10px] font-bold text-theme-text uppercase tracking-widest">Galeria Live</span>
+                    <span className="text-[10px] font-bold text-theme-text uppercase tracking-widest">Envie suas fotos</span>
                  </div>
                  <p className="text-[9px] text-theme-text-muted leading-relaxed uppercase tracking-wider">
                     {qrOpen 
-                      ? "Envie suas fotos agora para o painel do evento e apareça na transmissão oficial!"
+                      ? "Tire uma foto agora — ela entra no álbum do evento na hora!"
                       : (eventStatus.phase === "scheduled" || eventStatus.phase === "approaching")
-                        ? "O período de envio de fotos em tempo real iniciará quando o evento começar."
-                        : "O período de envio de fotos em tempo real para este evento foi encerrado."}
+                        ? "O envio de fotos abre quando o evento começar."
+                        : "O envio de fotos foi encerrado."}
                  </p>
                  {qrOpen && (
                    <button 
@@ -1148,7 +1151,7 @@ return (
                     <div className="space-y-4">
                       <h4 className="text-md font-heading font-bold text-theme-text uppercase">Aguardando Liberação</h4>
                       <p className="text-[11px] text-theme-muted uppercase font-bold tracking-widest leading-relaxed">
-                        Esta galeria premium está aguardando o pagamento do saldo residual ou a liberação oficial de acesso pelo contratante.
+                        O fotógrafo ainda não liberou o acesso a este álbum. Fale com quem te convidou.
                       </p>
                     </div>
                     <div className="pt-6 border-t border-zinc-800/80 space-y-6">
@@ -1212,7 +1215,7 @@ return (
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-2">
                             <Printer size={16} className="text-brand-tactical animate-pulse" />
-                            <span className="text-[10px] font-bold text-brand-tactical uppercase tracking-widest">Upgrade Phygital</span>
+                            <span className="text-[10px] font-bold text-brand-tactical uppercase tracking-widest">Adicionar Fotos Impressas</span>
                           </div>
                           {!eventPhysicalItems.length ? (
                             <button 
@@ -1287,14 +1290,14 @@ return (
                   />
                   <TacticalBenefit 
                     icon={<ShieldCheck size={16} className="lg:w-[20px] lg:h-[20px]" />} 
-                    title="Acesso Blindado" 
-                    desc="Memórias seguras na nuvem." 
+                    title="Acesso Seguro" 
+                    desc="Suas fotos ficam salvas e protegidas." 
                   />
                   <div className="col-span-2 lg:col-span-1">
                     <TacticalBenefit 
                       icon={<Printer size={16} className="lg:w-[20px] lg:h-[20px]" />} 
-                      title="Print Catalog" 
-                      desc="Acesso exclusivo à loja." 
+                      title="Fotos Impressas" 
+                      desc="Peça suas fotos reveladas." 
                     />
                   </div>
                 </div>
@@ -1307,8 +1310,8 @@ return (
                     </p>
                     <h3 className="text-2xl lg:text-3xl font-heading font-bold uppercase text-theme-text leading-[1.1] text-left">
                       {event.type === 'ALBUM_FULL' ? "O grande dia está chegando" : 
-                       event.type === 'PHOTO_MARKETPLACE' ? "Live Print em Processamento" : 
-                       "Captura em Processamento"}
+                       event.type === 'PHOTO_MARKETPLACE' ? "Preparando o álbum" : 
+                       "Preparando a galeria"}
                     </h3>
                   </div>
                 
@@ -1321,7 +1324,7 @@ return (
                       </div>
                       <p className="text-xs font-bold text-theme-text uppercase tracking-[0.2em] text-left">Reserva Confirmada</p>
                     </div>
-                    <p className="text-[11px] text-theme-text-muted leading-relaxed font-bold uppercase tracking-widest">Equipe técnica em prontidão para o seu evento.</p>
+                    <p className="text-[11px] text-theme-text-muted leading-relaxed font-bold uppercase tracking-widest">Nosso fotógrafo estará lá. Tudo certo! 📸</p>
                   </div>
                 </div>
 
@@ -1361,7 +1364,7 @@ return (
                 <p className="text-sm text-theme-text-muted leading-relaxed">
                   Você está logado como <span className="text-theme-text font-bold">{user.email}</span>, mas esta galeria é restrita aos noivos e convidados autorizados.
                 </p>
-                <p className="text-[10px] font-bold text-brand-tactical uppercase tracking-widest">Protocolo de Segurança Ativo</p>
+                <p className="text-[10px] font-bold text-brand-tactical uppercase tracking-widest">Galeria Restrita</p>
               </div>
               <div className="flex flex-col w-full gap-4 pt-6">
                 <a href="https://wa.me/5519981150440" target="_blank" rel="noreferrer" className="w-full py-4 bg-brand-tactical text-brand-text text-[10px] font-bold uppercase tracking-widest text-center shadow-lg shadow-brand-tactical/20">FALAR COM SUPORTE</a>
@@ -1393,11 +1396,13 @@ return (
       )}
       {needsAccessChoice && orderId && <AccessTypeModal orderId={orderId} eventTitle={event.title} isPrimaryClient={true} isMarketplace={isMarketplace} onConfirmed={() => setNeedsAccessChoice(false)} onClose={() => setNeedsAccessChoice(false)} />}
       
-      <Modal isOpen={showQrModal} onClose={() => setShowQrModal(false)} title="Protocolo de Captura Phygital">
+      <Modal isOpen={showQrModal} onClose={() => setShowQrModal(false)} title="Envie suas fotos para o álbum">
         <div className="flex flex-col items-center gap-4 pt-2">
-          <div className="space-y-1 text-center">
-            <p className="text-[9px] font-bold uppercase tracking-[0.4em] text-brand-tactical">Captura Instantânea</p>
-            <p className="text-xs text-theme-text-muted max-w-[240px] mx-auto leading-relaxed">Escaneie para transmitir suas fotos em tempo real para a galeria exclusiva.</p>
+          <div className="space-y-2 text-center">
+            <p className="text-[9px] font-bold uppercase tracking-[0.4em] text-brand-tactical">É rapidinho!</p>
+            <p className="text-sm text-theme-text max-w-[260px] mx-auto leading-relaxed font-medium">
+              Aponte a câmera para o QR code, tire uma foto — ela aparece na galeria do evento na hora.
+            </p>
           </div>
           <div className="p-4 bg-white rounded-2xl shadow-[0_10px_30px_rgba(20,184,166,0.1)]">
             <QRCodeCanvas value={`${window.location.origin}/phygital-capture?e=${event.id}`} size={180} level="H" />
@@ -1409,23 +1414,13 @@ return (
       </Modal>
       {isEditingEvent && event && (
         <Suspense fallback={<div className="fixed inset-0 z-[300] flex items-center justify-center p-4 bg-theme-bg/80 backdrop-blur-xl"><div className="w-8 h-8 border-4 border-brand-tactical border-t-transparent rounded-full animate-spin"></div></div>}>
-          {event.type === 'FOTO_POINT' ? (
-            <FotoPointEditModal
-              event={event as unknown as EventItem}
-              network={[]}
-              onClose={() => setIsEditingEvent(false)}
-              onSuccess={(updated) => setEvent(prev => prev ? { ...prev, ...updated } as EventData : null)}
-              onError={(msg) => alert(msg)}
-            />
-          ) : (
-            <EventEditPanel 
-              event={event as unknown as EventItem}
-              onUpdated={(u) => setEvent(prev => prev ? { ...prev, ...u } as EventData : null)}
-              onClose={() => setIsEditingEvent(false)}
-              onNotify={(msg) => alert(msg)}
-              onOpenPrintKit={() => setShowPrintKit(true)}
-            />
-          )}
+          <EventEditPanel 
+            event={event as unknown as EventItem}
+            onUpdated={(u) => setEvent(prev => prev ? { ...prev, ...u } as EventData : null)}
+            onClose={() => setIsEditingEvent(false)}
+            onNotify={(msg) => alert(msg)}
+            onOpenPrintKit={() => setShowPrintKit(true)}
+          />
         </Suspense>
       )}
       {/* Download Progress Overlay */}

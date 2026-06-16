@@ -86,4 +86,4 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines on code standards, commit 
 © 2026 Foto Segundo. All rights reserved.
 
 <!-- GSD-DOCS-UPDATE: VERIFIED -->
-_Documentação verificada e atualizada automaticamente via GSD-SDK em 2026-06-14._
+_Documentação verificada e atualizada automaticamente via GSD-SDK em 2026-06-15._

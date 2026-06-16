@@ -1,6 +1,6 @@
 # 📋 Lista de URLs Frontend — Foto Segundo
 
-**Gerado em:** 2026-06-10  
+**Gerado em:** 2026-06-15  
 **Base URL (produção):** <https://foto-segundo.vercel.app>  
 **Base URL (local):** <http://localhost:3003>  
 **Status:** Manual pendente =   | Manual gerado =  
@@ -55,6 +55,7 @@
 | 26  | `/cotacao/unidades`    | **Unidades Fixas** — Fluxo para casas parceiras com serviços específicos | Público |       |
 | 27  | `/cotacao/customizado` | **Cotação Customizada** — Monte sua cobertura do zero                    | Público |       |
 | 28  | `/checkout`            | **Checkout** — Pagamento de pedido e aplicação de cupom                  | Público |       |
+| 28a | `/checkout-sanfona`    | **Checkout Sanfona** — Nova versão do checkout com expansão              | Público |       |
 | 29  | `/checkout/:orderId`   | **Checkout por ID** — Retomada de pedido específico                      | Público |       |
 
 ---
@@ -141,8 +142,8 @@
 | 67  | `/meus-albuns/:vaultId` | **Álbum / Cofre** — Visualização das fotos de um evento              | Autenticado  |       |
 | 68  | `/delivery/:id`           | **Entrega Luxury** — Visão geral oficial do evento                   | Autenticado  |       |
 | 68a | `/delivery/:id?tab=GUEST` | **Entrega Luxury: Live Connect** — Fotos tiradas por convidados      | Autenticado  |       |
-| 69  | `/captura`              | **Captura Phygital** — Interface de captura ao vivo em evento        | PROFISSIONAL |       |
-| 70  | `/phygital-capture`     | **Captura Phygital** — Alias de /captura                             | PROFISSIONAL |       |
+| 69  | `/captura`              | **Captura Phygital** — Interface de captura ao vivo em evento        | Todos        |       |
+| 70  | `/phygital-capture`     | **Captura Phygital** — Alias de /captura                             | Todos        |       |
 | 71  | `/flash/:shortId`       | **Flash Unlock** — Desbloqueio rápido de álbum por link              | Público      |       |
 | 72  | `/embaixador/:slug`     | **Página do Embaixador** — Perfil público do embaixador              | Público      |       |
 | 73  | `/invitation/:code`     | **Convite** — Aceite de convite para vault compartilhado             | Público      |       |
@@ -167,14 +168,14 @@
 | ----------------------- | ---------------- |
 | Páginas Públicas        | 17               |
 | Autenticação            | 6                |
-| Cotação / Checkout      | 6                |
+| Cotação / Checkout      | 7                |
 | Área do Cliente         | 10               |
 | Área do Profissional    | 6                |
 | Área Unidade / Franquia | 2                |
 | Área Administrativa     | 18               |
 | Fluxos Especiais        | 9                |
 | Copa do Mundo           | 2                |
-| **TOTAL**               | **76 páginas**   |
+| **TOTAL**               | **77 páginas**   |
 
 ---
 

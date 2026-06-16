@@ -143,6 +143,12 @@ app.use("/api/checkout", createRateLimiter({
   message: "Muitas tentativas de checkout." 
 }));
 
+app.use("/api/public", createRateLimiter({ 
+  windowMs: 60 * 1000, 
+  max: 150,
+  message: "Muitas requisições públicas. Tente novamente em breve." 
+}));
+
 app.use("/api/webhooks", createRateLimiter({ 
   windowMs: 60 * 1000, 
   max: 50,

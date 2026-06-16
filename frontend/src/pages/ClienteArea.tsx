@@ -1366,7 +1366,7 @@ function PedidoDetalhe({ pedido, loading, onGoToEvent, onChangePrivacy, onRefres
  </button>
  <button 
  onClick={() => setIsEditing(false)} 
- className="fs-btn border border-theme-border text-theme-muted flex-1 hover:bg-zinc-800"
+ className="fs-btn border border-theme-border text-theme-muted flex-1 hover:bg-theme-field hover:text-theme-text"
  >
  Cancelar
  </button>

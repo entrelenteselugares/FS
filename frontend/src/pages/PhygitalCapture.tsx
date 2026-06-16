@@ -184,6 +184,7 @@ export default function PhygitalCapture() {
 
   return (
     <div
+      data-theme="dark"
       className="min-h-screen flex flex-col items-center py-4 px-3 md:px-6 relative overflow-x-hidden bg-[var(--bg,#0a0a0a)]"
     >
       {/* ── Hidden Native File Inputs ─────────────────────────────────────── */}
@@ -251,7 +252,7 @@ export default function PhygitalCapture() {
           </div>
           <div className="h-px w-10 bg-brand-tactical mx-auto mb-2" />
           <p className="text-[10px] uppercase tracking-[0.3em] font-bold opacity-30 text-theme-text">
-            Phygital Capture
+            Álbum do Evento
           </p>
         </div>
 
@@ -265,10 +266,10 @@ export default function PhygitalCapture() {
             <div className="text-center mb-6">
               <Camera size={32} className="mx-auto text-theme-brand mb-3 opacity-80" />
               <h2 className="text-sm font-bold text-theme-text uppercase tracking-widest">
-                Identificação
+                Quem é você?
               </h2>
               <p className="text-[10px] text-theme-muted mt-1 uppercase tracking-wider">
-                Para encontrar suas fotos depois no álbum.
+                Assim a gente sabe qual foto é a sua.
               </p>
             </div>
 
@@ -316,12 +317,24 @@ export default function PhygitalCapture() {
               />
             </div>
 
+            <div className="flex items-start gap-3 bg-black/20 p-3 rounded-lg border border-brand-warning/30">
+              <input 
+                type="checkbox" 
+                required 
+                id="consentCheckbox"
+                className="mt-0.5 shrink-0 accent-brand-tactical w-4 h-4"
+              />
+              <label htmlFor="consentCheckbox" className="text-[9px] leading-relaxed text-zinc-300 font-medium">
+                Autorizo o uso e veiculação desta foto na galeria do evento e concordo com a <a href="/privacidade" target="_blank" className="text-brand-tactical underline">Política de Privacidade</a>.
+              </label>
+            </div>
+
             <button
               type="submit"
               className="w-full bg-brand-tactical text-zinc-950 font-bold uppercase tracking-widest text-[11px] py-4 rounded-xl flex items-center justify-center gap-2 active:scale-[0.98] transition-transform hover:bg-brand-tactical"
             >
               <Camera size={16} />
-              Começar a Fotografar
+              Tirar minha foto agora
             </button>
           </form>
         ) : (
@@ -331,7 +344,7 @@ export default function PhygitalCapture() {
             {/* ── Shutter Mechanism ─────────────────────────────────────── */}
             <div className="flex flex-col items-center justify-center space-y-5 bg-white/[0.01] p-6 rounded-[2rem] border border-white/5">
               <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-theme-brand/80">
-                {isLongPressing ? 'Gravando Vídeo...' : 'Toque: Foto  •  Segure: Vídeo'}
+                {isLongPressing ? 'Gravando vídeo...' : 'Toque para foto • Segure para vídeo'}
               </span>
 
               {/* Shutter button with long-press */}
@@ -382,10 +395,10 @@ export default function PhygitalCapture() {
               <div className="space-y-3 pt-4 border-t border-white/10">
                 <div className="flex justify-between items-center px-1">
                   <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-theme-muted">
-                    Fotos Enviadas ({uploadItems.filter(i => i.status === 'success').length})
+                    Fotos enviadas ({uploadItems.filter(i => i.status === 'success').length})
                   </label>
                   <span className="text-[9px] font-bold uppercase tracking-widest text-theme-brand">
-                    Upload Direto Ativo
+                    Aparece na galeria na hora
                   </span>
                 </div>
 
@@ -413,21 +426,24 @@ export default function PhygitalCapture() {
                           <Loader2 size={24} className="text-theme-brand animate-spin" />
                         )}
                         {item.status === 'success' && (
-                          <CheckCircle2 size={24} className="text-theme-brand" />
+                          <div className="flex flex-col items-center gap-1">
+                            <CheckCircle2 size={24} className="text-theme-brand" />
+                            <span className="text-[8px] font-bold text-white uppercase tracking-wider">Enviada!</span>
+                          </div>
                         )}
                         {item.status === 'error' && (
-                          <button
-                            onClick={() => {
-                              retryUpload(item.id);
-                            }}
-                            className="bg-brand-danger/90 text-white p-2 rounded-full hover:bg-brand-danger active:scale-95 shadow-xl border border-brand-danger flex flex-col items-center gap-1"
-                            title="Tentar novamente"
-                          >
-                            <RefreshCcw size={16} />
-                            <span className="text-[9px] font-bold uppercase tracking-wider">
-                              Tentar
-                            </span>
-                          </button>
+                          <div className="flex flex-col items-center gap-1">
+                            <button
+                              onClick={() => {
+                                retryUpload(item.id);
+                              }}
+                              className="bg-brand-danger/90 text-white p-2 rounded-full hover:bg-brand-danger active:scale-95 shadow-xl border border-brand-danger"
+                              title="Tentar novamente"
+                            >
+                              <RefreshCcw size={16} />
+                            </button>
+                            <span className="text-[8px] font-bold text-white uppercase tracking-wider text-center leading-tight px-1">Não enviou — toque</span>
+                          </div>
                         )}
                       </div>
                     </div>

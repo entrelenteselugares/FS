@@ -137,7 +137,7 @@ export function FinanceTab({
               <h4 className="text-[10px] font-bold text-brand-tactical uppercase tracking-[0.2em]">Fluxo de Caixa Operacional</h4>
               <span className="text-[9px] font-bold bg-brand-tactical/10 text-brand-tactical px-2 py-1 rounded border border-brand-tactical/20 uppercase tracking-widest">Tempo Real</span>
             </div>
-            <div className="h-[200px] w-full">
+            <div className="w-full min-h-[300px]">
               <CashflowChart />
             </div>
           </div>

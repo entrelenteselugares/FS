@@ -22,9 +22,9 @@ export const T = {
 
   // ── Typography ────────────────────────────────────
   text:  "var(--text)",   // #f0ede8
-  text2: "var(--text-2)", // #999999
-  textMuted: "var(--text-2)",
-  text3: "var(--text-3)", // #555555
+  text2: "var(--text-muted)", // #999999
+  textMuted: "var(--text-muted)",
+  text3: "var(--text-disabled)", // #555555
 
   // ── Brand (TEAL — nunca usar #8a9a5b) ─────────────
   brand:       "var(--brand)",        // #85B9AC

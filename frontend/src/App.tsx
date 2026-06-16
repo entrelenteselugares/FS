@@ -32,7 +32,7 @@ const PartnerFlowPage = React.lazy(() => import("./pages/quote/PartnerFlowPage")
 const CustomFlowPage = React.lazy(() => import("./pages/quote/CustomFlowPage").then(m => ({ default: m.CustomFlowPage })));
 const PartnerLP = React.lazy(() => import("./pages/PartnerLP").then(m => ({ default: m.PartnerLP })));
 const NotFoundPage = React.lazy(() => import("./pages/NotFoundPage").then(m => ({ default: m.NotFoundPage })));
-const CheckoutPage = React.lazy(() => import("./pages/CheckoutPage").then(m => ({ default: m.CheckoutPage })));
+// CheckoutPage is deprecated, we only use CheckoutSanfonaPage
 const ResetPasswordPage = React.lazy(() => import("./pages/ResetPasswordPage"));
 const ForgotPasswordPage = React.lazy(() => import("./pages/ForgotPasswordPage"));
 const LuxuryExperiencePage = React.lazy(() => import("./pages/LuxuryExperiencePage"));
@@ -176,20 +176,20 @@ const AnimatedRoutes = () => {
             <Route path="/p/:slug" element={<ProtectedRoute><PartnerLP /></ProtectedRoute>} />
             <Route path="/suporte" element={<ProtectedRoute><HelpPage /></ProtectedRoute>} />
             
-            <Route path="/e/:slug" element={<ProtectedRoute><EventPage /></ProtectedRoute>} />
+            <Route path="/e/:slug" element={<EventPage />} />
             <Route path="/cotacao" element={<ProtectedRoute><QuotePage /></ProtectedRoute>} />
             <Route path="/cotacao/pacotes" element={<ProtectedRoute><PackageFlowPage /></ProtectedRoute>} />
             <Route path="/cotacao/unidades" element={<ProtectedRoute><PartnerFlowPage /></ProtectedRoute>} />
             <Route path="/cotacao/customizado" element={<ProtectedRoute><CustomFlowPage /></ProtectedRoute>} />
-            <Route path="/checkout" element={<ProtectedRoute><CheckoutPage /></ProtectedRoute>} />
-            <Route path="/checkout-sanfona" element={<ProtectedRoute><CheckoutSanfonaPage /></ProtectedRoute>} />
-            <Route path="/checkout/:orderId" element={<ProtectedRoute><CheckoutPage /></ProtectedRoute>} />
+            <Route path="/checkout" element={<CheckoutSanfonaPage />} />
+            <Route path="/checkout-sanfona" element={<CheckoutSanfonaPage />} />
+            <Route path="/checkout/:orderId" element={<CheckoutSanfonaPage />} />
             <Route path="/delivery/:id" element={<ProtectedRoute><LuxuryExperiencePage /></ProtectedRoute>} />
-            <Route path="/captura" element={<ProtectedRoute><PhygitalCapture /></ProtectedRoute>} />
-            <Route path="/phygital-capture" element={<ProtectedRoute><PhygitalCapture /></ProtectedRoute>} />
+            <Route path="/captura" element={<PhygitalCapture />} />
+            <Route path="/phygital-capture" element={<PhygitalCapture />} />
             <Route path="/negocios" element={<ProtectedRoute><BusinessLanding /></ProtectedRoute>} />
             <Route path="/clube" element={<ProtectedRoute><ClubLandingPage /></ProtectedRoute>} />
-            <Route path="/flash/:shortId" element={<ProtectedRoute><FlashUnlockPage /></ProtectedRoute>} />
+            <Route path="/flash/:shortId" element={<FlashUnlockPage />} />
             <Route path="/embaixador/:slug" element={<AmbassadorPage />} />
             
             {/* World Cup Gamification */}

@@ -56,7 +56,7 @@ O repositório é configurado com o frontend (`/frontend`) em Vite/React e o bac
 ### Frontend
 
 - **Framework:** React + Vite.
-- **Estilização:** TailwindCSS. Todas as cores principais devem utilizar os tokens configurados em `tailwind.config.js` (`bg-theme-bg`, `text-brand-tactical`, etc.) para suporte automático a Dark Mode e expansões futuras.
+- **Estilização e Tema:** TailwindCSS híbrido. Todas as cores principais devem utilizar os tokens configurados em `lib/theme.ts` e `index.css` (`bg-theme-bg`, `text-brand-tactical`, etc.) para suporte automático a Dark Mode e expansões futuras. Componentes de terceiros complexos que exigem alto contraste rigoroso (ex: Mercado Pago Bricks, Câmera em Tela Cheia) devem ser envelopados com o atributo forçado `data-theme="dark"` em seu container pai para garantir consistência visual.
 - **Roteamento:** React Router Dom. Novas páginas institucionais devem ser registradas em `App.tsx` e acessíveis via `Navbar` e `Footer`.
 - **Motor Multi-Vertical:** O layout de eventos (`EventPage.tsx`) agora suporta múltiplos verticais. A renderização de componentes deve ser condicional baseada na flag `event.vertical` e `event.type`.
 - **Estado:** Evite complexidade global excessiva se o React Context for suficiente, mantendo componentes o mais puros e "dumb" possível.
