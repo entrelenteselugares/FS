@@ -192,9 +192,9 @@ export default function CheckoutSanfonaPage() {
               } else {
                 // Fluxo de Pedido Comum
                 const { data } = await API.post("/checkout/payment", {
-                  eventId: order.event?.id || order.eventId,
-                  userId: order.clienteId || null,
-                  orderId: order.id,
+                  eventId: order?.event?.id || order?.eventId,
+                  userId: order?.clienteId || null,
+                  orderId: order?.id,
                   email: userEmail,
                   whatsapp: userWhatsApp, // Guest capture
                   cpf: formData.payer?.identification?.number,
@@ -206,7 +206,7 @@ export default function CheckoutSanfonaPage() {
                 if (data.hasPaid) {
                   setPaymentSuccess(true);
                   // Redireciona para o evento após 3 segundos
-                  const eventSlug = order.event?.slug;
+                  const eventSlug = order?.event?.slug;
                   if (eventSlug) setTimeout(() => navigate(`/e/${eventSlug}`), 3000);
                 } else if (data.qr_code) {
                   // Mostra o PIX na própria tela — não redireciona
@@ -214,7 +214,7 @@ export default function CheckoutSanfonaPage() {
                     qr_code: data.qr_code,
                     qr_code_base64: data.qr_code_base64,
                     ticket_url: data.ticket_url,
-                    orderId: data.orderId || order.id,
+                    orderId: data.orderId || order?.id,
                   });
                 } else {
                   toast.error("Não foi possível processar o pagamento. Tente novamente.");
